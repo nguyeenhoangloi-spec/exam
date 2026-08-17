@@ -27,6 +27,7 @@ import { ChangeExamPasswordModal } from '../../components/exam-papers/ChangeExam
 import { RubricDialog } from '../../components/question-bank/RubricDialog';
 import { TabBar } from '../../components/ui/TabBar';
 import { ExamPaperPaginationBar } from '../../components/exam-papers/ExamPaperPaginationBar';
+import { ExamPaperDetailDrawer } from '../../components/exam-papers/ExamPaperDetailDrawer';
 
 function formatPaperForExport(paper: any) {
   const details = paper.details || paper.questions || paper.paperDetails || [];
@@ -223,13 +224,20 @@ export default function ExamPapersPage() {
     });
 
     try {
-      const response = await api.get('/questions', {
-        params: {
-          type: targetQuestion.type || 'MULTIPLE_CHOICE',
-          difficulty: targetQuestion.difficulty || 'MEDIUM',
-          limit: 10,
-        },
-      });
+      const subjectId =
+        (drawerOpenPaper as any)?.subjectId ||
+        (drawerOpenPaper?.examSchedule as any)?.subjectId ||
+        (drawerOpenPaper?.examSchedule?.subject as any)?.id;
+
+      const params: any = {
+        limit: 20,
+        status: 'APPROVED',
+      };
+      if (subjectId) params.subjectId = Number(subjectId);
+      if (targetQuestion.type) params.type = targetQuestion.type;
+      if (targetQuestion.difficulty) params.difficulty = targetQuestion.difficulty;
+
+      const response = await api.get('/questions', { params });
 
       const rawList = Array.isArray(response.data) ? response.data : response.data?.data || [];
       const list = rawList.filter(
@@ -908,373 +916,101 @@ export default function ExamPapersPage() {
         />
       </main>
 
-      {/* ── CUSTOM EXAM PAPER DETAIL DRAWER: Chuẩn Design System & Hoạt ảnh 60 FPS ── */}
-      {drawerOpenPaper && (
-        <div role="dialog" aria-modal="true" aria-label="Chi tiết đề thi" className="fixed inset-0 z-[100] overflow-hidden">
-          {/* Backdrop mờ nền */}
-          <div
-            className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-              drawerVisible ? 'opacity-100' : 'opacity-0'
-            }`}
-            onClick={() => setSelectedPaper(null)}
-          />
-
-          <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
-            <div
-              className={`w-screen max-w-[640px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform ${
-                drawerVisible ? 'translate-x-0' : 'translate-x-full'
-              }`}
-            >
-              {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
-              <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                    {/* Avatar Icon Thương hiệu */}
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
-                      <FileText className="h-6 w-6 text-white" />
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h2 className="text-[18px] font-semibold leading-snug text-slate-900 dark:text-white break-words">
-                          {(drawerOpenPaper as any).subjectName || (drawerOpenPaper.examSchedule as any)?.subjectName || (drawerOpenPaper.examSchedule?.subject as any)?.subjectName || 'Chi tiết đề thi'}
-                        </h2>
-                        <IdentifierBadge tone="neutral">Mã đề: {drawerOpenPaper.paperCode}</IdentifierBadge>
-                      </div>
-                      <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400 mt-1 truncate">
-                        Kỳ thi: <strong className="font-semibold text-slate-900 dark:text-slate-100">{(drawerOpenPaper.examSchedule as any)?.periodName || (drawerOpenPaper.examSchedule as any)?.examPeriod?.name || 'Chính thức'}</strong>
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Nút Đóng */}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedPaper(null)}
-                    className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition cursor-pointer"
-                    title="Đóng chi tiết"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Quick KPI Stats & Toolbar Header */}
-              <div className="px-6 py-3.5 bg-slate-50/60 dark:bg-slate-850/60 border-b border-slate-200/90 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 shrink-0">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[13px] font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
-                    {(drawerOpenPaper as any).questionCount ?? drawerOpenPaper.questions?.length ?? (drawerOpenPaper as any).details?.length ?? 0} câu hỏi
-                  </span>
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[13px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">
-                    {drawerOpenPaper.totalScore} điểm
-                  </span>
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[13px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700">
-                    {drawerOpenPaper.durationMinutes} phút
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowAnswers(!showAnswers)}
-                    className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[13px] font-semibold transition cursor-pointer border ${
-                      showAnswers
-                        ? 'bg-amber-500 text-white border-amber-600 shadow-2xs'
-                        : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100'
-                    }`}
-                  >
-                    <KeyRound className="h-3.5 w-3.5" />
-                    <span>{showAnswers ? 'Ẩn đáp án' : 'Hiện đáp án'}</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => exportExamPaperToWord(formatPaperForExport(drawerOpenPaper), showAnswers)}
-                    className="flex items-center gap-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/60 border border-blue-200/80 dark:border-blue-800/60 px-3 py-1.5 text-[13px] font-semibold transition cursor-pointer"
-                  >
-                    <Download className="h-3.5 w-3.5" />
-                    <span>Tải Word (.doc)</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Scrollable Questions Body */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-white dark:bg-slate-900">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
-                    Nội dung câu hỏi đề thi
-                  </h3>
-                </div>
-
-                <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
-                  {((drawerOpenPaper as any).details || drawerOpenPaper.questions || []).map((detail: any, index: number) => {
-                    const q = detail.question || detail;
-                    const choices = questionChoices(q);
-                    const answerText = q.correctAnswer || q.sampleAnswer || q.explanation || q.answer || q.solution || '';
-
-                    return (
-                      <div key={detail.id || index} className="py-4 space-y-3">
-                        {/* Hàng 1: Tiêu đề câu hỏi & metadata */}
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="text-[15px] font-semibold text-slate-900 dark:text-white leading-relaxed break-words flex-1">
-                            <span className="text-blue-600 mr-1.5">Câu {index + 1}:</span>
-                            <span>{q.content}</span>
-                          </div>
-
-                          <div className="shrink-0 flex items-center gap-2">
-                            <span className="px-2 py-0.5 rounded-lg text-[12px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                              {detail.score || (drawerOpenPaper.totalScore / (((drawerOpenPaper as any).details || drawerOpenPaper.questions || []).length || 1)).toFixed(2)}đ
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Hàng 2: Thanh phụ chứa loại câu hỏi & nút bấm hành động */}
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="text-[12px] font-semibold text-blue-600 dark:text-blue-400">
-                            {q.type === 'ESSAY' ? 'TỰ LUẬN' : q.type === 'FILL_BLANK' ? 'ĐIỀN KHUYẾT' : q.type === 'TRUE_FALSE' ? 'ĐÚNG/SAI' : 'TRẮC NGHIỆM'} • {q.difficulty || 'TRUNG BÌNH'}
-                          </span>
-
-                          <div className="flex items-center gap-3">
-                            {drawerOpenPaper.status === 'DRAFT' && (
-                              <button
-                                type="button"
-                                onClick={() => openSwapModal(index, q)}
-                                className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline text-[13px] font-semibold transition cursor-pointer"
-                                title="Đổi câu hỏi này bằng 1 câu hỏi ngẫu nhiên tương đương trong Ngân hàng đề"
-                              >
-                                <RotateCcw className="w-3.5 h-3.5 text-blue-600" /> Đổi câu hỏi
-                              </button>
-                            )}
-                            {q.type === 'ESSAY' && (
-                              <button
-                                type="button"
-                                onClick={() => setRubricQuestion({ id: q.id || detail.questionId || detail.id, code: q.code || `Câu ${index + 1}`, content: q.content, score: detail.score || 1 })}
-                                className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline text-[13px] font-semibold transition cursor-pointer"
-                                title="Cấu hình thang điểm chi tiết (Rubric) cho câu tự luận"
-                              >
-                                <Award className="w-3.5 h-3.5 text-blue-600" /> Cấu hình Rubric
-                              </button>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Dạng Trắc Nghiệm */}
-                        {choices.length > 0 ? (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[14px] pt-1">
-                            {choices.map((c) => {
-                              const isCorrect = c.isCorrect;
-                              return (
-                                <div
-                                  key={c.label}
-                                  className={`rounded-xl border p-2.5 transition flex items-start gap-2 ${
-                                    showAnswers && isCorrect
-                                      ? 'border-emerald-500/80 bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-100 font-semibold'
-                                      : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 text-slate-800 dark:text-slate-200 font-medium'
-                                  }`}
-                                >
-                                  <span className="font-semibold text-slate-900 dark:text-white shrink-0">{c.label}.</span>
-                                  <span className="flex-1 min-w-0 break-words">{c.text}</span>
-                                  {showAnswers && isCorrect && (
-                                    <span className="shrink-0 text-emerald-700 dark:text-emerald-400 font-semibold text-[12px]">
-                                      ✓ Đúng
-                                    </span>
-                                  )}
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ) : q.type === 'FILL_BLANK' ? (
-                          /* Dạng Điền vào chỗ trống */
-                          <div className="text-[13px] pt-1 space-y-2">
-                            {showAnswers ? (
-                              <div className="rounded-2xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/80 dark:bg-emerald-950/40 p-3.5 space-y-1.5 text-emerald-900 dark:text-emerald-200">
-                                <p className="font-semibold text-emerald-800 dark:text-emerald-300 text-[13px] flex items-center gap-1.5">
-                                  <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Đáp án chính xác cho các chỗ trống:
-                                </p>
-                                <div className="flex flex-wrap gap-2 pt-1">
-                                  {(q.fillBlankAnswers || (q as any).answers || []).length > 0 ? (
-                                    (q.fillBlankAnswers || (q as any).answers).map((ans: any, idx: number) => (
-                                      <span key={idx} className="rounded-lg bg-emerald-100/90 dark:bg-emerald-900/60 px-2.5 py-1 text-[12px] font-semibold text-emerald-900 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700">
-                                        Ô #{ans.blankIndex || idx + 1}: {ans.answer || ans.text || 'đáp án đúng'} {ans.score ? `(${ans.score}đ)` : ''}
-                                      </span>
-                                    ))
-                                  ) : (
-                                    <span className="text-[12px] font-semibold text-slate-600 dark:text-slate-400 italic">Dữ liệu đáp án điền khuyết theo cú pháp {'{{blank_1}}'} trong câu hỏi.</span>
-                                  )}
-                                </div>
-                              </div>
-                            ) : (
-                              <p className="text-[13px] italic font-semibold text-slate-400">
-                                (Bấm &quot;Hiện đáp án&quot; để xem đáp án các ô điền khuyết)
-                              </p>
-                            )}
-                          </div>
-                        ) : (
-                          /* Dạng Tự Luận hoặc Khác */
-                          <div className="text-[13px] pt-1 space-y-2">
-                            {showAnswers ? (
-                              <div className="rounded-2xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/80 dark:bg-emerald-950/40 p-3.5 space-y-1.5 text-emerald-900 dark:text-emerald-200">
-                                <p className="font-semibold text-emerald-800 dark:text-emerald-300 text-[13px] flex items-center gap-1.5">
-                                  <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Gợi ý Đáp án & Thang điểm Tự luận:
-                                </p>
-                                <p className="font-medium whitespace-pre-wrap leading-relaxed">
-                                  {answerText || 'Chưa có đáp án mẫu hoặc hướng dẫn chấm cho câu hỏi này.'}
-                                </p>
-                              </div>
-                            ) : (
-                              <p className="text-[13px] italic font-semibold text-slate-400">
-                                (Bấm &quot;Hiện đáp án&quot; để xem đáp án gợi ý &amp; thang điểm)
-                              </p>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Standard Footer Action Bar */}
-              <div className="border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
-                    Trạng thái:
-                  </span>
-                  <span className={`px-2.5 py-0.5 rounded-lg text-[12px] font-semibold ${
-                    drawerOpenPaper.status === 'PUBLISHED'
-                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200/80'
-                      : drawerOpenPaper.status === 'ARCHIVED'
-                        ? 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                        : 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80'
-                  }`}>
-                    {drawerOpenPaper.status === 'PUBLISHED' ? 'Đã phát hành' : drawerOpenPaper.status === 'ARCHIVED' ? 'Lưu trữ' : 'Bản nháp'}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2.5 shrink-0">
-                  <Button
-                    variant="secondary"
-                    size="md"
-                    onClick={() => setSelectedPaper(null)}
-                  >
-                    Đóng
-                  </Button>
-
-                  {drawerOpenPaper.status === 'DRAFT' && (currentUser?.role === 'ADMIN' || currentUser?.role === 'TEACHER') && (
-                    <Button
-                      variant="primary"
-                      size="md"
-                      onClick={() => {
-                        const p = drawerOpenPaper;
-                        setSelectedPaper(null);
-                        runAction(p, 'publish');
-                      }}
-                      leftIcon={<Send className="w-4 h-4" />}
-                    >
-                      Phát hành
-                    </Button>
-                  )}
-
-                  {drawerOpenPaper.status === 'PUBLISHED' && currentUser?.role === 'ADMIN' && (
-                    <Button
-                      variant="secondary"
-                      size="md"
-                      onClick={() => {
-                        const p = drawerOpenPaper;
-                        setSelectedPaper(null);
-                        runAction(p, 'archive');
-                      }}
-                      leftIcon={<Archive className="w-4 h-4 text-slate-500" />}
-                    >
-                      Lưu trữ
-                    </Button>
-                  )}
-
-                  {drawerOpenPaper.status === 'ARCHIVED' && currentUser?.role === 'ADMIN' && (
-                    <Button
-                      variant="secondary"
-                      size="md"
-                      onClick={() => {
-                        const p = drawerOpenPaper;
-                        setSelectedPaper(null);
-                        runAction(p, 'restore');
-                      }}
-                      leftIcon={<RotateCcw className="w-4 h-4 text-slate-500" />}
-                    >
-                      Khôi phục
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ── EXAM PAPER DETAIL DRAWER: Chuẩn Design System & Sáng Tạo Hiện Đại ── */}
+      <ExamPaperDetailDrawer
+        paper={drawerOpenPaper}
+        isOpen={drawerVisible}
+        onClose={() => setSelectedPaper(null)}
+        showAnswers={showAnswers}
+        onToggleShowAnswers={() => setShowAnswers(!showAnswers)}
+        onExportWord={(p, showAns) => exportExamPaperToWord(formatPaperForExport(p), showAns)}
+        onSwapQuestion={(index, q) => openSwapModal(index, q)}
+        onRubric={(rubricData) => setRubricQuestion(rubricData)}
+        onPublish={(p) => {
+          setSelectedPaper(null);
+          runAction(p, 'publish');
+        }}
+        onArchive={(p) => {
+          setSelectedPaper(null);
+          runAction(p, 'archive');
+        }}
+        currentUserRole={currentUser?.role}
+        busyId={busyId}
+      />
 
       {/* Modal Đổi Câu Hỏi Lẻ */}
       {swapModal.isOpen && (
         <Modal
           isOpen={swapModal.isOpen}
           onClose={() => setSwapModal({ isOpen: false, questionIndex: null, targetQuestion: null, alternatives: [], loading: false })}
-          title={`Đổi Câu Hỏi #${(swapModal.questionIndex ?? 0) + 1} - Danh sách gợi ý thay thế`}
+          title={`Đổi câu hỏi #${(swapModal.questionIndex ?? 0) + 1} — Gợi ý thay thế`}
         >
           <div className="space-y-4">
-            <div className="rounded-xl bg-blue-50 p-3 border border-blue-200 text-xs text-blue-900">
-              <p className="font-semibold">Câu hỏi hiện tại đang bị thay thế:</p>
-              <p className="mt-1 font-semibold text-slate-700 italic border-l-2 border-blue-400 pl-2">
-                &quot;{swapModal.targetQuestion?.content}&quot;
+            {/* Header thông tin câu hỏi đang thay thế */}
+            <div className="pb-3 border-b border-slate-100 dark:border-slate-800 space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Câu hỏi đang thay thế:</span>
+                <span className="px-2 py-0.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                  {swapModal.targetQuestion?.type === 'ESSAY' ? 'Tự luận' : swapModal.targetQuestion?.type === 'FILL_BLANK' ? 'Điền khuyết' : 'Trắc nghiệm'} • {swapModal.targetQuestion?.difficulty || 'Trung bình'}
+                </span>
+              </div>
+              <p className="text-[14.5px] font-medium text-slate-900 dark:text-slate-100 leading-relaxed italic border-l-2 border-blue-500 pl-3">
+                &ldquo;{swapModal.targetQuestion?.content}&rdquo;
               </p>
-              <p className="mt-1 text-[12px] text-blue-700 font-semibold">
-                Hệ thống đã tìm được {swapModal.alternatives.length} câu hỏi cùng dạng ({swapModal.targetQuestion?.type || 'trắc nghiệm'}) & độ khó tương đương từ ngân hàng đề.
+              <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                Tìm thấy {swapModal.alternatives.length} câu hỏi tương đương từ ngân hàng đề.
               </p>
             </div>
 
             {swapModal.loading ? (
-              <div className="py-8 text-center text-xs text-slate-400 font-semibold flex items-center justify-center gap-2">
+              <div className="py-10 text-center text-xs text-slate-400 font-semibold flex items-center justify-center gap-2">
                 <RefreshCw className="w-4 h-4 animate-spin text-blue-600" />
                 <span>Đang tải câu hỏi tương đương từ Ngân hàng đề...</span>
               </div>
             ) : swapModal.alternatives.length === 0 ? (
-              <p className="py-6 text-center text-xs font-semibold text-slate-400">
-                Không tìm thấy câu hỏi khác cùng dạng & độ khó trong ngân hàng đề.
-              </p>
+              <div className="py-10 text-center space-y-1.5">
+                <FileText className="h-8 w-8 text-slate-300 dark:text-slate-600 mx-auto" />
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Không tìm thấy câu hỏi tương đương</p>
+                <p className="text-xs text-slate-400">Ngân hàng đề hiện chưa có thêm câu hỏi khác cùng dạng và độ khó này.</p>
+              </div>
             ) : (
-              <div className="max-h-[50vh] overflow-y-auto space-y-3 pr-1">
+              <div className="max-h-[50vh] overflow-y-auto space-y-3 pr-1 divide-y divide-slate-100 dark:divide-slate-800">
                 {swapModal.alternatives.map((altQ: any) => (
-                  <div key={altQ.id} className="rounded-2xl border border-slate-200 bg-white p-3.5 space-y-2 hover:border-blue-300 transition shadow-2xs">
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-xs font-semibold text-slate-900 leading-snug">
+                  <div key={altQ.id} className="pt-3 first:pt-0 space-y-2">
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="text-[14.5px] font-medium text-slate-900 dark:text-slate-100 leading-relaxed flex-1">
                         {altQ.content}
                       </p>
-                      <button
+                      <Button
                         type="button"
+                        variant="primary"
+                        size="sm"
                         onClick={() => handleSelectSwapQuestion(altQ)}
-                        className="shrink-0 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-3 py-1.5 shadow-2xs transition cursor-pointer"
                       >
                         Chọn câu này
-                      </button>
+                      </Button>
                     </div>
 
-                    <div className="flex items-center gap-2 text-[12px] font-semibold text-slate-500">
-                      <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-slate-700 font-semibold">
-                        Mã câu: #{altQ.id}
+                    <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                      <span className="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">
+                        Mã: #{altQ.id}
                       </span>
-                      <span>Độ khó: {altQ.difficulty || 'TRUNG BÌNH'}</span>
+                      <span>Độ khó: {altQ.difficulty || 'Trung bình'}</span>
                     </div>
                   </div>
                 ))}
               </div>
             )}
 
-            <div className="flex justify-end pt-2 border-t border-slate-100">
-              <button
+            <div className="flex justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
+              <Button
                 type="button"
+                variant="secondary"
+                size="md"
                 onClick={() => setSwapModal({ isOpen: false, questionIndex: null, targetQuestion: null, alternatives: [], loading: false })}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
               >
                 Đóng
-              </button>
+              </Button>
             </div>
           </div>
         </Modal>
@@ -1282,8 +1018,8 @@ export default function ExamPapersPage() {
 
       <CriticalConfirmModal
         isOpen={criticalModal.isOpen}
-        title={`Phát hành Đề thi Mã số: ${criticalModal.paper?.paperCode || ''}`}
-        warningMessage={`Khi phát hành đề thi ${criticalModal.paper?.paperCode || ''}, lịch thi sẽ bị KHOÁ CHỈNH SỬA và thí sinh có thể bắt đầu làm bài.`}
+        title={`Phát hành đề thi #${criticalModal.paper?.paperCode || ''}`}
+        warningMessage={`Khi phát hành đề thi ${criticalModal.paper?.paperCode || ''}, đề thi sẽ chính thức được niêm phong, lịch thi chuyển sang trạng thái sẵn sàng và thí sinh có thể bắt đầu làm bài theo ca thi.`}
         confirmPhrase="PHAT HANH DE THI"
         examPasswordRequired={true}
         onClose={() => setCriticalModal({ isOpen: false, paper: null })}

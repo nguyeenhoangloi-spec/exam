@@ -1,9 +1,10 @@
 'use client';
-import { FilterSelect } from './ui/FilterSelect';
 
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { AlertTriangle, Lock, ShieldAlert, KeyRound, X } from 'lucide-react';
+import { FilterSelect } from './ui/FilterSelect';
+import { Button } from './ui/Button';
 
 export interface CriticalConfirmPayload {
   reason: string;
@@ -150,23 +151,28 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
   };
 
   return createPortal(
-    <div role="dialog" aria-modal="true" aria-label={title} className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-rose-100 dark:border-rose-900/60 flex flex-col max-h-[90vh]">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm animate-in fade-in duration-200 ease-out"
+    >
+      <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-rose-100 dark:border-rose-900/50 flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform">
         {/* Header Alert Banner */}
-        <div className="bg-gradient-to-r from-rose-600 via-rose-700 to-amber-600 px-6 py-4 text-white flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md">
+        <div className="bg-gradient-to-r from-rose-600 via-rose-700 to-amber-600 px-6 py-4 text-white flex items-center justify-between shrink-0 shadow-xs">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md shrink-0">
               <ShieldAlert className="h-5 w-5 text-white" />
             </div>
-            <div>
-              <h3 className="text-[20px] font-semibold text-white tracking-tight leading-none">{title}</h3>
-              <p className="text-[13px] font-semibold text-rose-100 mt-1">Xác thực an toàn nhiều lớp (Local Security)</p>
+            <div className="min-w-0">
+              <h3 className="text-[17px] font-semibold text-white tracking-tight leading-snug truncate">{title}</h3>
+              <p className="text-xs font-medium text-rose-100/90 mt-0.5">Xác thực an toàn bảo mật nhiều lớp</p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl p-1.5 text-white/80 hover:bg-white/20 transition cursor-pointer"
+            className="rounded-xl p-1.5 text-white/80 hover:bg-white/20 hover:text-white transition cursor-pointer shrink-0"
           >
             <X className="h-5 w-5" />
           </button>
@@ -174,26 +180,27 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
         {/* Warning Body */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 bg-white dark:bg-slate-900">
-          <div className="rounded-xl bg-rose-50/80 border border-rose-200 p-4 flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
-            <div className="text-xs text-rose-900 space-y-1">
-              <p className="font-semibold">CẢNH BÁO HẬU QUẢ:</p>
+          <div className="rounded-xl bg-rose-50/80 border border-rose-200 p-3.5 flex items-start gap-3">
+            <AlertTriangle className="h-4 w-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+            <div className="text-xs text-rose-900 dark:text-rose-200 space-y-0.5">
+              <p className="font-semibold text-rose-700 dark:text-rose-300">Cảnh báo hậu quả:</p>
               <p className="leading-relaxed font-medium">{warningMessage}</p>
             </div>
           </div>
 
           {errorMsg && (
-            <div className="rounded-xl bg-red-100 border border-red-200 p-3 text-xs font-semibold text-red-700 animate-shake">
+            <div className="rounded-xl bg-red-100 dark:bg-red-950/60 border border-red-200 dark:border-red-800 p-3 text-xs font-semibold text-red-700 dark:text-red-300 animate-shake">
               {errorMsg}
             </div>
           )}
 
           {/* Step 1: Select Reason */}
           <div>
-            <label className="block text-[15px] font-medium text-slate-600 mb-1">
+            <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-1.5">
               1. Lý do thực hiện thao tác <span className="text-rose-500">*</span>
             </label>
-            <FilterSelect containerClassName="w-full"
+            <FilterSelect
+              containerClassName="w-full"
               value={selectedReason}
               onChange={(e) => setSelectedReason(e.target.value)}
               className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-[15px] font-medium text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none bg-slate-50/50 dark:bg-slate-800/70 cursor-pointer transition"
@@ -218,8 +225,8 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
           {/* Step 2: Optional Note */}
           <div>
-            <label className="block text-[15px] font-medium text-slate-600 mb-1">
-              2. Ghi chú chi tiết (Tùy chọn)
+            <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+              2. Ghi chú chi tiết <span className="text-xs text-slate-400 font-normal">(Tùy chọn)</span>
             </label>
             <textarea
               rows={2}
@@ -232,18 +239,18 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
           {/* Step 3: Type Exact Confirmation Phrase */}
           <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-[15px] font-medium text-slate-900">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
                 3. Nhập cụm từ xác nhận <span className="text-rose-500">*</span>
               </label>
               <div className="flex items-center gap-1.5">
-                <span className="text-[13px] font-semibold text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-md">
+                <span className="text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 border border-rose-200/60 dark:border-rose-800/60 px-2 py-0.5 rounded-lg">
                   {targetPhrase}
                 </span>
                 <button
                   type="button"
                   onClick={handleQuickFillPhrase}
-                  className="text-[13px] font-semibold text-blue-600 hover:bg-blue-50 px-2.5 py-0.5 rounded-xl transition cursor-pointer"
+                  className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/60 px-2 py-0.5 rounded-xl transition cursor-pointer"
                   title="Tự động điền cụm từ xác nhận"
                 >
                   Điền nhanh
@@ -257,27 +264,30 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               placeholder={`Gõ: ${targetPhrase} (hoặc bấm Điền nhanh)`}
               value={inputPhrase}
               onChange={(e) => setInputPhrase(e.target.value)}
-              className={`w-full rounded-xl border px-3.5 py-2 text-[15px] font-medium focus:outline-none transition ${isPhraseMatched
-                ? 'border-emerald-500 bg-emerald-50/50 text-emerald-900 font-semibold'
-                 : 'border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:!border-rose-500'
-                }`}
+              className={`w-full rounded-xl border px-3.5 py-2 text-[15px] font-medium focus:outline-none transition ${
+                isPhraseMatched
+                  ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-200 font-semibold'
+                  : 'border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:!border-rose-500'
+              }`}
             />
             {isPhraseMatched && (
-              <p className="mt-1 text-[13px] font-semibold text-emerald-600 flex items-center gap-1">
-                Cụm từ xác nhận hợp lệ
+              <p className="mt-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                ✓ Cụm từ xác nhận hợp lệ
               </p>
             )}
           </div>
 
           {/* Step 4: Account Password Verification */}
           <div>
-            <label className="block text-[15px] font-medium text-slate-900 mb-1 flex items-center justify-between">
-              <span className="flex items-center gap-1">
-                <KeyRound className="w-4 h-4 text-slate-500" />
-                4. Mật khẩu tài khoản của bạn {passwordRequired && <span className="text-rose-500">*</span>}
-              </span>
-              {!passwordRequired && <span className="text-[13px] text-slate-500 font-normal">(Tùy chọn nếu đã đăng nhập)</span>}
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[15px] font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <KeyRound className="w-3.5 h-3.5 text-slate-400" />
+                <span>4. Mật khẩu tài khoản của bạn {passwordRequired && <span className="text-rose-500">*</span>}</span>
+              </label>
+              {!passwordRequired && (
+                <span className="text-xs text-slate-400 font-normal">(Tùy chọn nếu đã đăng nhập)</span>
+              )}
+            </div>
             <input
               type="password"
               required={passwordRequired}
@@ -291,10 +301,10 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
           {/* Step 5: Exam Password (only for publishing official exam paper) */}
           {examPasswordRequired && (
-            <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/70 p-4 space-y-2">
-              <label className="block text-[15px] font-medium text-slate-900 flex items-center gap-1">
-                <Lock className="w-4 h-4 text-blue-600" />
-                5. Mật khẩu thi chính thức <span className="text-rose-500">*</span>
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-1.5">
+              <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                <span>5. Mật khẩu thi chính thức <span className="text-rose-500">*</span></span>
               </label>
               <input
                 type="password"
@@ -305,42 +315,32 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                 onChange={(e) => setExamPassword(e.target.value)}
                 className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3.5 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 focus:!border-rose-500 focus:outline-none shadow-2xs transition"
               />
-              <p className="text-[13px] font-normal text-slate-500 leading-relaxed">
-                Mật khẩu này sẽ được cấp cho sinh viên để nhập trước khi vào thi chính thức.
-                Hệ thống lưu dạng bảo mật (bcrypt) và không ai xem lại được sau khi lưu.
+              <p className="text-xs font-normal text-slate-500 dark:text-slate-400 leading-relaxed">
+                Mật khẩu này dùng cho thí sinh mở đề khi vào phòng thi. Hệ thống tự động mã hóa bảo mật (bcrypt).
               </p>
             </div>
           )}
 
           {/* Modal Actions */}
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-700">
-            <button
+          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <Button
               type="button"
+              variant="secondary"
+              size="md"
               onClick={onClose}
               disabled={loading}
-              className="h-10 px-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 text-[15px] font-semibold transition cursor-pointer disabled:opacity-50"
             >
               Hủy bỏ
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              disabled={loading}
-              className={`h-10 px-4 rounded-xl text-white font-semibold text-[15px] transition flex items-center gap-2 cursor-pointer ${
-                loading ? 'bg-slate-200 text-slate-500 cursor-not-allowed' : 'bg-danger-600 hover:bg-danger-700 active:bg-red-800'
-              }`}
+              variant="danger"
+              size="md"
+              isLoading={loading}
+              leftIcon={<Lock className="w-4 h-4" />}
             >
-              {loading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  <span>Đang xác thực...</span>
-                </>
-              ) : (
-                <>
-                  <Lock className="w-4 h-4" />
-                  <span>{actionButtonText}</span>
-                </>
-              )}
-            </button>
+              {actionButtonText}
+            </Button>
           </div>
         </form>
       </div>

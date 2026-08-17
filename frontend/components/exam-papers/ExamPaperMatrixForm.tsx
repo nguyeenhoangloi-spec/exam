@@ -593,7 +593,6 @@ export function ExamPaperMatrixForm({
             type="submit"
             variant="primary"
             size="md"
-            leftIcon={<Sparkles className="h-4 w-4" />}
             disabled={creating || !isValidMatrix || isPublished}
             isLoading={creating}
           >

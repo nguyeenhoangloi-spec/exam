@@ -13,5 +13,5 @@ interface ExamPaperPaginationBarProps {
 }
 
 export function ExamPaperPaginationBar(props: ExamPaperPaginationBarProps) {
-  return <PaginationBar {...props} unit="Đề thi" />;
+  return <PaginationBar {...props} unit="đề thi" />;
 }
