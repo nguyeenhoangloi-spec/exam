@@ -254,14 +254,14 @@ export class ExamPapersService {
 
       const isEssay = targetType === 'TU_LUAN' || schedule.examType === 'TU_LUAN';
 
-      if (isByScore || isEssay) {
-        // CHẾ ĐỘ 1: Theo Thang điểm hoặc Tự luận -> Lấy NGUYÊN BẢN 100% điểm gốc từng câu từ Ngân hàng câu hỏi
-        const scored = this.generationCore.assignScores(rawSelected, { targetType, isEssay, isByScore });
+      if (isByScore) {
+        // CHẾ ĐỘ 1: Theo Thang điểm (BY_SCORE) -> Lấy theo điểm mục tiêu/điểm gốc từng câu
+        const scored = this.generationCore.assignScores(rawSelected, { targetType, isEssay, isByScore: true });
         selectedQuestions = scored.questions;
         totalScore = scored.totalScore;
       } else {
-        // CHẾ ĐỘ 2: Trắc nghiệm Theo Số câu -> Chuẩn hóa phân bổ điểm sao cho Tổng điểm bộ đề LUÔN BẰNG ĐÚNG 10.0 ĐIỂM
-        const scored = this.generationCore.assignScores(rawSelected, { targetType, isEssay, isByScore });
+        // CHẾ ĐỘ 2: Theo Số câu (BY_COUNT) -> Chuẩn hóa phân bổ điểm sao cho Tổng điểm bộ đề LUÔN BẰNG ĐÚNG 10.0 ĐIỂM
+        const scored = this.generationCore.assignScores(rawSelected, { targetType, isEssay, isByScore: false });
         selectedQuestions = scored.questions;
         totalScore = scored.totalScore;
       }

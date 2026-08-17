@@ -18,7 +18,7 @@ describe('ExamPaperGenerationCore', () => {
     expect(selected.reduce((sum, item) => sum + Number(item.score || 1), 0)).toBe(3);
   });
 
-  it('normalizes count-based scores to ten points', () => {
+  it('normalizes count-based scores to ten points for multiple choice', () => {
     const result = core.assignScores([question(1, 'EASY'), question(2, 'HARD')], {
       targetType: 'TRAC_NGHIEM',
       isEssay: false,
@@ -26,5 +26,29 @@ describe('ExamPaperGenerationCore', () => {
     });
     expect(result.totalScore).toBe(10);
     expect(result.questions.reduce((sum, item) => sum + item.assignedScore, 0)).toBe(10);
+  });
+
+  it('normalizes count-based scores to ten points for essay exam (7 questions)', () => {
+    const questions = [
+      question(1, 'EASY'),
+      question(2, 'EASY'),
+      question(3, 'EASY'),
+      question(4, 'MEDIUM'),
+      question(5, 'MEDIUM'),
+      question(6, 'HARD'),
+      question(7, 'HARD'),
+    ];
+    const result = core.assignScores(questions, {
+      targetType: 'TU_LUAN',
+      isEssay: true,
+      isByScore: false,
+    });
+    expect(result.totalScore).toBe(10);
+    const sum = Math.round(result.questions.reduce((acc, item) => acc + item.assignedScore, 0) * 100) / 100;
+    expect(sum).toBe(10);
+    // All scores should be positive
+    result.questions.forEach((q) => {
+      expect(q.assignedScore).toBeGreaterThan(0);
+    });
   });
 });

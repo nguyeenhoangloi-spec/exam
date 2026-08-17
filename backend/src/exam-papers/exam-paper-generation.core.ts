@@ -80,7 +80,7 @@ export class ExamPaperGenerationCore {
     questions: ExamPaperQuestion[],
     options: { targetType: string; isEssay: boolean; isByScore: boolean },
   ): { questions: ScoredExamPaperQuestion[]; totalScore: number } {
-    if (options.isByScore || options.isEssay) {
+    if (options.isByScore) {
       const scored = questions.map((question) => ({
         ...question,
         assignedScore: question.score && Number(question.score) > 0
@@ -106,7 +106,12 @@ export class ExamPaperGenerationCore {
       if (index === questions.length - 1) {
         assignedScore = Math.round((targetTotalScore - currentSum) * 100) / 100;
       } else {
-        assignedScore = Math.max(0.05, Math.round(((rawWeights[index] / totalRawWeight) * targetTotalScore) * 100) / 100);
+        if (options.isEssay) {
+          // Với Tự luận, làm tròn theo bước điểm 0.25đ đẹp
+          assignedScore = Math.max(0.25, Math.round(((rawWeights[index] / totalRawWeight) * targetTotalScore) * 4) / 4);
+        } else {
+          assignedScore = Math.max(0.05, Math.round(((rawWeights[index] / totalRawWeight) * targetTotalScore) * 100) / 100);
+        }
         currentSum += assignedScore;
       }
       return { ...question, assignedScore };

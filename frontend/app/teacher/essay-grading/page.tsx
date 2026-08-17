@@ -582,201 +582,256 @@ function TeacherEssayGradingContent() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left Panel: Attempt List (3 cols, Collapsible) */}
         {!collapseList && (
-          <div className="lg:col-span-3 space-y-4 lg:sticky lg:top-4">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-2xs space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wider">
-                  Danh sách ({filteredRows.length}/{rows.length})
-                </span>
-                <div className="flex items-center gap-1">
-                  {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || dateFilter !== 'ALL' || scheduleFilter !== 'ALL' || searchQuery) && (
+          <div className="lg:col-span-3 space-y-3 lg:sticky lg:top-4">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-3.5 shadow-2xs space-y-3">
+              {/* Header Sidebar */}
+              <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-2">
+                  <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                  <h3 className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100">
+                    Danh sách bài thi
+                  </h3>
+                  <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full border border-blue-200/60 dark:border-blue-800/60 tabular-nums">
+                    {filteredRows.length}/{rows.length}
+                  </span>
+                </div>
+
+                {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || dateFilter !== 'ALL' || scheduleFilter !== 'ALL' || searchQuery) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStatusFilter('ALL');
+                      setSubjectFilter('ALL');
+                      setDateFilter('ALL');
+                      setScheduleFilter('ALL');
+                      setSearchQuery('');
+                    }}
+                    className="flex items-center gap-1 text-[12px] font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 p-1 rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800 transition cursor-pointer"
+                    title="Đặt lại tất cả bộ lọc"
+                  >
+                    <RotateCcw className="h-3 w-3" />
+                    <span>Đặt lại</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Search Bar */}
+              <div className="relative w-full">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Tìm mã SV, tên SV, môn..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-9 bg-slate-50/60 dark:bg-slate-800/50 border border-slate-200/90 dark:border-slate-700/80 rounded-xl pl-9 pr-8 text-[14px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                />
+                {searchQuery ? (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                    title="Xóa tìm kiếm"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                ) : (
+                  <kbd
+                    className="hidden sm:inline-flex absolute right-2.5 top-1/2 -translate-y-1/2 h-4 items-center justify-center px-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[11px] text-slate-400 select-none cursor-pointer"
+                    onClick={() => searchInputRef.current?.focus()}
+                    title="Nhấn phím / để tìm nhanh"
+                  >
+                    /
+                  </kbd>
+                )}
+              </div>
+
+              {/* Status Filter Tabs (Horizontal Scrollable with custom styling) */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
+                {[
+                  { key: 'ALL', label: 'Tất cả', count: counts.all },
+                  { key: 'NOT_SUBMITTED', label: 'Chưa nộp', count: counts.notSubmitted },
+                  { key: 'GRADING', label: 'Đang chấm', count: counts.grading },
+                  { key: 'WAITING_APPROVAL', label: 'Chờ duyệt', count: counts.waiting },
+                  { key: 'PUBLISHED', label: 'Công bố', count: counts.published },
+                ].map((t) => {
+                  const isActive = statusFilter === t.key;
+                  return (
                     <button
+                      key={t.key}
                       type="button"
-                      onClick={() => {
-                        setStatusFilter('ALL');
-                        setSubjectFilter('ALL');
-                        setDateFilter('ALL');
-                        setScheduleFilter('ALL');
-                        setSearchQuery('');
-                      }}
-                      className="p-1 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition cursor-pointer"
-                      title="Đặt lại bộ lọc"
+                      onClick={() => setStatusFilter(t.key as any)}
+                      className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-[12.5px] font-semibold shrink-0 transition-all cursor-pointer whitespace-nowrap ${
+                        isActive
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700/70'
+                      }`}
                     >
-                      <RotateCcw className="h-3.5 w-3.5" />
+                      <span>{t.label}</span>
+                      <span
+                        className={`px-1.5 py-0.2 rounded-full text-[11px] font-semibold tabular-nums ${
+                          isActive
+                            ? 'bg-white/20 text-white'
+                            : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+                        }`}
+                      >
+                        {t.count}
+                      </span>
                     </button>
+                  );
+                })}
+              </div>
+
+              {/* Dropdown Filters Accordion / Rows */}
+              <div className="space-y-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+                <div className="space-y-1.5">
+                  <select
+                    value={subjectFilter}
+                    onChange={(e) => setSubjectFilter(e.target.value)}
+                    className="w-full h-8.5 rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white dark:bg-slate-800 px-2.5 text-[13.5px] font-medium text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer truncate shadow-2xs"
+                    title="Lọc theo môn thi"
+                  >
+                    <option value="ALL">Tất cả môn học ({availableSubjects.length})</option>
+                    {availableSubjects.map((s) => (
+                      <option key={s.code} value={s.code}>
+                        [{s.code}] {s.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  {availableSchedules.length > 0 && (
+                    <select
+                      value={scheduleFilter}
+                      onChange={(e) => setScheduleFilter(e.target.value)}
+                      className="w-full h-8.5 rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white dark:bg-slate-800 px-2.5 text-[13.5px] font-medium text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer truncate shadow-2xs"
+                      title="Lọc theo ca thi"
+                    >
+                      <option value="ALL">Tất cả ca thi ({availableSchedules.length})</option>
+                      {availableSchedules.map((sc) => (
+                        <option key={sc.id} value={sc.id}>
+                          {sc.label}
+                        </option>
+                      ))}
+                    </select>
                   )}
                 </div>
               </div>
 
-              {/* Status Tabs */}
-              <TabBar
-              tabs={[
-                { key: 'ALL', label: 'Tất cả', count: counts.all },
-                { key: 'NOT_SUBMITTED', label: 'Chưa làm', count: counts.notSubmitted },
-                { key: 'GRADING', label: 'Đang chấm', count: counts.grading },
-                { key: 'WAITING_APPROVAL', label: 'Chờ duyệt', count: counts.waiting },
-                { key: 'PUBLISHED', label: 'Công bố', count: counts.published },
-              ]}
-              active={statusFilter}
-              onChange={(k) => setStatusFilter(k as any)}
-            />
+              {/* Attempts List */}
+              <div className="space-y-2 max-h-[calc(100vh-360px)] min-h-[400px] overflow-y-auto pr-1 -mr-1">
+                {loading ? (
+                  <div className="p-8 text-center text-xs font-medium text-slate-400 flex flex-col items-center gap-2">
+                    <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                    <span>Đang tải danh sách bài thi...</span>
+                  </div>
+                ) : paginatedRows.length === 0 ? (
+                  <div className="p-8 text-center text-xs font-medium text-slate-400 bg-slate-50/50 dark:bg-slate-800/40 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
+                    Không tìm thấy bài thi phù hợp
+                  </div>
+                ) : (
+                  paginatedRows.map((r) => {
+                    const isCur = selected?.id === r.id;
+                    const notSub = isNotSubmitted(r);
+                    const initialChar = r.student?.fullName ? r.student.fullName.trim().charAt(0).toUpperCase() : 'S';
 
-            {/* Search Bar */}
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Tìm mã SV, tên SV, môn, ca thi..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-[15px] font-normal text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
-              />
-              {searchQuery ? (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                  title="Xóa tìm kiếm"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              ) : (
-                <kbd
-                  className="hidden sm:inline-flex absolute right-2.5 top-1/2 -translate-y-1/2 h-4 items-center justify-center px-1 rounded bg-slate-100 border border-slate-200 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
-                  onClick={() => searchInputRef.current?.focus()}
-                  title="Nhấn phím / để tìm nhanh"
-                >
-                  /
-                </kbd>
-              )}
-            </div>
+                    return (
+                      <div
+                        key={r.id}
+                        onClick={() => openAttempt(r.id)}
+                        className={`p-3 rounded-xl border transition-all duration-150 cursor-pointer text-left ${
+                          isCur
+                            ? 'border-blue-500 bg-blue-50/60 dark:bg-blue-950/40 shadow-xs ring-1 ring-blue-500'
+                            : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-slate-50/60 dark:hover:bg-slate-800/50'
+                        }`}
+                      >
+                        {/* Top: Avatar + Name + StatusBadge */}
+                        <div className="flex justify-between items-start gap-2">
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center font-semibold text-xs shrink-0 ${
+                              isCur
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                            }`}>
+                              {initialChar}
+                            </div>
 
-            {/* Dropdown Filters Row */}
-            <div className="grid grid-cols-2 gap-2">
-              <select
-                value={subjectFilter}
-                onChange={(e) => setSubjectFilter(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
-              >
-                <option value="ALL">Tất cả môn ({availableSubjects.length})</option>
-                {availableSubjects.map((s) => (
-                  <option key={s.code} value={s.code}>
-                    [{s.code}] {s.name}
-                  </option>
-                ))}
-              </select>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setProfileCandidate(r);
+                              }}
+                              className="font-semibold text-[14px] text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                              title="Xem chi tiết hồ sơ thí sinh"
+                            >
+                              {r.student?.fullName || 'Chưa có tên'}
+                            </button>
+                          </div>
 
-              <select
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
-              >
-                <option value="ALL">Tất cả ngày thi ({availableDates.length})</option>
-                {availableDates.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
-              </select>
-            </div>
+                          <StatusBadge status={r.gradingStatus} />
+                        </div>
 
-            {availableSchedules.length > 0 && (
-              <div>
-                <select
-                  value={scheduleFilter}
-                  onChange={(e) => setScheduleFilter(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer truncate"
-                >
-                  <option value="ALL">Tất cả ca thi ({availableSchedules.length})</option>
-                  {availableSchedules.map((sc) => (
-                    <option key={sc.id} value={sc.id}>
-                      {sc.label}
-                    </option>
-                  ))}
-                </select>
+                        {/* Middle: MSSV identifier */}
+                        <div className="flex items-center gap-1.5 mt-2">
+                          <IdentifierBadge tone="neutral">{r.student?.studentCode || '---'}</IdentifierBadge>
+                        </div>
+
+                        {/* Bottom: Subject name & Score */}
+                        <div className="flex justify-between items-center text-xs mt-2 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+                          <span
+                            className="text-slate-500 dark:text-slate-400 truncate max-w-[150px] font-normal"
+                            title={r.onlineExamConfig?.examSchedule?.subject?.subjectName || r.subjectName}
+                          >
+                            {r.onlineExamConfig?.examSchedule?.subject?.subjectName || r.subjectName || 'Môn thi'}
+                          </span>
+
+                          <span className={`font-semibold tabular-nums ${
+                            notSub
+                              ? 'text-slate-400 text-[12px]'
+                              : r.totalScore !== undefined && r.totalScore !== null
+                                ? 'text-blue-600 dark:text-blue-400 text-[14px]'
+                                : 'text-slate-400 text-[13px]'
+                          }`}>
+                            {notSub ? 'Chưa nộp' : r.totalScore !== undefined && r.totalScore !== null ? `${r.totalScore}đ` : '--'}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
               </div>
-            )}
 
-            {/* Attempts List */}
-            <div className="space-y-2 max-h-[calc(100vh-290px)] min-h-[420px] overflow-y-auto pr-1">
-              {loading ? (
-                <div className="p-8 text-center text-xs font-medium text-slate-400">Đang tải danh sách bài thi...</div>
-              ) : paginatedRows.length === 0 ? (
-                <div className="p-8 text-center text-xs font-medium text-slate-400">Không tìm thấy bài thi phù hợp</div>
-              ) : (
-                paginatedRows.map((r) => {
-                  const isCur = selected?.id === r.id;
-                  const notSub = isNotSubmitted(r);
-                  return (
-                    <div
-                      key={r.id}
-                      onClick={() => openAttempt(r.id)}
-                      className={`p-3 rounded-xl border transition cursor-pointer text-left ${
-                        isCur
-                          ? 'border-blue-500 bg-blue-50/40 shadow-xs'
-                          : 'border-slate-200/90 bg-white hover:border-blue-300 hover:bg-slate-50/50'
-                      }`}
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-[13px] font-medium text-slate-500 dark:text-slate-400">
+                  <span>
+                    Trang {page} / {totalPages}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      disabled={page <= 1}
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed transition"
+                      title="Trang trước"
                     >
-                      <div className="flex justify-between items-start">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setProfileCandidate(r);
-                          }}
-                          className="font-semibold text-xs text-slate-900 dark:text-slate-100 truncate max-w-[170px] hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
-                          title="Xem chi tiết hồ sơ thí sinh"
-                        >
-                          {r.student?.fullName}
-                        </button>
-                        <StatusBadge status={r.gradingStatus} />
-                      </div>
-                      <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
-                        <span>MSSV:</span>
-                        <IdentifierBadge tone="neutral">{r.student?.studentCode}</IdentifierBadge>
-                      </div>
-                      <div className="flex justify-between items-center text-xs text-slate-400 mt-2 pt-1.5 border-t border-slate-100 dark:border-slate-800">
-                        <span className="truncate max-w-[140px]">
-                          {r.onlineExamConfig?.examSchedule?.subject?.subjectName || r.subjectName || 'Môn thi'}
-                        </span>
-                        <span className="font-semibold text-slate-700 dark:text-slate-300 tabular-nums">
-                          {notSub ? 'Chưa nộp' : r.totalScore !== undefined && r.totalScore !== null ? `${r.totalScore}đ` : '--'}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })
+                      <ChevronLeft className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      disabled={page >= totalPages}
+                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed transition"
+                      title="Trang tiếp theo"
+                    >
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
-
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500">
-                <span>
-                  Trang {page} / {totalPages}
-                </span>
-                <div className="flex gap-1">
-                  <button
-                    disabled={page <= 1}
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    className="p-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40"
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    disabled={page >= totalPages}
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    className="p-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40"
-                  >
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
-        </div>
-      )}
+        )}
 
         {/* Right Panel: Grading Question Content (9 cols or 12 cols when collapsed) */}
         <div className={`${collapseList ? 'lg:col-span-12' : 'lg:col-span-9'} space-y-4`}>
@@ -938,18 +993,6 @@ function TeacherEssayGradingContent() {
                           </div>
 
                           <div className="flex items-center gap-2.5 shrink-0">
-                            {ans?.id && (
-                              <button
-                                type="button"
-                                onClick={() => requestAiSuggestion(ans.id, q.questionId)}
-                                disabled={aiLoading === ans.id}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 text-xs font-semibold hover:bg-blue-100 dark:hover:bg-blue-900/50 transition cursor-pointer shadow-2xs"
-                                title="Nhờ AI đề xuất điểm cho câu này theo đáp án chuẩn"
-                              >
-                                <Sparkles className={`h-3.5 w-3.5 text-blue-600 dark:text-blue-400 ${aiLoading === ans.id ? 'animate-spin' : ''}`} />
-                                <span>{aiLoading === ans.id ? 'Đang chấm...' : 'Chấm AI'}</span>
-                              </button>
-                            )}
                             <button
                               type="button"
                               onClick={() => setViewingRubricQuestion({ ...q, id: q.questionId, code: `Câu ${idx + 1}` })}
