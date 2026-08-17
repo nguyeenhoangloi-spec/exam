@@ -444,8 +444,8 @@ export const Header: React.FC<HeaderProps> = ({
                       className="h-8 w-8 sm:h-9 sm:w-9 rounded-full object-cover ring-2 ring-blue-500/20"
                     />
                   ) : (
-                    <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-blue-600 font-bold text-white text-xs sm:text-sm tracking-tight shadow-xs">
-                      {displayName.charAt(0).toUpperCase()}
+                    <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-blue-600 font-semibold text-white text-xs sm:text-sm tracking-tight shadow-xs">
+                      {displayName?.charAt(0) || 'U'}
                     </div>
                   )}
                   <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />

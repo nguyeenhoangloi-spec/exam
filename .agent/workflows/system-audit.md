@@ -143,22 +143,30 @@ thì những phần mới này cũng phải được đưa vào lần **RESCAN**
 
 ---
 
-## ✅ KIỂM TRA TRƯỚC KHI KẾT THÚC
+## 📋 CHECKLIST RÀ SOÁT QUY CHUẨN THIẾT KẾ (DESIGN SYSTEM AUDIT)
 
-Trước khi báo hoàn thành, phải thực hiện tối thiểu:
+Khi thực hiện audit giao diện Web UI, bắt buộc đối chiếu với [ui-design-system-rules.md](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/ui-design-system-rules.md):
 
-* Search toàn project các pattern cũ hoặc class vi phạm.
-* Kiểm tra các shared component đã chỉnh sửa.
-* Kiểm tra các nơi import/sử dụng component đó.
-* Kiểm tra TypeScript/type error.
-* Kiểm tra lint nếu project hỗ trợ.
-* Chạy build nếu môi trường cho phép.
-* Kiểm tra responsive ở các breakpoint liên quan.
-* Kiểm tra dark mode nếu component hỗ trợ.
-* Kiểm tra loading / empty / error / disabled state liên quan.
-* Kiểm tra không làm thay đổi chức năng hiện có.
+1. **Typography & Font:**
+   - 100% font Inter, không dùng font serif hay monospace cho Web UI.
+   - Cỡ chữ chuẩn 15px (`fs-body`) cho nội dung, input, select, textarea, button và table body.
+   - Cỡ chữ phụ 14px (`fs-body-sm`), không dùng cỡ chữ dưới 12px cho nội dung thông thường.
+   - Weight 400–600 (`font-medium`, `font-semibold`). `font-bold` (700) chỉ dành riêng cho KPI/tổng số nổi bật được phê duyệt.
+   - Không viết in hoa toàn bộ (`uppercase`) cho button, label hoặc tiêu đề section.
 
-Nếu build/lint/test không thể chạy, không được giả định rằng chúng thành công.
+2. **Bố cục Phẳng & Hạn chế Khung Hộp (Flat Layout & Divider-First):**
+   - Hạn chế tối đa lồng nhiều khung hộp (card boxes) bo góc xám dày đặc bao quanh từng mục con trong modal/drawer.
+   - Danh sách nhiều mục (tiêu chí, thuộc tính, trường thông tin) phân tách bằng đường kẻ ngang mờ (`divide-y divide-slate-100 dark:divide-slate-800/80`).
+   - Tiêu đề Section viết Sentence case, có thanh chỉ báo dọc xanh (`h-4 w-1 rounded-full bg-blue-600`).
+   - Thanh trạng thái/khớp điểm inline phẳng trong suốt, không dùng nền màu đặc dày.
+
+3. **Buttons & Controls:**
+   - Bo góc chuẩn `rounded-xl` (12px). Tuyệt đối không dùng `rounded-lg` hay `rounded-full` cho button/control thông thường.
+   - Chiều cao: Nút chính 44px (`h-11`), Filter/search/input 40px (`h-10`), Nút phụ 36px (`h-9`).
+   - Nhóm 2-3 nút: Chỉ có duy nhất 1 nút Primary, cùng chiều cao, nút Danger tách biệt hẳn sang bên trái. Phân cấp 3 bậc thị giác: `Ghost` (phẳng) ➔ `Secondary` (viền) ➔ `Primary` (đặc).
+
+4. **Lệnh kiểm tra kỹ thuật tự động:**
+   - Chạy lệnh: `npm run audit:ui` trong thư mục `frontend` và đảm bảo đạt kết quả **0 violations**.
 
 ---
 

@@ -306,7 +306,22 @@ Tạo bản Backup ngay         → Tạo bản sao lưu
 </div>
 ```
 
-#### 3. Mô hình Toolbar / Bộ lọc trang danh sách
+#### 3. Mô hình Thanh công cụ Chấm thi / Trợ lý AI (Ghost ➔ Secondary ➔ Primary)
+- Phân cấp 3 bậc thị giác: Thao tác gợi ý/trợ lý (`ghost` - phẳng) ➔ Lưu nháp/tiến độ (`secondary` - viền) ➔ Chốt hành động duyệt/hoàn tất (`primary` - đặc).
+
+```text
+[ Mẫu chấm AI (Ghost) ]   [ Lưu điểm (Secondary) ]   [ Gửi duyệt (Primary) ]
+```
+
+```tsx
+<div className="flex items-center gap-2">
+  <Button variant="ghost" size="sm" onClick={handleAiSuggest}>Mẫu chấm AI</Button>
+  <Button variant="secondary" size="sm" onClick={handleSave}>Lưu điểm</Button>
+  <Button variant="primary" size="sm" onClick={handleSubmit}>Gửi duyệt</Button>
+</div>
+```
+
+#### 4. Mô hình Toolbar / Bộ lọc trang danh sách
 - Các nút bổ trợ là `secondary`, nút thêm mới chính là `primary`.
 
 ```text

@@ -667,13 +667,21 @@ export class EssayService {
         },
       });
 
-      // Nếu đang ở trạng thái SUBMITTED hoặc AUTO_SUBMITTED, chuyển sang UNDER_GRADING
-      if (['SUBMITTED', 'AUTO_SUBMITTED'].includes(attempt.status as any)) {
-        await tx.examAttempt.update({
-          where: { id: attempt.id },
-          data: { status: AttemptStatus.UNDER_REVIEW },
-        });
-      }
+      // Tự động tính lại tổng điểm toàn bộ bài thi khi lưu điểm
+      const allAnswers = await tx.attemptAnswer.findMany({
+        where: { attemptId: attempt.id },
+      });
+      const penalty = Number(attempt.penaltyPoints || 0);
+      const computedTotal = allAnswers.reduce((sum, a) => sum + (Number(a.finalScore) || 0), 0);
+      const newAttemptTotalScore = Number(Math.max(0, computedTotal - penalty).toFixed(2));
+
+      await tx.examAttempt.update({
+        where: { id: attempt.id },
+        data: {
+          totalScore: newAttemptTotalScore,
+          ...(['SUBMITTED', 'AUTO_SUBMITTED'].includes(attempt.status as any) ? { status: AttemptStatus.UNDER_REVIEW } : {}),
+        },
+      });
 
       await this.audit.write(
         {

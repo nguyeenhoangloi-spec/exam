@@ -151,7 +151,7 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
                 >
                   <div className="space-y-1 min-w-0 flex-1">
                     <div className="flex items-center gap-2.5">
-                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-bold text-[11px]">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold text-xs">
                         {idx + 1}
                       </span>
                       <span className="font-semibold text-[15px] text-slate-900 dark:text-slate-100">
@@ -181,7 +181,7 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
                   </div>
 
                   <div className="shrink-0 pt-0.5 text-right">
-                    <span className="font-bold text-sm text-blue-600 dark:text-blue-400 tabular-nums">
+                    <span className="font-semibold text-sm text-blue-600 dark:text-blue-400 tabular-nums">
                       {c.maxScore}đ
                     </span>
                   </div>

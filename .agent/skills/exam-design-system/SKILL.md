@@ -190,6 +190,15 @@ font-family:
      <Button variant="primary" leftIcon={<Plus className="w-4 h-4" />}>Tạo mới</Button>
    </div>
    ```
+4. **Toolbar Chấm thi / Trợ lý AI (Ghost ➔ Secondary ➔ Primary):**
+   Phân cấp 3 bậc thị giác: Thao tác gợi ý/trợ lý (`ghost` - phẳng) ➔ Lưu nháp/tiến độ (`secondary` - viền) ➔ Chốt hành động duyệt/hoàn tất (`primary` - đặc).
+   ```tsx
+   <div className="flex items-center gap-2">
+     <Button variant="ghost" size="sm" onClick={handleAiSuggest}>Mẫu chấm AI</Button>
+     <Button variant="secondary" size="sm" onClick={handleSave}>Lưu điểm</Button>
+     <Button variant="primary" size="sm" onClick={handleSubmit}>Gửi duyệt</Button>
+   </div>
+   ```
 
 ### 5.4 Xử lý trên Mobile (< 768px)
 - **Modal footer:** Dùng `flex-col-reverse` (Nút Primary lên trên cùng để ngón tay cái dễ thao tác nhất, nút Hủy nằm dưới cùng).
