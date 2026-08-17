@@ -540,7 +540,7 @@ export function QuestionBankTable({
                       <button
                         type="button"
                         onClick={() => onDetail(q)}
-                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
+                        className="table-action flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition cursor-pointer"
                         title="Xem chi tiết"
                       >
                         <Eye className="h-4 w-4" />
@@ -550,25 +550,25 @@ export function QuestionBankTable({
                         <button
                           type="button"
                           onClick={() => setRubricQuestion(q)}
-                          className="flex h-8 w-8 items-center justify-center rounded-xl text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
+                          className="table-action flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition cursor-pointer"
                           title="Cấu hình Rubric cho câu hỏi tự luận này"
                         >
-                          <Sliders className="h-4 w-4 text-blue-600" />
+                          <Sliders className="h-4 w-4" />
                         </button>
                       )}
 
                       <ActionDropdownPortal>
                         {(closeMenu) => (
-                          <>
+                          <div className="py-1">
                             <button
                               type="button"
                               onClick={() => {
                                 closeMenu();
                                 onDetail(q);
                               }}
-                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 cursor-pointer"
+                              className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
                             >
-                              <Eye className="h-4 w-4 text-slate-500" />
+                              <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                               <span>Xem chi tiết</span>
                             </button>
 
@@ -578,9 +578,9 @@ export function QuestionBankTable({
                                 closeMenu();
                                 onAction(q, 'edit');
                               }}
-                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 cursor-pointer"
+                              className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
                             >
-                              <Edit className="h-4 w-4 text-primary-600" />
+                              <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                               <span>Chỉnh sửa</span>
                             </button>
 
@@ -591,9 +591,9 @@ export function QuestionBankTable({
                                   closeMenu();
                                   setRubricQuestion(q);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-primary-600 font-medium cursor-pointer"
+                                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
                               >
-                                <HelpCircle className="h-4 w-4 text-primary-600" />
+                                <Sliders className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                                 <span>Cấu hình Rubric</span>
                               </button>
                             )}
@@ -605,9 +605,9 @@ export function QuestionBankTable({
                                   closeMenu();
                                   onAction(q, 'approve');
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-success-50 text-success-500 font-medium cursor-pointer"
+                                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
                               >
-                                <CheckCircle2 className="h-4 w-4 text-success-500" />
+                                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                                 <span>Phê duyệt</span>
                               </button>
                             )}
@@ -619,30 +619,30 @@ export function QuestionBankTable({
                                   closeMenu();
                                   onAction(q, 'reject');
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-warning-50 text-warning-600 font-medium cursor-pointer"
+                                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
                               >
-                                <XCircle className="h-4 w-4 text-warning-600" />
+                                <XCircle className="h-4 w-4 text-amber-500" />
                                 <span>Từ chối</span>
                               </button>
                             )}
 
                             {isAdmin && (
                               <>
-                                <div className="my-1 border-t border-slate-200" />
+                                <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
                                 <button
                                   type="button"
                                   onClick={() => {
                                     closeMenu();
                                     onAction(q, 'delete');
                                   }}
-                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-danger-50 text-danger-600 cursor-pointer"
+                                  className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
                                 >
-                                  <Trash2 className="h-4 w-4 text-danger-600" />
+                                  <Trash2 className="h-4 w-4 text-rose-500" />
                                   <span>Xóa câu hỏi</span>
                                 </button>
                               </>
                             )}
-                          </>
+                          </div>
                         )}
                       </ActionDropdownPortal>
                     </div>
