@@ -153,17 +153,7 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
     category: 'Ngân hàng & Đề thi',
   },
 
-  // ── 4. Giám sát & Báo cáo ──
-  {
-    id: 'teacher-proctor',
-    title: 'Giám sát phòng thi (Live Proctor)',
-    desc: 'Theo dõi trực tiếp màn hình và camera thí sinh đang thi',
-    href: '/teacher/proctor',
-    icon: Video,
-    roles: ['ADMIN', 'TEACHER'],
-    category: 'Giám sát & Báo cáo',
-    badge: 'Trực tiếp',
-  },
+
   {
     id: 'exam-reports',
     title: 'Báo cáo điểm thi',

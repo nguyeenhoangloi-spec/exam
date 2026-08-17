@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import api from '../../../lib/api';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { ConfirmModal } from '../../../components/ConfirmModal';
+import { Toast } from '../../../components/Toast';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { TabBar } from '../../../components/ui/TabBar';
 import { Button } from '../../../components/ui/Button';
@@ -34,7 +35,7 @@ export default function AdminEssayReviewPage() {
  const [rows, setRows] = useState<any[]>([]);
  const [selected, setSelected] = useState<any>(null);
  const [loading, setLoading] = useState(true);
- const [message, setMessage] = useState('');
+ const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
  const [statusFilter, setStatusFilter] = useState<string>('ALL');
  const [subjectFilter, setSubjectFilter] = useState<string>('ALL');
  const [searchQuery, setSearchQuery] = useState<string>('');
@@ -75,7 +76,7 @@ export default function AdminEssayReviewPage() {
  const res = await api.get('/essay/grading/assignments', { params: { noCache: true } });
  setRows(res.data || []);
  } catch (e: any) {
- setMessage(e?.response?.data?.message || 'Không thể tải danh sách bài tự luận.');
+ setToast({ message: e?.response?.data?.message || 'Không thể tải danh sách bài tự luận.', type: 'error' });
  } finally {
  setLoading(false);
  }
@@ -89,9 +90,8 @@ export default function AdminEssayReviewPage() {
  try {
  const res = await api.get(`/essay/grading/attempts/${id}`, { params: { noCache: true } });
  setSelected(res.data);
- setMessage('');
  } catch (e: any) {
- setMessage(e?.response?.data?.message || 'Không thể tải bài làm.');
+ setToast({ message: e?.response?.data?.message || 'Không thể tải bài làm.', type: 'error' });
  }
  }, []);
 
@@ -108,169 +108,159 @@ export default function AdminEssayReviewPage() {
  });
  };
 
- const handleApprove = (publish = false) => {
- if (!selected) return;
- setConfirmModal({
- isOpen: true,
- title: publish ? 'Công bố điểm chính thức' : 'Duyệt điểm bài thi',
- message: publish
- ? `Bạn có chắc chắn muốn CÔNG BỐ điểm bài thi của thí sinh ${selected.student?.fullName}? Sau khi công bố, sinh viên sẽ nhìn thấy điểm số và kết quả bài làm.`
- : `Xác nhận duyệt điểm bài thi của thí sinh ${selected.student?.fullName}?`,
- type: publish ? 'info' : 'success',
- requireReason: false,
- confirmText: publish ? 'Công bố' : 'Duyệt điểm',
- cancelText: 'Hủy bỏ',
- onConfirm: async () => {
- setConfirmModal((prev) => ({ ...prev, isOpen: false }));
- try {
- await api.post(`/essay/grading/attempts/${selected.id}/${publish ? 'publish' : 'approve'}`);
- const msg = publish ? 'Đã công bố điểm cho Sinh viên thành công.' : 'Đã duyệt điểm bài thi thành công.';
- setMessage(msg);
- await loadAssignments();
- await openAttempt(selected.id);
- showResultPopup(publish ? 'Đã Công Bố Điểm' : 'Đã Duyệt Điểm', msg, 'success');
- } catch (e: any) {
- const errMsg = e?.response?.data?.message || 'Thao tác không thành công.';
- setMessage(errMsg);
- showResultPopup('Không Thể Thực Hiện', errMsg, 'danger');
- }
- },
- });
- };
+  const handleApprove = (publish = false) => {
+    if (!selected) return;
+    setConfirmModal({
+      isOpen: true,
+      title: publish ? 'Công bố điểm chính thức' : 'Duyệt điểm bài thi',
+      message: publish
+        ? `Bạn có chắc chắn muốn CÔNG BỐ điểm bài thi của thí sinh ${selected.student?.fullName}? Sau khi công bố, sinh viên sẽ nhìn thấy điểm số và kết quả bài làm.`
+        : `Xác nhận duyệt điểm bài thi của thí sinh ${selected.student?.fullName}?`,
+      type: publish ? 'info' : 'success',
+      requireReason: false,
+      confirmText: publish ? 'Công bố' : 'Duyệt điểm',
+      cancelText: 'Hủy bỏ',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.post(`/essay/grading/attempts/${selected.id}/${publish ? 'publish' : 'approve'}`);
+          const msg = publish ? 'Đã công bố điểm cho Sinh viên thành công.' : 'Đã duyệt điểm bài thi thành công.';
+          setToast({ message: msg, type: 'success' });
+          await loadAssignments();
+          await openAttempt(selected.id);
+        } catch (e: any) {
+          const errMsg = e?.response?.data?.message || 'Thao tác không thành công.';
+          setToast({ message: errMsg, type: 'error' });
+        }
+      },
+    });
+  };
 
- const handleReturn = () => {
- if (!selected) return;
- setConfirmModal({
- isOpen: true,
- title: 'Trả lại bài thi để chấm lại',
- message: `Bạn có chắc chắn muốn trả lại bài thi của ${selected.student?.fullName} cho Giảng viên chấm lại?`,
- type: 'danger',
- requireReason: true,
- reasonPlaceholder: 'Nhập lý do trả lại bài thi (tối thiểu 3 ký tự)...',
- confirmText: 'Yêu cầu chấm lại',
- cancelText: 'Hủy bỏ',
- onConfirm: async (reasonFromModal) => {
- const finalReason = reasonFromModal?.trim() || actionReason.trim();
- setConfirmModal((prev) => ({ ...prev, isOpen: false }));
- try {
- await api.post(`/essay/grading/attempts/${selected.id}/return`, { reason: finalReason });
- const msg = 'Đã yêu cầu Giảng viên chấm lại bài thi thành công.';
- setMessage(msg);
- await loadAssignments();
- await openAttempt(selected.id);
- showResultPopup('Đã Yêu Cầu Chấm Lại', msg, 'success');
- } catch (e: any) {
- const errMsg = e?.response?.data?.message || 'Không thể trả lại bài thi.';
- setMessage(errMsg);
- showResultPopup('Không Thể Trả Bài', errMsg, 'danger');
- }
- },
- });
- };
+  const handleReturn = () => {
+    if (!selected) return;
+    setConfirmModal({
+      isOpen: true,
+      title: 'Trả lại bài thi để chấm lại',
+      message: `Bạn có chắc chắn muốn trả lại bài thi của ${selected.student?.fullName} cho Giảng viên chấm lại?`,
+      type: 'danger',
+      requireReason: true,
+      reasonPlaceholder: 'Nhập lý do trả lại bài thi (tối thiểu 3 ký tự)...',
+      confirmText: 'Yêu cầu chấm lại',
+      cancelText: 'Hủy bỏ',
+      onConfirm: async (reasonFromModal) => {
+        const finalReason = reasonFromModal?.trim() || actionReason.trim();
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.post(`/essay/grading/attempts/${selected.id}/return`, { reason: finalReason });
+          const msg = 'Đã yêu cầu Giảng viên chấm lại bài thi thành công.';
+          setToast({ message: msg, type: 'success' });
+          await loadAssignments();
+          await openAttempt(selected.id);
+        } catch (e: any) {
+          const errMsg = e?.response?.data?.message || 'Không thể trả lại bài thi.';
+          setToast({ message: errMsg, type: 'error' });
+        }
+      },
+    });
+  };
 
- const handleReopen = () => {
- if (!selected) return;
- setConfirmModal({
- isOpen: true,
- title: 'Mở lại phiên bài thi',
- message: `Xác nhận mở lại phiên thi cho sinh viên ${selected.student?.fullName}?`,
- type: 'warning',
- requireReason: true,
- reasonPlaceholder: 'Nhập lý do mở lại bài thi (tối thiểu 3 ký tự)...',
- confirmText: 'Mở lại bài',
- cancelText: 'Hủy bỏ',
- onConfirm: async (reasonFromModal) => {
- const finalReason = reasonFromModal?.trim() || actionReason.trim();
- setConfirmModal((prev) => ({ ...prev, isOpen: false }));
- try {
- await api.post(`/essay/grading/attempts/${selected.id}/reopen`, { reason: finalReason });
- const msg = 'Đã mở lại bài thi cho sinh viên tiếp tục.';
- setMessage(msg);
- await loadAssignments();
- await openAttempt(selected.id);
- showResultPopup('Đã Mở Lại Bài Thi', msg, 'success');
- } catch (e: any) {
- const errMsg = e?.response?.data?.message || 'Không thể mở lại bài thi.';
- setMessage(errMsg);
- showResultPopup('Không Thể Mở Lại Bài', errMsg, 'danger');
- }
- },
- });
- };
+  const handleReopen = () => {
+    if (!selected) return;
+    setConfirmModal({
+      isOpen: true,
+      title: 'Mở lại phiên bài thi',
+      message: `Xác nhận mở lại phiên thi cho sinh viên ${selected.student?.fullName}?`,
+      type: 'warning',
+      requireReason: true,
+      reasonPlaceholder: 'Nhập lý do mở lại bài thi (tối thiểu 3 ký tự)...',
+      confirmText: 'Mở lại bài',
+      cancelText: 'Hủy bỏ',
+      onConfirm: async (reasonFromModal) => {
+        const finalReason = reasonFromModal?.trim() || actionReason.trim();
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.post(`/essay/grading/attempts/${selected.id}/reopen`, { reason: finalReason });
+          const msg = 'Đã mở lại bài thi cho sinh viên tiếp tục.';
+          setToast({ message: msg, type: 'success' });
+          await loadAssignments();
+          await openAttempt(selected.id);
+        } catch (e: any) {
+          const errMsg = e?.response?.data?.message || 'Không thể mở lại bài thi.';
+          setToast({ message: errMsg, type: 'error' });
+        }
+      },
+    });
+  };
 
- const handleExtend = () => {
- if (!selected) return;
- if (extraMinutes <= 0) {
- showResultPopup('Số Phút Không Hợp Lệ', 'Số phút gia hạn phải lớn hơn 0.', 'warning');
- return;
- }
- setConfirmModal({
- isOpen: true,
- title: `Gia hạn ${extraMinutes} phút`,
- message: `Gia hạn thêm ${extraMinutes} phút làm bài cho ${selected.student?.fullName}?`,
- type: 'info',
- requireReason: true,
- reasonPlaceholder: 'Nhập lý do gia hạn thời gian làm bài...',
- confirmText: 'Gia hạn',
- cancelText: 'Hủy bỏ',
- onConfirm: async (reasonFromModal) => {
- const finalReason = reasonFromModal?.trim() || actionReason.trim() || 'Gia hạn thời gian làm bài';
- setConfirmModal((prev) => ({ ...prev, isOpen: false }));
- try {
- await api.post(`/essay/grading/attempts/${selected.id}/extend-time`, {
- reason: finalReason,
- extraMinutes: Number(extraMinutes),
- });
- const msg = `Đã gia hạn thêm ${extraMinutes} phút làm bài thành công.`;
- setMessage(msg);
- await loadAssignments();
- await openAttempt(selected.id);
- showResultPopup('Đã Gia Hạn Thời Gian', msg, 'success');
- } catch (e: any) {
- const errMsg = e?.response?.data?.message || 'Không thể gia hạn.';
- setMessage(errMsg);
- showResultPopup('Không Thể Gia Hạn', errMsg, 'danger');
- }
- },
- });
- };
+  const handleExtend = () => {
+    if (!selected) return;
+    if (extraMinutes <= 0) {
+      setToast({ message: 'Số phút gia hạn phải lớn hơn 0.', type: 'error' });
+      return;
+    }
+    setConfirmModal({
+      isOpen: true,
+      title: `Gia hạn ${extraMinutes} phút`,
+      message: `Gia hạn thêm ${extraMinutes} phút làm bài cho ${selected.student?.fullName}?`,
+      type: 'info',
+      requireReason: true,
+      reasonPlaceholder: 'Nhập lý do gia hạn thời gian làm bài...',
+      confirmText: 'Gia hạn',
+      cancelText: 'Hủy bỏ',
+      onConfirm: async (reasonFromModal) => {
+        const finalReason = reasonFromModal?.trim() || actionReason.trim() || 'Gia hạn thời gian làm bài';
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.post(`/essay/grading/attempts/${selected.id}/extend-time`, {
+            reason: finalReason,
+            extraMinutes: Number(extraMinutes),
+          });
+          const msg = `Đã gia hạn thêm ${extraMinutes} phút làm bài thành công.`;
+          setToast({ message: msg, type: 'success' });
+          await loadAssignments();
+          await openAttempt(selected.id);
+        } catch (e: any) {
+          const errMsg = e?.response?.data?.message || 'Không thể gia hạn.';
+          setToast({ message: errMsg, type: 'error' });
+        }
+      },
+    });
+  };
 
- const handlePenalty = () => {
- if (!selected) return;
- if (penaltyInput < 0) {
- showResultPopup('Điểm Phạt Không Hợp Lệ', 'Điểm phạt không được âm.', 'warning');
- return;
- }
- setConfirmModal({
- isOpen: true,
- title: `Trừ ${penaltyInput} điểm`,
- message: `Xác nhận trừ ${penaltyInput} điểm của bài thi ${selected.student?.fullName}?`,
- type: 'danger',
- requireReason: true,
- reasonPlaceholder: 'Nhập lý do áp dụng điểm phạt...',
- confirmText: 'Trừ điểm',
- cancelText: 'Hủy bỏ',
- onConfirm: async (reasonFromModal) => {
- const finalReason = reasonFromModal?.trim() || actionReason.trim() || 'Điểm phạt vi phạm quy chế';
- setConfirmModal((prev) => ({ ...prev, isOpen: false }));
- try {
- await api.post(`/essay/grading/attempts/${selected.id}/penalty`, {
- reason: finalReason,
- penaltyPoints: Number(penaltyInput),
- });
- const msg = `Đã áp dụng điểm phạt trừ ${penaltyInput} điểm thành công.`;
- setMessage(msg);
- await loadAssignments();
- await openAttempt(selected.id);
- showResultPopup('Đã Áp Dụng Điểm Phạt', msg, 'success');
- } catch (e: any) {
- const errMsg = e?.response?.data?.message || 'Không thể trừ điểm.';
- setMessage(errMsg);
- showResultPopup('Không Thể Trừ Điểm', errMsg, 'danger');
- }
- },
- });
- };
+  const handlePenalty = () => {
+    if (!selected) return;
+    if (penaltyInput < 0) {
+      setToast({ message: 'Điểm phạt không được âm.', type: 'error' });
+      return;
+    }
+    setConfirmModal({
+      isOpen: true,
+      title: `Trừ ${penaltyInput} điểm`,
+      message: `Xác nhận trừ ${penaltyInput} điểm của bài thi ${selected.student?.fullName}?`,
+      type: 'danger',
+      requireReason: true,
+      reasonPlaceholder: 'Nhập lý do áp dụng điểm phạt...',
+      confirmText: 'Trừ điểm',
+      cancelText: 'Hủy bỏ',
+      onConfirm: async (reasonFromModal) => {
+        const finalReason = reasonFromModal?.trim() || actionReason.trim() || 'Điểm phạt vi phạm quy chế';
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.post(`/essay/grading/attempts/${selected.id}/penalty`, {
+            reason: finalReason,
+            penaltyPoints: Number(penaltyInput),
+          });
+          const msg = `Đã áp dụng điểm phạt trừ ${penaltyInput} điểm thành công.`;
+          setToast({ message: msg, type: 'success' });
+          await loadAssignments();
+          await openAttempt(selected.id);
+        } catch (e: any) {
+          const errMsg = e?.response?.data?.message || 'Không thể trừ điểm.';
+          setToast({ message: errMsg, type: 'error' });
+        }
+      },
+    });
+  };
 
  const [dateFilter, setDateFilter] = useState<string>('ALL');
  const [scheduleFilter, setScheduleFilter] = useState<string>('ALL');
@@ -485,15 +475,6 @@ export default function AdminEssayReviewPage() {
           );
         })}
       </div>
-
-      {message && (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 text-xs font-medium text-slate-800 dark:text-slate-200 flex items-center justify-between shadow-2xs">
-          <span>{message}</span>
-          <button onClick={() => setMessage('')} className="text-slate-400 hover:text-slate-600 font-semibold ml-4 cursor-pointer">
-            Đóng
-          </button>
-        </div>
-      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
  {/* Left panel: List */}
@@ -930,6 +911,14 @@ export default function AdminEssayReviewPage() {
  onConfirm={confirmModal.onConfirm}
  onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
  />
+
+ {toast && (
+ <Toast
+ message={toast.message}
+ type={toast.type}
+ onClose={() => setToast(null)}
+ />
+ )}
  </main>
  );
 }

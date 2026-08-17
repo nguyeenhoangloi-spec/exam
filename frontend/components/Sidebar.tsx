@@ -125,7 +125,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {
         group: 'Hệ thống',
         items: [
-          { name: 'Giám sát trực tuyến', href: '/teacher/proctor', icon: ShieldCheck },
           { name: 'Nhật ký hệ thống', href: '/admin/activity-logs', icon: Activity },
           { name: 'Sao lưu dữ liệu', href: '/admin/backups', icon: DatabaseBackup },
           {
@@ -154,7 +153,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           { name: 'Lịch coi thi', href: '/teacher/assignments', icon: CalendarCheck },
           { name: 'Chấm thi tự luận', href: '/teacher/essay-grading', icon: FileCheck },
           { name: 'Thẩm định phúc khảo', href: '/teacher/regrade', icon: Award },
-          { name: 'Giám sát phòng thi', href: '/teacher/proctor', icon: ShieldCheck },
         ],
       },
       {
