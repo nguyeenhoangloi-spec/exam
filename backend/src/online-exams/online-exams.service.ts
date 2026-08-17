@@ -895,7 +895,24 @@ export class OnlineExamsService {
       throw new ForbiddenException('Bạn không có quyền xem bài làm của thí sinh này');
     }
 
-    await this.assertTeacherScheduleAccess(user, attempt.onlineExamConfig.examScheduleId);
+    if (user?.role === 'TEACHER') {
+      const isSupervisor = await this.prisma.examScheduleRoom.findFirst({
+        where: {
+          examScheduleId: attempt.onlineExamConfig.examScheduleId,
+          supervisors: { some: { teacher: { userId: user.id } } },
+        },
+        select: { id: true },
+      });
+
+      const hasAppeal = await this.prisma.gradeAppeal?.findFirst?.({
+        where: { attemptId: attempt.id },
+        select: { id: true },
+      });
+
+      if (!isSupervisor && !hasAppeal) {
+        throw new ForbiddenException('Bạn không được phân công giám thị lịch thi này.');
+      }
+    }
 
     // Never expose the answer key to students before the review is explicitly
     // released. This is enforced server-side; hiding a UI button is not enough.

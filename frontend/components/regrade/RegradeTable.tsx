@@ -128,20 +128,11 @@ export function RegradeTable({
                 </div>
               </div>
 
-              {/* Card Footer: Xem chi tiết (Slate) + Nút Chấm lại */}
-              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-                <button
-                  type="button"
-                  onClick={() => onReview(item)}
-                  className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-[14px] font-medium transition cursor-pointer"
-                >
-                  <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-                  <span>Xem chi tiết</span>
-                </button>
-
+              {/* Card Footer: Nút Thẩm định & Chấm lại duy nhất */}
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end">
                 <Button
                   variant="primary"
-                  size="xs"
+                  size="sm"
                   onClick={() => onReview(item)}
                   leftIcon={<Edit3 className="h-3.5 w-3.5" />}
                 >
@@ -171,7 +162,6 @@ export function RegradeTable({
                 isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
               }`}
             >
-              {/* Left: Checkbox + Mã SV + Tên sinh viên + Lớp + Meta */}
               <div className="flex items-center gap-3 min-w-0">
                 <input
                   type="checkbox"
@@ -180,23 +170,13 @@ export function RegradeTable({
                   className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                 />
 
-                <button
-                  type="button"
-                  onClick={() => onReview(item)}
-                  className="shrink-0"
-                >
-                  <IdentifierBadge tone="blue">{item.student.studentCode}</IdentifierBadge>
-                </button>
+                <IdentifierBadge tone="blue">{item.student.studentCode}</IdentifierBadge>
 
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <button
-                      type="button"
-                      onClick={() => onReview(item)}
-                      className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
-                    >
+                    <span className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 truncate">
                       {item.student.fullName}
-                    </button>
+                    </span>
                     {item.student.class && (
                       <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700">
                         {item.student.class.code || item.student.class.name}
@@ -225,27 +205,17 @@ export function RegradeTable({
                 </div>
               </div>
 
-              {/* Right: Status & Action Button */}
               <div className="flex items-center gap-2.5 shrink-0">
                 <StatusBadge status={badgeStatus} className="table-badge" />
 
                 <Button
                   variant="primary"
-                  size="xs"
+                  size="sm"
                   onClick={() => onReview(item)}
                   leftIcon={<Edit3 className="h-3.5 w-3.5" />}
                 >
                   Thẩm định
                 </Button>
-
-                <button
-                  type="button"
-                  onClick={() => onReview(item)}
-                  className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
-                  title="Xem chi tiết"
-                >
-                  <Eye className="w-4 h-4" />
-                </button>
               </div>
             </div>
           );
@@ -300,14 +270,10 @@ export function RegradeTable({
                   />
                 </td>
 
-                {/* Sinh viên */}
                 {visibleColumns.student !== false && (
                   <td className="p-3.5 whitespace-nowrap">
                     <div>
-                      <p
-                        onClick={() => onReview(item)}
-                        className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] leading-[22px] hover:text-blue-600 cursor-pointer transition"
-                      >
+                      <p className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] leading-[22px]">
                         {item.student.fullName}
                       </p>
                       <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
@@ -322,7 +288,6 @@ export function RegradeTable({
                   </td>
                 )}
 
-                {/* Môn học */}
                 {visibleColumns.subject !== false && (
                   <td className="p-3.5 min-w-[200px]">
                     <p className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] leading-[22px]">{subjectName}</p>
@@ -332,7 +297,6 @@ export function RegradeTable({
                   </td>
                 )}
 
-                {/* Nội dung */}
                 {visibleColumns.reason !== false && (
                   <td className="p-3.5 min-w-[280px]">
                     <p className="text-slate-700 dark:text-slate-300 text-[15px] leading-[22px] font-normal line-clamp-2 max-w-sm" title={item.reason}>
@@ -344,14 +308,12 @@ export function RegradeTable({
                   </td>
                 )}
 
-                {/* Điểm ban đầu */}
                 {visibleColumns.originalScore !== false && (
                   <td className="p-3.5 whitespace-nowrap text-center font-semibold text-slate-900 dark:text-slate-100 text-[15px]">
                     {item.originalScore.toFixed(1)} đ
                   </td>
                 )}
 
-                {/* Điểm sau phúc khảo */}
                 {visibleColumns.revisedScore !== false && (
                   <td className="p-3.5 whitespace-nowrap text-center text-[15px]">
                     {item.status === 'APPROVED_REGRADE' && item.revisedScore !== null ? (
@@ -362,7 +324,6 @@ export function RegradeTable({
                   </td>
                 )}
 
-                {/* Trạng thái */}
                 {visibleColumns.status !== false && (
                   <td className="p-3.5 whitespace-nowrap text-center">
                     <div className="flex justify-center">
@@ -371,26 +332,15 @@ export function RegradeTable({
                   </td>
                 )}
 
-                {/* Thao tác */}
                 <td className="p-3.5 pr-4 text-right whitespace-nowrap">
-                  <div className="flex items-center justify-end gap-1.5">
-                    <Button
-                      variant="primary"
-                      size="xs"
-                      onClick={() => onReview(item)}
-                      leftIcon={<Edit3 className="h-3.5 w-3.5" />}
-                    >
-                      Thẩm định & Chấm lại
-                    </Button>
-                    <button
-                      type="button"
-                      onClick={() => onReview(item)}
-                      className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
-                      title="Xem chi tiết"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </button>
-                  </div>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => onReview(item)}
+                    leftIcon={<Edit3 className="h-3.5 w-3.5" />}
+                  >
+                    Thẩm định & Chấm lại
+                  </Button>
                 </td>
               </tr>
             );

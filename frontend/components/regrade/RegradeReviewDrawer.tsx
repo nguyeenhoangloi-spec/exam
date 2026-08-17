@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { X, CheckCircle2, AlertCircle, Award, GraduationCap, Clock, BookOpen, Eye, FileEdit } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { X, CheckCircle2, AlertCircle, Award, GraduationCap, Clock, BookOpen, Eye, FileEdit, ExternalLink, MessageSquareQuote } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { StatusBadge } from '../common/StatusBadge';
@@ -73,6 +74,7 @@ export function RegradeReviewDrawer({
   handleSaveReview,
   submitting,
 }: RegradeReviewDrawerProps) {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [viewingAttemptModal, setViewingAttemptModal] = useState(false);
@@ -230,24 +232,41 @@ export function RegradeReviewDrawer({
                   </div>
                 </div>
 
-                {/* Nút Xem bài làm chi tiết */}
+                {/* Nút thao tác bài làm */}
                 {selectedAppeal.attemptId && (
-                  <div className="pt-2">
+                  <div className="pt-2 flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="primary"
+                      size="sm"
+                      onClick={() => {
+                        const isAdm = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+                        const targetUrl = isAdm
+                          ? `/admin/essay-review?attemptId=${selectedAppeal.attemptId}`
+                          : `/teacher/essay-grading?attemptId=${selectedAppeal.attemptId}`;
+                        router.push(targetUrl);
+                      }}
+                      leftIcon={<ExternalLink className="h-3.5 w-3.5" />}
+                      className="flex-1 justify-center text-xs font-semibold shadow-2xs"
+                    >
+                      Chấm lại trên Rubric
+                    </Button>
+
                     <Button
                       type="button"
                       variant="secondary"
-                      size="md"
+                      size="sm"
                       onClick={() => setViewingAttemptModal(true)}
-                      leftIcon={<Eye className="h-4 w-4 text-blue-600" />}
-                      className="w-full justify-center text-[13px] font-semibold"
+                      leftIcon={<Eye className="h-3.5 w-3.5 text-blue-600" />}
+                      className="flex-1 justify-center text-xs font-semibold"
                     >
-                      Xem bài làm chi tiết &amp; Đáp án từng câu
+                      Xem toàn bộ bài làm
                     </Button>
                   </div>
                 )}
               </div>
 
-              {/* Mục 2: Lý do xin phúc khảo */}
+              {/* Mục 2: Lý do xin phúc khảo (Flat & Clean Layout) */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
@@ -255,13 +274,14 @@ export function RegradeReviewDrawer({
                     Lý do &amp; Nguyện vọng xin phúc khảo
                   </h3>
                 </div>
-                <div className="rounded-xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/60 p-4 text-slate-900 dark:text-amber-100 leading-relaxed font-normal text-[14px]">
-                  {selectedAppeal.reason}
+                <div className="rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/90 dark:border-slate-800 p-3.5 text-slate-800 dark:text-slate-200 leading-relaxed font-normal text-[14.5px] flex items-start gap-2.5 shadow-2xs">
+                  <MessageSquareQuote className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
+                  <span className="flex-1 break-words">{selectedAppeal.reason}</span>
                 </div>
               </div>
 
               {/* Mục 3: Quyết định thẩm định & Chấm lại */}
-              <div className="space-y-3 pt-2 border-t border-slate-100 dark:divide-slate-800/80">
+              <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-2">
                   <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
                   <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
@@ -269,31 +289,32 @@ export function RegradeReviewDrawer({
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2.5">
+                {/* Segmented 2-State Control */}
+                <div className="rounded-xl bg-slate-100 dark:bg-slate-800 p-1 grid grid-cols-2 gap-1 select-none">
                   <button
                     type="button"
                     onClick={() => setReviewStatus('APPROVED_REGRADE')}
-                    className={`flex items-center justify-center gap-2 rounded-xl p-3 text-[13px] font-semibold border transition cursor-pointer ${
+                    className={`flex items-center justify-center gap-2 rounded-xl py-2 px-3 text-[13px] font-semibold transition cursor-pointer ${
                       reviewStatus === 'APPROVED_REGRADE'
-                        ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 ring-2 ring-emerald-500/20 shadow-2xs'
-                        : 'border-slate-200 bg-white dark:bg-slate-800 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
+                        ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs ring-1 ring-emerald-500/30'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                     }`}
                   >
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                    Chấp nhận &amp; Đổi điểm
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                    <span>Chấp nhận &amp; Đổi điểm</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setReviewStatus('REJECTED')}
-                    className={`flex items-center justify-center gap-2 rounded-xl p-3 text-[13px] font-semibold border transition cursor-pointer ${
+                    className={`flex items-center justify-center gap-2 rounded-xl py-2 px-3 text-[13px] font-semibold transition cursor-pointer ${
                       reviewStatus === 'REJECTED'
-                        ? 'border-rose-500 bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 ring-2 ring-rose-500/20 shadow-2xs'
-                        : 'border-slate-200 bg-white dark:bg-slate-800 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
+                        ? 'bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 shadow-xs ring-1 ring-rose-500/30'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                     }`}
                   >
-                    <AlertCircle className="h-4 w-4 text-rose-600" />
-                    Từ chối phúc khảo
+                    <AlertCircle className="h-4 w-4 text-rose-500" />
+                    <span>Từ chối phúc khảo</span>
                   </button>
                 </div>
 
@@ -302,16 +323,21 @@ export function RegradeReviewDrawer({
                     <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
                       Điểm số mới sau phúc khảo (Thang điểm 10):
                     </label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      max="10"
-                      value={revisedScore}
-                      onChange={(e) => setRevisedScore(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 text-[15px] font-medium text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none transition shadow-2xs"
-                      placeholder="Nhập điểm mới..."
-                    />
+                    <div className="relative">
+                      <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="10"
+                        value={revisedScore}
+                        onChange={(e) => setRevisedScore(e.target.value)}
+                        className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 pr-14 text-[15px] font-semibold text-emerald-600 dark:text-emerald-400 focus:border-emerald-500 focus:outline-none transition shadow-2xs"
+                        placeholder="Nhập điểm mới..."
+                      />
+                      <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 pointer-events-none">
+                        / 10 đ
+                      </span>
+                    </div>
                   </div>
                 )}
 

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo, useCallback, useRef, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import api from '../../../lib/api';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { ConfirmModal } from '../../../components/ConfirmModal';
@@ -32,6 +33,7 @@ import {
   Sparkles,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Lock,
 } from 'lucide-react';
 
@@ -49,8 +51,20 @@ function AdminEssayReviewContent() {
   const [collapseList, setCollapseList] = useState<boolean>(false);
   const [viewingRubricQuestion, setViewingRubricQuestion] = useState<any>(null);
   const [profileCandidate, setProfileCandidate] = useState<any | null>(null);
+  const [openActionMenu, setOpenActionMenu] = useState<boolean>(false);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const actionMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(e.target as Node)) {
+        setOpenActionMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -88,21 +102,8 @@ function AdminEssayReviewContent() {
     onConfirm: () => {},
   });
 
-  const loadAssignments = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get('/essay/grading/assignments', { params: { noCache: true } });
-      setRows(res.data || []);
-    } catch (e: any) {
-      setToast({ message: e?.response?.data?.message || 'Không thể tải danh sách bài tự luận.', type: 'error' });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadAssignments();
-  }, []);
+  const searchParams = useSearchParams();
+  const attemptIdParam = searchParams?.get('attemptId');
 
   const openAttempt = useCallback(async (id: string) => {
     try {
@@ -113,17 +114,34 @@ function AdminEssayReviewContent() {
     }
   }, []);
 
+  const loadAssignments = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await api.get('/essay/grading/assignments', { params: { noCache: true } });
+      setRows(res.data || []);
+      if (attemptIdParam) {
+        await openAttempt(attemptIdParam);
+      }
+    } catch (e: any) {
+      setToast({ message: e?.response?.data?.message || 'Không thể tải danh sách bài tự luận.', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  }, [attemptIdParam, openAttempt]);
+
+  useEffect(() => {
+    loadAssignments();
+  }, [loadAssignments]);
+
   const handleApprove = (publish = false) => {
     if (!selected) return;
     setConfirmModal({
       isOpen: true,
-      title: publish ? 'Công bố điểm chính thức' : 'Duyệt điểm bài thi',
-      message: publish
-        ? `Bạn có chắc chắn muốn CÔNG BỐ điểm bài thi của thí sinh ${selected.student?.fullName}? Sau khi công bố, sinh viên sẽ nhìn thấy điểm số và kết quả bài làm.`
-        : `Xác nhận duyệt điểm bài thi của thí sinh ${selected.student?.fullName}?`,
+      title: 'Duyệt & Công bố điểm',
+      message: `Bạn có chắc chắn muốn DUYỆT & CÔNG BỐ điểm bài thi của thí sinh ${selected.student?.fullName}? Sau khi công bố, sinh viên sẽ nhìn thấy kết quả bài làm và điểm số chính thức.`,
       type: 'info',
       requireReason: false,
-      confirmText: publish ? 'Công bố' : 'Duyệt điểm',
+      confirmText: 'Duyệt & Công bố',
       cancelText: 'Hủy bỏ',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -175,7 +193,7 @@ function AdminEssayReviewContent() {
       isOpen: true,
       title: 'Mở lại phiên bài thi',
       message: `Xác nhận mở lại phiên thi cho sinh viên ${selected.student?.fullName}?`,
-      type: 'warning',
+      type: 'info',
       requireReason: true,
       reasonPlaceholder: 'Nhập lý do mở lại bài thi (tối thiểu 3 ký tự)...',
       confirmText: 'Mở lại bài',
@@ -408,288 +426,409 @@ function AdminEssayReviewContent() {
 
       {/* ── 2. Main Workspace: Smooth Sidebar & Detail Panel ── */}
       <div className="flex flex-col lg:flex-row gap-5 items-start">
-        {/* Left Sidebar: Single Unified Container with Flat List */}
+        {/* Left Sidebar: Unified Container with Flat Candidate Items */}
         <aside
-          className={`transition-all duration-300 ease-in-out shrink-0 ${
+          aria-label="Danh sách bài thi"
+          className={`transition-all duration-300 ease-in-out shrink-0 lg:sticky lg:top-4 overflow-hidden ${
             collapseList
-              ? 'max-h-0 lg:w-0 lg:opacity-0 lg:pointer-events-none lg:-mr-5 hidden lg:block'
-              : 'w-full lg:w-[320px]'
+              ? 'max-h-0 lg:max-h-none lg:w-0 lg:opacity-0 lg:pointer-events-none lg:-mr-5 hidden lg:block'
+              : 'w-full lg:w-[320px] lg:opacity-100'
           }`}
         >
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs overflow-hidden flex flex-col">
-            {/* Header: Title + Neutral Reload Button + Filter Reset */}
-            <div className="p-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="h-4 w-1 rounded-full bg-blue-600" />
-                <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 tracking-wide">
-                  Danh sách bài thi
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 text-xs font-semibold">
-                  {filteredRows.length}/{rows.length}
-                </span>
-              </div>
+          <div className="w-full lg:w-[320px]">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs overflow-hidden flex flex-col">
+              {/* Header: Title + Neutral Reload Button + Filter Reset */}
+              <div className="p-3.5 space-y-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                    <h3 className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100">
+                      Danh sách bài thi
+                    </h3>
+                    <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full border border-blue-200/60 dark:border-blue-800/60 tabular-nums">
+                      {filteredRows.length}/{rows.length}
+                    </span>
+                  </div>
 
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={loadAssignments}
-                  disabled={loading}
-                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer select-none disabled:opacity-50"
-                  title="Làm mới danh sách"
-                >
-                  <RotateCcw className={`h-3.5 w-3.5 ${loading ? 'animate-spin text-blue-600' : ''}`} />
-                </button>
-                {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || dateFilter !== 'ALL' || scheduleFilter !== 'ALL' || searchQuery) && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setStatusFilter('ALL');
-                      setSubjectFilter('ALL');
-                      setDateFilter('ALL');
-                      setScheduleFilter('ALL');
-                      setSearchQuery('');
-                    }}
-                    className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer select-none"
-                    title="Đặt lại tất cả bộ lọc"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Filter Section */}
-            <div className="p-3 border-b border-slate-100 dark:border-slate-800 space-y-2.5 bg-slate-50/40 dark:bg-slate-800/20">
-              {/* Search Bar */}
-              <div className="relative w-full">
-                <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  placeholder="Tìm mã SV, tên SV, môn... (/)"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-8 pr-7 py-1.5 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                )}
-              </div>
-
-              {/* Status Tabs */}
-              <TabBar
-                tabs={[
-                  { key: 'ALL', label: 'Tất cả', count: counts.all },
-                  { key: 'WAITING_APPROVAL', label: 'Chờ duyệt', count: counts.waiting },
-                  { key: 'GRADING', label: 'Đang chấm', count: counts.grading },
-                  { key: 'PUBLISHED', label: 'Công bố', count: counts.published },
-                ]}
-                active={statusFilter}
-                onChange={setStatusFilter}
-              />
-
-              {/* Dropdown Filters Row: Subject & Date */}
-              <div className="grid grid-cols-2 gap-2">
-                {availableSubjects.length > 0 && (
-                  <FilterSelect
-                    value={subjectFilter}
-                    onChange={(e) => setSubjectFilter(e.target.value)}
-                    containerClassName="w-full"
-                    className="w-full text-xs"
-                  >
-                    <option value="ALL">Tất cả môn ({availableSubjects.length})</option>
-                    {availableSubjects.map((s) => (
-                      <option key={s.code} value={s.code}>
-                        [{s.code}] {s.name}
-                      </option>
-                    ))}
-                  </FilterSelect>
-                )}
-
-                {availableDates.length > 0 && (
-                  <FilterSelect
-                    value={dateFilter}
-                    onChange={(e) => setDateFilter(e.target.value)}
-                    containerClassName="w-full"
-                    className="w-full text-xs"
-                  >
-                    <option value="ALL">Tất cả ngày</option>
-                    {availableDates.map((d) => (
-                      <option key={d} value={d}>
-                        {d}
-                      </option>
-                    ))}
-                  </FilterSelect>
-                )}
-              </div>
-
-              {availableSchedules.length > 1 && (
-                <FilterSelect
-                  containerClassName="w-full"
-                  value={scheduleFilter}
-                  onChange={(e) => setScheduleFilter(e.target.value)}
-                  className="w-full text-xs"
-                >
-                  <option value="ALL">Tất cả ca thi / lịch thi</option>
-                  {availableSchedules.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.label}
-                    </option>
-                  ))}
-                </FilterSelect>
-              )}
-            </div>
-
-            {/* Flat List: Candidate items separated by divide-y */}
-            <div className="divide-y divide-slate-100 dark:divide-slate-800/80 max-h-[calc(100vh-380px)] min-h-[300px] overflow-y-auto">
-              {loading ? (
-                <div className="py-12 flex flex-col items-center gap-2.5">
-                  <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
-                  <p className="text-xs font-medium text-slate-400">Đang tải danh sách bài thi...</p>
-                </div>
-              ) : filteredRows.length === 0 ? (
-                <div className="text-center py-12 px-4 text-xs text-slate-400">
-                  Không tìm thấy bài thi nào phù hợp bộ lọc.
-                </div>
-              ) : (
-                filteredRows.map((row) => {
-                  const isSel = selected?.id === row.id;
-                  const dateStr = row.onlineExamConfig?.examSchedule?.examDate
-                    ? new Date(row.onlineExamConfig.examSchedule.examDate).toLocaleDateString('vi-VN')
-                    : row.submittedAt
-                      ? new Date(row.submittedAt).toLocaleDateString('vi-VN')
-                      : null;
-                  const schedCode = row.onlineExamConfig?.examSchedule?.code;
-                  return (
+                  <div className="flex items-center gap-1">
                     <button
-                      key={row.id}
                       type="button"
-                      onClick={() => openAttempt(row.id)}
-                      className={`w-full text-left p-3 transition cursor-pointer flex flex-col gap-1 select-none ${
-                        isSel
-                          ? 'bg-blue-50/70 dark:bg-blue-950/40 border-l-4 border-l-blue-600 pl-2.5'
-                          : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/50 pl-3.5'
-                      }`}
+                      onClick={loadAssignments}
+                      disabled={loading}
+                      className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer select-none disabled:opacity-50"
+                      title="Làm mới danh sách"
                     >
-                      <div className="flex justify-between items-center gap-2">
-                        <span className="font-semibold text-[14px] text-slate-900 dark:text-slate-100 truncate">
-                          {row.student?.fullName}
-                        </span>
-                        <StatusBadge status={row.gradingStatus} />
-                      </div>
-                      <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-                        <span>Mã SV:</span>
-                        <IdentifierBadge tone="neutral">{row.student?.studentCode}</IdentifierBadge>
-                        <span>
-                          · Điểm:{' '}
-                          <strong className="text-slate-900 dark:text-slate-100 font-semibold">
-                            {row.totalScore ?? 'Chưa chấm'}
-                          </strong>
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between gap-1 text-[12px] text-slate-500 dark:text-slate-400 pt-0.5">
-                        <span className="truncate flex-1 font-medium text-slate-600 dark:text-slate-300">
-                          {row.onlineExamConfig?.examSchedule?.subject?.subjectName || row.subjectName || 'Môn thi'}
-                          {schedCode ? ` (${schedCode})` : ''}
-                        </span>
-                        {dateStr && (
-                          <span className="shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
-                            {dateStr}
-                          </span>
-                        )}
-                      </div>
+                      <RotateCcw className={`h-3.5 w-3.5 ${loading ? 'animate-spin text-blue-600' : ''}`} />
                     </button>
-                  );
-                })
-              )}
+                    {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || dateFilter !== 'ALL' || scheduleFilter !== 'ALL' || searchQuery) && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStatusFilter('ALL');
+                          setSubjectFilter('ALL');
+                          setDateFilter('ALL');
+                          setScheduleFilter('ALL');
+                          setSearchQuery('');
+                        }}
+                        className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer select-none"
+                        title="Đặt lại tất cả bộ lọc"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Search Bar */}
+                <div className="relative w-full">
+                  <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    placeholder="Tìm mã SV, tên SV, môn... (/)"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-8 pr-7 py-1.5 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Status Tabs with modern Segmented Pills */}
+                <TabBar
+                  variant="segmented"
+                  tabs={[
+                    { key: 'ALL', label: 'Tất cả', count: counts.all },
+                    { key: 'WAITING_APPROVAL', label: 'Chờ duyệt', count: counts.waiting },
+                    { key: 'GRADING', label: 'Đang chấm', count: counts.grading },
+                    { key: 'PUBLISHED', label: 'Công bố', count: counts.published },
+                  ]}
+                  active={statusFilter}
+                  onChange={setStatusFilter}
+                />
+
+                {/* Dropdown Filters: Subject & Date/Schedule */}
+                <div className="space-y-1.5">
+                  {availableSubjects.length > 0 && (
+                    <FilterSelect
+                      value={subjectFilter}
+                      onChange={(e) => setSubjectFilter(e.target.value)}
+                      containerClassName="w-full"
+                      className="w-full text-xs"
+                    >
+                      <option value="ALL">Tất cả môn học ({availableSubjects.length})</option>
+                      {availableSubjects.map((s) => (
+                        <option key={s.code} value={s.code}>
+                          [{s.code}] {s.name}
+                        </option>
+                      ))}
+                    </FilterSelect>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {availableDates.length > 0 && (
+                      <FilterSelect
+                        value={dateFilter}
+                        onChange={(e) => setDateFilter(e.target.value)}
+                        containerClassName="w-full"
+                        className="w-full text-xs"
+                      >
+                        <option value="ALL">Tất cả ngày</option>
+                        {availableDates.map((d) => (
+                          <option key={d} value={d}>
+                            {d}
+                          </option>
+                        ))}
+                      </FilterSelect>
+                    )}
+
+                    {availableSchedules.length > 1 && (
+                      <FilterSelect
+                        containerClassName="w-full"
+                        value={scheduleFilter}
+                        onChange={(e) => setScheduleFilter(e.target.value)}
+                        className="w-full text-xs"
+                      >
+                        <option value="ALL">Tất cả ca thi</option>
+                        {availableSchedules.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.label}
+                          </option>
+                        ))}
+                      </FilterSelect>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Flat List: Candidate items separated by divide-y */}
+              <div className="divide-y divide-slate-100 dark:divide-slate-800/80 max-h-[calc(100vh-380px)] min-h-[300px] overflow-y-auto">
+                {loading ? (
+                  <div className="py-12 flex flex-col items-center gap-2.5">
+                    <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
+                    <p className="text-xs font-medium text-slate-400">Đang tải danh sách bài thi...</p>
+                  </div>
+                ) : filteredRows.length === 0 ? (
+                  <div className="text-center py-12 px-4 text-xs text-slate-400">
+                    Không tìm thấy bài thi nào phù hợp bộ lọc.
+                  </div>
+                ) : (
+                  filteredRows.map((r) => {
+                    const isCur = selected?.id === r.id;
+                    const notSub = r.status === 'NOT_STARTED' || r.status === 'IN_PROGRESS';
+                    return (
+                      <div
+                        key={r.id}
+                        onClick={() => openAttempt(r.id)}
+                        className={`p-3 transition cursor-pointer select-none text-left ${
+                          isCur
+                            ? 'bg-blue-50/80 dark:bg-blue-950/40 border-l-4 border-l-blue-600 pl-2.5'
+                            : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/50'
+                        }`}
+                      >
+                        {/* Row 1: Student Avatar + Name + Score */}
+                        <div className="flex justify-between items-center gap-2">
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            <div
+                              className={`w-7 h-7 rounded-full flex items-center justify-center font-semibold text-xs shrink-0 select-none ${
+                                isCur
+                                  ? 'bg-blue-600 text-white'
+                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                              }`}
+                            >
+                              {r.student?.fullName?.charAt(0) || 'S'}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setProfileCandidate(r);
+                              }}
+                              className={`font-semibold text-sm truncate transition cursor-pointer text-left ${
+                                isCur
+                                  ? 'text-blue-700 dark:text-blue-300'
+                                  : 'text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400'
+                              }`}
+                              title="Xem chi tiết hồ sơ thí sinh"
+                            >
+                              {r.student?.fullName || 'Chưa có tên'}
+                            </button>
+                          </div>
+
+                          <span
+                            className={`font-semibold tabular-nums text-sm shrink-0 ${
+                              notSub
+                                ? 'text-slate-400 text-xs'
+                                : r.totalScore !== undefined && r.totalScore !== null
+                                  ? 'text-blue-600 dark:text-blue-400'
+                                  : 'text-slate-400 text-xs'
+                            }`}
+                          >
+                            {notSub ? 'Chưa nộp' : r.totalScore !== undefined && r.totalScore !== null ? `${r.totalScore}đ` : '--'}
+                          </span>
+                        </div>
+
+                        {/* Row 2: MSSV identifier + Subject name + Status dot */}
+                        <div className="flex items-center justify-between gap-2 mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <IdentifierBadge tone={isCur ? 'blue' : 'neutral'}>
+                              {r.student?.studentCode || '---'}
+                            </IdentifierBadge>
+                            <span
+                              className="truncate max-w-[110px] font-normal"
+                              title={r.onlineExamConfig?.examSchedule?.subject?.subjectName || r.subjectName}
+                            >
+                              {r.onlineExamConfig?.examSchedule?.subject?.subjectName || r.subjectName || 'Môn thi'}
+                            </span>
+                          </div>
+
+                          <div className="shrink-0">
+                            <StatusBadge status={r.gradingStatus} />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
           </div>
         </aside>
 
-        {/* Right Panel: Detail & Admin Controls */}
+        {/* Right Panel: Detail & Admin Controls (Single Unified Container) */}
         <div className="flex-1 min-w-0 space-y-4">
           {!selected ? (
-            <div className="rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-16 text-center shadow-2xs">
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3">
-                <FileText className="w-6 h-6" />
-              </div>
-              <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                Chưa chọn bài thi
-              </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
-                Chọn một bài thi ở danh sách bên trái để xem chi tiết và thực hiện các thao tác quản trị.
-              </p>
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-12 text-center text-slate-400 text-xs font-medium shadow-2xs space-y-3">
+              <p>Vui lòng chọn bài thi từ danh sách bên trái để xem chi tiết và duyệt điểm.</p>
+              {collapseList && (
+                <div className="pt-1">
+                  <Button variant="primary" size="sm" onClick={() => setCollapseList(false)}>
+                    Mở danh sách bài thi
+                  </Button>
+                </div>
+              )}
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 space-y-5 shadow-2xs">
               {/* Sticky Header: Candidate Meta + Navigation */}
-              <div className="sticky top-0 z-10 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-sm backdrop-blur-md">
-                <div className="flex items-center justify-between gap-4 flex-wrap">
-                  {/* Left: Sidebar Toggle + Student Info (Clickable for Profile Drawer) */}
-                  <div className="flex items-center gap-3 min-w-0">
-                    <button
-                      type="button"
-                      onClick={() => setCollapseList(!collapseList)}
-                      className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer select-none shrink-0"
-                      title={collapseList ? 'Mở rộng danh sách' : 'Thu gọn danh sách'}
-                    >
-                      <ChevronLeft className={`h-4 w-4 transition-transform duration-300 ${collapseList ? 'rotate-180' : ''}`} />
-                    </button>
+              <div className="sticky top-0 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md -mx-5 -mt-5 p-5 border-b border-slate-100 dark:border-slate-800 rounded-t-2xl shadow-xs flex justify-between items-center flex-wrap gap-3">
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setCollapseList(!collapseList)}
+                    className="p-1 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0"
+                    title={collapseList ? 'Mở danh sách bài làm' : 'Thu gọn danh sách bài làm'}
+                  >
+                    <ChevronLeft
+                      className={`h-4 w-4 transition-transform duration-300 ease-in-out ${collapseList ? 'rotate-180' : ''}`}
+                    />
+                  </button>
 
-                    <div
-                      onClick={() => setProfileCandidate(selected)}
-                      className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 font-semibold text-sm flex items-center justify-center shrink-0 cursor-pointer hover:ring-2 hover:ring-blue-400 transition select-none"
-                      title="Xem chi tiết hồ sơ thí sinh"
-                    >
-                      {selected.student?.fullName ? selected.student.fullName.charAt(0).toUpperCase() : 'S'}
+                  <div
+                    onClick={() => setProfileCandidate(selected)}
+                    className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 flex items-center justify-center font-semibold text-sm shrink-0 cursor-pointer hover:ring-2 hover:ring-blue-400 transition"
+                    title="Xem chi tiết hồ sơ thí sinh"
+                  >
+                    {selected.student?.fullName?.charAt(0) || 'S'}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setProfileCandidate(selected)}
+                        className="text-base font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                        title="Xem chi tiết hồ sơ thí sinh"
+                      >
+                        {selected.student?.fullName}
+                      </button>
+                      <StatusBadge status={selected.gradingStatus} />
                     </div>
-
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <button
-                          type="button"
-                          onClick={() => setProfileCandidate(selected)}
-                          className="text-base font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left truncate"
-                          title="Xem chi tiết hồ sơ thí sinh"
-                        >
-                          {selected.student?.fullName}
-                        </button>
-                        <StatusBadge status={selected.gradingStatus} />
-                      </div>
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                        <span>Mã SV:</span>
-                        <IdentifierBadge tone="neutral">{selected.student?.studentCode}</IdentifierBadge>
-                        <span>· Lớp: {selected.student?.className || 'N/A'}</span>
-                        <span>· Môn: {selected.onlineExamConfig?.examSchedule?.subject?.subjectName || selected.subjectName}</span>
-                      </div>
+                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 mt-0.5">
+                      <span>Mã SV:</span>
+                      <IdentifierBadge tone="neutral">{selected.student?.studentCode}</IdentifierBadge>
+                      <span>
+                        · Môn:{' '}
+                        <strong className="text-slate-800 dark:text-slate-200">
+                          {selected.onlineExamConfig?.examSchedule?.subject?.subjectName || selected.subjectName || 'Môn thi'}
+                        </strong>
+                      </span>
                     </div>
                   </div>
+                </div>
 
-                  {/* Right: Score KPI + Quick Student Navigation */}
-                  <div className="flex items-center gap-4 shrink-0">
-                    <div className="text-right">
-                      <div className="tabular-nums font-semibold text-lg text-slate-900 dark:text-slate-100">
-                        {selected.totalScore ?? '--'} <span className="text-xs text-slate-400 font-normal">/ {selected.maxScore || 10}đ</span>
+                <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+                  <div className="text-right">
+                    <span className="text-xl tabular-nums font-semibold text-slate-900 dark:text-slate-100">
+                      {selected.totalScore ?? '--'}{' '}
+                      <span className="text-xs text-slate-500 font-normal">/ {selected.maxScore || 10}đ</span>
+                    </span>
+                    {selected.penaltyPoints > 0 && (
+                      <p className="text-xs font-semibold text-rose-600 mt-0.5">
+                        Điểm phạt: -{selected.penaltyPoints}đ ({selected.penaltyReason})
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Actions & Fast Student Navigation */}
+                  <div className="flex items-center gap-2 border-l border-slate-200 dark:border-slate-800 pl-3">
+                    {selected.gradingStatus === 'PUBLISHED' ? (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-xs font-semibold select-none shadow-2xs">
+                        <Lock className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                        <span>Đã công bố (Khóa điểm)</span>
                       </div>
-                      {selected.penaltyPoints > 0 && (
-                        <p className="text-xs font-semibold text-rose-600 mt-0.5">
-                          Phạt: -{selected.penaltyPoints}đ ({selected.penaltyReason})
-                        </p>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="primary"
+                        size="sm"
+                        onClick={() => handleApprove(true)}
+                        leftIcon={<Send className="w-3.5 h-3.5" />}
+                      >
+                        Duyệt & Công bố
+                      </Button>
+                    )}
+
+                    {/* Action Dropdown Menu for Admin Interventions */}
+                    <div className="relative" ref={actionMenuRef}>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => setOpenActionMenu(!openActionMenu)}
+                        rightIcon={<ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openActionMenu ? 'rotate-180' : ''}`} />}
+                        title="Tùy chọn thao tác quản trị khác"
+                      >
+                        Thao tác
+                      </Button>
+
+                      {openActionMenu && (
+                        <div className="absolute right-0 top-full mt-1.5 w-52 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 divide-y divide-slate-100 dark:divide-slate-800">
+                          <div className="py-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setOpenActionMenu(false);
+                                handleReturn();
+                              }}
+                              className="w-full px-3.5 py-2 text-left text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-2.5 transition cursor-pointer"
+                            >
+                              <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                              <span>Trả lại chấm lại</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setOpenActionMenu(false);
+                                handleReopen();
+                              }}
+                              className="w-full px-3.5 py-2 text-left text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-amber-950/40 hover:text-amber-600 dark:hover:text-amber-400 flex items-center gap-2.5 transition cursor-pointer"
+                            >
+                              <RotateCcw className="w-4 h-4 text-amber-600 shrink-0" />
+                              <span>Mở lại bài thi</span>
+                            </button>
+                          </div>
+
+                          <div className="py-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setOpenActionMenu(false);
+                                handleExtend();
+                              }}
+                              className="w-full px-3.5 py-2 text-left text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2.5 transition cursor-pointer"
+                            >
+                              <Clock className="w-4 h-4 text-blue-600 shrink-0" />
+                              <span>Gia hạn thời gian</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setOpenActionMenu(false);
+                                handlePenalty();
+                              }}
+                              className="w-full px-3.5 py-2 text-left text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-2.5 transition cursor-pointer"
+                            >
+                              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+                              <span>Trừ điểm vi phạm</span>
+                            </button>
+                          </div>
+                        </div>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-1 border-l border-slate-200 dark:border-slate-800 pl-3">
+                    <div className="flex items-center gap-1 border-l border-slate-200 dark:border-slate-800 pl-2">
                       <button
                         type="button"
                         onClick={handlePrevStudent}
                         disabled={currentIndex <= 0}
-                        className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 disabled:opacity-30 transition cursor-pointer select-none shadow-2xs"
+                        className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 disabled:opacity-30 transition cursor-pointer select-none"
                         title="Sinh viên trước đó"
                       >
                         <ChevronLeft className="h-4 w-4" />
@@ -701,7 +840,7 @@ function AdminEssayReviewContent() {
                         type="button"
                         onClick={handleNextStudent}
                         disabled={currentIndex < 0 || currentIndex >= filteredRows.length - 1}
-                        className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 disabled:opacity-30 transition cursor-pointer select-none shadow-2xs"
+                        className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 disabled:opacity-30 transition cursor-pointer select-none"
                         title="Sinh viên tiếp theo"
                       >
                         <ChevronRight className="h-4 w-4" />
@@ -711,7 +850,7 @@ function AdminEssayReviewContent() {
                 </div>
               </div>
 
-              {/* Questions & Rubrics List */}
+              {/* Essay Questions List */}
               <div className="space-y-4">
                 {(selected.questions || []).filter((q: any) => q.type === 'ESSAY').map((q: any, idx: number) => {
                   const ans = (selected.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
@@ -720,10 +859,10 @@ function AdminEssayReviewContent() {
                       key={q.questionId || idx}
                       className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 space-y-4 shadow-2xs"
                     >
-                      {/* Question Title, Rubric Viewer Trigger & Score */}
+                      {/* Question Header & Rubric Trigger */}
                       <div className="flex justify-between items-start gap-4 border-b border-slate-100 dark:border-slate-800 pb-3.5">
                         <div className="flex items-start gap-2.5 flex-1">
-                          <span className="px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-xs font-semibold border border-blue-200 dark:border-blue-800/80 shrink-0 select-none">
+                          <span className="px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-xs font-semibold border border-blue-200 dark:border-blue-800/80 shrink-0 select-none">
                             Câu {idx + 1}
                           </span>
                           <div className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-snug">
@@ -758,7 +897,9 @@ function AdminEssayReviewContent() {
                           )}
                         </div>
                         <div className="p-4 bg-slate-50/60 dark:bg-slate-800/40 rounded-xl border border-slate-200/70 dark:border-slate-800/80 border-l-4 border-l-blue-500 text-[15px] text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed font-normal shadow-2xs">
-                          {ans?.textAnswer || <span className="italic text-slate-400">Sinh viên không nhập nội dung văn bản</span>}
+                          {ans?.textAnswer || (
+                            <span className="italic text-slate-400">Sinh viên không nhập nội dung văn bản</span>
+                          )}
                         </div>
                       </div>
 
@@ -784,33 +925,79 @@ function AdminEssayReviewContent() {
                         </div>
                       )}
 
-                      {/* Rubric Grades */}
+                      {/* Rubric Criteria Section */}
                       {q.rubric?.length > 0 && (
-                        <div className="space-y-2.5 pt-1 border-t border-slate-100 dark:border-slate-800">
-                          <div className="text-xs font-semibold text-slate-600 dark:text-slate-400 tracking-wide">
-                            Điểm theo Rubric ({q.rubric.length}):
+                        <div className="space-y-2.5 pt-1">
+                          <div className="text-xs font-semibold text-slate-600 dark:text-slate-400 tracking-wide flex items-center justify-between">
+                            <span>Tiêu chí chấm Rubric ({q.rubric.length}):</span>
                           </div>
-                          <div className="space-y-2">
+                          <div className="space-y-2.5">
                             {q.rubric.map((r: any) => {
                               const g = (ans?.essayGrades || []).find((item: any) => item.criterionId === r.id);
+                              const currentScore = g?.score ?? 0;
                               return (
                                 <div
                                   key={r.id}
-                                  className="flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 text-xs shadow-2xs"
+                                  className="bg-slate-50/40 dark:bg-slate-800/30 p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 space-y-2.5 shadow-2xs"
                                 >
-                                  <div>
-                                    <span className="font-semibold text-slate-900 dark:text-slate-100">{r.label}: </span>
-                                    <span className="text-slate-600 dark:text-slate-400 font-normal">{g?.comment || 'Không có nhận xét'}</span>
+                                  <div className="flex justify-between items-start gap-2">
+                                    <div>
+                                      <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">{r.label}</span>
+                                      {r.description && (
+                                        <p className="text-xs text-slate-500 mt-0.5 font-normal leading-relaxed">{r.description}</p>
+                                      )}
+                                    </div>
+                                    <span className="tabular-nums text-xs font-semibold text-slate-500 shrink-0 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700">
+                                      Tối đa {r.maxScore}đ
+                                    </span>
                                   </div>
-                                  <span className="tabular-nums font-semibold text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700">
-                                    {g?.score ?? 0} / {r.maxScore}đ
-                                  </span>
+
+                                  <div className="flex gap-2 items-center flex-wrap pt-1">
+                                    <div className="w-20 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-center text-[15px] font-semibold tabular-nums text-blue-600 dark:text-blue-400 shadow-2xs select-none">
+                                      {currentScore}
+                                    </div>
+
+                                    {/* Quick Score Chips Indicator */}
+                                    <div className="flex gap-1 items-center flex-wrap">
+                                      {[0, Number((r.maxScore * 0.5).toFixed(2)), Number((r.maxScore * 0.75).toFixed(2)), r.maxScore].map((presetVal) => (
+                                        <div
+                                          key={presetVal}
+                                          className={`px-2.5 py-1 rounded-xl text-xs font-semibold border transition select-none ${
+                                            currentScore === presetVal
+                                              ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                                              : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 opacity-80'
+                                          }`}
+                                        >
+                                          {presetVal === r.maxScore ? `Max (${presetVal}đ)` : `${presetVal}đ`}
+                                        </div>
+                                      ))}
+                                    </div>
+
+                                    <div className="flex-1 min-w-[200px] bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-[15px] font-normal text-slate-800 dark:text-slate-200 shadow-2xs truncate">
+                                      {g?.comment || <span className="italic text-slate-400">Không có nhận xét tiêu chí</span>}
+                                    </div>
+                                  </div>
+
+                                  {ans?.aiEvidence && (
+                                    <div className="rounded-xl border border-blue-100 bg-blue-50/70 px-3 py-2 text-xs leading-relaxed text-blue-950 dark:border-blue-900 dark:bg-blue-950/30 dark:text-blue-100 mt-1">
+                                      <span className="font-semibold text-blue-700 dark:text-blue-300">Minh chứng AI: </span>
+                                      {ans.aiEvidence}
+                                    </div>
+                                  )}
                                 </div>
                               );
                             })}
                           </div>
                         </div>
                       )}
+
+                      {/* Overall Teacher Comment */}
+                      <div className="space-y-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
+                        <label className="text-[15px] font-medium text-slate-600 dark:text-slate-400">Nhận xét tổng quát cho câu này:</label>
+                        <div className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-[15px] font-normal text-slate-800 dark:text-slate-200 shadow-2xs">
+                          {ans?.teacherComment || <span className="italic text-slate-400">Chưa có nhận xét tổng quát</span>}
+                        </div>
+                      </div>
 
                       {/* AI Suggestion */}
                       {ans?.aiSuggestedScore !== undefined && ans?.aiSuggestedScore !== null && (
@@ -855,144 +1042,6 @@ function AdminEssayReviewContent() {
                     </div>
                   );
                 })}
-              </div>
-
-              {/* ── 4. Admin Actions Panel ── */}
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 space-y-4 shadow-2xs">
-                {/* Header & Status Indicator */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-slate-100 dark:border-slate-800">
-                  <div className="flex items-center gap-2">
-                    <div className="h-4 w-1 rounded-full bg-blue-600" />
-                    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
-                      Thao tác Quản trị Admin
-                    </h3>
-                  </div>
-
-                  {selected.gradingStatus === 'PUBLISHED' ? (
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-xs font-semibold select-none shadow-2xs">
-                      <Lock className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-                      <span>Điểm số đã công bố chính thức (Khóa điểm)</span>
-                    </div>
-                  ) : selected.gradingStatus === 'WAITING_APPROVAL' ? (
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/80 text-amber-800 dark:text-amber-300 text-xs font-semibold select-none shadow-2xs">
-                      <Clock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
-                      <span>Bài thi đang chờ Admin duyệt</span>
-                    </div>
-                  ) : (
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-800/80 text-blue-800 dark:text-blue-300 text-xs font-semibold select-none shadow-2xs">
-                      <Clock className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-                      <span>Giảng viên đang chấm thi</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Input Reason */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <label className="text-[15px] font-medium text-slate-700 dark:text-slate-300">
-                      Lý do thao tác / Ghi chú quản trị:
-                    </label>
-                    <span className="text-slate-400 font-normal">
-                      (Bắt buộc khi Trả lại, Mở lại, Gia hạn, Trừ điểm)
-                    </span>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Nhập ghi chú hoặc lý do chi tiết..."
-                    value={actionReason}
-                    onChange={(e) => setActionReason(e.target.value)}
-                    className="w-full bg-slate-50/70 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition shadow-2xs"
-                  />
-                </div>
-
-                {/* Main Action Buttons (Single Primary Rule) */}
-                <div className="flex flex-wrap items-center gap-2.5 pt-1">
-                  {selected.gradingStatus !== 'PUBLISHED' && (
-                    <>
-                      <Button
-                        type="button"
-                        variant="primary"
-                        size="md"
-                        onClick={() => handleApprove(true)}
-                        leftIcon={<Send className="w-4 h-4" />}
-                      >
-                        Công bố điểm
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        size="md"
-                        onClick={() => handleApprove(false)}
-                        leftIcon={<ShieldCheck className="w-4 h-4" />}
-                      >
-                        Duyệt điểm
-                      </Button>
-                    </>
-                  )}
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="md"
-                    onClick={handleReturn}
-                    leftIcon={<XCircle className="w-4 h-4 text-rose-600" />}
-                  >
-                    Trả lại chấm lại
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="md"
-                    onClick={handleReopen}
-                    leftIcon={<RotateCcw className="w-4 h-4 text-amber-600" />}
-                  >
-                    Mở lại bài thi
-                  </Button>
-                </div>
-
-                {/* Adjustment Controls Grid: Gia hạn & Trừ điểm */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                  {/* Gia hạn làm bài */}
-                  <div className="bg-slate-50/60 dark:bg-slate-800/40 p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-3 shadow-2xs">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[15px] font-medium text-slate-800 dark:text-slate-200">Gia hạn:</span>
-                      <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1 shadow-2xs">
-                        <input
-                          type="number"
-                          min={1}
-                          max={240}
-                          value={extraMinutes}
-                          onChange={(e) => setExtraMinutes(Number(e.target.value))}
-                          className="w-12 text-[15px] font-medium text-center text-slate-900 dark:text-slate-100 focus:outline-none"
-                        />
-                        <span className="text-xs font-semibold text-slate-400 ml-1">phút</span>
-                      </div>
-                    </div>
-                    <Button type="button" variant="secondary" size="sm" onClick={handleExtend}>
-                      Gia hạn
-                    </Button>
-                  </div>
-
-                  {/* Trừ điểm phạt */}
-                  <div className="bg-slate-50/60 dark:bg-slate-800/40 p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-3 shadow-2xs">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[15px] font-medium text-slate-800 dark:text-slate-200">Điểm phạt:</span>
-                      <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1 shadow-2xs">
-                        <input
-                          type="number"
-                          min={0}
-                          step={0.5}
-                          value={penaltyInput}
-                          onChange={(e) => setPenaltyInput(Number(e.target.value))}
-                          className="w-12 text-[15px] font-medium text-center text-slate-900 dark:text-slate-100 focus:outline-none"
-                        />
-                        <span className="text-xs font-semibold text-slate-400 ml-1">điểm</span>
-                      </div>
-                    </div>
-                    <Button type="button" variant="secondary" size="sm" onClick={handlePenalty}>
-                      Trừ điểm
-                    </Button>
-                  </div>
-                </div>
               </div>
             </div>
           )}

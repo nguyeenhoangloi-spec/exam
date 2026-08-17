@@ -11,6 +11,8 @@ import { RubricViewerModal } from '../../../components/question-bank/RubricViewe
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { TabBar } from '../../../components/ui/TabBar';
+import { FilterSelect } from '../../../components/ui/FilterSelect';
+import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import {
   Search,
@@ -38,7 +40,6 @@ import {
   Clock,
 } from 'lucide-react';
 import { SortDropdown } from '../../../components/ui/SortDropdown';
-import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 
 function TeacherEssayGradingContent() {
   usePageTitle('Chấm bài tự luận');
@@ -717,73 +718,70 @@ function TeacherEssayGradingContent() {
                   )}
                 </div>
 
-                {/* Status Filter Tabs */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 -mx-1 px-1 scrollbar-none">
-                  {[
+                {/* Status Tabs with modern Segmented Pills */}
+                <TabBar
+                  variant="segmented"
+                  tabs={[
                     { key: 'ALL', label: 'Tất cả', count: counts.all },
-                    { key: 'NOT_SUBMITTED', label: 'Chưa nộp', count: counts.notSubmitted },
                     { key: 'GRADING', label: 'Đang chấm', count: counts.grading },
                     { key: 'WAITING_APPROVAL', label: 'Chờ duyệt', count: counts.waiting },
                     { key: 'PUBLISHED', label: 'Công bố', count: counts.published },
-                  ].map((t) => {
-                    const isActive = statusFilter === t.key;
-                    return (
-                      <button
-                        key={t.key}
-                        type="button"
-                        onClick={() => setStatusFilter(t.key as any)}
-                        className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-semibold shrink-0 transition-all cursor-pointer whitespace-nowrap ${
-                          isActive
-                            ? 'bg-blue-600 text-white shadow-xs'
-                            : 'bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/70'
-                        }`}
-                      >
-                        <span>{t.label}</span>
-                        <span
-                          className={`px-1.5 py-0.2 rounded-full text-xs font-semibold tabular-nums ${
-                            isActive
-                              ? 'bg-white/20 text-white'
-                              : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
-                          }`}
-                        >
-                          {t.count}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
+                  ]}
+                  active={statusFilter}
+                  onChange={(key) => setStatusFilter(key as any)}
+                />
 
-                {/* Dropdown Filters (Compact Grid) */}
+                {/* Dropdown Filters: Subject & Date/Schedule */}
                 <div className="space-y-1.5 pt-0.5">
-                  <select
-                    value={subjectFilter}
-                    onChange={(e) => setSubjectFilter(e.target.value)}
-                    className="w-full h-9 rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white dark:bg-slate-800 px-2.5 text-[15px] font-medium text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer truncate shadow-2xs"
-                    title="Lọc theo môn thi"
-                  >
-                    <option value="ALL">Tất cả môn học ({availableSubjects.length})</option>
-                    {availableSubjects.map((s) => (
-                      <option key={s.code} value={s.code}>
-                        [{s.code}] {s.name}
-                      </option>
-                    ))}
-                  </select>
-
-                  {availableSchedules.length > 0 && (
-                    <select
-                      value={scheduleFilter}
-                      onChange={(e) => setScheduleFilter(e.target.value)}
-                      className="w-full h-9 rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white dark:bg-slate-800 px-2.5 text-[15px] font-medium text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer truncate shadow-2xs"
-                      title="Lọc theo ca thi"
+                  {availableSubjects.length > 0 && (
+                    <FilterSelect
+                      value={subjectFilter}
+                      onChange={(e) => setSubjectFilter(e.target.value)}
+                      containerClassName="w-full"
+                      className="w-full text-xs"
                     >
-                      <option value="ALL">Tất cả ca thi ({availableSchedules.length})</option>
-                      {availableSchedules.map((sc) => (
-                        <option key={sc.id} value={sc.id}>
-                          {sc.label}
+                      <option value="ALL">Tất cả môn học ({availableSubjects.length})</option>
+                      {availableSubjects.map((s) => (
+                        <option key={s.code} value={s.code}>
+                          [{s.code}] {s.name}
                         </option>
                       ))}
-                    </select>
+                    </FilterSelect>
                   )}
+
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {availableDates.length > 0 && (
+                      <FilterSelect
+                        value={dateFilter}
+                        onChange={(e) => setDateFilter(e.target.value)}
+                        containerClassName="w-full"
+                        className="w-full text-xs"
+                      >
+                        <option value="ALL">Tất cả ngày</option>
+                        {availableDates.map((d) => (
+                          <option key={d} value={d}>
+                            {d}
+                          </option>
+                        ))}
+                      </FilterSelect>
+                    )}
+
+                    {availableSchedules.length > 0 && (
+                      <FilterSelect
+                        containerClassName="w-full"
+                        value={scheduleFilter}
+                        onChange={(e) => setScheduleFilter(e.target.value)}
+                        className="w-full text-xs"
+                      >
+                        <option value="ALL">Tất cả ca thi</option>
+                        {availableSchedules.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.label}
+                          </option>
+                        ))}
+                      </FilterSelect>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -808,20 +806,22 @@ function TeacherEssayGradingContent() {
                       <div
                         key={r.id}
                         onClick={() => openAttempt(r.id)}
-                        className={`p-3.5 transition-colors duration-150 cursor-pointer text-left ${
+                        className={`p-3 transition cursor-pointer select-none text-left ${
                           isCur
-                            ? 'bg-blue-50/70 dark:bg-blue-950/40 border-l-4 border-l-blue-600 pl-2.5'
+                            ? 'bg-blue-50/80 dark:bg-blue-950/40 border-l-4 border-l-blue-600 pl-2.5'
                             : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/50'
                         }`}
                       >
-                        {/* Top: Avatar + Name + StatusBadge */}
-                        <div className="flex justify-between items-start gap-2">
+                        {/* Row 1: Avatar + Name + Score */}
+                        <div className="flex justify-between items-center gap-2">
                           <div className="flex items-center gap-2 min-w-0 flex-1">
-                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center font-semibold text-xs shrink-0 ${
-                              isCur
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
-                            }`}>
+                            <div
+                              className={`w-7 h-7 rounded-full flex items-center justify-center font-semibold text-xs shrink-0 select-none ${
+                                isCur
+                                  ? 'bg-blue-600 text-white'
+                                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                              }`}
+                            >
                               {initialChar}
                             </div>
 
@@ -842,32 +842,36 @@ function TeacherEssayGradingContent() {
                             </button>
                           </div>
 
-                          <StatusBadge status={r.gradingStatus} />
-                        </div>
-
-                        {/* Middle: MSSV identifier */}
-                        <div className="flex items-center gap-1.5 mt-2">
-                          <IdentifierBadge tone={isCur ? 'blue' : 'neutral'}>{r.student?.studentCode || '---'}</IdentifierBadge>
-                        </div>
-
-                        {/* Bottom: Subject name & Score */}
-                        <div className="flex justify-between items-center text-xs mt-2 pt-1.5 text-slate-500 dark:text-slate-400">
                           <span
-                            className="truncate max-w-[140px] font-normal"
-                            title={r.onlineExamConfig?.examSchedule?.subject?.subjectName || r.subjectName}
+                            className={`font-semibold tabular-nums text-sm shrink-0 ${
+                              notSub
+                                ? 'text-slate-400 text-xs'
+                                : r.totalScore !== undefined && r.totalScore !== null
+                                  ? 'text-blue-600 dark:text-blue-400'
+                                  : 'text-slate-400 text-xs'
+                            }`}
                           >
-                            {r.onlineExamConfig?.examSchedule?.subject?.subjectName || r.subjectName || 'Môn thi'}
-                          </span>
-
-                          <span className={`font-semibold tabular-nums ${
-                            notSub
-                              ? 'text-slate-400 text-xs'
-                              : r.totalScore !== undefined && r.totalScore !== null
-                                ? 'text-blue-600 dark:text-blue-400 text-sm'
-                                : 'text-slate-400 text-xs'
-                          }`}>
                             {notSub ? 'Chưa nộp' : r.totalScore !== undefined && r.totalScore !== null ? `${r.totalScore}đ` : '--'}
                           </span>
+                        </div>
+
+                        {/* Row 2: MSSV identifier + Subject name + Status dot */}
+                        <div className="flex items-center justify-between gap-2 mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <IdentifierBadge tone={isCur ? 'blue' : 'neutral'}>
+                              {r.student?.studentCode || '---'}
+                            </IdentifierBadge>
+                            <span
+                              className="truncate max-w-[110px] font-normal"
+                              title={r.onlineExamConfig?.examSchedule?.subject?.subjectName || r.subjectName}
+                            >
+                              {r.onlineExamConfig?.examSchedule?.subject?.subjectName || r.subjectName || 'Môn thi'}
+                            </span>
+                          </div>
+
+                          <div className="shrink-0">
+                            <StatusBadge status={r.gradingStatus} />
+                          </div>
                         </div>
                       </div>
                     );
