@@ -164,20 +164,18 @@ export function TrashFilterPopover({
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         onClick={() => setIsOpen(!isOpen)}
-        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-medium transition-all duration-150 cursor-pointer shadow-2xs select-none ${
-          activeFilterCount > 0
+        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-medium transition-all duration-150 cursor-pointer shadow-2xs select-none ${activeFilterCount > 0
             ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-semibold'
             : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-slate-50 dark:hover:bg-slate-800'
-        }`}
+          }`}
         title="Mở bảng điều khiển bộ lọc thùng rác"
       >
         <div className="flex items-center gap-1.5">
           <SlidersHorizontal
-            className={`h-4 w-4 shrink-0 transition-transform duration-150 ${
-              activeFilterCount > 0
+            className={`h-4 w-4 shrink-0 transition-transform duration-150 ${activeFilterCount > 0
                 ? 'text-blue-600 dark:text-blue-400 stroke-[2.3]'
                 : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600 group-hover:scale-105'
-            }`}
+              }`}
           />
           <span>Bộ lọc</span>
         </div>
@@ -198,9 +196,8 @@ export function TrashFilterPopover({
             </div>
           ) : (
             <ChevronDown
-              className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${
-                isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
-              }`}
+              className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
+                }`}
             />
           )}
         </div>
@@ -267,11 +264,10 @@ export function TrashFilterPopover({
                       key={cat.id}
                       type="button"
                       onClick={() => setCurrCategoryTab(cat.id)}
-                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${
-                        isActive
+                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${isActive
                           ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold shadow-2xs'
                           : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <IconComp className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`} />
@@ -314,11 +310,10 @@ export function TrashFilterPopover({
                         onActiveCategoryChange('schedules');
                         onExpiryFilterChange?.('');
                       }}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        activeCategory === 'schedules' && !expiryFilter
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${activeCategory === 'schedules' && !expiryFilter
                           ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
                           : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${activeCategory === 'schedules' && !expiryFilter ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -329,11 +324,10 @@ export function TrashFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${
-                          activeCategory === 'schedules' && !expiryFilter
+                        <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${activeCategory === 'schedules' && !expiryFilter
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                        }`}>
+                          }`}>
                           {stats.schedules}
                         </span>
                         {activeCategory === 'schedules' && !expiryFilter && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
@@ -346,11 +340,10 @@ export function TrashFilterPopover({
                         onActiveCategoryChange('questions');
                         onExpiryFilterChange?.('');
                       }}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        activeCategory === 'questions' && !expiryFilter
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${activeCategory === 'questions' && !expiryFilter
                           ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
                           : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${activeCategory === 'questions' && !expiryFilter ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -361,11 +354,10 @@ export function TrashFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${
-                          activeCategory === 'questions' && !expiryFilter
+                        <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${activeCategory === 'questions' && !expiryFilter
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                        }`}>
+                          }`}>
                           {stats.questions}
                         </span>
                         {activeCategory === 'questions' && !expiryFilter && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
@@ -377,11 +369,10 @@ export function TrashFilterPopover({
                       onClick={() => {
                         onExpiryFilterChange?.('expiring_soon');
                       }}
-                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                        expiryFilter === 'expiring_soon'
+                      className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${expiryFilter === 'expiring_soon'
                           ? 'border-rose-500 bg-rose-50/80 dark:bg-rose-950/60 text-rose-900 dark:text-rose-100 shadow-2xs'
                           : 'border-slate-200/70 dark:border-slate-800 hover:border-rose-200 dark:hover:border-rose-900 hover:bg-rose-50/30 dark:hover:bg-rose-950/20'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div className={`text-xs font-semibold ${expiryFilter === 'expiring_soon' ? 'text-rose-700 dark:text-rose-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -413,11 +404,10 @@ export function TrashFilterPopover({
                         key={item.key}
                         type="button"
                         onClick={() => onActiveCategoryChange(item.key)}
-                        className={`flex w-full items-center justify-between rounded-xl p-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                          activeCategory === item.key
+                        className={`flex w-full items-center justify-between rounded-xl p-2.5 text-left transition-all duration-150 cursor-pointer border ${activeCategory === item.key
                             ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
                             : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                        }`}
+                          }`}
                       >
                         <div className="min-w-0 pr-2">
                           <div className={`text-xs font-semibold ${activeCategory === item.key ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -428,11 +418,10 @@ export function TrashFilterPopover({
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${
-                            activeCategory === item.key
+                          <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${activeCategory === item.key
                               ? 'bg-blue-600 text-white'
                               : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                          }`}>
+                            }`}>
                             {item.count}
                           </span>
                           {activeCategory === item.key && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
@@ -454,11 +443,10 @@ export function TrashFilterPopover({
                         key={item.key}
                         type="button"
                         onClick={() => onExpiryFilterChange?.(item.key)}
-                        className={`flex w-full items-center justify-between rounded-xl p-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                          expiryFilter === item.key
+                        className={`flex w-full items-center justify-between rounded-xl p-2.5 text-left transition-all duration-150 cursor-pointer border ${expiryFilter === item.key
                             ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
                             : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
-                        }`}
+                          }`}
                       >
                         <div className="min-w-0 pr-2">
                           <div className={`text-xs font-semibold ${expiryFilter === item.key ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>

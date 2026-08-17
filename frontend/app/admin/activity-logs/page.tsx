@@ -1178,16 +1178,18 @@ export default function ActivityLogsPage() {
                             <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
-                                            <Activity className="h-6 w-6 text-white" />
+                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                                            <Activity className="h-5 w-5 text-white" />
                                         </div>
 
                                         <div className="min-w-0 flex-1">
                                             <div className="flex items-center gap-2 flex-wrap">
-                                                <h2 className="text-[18px] font-semibold leading-snug text-slate-900 dark:text-white break-words">
+                                                <h2 className="text-[17px] font-semibold leading-snug text-slate-900 dark:text-white break-words">
                                                     Chi tiết Nhật ký
                                                 </h2>
-                                                <IdentifierBadge tone="neutral">#{drawerOpenLog.id}</IdentifierBadge>
+                                                <IdentifierBadge tone="neutral" className="max-w-[200px] truncate" title={`#${drawerOpenLog.id}`}>
+                                                    #{drawerOpenLog.id}
+                                                </IdentifierBadge>
                                             </div>
                                             <p className="mt-1 text-[13px] font-medium text-slate-500 dark:text-slate-400 tabular-nums truncate">
                                                 Thời gian: {new Date(drawerOpenLog.createdAt).toLocaleString('vi-VN')}
@@ -1208,7 +1210,7 @@ export default function ActivityLogsPage() {
                             </div>
 
                             {/* Content Body */}
-                            <div className="flex-1 space-y-6 overflow-y-auto bg-white dark:bg-slate-900 p-6 text-[15px]">
+                            <div className="flex-1 space-y-6 overflow-y-auto bg-white dark:bg-slate-900 p-6 text-[15px] custom-scrollbar">
                                 {/* Section 1: Thông tin định danh */}
                                 <div className="space-y-3">
                                     <div className="flex items-center gap-2">
@@ -1250,7 +1252,7 @@ export default function ActivityLogsPage() {
                                     </div>
                                 </div>
 
-                                {/* Section 2: Nội dung mô tả */}
+                                {/* Section 2: Nội dung mô tả (Bố cục phẳng, không lồng khung hộp thô) */}
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
                                         <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
@@ -1258,9 +1260,9 @@ export default function ActivityLogsPage() {
                                             Nội dung thao tác chi tiết
                                         </h3>
                                     </div>
-                                    <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850/60 p-4 text-[14px] font-normal leading-relaxed text-slate-800 dark:text-slate-200">
+                                    <p className="text-[14px] font-normal leading-relaxed text-slate-700 dark:text-slate-300 py-1">
                                         {drawerOpenLog.description}
-                                    </div>
+                                    </p>
                                 </div>
 
                                 {/* Section 3: Data Metadata JSON */}
@@ -1283,14 +1285,14 @@ export default function ActivityLogsPage() {
                                                     setTimeout(() => setCopied(false), 2000);
                                                 });
                                             }}
-                                            className="flex cursor-pointer items-center gap-1 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-[13px] font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50"
+                                            className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-[13px] font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-750"
                                         >
                                             {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-slate-500" />}
                                             <span>{copied ? 'Đã sao chép!' : 'Sao chép JSON'}</span>
                                         </button>
                                     </div>
 
-                                    <pre className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900 p-4 text-[13px] leading-relaxed text-emerald-400 shadow-inner">
+                                    <pre className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950 p-4 text-[13px] leading-relaxed text-emerald-400 shadow-inner custom-scrollbar">
                                         {JSON.stringify(drawerOpenLog.metadata || { note: 'Không có dữ liệu bổ sung' }, null, 2)}
                                     </pre>
                                 </div>
