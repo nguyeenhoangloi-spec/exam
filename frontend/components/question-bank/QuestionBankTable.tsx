@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, HelpCircle, FileText, ImageIcon, BookOpen } from 'lucide-react';
+import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, HelpCircle, FileText, ImageIcon, BookOpen, Sliders } from 'lucide-react';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { RubricDialog } from './RubricDialog';
@@ -552,6 +552,17 @@ export function QuestionBankTable({
                       >
                         <Eye className="h-4 w-4" />
                       </button>
+
+                      {q.type === 'ESSAY' && (
+                        <button
+                          type="button"
+                          onClick={() => setRubricQuestion(q)}
+                          className="flex h-8 w-8 items-center justify-center rounded-xl text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
+                          title="Cấu hình Rubric cho câu hỏi tự luận này"
+                        >
+                          <Sliders className="h-4 w-4 text-blue-600" />
+                        </button>
+                      )}
 
                       <ActionDropdownPortal>
                         {(closeMenu) => (

@@ -20,6 +20,7 @@ Font Web UI       = Inter
 Màu chữ chính     = đen xanh đậm, không dùng xám lợt
 Cỡ chữ chuẩn      = 15px
 Weight tối thiểu  = 400
+Bố cục            = Phẳng, hạn chế khung hộp, dùng đường kẻ ngang (divide-y / border-t)
 Nút/control       = rounded-xl
 Nút chính         = cao 44px
 Control/filter    = cao 40px
@@ -379,7 +380,29 @@ Các ngoại lệ vẫn phải có accessibility phù hợp nếu là phần t�
 - Hỗ trợ `prefers-reduced-motion`.
 - Không dùng hiệu ứng chớp, rung hoặc gradient quá mạnh cho thao tác thông thường.
 
-## 14. Checklist trước khi hoàn thành màn hình
+## 14. Quy chuẩn Bố cục Phẳng & Hạn chế Khung Hộp (Flat Layout & Divider-First)
+
+Nhằm đảm bảo giao diện luôn thanh thoát, hiện đại, thoáng đãng và không bị nặng nề bởi các khối hộp xếp chồng lên nhau:
+
+### 14.1 Nguyên tắc cốt lõi
+- **Hạn chế tối đa việc lồng nhiều khung hộp (Nested card boxes):** Tránh chia nhỏ từng dòng, từng tiêu chí, từng trường thông tin thành các ô card bo góc riêng biệt có nền xám và viền dày.
+- **Ưu tiên đường kẻ ngang tinh tế (Divider-First):** Thay thế các khung hộp con bằng bố cục phẳng, phân tách các hàng/mục bằng đường kẻ ngang mờ (`divide-y divide-slate-100 dark:divide-slate-800/80` hoặc `border-t border-slate-100 dark:border-slate-800`).
+
+### 14.2 Áp dụng cụ thể
+1. **Danh sách nhiều mục (Criteria / Sub-items / Attributes):**
+   - Gom toàn bộ vào 1 khối phẳng duy nhất.
+   - Mỗi mục là một hàng linh hoạt có số thứ tự nhỏ gọn, tên tiêu đề (`15px font-semibold`), mô tả phụ bên dưới (`14px text-slate-500`) và giá trị/điểm số căn phải thẳng hàng.
+   - Phân cách giữa các hàng bằng `divide-y divide-slate-100 dark:divide-slate-800/80`.
+2. **Phân cách giữa các khối nội dung lớn (Sections):**
+   - Sử dụng `border-t border-slate-100 dark:border-slate-800 pt-3.5` (hoặc `pt-4`) kèm tiêu đề Sentence case có thanh chỉ báo xanh nhỏ (`h-4 w-1 rounded-full bg-blue-600`).
+   - Tuyệt đối không dùng chữ IN HOA toàn bộ cho tiêu đề section (Ví dụ: dùng `Đề bài câu hỏi`, `Đáp án mẫu & Hướng dẫn giải` thay vì `ĐỀ BÀI CÂU HỎI`).
+3. **Thanh trạng thái & Cảnh báo inline (Status / Notice bars):**
+   - Không dùng nền màu đặc đậm (`bg-amber-50`, `bg-emerald-50`) đóng khung to chắn giữa màn hình nếu không phải là Alert quan trọng cấp hệ thống.
+   - Ưu tiên dòng trạng thái phẳng, trong suốt (`py-1 text-xs/text-sm font-semibold` kèm icon semantic `CheckCircle2` / `AlertTriangle`).
+
+---
+
+## 15. Checklist trước khi hoàn thành màn hình
 
 ### Typography
 
@@ -389,6 +412,13 @@ Các ngoại lệ vẫn phải có accessibility phù hợp nếu là phần t�
 - [ ] Button/control dùng 15px.
 - [ ] Table body dùng 15px.
 - [ ] Không dùng chữ IN HOA tùy tiện.
+
+### Bố cục & Giao diện phẳng
+
+- [ ] Không lồng nhiều khung hộp (card boxes) con bên trong modal/drawer.
+- [ ] Danh sách nhiều mục dùng đường kẻ ngang (`divide-y`) thay vì bọc từng card riêng.
+- [ ] Tiêu đề Section viết Sentence case, có thanh pill xanh (`h-4 w-1 bg-blue-600`).
+- [ ] Thanh trạng thái/khớp điểm inline phẳng, không dùng nền hộp thô.
 
 ### Button/control
 
@@ -411,7 +441,7 @@ Các ngoại lệ vẫn phải có accessibility phù hợp nếu là phần t�
 - [ ] Mobile đạt vùng chạm tối thiểu 44px.
 - [ ] Không bị tràn chữ hoặc vỡ layout ở text dài.
 
-## 15. Lệnh kiểm tra kỹ thuật
+## 16. Lệnh kiểm tra kỹ thuật
 
 Chạy trong thư mục `frontend`:
 

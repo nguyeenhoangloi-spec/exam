@@ -17,6 +17,7 @@ import {
 import { Button } from '../ui/Button';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { Toast } from '../Toast';
+import { Modal } from '../Modal';
 
 interface RubricCriterion {
   id?: string;
@@ -49,15 +50,20 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
   const loadRubric = useCallback(async () => {
     setLoading(true);
     setMessage('');
+    const qScore = Number(question?.score || 0);
     try {
       const res = await api.get(`/essay/questions/${question.id}/rubric`);
       if (res.data && res.data.length > 0) {
-        setCriteria(res.data);
+        if (res.data.length === 1 && qScore > 0 && Math.abs(Number(res.data[0].maxScore) - qScore) > 0.001) {
+          setCriteria([{ ...res.data[0], maxScore: qScore }]);
+        } else {
+          setCriteria(res.data);
+        }
       } else {
         // Default 1 criterion matching question score
         setCriteria([
           {
-            label: 'Nội dung câu trả lời chính',
+            label: 'Nội dung câu trả lời tự luận hoàn chỉnh',
             description: 'Đánh giá tính chính xác, đầy đủ của câu trả lời',
             fullCreditGuide: '',
             partialCreditGuide: '',
@@ -65,7 +71,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
             acceptedConcepts: '',
             commonMistakes: '',
             scoreStep: 0.25,
-            maxScore: question.score || 1.0,
+            maxScore: qScore || 1.0,
             sortOrder: 1,
           },
         ]);
@@ -181,7 +187,9 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
       if (onSuccess) onSuccess();
       onClose();
     } catch (e: any) {
-      setMessage(e?.response?.data?.message || 'Không thể lưu Rubric.');
+      const apiMsg = e?.response?.data?.message;
+      const displayMsg = Array.isArray(apiMsg) ? apiMsg.join(', ') : (apiMsg || e?.message || 'Không thể lưu Rubric.');
+      setMessage(displayMsg);
     } finally {
       setSaving(false);
     }
@@ -191,253 +199,162 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
 
   return (
     <>
-      <div role="dialog" aria-modal="true" className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
-        <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col max-h-[90vh]">
-          {/* Header */}
-          <div className="bg-slate-900 dark:bg-slate-950 p-5 text-white shrink-0 border-b border-slate-800">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 text-blue-400 flex items-center justify-center font-bold">
-                  <Sliders className="h-5 w-5" />
-                </div>
-                <div>
-                  <h2 className="text-base font-semibold text-white">
-                    Thiết Lập Ba-rem (Rubric) Chấm Điểm
-                  </h2>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Chia nhỏ câu hỏi thành các ý để giảng viên và AI chấm điểm chính xác
-                  </p>
-                </div>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Thiết Lập Ba-rem (Rubric) Chấm Điểm"
+        subtitle="Chia nhỏ câu hỏi thành các ý để chấm điểm chính xác"
+        size="2xl"
+      >
+        <div className="space-y-4">
+          {/* Top Question Strip */}
+          <div className="space-y-1.5 pb-3.5 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div className="flex items-center gap-2">
+                <IdentifierBadge tone="blue">{question.code || 'Câu tự luận'}</IdentifierBadge>
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">Đề bài:</span>
               </div>
-              <button
-                type="button"
-                onClick={onClose}
-                className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition cursor-pointer"
-                title="Đóng"
-              >
-                <X className="h-5 w-5" />
-              </button>
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                Điểm câu hỏi: <strong className="text-blue-600 dark:text-blue-400 font-bold text-sm">{expectedScore}đ</strong>
+              </span>
+            </div>
+            <p className="text-[13px] text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
+              {question.content}
+            </p>
+          </div>
+
+          {/* Inline Status Line (Không dùng nền, phẳng 100%) */}
+          <div className="flex items-center justify-between gap-3 text-xs py-1">
+            <div className="flex items-center gap-2">
+              {isMatched ? (
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              ) : (
+                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+              )}
+              <span className={`font-semibold ${
+                isMatched
+                  ? 'text-emerald-700 dark:text-emerald-400'
+                  : 'text-amber-700 dark:text-amber-400'
+              }`}>
+                {isMatched
+                  ? 'Tổng điểm các tiêu chí đã khớp 100% với đề thi'
+                  : scoreDiff > 0
+                  ? `Chưa khớp: Còn thiếu ${scoreDiff}đ`
+                  : `Chưa khớp: Đang dư ${Math.abs(scoreDiff)}đ`}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="font-bold tabular-nums text-slate-900 dark:text-slate-100">
+                {totalRubricScore} / {expectedScore}đ
+              </span>
+              {criteria.length > 1 && !isMatched && (
+                <button
+                  type="button"
+                  onClick={handleAutoDivideScores}
+                  className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                >
+                  (Chia đều)
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Content Body */}
-          <div className="p-5 overflow-y-auto space-y-4 flex-1 bg-slate-50/50 dark:bg-slate-900/60">
-            {/* Question Info Card */}
-            <div className="p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200/90 dark:border-slate-700 space-y-2 shadow-2xs">
-              <div className="flex items-center justify-between text-xs text-slate-500">
-                <div className="flex items-center gap-2">
-                  <IdentifierBadge tone="blue">{question.code || 'Câu tự luận'}</IdentifierBadge>
-                  <span className="font-medium text-slate-700 dark:text-slate-300">Đề bài:</span>
-                </div>
-                <span className="font-semibold text-slate-900 dark:text-slate-100">
-                  Điểm chuẩn: <strong className="text-blue-600 dark:text-blue-400">{expectedScore}đ</strong>
-                </span>
-              </div>
-              <p className="text-xs text-slate-800 dark:text-slate-200 leading-relaxed font-medium">
-                {question.content}
-              </p>
+          {loading ? (
+            <div className="flex justify-center py-10">
+              <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
             </div>
-
-            {/* Score Match Balance Status Bar */}
-            <div className={`p-3.5 rounded-xl border flex items-center justify-between gap-3 text-xs font-semibold shadow-2xs ${
-              isMatched
-                ? 'bg-emerald-50/80 border-emerald-200 text-emerald-800 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300'
-                : 'bg-amber-50/80 border-amber-200 text-amber-800 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300'
-            }`}>
-              <div className="flex items-center gap-2">
-                {isMatched ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                ) : (
-                  <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-                )}
-                <span>
-                  {isMatched
-                    ? 'Tổng điểm các tiêu chí đã khớp 100% với điểm câu hỏi'
-                    : scoreDiff > 0
-                    ? `Chưa khớp: Tổng điểm đang thiếu ${scoreDiff}đ`
-                    : `Chưa khớp: Tổng điểm đang vượt quá ${Math.abs(scoreDiff)}đ`}
+          ) : (
+            <div className="space-y-3 pt-1">
+              <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                  Các ý chấm điểm ({criteria.length})
                 </span>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  leftIcon={<Plus className="w-3.5 h-3.5 text-blue-600" />}
+                  onClick={handleAddCriterion}
+                >
+                  Thêm ý chấm
+                </Button>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 tabular-nums font-bold text-xs">
-                  {totalRubricScore} / {expectedScore}đ
-                </span>
-                {criteria.length > 1 && !isMatched && (
-                  <button
-                    type="button"
-                    onClick={handleAutoDivideScores}
-                    className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-700 text-[11px] font-semibold hover:bg-blue-50 transition cursor-pointer"
-                    title="Tự động chia đều tổng điểm cho tất cả tiêu chí"
-                  >
-                    Chia đều điểm
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {loading ? (
-              <div className="flex justify-center py-10">
-                <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
-                    Danh sách các ý chấm ({criteria.length})
-                  </h3>
-                  <button
-                    type="button"
-                    onClick={handleAddCriterion}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/80 dark:text-blue-300 dark:hover:bg-blue-900 px-3 py-1.5 rounded-xl transition cursor-pointer border border-blue-200 dark:border-blue-800"
-                  >
-                    <Plus className="w-3.5 h-3.5" /> Thêm tiêu chí
-                  </button>
-                </div>
-
-                {/* Criteria Cards */}
-                {criteria.map((c, idx) => {
-                  const isExpanded = expandedIndex === idx;
-
-                  return (
-                    <div
-                      key={idx}
-                      className="p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200/90 dark:border-slate-700 space-y-3 shadow-2xs relative"
-                    >
-                      {/* Main Criterion Row: Label & Score */}
-                      <div className="flex items-start gap-3">
-                        <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs flex items-center justify-center shrink-0 mt-2">
-                          {idx + 1}
-                        </div>
-
-                        <div className="flex-1 space-y-1">
-                          <label className="block text-xs font-medium text-slate-700 dark:text-slate-300">
-                            Tên ý chấm / Tiêu chí <span className="text-rose-500">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="Ví dụ: Nêu đúng định nghĩa, cho ví dụ minh họa..."
-                            value={c.label}
-                            onChange={(e) => handleFieldChange(idx, 'label', e.target.value)}
-                            className="w-full bg-slate-50/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-slate-100 font-medium focus:bg-white focus:border-blue-500 focus:outline-none"
-                          />
-                        </div>
-
-                        <div className="w-28 space-y-1">
-                          <label className="block text-xs font-medium text-slate-700 dark:text-slate-300">
-                            Điểm tối đa <span className="text-rose-500">*</span>
-                          </label>
-                          <div className="relative">
-                            <input
-                              type="number"
-                              step={0.1}
-                              min={0.1}
-                              max={expectedScore}
-                              value={c.maxScore}
-                              onChange={(e) => handleFieldChange(idx, 'maxScore', Number(e.target.value))}
-                              className="w-full bg-slate-50/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl pl-3 pr-7 py-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 tabular-nums focus:bg-white focus:border-blue-500 focus:outline-none"
-                            />
-                            <span className="absolute right-2.5 top-1.5 text-xs text-slate-400 font-medium pointer-events-none">
-                              đ
-                            </span>
-                          </div>
-                        </div>
-
-                        {criteria.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveCriterion(idx)}
-                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition cursor-pointer shrink-0 mt-6"
-                            title="Xóa tiêu chí này"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
+              {/* Flat Criteria Rows */}
+              <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                {criteria.map((c, idx) => (
+                  <div key={idx} className="py-3 space-y-2 first:pt-0 last:pb-0">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-bold text-xs flex items-center justify-center shrink-0">
+                        {idx + 1}
                       </div>
 
-                      {/* Brief description */}
-                      <div className="space-y-1 pl-9">
-                        <label className="block text-[11px] font-normal text-slate-500">
-                          Mô tả nội dung đạt yêu cầu (tùy chọn):
-                        </label>
+                      <div className="flex-1">
                         <input
                           type="text"
-                          placeholder="Mô tả tóm tắt nội dung sinh viên cần nêu được..."
-                          value={c.description}
-                          onChange={(e) => handleFieldChange(idx, 'description', e.target.value)}
-                          className="w-full bg-slate-50/30 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:bg-white focus:border-blue-500 focus:outline-none font-normal"
+                          placeholder={`Nội dung ý ${idx + 1} (Ví dụ: Nêu đúng định nghĩa, giải thích đúng...)`}
+                          value={c.label}
+                          onChange={(e) => handleFieldChange(idx, 'label', e.target.value)}
+                          className="w-full bg-slate-50/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-slate-100 font-medium focus:bg-white focus:border-blue-500 focus:outline-none transition"
                         />
                       </div>
 
-                      {/* Expandable AI Prompt Guides */}
-                      <div className="pl-9 pt-1">
+                      <div className="w-24 relative shrink-0">
+                        <input
+                          type="number"
+                          step={0.1}
+                          min={0.1}
+                          max={expectedScore}
+                          value={c.maxScore}
+                          onChange={(e) => handleFieldChange(idx, 'maxScore', Number(e.target.value))}
+                          className="w-full bg-slate-50/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl pl-3 pr-6 py-2 text-xs font-bold text-blue-600 dark:text-blue-400 tabular-nums focus:bg-white focus:border-blue-500 focus:outline-none transition"
+                        />
+                        <span className="absolute right-2 top-2 text-xs text-slate-400 font-medium pointer-events-none">
+                          đ
+                        </span>
+                      </div>
+
+                      {criteria.length > 1 && (
                         <button
                           type="button"
-                          onClick={() => setExpandedIndex(isExpanded ? null : idx)}
-                          className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 hover:text-blue-600 transition cursor-pointer"
+                          onClick={() => handleRemoveCriterion(idx)}
+                          className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition cursor-pointer shrink-0"
+                          title="Xóa ý này"
                         >
-                          <Sparkles className="w-3 h-3 text-amber-500" />
-                          <span>{isExpanded ? 'Thu gọn hướng dẫn chi tiết cho AI' : 'Mở rộng hướng dẫn chi tiết cho AI (Nâng cao)'}</span>
-                          {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                          <Trash2 className="w-4 h-4" />
                         </button>
-
-                        {isExpanded && (
-                          <div className="mt-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 space-y-2.5">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
-                              <div className="space-y-1">
-                                <label className="block text-[11px] font-semibold text-emerald-600">Đạt điểm tối đa</label>
-                                <textarea
-                                  rows={2}
-                                  placeholder="Ý cần có để đạt full điểm..."
-                                  value={c.fullCreditGuide || ''}
-                                  onChange={(e) => handleFieldChange(idx, 'fullCreditGuide', e.target.value)}
-                                  className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500"
-                                />
-                              </div>
-                              <div className="space-y-1">
-                                <label className="block text-[11px] font-semibold text-amber-600">Đạt điểm một phần</label>
-                                <textarea
-                                  rows={2}
-                                  placeholder="Thiếu sót hoặc chưa đủ..."
-                                  value={c.partialCreditGuide || ''}
-                                  onChange={(e) => handleFieldChange(idx, 'partialCreditGuide', e.target.value)}
-                                  className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500"
-                                />
-                              </div>
-                              <div className="space-y-1">
-                                <label className="block text-[11px] font-semibold text-rose-600">Không đạt điểm</label>
-                                <textarea
-                                  rows={2}
-                                  placeholder="Không trả lời hoặc sai..."
-                                  value={c.zeroCreditGuide || ''}
-                                  onChange={(e) => handleFieldChange(idx, 'zeroCreditGuide', e.target.value)}
-                                  className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                      )}
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
 
-          {/* Footer */}
-          <div className="px-6 py-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center shrink-0">
-            <div className="text-xs text-slate-500 font-medium">
-              Tổng ba-rem: <strong className="text-slate-900 dark:text-slate-100">{totalRubricScore}đ</strong> / {expectedScore}đ
+                    <div className="pl-9 pr-2">
+                      <input
+                        type="text"
+                        placeholder="Ghi chú chi tiết yêu cầu đạt (tùy chọn)..."
+                        value={c.description}
+                        onChange={(e) => handleFieldChange(idx, 'description', e.target.value)}
+                        className="w-full bg-transparent border-0 border-b border-transparent focus:border-slate-300 dark:focus:border-slate-700 px-0 py-0.5 text-[11px] text-slate-500 dark:text-slate-400 placeholder:text-slate-400 focus:outline-none transition"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="flex gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={onClose}>
+          )}
+
+          {/* Standard Footer */}
+          <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <div className="text-xs text-slate-600 dark:text-slate-400 font-medium">
+              Tổng điểm ba-rem: <strong className="text-slate-900 dark:text-slate-100 font-bold text-sm">{totalRubricScore}đ</strong> / {expectedScore}đ
+            </div>
+            <div className="flex gap-2.5 items-center">
+              <Button type="button" variant="secondary" size="md" onClick={onClose}>
                 Hủy
               </Button>
               <Button
                 type="button"
                 variant="primary"
-                size="sm"
+                size="md"
                 onClick={handleSave}
                 disabled={saving || !isMatched}
                 isLoading={saving}
@@ -447,7 +364,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
             </div>
           </div>
         </div>
-      </div>
+      </Modal>
       {message && <Toast message={message} type="error" onClose={() => setMessage('')} />}
     </>
   );

@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
 import api from '../../lib/api';
-import { X, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { Modal } from '../Modal';
 
 interface RubricCriterion {
   id?: string;
@@ -39,11 +39,6 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
   const [criteria, setCriteria] = useState<RubricCriterion[]>([]);
   const [fetchedAnswer, setFetchedAnswer] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (!isOpen || !question) return;
@@ -79,131 +74,134 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
     }
   }, [isOpen, question]);
 
-  if (!isOpen || !question || !mounted) return null;
+  if (!isOpen || !question) return null;
 
   const sampleAns = (fetchedAnswer || question.sampleAnswer || question.explanation || question.correctAnswer || '').trim();
   const totalRubricScore = criteria.reduce((sum, c) => sum + Number(c.maxScore || 0), 0);
 
-  // Check if rubric is custom (has multiple criteria or detailed guidelines)
-  const isDefaultSingleRubric = criteria.length === 1 &&
-    (criteria[0].label === 'Nội dung & Đánh giá tổng thể' || criteria[0].label === 'Nội dung câu trả lời tự luận hoàn chỉnh') &&
-    !criteria[0].fullCreditGuide && !criteria[0].description;
-
-  return createPortal(
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-[2px] animate-fade-in"
-      onClick={onClose}
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="2xl"
+      title="Đáp án & Ba-rem chấm"
+      subtitle={
+        question.code
+          ? `Câu ${question.code} • Điểm tối đa: ${question.score || totalRubricScore || 0}đ`
+          : `Điểm tối đa: ${question.score || totalRubricScore || 0}đ`
+      }
     >
-      <div
-        className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200/90 dark:border-slate-800 overflow-hidden flex flex-col max-h-[85vh]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+      <div className="space-y-4">
+        {/* Đề bài câu hỏi */}
+        <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <h3 className="text-[15px] font-bold text-slate-900 dark:text-slate-100">
-              Đáp án & Ba-rem chấm
-            </h3>
-            <span className="text-xs px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">
-              {question.code || 'Câu tự luận'} · {question.score || totalRubricScore || 0}đ
+            <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+            <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+              Đề bài câu hỏi
+            </h4>
+          </div>
+          <p className="text-[15px] leading-relaxed text-slate-800 dark:text-slate-200 font-normal">
+            {question.content}
+          </p>
+        </div>
+
+        {/* Đáp án mẫu / Hướng dẫn giải */}
+        <div className="space-y-2 pt-3.5 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex items-center gap-2">
+            <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+            <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+              Đáp án mẫu & Hướng dẫn giải
+            </h4>
+          </div>
+          {sampleAns ? (
+            <p className="text-[15px] leading-relaxed text-slate-800 dark:text-slate-200 font-normal whitespace-pre-wrap">
+              {sampleAns}
+            </p>
+          ) : (
+            <p className="text-sm text-slate-400 italic">
+              Chưa có văn bản đáp án mẫu trong ngân hàng câu hỏi.
+            </p>
+          )}
+        </div>
+
+        {/* Tiêu chí chấm điểm chi tiết */}
+        <div className="space-y-2 pt-3.5 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+              <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+                Tiêu chí chấm điểm chi tiết ({criteria.length > 0 ? criteria.length : 1})
+              </h4>
+            </div>
+            <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
+              Tổng: {question.score || totalRubricScore || 0}đ
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg transition cursor-pointer"
-            title="Đóng"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        {/* Content Body */}
-        <div className="p-6 overflow-y-auto space-y-5 flex-1 text-sm">
-          {/* Question Text */}
-          <div className="space-y-1">
-            <span className="text-xs font-semibold text-slate-400">Câu hỏi:</span>
-            <p className="text-slate-900 dark:text-slate-100 leading-relaxed font-normal">
-              {question.content}
-            </p>
-          </div>
-
-          {/* Model Answer */}
-          <div className="space-y-2 border-t border-slate-100 dark:border-slate-800 pt-4">
-            <span className="text-xs font-semibold text-slate-400">Đáp án mẫu / Hướng dẫn giải:</span>
-            {sampleAns ? (
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-wrap font-normal text-[13.5px]">
-                {sampleAns}
-              </div>
-            ) : (
-              <p className="text-xs text-slate-400 italic">
-                Chưa có văn bản đáp án mẫu trong ngân hàng câu hỏi.
-              </p>
-            )}
-          </div>
-
-          {/* Rubric Criteria (Only show if multiple or detailed criteria exist) */}
-          {!isDefaultSingleRubric && criteria.length > 0 && (
-            <div className="space-y-3 border-t border-slate-100 dark:border-slate-800 pt-4">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-400">
-                  Tiêu chí chấm điểm chi tiết ({criteria.length})
-                </span>
-                <span className="text-xs font-medium text-slate-500">
-                  Tổng: {totalRubricScore}đ
-                </span>
-              </div>
-
-              {loading ? (
-                <div className="flex justify-center py-4">
-                  <Loader2 className="h-5 w-5 text-slate-400 animate-spin" />
-                </div>
-              ) : (
-                <div className="space-y-2.5">
-                  {criteria.map((c, idx) => (
-                    <div
-                      key={c.id || idx}
-                      className="p-3.5 rounded-xl bg-slate-50/60 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 space-y-1.5"
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-semibold text-xs text-slate-800 dark:text-slate-200">
-                          {idx + 1}. {c.label}
-                        </span>
-                        <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
-                          {c.maxScore}đ
-                        </span>
-                      </div>
-                      {c.description && (
-                        <p className="text-xs text-slate-500 font-normal">
-                          {c.description}
-                        </p>
-                      )}
-                      {(c.fullCreditGuide || c.partialCreditGuide || c.zeroCreditGuide) && (
-                        <div className="text-[11px] space-y-0.5 pt-1 text-slate-500 font-normal">
-                          {c.fullCreditGuide && <div>• Đạt tối đa: {c.fullCreditGuide}</div>}
-                          {c.partialCreditGuide && <div>• Đạt một phần: {c.partialCreditGuide}</div>}
-                          {c.zeroCreditGuide && <div>• Không đạt: {c.zeroCreditGuide}</div>}
-                        </div>
-                      )}
+          {loading ? (
+            <div className="flex justify-center py-6">
+              <Loader2 className="h-5 w-5 text-blue-600 animate-spin" />
+            </div>
+          ) : criteria.length > 0 ? (
+            <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
+              {criteria.map((c, idx) => (
+                <div
+                  key={c.id || idx}
+                  className="py-3 flex items-start justify-between gap-4"
+                >
+                  <div className="space-y-1 min-w-0 flex-1">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-bold text-[11px]">
+                        {idx + 1}
+                      </span>
+                      <span className="font-semibold text-[15px] text-slate-900 dark:text-slate-100">
+                        {c.label}
+                      </span>
                     </div>
-                  ))}
+
+                    {c.description && (
+                      <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed pl-7.5">
+                        {c.description}
+                      </p>
+                    )}
+
+                    {(c.fullCreditGuide || c.partialCreditGuide || c.zeroCreditGuide) && (
+                      <div className="text-xs space-y-0.5 pt-1 text-slate-500 pl-7.5 font-normal">
+                        {c.fullCreditGuide && (
+                          <div>• <span className="font-medium text-emerald-600 dark:text-emerald-400">Đạt tối đa:</span> {c.fullCreditGuide}</div>
+                        )}
+                        {c.partialCreditGuide && (
+                          <div>• <span className="font-medium text-amber-600 dark:text-amber-400">Đạt một phần:</span> {c.partialCreditGuide}</div>
+                        )}
+                        {c.zeroCreditGuide && (
+                          <div>• <span className="font-medium text-rose-600 dark:text-rose-400">Không đạt:</span> {c.zeroCreditGuide}</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="shrink-0 pt-0.5 text-right">
+                    <span className="font-bold text-sm text-blue-600 dark:text-blue-400 tabular-nums">
+                      {c.maxScore}đ
+                    </span>
+                  </div>
                 </div>
-              )}
+              ))}
+            </div>
+          ) : (
+            <div className="py-2.5 text-sm text-slate-500 italic">
+              Chưa bóc tách tiêu chí chi tiết (Hệ thống áp dụng 1 tiêu chí mặc định toàn vẹn {question.score || 0}đ).
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-          <Button type="button" variant="secondary" size="sm" onClick={onClose}>
+        <div className="flex justify-end pt-3.5 border-t border-slate-100 dark:border-slate-800">
+          <Button type="button" variant="secondary" size="md" onClick={onClose}>
             Đóng
           </Button>
         </div>
       </div>
-    </div>,
-    document.body
+    </Modal>
   );
 }

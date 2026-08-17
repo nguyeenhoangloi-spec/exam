@@ -248,7 +248,7 @@ Các quy tắc nghiệp vụ bắt buộc:
 
 ### Quy tắc chung
 
-* Màu popup/thông báo phải theo bảng màu trên; không tự chọn màu khác.* Chữ luôn căn trái trừ khi có quy định khác; tiêu đề in đậm, nội dung vừa phải (`text-sm`/`text-xs`).* Toast chỉ đặt góc dưới bên phải; không đặt trái hoặc phía trên.* Mọi popup phải có overlay tối + `backdrop-blur` để nhấn rõ nội dung phía sau.* Luôn hỗ trợ dark mode (`dark:`).* Thứ tự z-index: `Modal` (100) < `Toast` (110) < `ConfirmModal`/`CriticalConfirmModal` (9999).
+* Màu popup/thông báo phải theo bảng màu trên; không tự chọn màu khác.* Chữ luôn căn trái trừ khi có quy định khác; tiêu đề in đậm, nội dung vừa phải (`text-sm`/`text-xs`).* Toast chỉ đặt góc dưới bên phải; không đặt trái hoặc phía trên.* Mọi popup phải có overlay tối + `backdrop-blur` để nhấn rõ nội dung phía sau.* Luôn hỗ trợ dark mode (`dark:`).* Thứ tự z-index: `Modal` (100) < `Toast` (110) < `ConfirmModal`/`CriticalConfirmModal` (9999).* **Bố cục phẳng & Hạn chế khung hộp:** Tuyệt đối tránh lồng nhiều khung hộp/thẻ card bo góc xám dày đặc bên trong modal/drawer. Danh sách nhiều mục (tiêu chí, thuộc tính) phải dùng bố cục phẳng phân tách bằng đường kẻ ngang mờ (`divide-y divide-slate-100 dark:divide-slate-800`). Tiêu đề section viết Sentence case, không viết IN HOA toàn bộ. Dòng trạng thái/khớp điểm inline phẳng trong suốt, không dùng nền màu đặc to.
 
 ---
 

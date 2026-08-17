@@ -326,7 +326,7 @@ function TeacherEssayGradingContent() {
           }
         }
         if (gradedCount > 0) {
-          setToast({ message: `AI đã tạo đề xuất điểm cho ${gradedCount} câu tự luận!`, type: 'success' });
+          setToast({ message: `AI đã phân tích và điền đề xuất điểm cho ${gradedCount} câu tự luận!`, type: 'success' });
         } else {
           setToast({ message: 'Không tìm thấy câu trả lời tự luận hợp lệ để AI chấm.', type: 'error' });
         }
@@ -335,13 +335,34 @@ function TeacherEssayGradingContent() {
         for (const row of paginatedRows) {
           if (row.id && !row.id.startsWith('virtual-') && !isNotSubmitted(row) && row.submittedAt) {
             try {
-              await api.get(`/essay/grading/attempts/${row.id}`, { params: { noCache: true } });
+              const detailRes = await api.get(`/essay/grading/attempts/${row.id}`);
+              const detailData = detailRes.data;
+              const essayQuestions = (detailData?.questions || []).filter((q: any) => q.type === 'ESSAY');
+              for (const q of essayQuestions) {
+                const ans = (detailData?.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
+                if (ans?.id) {
+                  try {
+                    const aiRes = await api.post(`/essay-grading/answers/${ans.id}/ai-suggest`);
+                    if (Array.isArray(aiRes.data?.criteria) && aiRes.data.criteria.length > 0) {
+                      await api.patch(`/essay/grading/answers/${ans.id}`, {
+                        criteria: aiRes.data.criteria.map((c: any) => ({
+                          criterionId: c.criterionId,
+                          score: Number(c.score || 0),
+                          comment: c.comment || '',
+                        })),
+                        teacherComment: aiRes.data.overallComment || 'AI đề xuất điểm tự động',
+                      });
+                    }
+                  } catch (e) {}
+                }
+              }
+              await api.post(`/essay/grading/attempts/${row.id}/submit`).catch(() => null);
               count++;
             } catch (e) {}
           }
         }
         const msg = count > 0
-          ? `Hoàn tất AI chấm tự động cho ${count} bài thi trên Trang ${page}!`
+          ? `Hoàn tất AI chấm điểm tự động cho ${count} bài thi trên Trang ${page}!`
           : `Không có bài thi mới nào đã nộp cần AI chấm trên Trang ${page}.`;
         setToast({ message: msg, type: count > 0 ? 'success' : 'error' });
         await loadAssignments();

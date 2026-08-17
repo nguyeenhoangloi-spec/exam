@@ -253,6 +253,14 @@ font-family:
 - **Mã định danh / Số báo danh**: Dùng [IdentifierBadge](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/ui/IdentifierBadge.tsx) (`rounded-lg`, 13px, `tabular-nums`).
 - **Luôn có**: Skeleton loading, EmptyState khi rỗng, Pagination khi nhiều trang.
 
+### 7.3 Quy chuẩn Bố cục Phẳng & Hạn chế Khung Hộp (Flat Layout & Divider-First)
+
+- **Hạn chế tối đa việc lồng nhiều khung hộp (Nested card boxes):** Tránh chia nhỏ từng dòng, từng tiêu chí, từng trường thông tin thành các ô card bo góc riêng biệt có nền xám và viền dày bên trong modal/drawer.
+- **Ưu tiên đường kẻ ngang tinh tế (Divider-First):** Thay thế các khung hộp con bằng bố cục phẳng, phân tách các hàng/mục bằng đường kẻ ngang mờ (`divide-y divide-slate-100 dark:divide-slate-800/80` hoặc `border-t border-slate-100 dark:border-slate-800`).
+- **Danh sách nhiều mục (Criteria / Attributes):** Gom vào 1 khối phẳng, mỗi mục gồm số thứ tự nhỏ, tên tiêu đề (`15px font-semibold`), mô tả phụ bên dưới (`14px text-slate-500`) và giá trị/điểm số căn phải thẳng hàng.
+- **Tiêu đề Section:** Dùng Sentence case (`Đề bài câu hỏi`, `Đáp án mẫu & Hướng dẫn giải`), chữ `15px font-semibold`, có thanh chỉ báo dọc xanh (`h-4 w-1 rounded-full bg-blue-600`). TUYỆT ĐỐI KHÔNG dùng chữ IN HOA toàn bộ.
+- **Thanh trạng thái / Cảnh báo inline:** Không dùng nền hộp màu đặc dày (`bg-amber-50`); ưu tiên dạng dòng chữ phẳng trong suốt kèm icon semantic (`CheckCircle2` / `AlertTriangle`).
+
 ---
 
 ## 8. Dark Mode & Responsive
@@ -294,7 +302,8 @@ npm run build
 ❌ Dùng font serif (`font-serif`) hoặc monospace (`font-mono`) trong Web UI  
 ❌ Dùng cỡ chữ 10px, 11px, 12px, 14px, 16px cho nội dung body/button (chuẩn là 15px)  
 ❌ Dùng font-weight < 400 (`font-light`, `font-thin`) hoặc > 700 (`font-black`) trong UI thông thường  
-❌ Viết in hoa toàn bộ (`uppercase`) cho button hoặc label  
+❌ Viết in hoa toàn bộ (`uppercase`) cho button, label hoặc tiêu đề section  
+❌ Chia quá nhiều khung hộp (nested card boxes) con bao quanh từng mục; phải dùng bố cục phẳng với đường kẻ ngang `divide-y`  
 ❌ Đặt Toast ở vị trí khác ngoài `fixed bottom-5 right-5`  
 ❌ Tự viết status mapping màu tùy tiện thay vì dùng `StatusBadge`  
 ❌ Để 2 nút Primary cùng xuất hiện trên 1 hàng / nhóm  

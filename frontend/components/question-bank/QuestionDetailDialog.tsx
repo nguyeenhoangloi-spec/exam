@@ -1,12 +1,12 @@
-'use client';
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Question } from '../../types';
+import api from '../../lib/api';
 import { fixHtmlImageUrls, getImageUrl } from '../../lib/media-utils';
 import { ImageLightboxModal } from '../ImageLightboxModal';
 import { VideoLightboxModal } from '../VideoLightboxModal';
-import { Maximize2, X, CheckCircle2, FileText, User, Calendar, BookOpen, Layers, HelpCircle, Hash, Award, Brain } from 'lucide-react';
+import { RubricDialog } from './RubricDialog';
+import { Maximize2, X, CheckCircle2, FileText, User, Calendar, BookOpen, Layers, HelpCircle, Hash, Award, Brain, Sliders } from 'lucide-react';
 import { QuestionDifficultyBadge, QuestionStatusBadge, QuestionTypeBadge } from './QuestionBadges';
 import { Button } from '../ui/Button';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
@@ -17,6 +17,17 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
   const [visible, setVisible] = useState(false);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [videoLightbox, setVideoLightbox] = useState<{ url: string; fileName?: string } | null>(null);
+  const [rubricOpen, setRubricOpen] = useState(false);
+  const [rubrics, setRubrics] = useState<any[]>([]);
+
+  const fetchRubrics = useCallback(async (qid: number | string) => {
+    try {
+      const res = await api.get(`/essay/questions/${qid}/rubric`);
+      setRubrics(res.data || []);
+    } catch {
+      setRubrics([]);
+    }
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -24,6 +35,11 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
 
   useEffect(() => {
     if (question) {
+      if (question.type === 'ESSAY') {
+        void fetchRubrics(question.id);
+      } else {
+        setRubrics([]);
+      }
       const raf = requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setVisible(true);
@@ -33,7 +49,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
     } else {
       setVisible(false);
     }
-  }, [question]);
+  }, [question, fetchRubrics]);
 
   const handleClose = useCallback(() => {
     setVisible(false);
@@ -285,6 +301,55 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
               )}
             </div>
 
+            {/* Section 3.5: Tiêu chí chấm Rubric (dạng phẳng ngăn cách bằng đường kẻ ngang) */}
+            {question.type === 'ESSAY' && (
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                    Tiêu chí chấm Rubric ({rubrics.length > 0 ? rubrics.length : 1})
+                  </h3>
+                </div>
+
+                {rubrics.length > 0 ? (
+                  <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                    {rubrics.map((r, i) => (
+                      <div
+                        key={r.id || i}
+                        className="py-3 px-1 flex items-start justify-between gap-4 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/30 -mx-1 rounded-xl"
+                      >
+                        <div className="space-y-1 min-w-0 flex-1">
+                          <div className="flex items-center gap-2.5">
+                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-bold text-[11px]">
+                              {i + 1}
+                            </span>
+                            <span className="font-semibold text-[14px] text-slate-900 dark:text-slate-100">
+                              {r.label}
+                            </span>
+                          </div>
+                          {r.description && (
+                            <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-relaxed pl-7.5">
+                              {r.description}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="shrink-0 pt-0.5 text-right">
+                          <span className="font-bold text-sm text-blue-600 dark:text-blue-400 tabular-nums">
+                            {rubrics.length === 1 && question.score ? question.score : r.maxScore}đ
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="py-3 text-[14px] text-slate-500 italic">
+                    Chưa bóc tách tiêu chí chi tiết (Đang áp dụng 1 tiêu chí mặc định toàn vẹn {scoreText}).
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Section 4: Metadata thông tin chi tiết (Phẳng dạng divide-y) */}
             <div>
               <div className="flex items-center gap-2 mb-3">
@@ -331,8 +396,8 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
             </div>
           </div>
 
-          {/* Standard Footer */}
-          <div className="border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex items-center justify-end shrink-0">
+          {/* Standard Footer with Primary Action */}
+          <div className="border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex items-center justify-end gap-2.5 shrink-0">
             <Button
               variant="secondary"
               size="md"
@@ -340,9 +405,31 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
             >
               Đóng
             </Button>
+            {question.type === 'ESSAY' && (
+              <Button
+                variant="primary"
+                size="md"
+                leftIcon={<Sliders className="h-4 w-4" />}
+                onClick={() => setRubricOpen(true)}
+              >
+                Cấu hình Rubric
+              </Button>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Rubric Dialog */}
+      {rubricOpen && (
+        <RubricDialog
+          isOpen={rubricOpen}
+          question={question}
+          onClose={() => setRubricOpen(false)}
+          onSuccess={() => {
+            void fetchRubrics(question.id);
+          }}
+        />
+      )}
     </div>
   );
 

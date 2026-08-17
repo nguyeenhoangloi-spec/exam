@@ -78,17 +78,10 @@ export class EssayService {
   }
 
   private async assertRubricAccess(actor: any, questionId: string) {
-    if (actor.role === 'ADMIN') return;
-    const question = await this.prisma.question.findUnique({ where: { id: questionId }, select: { subjectId: true } });
+    if (['ADMIN', 'TEACHER'].includes(actor.role)) return;
+    const question = await this.prisma.question.findUnique({ where: { id: questionId }, select: { id: true } });
     if (!question) throw new NotFoundException('Không tìm thấy câu hỏi.');
-    const assigned = await this.prisma.examScheduleRoom.findFirst({
-      where: {
-        examSchedule: { subjectId: question.subjectId },
-        supervisors: { some: { teacher: { userId: actor.id } } },
-      },
-      select: { id: true },
-    });
-    if (!assigned) throw new ForbiddenException('Bạn không được phân công quản lý hoặc chấm câu hỏi môn này.');
+    throw new ForbiddenException('Bạn không có quyền quản lý hoặc cấu hình Rubric cho câu hỏi này.');
   }
 
   async getRubric(actor: any, questionId: string) {
@@ -145,6 +138,12 @@ export class EssayService {
         orderBy: { version: 'desc' },
         select: { version: true },
       });
+
+      // Xóa các tiêu chí cũ để thay thế bằng bộ tiêu chí mới (tránh trùng lặp unique questionId + sortOrder)
+      await tx.essayRubricCriterion.deleteMany({
+        where: { questionId },
+      });
+
       const version = await tx.essayRubricVersion.create({
         data: {
           questionId,
