@@ -14,6 +14,7 @@ interface ConfirmModalProps {
   reasonPlaceholder?: string;
   confirmText?: string;
   cancelText?: string;
+  confirmVariant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'success' | 'warning';
   isLoading?: boolean;
 }
 
@@ -28,6 +29,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   reasonPlaceholder = 'Nhập lý do (tối thiểu 3 ký tự)...',
   confirmText = 'Xác nhận',
   cancelText = 'Hủy bỏ',
+  confirmVariant,
   isLoading = false,
 }) => {
   const [reason, setReason] = useState('');
@@ -69,7 +71,13 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         return {
           icon: <CheckCircle className="h-4.5 w-4.5 text-emerald-600" />,
           iconShell: 'bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-800/60',
-          btnVariant: 'success' as const,
+          btnVariant: (confirmVariant || (cancelText ? 'primary' : 'secondary')) as
+            | 'primary'
+            | 'secondary'
+            | 'danger'
+            | 'ghost'
+            | 'success'
+            | 'warning',
         };
       case 'warning':
         return {

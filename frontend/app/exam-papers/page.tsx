@@ -294,6 +294,7 @@ export default function ExamPapersPage() {
     message: string;
     type: 'danger' | 'warning' | 'info' | 'success';
     confirmText?: string;
+    cancelText?: string;
     onConfirm: () => void;
   }>({
     isOpen: false,
@@ -636,10 +637,11 @@ export default function ExamPapersPage() {
       await api.post(`/exam-papers/${paper.id}/publish`, payload);
       setConfirmModal({
         isOpen: true,
-        title: 'Phát hành Đề thi Thành công!',
-        message: `Đã phát hành Đề thi mã số [${paper.paperCode}] thành công. Lịch thi tương ứng đã được KHOÁ CHỈNH SỬA chính thức và sinh viên đã có thể tham gia thi.`,
+        title: 'Phát hành đề thi thành công',
+        message: `Đã phát hành đề thi #${paper.paperCode} thành công. Lịch thi tương ứng đã được khóa chỉnh sửa chính thức và thí sinh đã có thể tham gia thi.`,
         type: 'success',
         confirmText: 'Đóng',
+        cancelText: '',
         onConfirm: () => setConfirmModal((prev) => ({ ...prev, isOpen: false })),
       });
       setToast({
@@ -1033,6 +1035,8 @@ export default function ExamPapersPage() {
         title={confirmModal.title}
         message={confirmModal.message}
         type={confirmModal.type}
+        confirmText={confirmModal.confirmText}
+        cancelText={confirmModal.cancelText}
       />
 
       <RubricDialog

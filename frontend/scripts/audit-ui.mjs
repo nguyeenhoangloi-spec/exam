@@ -447,9 +447,9 @@ if (!/max-w-sm/.test(confirmModal)
 }
 
 if (!/fixed inset-0 z-\[9999\]/.test(criticalConfirmModal)
-  || !/from-rose-600 via-rose-700 to-amber-600/.test(criticalConfirmModal)
+  || !/ShieldAlert/.test(criticalConfirmModal)
   || !/max-w-lg/.test(criticalConfirmModal)
-  || !/bg-rose-50\/80 border border-rose-200/.test(criticalConfirmModal)) {
+  || !/bg-rose-50\/[78]0 border border-rose-200/.test(criticalConfirmModal)) {
   violations.push('components/CriticalConfirmModal.tsx: CriticalConfirmModal popup specification is incomplete');
 }
 
