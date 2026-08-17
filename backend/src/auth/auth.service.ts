@@ -150,7 +150,7 @@ export class AuthService {
       where: { id: userId },
       include: {
         student: {
-          include: { class: true },
+          include: { class: { include: { department: true } } },
         },
         teacher: {
           include: { department: true },

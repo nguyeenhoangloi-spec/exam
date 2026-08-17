@@ -32,6 +32,7 @@ export default function StudentExamTakePage() {
   const [syncState, setSyncState] = useState<'SAVED' | 'SAVING' | 'OFFLINE'>('SAVED');
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [showExamProfileDrawer, setShowExamProfileDrawer] = useState(false);
@@ -99,10 +100,12 @@ export default function StudentExamTakePage() {
     if (!token || !attemptData) return;
 
     try {
+      setIsSubmitted(true);
       await onlineExamService.submitAttempt(token);
       router.push(`/student/online-exam/${attemptData.attemptId}/result`);
     } catch (err) {
       console.error('Auto submit failed:', err);
+      setIsSubmitted(false);
     }
   }, [attemptData, router, tokenFromUrl]);
 
@@ -439,11 +442,12 @@ export default function StudentExamTakePage() {
         });
       }
       await onlineExamService.submitAttempt(token);
-      sessionStorage.removeItem('attemptToken');
+      setIsSubmitted(true);
       router.push(`/student/online-exam/${attemptData.attemptId}/result`);
     } catch (err: any) {
       setToast({ type: 'error', message: err?.response?.data?.message || err?.message || 'Không thể nộp bài' });
       setSubmitting(false);
+      setIsSubmitted(false);
     }
   };
 
@@ -455,6 +459,18 @@ export default function StudentExamTakePage() {
       .toString()
       .padStart(2, '0')}`;
   };
+
+  if (submitting || isSubmitted) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col items-center justify-center space-y-4">
+        <div className="w-10 h-10 border-3 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
+        <div className="text-center space-y-1">
+          <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">Đã nộp bài thi thành công</h3>
+          <p className="text-xs font-normal text-slate-500 dark:text-slate-400">Đang chuyển tiếp đến trang kết quả...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -470,7 +486,7 @@ export default function StudentExamTakePage() {
     );
   }
 
-  if (error || !attemptData) {
+  if ((error || !attemptData) && !isSubmitted && !submitting) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex items-center justify-center p-6">
         <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700 p-8 rounded-2xl max-w-md w-full text-center shadow-xl space-y-4">
@@ -1023,17 +1039,17 @@ export default function StudentExamTakePage() {
             <Shield className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Bài thi đã được nộp tự động</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Vượt quá số lần vi phạm quy chế cho phép</p>
+            <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">Bài thi đã được nộp tự động</h3>
+            <p className="text-[13px] text-slate-500 dark:text-slate-400">Vượt quá số lần vi phạm quy chế cho phép</p>
           </div>
         </div>
 
         <div className="p-6 space-y-4">
           <div className="space-y-1.5">
-            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-relaxed">
-              Bạn đã vi phạm quy chế thi {violationSubmittedModal.violationCount}/{violationSubmittedModal.maxAllowed} lần cho phép.
+            <p className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 leading-relaxed">
+              Bạn đã vi phạm quy chế thi <span className="text-rose-600 dark:text-rose-400 font-semibold">{violationSubmittedModal.violationCount}/{violationSubmittedModal.maxAllowed}</span> lần cho phép.
             </p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <p className="text-[13.5px] text-slate-500 dark:text-slate-400 leading-relaxed">
               Toàn bộ dữ liệu bài làm và nhật ký giám sát đã được gửi về cho giám thị phòng thi.
             </p>
           </div>
@@ -1042,13 +1058,13 @@ export default function StudentExamTakePage() {
             variant="primary"
             size="lg"
             className="w-full"
+            rightIcon={<ChevronRight className="w-4 h-4" />}
             onClick={() => {
-              sessionStorage.removeItem('attemptToken');
+              setIsSubmitted(true);
               router.push(`/student/online-exam/${violationSubmittedModal.attemptId || attemptData?.attemptId}/result`);
             }}
           >
-            <span>Xem kết quả bài thi</span>
-            <ChevronRight className="w-4 h-4 ml-1.5" />
+            Xem kết quả bài thi
           </Button>
         </div>
       </div>

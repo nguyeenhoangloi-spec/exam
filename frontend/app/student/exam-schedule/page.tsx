@@ -36,6 +36,7 @@ export default function StudentExamSchedulePage() {
   usePageTitle('Lịch thi cá nhân');
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [studentInfo, setStudentInfo] = useState<any>(null);
   const [schedules, setSchedules] = useState<PersonalScheduleItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -57,8 +58,16 @@ export default function StudentExamSchedulePage() {
   const fetchMySchedule = async () => {
     try {
       setLoading(true);
-      const res = await api.get('/students/my-schedule');
-      setSchedules(res.data || []);
+      const [scheduleRes, profileRes] = await Promise.allSettled([
+        api.get('/students/my-schedule'),
+        api.get('/students/my-curriculum'),
+      ]);
+      if (scheduleRes.status === 'fulfilled') {
+        setSchedules(scheduleRes.value.data || []);
+      }
+      if (profileRes.status === 'fulfilled' && profileRes.value.data?.student) {
+        setStudentInfo(profileRes.value.data.student);
+      }
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải lịch thi cá nhân', type: 'error' });
     } finally {
@@ -207,9 +216,17 @@ export default function StudentExamSchedulePage() {
             <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
               Lịch thi cá nhân
             </h1>
-            <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-              Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{currentUser?.student?.fullName || (currentUser as any)?.fullName || currentUser?.username || '---'}</strong> <IdentifierBadge tone="neutral">{currentUser?.student?.studentCode || currentUser?.code || currentUser?.username || '---'}</IdentifierBadge> &nbsp;•&nbsp; Kiểm tra ca thi, phòng thi, SBD và vị trí chỗ ngồi trước giờ thi
-            </p>
+            <div className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-1">
+              <span>
+                Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || currentUser?.student?.fullName || (currentUser as any)?.fullName || currentUser?.username || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || currentUser?.student?.studentCode || currentUser?.code || currentUser?.username || '---'}</IdentifierBadge>
+              </span>
+              <span>
+                Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || currentUser?.student?.class?.name || currentUser?.student?.className || (currentUser as any)?.className || '---'}</strong>
+              </span>
+              <span>
+                Khoa: <span className="text-slate-700 dark:text-slate-300 font-medium">{studentInfo?.departmentName || studentInfo?.departmentCode || currentUser?.student?.class?.department?.name || currentUser?.student?.departmentName || (currentUser as any)?.departmentName || '---'}</span>
+              </span>
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">

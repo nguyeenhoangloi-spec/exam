@@ -36,6 +36,9 @@ export default function StudentExamResultPage() {
       setError(null);
       const res = await onlineExamService.getAttemptResult(attemptId);
       setResult(res);
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('attemptToken');
+      }
     } catch (err: any) {
       setError(err.message || 'Không thể tải kết quả bài thi');
     } finally {

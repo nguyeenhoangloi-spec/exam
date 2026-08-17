@@ -385,9 +385,17 @@ export default function StudentCurriculumPage() {
             <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
               Chương trình đào tạo
             </h1>
-            <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-              Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '---'}</IdentifierBadge> &nbsp;•&nbsp; Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
-            </p>
+            <div className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-1">
+              <span>
+                Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '---'}</IdentifierBadge>
+              </span>
+              <span>
+                Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong>
+              </span>
+              <span>
+                Khoa: <span className="text-slate-700 dark:text-slate-300 font-medium">{studentInfo?.departmentName || studentInfo?.departmentCode || '---'}</span>
+              </span>
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
@@ -862,30 +870,30 @@ export default function StudentCurriculumPage() {
                         )}
                         {visibleColumns.name && (
                           <td className="py-3.5 px-4 min-w-[240px]">
-                            <div className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-[15px]" onClick={() => setDetailItem(item)}>
+                            <div className="font-medium text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-[15px]" onClick={() => setDetailItem(item)}>
                               {item.subjectName}
                             </div>
                             {item.note && <p className="table-meta text-[13px] text-slate-400 italic truncate max-w-md mt-0.5">{item.note}</p>}
                           </td>
                         )}
                         {visibleColumns.semester && (
-                          <td className="py-3.5 px-4 text-center font-medium text-slate-600 dark:text-slate-400 text-[15px]">
+                          <td className="py-3.5 px-4 text-center font-normal text-slate-600 dark:text-slate-400 text-[15px] tabular-nums">
                             HK {item.recommendedSemester}
                           </td>
                         )}
                         {visibleColumns.credits && (
-                          <td className="py-3.5 px-4 text-center font-semibold text-slate-900 dark:text-slate-100 text-[15px]">
+                          <td className="py-3.5 px-4 text-center font-normal text-slate-700 dark:text-slate-300 text-[15px] tabular-nums">
                             {item.credits}
                           </td>
                         )}
                         {visibleColumns.type && (
                           <td className="py-3.5 px-4 whitespace-nowrap">
                             {item.type === 'MANDATORY' ? (
-                              <span className="table-badge inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                              <span className="table-badge inline-flex items-center gap-1.5 text-[13.5px] font-medium text-blue-600 dark:text-blue-400">
                                 <Award className="h-3.5 w-3.5" /> Bắt buộc
                               </span>
                             ) : (
-                              <span className="table-badge inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                              <span className="table-badge inline-flex items-center gap-1.5 text-[13.5px] font-medium text-blue-600 dark:text-blue-400">
                                 <GraduationCap className="h-3.5 w-3.5" /> Tự chọn
                               </span>
                             )}
@@ -894,11 +902,11 @@ export default function StudentCurriculumPage() {
                         {visibleColumns.status && (
                           <td className="py-3.5 px-4 text-center whitespace-nowrap">
                             {item.isCompleted ? (
-                              <span className="table-badge inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                              <span className="table-badge inline-flex items-center gap-1.5 text-[13.5px] font-medium text-blue-600 dark:text-blue-400">
                                 <CheckCircle2 className="h-4 w-4 text-blue-600" /> Đã học
                               </span>
                             ) : (
-                              <span className="table-badge inline-flex items-center gap-1.5 text-xs font-medium text-slate-400">
+                              <span className="table-badge inline-flex items-center gap-1.5 text-[13.5px] font-medium text-slate-500 dark:text-slate-400">
                                 <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa học
                               </span>
                             )}
@@ -909,7 +917,7 @@ export default function StudentCurriculumPage() {
                             <button
                               type="button"
                               onClick={() => setDetailItem(item)}
-                              className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
+                              className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
                               title="Xem chi tiết"
                             >
                               <Eye className="w-4 h-4" />

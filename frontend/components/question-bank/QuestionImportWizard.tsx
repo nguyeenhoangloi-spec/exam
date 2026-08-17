@@ -855,7 +855,7 @@ export function QuestionImportWizard({
         }}
         title="Xác nhận lưu câu hỏi"
         message={`Hệ thống sẽ lưu ${selected.length} câu hỏi đã chọn ở trạng thái Bản nháp. Bạn vẫn có thể chỉnh sửa và gửi duyệt sau khi lưu.`}
-        type="warning"
+        type="info"
         confirmText="Lưu câu hỏi"
         cancelText="Quay lại kiểm tra"
       />

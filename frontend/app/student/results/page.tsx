@@ -511,9 +511,17 @@ export default function StudentResultsPage() {
             <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
               Kết quả bài thi
             </h1>
-            <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-              Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '---'}</IdentifierBadge> &nbsp;•&nbsp; Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong> &nbsp;•&nbsp; Khoa: {studentInfo?.departmentName || studentInfo?.departmentCode || '---'}
-            </p>
+            <div className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-1">
+              <span>
+                Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '---'}</IdentifierBadge>
+              </span>
+              <span>
+                Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong>
+              </span>
+              <span>
+                Khoa: <span className="text-slate-700 dark:text-slate-300 font-medium">{studentInfo?.departmentName || studentInfo?.departmentCode || '---'}</span>
+              </span>
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
@@ -990,7 +998,7 @@ export default function StudentResultsPage() {
  <td className="p-3.5 min-w-[240px]">
  <p
  onClick={() => setDetailItem(item)}
- className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] leading-[22px] cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
+ className="font-medium text-slate-900 dark:text-slate-100 text-[15px] leading-[22px] cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
  >
  {item.subjectName}
  </p>

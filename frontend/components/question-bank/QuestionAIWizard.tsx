@@ -426,7 +426,7 @@ export function QuestionAIWizard({
         }}
         title="Xác nhận lưu câu hỏi AI"
         message={`Hệ thống sẽ lưu ${items.length} câu hỏi AI đã xem trước vào Ngân hàng ở trạng thái Bản nháp. Các câu này không tự được duyệt.`}
-        type="warning"
+        type="info"
         confirmText="Lưu bản nháp"
         cancelText="Quay lại kiểm tra"
       />

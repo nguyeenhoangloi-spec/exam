@@ -504,7 +504,7 @@ export default function BackupsPage() {
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Backup Worker
                             </span>
-                            <div className="h-[38px] flex items-center text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-[28px] truncate gap-2">
+                            <div className="h-[38px] flex items-center text-[18px] sm:text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-[28px] truncate">
                                 {overview?.worker?.enabled ? (
                                     <span className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-semibold">
                                         <CheckCircle2 className="h-4 w-4" /> Đang hoạt động
@@ -529,7 +529,7 @@ export default function BackupsPage() {
                     </div>
 
                     <div className="mt-2.5">
-                        <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate">
+                        <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                             Lịch chạy: {overview?.worker?.schedule || '02:00'} ({overview?.timezone || 'Asia/Ho_Chi_Minh'})
                         </span>
                     </div>
@@ -542,7 +542,7 @@ export default function BackupsPage() {
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Nơi lưu trữ (Storage)
                             </span>
-                            <div className="h-[38px] flex items-center text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-[28px] truncate">
+                            <div className="h-[38px] flex items-center text-[18px] sm:text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-[28px] truncate">
                                 {overview?.storage?.provider === 'S3' ? 'Amazon S3 / MinIO' : 'Ổ đĩa máy chủ (Local)'}
                             </div>
                         </div>
@@ -553,13 +553,12 @@ export default function BackupsPage() {
 
                     <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
                         <div
-                            className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
-                            style={{ width: '100%' }}
+                            className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500 w-full"
                         />
                     </div>
 
                     <div className="mt-2.5">
-                        <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate">
+                        <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                             {overview?.storage?.provider === 'S3' ? 'Lưu trữ offsite đã cấu hình' : 'Thư mục máy chủ cục bộ'}
                         </span>
                     </div>
@@ -572,12 +571,20 @@ export default function BackupsPage() {
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Công cụ Database CLI
                             </span>
-                            <div className="h-[38px] flex items-center gap-3 text-xs font-semibold">
-                                <span className={`inline-flex items-center gap-1 ${overview?.tools?.pgDumpAvailable ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`}>
-                                    {overview?.tools?.pgDumpAvailable ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />} pg_dump
+                            <div className="h-[38px] flex items-center gap-2 text-[12px] font-semibold flex-wrap">
+                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[12px] font-semibold border ${overview?.tools?.pgDumpAvailable
+                                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200/80 dark:border-blue-800/60'
+                                    : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                                    }`}>
+                                    {overview?.tools?.pgDumpAvailable ? <CheckCircle2 className="h-3 w-3 text-blue-600 dark:text-blue-400" /> : <XCircle className="h-3 w-3" />}
+                                    pg_dump
                                 </span>
-                                <span className={`inline-flex items-center gap-1 ${overview?.tools?.pgRestoreAvailable ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`}>
-                                    {overview?.tools?.pgRestoreAvailable ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />} pg_restore
+                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[12px] font-semibold border ${overview?.tools?.pgRestoreAvailable
+                                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200/80 dark:border-blue-800/60'
+                                    : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                                    }`}>
+                                    {overview?.tools?.pgRestoreAvailable ? <CheckCircle2 className="h-3 w-3 text-blue-600 dark:text-blue-400" /> : <XCircle className="h-3 w-3" />}
+                                    pg_restore
                                 </span>
                             </div>
                         </div>
@@ -589,12 +596,12 @@ export default function BackupsPage() {
                     <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
                         <div
                             className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
-                            style={{ width: overview?.tools?.pgDumpAvailable && overview?.tools?.pgRestoreAvailable ? '100%' : '50%' }}
+                            style={{ width: overview?.tools?.pgDumpAvailable && overview?.tools?.pgRestoreAvailable ? '100%' : overview?.tools?.pgDumpAvailable || overview?.tools?.pgRestoreAvailable ? '50%' : '15%' }}
                         />
                     </div>
 
                     <div className="mt-2.5">
-                        <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate">
+                        <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                             {overview?.tools?.pgDumpAvailable && overview?.tools?.pgRestoreAvailable ? 'Sẵn sàng sao lưu & phục hồi' : 'Thiếu công cụ PostgreSQL CLI'}
                         </span>
                     </div>
@@ -607,7 +614,7 @@ export default function BackupsPage() {
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Dung lượng tổng
                             </span>
-                            <div className="h-[38px] flex items-center text-[32px] font-semibold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums truncate">
+                            <div className="h-[38px] flex items-center text-[28px] sm:text-[30px] font-semibold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums truncate">
                                 {formatBytes(overview?.totalBytes)}
                             </div>
                         </div>
@@ -619,12 +626,12 @@ export default function BackupsPage() {
                     <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
                         <div
                             className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
-                            style={{ width: '100%' }}
+                            style={{ width: `${Math.min(Math.max((verifiedJobs.length / Math.max(jobs.length, 1)) * 100, 20), 100)}%` }}
                         />
                     </div>
 
                     <div className="mt-2.5">
-                        <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate">
+                        <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                             {verifiedJobs.length} bản hợp lệ · {overview?.failed24h || 0} lỗi 24h
                         </span>
                     </div>

@@ -160,7 +160,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
     >
       <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800 flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform">
         {/* Clean Security Header */}
-        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-start justify-between shrink-0">
+        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 flex items-start justify-between shrink-0">
           <div className="flex items-start gap-3.5 min-w-0">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200/70 dark:border-rose-800/70 text-rose-600 dark:text-rose-400 shrink-0 shadow-2xs">
               <ShieldAlert className="h-5 w-5" />
@@ -173,166 +173,179 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0 -mr-1 -mt-1"
+            className="rounded-xl p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700 transition cursor-pointer shrink-0 -mr-1 -mt-1"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Warning Body */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 bg-white dark:bg-slate-900">
-          <div className="rounded-xl bg-rose-50/80 border border-rose-200 p-3.5 flex items-start gap-3">
-            <AlertTriangle className="h-4 w-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
-            <div className="text-xs text-rose-900 dark:text-rose-200 space-y-0.5">
-              <p className="font-semibold text-rose-700 dark:text-rose-300">Cảnh báo hậu quả:</p>
-              <p className="leading-relaxed font-medium">{warningMessage}</p>
-            </div>
-          </div>
-
-          {errorMsg && (
-            <div className="rounded-xl bg-red-100 dark:bg-red-950/60 border border-red-200 dark:border-red-800 p-3 text-xs font-semibold text-red-700 dark:text-red-300 animate-shake">
-              {errorMsg}
-            </div>
-          )}
-
-          {/* Step 1: Select Reason */}
-          <div>
-            <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-              1. Lý do thực hiện thao tác <span className="text-rose-500">*</span>
-            </label>
-            <FilterSelect
-              containerClassName="w-full"
-              value={selectedReason}
-              onChange={(e) => setSelectedReason(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-[15px] font-medium text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none bg-slate-50/50 dark:bg-slate-800/70 cursor-pointer transition"
-            >
-              {reasons.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </FilterSelect>
-            {selectedReason === 'Lý do khác' && (
-              <input
-                type="text"
-                placeholder="Nhập lý do cụ thể..."
-                required
-                value={customReason}
-                onChange={(e) => setCustomReason(e.target.value)}
-                className="mt-2 w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition"
-              />
-            )}
-          </div>
-
-          {/* Step 2: Optional Note */}
-          <div>
-            <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-              2. Ghi chú chi tiết <span className="text-xs text-slate-400 font-normal">(Tùy chọn)</span>
-            </label>
-            <textarea
-              rows={2}
-              placeholder="Nhập bổ sung văn bản chỉ đạo, số quyết định hoặc thông tin liên quan..."
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition"
-            />
-          </div>
-
-          {/* Step 3: Type Exact Confirmation Phrase */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
-                3. Nhập cụm từ xác nhận <span className="text-rose-500">*</span>
-              </label>
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 border border-rose-200/60 dark:border-rose-800/60 px-2 py-0.5 rounded-lg">
-                  {targetPhrase}
-                </span>
-                <button
-                  type="button"
-                  onClick={handleQuickFillPhrase}
-                  className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/60 px-2 py-0.5 rounded-xl transition cursor-pointer"
-                  title="Tự động điền cụm từ xác nhận"
-                >
-                  Điền nhanh
-                </button>
+        {/* Form Body */}
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="p-6 overflow-y-auto space-y-4 flex-1 bg-white dark:bg-slate-900">
+            {/* Warning Callout Banner */}
+            <div className="rounded-xl bg-rose-50/80 border border-rose-200 dark:bg-rose-950/30 dark:border-rose-900/50 p-3.5 flex items-start gap-3">
+              <AlertTriangle className="h-4 w-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+              <div className="text-xs text-rose-900 dark:text-rose-200 space-y-0.5">
+                <p className="font-semibold text-rose-700 dark:text-rose-300">Cảnh báo hậu quả:</p>
+                <p className="leading-relaxed font-medium">{warningMessage}</p>
               </div>
             </div>
-            <input
-              type="text"
-              required
-              autoFocus
-              placeholder={`Gõ: ${targetPhrase} (hoặc bấm Điền nhanh)`}
-              value={inputPhrase}
-              onChange={(e) => setInputPhrase(e.target.value)}
-              className={`w-full rounded-xl border px-3.5 py-2 text-[15px] font-medium focus:outline-none transition ${
-                isPhraseMatched
-                  ? 'border-slate-300 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-800/50 text-slate-900 dark:text-slate-100 font-semibold focus:!border-slate-400'
-                  : 'border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:!border-rose-500'
-              }`}
-            />
-            {isPhraseMatched && (
-              <p className="mt-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                ✓ Cụm từ xác nhận hợp lệ
-              </p>
-            )}
-          </div>
 
-          {/* Step 4: Account Password Verification */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-[15px] font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                <KeyRound className="w-3.5 h-3.5 text-slate-400" />
-                <span>4. Mật khẩu tài khoản của bạn {passwordRequired && <span className="text-rose-500">*</span>}</span>
+            {errorMsg && (
+              <div className="rounded-xl bg-red-100 dark:bg-red-950/60 border border-red-200 dark:border-red-800 p-3 text-xs font-semibold text-red-700 dark:text-red-300 animate-shake">
+                {errorMsg}
+              </div>
+            )}
+
+            {/* 1. Reason Select */}
+            <div className="space-y-1.5">
+              <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                Lý do thực hiện thao tác <span className="text-rose-500">*</span>
               </label>
-              {!passwordRequired && (
-                <span className="text-xs text-slate-400 font-normal">(Tùy chọn nếu đã đăng nhập)</span>
+              <FilterSelect
+                containerClassName="w-full"
+                value={selectedReason}
+                onChange={(e) => setSelectedReason(e.target.value)}
+                className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 px-3.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none bg-slate-50/50 dark:bg-slate-800/70 cursor-pointer transition shadow-2xs"
+              >
+                {reasons.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </FilterSelect>
+              {selectedReason === 'Lý do khác' && (
+                <input
+                  type="text"
+                  placeholder="Nhập lý do cụ thể..."
+                  required
+                  value={customReason}
+                  onChange={(e) => setCustomReason(e.target.value)}
+                  className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 px-3.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition shadow-2xs"
+                />
               )}
             </div>
-            <input
-              type="password"
-              required={passwordRequired}
-              autoComplete="current-password"
-              placeholder={passwordRequired ? 'Nhập mật khẩu Admin hiện tại' : 'Mật khẩu tài khoản (tùy chọn)'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3.5 py-2 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition"
-            />
-          </div>
 
-          {/* Step 5: Exam Password (only for publishing official exam paper) */}
-          {examPasswordRequired && (
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-1.5">
-              <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-slate-400" />
-                <span>5. Mật khẩu thi chính thức <span className="text-rose-500">*</span></span>
+            {/* 2. Note Textarea */}
+            <div className="space-y-1.5">
+              <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                Ghi chú chi tiết <span className="text-xs text-slate-400 font-normal">(Tùy chọn)</span>
               </label>
+              <textarea
+                rows={2}
+                placeholder="Nhập bổ sung văn bản chỉ đạo, số quyết định hoặc thông tin liên quan..."
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition bg-white dark:bg-slate-900 placeholder:text-slate-400"
+              />
+            </div>
+
+            {/* 3. Confirm Phrase */}
+            <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                  Nhập cụm từ xác nhận <span className="text-rose-500">*</span>
+                </label>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 border border-rose-200/60 dark:border-rose-800/60 px-2 py-0.5 rounded-lg">
+                    {targetPhrase}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleQuickFillPhrase}
+                    className="text-xs font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 px-2 py-0.5 rounded-xl transition cursor-pointer"
+                    title="Tự động điền cụm từ xác nhận"
+                  >
+                    Điền nhanh
+                  </button>
+                </div>
+              </div>
+
               <div className="relative">
                 <input
-                  type={showExamPassword ? 'text' : 'password'}
-                  autoComplete="off"
+                  type="text"
                   required
-                  placeholder="Nhập mật khẩu thi (tối thiểu 4 ký tự)"
-                  value={examPassword}
-                  onChange={(e) => setExamPassword(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-3.5 py-2 pr-10 text-[15px] font-normal text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 focus:!border-rose-500 focus:outline-none shadow-2xs transition"
+                  autoFocus
+                  placeholder={`Gõ: ${targetPhrase} (hoặc bấm Điền nhanh)`}
+                  value={inputPhrase}
+                  onChange={(e) => setInputPhrase(e.target.value)}
+                  className={`w-full h-10 rounded-xl border px-3.5 text-[15px] font-medium focus:outline-none transition shadow-2xs ${
+                    isPhraseMatched
+                      ? 'border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-200 focus:!border-emerald-500 pr-24 font-semibold'
+                      : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:!border-rose-500'
+                  }`}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowExamPassword(!showExamPassword)}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1 rounded-xl transition cursor-pointer"
-                >
-                  {showExamPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
+                {isPhraseMatched && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-emerald-600 dark:text-emerald-400 bg-emerald-100/80 dark:bg-emerald-900/50 px-2 py-0.5 rounded-md text-xs font-semibold">
+                    <span>Đã khớp</span>
+                    <span>✓</span>
+                  </div>
+                )}
               </div>
-              <p className="text-xs font-normal text-slate-500 dark:text-slate-400 leading-relaxed">
-                Mật khẩu này dùng cho thí sinh mở đề khi vào phòng thi. Hệ thống tự động mã hóa bảo mật (bcrypt).
-              </p>
             </div>
-          )}
 
-          {/* Modal Actions */}
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
+            {/* 4. Account Password */}
+            <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between">
+                <label className="text-[15px] font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                  <KeyRound className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Mật khẩu tài khoản của bạn {passwordRequired && <span className="text-rose-500">*</span>}</span>
+                </label>
+                {!passwordRequired && (
+                  <span className="text-xs text-slate-400 font-normal">(Tùy chọn nếu đã đăng nhập)</span>
+                )}
+              </div>
+              <input
+                type="password"
+                required={passwordRequired}
+                autoComplete="current-password"
+                placeholder={passwordRequired ? 'Nhập mật khẩu Admin hiện tại' : 'Mật khẩu tài khoản (tùy chọn)'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 px-3.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 focus:!border-rose-500 focus:outline-none transition shadow-2xs"
+              />
+            </div>
+
+            {/* 5. Exam Password (if required) */}
+            {examPasswordRequired && (
+              <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <div className="flex items-center justify-between">
+                  <label className="text-[15px] font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <Lock className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Mật khẩu thi chính thức <span className="text-rose-500">*</span></span>
+                  </label>
+                  <span className="text-xs font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-0.5 rounded-lg border border-blue-200/60 dark:border-blue-800/60">
+                    Thí sinh dùng khi mở đề
+                  </span>
+                </div>
+                <div className="relative">
+                  <input
+                    type={showExamPassword ? 'text' : 'password'}
+                    autoComplete="off"
+                    required
+                    placeholder="Nhập mật khẩu thi (tối thiểu 4 ký tự)"
+                    value={examPassword}
+                    onChange={(e) => setExamPassword(e.target.value)}
+                    className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 px-3.5 pr-10 text-[15px] font-normal text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 focus:!border-rose-500 focus:outline-none shadow-2xs transition"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowExamPassword(!showExamPassword)}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1 rounded-xl transition cursor-pointer"
+                    title={showExamPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                  >
+                    {showExamPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  Mật khẩu này dùng cho thí sinh mở đề khi vào phòng thi. Hệ thống tự động mã hóa bảo mật (bcrypt).
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Modal Footer Actions */}
+          <div className="flex items-center justify-end gap-2.5 px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 shrink-0">
             <Button
               type="button"
               variant="secondary"
@@ -347,7 +360,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               variant="danger"
               size="md"
               isLoading={loading}
-              leftIcon={<Lock className="w-4 h-4" />}
+              leftIcon={<ShieldAlert className="w-4 h-4" />}
             >
               {actionButtonText}
             </Button>

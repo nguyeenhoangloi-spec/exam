@@ -263,7 +263,7 @@ export function ExamPaperMatrixForm({
 
         {/* ── ROW 2: Ca thi (Thuần túy, không khung, không nền, không icon thừa) ── */}
         <div className="space-y-1 pt-1">
-          <label className="block text-[15px] font-medium text-slate-500 dark:text-slate-400 tracking-wider">
+          <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">
             Chọn Ca thi / Lịch thi <span className="text-rose-500">*</span>
           </label>
 
