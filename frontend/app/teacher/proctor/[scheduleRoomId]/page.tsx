@@ -570,25 +570,14 @@ export default function ProctorDashboardPage() {
           </div>
         </div>
 
-        {/* Quick Proctoring Actions */}
+        {/* Quick Proctoring Actions: Chuẩn phân cấp 3 bậc (Ghost -> Secondary -> Primary ngoài cùng) */}
         <div className="flex flex-wrap items-center gap-2.5 shrink-0">
           <Button
             type="button"
             variant="ghost"
             size="md"
-            onClick={() => setShowBroadcastModal(true)}
-            leftIcon={<Megaphone className="h-4 w-4 text-blue-600" />}
-            className="text-blue-600 hover:bg-blue-50/80 dark:hover:bg-blue-950/50"
-          >
-            Phát thông báo
-          </Button>
-
-          <Button
-            type="button"
-            variant="primary"
-            size="md"
             onClick={() => setShowReopenEntryModal(true)}
-            leftIcon={<PlusCircle className="h-4 w-4" />}
+            leftIcon={<PlusCircle className="h-4 w-4 text-slate-600 dark:text-slate-400" />}
           >
             Cho vào trễ
           </Button>
@@ -601,6 +590,16 @@ export default function ProctorDashboardPage() {
             leftIcon={<Clock className="h-4 w-4 text-slate-500" />}
           >
             Bù giờ toàn phòng
+          </Button>
+
+          <Button
+            type="button"
+            variant="primary"
+            size="md"
+            onClick={() => setShowBroadcastModal(true)}
+            leftIcon={<Megaphone className="h-4 w-4" />}
+          >
+            Phát thông báo
           </Button>
         </div>
       </div>
@@ -1405,48 +1404,75 @@ export default function ProctorDashboardPage() {
         const MetaIcon = meta.icon;
         return (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-            <div className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-xl border border-slate-200/90 dark:border-slate-700">
+            <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800">
               {/* Modal header */}
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
-                <div className="flex items-center gap-2.5">
-                  <div className={`flex h-8.5 w-8.5 items-center justify-center rounded-xl border ${meta.iconBg} shadow-2xs shrink-0`}>
-                    <MetaIcon className={`h-4.5 w-4.5 ${meta.color}`} />
+                <div className="flex items-center gap-3">
+                  <div className={`flex h-9 w-9 items-center justify-center rounded-xl border ${
+                    actionType === 'FLAG'
+                      ? 'border-rose-200/80 dark:border-rose-800/60 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
+                      : actionType === 'RESOLVE'
+                      ? 'border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400'
+                      : actionType === 'REOPEN'
+                      ? 'border-amber-200/80 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400'
+                      : 'border-blue-200/80 dark:border-blue-800/60 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400'
+                  } shadow-2xs shrink-0`}>
+                    <MetaIcon className="h-4.5 w-4.5" />
                   </div>
                   <div>
-                    <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 tracking-tight leading-none">{meta.title}</h3>
-                    <p className="mt-1 text-[13px] text-slate-500 font-semibold leading-none">{meta.desc}</p>
+                    <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 tracking-tight leading-none">
+                      {meta.title}
+                    </h3>
+                    <p className="mt-1.5 text-[13px] text-slate-500 dark:text-slate-400 font-normal leading-none">
+                      {meta.desc}
+                    </p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setActionType(null)}
-                  className="rounded-xl p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
+                  className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                  title="Đóng (Esc)"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Student info */}
-              <div className="mx-6 mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-xs font-semibold text-slate-700 flex items-center justify-between">
-                <span>Thí sinh: <strong className="text-slate-900 font-semibold">{selectedStudent.student.fullName}</strong></span>
-                <IdentifierBadge tone="neutral">{selectedStudent.student.studentCode}</IdentifierBadge>
-              </div>
-
               {/* Modal body */}
               <div className="p-6 space-y-4 text-xs font-semibold">
+                {/* Student info flat strip */}
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400 dark:text-slate-500 font-normal">Thí sinh:</span>
+                    <strong className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+                      {selectedStudent.student.fullName}
+                    </strong>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <IdentifierBadge tone="blue">{selectedStudent.student.studentCode}</IdentifierBadge>
+                    {selectedStudent.examNumber && (
+                      <IdentifierBadge tone="neutral">SBD: {selectedStudent.examNumber}</IdentifierBadge>
+                    )}
+                  </div>
+                </div>
+
+                {/* EXTEND Sub-view */}
                 {actionType === 'EXTEND' && (
-                  <div>
-                    <label className="block text-[15px] text-slate-700 font-medium mb-1.5">Số phút cộng thêm vào bài thi:</label>
-                    <div className="flex gap-2">
+                  <div className="space-y-1.5">
+                    <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                      Số phút cộng thêm vào bài thi:
+                    </label>
+                    <div className="grid grid-cols-5 gap-2">
                       {[5, 10, 15, 20, 30].map((m) => (
                         <button
                           key={m}
                           type="button"
                           onClick={() => setExtraMinutes(m)}
-                          className={`flex-1 py-2 rounded-xl border text-xs font-semibold transition cursor-pointer ${extraMinutes === m
-                            ? 'bg-blue-600 border-blue-600 text-white shadow-xs'
-                            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
-                            }`}
+                          className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${
+                            extraMinutes === m
+                              ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
+                              : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
+                          }`}
                         >
                           +{m}p
                         </button>
@@ -1455,14 +1481,17 @@ export default function ProctorDashboardPage() {
                   </div>
                 )}
 
+                {/* RESOLVE Sub-view */}
                 {actionType === 'RESOLVE' && (
                   <div className="space-y-3">
-                    <div>
-                      <label className="block text-[15px] text-slate-700 font-medium mb-1.5">Quyết định xử lý sự cố:</label>
+                    <div className="space-y-1.5">
+                      <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                        Quyết định xử lý sự cố:
+                      </label>
                       <FilterSelect
                         value={resolutionDecision}
                         onChange={(e) => setResolutionDecision(e.target.value as any)}
-                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
+                        className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
                       >
                         <option value="REOPEN">Cho phép mở lại phiên thi để làm tiếp</option>
                         <option value="PENALTY">Giữ nguyên bài thi & Áp dụng trừ điểm</option>
@@ -1471,8 +1500,10 @@ export default function ProctorDashboardPage() {
                     </div>
 
                     {resolutionDecision === 'PENALTY' && (
-                      <div>
-                        <label className="block text-[15px] text-slate-700 font-medium mb-1.5">Số điểm trừ trực tiếp (thang 10):</label>
+                      <div className="space-y-1.5">
+                        <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                          Số điểm trừ trực tiếp (thang 10):
+                        </label>
                         <input
                           type="number"
                           min="0.5"
@@ -1480,65 +1511,150 @@ export default function ProctorDashboardPage() {
                           step="0.5"
                           value={penaltyPoints}
                           onChange={(e) => setPenaltyPoints(Number(e.target.value))}
-                          className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500"
+                          className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500 shadow-2xs"
                         />
                       </div>
                     )}
                   </div>
                 )}
 
+                {/* FLAG Sub-view: Lập biên bản sự cố */}
                 {actionType === 'FLAG' && (
-                  <div>
-                    <label className="block text-[15px] text-slate-700 font-medium mb-1.5">Phân loại sự cố ghi nhận:</label>
-                    <FilterSelect
-                      value={incidentDecision}
-                      onChange={(e) => setIncidentDecision(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] font-medium text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
-                    >
-                      <option value="UNDER_REVIEW">Tạm giữ để hội đồng thi kiểm tra lại</option>
-                      <option value="CONFIRMED_VIOLATION">Xác nhận có hành vi vi phạm quy chế</option>
-                      <option value="DISMISSED">Bỏ qua (Sự cố khách quan ngoài ý muốn)</option>
-                    </FilterSelect>
+                  <div className="space-y-1.5">
+                    <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                      Phân loại sự cố ghi nhận:
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      {[
+                        { value: 'UNDER_REVIEW', label: 'Tạm giữ kiểm tra', desc: 'Hội đồng xem xét sau' },
+                        { value: 'CONFIRMED_VIOLATION', label: 'Xác nhận vi phạm', desc: 'Vi phạm quy chế thi' },
+                        { value: 'DISMISSED', label: 'Sự cố khách quan', desc: 'Lỗi thiết bị / sự cố ngoài ý muốn' },
+                      ].map((opt) => (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => setIncidentDecision(opt.value)}
+                          className={`p-2.5 rounded-xl border text-left transition cursor-pointer select-none ${
+                            incidentDecision === opt.value
+                              ? 'border-rose-500 bg-rose-50/90 dark:bg-rose-950/60 ring-1 ring-rose-500/50'
+                              : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-rose-300 dark:hover:border-rose-800 hover:bg-rose-50/30 dark:hover:bg-rose-950/30'
+                          }`}
+                        >
+                          <div className={`text-[13px] font-semibold ${
+                            incidentDecision === opt.value ? 'text-rose-700 dark:text-rose-300' : 'text-slate-900 dark:text-slate-100'
+                          }`}>
+                            {opt.label}
+                          </div>
+                          <p className="text-[12px] text-slate-500 dark:text-slate-400 font-normal line-clamp-1 mt-0.5">
+                            {opt.desc}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
 
-                <div>
-                  <label className="block text-[15px] text-slate-700 font-medium mb-1.5">
-                    {actionType === 'FLAG' ? 'Lý do / Mô tả chi tiết vi phạm:' : 'Lý do thực hiện:'}
-                  </label>
+                {/* Reason Editor with Presets */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                      {actionType === 'FLAG' ? 'Lý do / Mô tả chi tiết vi phạm:' : 'Lý do thực hiện:'}
+                    </label>
+                    {reason && (
+                      <button
+                        type="button"
+                        onClick={() => setReason('')}
+                        className="text-xs font-semibold text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition cursor-pointer"
+                      >
+                        Xóa nội dung
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Quick presets for FLAG */}
+                  {actionType === 'FLAG' && (
+                    <div className="flex flex-wrap gap-1.5 pt-0.5">
+                      {[
+                        'Sử dụng thiết bị trái phép (điện thoại/tai nghe)',
+                        'Trao đổi hoặc nhìn bài thí sinh khác',
+                        'Mở ứng dụng/tab khác ngoài bài thi',
+                        'Rời khỏi vị trí khi chưa được phép',
+                      ].map((tpl) => (
+                        <button
+                          key={tpl}
+                          type="button"
+                          onClick={() => setReason(tpl)}
+                          className={`px-2.5 py-1 rounded-xl text-xs font-medium border transition cursor-pointer select-none ${
+                            reason === tpl
+                              ? 'bg-rose-50 dark:bg-rose-950/60 border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300'
+                              : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800'
+                          }`}
+                        >
+                          {tpl}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
                   <textarea
                     rows={3}
+                    maxLength={500}
                     placeholder="Nhập lý do hoặc ghi chú cho hội đồng thi..."
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 p-2.5 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !processing) {
+                        e.preventDefault();
+                        handleAction();
+                      }
+                    }}
+                    className={`w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition resize-none shadow-2xs ${
+                      actionType === 'FLAG' ? 'focus:border-rose-500' : 'focus:border-blue-500'
+                    }`}
                   />
+
+                  {/* Meta row */}
+                  <div className="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 select-none pt-0.5">
+                    <span className="hidden sm:inline-flex items-center gap-1 font-normal">
+                      Nhấn <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Enter</kbd> để xác nhận
+                    </span>
+                    <span className="ml-auto font-medium tabular-nums">
+                      {reason.length} / 500 ký tự
+                    </span>
+                  </div>
                 </div>
               </div>
 
               {/* Modal footer */}
-              <div className="flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/80 px-6 py-3">
-                <button
+              <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-3.5">
+                <Button
                   type="button"
+                  variant="secondary"
+                  size="md"
                   onClick={() => setActionType(null)}
                   disabled={processing}
-                  className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition cursor-pointer"
                 >
                   Hủy
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant={actionType === 'FLAG' ? 'danger' : actionType === 'RESOLVE' ? 'success' : 'primary'}
+                  size="md"
                   onClick={handleAction}
                   disabled={processing}
-                  className={`rounded-xl px-5 py-2 text-xs font-semibold text-white shadow-xs transition active:scale-95 cursor-pointer disabled:opacity-50 ${actionType === 'FLAG'
-                    ? 'bg-rose-600 hover:bg-rose-700'
-                    : actionType === 'RESOLVE'
-                      ? 'bg-emerald-600 hover:bg-emerald-700'
-                      : 'bg-blue-600 hover:bg-blue-700'
-                    }`}
+                  isLoading={processing}
+                  leftIcon={
+                    actionType === 'FLAG' ? (
+                      <Flag className="w-4 h-4" />
+                    ) : actionType === 'RESOLVE' ? (
+                      <Check className="w-4 h-4" />
+                    ) : (
+                      <Clock className="w-4 h-4" />
+                    )
+                  }
                 >
-                  {processing ? 'Đang xử lý...' : 'Xác nhận'}
-                </button>
+                  {actionType === 'FLAG' ? 'Lập biên bản' : actionType === 'RESOLVE' ? 'Xác nhận xử lý' : 'Xác nhận'}
+                </Button>
               </div>
             </div>
           </div>
@@ -1548,41 +1664,52 @@ export default function ProctorDashboardPage() {
       {/* ═══════ MULTI-STUDENT EXTEND MODAL ═══════ */}
       {mounted && showMultiExtendModal && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-xl border border-slate-200/90 dark:border-slate-700">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-blue-50/80 dark:bg-blue-950/40 px-6 py-4">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-blue-200 bg-blue-100/70 text-blue-700 shadow-2xs shrink-0">
+          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-blue-200/80 dark:border-blue-800/60 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shadow-2xs shrink-0">
                   <Clock className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <h3 className="text-[20px] font-semibold text-slate-900 leading-none">Gia hạn nhóm thí sinh</h3>
-                  <p className="mt-1 text-[13px] text-slate-500 font-semibold leading-none">
-                    Áp dụng cho {selectedIds.length} thí sinh đã chọn
-                  </p>
+                  <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-none">
+                    Gia hạn nhóm thí sinh
+                  </h3>
+                  <div className="mt-1.5 flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
+                      <Users className="w-3 h-3" />
+                      Áp dụng cho {selectedIds.length} thí sinh đã chọn
+                    </span>
+                  </div>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setShowMultiExtendModal(false)}
-                className="rounded-xl p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
+                className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                title="Đóng (Esc)"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
+            {/* Body */}
             <div className="p-6 space-y-4 text-xs font-semibold">
-              <div>
-                <label className="block text-slate-700 font-medium mb-1.5">Chọn số phút cộng thêm:</label>
-                <div className="flex gap-2">
+              <div className="space-y-1.5">
+                <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                  Chọn số phút cộng thêm:
+                </label>
+                <div className="grid grid-cols-5 gap-2">
                   {[5, 10, 15, 20, 30].map((m) => (
                     <button
                       key={m}
                       type="button"
                       onClick={() => setMultiMinutes(m)}
-                      className={`flex-1 py-2 rounded-xl border text-xs font-semibold transition cursor-pointer ${multiMinutes === m
-                        ? 'bg-blue-600 border-blue-600 text-white shadow-xs'
-                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
-                        }`}
+                      className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${
+                        multiMinutes === m
+                          ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
+                          : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
+                      }`}
                     >
                       +{m}p
                     </button>
@@ -1590,19 +1717,38 @@ export default function ProctorDashboardPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[15px] text-slate-700 font-medium mb-1.5">Lý do gia hạn:</label>
+              <div className="space-y-1.5">
+                <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                  Lý do gia hạn:
+                </label>
                 <textarea
                   rows={3}
+                  maxLength={300}
                   value={multiReason}
                   onChange={(e) => setMultiReason(e.target.value)}
-                  placeholder="Nhập lý do gia hạn cho nhóm..."
-                  className="w-full rounded-xl border border-slate-200 p-2.5 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !multiProcessing) {
+                      e.preventDefault();
+                      handleMultiExtend();
+                    }
+                  }}
+                  placeholder="Nhập lý do gia hạn cho nhóm thí sinh..."
+                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
                 />
+
+                <div className="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 select-none pt-0.5">
+                  <span className="hidden sm:inline-flex items-center gap-1 font-normal">
+                    Nhấn <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Enter</kbd> để xác nhận
+                  </span>
+                  <span className="ml-auto font-medium tabular-nums">
+                    {multiReason.length} / 300 ký tự
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 bg-slate-50/80 px-6 py-3">
+            {/* Footer */}
+            <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-3.5">
               <Button
                 type="button"
                 variant="secondary"
@@ -1619,8 +1765,9 @@ export default function ProctorDashboardPage() {
                 onClick={handleMultiExtend}
                 disabled={multiProcessing}
                 isLoading={multiProcessing}
+                leftIcon={<Clock className="w-4 h-4" />}
               >
-                Gia hạn
+                Gia hạn nhóm
               </Button>
             </div>
           </div>
@@ -1630,62 +1777,168 @@ export default function ProctorDashboardPage() {
       {/* ═══════ BROADCAST ANNOUNCEMENT MODAL ═══════ */}
       {mounted && showBroadcastModal && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-xl border border-slate-200/90 dark:border-slate-700">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-blue-50/80 dark:bg-blue-950/40 px-6 py-4">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-blue-200 bg-blue-100/70 text-blue-700 shadow-2xs shrink-0">
+          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-blue-200/80 dark:border-blue-800/60 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shadow-2xs shrink-0">
                   <Megaphone className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <h3 className="text-[20px] font-semibold text-slate-900 leading-none">Phát thông báo phòng thi</h3>
-                  <p className="mt-1 text-[13px] text-slate-500 font-semibold leading-none">
-                    Hiển thị thông báo tức thời trên màn hình của tất cả thí sinh
-                  </p>
+                  <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-none">
+                    Phát thông báo phòng thi
+                  </h3>
+                  <div className="mt-1.5 flex items-center gap-2">
+                    {selectedIds.length > 0 ? (
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
+                        <Users className="w-3 h-3" />
+                        Gửi đến {selectedIds.length} thí sinh đã chọn
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300">
+                        <Radio className="w-3 h-3 text-emerald-500 animate-pulse" />
+                        Toàn phòng • {stats.total || 0} thí sinh
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setShowBroadcastModal(false)}
-                className="rounded-xl p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
+                className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                title="Đóng (Esc)"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
+            {/* Body */}
             <div className="p-6 space-y-4 text-xs font-semibold">
-              <div>
-                <label className="block text-slate-700 font-medium mb-1.5">Mẫu thông báo nhanh:</label>
-                <div className="flex flex-col gap-1.5">
+              {/* Quick Presets Grid */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                    Mẫu thông báo nhanh:
+                  </label>
+                  <span className="text-xs text-slate-400 dark:text-slate-500 font-normal">
+                    Chọn 1 chạm để áp dụng
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {[
-                    'Thời gian làm bài còn lại 15 phút. Các em chú ý rà soát lại câu trả lời.',
-                    'Đề nghị tất cả thí sinh giữ trật tự và không rời khỏi màn hình làm bài.',
-                    'Hệ thống mạng vừa được khôi phục, thí sinh tiếp tục làm bài bình thường.',
-                  ].map((tpl) => (
-                    <button
-                      key={tpl}
-                      type="button"
-                      onClick={() => setBroadcastMessage(tpl)}
-                      className="text-left text-xs p-2 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/60 text-slate-700 transition cursor-pointer"
-                    >
-                      • {tpl}
-                    </button>
-                  ))}
+                    {
+                      id: 'time_15',
+                      icon: Clock,
+                      label: 'Nhắc thời gian (15p)',
+                      text: 'Thời gian làm bài còn lại 15 phút. Các em chú ý rà soát lại câu trả lời.',
+                    },
+                    {
+                      id: 'order',
+                      icon: ShieldAlert,
+                      label: 'Yêu cầu giữ trật tự',
+                      text: 'Đề nghị tất cả thí sinh giữ trật tự và không rời khỏi màn hình làm bài.',
+                    },
+                    {
+                      id: 'network',
+                      icon: Wifi,
+                      label: 'Mạng đã khôi phục',
+                      text: 'Hệ thống mạng vừa được khôi phục, thí sinh tiếp tục làm bài bình thường.',
+                    },
+                    {
+                      id: 'time_5',
+                      icon: Bell,
+                      label: 'Sắp hết giờ (5p)',
+                      text: 'Còn 5 phút cuối cùng. Hệ thống sẽ tự động thu bài khi hết thời gian.',
+                    },
+                  ].map((preset) => {
+                    const PresetIcon = preset.icon;
+                    const isSelected = broadcastMessage === preset.text;
+                    return (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        onClick={() => setBroadcastMessage(preset.text)}
+                        className={`group flex items-start gap-2.5 p-2.5 rounded-xl border text-left transition cursor-pointer select-none ${
+                          isSelected
+                            ? 'border-blue-500 bg-blue-50/90 dark:bg-blue-950/60 ring-1 ring-blue-500/50'
+                            : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/30 dark:hover:bg-blue-950/30'
+                        }`}
+                      >
+                        <span
+                          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition ${
+                            isSelected
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/60 group-hover:text-blue-600'
+                          }`}
+                        >
+                          <PresetIcon className="h-3.5 w-3.5" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[13px] font-semibold text-slate-900 dark:text-slate-100 leading-tight">
+                            {preset.label}
+                          </div>
+                          <p className="text-[12px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5 leading-snug font-normal">
+                            {preset.text}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[15px] text-slate-700 font-medium mb-1.5">Nội dung thông báo:</label>
+              {/* Textarea Editor */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                    Nội dung thông báo:
+                  </label>
+                  {broadcastMessage && (
+                    <button
+                      type="button"
+                      onClick={() => setBroadcastMessage('')}
+                      className="text-xs font-semibold text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition cursor-pointer"
+                    >
+                      Xóa nội dung
+                    </button>
+                  )}
+                </div>
+
                 <textarea
                   rows={4}
+                  maxLength={500}
                   value={broadcastMessage}
                   onChange={(e) => setBroadcastMessage(e.target.value)}
-                  placeholder="Nhập nội dung cần phát đến toàn bộ thí sinh trong phòng..."
-                  className="w-full rounded-xl border border-slate-200 p-2.5 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-blue-500"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && broadcastMessage.trim() && !broadcastProcessing) {
+                      e.preventDefault();
+                      handleSendBroadcast();
+                    }
+                  }}
+                  placeholder="Nhập nội dung cần phát đến thí sinh..."
+                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
                 />
+
+                {/* Helper & Counter */}
+                <div className="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 select-none pt-0.5">
+                  <span className="hidden sm:inline-flex items-center gap-1 font-normal">
+                    Nhấn <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Enter</kbd> để gửi nhanh
+                  </span>
+                  <span
+                    className={`ml-auto font-medium tabular-nums ${
+                      broadcastMessage.length >= 450 ? 'text-amber-600 dark:text-amber-400' : ''
+                    }`}
+                  >
+                    {broadcastMessage.length} / 500 ký tự
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 bg-slate-50/80 px-6 py-3">
+            {/* Footer */}
+            <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-3.5">
               <Button
                 type="button"
                 variant="secondary"
@@ -1702,9 +1955,9 @@ export default function ProctorDashboardPage() {
                 onClick={handleSendBroadcast}
                 disabled={broadcastProcessing || !broadcastMessage.trim()}
                 isLoading={broadcastProcessing}
-                leftIcon={<Megaphone className="w-3.5 h-3.5" />}
+                leftIcon={<Megaphone className="w-4 h-4" />}
               >
-                Gửi thông báo
+                Phát thông báo
               </Button>
             </div>
           </div>
@@ -1714,39 +1967,60 @@ export default function ProctorDashboardPage() {
       {/* ═══════ BULK EXTEND MODAL ═══════ */}
       {mounted && showBulkModal && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-xl border border-slate-200/90 dark:border-slate-700">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-amber-50/60 dark:bg-amber-950/40 px-6 py-4">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-amber-200 bg-amber-100/70 text-amber-700 shadow-2xs shrink-0">
+          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-blue-200/80 dark:border-blue-800/60 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shadow-2xs shrink-0">
                   <Clock className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <h3 className="text-[20px] font-semibold text-slate-900 leading-none">Bù giờ toàn phòng thi khẩn cấp</h3>
-                  <p className="mt-1 text-[13px] text-slate-500 font-semibold leading-none">Cộng bù thời gian làm bài cho tất cả sinh viên</p>
+                  <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-none">
+                    Bù giờ toàn phòng thi
+                  </h3>
+                  <div className="mt-1.5 flex items-center gap-2">
+                    {selectedIds.length > 0 ? (
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
+                        <Users className="w-3 h-3" />
+                        Cộng bù cho {selectedIds.length} thí sinh đã chọn
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300">
+                        <Radio className="w-3 h-3 text-emerald-500 animate-pulse" />
+                        Toàn phòng • {stats.total || 0} thí sinh
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setShowBulkModal(false)}
-                className="rounded-xl p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
+                className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                title="Đóng (Esc)"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
+            {/* Body */}
             <div className="p-6 space-y-4 text-xs font-semibold">
-              <div>
-                <label className="block text-slate-700 font-medium mb-1.5">Chọn số phút cộng bù hàng loạt:</label>
-                <div className="flex gap-2">
+              {/* Select Minutes */}
+              <div className="space-y-1.5">
+                <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                  Chọn số phút cộng bù:
+                </label>
+                <div className="grid grid-cols-5 gap-2">
                   {[5, 10, 15, 20, 30].map((m) => (
                     <button
                       key={m}
                       type="button"
                       onClick={() => setBulkMinutes(m)}
-                      className={`flex-1 py-2 rounded-xl border text-xs font-semibold transition cursor-pointer ${bulkMinutes === m
-                        ? 'bg-amber-600 border-amber-600 text-white shadow-xs'
-                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
-                        }`}
+                      className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${
+                        bulkMinutes === m
+                          ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
+                          : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
+                      }`}
                     >
                       +{m}p
                     </button>
@@ -1754,18 +2028,64 @@ export default function ProctorDashboardPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[15px] text-slate-700 font-medium mb-1.5">Lý do bù giờ (Ghi rõ để lưu biên bản thanh tra):</label>
+              {/* Reason Presets & Textarea */}
+              <div className="space-y-1.5">
+                <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                  Lý do bù giờ (Ghi rõ để lưu biên bản thanh tra):
+                </label>
+
+                {/* Preset Chips */}
+                <div className="flex flex-wrap gap-1.5 pt-0.5">
+                  {[
+                    'Sự cố mạng diện rộng',
+                    'Mất điện phòng thi tạm thời',
+                    'Lỗi hệ thống máy chủ',
+                    'Đính chính nội dung đề thi',
+                  ].map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setBulkReason(r)}
+                      className={`px-2.5 py-1 rounded-xl text-xs font-medium border transition cursor-pointer select-none ${
+                        bulkReason === r
+                          ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300'
+                          : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800'
+                      }`}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
+
                 <textarea
                   rows={3}
+                  maxLength={300}
                   value={bulkReason}
                   onChange={(e) => setBulkReason(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 p-2.5 text-[15px] font-normal text-slate-900 focus:outline-none focus:border-amber-500"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !bulkProcessing) {
+                      e.preventDefault();
+                      handleBulkExtend();
+                    }
+                  }}
+                  placeholder="Nhập chi tiết lý do bù giờ..."
+                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
                 />
+
+                {/* Helper & Counter */}
+                <div className="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 select-none pt-0.5">
+                  <span className="hidden sm:inline-flex items-center gap-1 font-normal">
+                    Nhấn <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Enter</kbd> để xác nhận
+                  </span>
+                  <span className="ml-auto font-medium tabular-nums">
+                    {bulkReason.length} / 300 ký tự
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 bg-slate-50/80 px-6 py-3">
+            {/* Footer */}
+            <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-3.5">
               <Button
                 type="button"
                 variant="secondary"
@@ -1777,13 +2097,14 @@ export default function ProctorDashboardPage() {
               </Button>
               <Button
                 type="button"
-                variant="warning"
+                variant="primary"
                 size="md"
                 onClick={handleBulkExtend}
                 disabled={bulkProcessing}
                 isLoading={bulkProcessing}
+                leftIcon={<Clock className="w-4 h-4" />}
               >
-                Bù giờ
+                Xác nhận bù giờ
               </Button>
             </div>
           </div>
@@ -1793,39 +2114,49 @@ export default function ProctorDashboardPage() {
       {/* ═══════ REOPEN ENTRY MODAL ═══════ */}
       {mounted && showReopenEntryModal && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-xl border border-slate-200/90 dark:border-slate-700">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-blue-50/60 dark:bg-blue-950/40 px-6 py-4">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-blue-200 bg-blue-100/70 text-blue-700 shadow-2xs shrink-0">
+          <div className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-blue-200/80 dark:border-blue-800/60 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shadow-2xs shrink-0">
                   <PlusCircle className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <h3 className="text-[20px] font-semibold text-slate-900 leading-none">Mở Giờ Cho Vào Thi Muộn</h3>
-                  <p className="mt-1 text-[13px] text-slate-500 font-semibold leading-none">Gia hạn thời gian cho phép sinh viên bắt đầu làm bài</p>
+                  <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-none">
+                    Mở Giờ Cho Vào Thi Muộn
+                  </h3>
+                  <p className="mt-1.5 text-[13px] text-slate-500 dark:text-slate-400 font-normal leading-none">
+                    Gia hạn thời gian cho phép sinh viên bắt đầu làm bài
+                  </p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setShowReopenEntryModal(false)}
-                className="rounded-xl p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
+                className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                title="Đóng (Esc)"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
+            {/* Body */}
             <div className="p-6 space-y-4 text-xs font-semibold">
-                            <div>
-                <label className="block text-slate-700 font-medium mb-1.5">Số phút cho phép vào thi kể từ bây giờ:</label>
-                <div className="flex gap-2">
+              <div className="space-y-1.5">
+                <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                  Số phút cho phép vào thi kể từ bây giờ:
+                </label>
+                <div className="grid grid-cols-4 gap-2">
                   {[15, 30, 45, 60].map((m) => (
                     <button
                       key={m}
                       type="button"
                       onClick={() => setLateWindowMinutes(m)}
-                      className={`flex-1 py-2 rounded-xl border text-xs font-semibold transition cursor-pointer ${lateWindowMinutes === m
-                        ? 'bg-blue-600 border-blue-600 text-white shadow-xs'
-                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
-                        }`}
+                      className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${
+                        lateWindowMinutes === m
+                          ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
+                          : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
+                      }`}
                     >
                       +{m}p
                     </button>
@@ -1834,7 +2165,8 @@ export default function ProctorDashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 bg-slate-50/80 px-6 py-3">
+            {/* Footer */}
+            <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-3.5">
               <Button
                 type="button"
                 variant="secondary"
@@ -1851,6 +2183,7 @@ export default function ProctorDashboardPage() {
                 onClick={handleReopenEntryConfirm}
                 disabled={reopenEntryProcessing}
                 isLoading={reopenEntryProcessing}
+                leftIcon={<PlusCircle className="w-4 h-4" />}
               >
                 Mở vào thi
               </Button>
