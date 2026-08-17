@@ -22,6 +22,7 @@ import { SubjectTableToolbar } from '../../components/subjects/SubjectTableToolb
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { SubjectTable } from '../../components/subjects/SubjectTable';
 import { SubjectPaginationBar } from '../../components/subjects/SubjectPaginationBar';
+import { SubjectBulkAction } from '../../components/subjects/SubjectBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 
 export default function SubjectsPage() {
@@ -527,6 +528,89 @@ export default function SubjectsPage() {
  onPage={setPage}
  onLimit={(v) => { setLimit(v); setPage(1); }}
  />
+
+        {/* Floating Bulk Action Bar */}
+        <SubjectBulkAction
+          selectedCount={selected.length}
+          totalCount={filteredSubjects.length}
+          allSelected={selected.length === filteredSubjects.length && filteredSubjects.length > 0}
+          onToggleAll={() =>
+            setSelected(selected.length === filteredSubjects.length ? [] : filteredSubjects.map((s) => s.id))
+          }
+          onExportExcel={() => {
+            const selectedItems = subjects.filter((s) => selected.includes(s.id));
+            const columns = [
+              { header: 'STT', width: 8, align: 'center' as const },
+              { header: 'Mã môn', width: 15 },
+              { header: 'Tên môn học', width: 30 },
+              { header: 'Số tín chỉ', width: 12, align: 'center' as const },
+              { header: 'Khoa trực thuộc', width: 25 },
+            ];
+            const rows = selectedItems.map((s, idx) => [
+              idx + 1,
+              s.subjectCode,
+              s.name,
+              s.credits,
+              s.department?.name || '',
+            ]);
+            exportToFormattedExcel({
+              filename: 'Danh_sach_mon_hoc_da_chon.xls',
+              title: 'DANH SÁCH MÔN HỌC ĐÃ CHỌN',
+              subtitle: `Đã trích xuất ${selectedItems.length} môn học`,
+              columns,
+              rows,
+            });
+            setToast({ message: `Đã xuất ${selected.length} môn học ra Excel`, type: 'success' });
+          }}
+          onPrint={() => {
+            const selectedItems = subjects.filter((s) => selected.includes(s.id));
+            printReport({
+              title: 'BÁO CÁO DANH SÁCH MÔN HỌC ĐÃ CHỌN',
+              subtitle: `Tổng số môn học được chọn: ${selectedItems.length}`,
+              metaInfo: [
+                { label: 'Số lượng đã chọn', value: String(selectedItems.length) },
+              ],
+              columns: [
+                { header: 'STT', width: '40px' },
+                { header: 'Mã môn', width: '90px', align: 'center' },
+                { header: 'Tên Môn học', width: '220px' },
+                { header: 'Số tín chỉ', width: '80px', align: 'center' },
+                { header: 'Khoa trực thuộc', width: '180px' },
+              ],
+              rows: selectedItems.map((s, idx) => [
+                idx + 1,
+                s.subjectCode,
+                s.name,
+                String(s.credits),
+                s.department?.name || '---',
+              ]),
+            });
+          }}
+          onDelete={() => {
+            const count = selected.length;
+            setConfirmModal({
+              isOpen: true,
+              title: 'Xóa hàng loạt môn học',
+              message: `Bạn có chắc chắn muốn xóa ${count} môn học đã chọn? Hành động này không thể hoàn tác.`,
+              type: 'danger',
+              onConfirm: async () => {
+                setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+                try {
+                  const results = await Promise.allSettled(selected.map((id) => api.delete(`/subjects/${id}`)));
+                  const deletedIds = selected.filter((_, index) => results[index].status === 'fulfilled');
+                  if (deletedIds.length) {
+                    setSubjects((prev) => prev.filter((item) => !deletedIds.includes(item.id)));
+                    setSelected([]);
+                    setToast({ message: `Đã xóa thành công ${deletedIds.length} môn học`, type: 'success' });
+                  }
+                } catch (err: any) {
+                  setToast({ message: err.message || 'Lỗi khi xóa môn học', type: 'error' });
+                }
+              },
+            });
+          }}
+          onClear={() => setSelected([])}
+        />
  </main>
 
   {/* Add/Edit Subject Modal */}

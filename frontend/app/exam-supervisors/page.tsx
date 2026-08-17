@@ -20,6 +20,7 @@ import { ExamSupervisorFilterPopover } from '../../components/exam-supervisors/E
 import { ExamSupervisorTableToolbar } from '../../components/exam-supervisors/ExamSupervisorTableToolbar';
 import { ExamSupervisorTable } from '../../components/exam-supervisors/ExamSupervisorTable';
 import { ExamSupervisorPaginationBar } from '../../components/exam-supervisors/ExamSupervisorPaginationBar';
+import { ExamSupervisorBulkAction } from '../../components/exam-supervisors/ExamSupervisorBulkAction';
 import { InlineCreateAssignmentPanel } from '../../components/exam-supervisors/InlineCreateAssignmentPanel';
 import { InlineAutoProposalPanel } from '../../components/exam-supervisors/InlineAutoProposalPanel';
 import { SchedulePickerModal } from '../../components/exam-supervisors/SchedulePickerModal';
@@ -763,24 +764,6 @@ export default function ExamSupervisorsPage() {
           </div>
         </div>
 
-        {/* ── 5. Bulk Actions Bar ── */}
-        {selected.length > 0 && currentUser?.role === 'ADMIN' && (
-          <div className="flex items-center justify-between p-3 rounded-2xl border border-blue-200 dark:border-blue-900 bg-blue-50/90 dark:bg-blue-950/60 shadow-md">
-            <span className="text-xs font-semibold text-blue-900 dark:text-blue-200 pl-2">
-              Đang chọn {selected.length} lượt phân công
-            </span>
-            <div className="flex items-center gap-2">
-              <Button variant="danger" size="sm" onClick={handleBulkDelete}>
-                <Trash2 className="h-3.5 w-3.5 mr-1" />
-                Hủy {selected.length} phân công
-              </Button>
-              <Button variant="secondary" size="sm" onClick={() => setSelected([])}>
-                Bỏ chọn
-              </Button>
-            </div>
-          </div>
-        )}
-
         {/* ── 6. Main Data Table / Grid / Compact ── */}
         {loading ? (
           <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
@@ -821,6 +804,52 @@ export default function ExamSupervisorsPage() {
             setLimit(l);
             setPage(1);
           }}
+        />
+
+        {/* Floating Bulk Action Bar */}
+        <ExamSupervisorBulkAction
+          selectedCount={selected.length}
+          totalCount={filteredSupervisors.length}
+          allSelected={selected.length === filteredSupervisors.length && filteredSupervisors.length > 0}
+          onToggleAll={() =>
+            setSelected(selected.length === filteredSupervisors.length ? [] : filteredSupervisors.map((s) => s.id))
+          }
+          onNotify={() => {
+            setToast({ message: `Đã gửi thông báo nhắc ca thi cho ${selected.length} giám thị`, type: 'success' });
+          }}
+          onExport={() => {
+            const selectedItems = filteredSupervisors.filter((s) => selected.includes(s.id));
+            const columns = [
+              { header: 'STT', width: 8, align: 'center' as const },
+              { header: 'Mã GV', width: 15 },
+              { header: 'Họ và tên', width: 25 },
+              { header: 'Phòng thi', width: 20 },
+              { header: 'Vai trò', width: 15, align: 'center' as const },
+              { header: 'Trạng thái', width: 15, align: 'center' as const },
+            ];
+            const rows = selectedItems.map((s, idx) => {
+              const roomObj = s.examScheduleRoom?.room || s.examScheduleRoom?.examRoom;
+              const rName = roomObj?.roomName || roomObj?.name || roomObj?.roomCode || `Phòng #${s.examScheduleRoomId}`;
+              return [
+                idx + 1,
+                s.teacher?.teacherCode || '',
+                s.teacher?.fullName || '',
+                rName,
+                s.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
+                s.status || 'PENDING',
+              ];
+            });
+            exportToFormattedExcel({
+              filename: 'Danh_sach_phan_cong_da_chon.xls',
+              title: 'DANH SÁCH PHÂN CÔNG GIÁM THỊ ĐÃ CHỌN',
+              subtitle: `Đã trích xuất ${selectedItems.length} lượt phân công`,
+              columns,
+              rows,
+            });
+            setToast({ message: `Đã xuất ${selected.length} phân công ra Excel`, type: 'success' });
+          }}
+          onDelete={handleBulkDelete}
+          onClear={() => setSelected([])}
         />
       </main>
 

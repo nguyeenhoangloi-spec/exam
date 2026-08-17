@@ -23,6 +23,7 @@ import { StudentTableToolbar } from '../../components/students/StudentTableToolb
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { StudentTable } from '../../components/students/StudentTable';
 import { StudentPaginationBar } from '../../components/students/StudentPaginationBar';
+import { StudentBulkAction } from '../../components/students/StudentBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 
 export default function StudentsPage() {
@@ -554,6 +555,97 @@ export default function StudentsPage() {
             setLimit(v);
             setPage(1);
           }}
+        />
+
+        {/* Floating Bulk Action Bar */}
+        <StudentBulkAction
+          selectedCount={selected.length}
+          totalCount={filteredStudents.length}
+          allSelected={selected.length === filteredStudents.length && filteredStudents.length > 0}
+          onToggleAll={() =>
+            setSelected(selected.length === filteredStudents.length ? [] : filteredStudents.map((s) => s.id))
+          }
+          onExportExcel={() => {
+            const selectedItems = students.filter((s) => selected.includes(s.id));
+            const columns = [
+              { header: 'STT', width: 8, align: 'center' as const },
+              { header: 'Mã SV', width: 15 },
+              { header: 'Họ và tên', width: 25 },
+              { header: 'Giới tính', width: 12, align: 'center' as const },
+              { header: 'Lớp học', width: 15, align: 'center' as const },
+              { header: 'Email', width: 25 },
+              { header: 'Số điện thoại', width: 15, align: 'center' as const },
+            ];
+            const rows = selectedItems.map((s, idx) => [
+              idx + 1,
+              s.studentCode,
+              s.fullName,
+              s.gender === 'FEMALE' ? 'Nữ' : 'Nam',
+              s.class?.name || '---',
+              s.email,
+              s.phone || '---',
+            ]);
+            exportToFormattedExcel({
+              filename: 'Danh_sach_sinh_vien_da_chon.xls',
+              title: 'DANH SÁCH SINH VIÊN ĐÃ CHỌN',
+              subtitle: `Đã trích xuất ${selectedItems.length} sinh viên`,
+              columns,
+              rows,
+            });
+            setToast({ message: `Đã xuất ${selected.length} sinh viên ra Excel`, type: 'success' });
+          }}
+          onPrint={() => {
+            const selectedItems = students.filter((s) => selected.includes(s.id));
+            printReport({
+              title: 'BÁO CÁO DANH SÁCH SINH VIÊN ĐÃ CHỌN',
+              subtitle: `Tổng số sinh viên được chọn: ${selectedItems.length}`,
+              metaInfo: [
+                { label: 'Số lượng đã chọn', value: String(selectedItems.length) },
+              ],
+              columns: [
+                { header: 'STT', width: '40px' },
+                { header: 'Mã SV', width: '90px', align: 'center' },
+                { header: 'Họ và Tên', width: '180px' },
+                { header: 'Giới tính', width: '80px', align: 'center' },
+                { header: 'Lớp học', width: '120px', align: 'center' },
+                { header: 'Email', width: '180px' },
+                { header: 'Số điện thoại', width: '100px', align: 'center' },
+              ],
+              rows: selectedItems.map((s, idx) => [
+                idx + 1,
+                s.studentCode,
+                s.fullName,
+                s.gender === 'FEMALE' ? 'Nữ' : 'Nam',
+                s.class?.name || '---',
+                s.email,
+                s.phone || '---',
+              ]),
+            });
+          }}
+          onDelete={() => {
+            const count = selected.length;
+            setConfirmModal({
+              isOpen: true,
+              title: 'Xóa hàng loạt sinh viên',
+              message: `Bạn có chắc chắn muốn xóa ${count} sinh viên đã chọn? Hành động này không thể hoàn tác.`,
+              type: 'danger',
+              onConfirm: async () => {
+                setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+                try {
+                  const results = await Promise.allSettled(selected.map((id) => api.delete(`/students/${id}`)));
+                  const deletedIds = selected.filter((_, index) => results[index].status === 'fulfilled');
+                  if (deletedIds.length) {
+                    setStudents((prev) => prev.filter((item) => !deletedIds.includes(item.id)));
+                    setSelected([]);
+                    setToast({ message: `Đã xóa thành công ${deletedIds.length} sinh viên`, type: 'success' });
+                  }
+                } catch (err: any) {
+                  setToast({ message: err.message || 'Lỗi khi xóa sinh viên', type: 'error' });
+                }
+              },
+            });
+          }}
+          onClear={() => setSelected([])}
         />
       </main>
 

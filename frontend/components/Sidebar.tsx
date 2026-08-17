@@ -173,7 +173,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         group: 'Khảo thí sinh viên',
         items: [
           { name: 'Lịch thi cá nhân', href: '/student/exam-schedule', icon: CalendarDays },
-          { name: 'Luyện thi trắc nghiệm', href: '/student/practice', icon: Sparkles },
           { name: 'Kết quả bài thi', href: '/student/results', icon: Award },
           { name: 'Chương trình đào tạo', href: '/student/curriculum', icon: BookOpen },
         ],

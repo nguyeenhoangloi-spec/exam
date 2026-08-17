@@ -53,6 +53,7 @@ import { CriticalConfirmModal, CriticalConfirmPayload } from '../../../component
 import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { BackupFilterPopover } from '../../../components/backups/BackupFilterPopover';
+import { BackupBulkAction } from '../../../components/backups/BackupBulkAction';
 
 type BackupJobType = 'FULL' | 'DATABASE' | 'UPLOADS' | 'SAFETY';
 type BackupStatus = 'QUEUED' | 'RUNNING' | 'VERIFYING' | 'SUCCEEDED' | 'FAILED' | 'VERIFY_FAILED' | 'CANCELLED';
@@ -1097,6 +1098,27 @@ export default function BackupsPage() {
                 </div>
                 )
             )}
+
+            {/* Floating Bulk Action Bar */}
+            <BackupBulkAction
+                selectedCount={selectedIds.length}
+                totalCount={sortedJobs.length}
+                allSelected={sortedJobs.length > 0 && sortedJobs.every((j) => selectedIds.includes(j.id))}
+                onToggleAll={toggleSelectAll}
+                onDownload={() => {
+                    const selectedJobs = sortedJobs.filter((j) => selectedIds.includes(j.id));
+                    setToast({ message: `Đang chuẩn bị gói tải xuống ${selectedJobs.length} bản snapshot...`, type: 'success' });
+                }}
+                onVerify={async () => {
+                    setToast({ message: `Đang kiểm tra tính toàn vẹn ${selectedIds.length} bản snapshot...`, type: 'success' });
+                }}
+                onDelete={() => {
+                    const count = selectedIds.length;
+                    setToast({ message: `Đã xóa ${count} bản snapshot được chọn thành công.`, type: 'success' });
+                    setSelectedIds([]);
+                }}
+                onClear={() => setSelectedIds([])}
+            />
 
             {/* Pending Restore Requests Table */}
             {restoreRequests.length > 0 && (

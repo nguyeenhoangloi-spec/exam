@@ -23,6 +23,7 @@ import { TeacherTableToolbar } from '../../components/teachers/TeacherTableToolb
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { TeacherTable } from '../../components/teachers/TeacherTable';
 import { TeacherPaginationBar } from '../../components/teachers/TeacherPaginationBar';
+import { TeacherBulkAction } from '../../components/teachers/TeacherBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 
 const DEGREE_OPTIONS = ['GS.TS', 'PGS.TS', 'TS', 'ThS'];
@@ -515,6 +516,97 @@ export default function TeachersPage() {
             setLimit(v);
             setPage(1);
           }}
+        />
+
+        {/* Floating Bulk Action Bar */}
+        <TeacherBulkAction
+          selectedCount={selected.length}
+          totalCount={filteredTeachers.length}
+          allSelected={selected.length === filteredTeachers.length && filteredTeachers.length > 0}
+          onToggleAll={() =>
+            setSelected(selected.length === filteredTeachers.length ? [] : filteredTeachers.map((t) => t.id))
+          }
+          onExportExcel={() => {
+            const selectedItems = teachers.filter((t) => selected.includes(t.id));
+            const columns = [
+              { header: 'STT', width: 8, align: 'center' as const },
+              { header: 'Mã GV', align: 'center' as const, width: 16 },
+              { header: 'Họ và tên', align: 'left' as const, width: 25 },
+              { header: 'Học vị', align: 'center' as const, width: 14 },
+              { header: 'Email', align: 'left' as const, width: 28 },
+              { header: 'Số điện thoại', align: 'center' as const, width: 16 },
+              { header: 'Khoa trực thuộc', align: 'left' as const, width: 24 },
+            ];
+            const rows = selectedItems.map((t, idx) => [
+              idx + 1,
+              t.teacherCode,
+              t.fullName,
+              t.degree || 'TS',
+              t.email,
+              t.phone || '',
+              t.department?.name || '',
+            ]);
+            exportToFormattedExcel({
+              filename: 'Danh_sach_giang_vien_da_chon.xls',
+              title: 'DANH SÁCH GIẢNG VIÊN ĐÃ CHỌN',
+              subtitle: `Đã trích xuất ${selectedItems.length} giảng viên`,
+              columns,
+              rows,
+            });
+            setToast({ message: `Đã xuất ${selected.length} giảng viên ra Excel`, type: 'success' });
+          }}
+          onPrint={() => {
+            const selectedItems = teachers.filter((t) => selected.includes(t.id));
+            printReport({
+              title: 'BÁO CÁO DANH SÁCH GIẢNG VIÊN ĐÃ CHỌN',
+              subtitle: `Tổng số giảng viên được chọn: ${selectedItems.length}`,
+              metaInfo: [
+                { label: 'Số lượng đã chọn', value: String(selectedItems.length) },
+              ],
+              columns: [
+                { header: 'STT', width: '40px' },
+                { header: 'Mã GV', width: '90px', align: 'center' },
+                { header: 'Họ và Tên', width: '180px' },
+                { header: 'Học vị', width: '80px', align: 'center' },
+                { header: 'Khoa trực thuộc', width: '150px' },
+                { header: 'Email công vụ', width: '180px' },
+                { header: 'Số điện thoại', width: '100px', align: 'center' },
+              ],
+              rows: selectedItems.map((t, idx) => [
+                idx + 1,
+                t.teacherCode,
+                t.fullName,
+                t.degree || 'TS',
+                t.department?.name || '---',
+                t.email,
+                t.phone || '---',
+              ]),
+            });
+          }}
+          onDelete={() => {
+            const count = selected.length;
+            setConfirmModal({
+              isOpen: true,
+              title: 'Xóa hàng loạt giảng viên',
+              message: `Bạn có chắc chắn muốn xóa ${count} giảng viên đã chọn? Hành động này không thể hoàn tác.`,
+              type: 'danger',
+              onConfirm: async () => {
+                setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+                try {
+                  const results = await Promise.allSettled(selected.map((id) => api.delete(`/teachers/${id}`)));
+                  const deletedIds = selected.filter((_, index) => results[index].status === 'fulfilled');
+                  if (deletedIds.length) {
+                    setTeachers((prev) => prev.filter((item) => !deletedIds.includes(item.id)));
+                    setSelected([]);
+                    setToast({ message: `Đã xóa thành công ${deletedIds.length} giảng viên`, type: 'success' });
+                  }
+                } catch (err: any) {
+                  setToast({ message: err.message || 'Lỗi khi xóa giảng viên', type: 'error' });
+                }
+              },
+            });
+          }}
+          onClear={() => setSelected([])}
         />
       </main>
 

@@ -12,6 +12,7 @@ import { Button } from '../../components/ui/Button';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { TrashPaginationBar } from '../../components/trash/TrashPaginationBar';
+import { TrashBulkAction } from '../../components/trash/TrashBulkAction';
 import { TrashFilterPopover } from '../../components/trash/TrashFilterPopover';
 import {
   Trash2, RotateCcw, Search, CalendarCheck, FileText, X,
@@ -258,6 +259,56 @@ function TrashPageContent() {
     } else {
       setSelectedIds((prev) => prev.filter((item) => item !== id));
     }
+  };
+
+  const handleBulkRestore = () => {
+    const count = selectedIds.length;
+    const selectedItems = items.filter((i) => selectedIds.includes(i.id));
+    setConfirmModal({
+      isOpen: true,
+      title: 'Khôi phục hàng loạt',
+      message: `Bạn có chắc chắn muốn khôi phục ${count} bản ghi đã chọn trở lại hệ thống?`,
+      type: 'info',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await Promise.allSettled(
+            selectedItems.map((item) => api.post('/trash/restore', { type: item.type, id: item.id }))
+          );
+          setToast({ message: `Đã khôi phục thành công ${count} bản ghi!`, type: 'success' });
+          setSelectedIds([]);
+          fetchStats();
+          fetchItems();
+        } catch (err: any) {
+          setToast({ message: err?.response?.data?.message || 'Khôi phục thất bại', type: 'error' });
+        }
+      },
+    });
+  };
+
+  const handleBulkHardDelete = () => {
+    const count = selectedIds.length;
+    const selectedItems = items.filter((i) => selectedIds.includes(i.id));
+    setConfirmModal({
+      isOpen: true,
+      title: 'Xóa vĩnh viễn hàng loạt',
+      message: `CẢNH BÁO: Thao tác này sẽ XÓA VĨNH VIỄN ${count} bản ghi đã chọn khỏi Database và KHÔNG THỂ KHÔI PHỤC! Bạn có chắc chắn?`,
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await Promise.allSettled(
+            selectedItems.map((item) => api.delete('/trash/permanent', { data: { type: item.type, id: item.id } }))
+          );
+          setToast({ message: `Đã xóa vĩnh viễn ${count} bản ghi khỏi hệ thống!`, type: 'success' });
+          setSelectedIds([]);
+          fetchStats();
+          fetchItems();
+        } catch (err: any) {
+          setToast({ message: err?.response?.data?.message || 'Xóa vĩnh viễn thất bại', type: 'error' });
+        }
+      },
+    });
   };
 
   const handleAutoClean = () => {
@@ -893,6 +944,19 @@ function TrashPageContent() {
             }}
           />
         )}
+
+        {/* Floating Bulk Action Bar */}
+        <TrashBulkAction
+          selectedCount={selectedIds.length}
+          totalCount={sortedItems.length}
+          allSelected={selectedIds.length === sortedItems.length && sortedItems.length > 0}
+          onToggleAll={() =>
+            setSelectedIds(selectedIds.length === sortedItems.length ? [] : sortedItems.map((i) => i.id))
+          }
+          onRestore={handleBulkRestore}
+          onHardDelete={handleBulkHardDelete}
+          onClear={() => setSelectedIds([])}
+        />
 
         {/* ── Standardized ProfileDrawer ── */}
         <ProfileDrawer

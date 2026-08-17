@@ -21,6 +21,7 @@ import { DepartmentFilterPopover } from '../../components/departments/Department
 import { DepartmentTableToolbar } from '../../components/departments/DepartmentTableToolbar';
 import { DepartmentTable } from '../../components/departments/DepartmentTable';
 import { DepartmentPaginationBar } from '../../components/departments/DepartmentPaginationBar';
+import { DepartmentBulkAction } from '../../components/departments/DepartmentBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 
@@ -541,6 +542,91 @@ export default function DepartmentsPage() {
             setLimit(v);
             setPage(1);
           }}
+        />
+
+        {/* Floating Bulk Action Bar */}
+        <DepartmentBulkAction
+          selectedCount={selected.length}
+          totalCount={filteredDepartments.length}
+          allSelected={selected.length === filteredDepartments.length && filteredDepartments.length > 0}
+          onToggleAll={() =>
+            setSelected(selected.length === filteredDepartments.length ? [] : filteredDepartments.map((d) => d.id))
+          }
+          onExportExcel={() => {
+            const selectedItems = departments.filter((d) => selected.includes(d.id));
+            const columns = [
+              { header: 'STT', width: 8, align: 'center' as const },
+              { header: 'Mã khoa', width: 15 },
+              { header: 'Tên khoa/viện', width: 30 },
+              { header: 'Số giảng viên', width: 15, align: 'center' as const },
+              { header: 'Số môn học', width: 15, align: 'center' as const },
+              { header: 'Số lớp học', width: 15, align: 'center' as const },
+            ];
+            const rows = selectedItems.map((d: any, idx) => [
+              idx + 1,
+              d.code,
+              d.name,
+              d.teachers?.length ?? 0,
+              d.subjects?.length ?? 0,
+              d.classes?.length ?? 0,
+            ]);
+            exportToFormattedExcel({
+              filename: 'Danh_sach_khoa_da_chon.xls',
+              title: 'DANH SÁCH KHOA/VIỆN ĐÃ CHỌN',
+              subtitle: `Đã trích xuất ${selectedItems.length} khoa`,
+              columns,
+              rows,
+            });
+            setToast({ message: `Đã xuất ${selected.length} khoa ra Excel`, type: 'success' });
+          }}
+          onPrint={() => {
+            const selectedItems = departments.filter((d) => selected.includes(d.id));
+            printReport({
+              title: 'BÁO CÁO DANH SÁCH KHOA/VIỆN ĐÃ CHỌN',
+              subtitle: `Tổng số khoa được chọn: ${selectedItems.length}`,
+              metaInfo: [
+                { label: 'Số lượng đã chọn', value: String(selectedItems.length) },
+              ],
+              columns: [
+                { header: 'STT', width: '40px' },
+                { header: 'Mã khoa', width: '90px', align: 'center' },
+                { header: 'Tên Khoa/Viện', width: '220px' },
+                { header: 'Số giảng viên', width: '100px', align: 'center' },
+                { header: 'Số môn học', width: '100px', align: 'center' },
+              ],
+              rows: selectedItems.map((d: any, idx) => [
+                idx + 1,
+                d.code,
+                d.name,
+                String(d.teachers?.length ?? 0),
+                String(d.subjects?.length ?? 0),
+              ]),
+            });
+          }}
+          onDelete={() => {
+            const count = selected.length;
+            setConfirmModal({
+              isOpen: true,
+              title: 'Xóa hàng loạt khoa/viện',
+              message: `Bạn có chắc chắn muốn xóa ${count} khoa đã chọn? Hành động này không thể hoàn tác.`,
+              type: 'danger',
+              onConfirm: async () => {
+                setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+                try {
+                  const results = await Promise.allSettled(selected.map((id) => api.delete(`/departments/${id}`)));
+                  const deletedIds = selected.filter((_, index) => results[index].status === 'fulfilled');
+                  if (deletedIds.length) {
+                    setDepartments((prev) => prev.filter((item) => !deletedIds.includes(item.id)));
+                    setSelected([]);
+                    setToast({ message: `Đã xóa thành công ${deletedIds.length} khoa`, type: 'success' });
+                  }
+                } catch (err: any) {
+                  setToast({ message: err.message || 'Lỗi khi xóa khoa', type: 'error' });
+                }
+              },
+            });
+          }}
+          onClear={() => setSelected([])}
         />
       </main>
 

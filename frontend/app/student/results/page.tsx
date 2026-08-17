@@ -15,6 +15,7 @@ import { SortDropdown } from '../../../components/ui/SortDropdown';
 import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
 import { TabBar } from '../../../components/ui/TabBar';
 import { StudentResultFilterPopover } from '../../../components/student-results/StudentResultFilterPopover';
+import { StudentResultBulkAction } from '../../../components/student-results/StudentResultBulkAction';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import { downloadCsv } from '../../../lib/export-csv';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
@@ -1067,17 +1068,83 @@ export default function StudentResultsPage() {
 
  {/* ── 6. Standard Pagination Bar (Hiển thị 1 - X trong Y Kết quả, Page Buttons, Rows Per Page) ── */}
   {totalItems > 0 && (
-  <PaginationBar
-  page={page}
-  totalPages={totalPages}
-  limit={limit}
-  totalItems={totalItems}
-  unit="kết quả thi"
-  onPage={(p) => setPage(p)}
-  onLimit={(l) => { setLimit(l); setPage(1); }}
-  limitOptions={[8, 15, 25, 50]}
+    <PaginationBar
+      page={page}
+      totalPages={totalPages}
+      limit={limit}
+      totalItems={totalItems}
+      unit="kết quả thi"
+      onPage={(p) => setPage(p)}
+      onLimit={(l) => { setLimit(l); setPage(1); }}
+      limitOptions={[8, 15, 25, 50]}
+    />
+  )}
+
+  {/* Floating Bulk Action Bar */}
+  <StudentResultBulkAction
+    selectedCount={selected.length}
+    totalCount={totalItems}
+    allSelected={allSelected}
+    onToggleAll={() => handleSelectAll(!allSelected)}
+    onExportExcel={() => {
+      const selectedItems = currentItems.filter((item) => selected.includes(item.id));
+      const columns = [
+        { header: 'STT', width: 8, align: 'center' as const },
+        { header: 'Mã môn', width: 15 },
+        { header: 'Tên môn học', width: 30 },
+        { header: 'Tín chỉ', width: 10, align: 'center' as const },
+        { header: 'Kỳ thi', width: 20 },
+        { header: 'Ngày thi', width: 15, align: 'center' as const },
+        { header: 'Điểm số', width: 12, align: 'center' as const },
+        { header: 'Kết quả', width: 15, align: 'center' as const },
+      ];
+      const rows = selectedItems.map((item, idx) => [
+        idx + 1,
+        item.subjectCode,
+        item.subjectName,
+        item.credits,
+        item.periodName,
+        item.examDate ? new Date(item.examDate).toLocaleDateString('vi-VN') : '---',
+        item.score !== null ? item.score.toFixed(1) : '---',
+        item.status === 'PASSED' ? 'Đạt' : item.status === 'FAILED' ? 'Chưa đạt' : 'Chờ điểm',
+      ]);
+      exportToFormattedExcel({
+        filename: 'Ket_qua_thi_sinh_vien_da_chon.xls',
+        title: 'KẾT QUẢ THI SINH VIÊN ĐÃ CHỌN',
+        subtitle: `Đã trích xuất ${selectedItems.length} kết quả học phần`,
+        columns,
+        rows,
+      });
+      setToast({ message: `Đã xuất ${selected.length} kết quả ra Excel`, type: 'success' });
+    }}
+    onPrint={() => {
+      const selectedItems = currentItems.filter((item) => selected.includes(item.id));
+      printReport({
+        title: 'BÁO CÁO KẾT QUẢ THI CÁ NHÂN',
+        subtitle: `Tổng số học phần được chọn: ${selectedItems.length}`,
+        metaInfo: [
+          { label: 'Số lượng học phần', value: String(selectedItems.length) },
+        ],
+        columns: [
+          { header: 'STT', width: '40px' },
+          { header: 'Mã HP', width: '90px', align: 'center' },
+          { header: 'Tên Môn Học', width: '220px' },
+          { header: 'Số TC', width: '70px', align: 'center' },
+          { header: 'Điểm', width: '70px', align: 'center' },
+          { header: 'Trạng thái', width: '100px', align: 'center' },
+        ],
+        rows: selectedItems.map((item, idx) => [
+          idx + 1,
+          item.subjectCode,
+          item.subjectName,
+          String(item.credits),
+          item.score !== null ? item.score.toFixed(1) : '---',
+          item.status === 'PASSED' ? 'Đạt' : item.status === 'FAILED' ? 'Chưa đạt' : 'Chờ điểm',
+        ]),
+      });
+    }}
+    onClear={() => setSelected([])}
   />
-   )}
 
       {/* ── 7. Detail Result Drawer ── */}
       <ProfileDrawer

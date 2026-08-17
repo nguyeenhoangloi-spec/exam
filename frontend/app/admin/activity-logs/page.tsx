@@ -16,6 +16,7 @@ import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdow
 import { printReport } from '../../../lib/export-print';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import { ActivityLogFilterPopover } from '../../../components/activity-logs/ActivityLogFilterPopover';
+import { ActivityLogBulkAction } from '../../../components/activity-logs/ActivityLogBulkAction';
 import {
     Activity,
     Search,
@@ -714,29 +715,6 @@ export default function ActivityLogsPage() {
                 </div>
             </div>
 
-            {/* Bulk Action Bar */}
-            {selectedIds.length > 0 && (
-                <div className="flex items-center justify-between rounded-xl border border-blue-200 bg-blue-50 p-3 text-[14px] font-medium text-blue-900 shadow-2xs">
-                    <span>Đã chọn <strong className="text-blue-700">{selectedIds.length}</strong> dòng nhật ký</span>
-                    <div className="flex items-center gap-2">
-                        <Button variant="secondary" size="xs" onClick={() => setSelectedIds([])}>
-                            Bỏ chọn tất cả
-                        </Button>
-                        <Button
-                            variant="danger"
-                            size="xs"
-                            onClick={() => {
-                                setToast({ message: `Đã xử lý ${selectedIds.length} nhật ký được chọn.`, type: 'success' });
-                                setSelectedIds([]);
-                            }}
-                            leftIcon={<Trash2 className="h-3.5 w-3.5" />}
-                        >
-                            Xóa {selectedIds.length} mục
-                        </Button>
-                    </div>
-                </div>
-            )}
-
             {/* ── 5. Full-Width DataGrid Table (Exact StudentTable Match 1-1) ── */}
             {viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1108,6 +1086,75 @@ export default function ActivityLogsPage() {
                     </div>
                 </div>
             )}
+
+            {/* Floating Bulk Action Bar */}
+            <ActivityLogBulkAction
+                selectedCount={selectedIds.length}
+                totalCount={totalCount}
+                allSelected={selectedIds.length === paginatedLogs.length && paginatedLogs.length > 0}
+                onToggleAll={toggleSelectAll}
+                onExportExcel={() => {
+                    const selectedLogs = logs.filter((l) => selectedIds.includes(l.id));
+                    const columns = [
+                        { header: 'STT', width: 8, align: 'center' as const },
+                        { header: 'Mã Log ID', width: 15 },
+                        { header: 'Thời gian', width: 22 },
+                        { header: 'Người thực hiện', width: 20 },
+                        { header: 'Hành động', width: 15 },
+                        { header: 'Đối tượng', width: 15 },
+                        { header: 'Nội dung chi tiết', width: 40 },
+                    ];
+                    const rows = selectedLogs.map((l, idx) => [
+                        idx + 1,
+                        l.id,
+                        new Date(l.createdAt).toLocaleString('vi-VN'),
+                        l.actor?.username || 'Hệ thống',
+                        l.action,
+                        l.entityType,
+                        l.description || '',
+                    ]);
+                    exportToFormattedExcel({
+                        filename: 'Nhat_ky_hoat_dong_da_chon.xls',
+                        title: 'NHẬT KÝ HOẠT ĐỘNG HỆ THỐNG ĐÃ CHỌN',
+                        subtitle: `Đã trích xuất ${selectedLogs.length} bản ghi nhật ký`,
+                        columns,
+                        rows,
+                    });
+                    setToast({ message: `Đã xuất ${selectedLogs.length} nhật ký ra Excel`, type: 'success' });
+                }}
+                onPrint={() => {
+                    const selectedLogs = logs.filter((l) => selectedIds.includes(l.id));
+                    printReport({
+                        title: 'BÁO CÁO NHẬT KÝ HOẠT ĐỘNG HỆ THỐNG',
+                        subtitle: `Tổng số bản ghi được chọn: ${selectedLogs.length}`,
+                        metaInfo: [
+                            { label: 'Số lượng đã chọn', value: String(selectedLogs.length) },
+                        ],
+                        columns: [
+                            { header: 'STT', width: '40px' },
+                            { header: 'Thời gian', width: '140px' },
+                            { header: 'Người thực hiện', width: '140px' },
+                            { header: 'Hành động', width: '100px', align: 'center' },
+                            { header: 'Đối tượng', width: '100px', align: 'center' },
+                            { header: 'Mô tả', width: '240px' },
+                        ],
+                        rows: selectedLogs.map((l, idx) => [
+                            idx + 1,
+                            new Date(l.createdAt).toLocaleString('vi-VN'),
+                            l.actor?.username || 'Hệ thống',
+                            l.action,
+                            l.entityType,
+                            l.description || '---',
+                        ]),
+                    });
+                }}
+                onDelete={() => {
+                    const count = selectedIds.length;
+                    setToast({ message: `Đã xử lý xóa ${count} nhật ký được chọn thành công.`, type: 'success' });
+                    setSelectedIds([]);
+                }}
+                onClear={() => setSelectedIds([])}
+            />
 
             {/* ── 7. Metadata Inspector Drawer (Chuẩn Design System & Hoạt ảnh 60 FPS) ── */}
             {drawerOpenLog && (

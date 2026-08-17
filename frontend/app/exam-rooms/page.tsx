@@ -22,6 +22,7 @@ import { ExamRoomFilterPopover } from '../../components/exam-rooms/ExamRoomFilte
 import { ExamRoomTableToolbar } from '../../components/exam-rooms/ExamRoomTableToolbar';
 import { ExamRoomTable } from '../../components/exam-rooms/ExamRoomTable';
 import { ExamRoomPaginationBar } from '../../components/exam-rooms/ExamRoomPaginationBar';
+import { ExamRoomBulkAction } from '../../components/exam-rooms/ExamRoomBulkAction';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 
 export default function ExamRoomsPage() {
@@ -469,6 +470,97 @@ export default function ExamRoomsPage() {
             setLimit(v);
             setPage(1);
           }}
+        />
+
+        {/* Floating Bulk Action Bar */}
+        <ExamRoomBulkAction
+          selectedCount={selected.length}
+          totalCount={filteredRooms.length}
+          allSelected={selected.length === filteredRooms.length && filteredRooms.length > 0}
+          onToggleAll={() =>
+            setSelected(selected.length === filteredRooms.length ? [] : filteredRooms.map((r) => r.id))
+          }
+          onExportExcel={() => {
+            const selectedItems = rooms.filter((r) => selected.includes(r.id));
+            const columns = [
+              { header: 'STT', width: 8, align: 'center' as const },
+              { header: 'Mã phòng', width: 15 },
+              { header: 'Tên phòng thi', width: 25 },
+              { header: 'Sức chứa', width: 12, align: 'center' as const },
+              { header: 'Vị trí / Tòa nhà', width: 20 },
+              { header: 'Loại phòng', width: 20, align: 'center' as const },
+              { header: 'Trạng thái', width: 15, align: 'center' as const },
+            ];
+            const rows = selectedItems.map((r, idx) => [
+              idx + 1,
+              r.roomCode || r.code || '',
+              r.roomName || r.name || '',
+              r.capacity ?? 0,
+              r.building || r.location || '',
+              r.roomType === 'COMPUTER_LAB' ? 'Phòng máy tính' : 'Phòng lý thuyết',
+              r.status === 'MAINTENANCE' ? 'Bảo trì' : 'Sẵn sàng',
+            ]);
+            exportToFormattedExcel({
+              filename: 'Danh_sach_phong_thi_da_chon.xls',
+              title: 'DANH SÁCH PHÒNG THI ĐÃ CHỌN',
+              subtitle: `Đã trích xuất ${selectedItems.length} phòng thi`,
+              columns,
+              rows,
+            });
+            setToast({ message: `Đã xuất ${selected.length} phòng thi ra Excel`, type: 'success' });
+          }}
+          onPrint={() => {
+            const selectedItems = rooms.filter((r) => selected.includes(r.id));
+            printReport({
+              title: 'BÁO CÁO DANH SÁCH PHÒNG THI ĐÃ CHỌN',
+              subtitle: `Tổng số phòng thi được chọn: ${selectedItems.length}`,
+              metaInfo: [
+                { label: 'Số lượng đã chọn', value: String(selectedItems.length) },
+              ],
+              columns: [
+                { header: 'STT', width: '40px' },
+                { header: 'Mã phòng', width: '90px' },
+                { header: 'Tên Phòng thi', width: '180px' },
+                { header: 'Sức chứa', width: '70px', align: 'center' },
+                { header: 'Tòa nhà', width: '100px' },
+                { header: 'Loại phòng', width: '110px' },
+                { header: 'Trạng thái', width: '90px', align: 'center' },
+              ],
+              rows: selectedItems.map((r, idx) => [
+                idx + 1,
+                r.roomCode || r.code || '',
+                r.roomName || r.name || '',
+                String(r.capacity ?? 0),
+                r.building || r.location || '',
+                r.roomType === 'COMPUTER_LAB' ? 'Phòng máy tính' : 'Phòng lý thuyết',
+                r.status === 'MAINTENANCE' ? 'Bảo trì' : 'Sẵn sàng',
+              ]),
+            });
+          }}
+          onDelete={() => {
+            const count = selected.length;
+            setConfirmModal({
+              isOpen: true,
+              title: 'Xóa hàng loạt phòng thi',
+              message: `Bạn có chắc chắn muốn xóa ${count} phòng thi đã chọn? Hành động này không thể hoàn tác.`,
+              type: 'danger',
+              onConfirm: async () => {
+                setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+                try {
+                  const results = await Promise.allSettled(selected.map((id) => api.delete(`/exam-rooms/${id}`)));
+                  const deletedIds = selected.filter((_, index) => results[index].status === 'fulfilled');
+                  if (deletedIds.length) {
+                    setRooms((prev) => prev.filter((item) => !deletedIds.includes(item.id)));
+                    setSelected([]);
+                    setToast({ message: `Đã xóa thành công ${deletedIds.length} phòng thi`, type: 'success' });
+                  }
+                } catch (err: any) {
+                  setToast({ message: err.message || 'Lỗi khi xóa phòng thi', type: 'error' });
+                }
+              },
+            });
+          }}
+          onClear={() => setSelected([])}
         />
       </main>
 

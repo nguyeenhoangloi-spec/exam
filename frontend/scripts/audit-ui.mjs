@@ -152,12 +152,12 @@ for (const folder of sourceRoots) {
       }
       if ((control.tagName === 'button' || control.role === 'button') && !/\brounded-full\b/i.test(control.classes)
         && (/\brounded-(?:sm|md|lg)\b/i.test(control.classes) || /(?:^|\s)rounded(?:\s|$)/i.test(control.classes))) {
-        report(file, 'button khÃ´ng Ä‘Æ°á»£c dÃ¹ng radius legacy; pháº£i dÃ¹ng rounded-xl');
+        report(file, 'button không được dùng radius legacy; phải dùng rounded-xl');
       }
       if (control.tagName === 'label' && /\bcursor-pointer\b/i.test(control.classes)
         && !/\brounded-full\b/i.test(control.classes)
         && (/\brounded-(?:sm|md|lg)\b/i.test(control.classes) || /(?:^|\s)rounded(?:\s|$)/i.test(control.classes))) {
-        report(file, 'label control khÃ´ng Ä‘Æ°á»£c dÃ¹ng radius legacy; pháº£i dÃ¹ng rounded-xl');
+        report(file, 'label control không được dùng radius legacy; phải dùng rounded-xl');
       }
     }
 
@@ -175,9 +175,6 @@ for (const folder of sourceRoots) {
       report(file, 'Web UI dùng sentence case; không dùng utility uppercase');
     }
 
-    // Export/print templates may intentionally use uppercase headings. The
-    // interactive Web UI must stay within the 400–700 weight range and use
-    // sentence case for labels, controls and table content.
     if (!printExportFiles.has(relativeFile)) {
       if (/\bfont-(?:thin|extralight|light|black|extrabold)\b/i.test(content)
         || /font(?:-weight)?\s*[:=]\s*['"]?(?:100|200|300|800|900)/i.test(content)) {
@@ -188,8 +185,6 @@ for (const folder of sourceRoots) {
       }
     }
 
-    // The compact sidebar brand lockup is the only intentional 10px exception.
-    // It is limited to the compact subtitle so the product name remains readable in the fixed-width sidebar header.
     const isCompactBrandSubtitle = file.replaceAll('\\', '/').endsWith('components/Sidebar.tsx')
       && /<h2\b[^>]*text-\[10px\][^>]*>/.test(content);
     if (/text-\[(?:[0-9]|10|10\.5|11|11\.5)px\]/i.test(content) && !isCompactBrandSubtitle) {
@@ -247,8 +242,6 @@ for (const folder of sourceRoots) {
     }
 
     const isPrintExport = printExportFiles.has(relativeFile);
-    // Print/export helpers may contain raw HTML tables, but JSX Web UI tables
-    // (identified by className) must always use the shared contract.
     if (file.endsWith('.tsx') && /<table\b[^>]*\bclassName\s*=/i.test(content)
       && (!/ui-table-wrap/.test(content) || !/<table\b[^>]*\bui-table\b/i.test(content))) {
       report(file, 'Web table must use the shared ui-table-wrap/ui-table contract');
@@ -264,10 +257,10 @@ for (const folder of sourceRoots) {
       report(file, 'ProfileDrawer dùng z-[100] theo chuẩn Drawer/Modal');
     }
     if (!isPrintExport && /font-family\s*:[^;{}]*(?:serif|Times New Roman|Georgia|Cambria)/i.test(content)) {
-      report(file, 'Web UI khÃ´ng Ä‘Æ°á»£c khai bÃ¡o font serif; chá»‰ font Inter vÃ  fallback sans-serif');
+      report(file, 'Web UI không được khai báo font serif; chỉ font Inter và fallback sans-serif');
     }
     if (/pointer-events-auto[^\n]*bg-white(?![^\n]*dark:bg)/i.test(content)) {
-      report(file, 'custom overlay panel cÃ³ bg-white pháº£i cÃ³ dark:bg counterpart');
+      report(file, 'custom overlay panel có bg-white phải có dark:bg counterpart');
     }
     if (file.endsWith('.tsx') && !isPrintExport && /#[0-9a-f]{3,8}\b/i.test(content)) {
       report(file, 'màu UI inline/SVG/chart phải dùng token semantic; hex chỉ được phép trong print/export');
@@ -321,9 +314,6 @@ if (!/file-mau-cau-hoi-test\.csv/.test(middleware)
   || !/mau-cau-hoi-7-cot-test\.csv/.test(middleware)
   || !/status:\s*404/.test(middleware)) {
   violations.push('middleware.ts: public CSV mẫu có đáp án phải bị chặn truy cập trực tiếp');
-}
-if (!/prefix:\s*['"]\/student\/practice['"][\s\S]*?roles:\s*\[['"]STUDENT['"]\]/.test(accessRules)) {
-  violations.push('lib/access.ts: student practice route must be available to STUDENT');
 }
 const routePageFiles = (await collectFiles(join(root, 'app')))
   .filter((file) => file.endsWith('/page.tsx') || file.endsWith('\\page.tsx'));

@@ -22,6 +22,7 @@ import { ClassTableToolbar } from '../../components/classes/ClassTableToolbar';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { ClassTable } from '../../components/classes/ClassTable';
 import { ClassPaginationBar } from '../../components/classes/ClassPaginationBar';
+import { ClassBulkAction } from '../../components/classes/ClassBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 
@@ -484,6 +485,89 @@ export default function ClassesPage() {
             setLimit(v);
             setPage(1);
           }}
+        />
+
+        {/* Floating Bulk Action Bar */}
+        <ClassBulkAction
+          selectedCount={selected.length}
+          totalCount={filteredClasses.length}
+          allSelected={selected.length === filteredClasses.length && filteredClasses.length > 0}
+          onToggleAll={() =>
+            setSelected(selected.length === filteredClasses.length ? [] : filteredClasses.map((c) => c.id))
+          }
+          onExportExcel={() => {
+            const selectedItems = classes.filter((c) => selected.includes(c.id));
+            const columns = [
+              { header: 'STT', width: 8, align: 'center' as const },
+              { header: 'Mã lớp', width: 15 },
+              { header: 'Tên lớp học', width: 30 },
+              { header: 'Khoa trực thuộc', width: 25 },
+              { header: 'Sĩ số', width: 12, align: 'center' as const },
+            ];
+            const rows = selectedItems.map((c, idx) => [
+              idx + 1,
+              c.code,
+              c.name,
+              c.department?.name || '',
+              c._count?.students ?? 0,
+            ]);
+            exportToFormattedExcel({
+              filename: 'Danh_sach_lop_hoc_da_chon.xls',
+              title: 'DANH SÁCH LỚP HỌC ĐÃ CHỌN',
+              subtitle: `Đã trích xuất ${selectedItems.length} lớp học`,
+              columns,
+              rows,
+            });
+            setToast({ message: `Đã xuất ${selected.length} lớp học ra Excel`, type: 'success' });
+          }}
+          onPrint={() => {
+            const selectedItems = classes.filter((c) => selected.includes(c.id));
+            printReport({
+              title: 'BÁO CÁO DANH SÁCH LỚP HỌC ĐÃ CHỌN',
+              subtitle: `Tổng số lớp học được chọn: ${selectedItems.length}`,
+              metaInfo: [
+                { label: 'Số lượng đã chọn', value: String(selectedItems.length) },
+              ],
+              columns: [
+                { header: 'STT', width: '40px' },
+                { header: 'Mã lớp', width: '90px', align: 'center' },
+                { header: 'Tên Lớp học', width: '200px' },
+                { header: 'Khoa trực thuộc', width: '180px' },
+                { header: 'Sĩ số', width: '80px', align: 'center' },
+              ],
+              rows: selectedItems.map((c, idx) => [
+                idx + 1,
+                c.code,
+                c.name,
+                c.department?.name || '---',
+                String(c._count?.students ?? 0),
+              ]),
+            });
+          }}
+          onDelete={() => {
+            const count = selected.length;
+            setConfirmModal({
+              isOpen: true,
+              title: 'Xóa hàng loạt lớp học',
+              message: `Bạn có chắc chắn muốn xóa ${count} lớp học đã chọn? Hành động này không thể hoàn tác.`,
+              type: 'danger',
+              onConfirm: async () => {
+                setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+                try {
+                  const results = await Promise.allSettled(selected.map((id) => api.delete(`/classes/${id}`)));
+                  const deletedIds = selected.filter((_, index) => results[index].status === 'fulfilled');
+                  if (deletedIds.length) {
+                    setClasses((prev) => prev.filter((item) => !deletedIds.includes(item.id)));
+                    setSelected([]);
+                    setToast({ message: `Đã xóa thành công ${deletedIds.length} lớp học`, type: 'success' });
+                  }
+                } catch (err: any) {
+                  setToast({ message: err.message || 'Lỗi khi xóa lớp học', type: 'error' });
+                }
+              },
+            });
+          }}
+          onClear={() => setSelected([])}
         />
       </main>
 

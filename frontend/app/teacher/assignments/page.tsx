@@ -16,6 +16,7 @@ import { StatusBadge } from '../../../components/common/StatusBadge';
 import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import { TabBar } from '../../../components/ui/TabBar';
 import { PaginationBar } from '../../../components/ui/PaginationBar';
+import { TeacherAssignmentBulkAction } from '../../../components/exam-supervisors/TeacherAssignmentBulkAction';
 import { SortDropdown } from '../../../components/ui/SortDropdown';
 import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
 import {
@@ -1041,6 +1042,89 @@ export default function TeacherAssignmentsPage() {
             unit="ca coi thi"
           />
         )}
+
+        {/* Floating Bulk Action Bar */}
+        <TeacherAssignmentBulkAction
+          selectedCount={selected.length}
+          totalCount={totalItems}
+          allSelected={allSelected}
+          onToggleAll={() => handleSelectAll(!allSelected)}
+          onConfirmAll={async () => {
+            const unconfirmedIds = currentItems
+              .filter((item) => selected.includes(item.id) && item.status !== 'CONFIRMED')
+              .map((item) => item.id);
+            if (!unconfirmedIds.length) {
+              setToast({ message: 'Tất cả các ca được chọn đã được xác nhận trước đó.', type: 'success' });
+              return;
+            }
+            try {
+              await Promise.all(unconfirmedIds.map((id) => api.patch(`/exam-supervisors/${id}/status`, { status: 'CONFIRMED' })));
+              setToast({ message: `Đã xác nhận thành công ${unconfirmedIds.length} ca coi thi!`, type: 'success' });
+              setSelected([]);
+              fetchMyAssignments();
+            } catch (err: any) {
+              setToast({ message: err.message || 'Lỗi khi cập nhật trạng thái', type: 'error' });
+            }
+          }}
+          onExportExcel={() => {
+            const selectedItems = currentItems.filter((item) => selected.includes(item.id));
+            const columns = [
+              { header: 'STT', width: 8, align: 'center' as const },
+              { header: 'Mã HP', width: 15 },
+              { header: 'Tên môn học', width: 30 },
+              { header: 'Ngày thi', width: 15, align: 'center' as const },
+              { header: 'Giờ thi', width: 15, align: 'center' as const },
+              { header: 'Phòng thi', width: 15, align: 'center' as const },
+              { header: 'Vai trò', width: 18 },
+              { header: 'Trạng thái', width: 15, align: 'center' as const },
+            ];
+            const rows = selectedItems.map((item, idx) => [
+              idx + 1,
+              item.subjectCode,
+              item.subjectName,
+              item.examDate ? new Date(item.examDate).toLocaleDateString('vi-VN') : '---',
+              `${item.startTime} - ${item.endTime}`,
+              item.roomName || '---',
+              item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
+              item.status === 'CONFIRMED' ? 'Đã xác nhận' : 'Chờ xác nhận',
+            ]);
+            exportToFormattedExcel({
+              filename: 'Lich_coi_thi_giang_vien_da_chon.xls',
+              title: 'LỊCH COI THI CỦA GIẢNG VIÊN ĐÃ CHỌN',
+              subtitle: `Đã trích xuất ${selectedItems.length} ca coi thi`,
+              columns,
+              rows,
+            });
+            setToast({ message: `Đã xuất ${selected.length} ca coi thi ra Excel`, type: 'success' });
+          }}
+          onPrint={() => {
+            const selectedItems = currentItems.filter((item) => selected.includes(item.id));
+            printReport({
+              title: 'LỊCH PHÂN CÔNG COI THI CÁ NHÂN',
+              subtitle: `Tổng số ca thi được chọn: ${selectedItems.length}`,
+              metaInfo: [
+                { label: 'Số lượng ca thi', value: String(selectedItems.length) },
+              ],
+              columns: [
+                { header: 'STT', width: '40px' },
+                { header: 'Mã HP', width: '90px', align: 'center' },
+                { header: 'Tên Môn Học', width: '200px' },
+                { header: 'Thời Gian', width: '130px', align: 'center' },
+                { header: 'Phòng', width: '90px', align: 'center' },
+                { header: 'Vai Trò', width: '100px', align: 'center' },
+              ],
+              rows: selectedItems.map((item, idx) => [
+                idx + 1,
+                item.subjectCode,
+                item.subjectName,
+                `${item.startTime}-${item.endTime} (${item.examDate ? new Date(item.examDate).toLocaleDateString('vi-VN') : ''})`,
+                item.roomName || '---',
+                item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
+              ]),
+            });
+          }}
+          onClear={() => setSelected([])}
+        />
       </main>
 
       {/* Duty Detail Drawer */}

@@ -291,16 +291,6 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
     badge: 'Lịch thi',
   },
   {
-    id: 'student-practice',
-    title: 'Luyện thi thử trắc nghiệm',
-    desc: 'Làm bài thi thử để ôn luyện kiến thức trước kỳ thi',
-    href: '/student/practice',
-    icon: Flame,
-    roles: ['STUDENT'],
-    category: 'Sinh viên',
-    badge: 'Ôn luyện',
-  },
-  {
     id: 'student-results',
     title: 'Kết quả thi & Bảng điểm',
     desc: 'Xem điểm số bài thi, lịch sử thi và gửi đơn phúc khảo',

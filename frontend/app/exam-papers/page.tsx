@@ -27,6 +27,7 @@ import { ChangeExamPasswordModal } from '../../components/exam-papers/ChangeExam
 import { RubricDialog } from '../../components/question-bank/RubricDialog';
 import { TabBar } from '../../components/ui/TabBar';
 import { ExamPaperPaginationBar } from '../../components/exam-papers/ExamPaperPaginationBar';
+import { ExamPaperBulkAction } from '../../components/exam-papers/ExamPaperBulkAction';
 import { ExamPaperDetailDrawer } from '../../components/exam-papers/ExamPaperDetailDrawer';
 
 function formatPaperForExport(paper: any) {
@@ -915,6 +916,109 @@ export default function ExamPapersPage() {
             setLimit(v);
             setPage(1);
           }}
+        />
+
+        {/* Floating Bulk Action Bar */}
+        <ExamPaperBulkAction
+          selectedCount={selected.length}
+          totalCount={filteredPapers.length}
+          allSelected={selected.length === filteredPapers.length && filteredPapers.length > 0}
+          onToggleAll={() =>
+            setSelected(selected.length === filteredPapers.length ? [] : filteredPapers.map((p) => p.id))
+          }
+          onPublish={() => {
+            const count = selected.length;
+            setConfirmModal({
+              isOpen: true,
+              title: 'Phát hành hàng loạt đề thi',
+              message: `Bạn có chắc chắn muốn phát hành ${count} đề thi đã chọn?`,
+              type: 'info',
+              onConfirm: async () => {
+                setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+                try {
+                  await Promise.allSettled(selected.map((id) => api.patch(`/exam-papers/${id}/publish`)));
+                  setToast({ message: `Đã phát hành thành công ${count} đề thi`, type: 'success' });
+                  setSelected([]);
+                  fetchData();
+                } catch (err: any) {
+                  setToast({ message: err.message || 'Lỗi khi phát hành đề thi', type: 'error' });
+                }
+              },
+            });
+          }}
+          onArchive={() => {
+            const count = selected.length;
+            setConfirmModal({
+              isOpen: true,
+              title: 'Lưu trữ hàng loạt đề thi',
+              message: `Bạn có chắc chắn muốn lưu trữ ${count} đề thi đã chọn?`,
+              type: 'warning',
+              onConfirm: async () => {
+                setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+                try {
+                  await Promise.allSettled(selected.map((id) => api.patch(`/exam-papers/${id}/archive`)));
+                  setToast({ message: `Đã lưu trữ thành công ${count} đề thi`, type: 'success' });
+                  setSelected([]);
+                  fetchData();
+                } catch (err: any) {
+                  setToast({ message: err.message || 'Lỗi khi lưu trữ đề thi', type: 'error' });
+                }
+              },
+            });
+          }}
+          onExportExcel={() => {
+            const selectedItems = papers.filter((p) => selected.includes(p.id));
+            const columns = [
+              { header: 'STT', width: 8, align: 'center' as const },
+              { header: 'Mã Đề', width: 15 },
+              { header: 'Môn học', width: 35 },
+              { header: 'Trạng thái', width: 18 },
+              { header: 'Số câu', width: 12, align: 'center' as const },
+              { header: 'Thời gian', width: 15, align: 'center' as const },
+              { header: 'Tổng điểm', width: 12, align: 'center' as const },
+            ];
+            const rows = selectedItems.map((p: any, idx) => [
+              idx + 1,
+              p.paperCode,
+              p.subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '',
+              p.status,
+              p.questionCount ?? p.questions?.length ?? 0,
+              `${p.durationMinutes} phút`,
+              `${p.totalScore} đ`,
+            ]);
+            exportToFormattedExcel({
+              filename: 'Danh_sach_de_thi_da_chon.xls',
+              title: 'DANH SÁCH ĐỀ THI ĐÃ CHỌN',
+              subtitle: `Đã trích xuất ${selectedItems.length} đề thi`,
+              columns,
+              rows,
+            });
+            setToast({ message: `Đã xuất ${selected.length} đề thi ra Excel`, type: 'success' });
+          }}
+          onDelete={() => {
+            const count = selected.length;
+            setConfirmModal({
+              isOpen: true,
+              title: 'Xóa hàng loạt đề thi',
+              message: `Bạn có chắc chắn muốn xóa ${count} đề thi đã chọn? Hành động này không thể hoàn tác.`,
+              type: 'danger',
+              onConfirm: async () => {
+                setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+                try {
+                  const results = await Promise.allSettled(selected.map((id) => api.delete(`/exam-papers/${id}`)));
+                  const deletedIds = selected.filter((_, index) => results[index].status === 'fulfilled');
+                  if (deletedIds.length) {
+                    setPapers((prev) => prev.filter((item) => !deletedIds.includes(item.id)));
+                    setSelected([]);
+                    setToast({ message: `Đã xóa thành công ${deletedIds.length} đề thi`, type: 'success' });
+                  }
+                } catch (err: any) {
+                  setToast({ message: err.message || 'Lỗi khi xóa đề thi', type: 'error' });
+                }
+              },
+            });
+          }}
+          onClear={() => setSelected([])}
         />
       </main>
 

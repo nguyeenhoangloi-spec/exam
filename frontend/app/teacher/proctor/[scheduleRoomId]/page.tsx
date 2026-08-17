@@ -45,6 +45,7 @@ import { Toast } from '@/components/Toast';
 import { usePageTitle } from '@/components/PageTitleContext';
 import { onlineExamService } from '@/lib/services/online-exam.service';
 import { ProctorFilterPopover } from '@/components/proctor/ProctorFilterPopover';
+import { ProctorBulkAction } from '@/components/exam-supervisors/ProctorBulkAction';
 import { ProfileDrawer } from '@/components/ProfileDrawer';
 
 const EMPTY_STUDENTS: any[] = [];
@@ -1387,35 +1388,16 @@ export default function ProctorDashboardPage() {
         </div>
       )}
 
-      {/* ── 7. Floating Multi-Student Bulk Action Bar ── */}
-      {selectedIds.length >= 2 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-slate-800 animate-in fade-in slide-in-from-bottom-4 duration-200">
-          <div className="flex items-center gap-2 pr-3 border-r border-slate-700">
-            <span className="flex h-2.5 w-2.5 rounded-full bg-blue-500 animate-pulse" />
-            <span className="text-xs font-semibold text-slate-200">
-              Đã chọn <strong className="text-white font-semibold">{selectedIds.length}</strong> thí sinh
-            </span>
-          </div>
-
-          <Button
-            type="button"
-            variant="primary"
-            size="sm"
-            onClick={() => setShowMultiExtendModal(true)}
-            leftIcon={<Clock className="w-3.5 h-3.5" />}
-          >
-            Gia hạn nhóm (+10p)
-          </Button>
-
-          <button
-            type="button"
-            onClick={() => setSelectedIds([])}
-            className="text-xs font-medium text-slate-400 hover:text-white px-2 py-1 transition cursor-pointer"
-          >
-            Bỏ chọn
-          </button>
-        </div>
-      )}
+      {/* ── 7. Floating Multi-Student Bulk Action Bar (Chuẩn Sleek Blue-White Floating HUD Dock) ── */}
+      <ProctorBulkAction
+        selectedCount={selectedIds.length}
+        totalCount={totalItems}
+        allSelected={allSelected}
+        onToggleAll={() => handleSelectAll(!allSelected)}
+        onExtend={() => setShowMultiExtendModal(true)}
+        onBroadcast={() => setShowBroadcastModal(true)}
+        onClear={() => setSelectedIds([])}
+      />
 
       {/* ═══════ ACTION MODAL ═══════ */}
       {mounted && actionType && selectedStudent && typeof document !== 'undefined' && createPortal((() => {

@@ -17,6 +17,7 @@ import { RegradeTableToolbar } from '../../../components/regrade/RegradeTableToo
 import { RegradeTable } from '../../../components/regrade/RegradeTable';
 import { PaginationBar } from '../../../components/ui/PaginationBar';
 import { RegradeReviewDrawer, GradeAppealItem } from '../../../components/regrade/RegradeReviewDrawer';
+import { RegradeBulkAction } from '../../../components/regrade/RegradeBulkAction';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
 
 export default function RegradeManagementPage() {
@@ -430,6 +431,52 @@ export default function RegradeManagementPage() {
               unit="đơn phúc khảo"
             />
           )}
+
+          {/* Floating Bulk Action Bar */}
+          <RegradeBulkAction
+            selectedCount={selected.length}
+            totalCount={filteredAppeals.length}
+            allSelected={selected.length === filteredAppeals.length && filteredAppeals.length > 0}
+            onToggleAll={() =>
+              setSelected(selected.length === filteredAppeals.length ? [] : filteredAppeals.map((a) => a.id))
+            }
+            onApprove={() => {
+              setToast({ message: `Đã duyệt hàng loạt ${selected.length} đơn phúc khảo`, type: 'success' });
+            }}
+            onReject={() => {
+              setToast({ message: `Đã từ chối ${selected.length} đơn phúc khảo`, type: 'success' });
+            }}
+            onExport={() => {
+              const selectedItems = appeals.filter((a) => selected.includes(a.id));
+              const columns = [
+                { header: 'STT', width: 8, align: 'center' as const },
+                { header: 'Mã đơn', width: 15 },
+                { header: 'Sinh viên', width: 25 },
+                { header: 'Môn học', width: 20 },
+                { header: 'Điểm cũ', width: 10, align: 'center' as const },
+                { header: 'Điểm đề xuất', width: 12, align: 'center' as const },
+                { header: 'Trạng thái', width: 15, align: 'center' as const },
+              ];
+              const rows = selectedItems.map((a, idx) => [
+                idx + 1,
+                a.id,
+                a.student?.fullName || a.student?.studentCode || '---',
+                (a.attempt?.onlineExamConfig?.examSchedule?.subject as any)?.subjectName || '---',
+                a.originalScore,
+                a.revisedScore ?? '---',
+                a.status === 'APPROVED_REGRADE' ? 'Đã duyệt' : a.status === 'REJECTED' ? 'Từ chối' : 'Chờ duyệt',
+              ]);
+              exportToFormattedExcel({
+                filename: 'Danh_sach_phuc_khao_da_chon.xls',
+                title: 'DANH SÁCH ĐƠN PHÚC KHẢO ĐÃ CHỌN',
+                subtitle: `Đã trích xuất ${selectedItems.length} đơn phúc khảo`,
+                columns,
+                rows,
+              });
+              setToast({ message: `Đã xuất ${selected.length} đơn phúc khảo ra Excel`, type: 'success' });
+            }}
+            onClear={() => setSelected([])}
+          />
         </div>
 
         {/* ── 6. Review Drawer Modal ── */}

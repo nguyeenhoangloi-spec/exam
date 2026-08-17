@@ -16,6 +16,7 @@ import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { PaginationBar } from '../../../components/ui/PaginationBar';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import { StudentCurriculumFilterPopover } from '../../../components/student-curriculum/StudentCurriculumFilterPopover';
+import { StudentCurriculumBulkAction } from '../../../components/student-curriculum/StudentCurriculumBulkAction';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import { printReport } from '../../../lib/export-print';
 import {
@@ -940,6 +941,70 @@ export default function StudentCurriculumPage() {
           />
         )}
 
+        {/* Floating Bulk Action Bar */}
+        <StudentCurriculumBulkAction
+          selectedCount={selected.length}
+          totalCount={totalItems}
+          allSelected={allSelected}
+          onToggleAll={() => handleSelectAll(!allSelected)}
+          onExportExcel={() => {
+            const selectedItems = currentItems.filter((item) => selected.includes(item.id));
+            const columns = [
+              { header: 'STT', width: 8, align: 'center' as const },
+              { header: 'Mã môn', width: 15 },
+              { header: 'Tên môn học', width: 30 },
+              { header: 'Học kỳ', width: 10, align: 'center' as const },
+              { header: 'Tín chỉ', width: 10, align: 'center' as const },
+              { header: 'Loại môn', width: 15, align: 'center' as const },
+              { header: 'Trạng thái', width: 15, align: 'center' as const },
+            ];
+            const rows = selectedItems.map((item, idx) => [
+              idx + 1,
+              item.subjectCode,
+              item.subjectName,
+              `HK ${item.recommendedSemester}`,
+              item.credits,
+              item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn',
+              item.isCompleted ? 'Đã học' : 'Chưa học',
+            ]);
+            exportToFormattedExcel({
+              filename: 'Khung_chuong_trinh_dao_tao_da_chon.xls',
+              title: 'KHUNG CHƯƠNG TRÌNH ĐÀO TẠO ĐÃ CHỌN',
+              subtitle: `Đã trích xuất ${selectedItems.length} học phần`,
+              columns,
+              rows,
+            });
+            setToast({ message: `Đã xuất ${selected.length} môn học ra Excel`, type: 'success' });
+          }}
+          onPrint={() => {
+            const selectedItems = currentItems.filter((item) => selected.includes(item.id));
+            printReport({
+              title: 'CHƯƠNG TRÌNH ĐÀO TẠO ĐÃ CHỌN',
+              subtitle: `Tổng số môn học được chọn: ${selectedItems.length}`,
+              metaInfo: [
+                { label: 'Số lượng môn học', value: String(selectedItems.length) },
+              ],
+              columns: [
+                { header: 'STT', width: '40px' },
+                { header: 'Mã Môn', width: '90px', align: 'center' },
+                { header: 'Tên Môn Học', width: '220px' },
+                { header: 'Học Kỳ', width: '80px', align: 'center' },
+                { header: 'Số TC', width: '70px', align: 'center' },
+                { header: 'Loại môn', width: '100px', align: 'center' },
+              ],
+              rows: selectedItems.map((item, idx) => [
+                idx + 1,
+                item.subjectCode,
+                item.subjectName,
+                `HK ${item.recommendedSemester}`,
+                String(item.credits),
+                item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn',
+              ]),
+            });
+          }}
+          onClear={() => setSelected([])}
+        />
+
         {/* ── 7. Detail Course Drawer ── */}
         <ProfileDrawer
           isOpen={Boolean(detailItem)}
@@ -995,19 +1060,6 @@ export default function StudentCurriculumPage() {
                       className="w-full justify-center"
                     >
                       Tra cứu điểm thi &amp; Kết quả học tập
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setDetailItem(null);
-                        router.push('/student/practice');
-                      }}
-                      leftIcon={<Sparkles className="w-3.5 h-3.5 text-amber-500" />}
-                      className="w-full justify-center text-slate-600 hover:text-slate-900 dark:text-slate-300"
-                    >
-                      Luyện thi trắc nghiệm môn này
                     </Button>
                   </div>
                 </div>

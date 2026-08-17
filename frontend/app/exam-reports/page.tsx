@@ -8,6 +8,7 @@ import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { downloadCsv } from '../../lib/export-csv';
 import { exportToFormattedExcel } from '../../lib/export-excel';
+import { printReport } from '../../lib/export-print';
 import { Toast } from '../../components/Toast';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { StatusBadge } from '../../components/common/StatusBadge';
@@ -22,6 +23,7 @@ import { ExamReportFilterPopover } from '../../components/exam-reports/ExamRepor
 import { ExamReportTableToolbar } from '../../components/exam-reports/ExamReportTableToolbar';
 import { ExamReportTable, CandidateReport } from '../../components/exam-reports/ExamReportTable';
 import { ExamReportPaginationBar } from '../../components/exam-reports/ExamReportPaginationBar';
+import { ExamReportBulkAction } from '../../components/exam-reports/ExamReportBulkAction';
 import { TabBar } from '../../components/ui/TabBar';
 
 interface GradeReportResponse {
@@ -1017,6 +1019,72 @@ export default function ExamReportsPage() {
             setLimit(v);
             setPage(1);
           }}
+        />
+
+        {/* Floating Bulk Action Bar */}
+        <ExamReportBulkAction
+          selectedCount={selected.length}
+          totalCount={filteredCandidates.length}
+          allSelected={selected.length === filteredCandidates.length && filteredCandidates.length > 0}
+          onToggleAll={() =>
+            setSelected(selected.length === filteredCandidates.length ? [] : filteredCandidates.map((c) => c.studentId))
+          }
+          onExportExcel={() => {
+            const selectedCandidates = filteredCandidates.filter((c) => selected.includes(c.studentId));
+            const columns = [
+              { header: 'STT', width: 8, align: 'center' as const },
+              { header: 'Mã SV', width: 15 },
+              { header: 'Họ và tên thí sinh', width: 25 },
+              { header: 'Lớp sinh hoạt', width: 18 },
+              { header: 'Trạng thái', width: 15, align: 'center' as const },
+              { header: 'Điểm số', width: 12, align: 'center' as const },
+              { header: 'Vi phạm', width: 10, align: 'center' as const },
+            ];
+            const rows = selectedCandidates.map((c, idx) => [
+              idx + 1,
+              c.studentCode,
+              c.fullName,
+              c.className || '---',
+              c.status,
+              c.status === 'ABSENT' ? 'Vắng' : c.totalScore,
+              c.violationCount || 0,
+            ]);
+            exportToFormattedExcel({
+              filename: 'Bang_diem_thi_sinh_da_chon.xls',
+              title: 'KẾT QUẢ THI THÍ SINH ĐÃ CHỌN',
+              subtitle: `Môn: ${report?.schedule?.subjectName || ''} | Đã trích xuất ${selectedCandidates.length} thí sinh`,
+              columns,
+              rows,
+            });
+            setToast({ message: `Đã xuất ${selected.length} kết quả thi ra Excel`, type: 'success' });
+          }}
+          onPrint={() => {
+            const selectedCandidates = filteredCandidates.filter((c) => selected.includes(c.studentId));
+            printReport({
+              title: 'BẢNG ĐIỂM THÍ SINH ĐÃ CHỌN',
+              subtitle: `Môn: ${report?.schedule?.subjectName || ''} (${report?.schedule?.subjectCode || ''}) - Ngày thi: ${report?.schedule?.examDate ? new Date(report.schedule.examDate).toLocaleDateString('vi-VN') : '---'}`,
+              metaInfo: [
+                { label: 'Số lượng thí sinh', value: String(selectedCandidates.length) },
+              ],
+              columns: [
+                { header: 'STT', width: '40px' },
+                { header: 'Mã SV', width: '90px', align: 'center' },
+                { header: 'Họ và tên', width: '200px' },
+                { header: 'Lớp', width: '100px', align: 'center' },
+                { header: 'Trạng thái', width: '100px', align: 'center' },
+                { header: 'Điểm', width: '70px', align: 'center' },
+              ],
+              rows: selectedCandidates.map((c, idx) => [
+                idx + 1,
+                c.studentCode,
+                c.fullName,
+                c.className || '---',
+                c.status === 'ABSENT' ? 'Vắng thi' : 'Đã nộp',
+                c.status === 'ABSENT' ? '0.0' : String(c.totalScore),
+              ]),
+            });
+          }}
+          onClear={() => setSelected([])}
         />
       </main>
 

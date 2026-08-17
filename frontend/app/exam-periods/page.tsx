@@ -21,6 +21,7 @@ import { ExamPeriodKPICards } from '../../components/exam-periods/ExamPeriodKPIC
 import { ExamPeriodTableToolbar } from '../../components/exam-periods/ExamPeriodTableToolbar';
 import { ExamPeriodTable, computePeriodStatus } from '../../components/exam-periods/ExamPeriodTable';
 import { ExamPeriodPaginationBar } from '../../components/exam-periods/ExamPeriodPaginationBar';
+import { ExamPeriodBulkAction } from '../../components/exam-periods/ExamPeriodBulkAction';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { ExamPeriodFilterPopover } from '../../components/exam-periods/ExamPeriodFilterPopover';
 
@@ -442,6 +443,95 @@ export default function ExamPeriodsPage() {
             setLimit(v);
             setPage(1);
           }}
+        />
+
+        {/* Floating Bulk Action Bar */}
+        <ExamPeriodBulkAction
+          selectedCount={selected.length}
+          totalCount={filteredPeriods.length}
+          allSelected={selected.length === filteredPeriods.length && filteredPeriods.length > 0}
+          onToggleAll={() =>
+            setSelected(selected.length === filteredPeriods.length ? [] : filteredPeriods.map((p) => p.id))
+          }
+          onExportExcel={() => {
+            const selectedItems = periods.filter((p) => selected.includes(p.id));
+            const columns = [
+              { header: 'STT', width: 8, align: 'center' as const },
+              { header: 'Tên kỳ thi', width: 30 },
+              { header: 'Học kỳ', width: 12, align: 'center' as const },
+              { header: 'Năm học', width: 15, align: 'center' as const },
+              { header: 'Ngày bắt đầu', width: 15, align: 'center' as const },
+              { header: 'Ngày kết thúc', width: 15, align: 'center' as const },
+              { header: 'Trạng thái', width: 15, align: 'center' as const },
+            ];
+            const rows = selectedItems.map((p, idx) => [
+              idx + 1,
+              p.name,
+              p.semester,
+              p.schoolYear,
+              p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : '',
+              p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : '',
+              p.status === 'COMPLETED' ? 'Đã hoàn thành' : p.status === 'ONGOING' ? 'Đang diễn ra' : 'Sắp diễn ra',
+            ]);
+            exportToFormattedExcel({
+              filename: 'Danh_sach_ky_thi_da_chon.xls',
+              title: 'DANH SÁCH KỲ THI ĐÃ CHỌN',
+              subtitle: `Đã trích xuất ${selectedItems.length} kỳ thi`,
+              columns,
+              rows,
+            });
+            setToast({ message: `Đã xuất ${selected.length} kỳ thi ra Excel`, type: 'success' });
+          }}
+          onPrint={() => {
+            const selectedItems = periods.filter((p) => selected.includes(p.id));
+            printReport({
+              title: 'BÁO CÁO DANH SÁCH KỲ THI ĐÃ CHỌN',
+              subtitle: `Tổng số kỳ thi được chọn: ${selectedItems.length}`,
+              metaInfo: [
+                { label: 'Số lượng đã chọn', value: String(selectedItems.length) },
+              ],
+              columns: [
+                { header: 'STT', width: '40px' },
+                { header: 'Tên Kỳ thi', width: '220px' },
+                { header: 'Học kỳ', width: '80px', align: 'center' },
+                { header: 'Năm học', width: '100px', align: 'center' },
+                { header: 'Thời gian', width: '160px', align: 'center' },
+                { header: 'Trạng thái', width: '110px', align: 'center' },
+              ],
+              rows: selectedItems.map((p, idx) => [
+                idx + 1,
+                p.name,
+                p.semester,
+                p.schoolYear,
+                `${p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : ''} - ${p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : ''}`,
+                p.status === 'COMPLETED' ? 'Đã hoàn thành' : 'Sắp diễn ra',
+              ]),
+            });
+          }}
+          onDelete={() => {
+            const count = selected.length;
+            setConfirmModal({
+              isOpen: true,
+              title: 'Xóa hàng loạt kỳ thi',
+              message: `Bạn có chắc chắn muốn xóa ${count} kỳ thi đã chọn? Hành động này không thể hoàn tác.`,
+              type: 'danger',
+              onConfirm: async () => {
+                setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+                try {
+                  const results = await Promise.allSettled(selected.map((id) => api.delete(`/exam-periods/${id}`)));
+                  const deletedIds = selected.filter((_, index) => results[index].status === 'fulfilled');
+                  if (deletedIds.length) {
+                    setPeriods((prev) => prev.filter((item) => !deletedIds.includes(item.id)));
+                    setSelected([]);
+                    setToast({ message: `Đã xóa thành công ${deletedIds.length} kỳ thi`, type: 'success' });
+                  }
+                } catch (err: any) {
+                  setToast({ message: err.message || 'Lỗi khi xóa kỳ thi', type: 'error' });
+                }
+              },
+            });
+          }}
+          onClear={() => setSelected([])}
         />
       </main>
 
