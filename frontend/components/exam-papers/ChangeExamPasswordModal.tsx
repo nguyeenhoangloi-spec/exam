@@ -162,7 +162,7 @@ export function ChangeExamPasswordModal({
               onClick={onClose}
               disabled={submitting}
             >
-              Hủy
+              Hủy bỏ
             </Button>
             <Button
               type="submit"

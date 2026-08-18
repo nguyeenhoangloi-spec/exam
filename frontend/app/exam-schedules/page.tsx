@@ -903,7 +903,7 @@ export default function ExamSchedulesPage() {
                 size="md"
                 onClick={() => setIsModalOpen(false)}
               >
-                Hủy
+                Hủy bỏ
               </Button>
               <Button
                 type="submit"

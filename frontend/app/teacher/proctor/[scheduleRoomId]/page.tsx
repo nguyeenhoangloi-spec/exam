@@ -1637,7 +1637,7 @@ export default function ProctorDashboardPage() {
                   onClick={() => setActionType(null)}
                   disabled={processing}
                 >
-                  Hủy
+                  Hủy bỏ
                 </Button>
                 <Button
                   type="button"
@@ -1758,7 +1758,7 @@ export default function ProctorDashboardPage() {
                 onClick={() => setShowMultiExtendModal(false)}
                 disabled={multiProcessing}
               >
-                Hủy
+                Hủy bỏ
               </Button>
               <Button
                 type="button"
@@ -1945,7 +1945,7 @@ export default function ProctorDashboardPage() {
                 onClick={() => setShowBroadcastModal(false)}
                 disabled={broadcastProcessing}
               >
-                Hủy
+                Hủy bỏ
               </Button>
               <Button
                 type="button"
@@ -2090,7 +2090,7 @@ export default function ProctorDashboardPage() {
                 onClick={() => setShowBulkModal(false)}
                 disabled={bulkProcessing}
               >
-                Hủy
+                Hủy bỏ
               </Button>
               <Button
                 type="button"
@@ -2120,7 +2120,7 @@ export default function ProctorDashboardPage() {
                 </div>
                 <div>
                   <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-none">
-                    Mở Giờ Cho Vào Thi Muộn
+                    Mở giờ cho vào thi muộn
                   </h3>
                   <p className="mt-1.5 text-[13px] text-slate-500 dark:text-slate-400 font-normal leading-none">
                     Gia hạn thời gian cho phép sinh viên bắt đầu làm bài
@@ -2170,7 +2170,7 @@ export default function ProctorDashboardPage() {
                 onClick={() => setShowReopenEntryModal(false)}
                 disabled={reopenEntryProcessing}
               >
-                Hủy
+                Hủy bỏ
               </Button>
               <Button
                 type="button"

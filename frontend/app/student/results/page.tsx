@@ -1290,7 +1290,7 @@ export default function StudentResultsPage() {
                 onClick={() => setShowAppealModal(false)}
                 disabled={submittingAppeal}
               >
-                Hủy
+                Hủy bỏ
               </Button>
               <Button
                 variant="primary"

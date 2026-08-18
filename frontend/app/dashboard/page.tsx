@@ -308,7 +308,7 @@ export default function DashboardPage() {
                 setReasonError('');
               }}
             >
-              Hủy
+              Hủy bỏ
             </Button>
             <Button
               type="button"

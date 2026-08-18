@@ -672,7 +672,7 @@ export default function ExamRoomsPage() {
                 size="md"
                 onClick={() => setIsModalOpen(false)}
               >
-                Hủy
+                Hủy bỏ
               </Button>
               <Button
                 type="submit"

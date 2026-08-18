@@ -625,7 +625,7 @@ export default function ExamPeriodsPage() {
             )}
             <div className="flex items-center gap-2.5">
               <Button variant="secondary" size="md" onClick={() => setIsModalOpen(false)}>
-                Hủy
+                Hủy bỏ
               </Button>
               <Button variant="primary" size="md" type="submit">
                 {editingPeriod ? 'Cập nhật kỳ thi' : 'Lưu kỳ thi'}

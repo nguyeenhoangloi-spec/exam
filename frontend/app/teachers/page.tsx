@@ -731,7 +731,7 @@ export default function TeachersPage() {
                 size="md"
                 onClick={() => setIsModalOpen(false)}
               >
-                Hủy
+                Hủy bỏ
               </Button>
               <Button
                 type="submit"

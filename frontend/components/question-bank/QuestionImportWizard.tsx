@@ -606,7 +606,7 @@ export function QuestionImportWizard({
               {preview ? (
                 <>
                   <Button type="button" variant="secondary" size="md" onClick={onClose}>
-                    Hủy
+                    Hủy bỏ
                   </Button>
                   <Button
                     type="button"

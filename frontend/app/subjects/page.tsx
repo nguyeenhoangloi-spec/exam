@@ -669,14 +669,14 @@ export default function SubjectsPage() {
  <div />
  )}
  <div className="flex items-center gap-2.5">
- <Button
- type="button"
- variant="secondary"
- size="md"
- onClick={() => setIsModalOpen(false)}
- >
- Hủy
- </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Hủy bỏ
+              </Button>
  <Button
  type="submit"
  variant="primary"
@@ -779,23 +779,23 @@ export default function SubjectsPage() {
  )}
 
  <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
- <Button
- type="button"
- variant="secondary"
- size="md"
- onClick={() => setEnrollClassSubject(null)}
- >
- Hủy
- </Button>
- <Button
- type="submit"
- variant="primary"
- size="md"
- disabled={!enrollClassData.classId || enrollClassLoading}
- isLoading={enrollClassLoading}
- >
- Xác nhận Gán Lớp
- </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            onClick={() => setEnrollClassSubject(null)}
+          >
+            Hủy bỏ
+          </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            size="md"
+            disabled={!enrollClassData.classId || enrollClassLoading}
+            isLoading={enrollClassLoading}
+          >
+            Xác nhận gán lớp
+          </Button>
  </div>
  </form>
  </Modal>

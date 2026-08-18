@@ -349,7 +349,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
             </div>
             <div className="flex gap-2.5 items-center">
               <Button type="button" variant="secondary" size="md" onClick={onClose}>
-                Hủy
+                Hủy bỏ
               </Button>
               <Button
                 type="button"

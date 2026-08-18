@@ -204,7 +204,7 @@ export function CreateAssignmentModal({
         {/* 4. Footer Actions */}
         <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
           <Button type="button" variant="secondary" size="md" onClick={onClose} disabled={loading}>
-            Hủy
+            Hủy bỏ
           </Button>
           <Button
             type="submit"
@@ -212,7 +212,7 @@ export function CreateAssignmentModal({
             size="md"
             disabled={loading || !roomId || (!supervisor1Id && !supervisor2Id)}
           >
-            {loading ? 'Đang lưu...' : 'Xác Nhận Phân Công'}
+            {loading ? 'Đang lưu...' : 'Xác nhận phân công'}
           </Button>
         </div>
       </form>

@@ -198,7 +198,7 @@ export function InlineCreateAssignmentPanel({
             onClick={onClose}
             disabled={loading}
           >
-            Hủy
+            Hủy bỏ
           </Button>
           {/* Tầng 1: Primary Solid Button */}
           <Button

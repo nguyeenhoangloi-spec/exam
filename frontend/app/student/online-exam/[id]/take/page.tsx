@@ -854,7 +854,7 @@ export default function StudentExamTakePage() {
  <Modal
     isOpen={showSubmitModal}
     onClose={() => setShowSubmitModal(false)}
-    title="Xác nhận nộp bài thi"
+    title="Xác nhận nộp bài thi?"
     size="md"
   >
     <div className="space-y-4">
