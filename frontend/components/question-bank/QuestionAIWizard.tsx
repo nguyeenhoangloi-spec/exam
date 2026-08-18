@@ -393,7 +393,7 @@ export function QuestionAIWizard({
                   )}
 
                   {q.explanation && (
-                    <div className="rounded-lg bg-blue-50/70 border border-blue-200 p-2 text-[15px] font-normal text-blue-900">
+                    <div className="rounded-xl bg-blue-50/70 border border-blue-200 p-2 text-[15px] font-normal text-blue-900">
                       <strong className="font-semibold text-blue-950">Giải thích chi tiết:</strong> {q.explanation}
                     </div>
                   )}

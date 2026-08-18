@@ -194,10 +194,10 @@ export default function LoginPage() {
             <GraduationCap className="h-6.5 w-6.5" />
           </div>
           <div>
-            <span className="text-[21px] font-semibold tracking-tight text-slate-900 dark:text-white leading-none block">
+            <span className="text-[22px] font-semibold tracking-tight text-slate-900 dark:text-white leading-none block">
               EXAMSYS
             </span>
-            <p className="text-[12px] font-semibold tracking-wider text-blue-600 dark:text-blue-400  mt-0.5">
+            <p className="text-[12px] font-semibold tracking-wider text-blue-600 dark:text-blue-400 mt-1">
               HỆ THỐNG KHẢO THÍ ĐIỆN TỬ
             </p>
           </div>
@@ -210,7 +210,7 @@ export default function LoginPage() {
             onClick={toggleDark}
             aria-label="Chuyển chủ đề sáng/tối"
             title={isDark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/90 dark:hover:bg-slate-800/90 transition-all duration-200 cursor-pointer shadow-2xs"
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/90 dark:hover:bg-slate-800/90 transition-all duration-200 cursor-pointer shadow-2xs"
           >
             {isDark ? (
               <Sun className="h-5 w-5 text-amber-400 animate-spin-slow" />
@@ -222,18 +222,18 @@ export default function LoginPage() {
       </header>
 
       {/* ── Main Section: Big Bold 2-Column Showcase Layout ── */}
-      <main className="relative z-10 max-w-[1380px] mx-auto px-6 sm:px-10 pt-5 pb-12 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start w-full">
+      <main className="relative z-10 max-w-[1380px] mx-auto px-6 sm:px-10 pt-6 pb-12 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start w-full">
         {/* ── Left Column: Large Showcase (7 Cols ~ 58%) ── */}
-        <section className="lg:col-span-7 flex flex-col justify-start space-y-9">
+        <section className="lg:col-span-7 flex flex-col justify-start space-y-8">
           {/* Main Large Headline with Gradient Text */}
           <div className="space-y-3.5">
-            <h1 className="text-xl sm:text-xl lg:text-[46px] font-semibold tracking-tight leading-[1.15] text-slate-900 dark:text-white">
+            <h1 className="text-[28px] sm:text-[36px] lg:text-[44px] font-semibold tracking-tight leading-[1.18] text-slate-900 dark:text-white">
               HỆ THỐNG <br />
-              <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-sky-300">
+              <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-sky-600 bg-clip-text text-transparent dark:from-blue-400 dark:via-sky-300 dark:to-blue-300">
                 KHẢO THÍ TRỰC TUYẾN
               </span>
             </h1>
-            <p className="text-[15.5px] sm:text-[16.5px] text-slate-600 dark:text-slate-300 max-w-xl font-normal leading-relaxed">
+            <p className="text-[15.5px] sm:text-[17px] text-slate-600 dark:text-slate-300 max-w-xl font-normal leading-relaxed">
               Giải pháp toàn diện cho quản lý kỳ thi, tổ chức thi trắc nghiệm và phân tích kết quả học thuật minh bạch, chính xác.
             </p>
           </div>
@@ -241,62 +241,62 @@ export default function LoginPage() {
           {/* Center 3D Isometric Art & Interactive Feature Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
             {/* 4 Key Features Column */}
-            <div className="sm:col-span-5 space-y-3.5">
+            <div className="sm:col-span-5 space-y-4">
               {/* Feature 1 */}
-              <div className="flex items-start gap-3.5 p-2 rounded-2xl transition-all duration-300 hover:bg-white/80 dark:hover:bg-slate-900/60 hover:shadow-2xs group cursor-default">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
-                  <ShieldCheck className="h-5.5 w-5.5" />
+              <div className="flex items-start gap-3.5 p-2.5 rounded-2xl transition-all duration-300 hover:bg-white/90 dark:hover:bg-slate-900/70 hover:shadow-xs group cursor-default">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
+                  <ShieldCheck className="h-6 w-6" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h2 className="text-[15.5px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     Bảo mật cao
                   </h2>
-                  <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <p className="text-[13.5px] text-slate-500 dark:text-slate-400 leading-snug mt-1">
                     Mã hóa chuẩn quốc tế
                   </p>
                 </div>
               </div>
 
               {/* Feature 2 */}
-              <div className="flex items-start gap-3.5 p-2 rounded-2xl transition-all duration-300 hover:bg-white/80 dark:hover:bg-slate-900/60 hover:shadow-2xs group cursor-default">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
-                  <FileCheck2 className="h-5.5 w-5.5" />
+              <div className="flex items-start gap-3.5 p-2.5 rounded-2xl transition-all duration-300 hover:bg-white/90 dark:hover:bg-slate-900/70 hover:shadow-xs group cursor-default">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
+                  <FileCheck2 className="h-6 w-6" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h2 className="text-[15.5px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     Quản lý toàn diện
                   </h2>
-                  <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <p className="text-[13.5px] text-slate-500 dark:text-slate-400 leading-snug mt-1">
                     Từ đề thi đến chấm điểm
                   </p>
                 </div>
               </div>
 
               {/* Feature 3 */}
-              <div className="flex items-start gap-3.5 p-2 rounded-2xl transition-all duration-300 hover:bg-white/80 dark:hover:bg-slate-900/60 hover:shadow-2xs group cursor-default">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
-                  <BarChart3 className="h-5.5 w-5.5" />
+              <div className="flex items-start gap-3.5 p-2.5 rounded-2xl transition-all duration-300 hover:bg-white/90 dark:hover:bg-slate-900/70 hover:shadow-xs group cursor-default">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
+                  <BarChart3 className="h-6 w-6" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h2 className="text-[15.5px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     Phân tích thông minh
                   </h2>
-                  <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <p className="text-[13.5px] text-slate-500 dark:text-slate-400 leading-snug mt-1">
                     Thống kê & biểu đồ trực quan
                   </p>
                 </div>
               </div>
 
               {/* Feature 4 */}
-              <div className="flex items-start gap-3.5 p-2 rounded-2xl transition-all duration-300 hover:bg-white/80 dark:hover:bg-slate-900/60 hover:shadow-2xs group cursor-default">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
-                  <Clock className="h-5.5 w-5.5" />
+              <div className="flex items-start gap-3.5 p-2.5 rounded-2xl transition-all duration-300 hover:bg-white/90 dark:hover:bg-slate-900/70 hover:shadow-xs group cursor-default">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 dark:bg-blue-950/60 dark:border-blue-900 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
+                  <Clock className="h-6 w-6" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h2 className="text-[15.5px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     Tiết kiệm thời gian
                   </h2>
-                  <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <p className="text-[13.5px] text-slate-500 dark:text-slate-400 leading-snug mt-1">
                     Tối ưu hiệu suất làm việc
                   </p>
                 </div>
@@ -452,40 +452,40 @@ export default function LoginPage() {
           </div>
 
           {/* Bottom Trust Statistics Cards */}
-          <div className="pt-5 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-3 gap-4">
-            <div className="flex items-center gap-3.5 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/60 border border-slate-100/80 dark:border-slate-800 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
-                <Users className="h-5.5 w-5.5" />
+          <div className="pt-6 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-3 gap-4">
+            <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/80 dark:bg-slate-900/70 border border-slate-200/70 dark:border-slate-800 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+                <Users className="h-6 w-6" />
               </div>
               <div className="min-w-0">
-                <p className="text-[15px] sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-[18px] sm:text-[20px] font-semibold text-slate-900 dark:text-white leading-tight truncate">
                   10,000+
                 </p>
-                <p className="text-[12.5px] text-slate-500 dark:text-slate-400 truncate">Người dùng</p>
+                <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400 truncate mt-0.5">Người dùng</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3.5 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/60 border border-slate-100/80 dark:border-slate-800 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
-                <Award className="h-5.5 w-5.5" />
+            <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/80 dark:bg-slate-900/70 border border-slate-200/70 dark:border-slate-800 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+                <Award className="h-6 w-6" />
               </div>
               <div className="min-w-0">
-                <p className="text-[15px] sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-[18px] sm:text-[20px] font-semibold text-slate-900 dark:text-white leading-tight truncate">
                   50,000+
                 </p>
-                <p className="text-[12.5px] text-slate-500 dark:text-slate-400 truncate">Kỳ thi tổ chức</p>
+                <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400 truncate mt-0.5">Kỳ thi tổ chức</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3.5 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-900/60 border border-slate-100/80 dark:border-slate-800 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
-                <ShieldCheck className="h-5.5 w-5.5" />
+            <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/80 dark:bg-slate-900/70 border border-slate-200/70 dark:border-slate-800 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+                <ShieldCheck className="h-6 w-6" />
               </div>
               <div className="min-w-0">
-                <p className="text-[15px] sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-[18px] sm:text-[20px] font-semibold text-slate-900 dark:text-white leading-tight truncate">
                   99.9%
                 </p>
-                <p className="text-[12.5px] text-slate-500 dark:text-slate-400 truncate">Độ tin cậy</p>
+                <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400 truncate mt-0.5">Độ tin cậy</p>
               </div>
             </div>
           </div>
@@ -494,37 +494,37 @@ export default function LoginPage() {
         {/* ── Right Column: Large Modern Academic Login Form Card (5 Cols ~ 42%) ── */}
         <section className="lg:col-span-5 flex justify-center w-full items-start">
           <div
-            className={`w-full max-w-[460px] rounded-[32px] border p-7 sm:p-8 transition-all duration-300 ${
+            className={`w-full max-w-[460px] rounded-3xl border p-8 sm:p-9 transition-all duration-300 ${
               isDark
-                ? 'border-slate-800 bg-slate-900/90 shadow-2xl shadow-black/50 backdrop-blur-xl'
-                : 'border-slate-100/90 bg-white shadow-[0_20px_50px_-10px_rgba(37,99,235,0.09),0_8px_20px_-3px_rgba(0,0,0,0.03)] backdrop-blur-sm'
+                ? 'border-slate-800 bg-slate-900/95 shadow-2xl shadow-black/50 backdrop-blur-xl'
+                : 'border-slate-200/80 bg-white/95 shadow-[0_20px_60px_-15px_rgba(37,99,235,0.12),0_10px_25px_-5px_rgba(0,0,0,0.04)] backdrop-blur-sm'
             }`}
           >
             {/* Top User Avatar Circle */}
-            <div className="text-center mb-5">
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-blue-50/90 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 mb-2 border border-blue-100/80 dark:border-blue-900 shadow-inner">
-                <UserIcon className="h-7 w-7" />
+            <div className="text-center mb-6">
+              <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-b from-blue-50 to-blue-100/80 dark:from-blue-950/80 dark:to-blue-900/40 text-blue-600 dark:text-blue-400 mb-3 border border-blue-200/80 dark:border-blue-800/80 shadow-xs">
+                <UserIcon className="h-8 w-8" />
               </div>
-              <h2 className="text-[24px] sm:text-[26px] font-semibold text-slate-900 dark:text-white tracking-tight">
+              <h2 className="text-[26px] sm:text-[28px] font-semibold text-slate-900 dark:text-white tracking-tight leading-tight">
                 Đăng nhập hệ thống
               </h2>
-              <p className="text-[13.5px] text-slate-500 dark:text-slate-400 mt-1 font-normal">
+              <p className="text-[15px] text-slate-500 dark:text-slate-400 mt-1.5 font-normal">
                 Chào mừng bạn quay trở lại!
               </p>
             </div>
 
-            {/* ── HERO PRIMARY ACTION: Google OAuth Login Button (Fixed 20px SVG) ── */}
+            {/* ── HERO PRIMARY ACTION: Google OAuth Login Button (48px Height) ── */}
             <button
               type="button"
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="flex h-11 w-full items-center justify-center gap-3 rounded-xl border border-slate-300/90 bg-white px-4 text-[15px] font-semibold text-slate-800 shadow-2xs transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/40 hover:text-blue-700 hover:shadow-xs active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 cursor-pointer"
+              className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-slate-300/90 bg-white px-5 text-[15px] font-semibold text-slate-800 shadow-2xs transition-all duration-200 hover:border-blue-500 hover:bg-blue-50/50 hover:text-blue-700 hover:shadow-xs active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 cursor-pointer"
             >
               <svg
-                className="w-5 h-5 shrink-0"
-                width="20"
-                height="20"
-                style={{ width: '20px', height: '20px', minWidth: '20px', minHeight: '20px' }}
+                className="w-5.5 h-5.5 shrink-0"
+                width="22"
+                height="22"
+                style={{ width: '22px', height: '22px', minWidth: '22px', minHeight: '22px' }}
                 viewBox="0 0 24 24"
                 aria-hidden="true"
               >
@@ -549,24 +549,24 @@ export default function LoginPage() {
             </button>
 
             {/* Subtle Divider */}
-            <div className="my-4 flex items-center gap-3 text-xs font-medium text-slate-400">
+            <div className="my-5 flex items-center gap-3 text-xs font-semibold text-slate-400">
               <div className="h-px flex-1 bg-slate-200/90 dark:bg-slate-800" />
               <span>hoặc</span>
               <div className="h-px flex-1 bg-slate-200/90 dark:bg-slate-800" />
             </div>
 
             {/* ── Collapsible Internal Login Section ── */}
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               {/* Clean Frameless Trigger Button */}
               <button
                 type="button"
                 onClick={() => setShowManualLogin((prev) => !prev)}
-                className="w-full py-2 px-3 flex items-center justify-center gap-2 text-[13px] font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 rounded-2xl transition-all duration-200 cursor-pointer"
+                className="w-full h-11 px-4 flex items-center justify-center gap-2.5 text-[15px] font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/70 rounded-xl transition-all duration-200 cursor-pointer"
               >
-                <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-500" />
+                <UserIcon className="h-4.5 w-4.5 text-slate-400 group-hover:text-blue-500" />
                 <span>Đăng nhập tài khoản nội bộ</span>
                 <ChevronDown
-                  className={`h-4 w-4 transition-transform duration-300 ease-in-out ${
+                  className={`h-4.5 w-4.5 transition-transform duration-300 ease-in-out ${
                     showManualLogin ? 'rotate-180 text-blue-600' : 'rotate-0 text-slate-400'
                   }`}
                 />
@@ -581,15 +581,15 @@ export default function LoginPage() {
                 }`}
               >
                 <div className="overflow-hidden">
-                  <form onSubmit={handleManualLogin} noValidate className="space-y-3.5 pt-3 pb-0.5">
-                    {/* Username / Email Input (Spacious pl-12 to prevent text overlap) */}
-                    <div className="space-y-1">
-                      <label className="block text-[15px] font-medium text-slate-600 dark:text-slate-300">
+                  <form onSubmit={handleManualLogin} noValidate className="space-y-4 pt-3 pb-1">
+                    {/* Username / Email Input */}
+                    <div className="space-y-1.5">
+                      <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
                         Email hoặc tên đăng nhập
                       </label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                          <Mail className="h-4.5 w-4.5" />
+                          <Mail className="h-5 w-5" />
                         </div>
                         <input
                           type="text"
@@ -597,7 +597,7 @@ export default function LoginPage() {
                           onChange={(e) => setUsername(e.target.value)}
                           placeholder="Nhập email hoặc tên đăng nhập"
                           required
-                          className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-[15px] outline-none transition ${
+                          className={`w-full h-12 rounded-xl border pl-12 pr-4 text-[15px] outline-none transition ${
                             isDark
                               ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                             : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -606,14 +606,14 @@ export default function LoginPage() {
                       </div>
                     </div>
 
-                    {/* Password Input (Spacious pl-12 to prevent text overlap) */}
-                    <div className="space-y-1">
-                      <label className="block text-[15px] font-medium text-slate-600 dark:text-slate-300">
+                    {/* Password Input */}
+                    <div className="space-y-1.5">
+                      <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
                         Mật khẩu
                       </label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                          <Lock className="h-4.5 w-4.5" />
+                          <Lock className="h-5 w-5" />
                         </div>
                         <input
                           type={showPassword ? 'text' : 'password'}
@@ -621,7 +621,7 @@ export default function LoginPage() {
                           onChange={(e) => setPassword(e.target.value)}
                           placeholder="Nhập mật khẩu"
                           required
-                          className={`w-full h-[44px] rounded-2xl border pl-12 pr-11 text-[15px] outline-none transition ${
+                          className={`w-full h-12 rounded-xl border pl-12 pr-12 text-[15px] outline-none transition ${
                             isDark
                               ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                             : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -633,19 +633,19 @@ export default function LoginPage() {
                           className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
                           aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                         >
-                          {showPassword ? <EyeOff className="h-4.5 w-4.5" /> : <Eye className="h-4.5 w-4.5" />}
+                          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                         </button>
                       </div>
                     </div>
 
                     {/* Remember Me & Forgot Password Row */}
-                    <div className="flex items-center justify-between text-[12.5px] pt-0.5">
-                      <label className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 cursor-pointer select-none">
+                    <div className="flex items-center justify-between text-[14px] pt-1">
+                      <label className="flex items-center gap-2 text-slate-600 dark:text-slate-300 cursor-pointer select-none">
                         <input
                           type="checkbox"
                           checked={rememberMe}
                           onChange={(e) => setRememberMe(e.target.checked)}
-                          className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          className="h-4.5 w-4.5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                         />
                         <span>Ghi nhớ</span>
                       </label>
@@ -661,16 +661,16 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={loading || !username || !password}
-                      className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-[15px] shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-1"
+                      className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-[15px] shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-2"
                     >
                       {loading ? (
                         <div className="flex items-center gap-2">
-                          <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <div className="h-4.5 w-4.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                           <span>Đang xác thực...</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <Lock className="h-4 w-4" />
+                          <Lock className="h-4.5 w-4.5" />
                           <span>Đăng nhập</span>
                         </div>
                       )}
@@ -681,7 +681,7 @@ export default function LoginPage() {
             </div>
 
             {/* Card Footer Help Link */}
-            <div className="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4 text-center text-xs sm:text-[13.5px] text-slate-500 dark:text-slate-400">
+            <div className="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4 text-center text-[14px] text-slate-500 dark:text-slate-400">
               <p>
                 Chưa có tài khoản?{' '}
                 <button
@@ -699,8 +699,8 @@ export default function LoginPage() {
 
       {/* ── Page Bottom Footer ── */}
       <footer className="mt-auto relative z-10 w-full py-5 shrink-0 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1">
-        <p className="flex items-center justify-center gap-2 font-medium text-slate-700 dark:text-slate-300 text-[12.5px]">
-          <ShieldCheck className="h-4 w-4 text-blue-600" />
+        <p className="flex items-center justify-center gap-2 font-medium text-slate-700 dark:text-slate-300 text-[13px]">
+          <ShieldCheck className="h-4.5 w-4.5 text-blue-600" />
           <span>Hệ thống khảo thí an toàn – Minh bạch – Hiệu quả</span>
         </p>
         <p className="text-[12px] text-slate-400 dark:text-slate-500">© 2026 EXAMSYS. All rights reserved.</p>

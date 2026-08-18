@@ -64,6 +64,7 @@ export function QuestionImportWizard({
   const [documentImages, setDocumentImages] = useState<Array<{ mimeType: string; data: string }>>([]);
   const [documentIntent, setDocumentIntent] = useState<'preserve' | 'generate'>('preserve');
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [aiCount, setAiCount] = useState(5);
   const [aiPrompt, setAiPrompt] = useState('');
 
@@ -284,10 +285,9 @@ export function QuestionImportWizard({
   };
 
   const confirm = async () => {
-    if (!preview || !selected.length || busy) return;
+    if (!preview || !selected.length || busy || saving) return;
     if (mode !== 'ai_generate' && !file) return;
-    setBusy(true);
-    setProgress(8);
+    setSaving(true);
     showToast('');
 
     try {
@@ -337,8 +337,7 @@ export function QuestionImportWizard({
     } catch (e: any) {
       showToast(e.response?.data?.message || e.message || 'Không thể nhập dữ liệu vào hệ thống.');
     } finally {
-      setProgress(100);
-      setBusy(false);
+      setSaving(false);
     }
   };
 
@@ -613,10 +612,11 @@ export function QuestionImportWizard({
                     type="button"
                     variant="primary"
                     size="md"
-                    disabled={!selected.length || busy}
+                    disabled={!selected.length || busy || saving}
+                    isLoading={saving}
                     onClick={() => setShowSaveConfirm(true)}
                   >
-                    Lưu câu hỏi
+                    {saving ? 'Đang lưu...' : 'Lưu câu hỏi'}
                   </Button>
                 </>
               ) : (
@@ -847,7 +847,7 @@ export function QuestionImportWizard({
       </div>
       <ConfirmModal
         isOpen={showSaveConfirm}
-        isLoading={busy}
+        isLoading={saving}
         onClose={() => setShowSaveConfirm(false)}
         onConfirm={() => {
           setShowSaveConfirm(false);
