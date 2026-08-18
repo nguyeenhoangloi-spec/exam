@@ -541,7 +541,7 @@ export default function ExamRoomsPage() {
             const count = selected.length;
             setConfirmModal({
               isOpen: true,
-              title: 'Xóa hàng loạt phòng thi',
+              title: 'Xóa hàng loạt phòng thi?',
               message: `Bạn có chắc chắn muốn xóa ${count} phòng thi đã chọn? Hành động này không thể hoàn tác.`,
               type: 'danger',
               onConfirm: async () => {

@@ -590,7 +590,7 @@ export default function SubjectsPage() {
             const count = selected.length;
             setConfirmModal({
               isOpen: true,
-              title: 'Xóa hàng loạt môn học',
+              title: 'Xóa hàng loạt môn học?',
               message: `Bạn có chắc chắn muốn xóa ${count} môn học đã chọn? Hành động này không thể hoàn tác.`,
               type: 'danger',
               onConfirm: async () => {

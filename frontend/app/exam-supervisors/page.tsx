@@ -76,11 +76,13 @@ export default function ExamSupervisorsPage() {
     isOpen: boolean;
     title: string;
     message: string;
+    type?: 'danger' | 'warning' | 'info' | 'success';
     onConfirm: () => void;
   }>({
     isOpen: false,
     title: '',
     message: '',
+    type: 'danger',
     onConfirm: () => { },
   });
 
@@ -295,8 +297,9 @@ export default function ExamSupervisorsPage() {
   const handleDelete = (id: number, teacherName: string) => {
     setConfirmModal({
       isOpen: true,
-      title: 'Hủy Phân Công Giám Thị',
+      title: 'Hủy phân công giám thị?',
       message: `Bạn có chắc chắn muốn hủy phân công giám thị ${teacherName}? Hành động này không thể hoàn tác.`,
+      type: 'danger',
       onConfirm: async () => {
         setConfirmModal((p) => ({ ...p, isOpen: false }));
         try {
@@ -306,7 +309,7 @@ export default function ExamSupervisorsPage() {
             await fetchSupervisors(selectedSchedule.id);
           }
         } catch (err: any) {
-          setToast({ message: err.message || 'Lỗi khi hủy phân công', type: 'error' });
+          setToast({ message: err.message || 'Lỗi khi hủy phân công. Vui lòng thử lại.', type: 'error' });
         }
       },
     });
@@ -317,8 +320,9 @@ export default function ExamSupervisorsPage() {
     if (selected.length === 0) return;
     setConfirmModal({
       isOpen: true,
-      title: 'Hủy phân công hàng loạt',
+      title: 'Hủy phân công hàng loạt?',
       message: `Bạn có chắc chắn muốn hủy ${selected.length} lượt phân công giám thị đã chọn?`,
+      type: 'danger',
       onConfirm: async () => {
         setConfirmModal((p) => ({ ...p, isOpen: false }));
         try {
@@ -458,7 +462,7 @@ export default function ExamSupervisorsPage() {
         isOpen={confirmModal.isOpen}
         title={confirmModal.title}
         message={confirmModal.message}
-        type="danger"
+        type={confirmModal.type || 'danger'}
         onConfirm={confirmModal.onConfirm}
         onClose={() => setConfirmModal((p) => ({ ...p, isOpen: false }))}
       />
@@ -889,18 +893,6 @@ export default function ExamSupervisorsPage() {
           { label: 'Trạng thái', value: drawerSupervisor?.status === 'CONFIRMED' ? 'Đã xác nhận' : drawerSupervisor?.status === 'CHANGE_REQUESTED' ? 'Đề nghị thay đổi' : 'Đã phân công', icon: ShieldCheck },
         ]}
       />
-
-      {/* ── Confirm Modal ── */}
-      <ConfirmModal
-        isOpen={confirmModal.isOpen}
-        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
-        onConfirm={confirmModal.onConfirm}
-        title={confirmModal.title}
-        message={confirmModal.message}
-      />
-
-      {/* ── Toast ── */}
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </>
   );
 }

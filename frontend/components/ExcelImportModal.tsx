@@ -226,11 +226,11 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
           setShowConfirm(false);
           void handleConfirmImport();
         }}
-        title="Xác nhận nhập dữ liệu"
+        title="Nhập dữ liệu từ tệp Excel?"
         message={`Hệ thống sẽ tạo ${previewData.length} bản ghi từ tệp đã xem trước. Các dòng không hợp lệ sẽ được thông báo chi tiết.`}
         type="info"
         confirmText="Nhập dữ liệu"
-        cancelText="Quay lại kiểm tra"
+        cancelText="Hủy bỏ"
       />
     </>
   );

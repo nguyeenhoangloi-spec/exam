@@ -853,11 +853,11 @@ export function QuestionImportWizard({
           setShowSaveConfirm(false);
           void confirm();
         }}
-        title="Xác nhận lưu câu hỏi"
+        title="Lưu câu hỏi nhập từ file vào Ngân hàng?"
         message={`Hệ thống sẽ lưu ${selected.length} câu hỏi đã chọn ở trạng thái Bản nháp. Bạn vẫn có thể chỉnh sửa và gửi duyệt sau khi lưu.`}
         type="info"
         confirmText="Lưu câu hỏi"
-        cancelText="Quay lại kiểm tra"
+        cancelText="Hủy bỏ"
       />
     </Modal>
   );

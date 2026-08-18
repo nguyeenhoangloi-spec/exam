@@ -348,11 +348,11 @@ export default function StudentExamResultPage() {
           setShowAppealConfirm(false);
           void handleSendAppeal();
         }}
-        title="Xác nhận gửi giải trình"
+        title="Gửi đơn giải trình vi phạm?"
         message="Giải trình sẽ được chuyển cho giám thị để xem xét. Bạn không thể chỉnh sửa nội dung sau khi gửi."
         type="warning"
         confirmText="Gửi giải trình"
-        cancelText="Quay lại sửa"
+        cancelText="Hủy bỏ"
       />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </>

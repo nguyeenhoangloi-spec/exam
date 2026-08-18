@@ -512,7 +512,7 @@ export default function ExamPeriodsPage() {
             const count = selected.length;
             setConfirmModal({
               isOpen: true,
-              title: 'Xóa hàng loạt kỳ thi',
+              title: 'Xóa hàng loạt kỳ thi?',
               message: `Bạn có chắc chắn muốn xóa ${count} kỳ thi đã chọn? Hành động này không thể hoàn tác.`,
               type: 'danger',
               onConfirm: async () => {

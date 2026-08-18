@@ -91,7 +91,7 @@ export default function DashboardPage() {
   const approve = (id: string, code: string) => {
     setConfirmModal({
       isOpen: true,
-      title: 'Phê duyệt câu hỏi',
+      title: 'Phê duyệt câu hỏi?',
       message: `Bạn có chắc chắn muốn duyệt câu hỏi ${code} vào Ngân hàng câu hỏi?`,
       type: 'success',
       onConfirm: async () => {

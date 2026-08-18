@@ -208,18 +208,18 @@ function TrashPageContent() {
   const handleRestore = (item: TrashItem) => {
     setConfirmModal({
       isOpen: true,
-      title: 'Khôi phục dữ liệu',
+      title: 'Khôi phục dữ liệu?',
       message: `Bạn có chắc chắn muốn khôi phục "${item.title}" trở lại hệ thống?`,
       type: 'info',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.post('/trash/restore', { type: item.type, id: item.id });
-          setToast({ message: 'Khôi phục dữ liệu thành công!', type: 'success' });
+          setToast({ message: 'Đã khôi phục dữ liệu thành công!', type: 'success' });
           fetchStats();
           fetchItems();
         } catch (err: any) {
-          setToast({ message: err?.response?.data?.message || 'Khôi phục thất bại', type: 'error' });
+          setToast({ message: err?.response?.data?.message || 'Khôi phục thất bại. Vui lòng thử lại.', type: 'error' });
         }
       },
     });
@@ -228,18 +228,18 @@ function TrashPageContent() {
   const handleHardDelete = (item: TrashItem) => {
     setConfirmModal({
       isOpen: true,
-      title: 'Xóa vĩnh viễn dữ liệu',
-      message: `CẢNH BÁO: Thao tác này sẽ XÓA VĨNH VIỄN "${item.title}" khỏi Database và KHÔNG THỂ KHÔI PHỤC! Bạn có chắc chắn?`,
+      title: 'Xóa vĩnh viễn dữ liệu?',
+      message: `CẢNH BÁO: Thao tác này sẽ XÓA VĨNH VIỄN "${item.title}" khỏi Database và KHÔNG THỂ KHÔI PHỤC! Bạn có chắc chắn muốn thực hiện?`,
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.delete('/trash/permanent', { data: { type: item.type, id: item.id } });
-          setToast({ message: 'Đã xóa vĩnh viễn dữ liệu khỏi hệ thống!', type: 'success' });
+          setToast({ message: 'Đã xóa vĩnh viễn dữ liệu khỏi hệ thống thành công!', type: 'success' });
           fetchStats();
           fetchItems();
         } catch (err: any) {
-          setToast({ message: err?.response?.data?.message || 'Xóa vĩnh viễn thất bại', type: 'error' });
+          setToast({ message: err?.response?.data?.message || 'Xóa vĩnh viễn thất bại. Vui lòng thử lại.', type: 'error' });
         }
       },
     });
@@ -266,7 +266,7 @@ function TrashPageContent() {
     const selectedItems = items.filter((i) => selectedIds.includes(i.id));
     setConfirmModal({
       isOpen: true,
-      title: 'Khôi phục hàng loạt',
+      title: 'Khôi phục hàng loạt?',
       message: `Bạn có chắc chắn muốn khôi phục ${count} bản ghi đã chọn trở lại hệ thống?`,
       type: 'info',
       onConfirm: async () => {
@@ -280,7 +280,7 @@ function TrashPageContent() {
           fetchStats();
           fetchItems();
         } catch (err: any) {
-          setToast({ message: err?.response?.data?.message || 'Khôi phục thất bại', type: 'error' });
+          setToast({ message: err?.response?.data?.message || 'Khôi phục thất bại. Vui lòng thử lại.', type: 'error' });
         }
       },
     });
@@ -291,8 +291,8 @@ function TrashPageContent() {
     const selectedItems = items.filter((i) => selectedIds.includes(i.id));
     setConfirmModal({
       isOpen: true,
-      title: 'Xóa vĩnh viễn hàng loạt',
-      message: `CẢNH BÁO: Thao tác này sẽ XÓA VĨNH VIỄN ${count} bản ghi đã chọn khỏi Database và KHÔNG THỂ KHÔI PHỤC! Bạn có chắc chắn?`,
+      title: 'Xóa vĩnh viễn hàng loạt?',
+      message: `CẢNH BÁO: Thao tác này sẽ XÓA VĨNH VIỄN ${count} bản ghi đã chọn khỏi Database và KHÔNG THỂ KHÔI PHỤC! Bạn có chắc chắn muốn thực hiện?`,
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -300,12 +300,12 @@ function TrashPageContent() {
           await Promise.allSettled(
             selectedItems.map((item) => api.delete('/trash/permanent', { data: { type: item.type, id: item.id } }))
           );
-          setToast({ message: `Đã xóa vĩnh viễn ${count} bản ghi khỏi hệ thống!`, type: 'success' });
+          setToast({ message: `Đã xóa vĩnh viễn ${count} bản ghi khỏi hệ thống thành công!`, type: 'success' });
           setSelectedIds([]);
           fetchStats();
           fetchItems();
         } catch (err: any) {
-          setToast({ message: err?.response?.data?.message || 'Xóa vĩnh viễn thất bại', type: 'error' });
+          setToast({ message: err?.response?.data?.message || 'Xóa vĩnh viễn thất bại. Vui lòng thử lại.', type: 'error' });
         }
       },
     });
@@ -314,7 +314,7 @@ function TrashPageContent() {
   const handleAutoClean = () => {
     setConfirmModal({
       isOpen: true,
-      title: 'Tự động dọn dẹp Thùng Rác',
+      title: 'Tự động dọn dẹp Thùng rác?',
       message: 'Hệ thống sẽ quét và XÓA VĨNH VIỄN toàn bộ các bản ghi trong Thùng rác đã quá 30 ngày. Bạn có chắc chắn muốn thực hiện?',
       type: 'danger',
       onConfirm: async () => {
@@ -323,7 +323,7 @@ function TrashPageContent() {
           const res = await api.post('/trash/auto-clean');
           const count = res.data?.totalCleaned ?? 0;
           setToast({
-            message: count > 0 ? `🧹 Đã tự động dọn dẹp vĩnh viễn ${count} bản ghi quá 30 ngày!` : 'Thành công: Không có bản ghi nào quá 30 ngày cần dọn dẹp.',
+            message: count > 0 ? `Đã tự động dọn dẹp vĩnh viễn ${count} bản ghi quá 30 ngày!` : 'Không có bản ghi nào quá 30 ngày cần dọn dẹp.',
             type: 'success',
           });
           fetchStats();

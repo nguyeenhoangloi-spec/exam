@@ -593,7 +593,7 @@ export default function TeachersPage() {
             const count = selected.length;
             setConfirmModal({
               isOpen: true,
-              title: 'Xóa hàng loạt giảng viên',
+              title: 'Xóa hàng loạt giảng viên?',
               message: `Bạn có chắc chắn muốn xóa ${count} giảng viên đã chọn? Hành động này không thể hoàn tác.`,
               type: 'danger',
               onConfirm: async () => {

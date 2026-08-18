@@ -682,7 +682,7 @@ export default function ExamSchedulesPage() {
             const count = selected.length;
             setConfirmModal({
               isOpen: true,
-              title: 'Xóa hàng loạt lịch thi',
+              title: 'Xóa hàng loạt ca thi?',
               message: `Bạn có chắc chắn muốn xóa ${count} ca thi đã chọn? Hành động này không thể hoàn tác.`,
               type: 'danger',
               onConfirm: async () => {

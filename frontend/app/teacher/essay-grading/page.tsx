@@ -410,10 +410,10 @@ function TeacherEssayGradingContent() {
 
     setConfirmModal({
       isOpen: true,
-      title: isAdmin ? 'Duyệt bài thi tự luận' : 'Gửi duyệt',
+      title: isAdmin ? 'Duyệt bài thi tự luận?' : 'Gửi duyệt bài thi tự luận?',
       message: isAdmin
-        ? `Hệ thống sẽ lưu điểm và thực hiện duyệt bài thi cho thí sinh ${selected.student?.fullName}. Bạn có chắc chắn?`
-        : `Hệ thống sẽ lưu toàn bộ điểm và gửi bài thi của thí sinh ${selected.student?.fullName} tới ADMIN duyệt. Bạn có chắc chắn?`,
+        ? `Hệ thống sẽ lưu điểm và thực hiện duyệt bài thi cho thí sinh ${selected.student?.fullName}. Bạn có chắc chắn muốn thực hiện?`
+        : `Hệ thống sẽ lưu toàn bộ điểm và gửi bài thi của thí sinh ${selected.student?.fullName} tới Ban quản trị để duyệt. Bạn có chắc chắn muốn thực hiện?`,
       type: 'info',
       confirmText: isAdmin ? 'Duyệt bài' : 'Gửi duyệt',
       cancelText: 'Hủy bỏ',

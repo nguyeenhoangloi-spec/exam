@@ -607,7 +607,7 @@ export default function DepartmentsPage() {
             const count = selected.length;
             setConfirmModal({
               isOpen: true,
-              title: 'Xóa hàng loạt khoa/viện',
+              title: 'Xóa hàng loạt khoa?',
               message: `Bạn có chắc chắn muốn xóa ${count} khoa đã chọn? Hành động này không thể hoàn tác.`,
               type: 'danger',
               onConfirm: async () => {

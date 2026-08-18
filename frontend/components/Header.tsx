@@ -272,11 +272,11 @@ export const Header: React.FC<HeaderProps> = ({
         isOpen={showLogoutConfirm}
         onClose={() => setShowLogoutConfirm(false)}
         onConfirm={handleLogout}
-        title="Đăng xuất khỏi hệ thống"
+        title="Đăng xuất khỏi hệ thống?"
         message="Bạn có chắc chắn muốn đăng xuất phiên làm việc hiện tại không?"
         type="danger"
         confirmText="Đăng xuất"
-        cancelText="Hủy"
+        cancelText="Hủy bỏ"
       />
 
       {/* Quick Search Modal */}

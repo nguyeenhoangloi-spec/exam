@@ -548,7 +548,7 @@ export default function ClassesPage() {
             const count = selected.length;
             setConfirmModal({
               isOpen: true,
-              title: 'Xóa hàng loạt lớp học',
+              title: 'Xóa hàng loạt lớp học?',
               message: `Bạn có chắc chắn muốn xóa ${count} lớp học đã chọn? Hành động này không thể hoàn tác.`,
               type: 'danger',
               onConfirm: async () => {

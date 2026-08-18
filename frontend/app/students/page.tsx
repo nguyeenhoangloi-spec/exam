@@ -632,7 +632,7 @@ export default function StudentsPage() {
             const count = selected.length;
             setConfirmModal({
               isOpen: true,
-              title: 'Xóa hàng loạt sinh viên',
+              title: 'Xóa hàng loạt sinh viên?',
               message: `Bạn có chắc chắn muốn xóa ${count} sinh viên đã chọn? Hành động này không thể hoàn tác.`,
               type: 'danger',
               onConfirm: async () => {

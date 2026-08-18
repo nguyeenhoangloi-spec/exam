@@ -136,10 +136,10 @@ export default function TeacherAssignmentsPage() {
     const isConfirm = status === 'CONFIRMED';
     setConfirmModal({
       isOpen: true,
-      title: isConfirm ? 'Xác nhận tham gia ca coi thi' : 'Xin đổi ca coi thi',
+      title: isConfirm ? 'Xác nhận tham gia ca coi thi?' : 'Gửi yêu cầu đổi ca coi thi?',
       message: isConfirm
-        ? `Bạn có chắc chắn xác nhận tham gia ca coi thi ${item?.subjectName || ''} (${item?.startTime || ''} - ${item?.endTime || ''}, phòng ${item?.roomName || item?.roomCode || ''})?`
-        : `Bạn có chắc chắn gửi yêu cầu xin đổi ca coi thi ${item?.subjectName || ''} (${item?.startTime || ''} - ${item?.endTime || ''}, phòng ${item?.roomName || item?.roomCode || ''})?`,
+        ? `Bạn có chắc chắn xác nhận tham gia ca coi thi môn ${item?.subjectName || ''} (${item?.startTime || ''} - ${item?.endTime || ''}, phòng ${item?.roomName || item?.roomCode || ''})?`
+        : `Bạn có chắc chắn gửi yêu cầu xin đổi ca coi thi môn ${item?.subjectName || ''} (${item?.startTime || ''} - ${item?.endTime || ''}, phòng ${item?.roomName || item?.roomCode || ''})?`,
       type: isConfirm ? 'success' : 'warning',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));

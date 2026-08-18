@@ -1005,7 +1005,7 @@ export default function ExamPapersPage() {
             const count = selected.length;
             setConfirmModal({
               isOpen: true,
-              title: 'Xóa hàng loạt đề thi',
+              title: 'Xóa hàng loạt đề thi?',
               message: `Bạn có chắc chắn muốn xóa ${count} đề thi đã chọn? Hành động này không thể hoàn tác.`,
               type: 'danger',
               onConfirm: async () => {

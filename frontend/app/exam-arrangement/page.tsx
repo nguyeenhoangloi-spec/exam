@@ -611,7 +611,7 @@ export default function ExamArrangementPage() {
     const currentSched = schedules.find((s) => s.id.toString() === selectedScheduleId);
     setConfirmModal({
       isOpen: true,
-      title: 'Hủy & Reset Xếp phòng thi',
+      title: 'Hủy xếp phòng ca thi?',
       message: `Bạn có chắc chắn muốn HỦY và XÓA TOÀN BỘ dữ liệu xếp phòng cho ca thi ${currentSched?.subject?.subjectName || ''
         }? Thao tác này không thể hoàn tác.`,
       type: 'danger',
@@ -1005,8 +1005,8 @@ export default function ExamArrangementPage() {
                           onClick={() =>
                             setConfirmModal({
                               isOpen: true,
-                              title: 'Xác nhận lưu phương án xếp phòng',
-                              message: 'Kết quả phân bổ sinh viên vào phòng sẽ được lưu chính thức vào hệ thống. Bạn có chắc chắn?',
+                              title: 'Lưu phương án xếp phòng thi?',
+                              message: 'Kết quả phân bổ sinh viên vào phòng sẽ được lưu chính thức vào hệ thống. Bạn có chắc chắn muốn thực hiện?',
                               type: 'info',
                               onConfirm: runSaveArrangement,
                             })

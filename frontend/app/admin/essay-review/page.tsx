@@ -137,7 +137,7 @@ function AdminEssayReviewContent() {
     if (!selected) return;
     setConfirmModal({
       isOpen: true,
-      title: 'Duyệt & Công bố điểm',
+      title: publish ? 'Duyệt & Công bố điểm thi?' : 'Duyệt điểm bài thi?',
       message: `Bạn có chắc chắn muốn DUYỆT & CÔNG BỐ điểm bài thi của thí sinh ${selected.student?.fullName}? Sau khi công bố, sinh viên sẽ nhìn thấy kết quả bài làm và điểm số chính thức.`,
       type: 'info',
       requireReason: false,
@@ -147,7 +147,7 @@ function AdminEssayReviewContent() {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.post(`/essay/grading/attempts/${selected.id}/${publish ? 'publish' : 'approve'}`);
-          const msg = publish ? 'Đã công bố điểm cho Sinh viên thành công.' : 'Đã duyệt điểm bài thi thành công.';
+          const msg = publish ? 'Đã công bố điểm cho sinh viên thành công!' : 'Đã duyệt điểm bài thi thành công!';
           setToast({ message: msg, type: 'success' });
           await loadAssignments();
           await openAttempt(selected.id);
@@ -163,8 +163,8 @@ function AdminEssayReviewContent() {
     if (!selected) return;
     setConfirmModal({
       isOpen: true,
-      title: 'Trả lại bài thi để chấm lại',
-      message: `Bạn có chắc chắn muốn trả lại bài thi của ${selected.student?.fullName} cho Giảng viên chấm lại?`,
+      title: 'Trả lại bài thi để chấm lại?',
+      message: `Bạn có chắc chắn muốn trả lại bài thi của thí sinh ${selected.student?.fullName} cho Giảng viên chấm lại?`,
       type: 'danger',
       requireReason: true,
       reasonPlaceholder: 'Nhập lý do trả lại bài thi (tối thiểu 3 ký tự)...',
@@ -175,7 +175,7 @@ function AdminEssayReviewContent() {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.post(`/essay/grading/attempts/${selected.id}/return`, { reason: finalReason });
-          const msg = 'Đã yêu cầu Giảng viên chấm lại bài thi thành công.';
+          const msg = 'Đã yêu cầu Giảng viên chấm lại bài thi thành công!';
           setToast({ message: msg, type: 'success' });
           await loadAssignments();
           await openAttempt(selected.id);
@@ -191,7 +191,7 @@ function AdminEssayReviewContent() {
     if (!selected) return;
     setConfirmModal({
       isOpen: true,
-      title: 'Mở lại phiên bài thi',
+      title: 'Mở lại phiên bài thi?',
       message: `Xác nhận mở lại phiên thi cho sinh viên ${selected.student?.fullName}?`,
       type: 'info',
       requireReason: true,
@@ -203,7 +203,7 @@ function AdminEssayReviewContent() {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.post(`/essay/grading/attempts/${selected.id}/reopen`, { reason: finalReason });
-          const msg = 'Đã mở lại bài thi cho sinh viên tiếp tục.';
+          const msg = 'Đã mở lại bài thi cho sinh viên tiếp tục thành công!';
           setToast({ message: msg, type: 'success' });
           await loadAssignments();
           await openAttempt(selected.id);
@@ -223,8 +223,8 @@ function AdminEssayReviewContent() {
     }
     setConfirmModal({
       isOpen: true,
-      title: `Gia hạn ${extraMinutes} phút`,
-      message: `Gia hạn thêm ${extraMinutes} phút làm bài cho ${selected.student?.fullName}?`,
+      title: `Gia hạn ${extraMinutes} phút làm bài?`,
+      message: `Gia hạn thêm ${extraMinutes} phút làm bài cho sinh viên ${selected.student?.fullName}?`,
       type: 'info',
       requireReason: true,
       reasonPlaceholder: 'Nhập lý do gia hạn thời gian làm bài...',
@@ -238,7 +238,7 @@ function AdminEssayReviewContent() {
             reason: finalReason,
             extraMinutes: Number(extraMinutes),
           });
-          const msg = `Đã gia hạn thêm ${extraMinutes} phút làm bài thành công.`;
+          const msg = `Đã gia hạn thêm ${extraMinutes} phút làm bài thành công!`;
           setToast({ message: msg, type: 'success' });
           await loadAssignments();
           await openAttempt(selected.id);
@@ -258,7 +258,7 @@ function AdminEssayReviewContent() {
     }
     setConfirmModal({
       isOpen: true,
-      title: `Trừ ${penaltyInput} điểm`,
+      title: `Trừ ${penaltyInput} điểm bài thi?`,
       message: `Xác nhận trừ ${penaltyInput} điểm của bài thi ${selected.student?.fullName}?`,
       type: 'danger',
       requireReason: true,

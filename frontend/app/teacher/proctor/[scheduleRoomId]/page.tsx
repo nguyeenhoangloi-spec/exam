@@ -226,7 +226,7 @@ export default function ProctorDashboardPage() {
     if (!data?.scheduleId) return;
     setConfirmModal({
       isOpen: true,
-      title: 'Xác nhận Mở Giờ Vào Thi Muộn',
+      title: 'Mở giờ vào thi muộn?',
       message: `Bạn có chắc chắn muốn gia hạn thời gian cho sinh viên vào thi muộn thêm ${lateWindowMinutes} phút nữa (tính từ thời điểm hiện tại)?`,
       type: 'info',
       onConfirm: () => executeReopenEntry(),

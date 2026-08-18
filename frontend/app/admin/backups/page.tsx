@@ -1507,7 +1507,7 @@ export default function BackupsPage() {
                 isOpen={Boolean(rejectRequest)}
                 onClose={() => !actionLoading && setRejectRequest(null)}
                 onConfirm={(reasonText) => void handleRejectRequest(reasonText)}
-                title={rejectRequest?.status === 'FAILED' ? 'Mở khóa hệ thống sau restore lỗi' : 'Từ chối yêu cầu khôi phục'}
+                title={rejectRequest?.status === 'FAILED' ? 'Mở khóa hệ thống sau restore lỗi?' : 'Từ chối yêu cầu khôi phục?'}
                 message={
                     rejectRequest?.status === 'FAILED'
                         ? `Restore Production cho snapshot ${rejectRequest.backupJob.snapshotId} đã thất bại. Hệ thống đang giữ maintenance lock để tránh tiếp tục ghi dữ liệu. Chỉ mở khóa sau khi đã kiểm tra safety snapshot.`
