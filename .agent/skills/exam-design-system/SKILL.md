@@ -60,27 +60,29 @@ font-family:
 
 *(Ngoại lệ file xuất: Word/Báo cáo in dùng Times New Roman; Excel dùng Arial).*
 
-### 2.2 Thang cỡ chữ Semantic
+### 2.2 Thang cỡ chữ Semantic & Line-Height
 
-| Token | Cỡ chữ | Line-height | Weight | Vai trò | Ví dụ |
-|---|---:|---:|---|---|---|
-| `fs-kpi` | 32px | 38px | 700 | KPI, tổng số nổi bật (+ tabular-nums) | `2.219` |
-| `fs-page-title` | 28px (mobile: 24px) | 36px | 600–700 | Tiêu đề trang (h1) | `Ngân hàng câu hỏi` |
-| `fs-section-title` | 20px (mobile: 18px) | 28px | 600 | Tiêu đề khu vực (h2) | `Thống kê trạng thái` |
-| `fs-card-title` | 18px | 26px | 600 | Tiêu đề card | `Thông tin kỳ thi` |
-| `fs-body` | 15px | 24px | 400 | Nội dung thường, button, input, label | `Tạo lịch thi` |
-| `fs-body-sm` | 14px | 20px | 500 | Nội dung phụ, header bảng | `Thời gian` |
-| `fs-helper` | 13px | 18px | 400–500 | Hướng dẫn, ghi chú, error | `Tối đa 10MB` |
-| `fs-badge` | 12px | 18px | 600 | Badge, trạng thái nhỏ | `Đã duyệt` |
+| Token | Cỡ chữ | Line-height | Tỷ lệ | Weight | Vai trò | Ví dụ |
+|---|---:|---:|---:|---|---|---|
+| `fs-kpi` | 32px | 38px | ~1.2x | 700 | KPI, tổng số nổi bật (+ tabular-nums) | `2.219` |
+| `fs-page-title` | 28px (mobile: 24px) | 36px | ~1.3x | 600–700 | Tiêu đề trang (h1) | `Ngân hàng câu hỏi` |
+| `fs-section-title` | 20px (mobile: 18px) | 28px | 1.4x | 600 | Tiêu đề khu vực (h2) | `Thống kê trạng thái` |
+| `fs-card-title` | 18px | 26px | ~1.45x | 600 | Tiêu đề card, tiêu đề modal/drawer | `Thông tin kỳ thi` |
+| `fs-body` | 15px | 24px | **1.6x** | 400–500 | **Cỡ chữ chính:** Nội dung, button, input, label | `Tạo lịch thi` |
+| `fs-body-sm` | 14px | 20px | ~1.43x | 500 | Nội dung phụ, header bảng (`thead th`) | `Thời gian` |
+| `fs-helper` | 13px | 18px | ~1.38x | 400 | Hướng dẫn, ghi chú, error | `Tối đa 10MB` |
+| `fs-badge` | 12px | 18px | 1.5x | 500–600 | Badge, trạng thái nhỏ | `Đã duyệt` |
 
-### 2.3 Phân cấp Font Weight
+*Lưu ý:* Cỡ chữ chính 15px bắt buộc kèm `line-height: 24px` để tối ưu cho tiếng Việt có dấu (`ắ`, `ế`, `ộ`, `ữ`), chống dính dòng và căn giữa hoàn hảo trong button/input.
 
-- **400 (`font-normal`)**: Nội dung thường, mô tả, tbody cell dữ liệu.
-- **500 (`font-medium`)**: Label, header bảng (`thead th`), navigation, mã, ngày tháng, giá trị quét nhanh.
-- **600 (`font-semibold`)**: Tiêu đề card, button, action chính, trạng thái semantic.
+### 2.3 Phân cấp Font Weight & Chống nhiễu thị giác
+
+- **400 (`font-normal`)**: Nội dung thường, mô tả, tbody cell dữ liệu, placeholder.
+- **500 (`font-medium`)**: Label, header bảng (`thead th`), navigation menu, mã định danh, ngày tháng.
+- **600 (`font-semibold`)**: Tiêu đề card, button chính (Primary), trạng thái semantic.
 - **700 (`font-bold`)**: KPI, tổng số hoặc tiêu đề h1 trang.
-- **Cấm**: `font-light`, `font-thin`, `font-extralight`, hoặc font-weight < 400 / > 700 trong UI thông thường.
-- Không dùng utility `uppercase` cho button, table header hoặc label thông thường.
+- **Nguyên tắc cốt lõi:** *Không làm cả nhóm chữ đều đậm; mỗi nhóm thông tin chỉ có 1 điểm nhấn chính, các phần tử xung quanh hạ xuống 400 hoặc màu nhạt hơn.*
+- **Cấm**: `font-light`, `font-thin`, `font-extralight`, hoặc font-weight < 400 / > 700 trong UI thông thường. Không dùng `uppercase` cho button/label.
 
 ---
 

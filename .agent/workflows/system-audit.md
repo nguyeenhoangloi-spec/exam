@@ -147,11 +147,12 @@ thì những phần mới này cũng phải được đưa vào lần **RESCAN**
 
 Khi thực hiện audit giao diện Web UI, bắt buộc đối chiếu với [ui-design-system-rules.md](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/ui-design-system-rules.md):
 
-1. **Typography & Font:**
+1. **Typography & Font & Line-Height:**
    - 100% font Inter, không dùng font serif hay monospace cho Web UI.
-   - Cỡ chữ chuẩn 15px (`fs-body`) cho nội dung, input, select, textarea, button và table body.
-   - Cỡ chữ phụ 14px (`fs-body-sm`), không dùng cỡ chữ dưới 12px cho nội dung thông thường.
+   - Cỡ chữ chuẩn 15px (`fs-body`) bắt buộc đi kèm `line-height: 24px` (tỷ lệ 1.6x) cho nội dung, input, select, textarea, button và table body để tối ưu tiếng Việt có dấu (`ắ`, `ế`, `ộ`, `ữ`).
+   - Cỡ chữ phụ 14px (`fs-body-sm`, line-height 20px), không dùng cỡ chữ dưới 12px cho nội dung thông thường.
    - Weight 400–600 (`font-medium`, `font-semibold`). `font-bold` (700) chỉ dành riêng cho KPI/tổng số nổi bật được phê duyệt.
+   - Không làm cả nhóm chữ đều đậm; mỗi nhóm thông tin chỉ có 1 điểm nhấn chính.
    - Không viết in hoa toàn bộ (`uppercase`) cho button, label hoặc tiêu đề section.
 
 2. **Bố cục Phẳng & Hạn chế Khung Hộp (Flat Layout & Divider-First):**

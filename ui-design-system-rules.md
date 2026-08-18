@@ -61,29 +61,28 @@ Không dùng trong Web UI:
 - Excel: Arial.
 - Đây là ngoại lệ cho file xuất, không áp dụng ngược lại cho Web UI.
 
-## 4. Cỡ chữ chuẩn
+## 4. Cỡ chữ chuẩn & Line-height (Typography & Line Spacing Scale)
 
-Hệ thống có 8 cỡ chữ semantic chính trên desktop:
+Hệ thống có 8 cỡ chữ semantic chính trên desktop đi kèm **Line-height (Chiều cao dòng)** tương ứng nhằm đảm bảo khoảng cách dòng tối ưu, chống đè dấu tiếng Việt và căn giữa chuẩn xác:
 
-| Token | Cỡ chữ | Line-height | Vai trò | Ví dụ |
-|---|---:|---:|---|---|
-| `fs-kpi` | 32px | 38px | KPI, tổng số nổi bật | `2.219` |
-| `fs-page-title` | 28px | 36px | Tiêu đề trang | `Ngân hàng câu hỏi` |
-| `fs-section-title` | 20px | 28px | Tiêu đề khu vực | `Thống kê trạng thái` |
-| `fs-card-title` | 18px | 26px | Tiêu đề card | `Thông tin kỳ thi` |
-| `fs-body` | 15px | 24px | Nội dung, button, input, label | `Tạo lịch thi` |
-| `fs-body-sm` | 14px | 20px | Nội dung phụ, header bảng | `Thời gian` |
-| `fs-helper` | 13px | 18px | Hướng dẫn, ghi chú | `Tối đa 10MB` |
-| `fs-badge` | 12px | 18px | Badge, trạng thái nhỏ | `Đã duyệt` |
+| Token | Cỡ chữ | Line-height | Tỷ lệ giãn dòng | Vai trò | Ví dụ |
+|---|---:|---:|---:|---|---|
+| `fs-kpi` | 32px | 38px | ~1.2x | KPI, tổng số nổi bật | `2.219` |
+| `fs-page-title` | 28px | 36px | ~1.3x | Tiêu đề trang | `Ngân hàng câu hỏi` |
+| `fs-section-title` | 20px | 28px | 1.4x | Tiêu đề khu vực | `Thống kê trạng thái` |
+| `fs-card-title` | 18px | 26px | ~1.45x | Tiêu đề card, tiêu đề modal/drawer | `Thông tin kỳ thi` |
+| `fs-body` | 15px | 24px | **1.6x (Tỷ lệ vàng)** | **Cỡ chữ chính:** Nội dung, button, input, label | `Tạo lịch thi` |
+| `fs-body-sm` | 14px | 20px | ~1.43x | Nội dung phụ, header bảng | `Thời gian` |
+| `fs-helper` | 13px | 18px | ~1.38x | Hướng dẫn, ghi chú | `Tối đa 10MB` |
+| `fs-badge` | 12px | 18px | 1.5x | Badge, chip trạng thái nhỏ | `Đã duyệt` |
 
-Quy tắc bổ sung:
-
-- Nội dung bảng: 15px.
-- Header bảng: 14px, không dùng chữ quá mảnh.
-- Button/control có chữ: mặc định 15px.
-- Nút icon-only không có chữ nhưng vẫn phải có vùng chạm đúng chuẩn.
-- Mobile: tiêu đề trang 24px, tiêu đề section 18px.
-- Không dùng 10px hoặc 11px cho nội dung UI thông thường.
+### Quy tắc line-height & cỡ chữ bắt buộc:
+1. **Chống đè dấu tiếng Việt:** Cỡ chữ chính `15px` bắt buộc đi kèm `line-height: 24px` (để lại 4.5px đệm trên/dưới) giúp các ký tự có dấu mũ (`ế`, `ắ`, `ổ`, `ữ`) và dấu nặng/đuôi móc (`g`, `y`, `p`, `.`) hiển thị sắc nét, không bị dính vào dòng trên hoặc dòng dưới.
+2. **Căn giữa nút & ô nhập:** Trong button (`h-11`, `h-10`, `h-9`) và input, line-height chuẩn kết hợp flexbox giúp chữ luôn nằm ngay ngắn tại tâm giữa hộp.
+3. **Nội dung bảng (Table body):** 15px, line-height 22–24px.
+4. **Header bảng (Table header):** 14px, line-height 20px.
+5. **Mobile viewport:** Tiêu đề trang 24px (line-height 32px), tiêu đề section 18px (line-height 26px).
+6. **Không dùng cỡ chữ dưới 12px:** Tuyệt đối không dùng 10px hoặc 11px cho nội dung Web UI thông thường.
 
 ## 5. Font weight và phân cấp thông tin
 
