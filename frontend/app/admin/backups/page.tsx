@@ -436,16 +436,16 @@ export default function BackupsPage() {
     const getBackupStatusBadge = (jobStatus: BackupStatus) => {
         switch (jobStatus) {
             case 'SUCCEEDED':
-                return <StatusBadge status="COMPLETED" customLabel="Thành công" />;
+                return <StatusBadge status="SUCCEEDED" customLabel="Thành công" />;
             case 'RUNNING':
-                return <StatusBadge status="ONGOING" customLabel="Đang chạy" />;
+                return <StatusBadge status="RUNNING" customLabel="Đang chạy" />;
             case 'VERIFYING':
-                return <StatusBadge status="UNDER_REVIEW" customLabel="Đang verify" />;
+                return <StatusBadge status="PROCESSING" customLabel="Đang verify" />;
             case 'QUEUED':
                 return <StatusBadge status="PENDING" customLabel="Đang chờ" />;
             case 'FAILED':
             case 'VERIFY_FAILED':
-                return <StatusBadge status="CANCELLED" customLabel="Thất bại" />;
+                return <StatusBadge status="FAILED" customLabel="Thất bại" />;
             default:
                 return <StatusBadge status="DRAFT" customLabel={jobStatus} />;
         }

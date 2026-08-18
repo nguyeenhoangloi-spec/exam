@@ -176,15 +176,18 @@ Khi thực hiện audit giao diện Web UI, bắt buộc đối chiếu với [u
    - **WCAG tương phản:** Cặp màu chữ quan trọng phải đạt chuẩn **WCAG AA** ($\ge 4.5:1$ text thường, $\ge 3:1$ text lớn/đậm), ưu tiên AAA khi có thể.
    - **Giới hạn màu nhạt:** `text-slate-400` chỉ dùng cho Placeholder, Disabled, Copyright footer và Metadata phụ; tuyệt đối không dùng cho nội dung cần đọc.
 
-5. **Quy Tắc Sử Dụng Màu Sắc & Màu Trạng Thái (Color Usage & Semantic Status):**
+5. **Quy Tắc Sử Dụng Màu Sắc & 5 Nhóm Trạng Thái Semantic (Nền Siêu Nhạt & Chữ Đậm):**
    - Nền trang, card, control giữ trắng và trắng xanh (`bg-white`, `bg-slate-50/50`, `bg-blue-50/30`), không dùng màu trạng thái làm nền lớn toàn trang.
    - Nội dung thường bắt buộc dùng Cool Slate (`slate-900`, `slate-700`, `slate-500`), không dùng xanh lá, đỏ, cam cho văn bản đọc thông thường.
-   - Màu trạng thái chỉ dùng cho icon, chữ trạng thái, viền hoặc nền nhạt:
-     - **Đã duyệt / Thành công:** Xanh lá (`emerald-600`).
-     - **Chờ duyệt / Đang chờ:** Vàng cam (`amber-700` đạt chuẩn WCAG AA $\ge 4.5:1$ trên nền trắng).
-     - **Bị từ chối / Đã hủy / Lỗi:** Đỏ (`rose-600`).
-     - **Cần sửa / Thông tin / Tiến trình:** Xanh dương (`blue-600`).
+   - **5 Nhóm Màu Trạng Thái Semantic:**
+     - **Trung tính (Nháp/Chưa bắt đầu/Lưu trữ):** Nền `#F1F5F9` (`bg-slate-100 dark:bg-slate-800`), Chữ `#334155` (`text-slate-700 dark:text-slate-300`).
+     - **Thông tin/Đang xử lý (Đang diễn ra/Đã lên lịch/Cần sửa):** Nền `#EFF6FF` (`bg-blue-50 dark:bg-blue-950/40`), Chữ `#1D4ED8` (`text-blue-700 dark:text-blue-400`).
+     - **Chờ xử lý (Chờ duyệt/Chờ xác nhận):** Nền `#FFFBEB` (`bg-amber-50 dark:bg-amber-950/40`), Chữ `#B45309` (`text-amber-700 dark:text-amber-400` WCAG AA).
+     - **Thành công (Đã duyệt/Hoàn thành/Đã nộp/Đạt):** Nền `#F0FDF4` (`bg-emerald-50 dark:bg-emerald-950/40`), Chữ `#15803D` (`text-emerald-700 dark:text-emerald-400`).
+     - **Lỗi/Nguy hiểm (Bị từ chối/Đã hủy/Bị khóa/Không đạt):** Nền `#FEF2F2` (`bg-rose-50 dark:bg-rose-950/40`), Chữ `#B91C1C` (`text-rose-700 dark:text-rose-400`).
    - Nút trạng thái nền đậm bắt buộc dùng chữ màu trắng (`text-white`).
+   - **NÊN DÙNG Badge:** Kỳ thi, Câu hỏi, Đề thi, Lịch thi, Sao lưu, Tài khoản, Phúc khảo, Kết quả.
+   - **KHÔNG DÙNG Badge:** Mã KT-1/SV, Tên khoa/môn, Số lượng/Điểm/Ngày, Nút hành động, Nội dung mô tả.
 
 6. **Lệnh kiểm tra kỹ thuật tự động:**
    - Chạy lệnh: `npm run audit:ui` trong thư mục `frontend` và đảm bảo đạt kết quả **0 violations**.

@@ -101,13 +101,12 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                     <div className="mt-2 flex items-center gap-2 min-w-0 flex-nowrap overflow-hidden">
                       {badge && (
                         <div className="shrink-0 flex items-center">
-                          {badge.status ? (
-                            <StatusBadge status={badge.status} customLabel={badge.label} />
-                          ) : (
-                            <span className={`inline-flex items-center rounded-lg px-2.5 py-0.5 text-[12px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60 ${badge.className || ''}`}>
-                              {badge.label}
-                            </span>
-                          )}
+                          <StatusBadge
+                            status={badge.status || badge.label}
+                            customLabel={badge.label}
+                            variant="pill"
+                            className={badge.className}
+                          />
                         </div>
                       )}
 

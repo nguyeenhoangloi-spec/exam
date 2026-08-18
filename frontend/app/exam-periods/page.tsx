@@ -655,8 +655,8 @@ export default function ExamPeriodsPage() {
         subtitle={`Học kỳ: ${drawerPeriod?.semester || ''} | Năm học: ${drawerPeriod?.schoolYear || ''}`}
         avatarText={drawerPeriod?.semester || 'KT'}
         badge={{
+          status: drawerPeriod?.status || 'UPCOMING',
           label: drawerPeriod?.status === 'COMPLETED' ? 'Đã hoàn thành' : drawerPeriod?.status === 'ONGOING' ? 'Đang diễn ra' : 'Sắp diễn ra',
-          className: 'bg-blue-50 text-blue-700 border-blue-200',
         }}
         details={[
           { label: 'Tên kỳ thi', value: drawerPeriod?.name, icon: Calendar },

@@ -353,6 +353,7 @@ const filterSelect = await readFile(join(root, 'components', 'ui', 'FilterSelect
 const button = await readFile(join(root, 'components', 'ui', 'Button.tsx'), 'utf8');
 const input = await readFile(join(root, 'components', 'ui', 'Input.tsx'), 'utf8');
 const identifierBadge = await readFile(join(root, 'components', 'ui', 'IdentifierBadge.tsx'), 'utf8');
+const statusBadge = await readFile(join(root, 'components', 'common', 'StatusBadge.tsx'), 'utf8');
 const sharedUiPrimitiveFiles = [
   'components/ui/Button.tsx',
   'components/ui/Card.tsx',
@@ -507,6 +508,14 @@ if (!/rounded-lg/.test(identifierBadge)
   || !/whitespace-nowrap/.test(identifierBadge)
   || !/toneClasses/.test(identifierBadge)) {
   violations.push('components/ui/IdentifierBadge.tsx: identifier badge phải dùng primitive chung và đủ contract typography/layout');
+}
+
+if (!/variant === 'pill'/.test(statusBadge)
+  || !/categoryStyles/.test(statusBadge)
+  || !/dark:/.test(statusBadge)
+  || !/text-amber-700/.test(statusBadge)
+  || !/text-emerald-700/.test(statusBadge)) {
+  violations.push('components/common/StatusBadge.tsx: status badge phải có 5 nhóm màu semantic chuẩn và hỗ trợ 2 variants dot/pill');
 }
 
 if (!/aria-busy=\{isLoading \|\| undefined\}/.test(button)) {

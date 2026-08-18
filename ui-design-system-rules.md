@@ -511,28 +511,39 @@ Không chỉnh từng page riêng nếu có thể chuẩn hóa ở shared compon
 
 ## 18. Quy tắc Sử dụng Màu sắc & Màu Trạng thái (Color Usage & Semantic Status System)
 
-Nhằm đảm bảo giao diện luôn trang nhã, chuyên nghiệp, dịu mắt và đạt chuẩn tiếp cận WCAG:
+Nhằm đảm bảo giao diện luôn trang nhã, chuyên nghiệp, dịu mắt và đạt chuẩn tiếp cận WCAG AA:
 
-### 18.1 Nền trang, Card và Control
-- **Nền trang, card, control:** Vẫn giữ nguyên nền trắng (`bg-white`) và trắng xanh (`bg-slate-50`, `bg-slate-50/50`, `bg-blue-50/30`, `dark:bg-slate-900`, `dark:bg-slate-950`).
-- **Giới hạn tuyệt đối:** Không dùng các màu trạng thái (xanh lá, đỏ, cam) làm nền lớn toàn bộ trang hoặc nền các khối section to.
+### 18.1 Bảng màu chốt 5 Nhóm Trạng Thái (Nền Siêu Nhạt & Chữ Đậm Tương Phản Cao)
 
-### 18.2 Màu văn bản thông thường
-- **Nội dung thông thường:** Bắt buộc dùng dải màu **Cool Slate** (`text-slate-900`, `text-slate-700`, `text-slate-500`).
-- **Cấm:** Không dùng xanh lá, đỏ, cam cho văn bản mô tả, nhãn form, tên cột hoặc nội dung đọc thông thường.
+| Nhóm Ý Nghĩa | Ví Dụ Nghiệp Vụ | Màu Sắc | Nền Nhạt (Hex & Tailwind) | Chữ Đậm (Hex & Tailwind) | Viền Nhạt |
+|---|---|---|---|---|---|
+| **Trung tính** | Bản nháp, Chưa bắt đầu, Lưu trữ, Đã khóa, Chưa công bố | **Xám xanh** | `#F1F5F9`<br>`bg-slate-100 dark:bg-slate-800` | `#334155`<br>`text-slate-700 dark:text-slate-300` | `border-slate-200 dark:border-slate-700` |
+| **Thông tin / Đang xử lý** | Đang diễn ra, Đang tải, Đã lên lịch, Đang chấm thi, Đang chạy, Cần chỉnh sửa | **Xanh dương** | `#EFF6FF`<br>`bg-blue-50 dark:bg-blue-950/40` | `#1D4ED8`<br>`text-blue-700 dark:text-blue-400` | `border-blue-200 dark:border-blue-800/60` |
+| **Chờ xử lý** | Chờ duyệt, Chờ xác nhận, Cần bổ sung, Đang xem xét, Chờ xác minh | **Vàng cam** | `#FFFBEB`<br>`bg-amber-50 dark:bg-amber-950/40` | `#B45309`<br>`text-amber-700 dark:text-amber-400` | `border-amber-200 dark:border-amber-800/60` |
+| **Thành công** | Đã duyệt, Đã hoàn thành, Đã nộp, Đã công bố, Đạt, Thành công, Đang hoạt động | **Xanh lá** | `#F0FDF4`<br>`bg-emerald-50 dark:bg-emerald-950/40` | `#15803D`<br>`text-emerald-700 dark:text-emerald-400` | `border-emerald-200 dark:border-emerald-800/60` |
+| **Lỗi / Nguy hiểm** | Bị từ chối, Thất bại, Đã hủy, Bị khóa, Không đạt, Vắng thi | **Đỏ** | `#FEF2F2`<br>`bg-rose-50 dark:bg-rose-950/40` | `#B91C1C`<br>`text-rose-700 dark:text-rose-400` | `border-rose-200 dark:border-rose-800/60` |
 
-### 18.3 Màu trạng thái Semantic
-Màu trạng thái chỉ dùng cho **icon, chữ chỉ báo trạng thái, viền hoặc nền nhạt** (pill/badge nhạt):
+### 18.2 Hai Hình Thức Hiển Thị của `StatusBadge`
+1. **`variant="dot"` (Mặc định trong bảng/danh sách):** `[Chấm tròn màu] [Chữ đậm]` — Bố cục phẳng phân tách bằng đường kẻ ngang (`divide-y`), không bọc card box dày.
+2. **`variant="pill"` (Trong Drawer, Card chi tiết, Summary Chip):** `[Nền siêu nhạt + Chữ đậm + Viền mờ]` — Bo góc `rounded-lg` (8px), padding `px-2.5 py-0.5`.
 
-1. **Đã duyệt / Hoàn thành / Thành công:**
-   - Màu: **Xanh lá** (`text-emerald-600 dark:text-emerald-400`, `bg-emerald-50 dark:bg-emerald-950/40`, `border-emerald-200 dark:border-emerald-800/60`).
-2. **Chờ duyệt / Đang xử lý / Tạm hoãn:**
-   - Màu: **Vàng cam đậm** (`text-amber-700 dark:text-amber-400`, `bg-amber-50 dark:bg-amber-950/40`, `border-amber-200 dark:border-amber-800/60`).
-   - *Quy chuẩn WCAG:* Chữ màu vàng/cam không được đặt trên nền trắng nếu độ tương phản thấp; bắt buộc dùng `text-amber-700` (`#B45309`) hoặc `text-amber-800` để đạt tỷ lệ tương phản $\ge 4.5:1$ (WCAG AA).
-3. **Bị từ chối / Đã hủy / Thất bại / Lỗi:**
-   - Màu: **Đỏ** (`text-rose-600 dark:text-rose-400`, `bg-rose-50 dark:bg-rose-950/40`, `border-rose-200 dark:border-rose-800/60`).
-4. **Cần chỉnh sửa / Thông tin / Tiến trình:**
-   - Màu: **Xanh dương** (`text-blue-600 dark:text-blue-400`, `bg-blue-50 dark:bg-blue-950/40`, `border-blue-200 dark:border-blue-800/60`).
+### 18.3 Các Nơi NÊN DÙNG Badge Trạng Thái
+- **Kỳ thi:** Nháp (`DRAFT`), Sắp diễn ra (`UPCOMING`), Đang diễn ra (`ONGOING`), Đã kết thúc (`COMPLETED`), Đã hủy (`CANCELLED`).
+- **Câu hỏi:** Chờ duyệt (`PENDING`), Đã duyệt (`APPROVED`), Bị từ chối (`REJECTED`), Cần chỉnh sửa (`CHANGE_REQUESTED`).
+- **Đề thi:** Bản nháp (`DRAFT`), Đã phát hành (`PUBLISHED`), Đã khóa (`LOCKED`), Đã hủy (`CANCELLED`).
+- **Lịch thi:** Chưa bắt đầu (`NOT_STARTED`), Đang diễn ra (`IN_PROGRESS`), Đã hoàn tất (`COMPLETED`), Đã hủy (`CANCELLED`).
+- **Sao lưu:** Đang chờ (`PENDING`), Đang chạy (`RUNNING`), Thành công (`SUCCEEDED`), Thất bại (`FAILED`).
+- **Tài khoản:** Đang hoạt động (`ACTIVE`), Chờ xác minh (`PENDING_VERIFY`), Bị khóa (`LOCKED`), Không hoạt động (`INACTIVE`).
+- **Phúc khảo:** Mới gửi (`NEW`), Đang xử lý (`PROCESSING`), Đã chấp nhận (`ACCEPTED`), Đã từ chối (`REJECTED`).
+- **Kết quả:** Đã công bố (`PUBLISHED`), Chưa công bố (`UNPUBLISHED`), Đạt (`PASSED`), Không đạt (`NOT_PASSED`/`FAILED`).
 
-### 18.4 Nút trạng thái (Status Buttons)
-- Nút trạng thái có nền màu đậm (`bg-blue-600`, `bg-emerald-600`, `bg-rose-600`, `bg-amber-600`): Chữ bắt buộc dùng màu trắng (`text-white`).
+### 18.4 Tuyệt Đối KHÔNG DÙNG Badge Cho
+- **Mã kỹ thuật:** Mã `KT-1`, mã sinh viên `SV...`, mã câu hỏi `Q...` ➔ Dùng `IdentifierBadge` dạng nhãn xám kỹ thuật (`bg-slate-100 text-slate-700 font-medium tabular-nums`) hoặc chữ thường.
+- **Tên khoa, tên môn học:** Dùng typography thường (`text-slate-900` / `text-slate-700`).
+- **Số lượng, điểm số, ngày tháng:** Dùng text thường kèm `tabular-nums`.
+- **Nút hành động:** Bắt buộc dùng component `Button`.
+- **Nội dung mô tả thông thường:** Dùng văn bản chuẩn.
+
+### 18.5 Nền trang & Nút trạng thái
+- **Nền trang, card, control:** Vẫn giữ nguyên nền trắng (`bg-white`) và trắng xanh (`bg-slate-50`, `bg-slate-50/50`). Tuyệt đối KHÔNG dùng màu trạng thái làm nền lớn toàn trang.
+- **Nút trạng thái nền đậm:** Nút có nền màu đậm (`bg-blue-600`, `bg-emerald-600`, `bg-rose-600`, `bg-amber-600`) bắt buộc dùng chữ màu trắng (`text-white`).

@@ -58,7 +58,9 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
               </div>
               <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                 <div
-                  className="h-full rounded-full bg-blue-600 dark:bg-blue-500 transition-all duration-500"
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    item.progress === 100 ? 'bg-emerald-600 dark:bg-emerald-500' : 'bg-blue-600 dark:bg-blue-500'
+                  }`}
                   style={{ width: `${item.progress}%` }}
                 />
               </div>
@@ -83,7 +85,7 @@ export function ExamProgressOverview({ periods }: { periods?: DashboardOverview[
           <span>Đang thực hiện</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-blue-800 dark:bg-blue-400 inline-block" />
+          <span className="h-2 w-2 rounded-full bg-emerald-500 inline-block" />
           <span>Hoàn thành</span>
         </div>
       </div>

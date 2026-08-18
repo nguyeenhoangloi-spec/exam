@@ -15,6 +15,7 @@ import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { PaginationBar } from '../../../components/ui/PaginationBar';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
+import { StatusBadge } from '../../../components/common/StatusBadge';
 import { StudentCurriculumFilterPopover } from '../../../components/student-curriculum/StudentCurriculumFilterPopover';
 import { StudentCurriculumBulkAction } from '../../../components/student-curriculum/StudentCurriculumBulkAction';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
@@ -703,7 +704,7 @@ export default function StudentCurriculumPage() {
                         <span className="text-slate-400 text-[12px] block">Trạng thái</span>
                         <span className="font-semibold text-xs block">
                           {item.isCompleted ? (
-                            <span className="text-blue-600 dark:text-blue-400">Đã học</span>
+                            <span className="text-emerald-700 dark:text-emerald-400">Đã học</span>
                           ) : (
                             <span className="text-slate-400">Chưa tích lũy</span>
                           )}
@@ -723,13 +724,9 @@ export default function StudentCurriculumPage() {
                     </button>
                     <div>
                       {item.isCompleted ? (
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-blue-600" /> Đã học
-                        </span>
+                        <StatusBadge status="COMPLETED" customLabel="Đã học" />
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400">
-                          <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa tích lũy
-                        </span>
+                        <StatusBadge status="NOT_STARTED" customLabel="Chưa tích lũy" />
                       )}
                     </div>
                   </div>
@@ -792,13 +789,9 @@ export default function StudentCurriculumPage() {
                   <div className="flex items-center gap-3 shrink-0">
                     <div>
                       {item.isCompleted ? (
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
-                          <CheckCircle2 className="h-4 w-4 text-blue-600" /> Đã học
-                        </span>
+                        <StatusBadge status="COMPLETED" customLabel="Đã học" />
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400">
-                          <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa tích lũy
-                        </span>
+                        <StatusBadge status="NOT_STARTED" customLabel="Chưa tích lũy" />
                       )}
                     </div>
 
@@ -1038,11 +1031,11 @@ export default function StudentCurriculumPage() {
               content: (
                 <div className="space-y-3">
                   {detailItem.isCompleted ? (
-                    <div className="flex items-center gap-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-800 p-3.5">
-                      <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-100 dark:border-emerald-800 p-3.5">
+                      <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                       <div>
-                        <p className="text-[13px] font-semibold text-blue-900 dark:text-blue-100">Đã tích lũy thành công</p>
-                        <p className="text-[12px] text-blue-600 dark:text-blue-400 font-medium mt-0.5">Sinh viên đã hoàn thành và tích lũy đủ tín chỉ môn học này.</p>
+                        <p className="text-[13px] font-semibold text-emerald-900 dark:text-emerald-100">Đã tích lũy thành công</p>
+                        <p className="text-[12px] text-emerald-700 dark:text-emerald-400 font-medium mt-0.5">Sinh viên đã hoàn thành và tích lũy đủ tín chỉ môn học này.</p>
                       </div>
                     </div>
                   ) : (

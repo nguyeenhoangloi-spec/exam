@@ -835,9 +835,9 @@ export default function SubjectsPage() {
  <IdentifierBadge tone="neutral" title={drawerOpenSubject.subjectCode}>
  {drawerOpenSubject.subjectCode}
  </IdentifierBadge>
- <span className="inline-flex items-center rounded-lg px-2.5 py-0.5 text-[12px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
- {drawerOpenSubject.credits} Tín chỉ
- </span>
+  <span className="text-[13px] font-medium text-slate-600 dark:text-slate-400 tabular-nums">
+    {drawerOpenSubject.credits} Tín chỉ
+  </span>
  </div>
  </div>
  </div>

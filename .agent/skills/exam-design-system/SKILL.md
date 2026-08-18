@@ -98,19 +98,23 @@ font-family:
 | **Tầng 4** | **Placeholder, Vô hiệu hóa** | `#94A3B8` (`slate-400`) | `#64748B` (`slate-500`) | `.text-placeholder` | Chữ mờ trong ô input (`Tìm kiếm...`), nút bị khóa, icon mờ |
 | **Tầng 5** | **Chữ trên nền đậm/xanh** | `#FFFFFF` (`white`) | `#FFFFFF` (`white`) | `.text-inverse` | Chữ trên nút Primary xanh, badge trạng thái đặc biệt |
 
-### 3.2 Semantic Brand & Status Colors
+### 3.2 Semantic Brand & Status Colors (Bảng màu 5 nhóm chốt)
 
-- **Primary (Blue)**: `primary-50` (#EFF6FF), `primary-600` (#2563EB - chuẩn action chính), `primary-700` (#1D4ED8 - hover), `primary-800` (#1E40AF - active) — Thông tin, tiến trình, cần chỉnh sửa.
-- **Success (Green)**: `emerald-600` (#059669), `bg-emerald-50`, Toast/Badge emerald (#10B981) — Đã duyệt, hoàn thành, thành công.
-- **Warning (Amber)**: `amber-700` (#B45309), `bg-amber-50`, Toast/Badge amber (#F59E0B) — Chờ duyệt, tạm hoãn, đang xử lý.
-- **Danger (Red)**: `rose-600` (#E11D48), `bg-rose-50`, Toast/Alert red (#EF4444) — Bị từ chối, đã hủy, thất bại, lỗi.
-- **Neutral Surface**: `surface-page` (`#F8FAFC` / `slate-50`), `surface` (`#FFFFFF`), `border-default` (`#E2E8F0` / `slate-200`).
+- **Trung tính (Neutral - Xám xanh):** Nền `#F1F5F9` (`bg-slate-100 dark:bg-slate-800`), Chữ `#334155` (`text-slate-700 dark:text-slate-300`), Viền `border-slate-200` — Nháp, Chưa bắt đầu, Lưu trữ, Đã khóa, Chưa công bố.
+- **Thông tin / Đang xử lý (Info - Xanh dương):** Nền `#EFF6FF` (`bg-blue-50 dark:bg-blue-950/40`), Chữ `#1D4ED8` (`text-blue-700 dark:text-blue-400`), Viền `border-blue-200` — Đang diễn ra, Đang tải, Đã lên lịch, Đang chấm thi, Đang chạy, Cần chỉnh sửa.
+- **Chờ xử lý (Warning - Vàng cam):** Nền `#FFFBEB` (`bg-amber-50 dark:bg-amber-950/40`), Chữ `#B45309` (`text-amber-700 dark:text-amber-400`), Viền `border-amber-200` — Chờ duyệt, Chờ xác nhận, Cần bổ sung, Đang xem xét, Chờ xác minh.
+- **Thành công (Success - Xanh lá):** Nền `#F0FDF4` (`bg-emerald-50 dark:bg-emerald-950/40`), Chữ `#15803D` (`text-emerald-700 dark:text-emerald-400`), Viền `border-emerald-200` — Đã duyệt, Đã hoàn thành, Đã nộp, Đã công bố, Đạt, Thành công, Đang hoạt động.
+- **Lỗi / Nguy hiểm (Danger - Đỏ):** Nền `#FEF2F2` (`bg-rose-50 dark:bg-rose-950/40`), Chữ `#B91C1C` (`text-rose-700 dark:text-rose-400`), Viền `border-rose-200` — Bị từ chối, Thất bại, Đã hủy, Bị khóa, Không đạt, Vắng thi.
 
 ### 3.3 Quy tắc sử dụng màu sắc TUYỆT ĐỐI & WCAG thực tế
 
 - **Nền trang, card, control:** Vẫn giữ nguyên nền trắng và trắng xanh (`bg-white`, `bg-slate-50/50`, `bg-blue-50/30`, `dark:bg-slate-900`). Tuyệt đối KHÔNG dùng các màu trạng thái (xanh lá, đỏ, cam) làm nền lớn toàn trang.
 - **Màu văn bản thông thường:** Bắt buộc dùng dải màu **Cool Slate** (`slate-900`, `slate-700`, `slate-500`). CẤM dùng xanh lá, đỏ, cam cho văn bản đọc thông thường.
-- **Màu trạng thái Semantic:** Chỉ dùng cho icon, chữ chỉ báo trạng thái, viền hoặc nền nhạt (pill/badge nhạt).
+- **Màu trạng thái Semantic:** Chỉ dùng cho icon, chữ chỉ báo trạng thái, viền hoặc nền nhạt:
+  - `variant="dot"`: Dùng trong bảng/danh sách phẳng (chấm tròn + chữ đậm).
+  - `variant="pill"`: Dùng trong Drawer, Card chi tiết, Tag tóm tắt (nền siêu nhạt + chữ đậm + viền mờ).
+- **Phân loại NÊN DÙNG Badge:** Kỳ thi, Câu hỏi, Đề thi, Lịch thi, Sao lưu, Tài khoản, Phúc khảo, Kết quả.
+- **Phân loại KHÔNG DÙNG Badge:** Mã kỹ thuật (`KT-1`, mã SV, mã câu hỏi ➔ dùng `IdentifierBadge` xám hoặc chữ thường), Tên khoa/môn, Điểm số/ngày tháng, Nút hành động, Nội dung mô tả.
 - **Nút trạng thái nền đậm:** Nút có nền màu đậm (`bg-blue-600`, `bg-emerald-600`, `bg-rose-600`, `bg-amber-600`) bắt buộc dùng chữ màu trắng (`text-white`).
 - **Quy chuẩn tương phản WCAG:** Các cặp màu chữ quan trọng phải được kiểm tra tương phản theo chuẩn **WCAG AA** (tỷ lệ $\ge 4.5:1$ cho văn bản thường, $\ge 3:1$ cho văn bản lớn/đậm). Chữ màu vàng/cam không được đặt trên nền trắng nếu độ tương phản thấp; bắt buộc dùng `text-amber-700` (`#B45309`, 4.8:1) hoặc `text-amber-800`.
 - **Giới hạn màu xám nhạt (`text-slate-400` / `text-slate-400/80`):** Chỉ dùng cho Placeholder, Disabled state, Copyright footer và Metadata phụ; tuyệt đối không dùng cho nội dung cần đọc.

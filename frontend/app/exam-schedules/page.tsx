@@ -939,8 +939,8 @@ export default function ExamSchedulesPage() {
         subtitle={`Mã ca thi: ${drawerSchedule?.code || ''}`}
         avatarText={drawerSchedule?.subjectCode?.slice(0, 3) || 'LCT'}
         badge={{
+          status: drawerSchedule?.statusBadge || 'UPCOMING',
           label: drawerSchedule?.statusBadge === 'UPCOMING' ? 'Sắp diễn ra' : drawerSchedule?.statusBadge === 'ONGOING' ? 'Đang diễn ra' : 'Đã hoàn thành',
-          className: 'bg-blue-50 text-blue-700 border-blue-200',
         }}
         details={[
           { label: 'Kỳ thi', value: drawerSchedule?.periodName, icon: Calendar },

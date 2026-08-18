@@ -56,7 +56,8 @@ Lập kế hoạch triển khai chi tiết, bao gồm:
 * Shared component/token/style nào nên chỉnh trước.
 * Đối chiếu quy chuẩn UI với [ui-design-system-rules.md](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/ui-design-system-rules.md):
   - Hệ thống màu chữ 5 Tầng Cool Slate (`.text-main`, `.text-sub`, `.text-helper`, `.text-placeholder`, `.text-inverse`) & Giới hạn màu nhạt `text-slate-400`.
-  - Quy tắc sử dụng màu sắc & trạng thái: Nền trắng/trắng xanh, không dùng màu trạng thái làm nền lớn, chữ thường dùng Cool Slate, nút trạng thái đậm dùng chữ trắng, chữ vàng/cam đạt WCAG AA (`text-amber-700`).
+  - Quy tắc sử dụng màu sắc & 5 nhóm trạng thái Semantic (Nền siêu nhạt & Chữ đậm: Trung tính `#F1F5F9`/`#334155`, Info `#EFF6FF`/`#1D4ED8`, Warning `#FFFBEB`/`#B45309`, Success `#F0FDF4`/`#15803D`, Danger `#FEF2F2`/`#B91C1C`).
+  - Phân loại NÊN DÙNG Badge (Kỳ thi, Câu hỏi, Đề thi, Lịch thi, Sao lưu, Tài khoản, Phúc khảo, Kết quả) vs KHÔNG DÙNG Badge (Mã KT-1/SV, Tên khoa/môn, Điểm/Ngày, Nút bấm, Mô tả).
   - Thang cỡ chữ 8 tầng (12px ➔ 32px) kèm Line-Height chuẩn 24px/15px cho tiếng Việt.
   - Phân định chiều cao nút: Primary CTA 44px (`lg`), Toolbar/Filter 40px (`md`), Nút phụ 36px (`sm`), Mobile tối thiểu 44px.
   - Bo góc chuẩn `rounded-xl` (12px), ghi nhận ngoại lệ `rounded-lg` (8px) cho submenu Sidebar, badge, chip, tooltip.
