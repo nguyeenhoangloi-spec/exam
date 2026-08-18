@@ -17,7 +17,11 @@ export const setAuthToken = (token: string, user: User) => {
 };
 
 export const getAuthToken = (): string | null => {
-  return typeof window !== 'undefined' ? accessToken : null;
+  if (typeof window === 'undefined') return null;
+
+  // A removed user record means another tab (or the current logout flow) has
+  // ended the browser session. Never keep using a stale in-memory token.
+  return getAuthUser() ? accessToken : null;
 };
 
 export const getAuthUser = (): User | null => {

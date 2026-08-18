@@ -34,6 +34,7 @@ const routeAccess: Array<{ prefix: string; roles: Role[] }> = [
   { prefix: '/student/exam-schedule', roles: ['STUDENT'] },
   { prefix: '/student/results', roles: ['STUDENT'] },
   { prefix: '/student/curriculum', roles: ['STUDENT'] },
+  { prefix: '/student/online-exam', roles: ['STUDENT'] },
   { prefix: '/profile', roles: ['ADMIN', 'TEACHER', 'STUDENT'] },
   { prefix: '/settings', roles: ['ADMIN', 'TEACHER', 'STUDENT'] },
   { prefix: '/change-password', roles: ['ADMIN', 'TEACHER', 'STUDENT'] },

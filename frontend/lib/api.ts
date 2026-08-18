@@ -14,6 +14,7 @@ const api = axios.create({
 const cache = new Map<string, { timestamp: number; data: any }>();
 let isWarmedUp = false;
 let refreshPromise: Promise<string> | null = null;
+let restoreSessionPromise: Promise<boolean> | null = null;
 
 const shouldNeverCache = (url?: string) => /profile|attempt|exam-paper|question|result|report|appeal|proctor|essay|student|teacher|user|dashboard/i.test(url || '');
 
@@ -158,16 +159,23 @@ export const warmupGlobalCache = (role?: string) => {
 
 export const restoreAuthSession = async () => {
   if (getAuthToken()) return true;
-  try {
-    const response = await api.post('/auth/refresh');
-    const { accessToken, user } = response.data || {};
-    if (!accessToken || !user) return false;
-    setAuthToken(accessToken, user);
-    return true;
-  } catch {
-    removeAuth(false);
-    return false;
-  }
+
+  restoreSessionPromise ||= (async () => {
+    try {
+      const response = await api.post('/auth/refresh');
+      const { accessToken, user } = response.data || {};
+      if (!accessToken || !user) return false;
+      setAuthToken(accessToken, user);
+      return true;
+    } catch {
+      removeAuth(false);
+      return false;
+    } finally {
+      restoreSessionPromise = null;
+    }
+  })();
+
+  return restoreSessionPromise;
 };
 
 export default api;

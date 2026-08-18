@@ -11,14 +11,14 @@ import { restoreAuthSession, warmupGlobalCache } from '../lib/api';
 import { NavigationProgress } from './NavigationProgress';
 import { usePageTitleValue } from './PageTitleContext';
 
-/**
- * Full-screen routes that must render without the sidebar/header shell
- * (online exam taking, proctor live dashboard, login, etc.).
- */
-const FULLSCREEN_PREFIXES = ['/login', '/student/online-exam', '/contact', '/forgot-password'];
+/** Public entry/support routes and pages that intentionally omit the app shell. */
+const PUBLIC_ROUTES = new Set(['/', '/login', '/contact', '/forgot-password']);
+const SHELLLESS_PREFIXES = ['/login', '/student/online-exam', '/contact', '/forgot-password'];
 
-const isFullscreenRoute = (pathname: string) =>
-    FULLSCREEN_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+const isPublicRoute = (pathname: string) => PUBLIC_ROUTES.has(pathname);
+
+const isShelllessRoute = (pathname: string) =>
+    SHELLLESS_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 
 /**
  * Persistent application shell mounted once in the root layout.
@@ -69,10 +69,24 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
 
         if (typeof window !== 'undefined') {
             const handleAuthChange = () => { void updateAuthUser(); };
+            const handleAuthStorage = (event: StorageEvent) => {
+                if (event.key === 'exam_app_user') {
+                    void updateAuthUser();
+                }
+            };
+            const handlePageShow = (event: PageTransitionEvent) => {
+                if (event.persisted) {
+                    void updateAuthUser();
+                }
+            };
             window.addEventListener('auth-change', handleAuthChange);
+            window.addEventListener('storage', handleAuthStorage);
+            window.addEventListener('pageshow', handlePageShow);
             return () => {
                 active = false;
                 window.removeEventListener('auth-change', handleAuthChange);
+                window.removeEventListener('storage', handleAuthStorage);
+                window.removeEventListener('pageshow', handlePageShow);
             };
         }
     }, [pathname]);
@@ -88,9 +102,25 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
         setTimeout(() => setIsToggling(false), 350);
     };
 
-    // Redirect to the user's workspace when they hit an unauthorized route
+    // Re-evaluate every history navigation against the current session. Browser
+    // Back/Forward must never make a protected page visible after logout.
     useEffect(() => {
-        if (!user || !authLoaded || isFullscreenRoute(pathname)) return;
+        if (!authLoaded) return;
+
+        if (!user) {
+            if (!isPublicRoute(pathname)) {
+                router.replace('/login');
+            }
+            return;
+        }
+
+        if (pathname === '/' || pathname === '/login') {
+            router.replace(workspaceRoutes[user.role] || '/dashboard');
+            return;
+        }
+
+        if (isPublicRoute(pathname)) return;
+
         if (!canAccessPath(user.role, pathname) && pathname !== workspaceRoutes[user.role]) {
             router.replace(workspaceRoutes[user.role]);
         }
@@ -100,8 +130,22 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
         return <div className="min-h-screen bg-slate-50 dark:bg-slate-950" aria-live="polite" />;
     }
 
-    // Login / full-screen routes render without the shell
-    if (!user || isFullscreenRoute(pathname)) {
+    // Never render protected children while unauthenticated. This blocks stale
+    // history snapshots after logout while the router returns to /login.
+    if (!user) {
+        return isPublicRoute(pathname)
+            ? <>{children}</>
+            : <div className="min-h-screen bg-slate-50 dark:bg-slate-950" aria-live="polite" />;
+    }
+
+    // Keep entry routes blank while an authenticated user is redirected to the
+    // correct workspace, preventing the login page from flashing on Back.
+    if (pathname === '/' || pathname === '/login') {
+        return <div className="min-h-screen bg-slate-50 dark:bg-slate-950" aria-live="polite" />;
+    }
+
+    // Public support routes and protected exam routes render without the shell.
+    if (isPublicRoute(pathname) || (isShelllessRoute(pathname) && canAccessPath(user.role, pathname))) {
         return <>{children}</>;
     }
 
