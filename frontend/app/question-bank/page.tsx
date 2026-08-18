@@ -22,7 +22,7 @@ import { QuestionBankHeader } from '../../components/question-bank/QuestionBankH
 import { QuestionBankTopCharts } from '../../components/question-bank/QuestionBankTopCharts';
 import { QuestionBankFilterPopover } from '../../components/question-bank/QuestionBankFilterPopover';
 import { QuestionBankFilterValues } from '../../components/question-bank/QuestionBankFiltersCard';
-import { QuestionBankTabsBar } from '../../components/question-bank/QuestionBankTabsBar';
+import { TabBar } from '../../components/ui/TabBar';
 import { QuestionBankTableToolbar } from '../../components/question-bank/QuestionBankTableToolbar';
 import { QuestionBankTable } from '../../components/question-bank/QuestionBankTable';
 import { QuestionBankPaginationBar } from '../../components/question-bank/QuestionBankPaginationBar';
@@ -461,7 +461,7 @@ export default function QuestionBankPage() {
         />
 
         {/* Search & Action Toolbar Row (Single Horizontal Unified Row) */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
           {/* Left: Search input + 1 Unified Filter Popover */}
           <div className="flex items-center gap-2 flex-1 max-w-xl">
             <div className="relative flex-1 min-w-[240px]">
@@ -528,100 +528,102 @@ export default function QuestionBankPage() {
           </div>
         </div>
 
-        {/* Status Tabs Bar */}
-        <QuestionBankTabsBar
-          activeStatus={filterValues.status}
-          counts={counts}
-          onSelectStatus={(status) => {
-            setFilterValues({ ...filterValues, status });
+        {/* Status TabBar */}
+        <TabBar
+          tabs={[
+            { key: '', label: 'Tất cả câu hỏi', count: counts.total ?? counts.all ?? 0 },
+            { key: 'DRAFT', label: 'Bản nháp', count: counts.DRAFT ?? counts.draft ?? 0 },
+            { key: 'PENDING', label: 'Chờ duyệt', count: counts.PENDING ?? counts.pending ?? 0 },
+            { key: 'APPROVED', label: 'Đã duyệt', count: counts.APPROVED ?? counts.approved ?? 0 },
+            { key: 'REJECTED', label: 'Bị từ chối', count: counts.REJECTED ?? counts.rejected ?? 0 },
+          ]}
+          active={filterValues.status}
+          onChange={(key) => {
+            setFilterValues({ ...filterValues, status: key });
             setPage(1);
           }}
         />
 
-        {/* Main Table Content Section */}
-        <div className="space-y-4">
+        {/* Floating Bulk Action Bar when items selected */}
+        {(() => {
+          const selectedQuestions = questions.filter((q) => selected.includes(q.id));
+          const isAdmin = user?.role === 'ADMIN';
 
-          {/* Floating Bulk Action Bar when items selected */}
-          {(() => {
-            const selectedQuestions = questions.filter((q) => selected.includes(q.id));
-            const isAdmin = user?.role === 'ADMIN';
+          const canSubmit = selectedQuestions.some((q) => ['DRAFT', 'REJECTED'].includes(q.status));
+          const canApprove = isAdmin && selectedQuestions.some((q) => ['DRAFT', 'PENDING', 'REJECTED'].includes(q.status));
+          const canReject = isAdmin && selectedQuestions.some((q) => ['DRAFT', 'PENDING'].includes(q.status));
+          const canRestore = isAdmin && selectedQuestions.some((q) => ['ARCHIVED', 'REJECTED'].includes(q.status));
+          const canArchive = isAdmin && selectedQuestions.some((q) => ['DRAFT', 'PENDING', 'APPROVED', 'REJECTED'].includes(q.status));
+          const canDelete = isAdmin || selectedQuestions.every((q) => q.status === 'DRAFT');
 
-            const canSubmit = selectedQuestions.some((q) => ['DRAFT', 'REJECTED'].includes(q.status));
-            const canApprove = isAdmin && selectedQuestions.some((q) => ['DRAFT', 'PENDING', 'REJECTED'].includes(q.status));
-            const canReject = isAdmin && selectedQuestions.some((q) => ['DRAFT', 'PENDING'].includes(q.status));
-            const canRestore = isAdmin && selectedQuestions.some((q) => ['ARCHIVED', 'REJECTED'].includes(q.status));
-            const canArchive = isAdmin && selectedQuestions.some((q) => ['DRAFT', 'PENDING', 'APPROVED', 'REJECTED'].includes(q.status));
-            const canDelete = isAdmin || selectedQuestions.every((q) => q.status === 'DRAFT');
-
-            return (
-              <QuestionBulkAction
-                totalCount={questions.length}
-                selectedCount={selected.length}
-                allSelected={questions.length > 0 && selected.length === questions.length}
-                canSubmit={canSubmit}
-                canApprove={canApprove}
-                canReject={canReject}
-                canRestore={canRestore}
-                canArchive={canArchive}
-                canDelete={canDelete}
-                onToggleAll={() =>
-                  setSelected(selected.length === questions.length ? [] : questions.map((q) => q.id))
-                }
-                onAction={bulk}
-                onClear={() => setSelected([])}
-              />
-            );
-          })()}
-
-          {/* Full-Width Question Data Table */}
-          {loading ? (
-            <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />
-              ))}
-            </div>
-          ) : error ? (
-            <div className="rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center text-rose-700 font-semibold">
-              {error}
-              <button onClick={load} className="ml-3 underline cursor-pointer">
-                Thử lại
-              </button>
-            </div>
-          ) : !questions.length ? (
-            <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
-              Không tìm thấy câu hỏi phù hợp.
-            </div>
-          ) : (
-            <QuestionBankTable
-              questions={questions}
-              selected={selected}
-              viewMode={viewMode}
-              visibleColumns={visibleColumns}
-              onSelect={(id, checked) =>
-                setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))
+          return (
+            <QuestionBulkAction
+              totalCount={questions.length}
+              selectedCount={selected.length}
+              allSelected={questions.length > 0 && selected.length === questions.length}
+              canSubmit={canSubmit}
+              canApprove={canApprove}
+              canReject={canReject}
+              canRestore={canRestore}
+              canArchive={canArchive}
+              canDelete={canDelete}
+              onToggleAll={() =>
+                setSelected(selected.length === questions.length ? [] : questions.map((q) => q.id))
               }
-              onSelectAll={(checked) =>
-                setSelected(checked ? questions.map((q) => q.id) : [])
-              }
-              onDetail={showDetail}
-              onAction={action}
-              isAdmin={user?.role === 'ADMIN'}
+              onAction={bulk}
+              onClear={() => setSelected([])}
             />
-          )}
+          );
+        })()}
 
-          {/* Pagination Footer */}
-          <QuestionBankPaginationBar
-            page={page}
-            totalPages={totalPages}
-            limit={limit}
-            totalItems={counts.total ?? questions.length ?? 0}
-            onPage={setPage}
-            onLimit={(v) => {
-              setLimit(v);
-              setPage(1);
-            }}
+        {/* Full-Width Question Data Table */}
+        {loading ? (
+          <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />
+            ))}
+          </div>
+        ) : error ? (
+          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center text-rose-700 font-semibold">
+            {error}
+            <button onClick={load} className="ml-3 underline cursor-pointer">
+              Thử lại
+            </button>
+          </div>
+        ) : !questions.length ? (
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
+            Không tìm thấy câu hỏi phù hợp.
+          </div>
+        ) : (
+          <QuestionBankTable
+            questions={questions}
+            selected={selected}
+            viewMode={viewMode}
+            visibleColumns={visibleColumns}
+            onSelect={(id, checked) =>
+              setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))
+            }
+            onSelectAll={(checked) =>
+              setSelected(checked ? questions.map((q) => q.id) : [])
+            }
+            onDetail={showDetail}
+            onAction={action}
+            isAdmin={user?.role === 'ADMIN'}
           />
-        </div>
+        )}
+
+        {/* Pagination Footer */}
+        <QuestionBankPaginationBar
+          page={page}
+          totalPages={totalPages}
+          limit={limit}
+          totalItems={counts.total ?? questions.length ?? 0}
+          onPage={setPage}
+          onLimit={(v) => {
+            setLimit(v);
+            setPage(1);
+          }}
+        />
       </main>
 
       {/* Dialogs and Modals */}

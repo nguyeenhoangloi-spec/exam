@@ -447,17 +447,17 @@ export default function TeacherAssignmentsPage() {
     <>
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
         {/* ── 1. Standard Page Header ── */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-0.5">
             <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
               Lịch coi thi
             </h1>
             <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-              Giảng viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{currentUser?.fullName || currentUser?.teacher?.fullName || currentUser?.username || '---'}</strong> <IdentifierBadge tone="neutral">{currentUser?.teacher?.teacherCode || currentUser?.teacherCode || currentUser?.code || currentUser?.username || '---'}</IdentifierBadge> &nbsp;•&nbsp; Danh sách ca coi thi được phân công trong học kỳ
+              Giảng viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{currentUser?.fullName || currentUser?.teacher?.fullName || currentUser?.username || '---'}</strong> <IdentifierBadge tone="neutral">{currentUser?.teacher?.teacherCode || currentUser?.teacherCode || currentUser?.code || currentUser?.username || '---'}</IdentifierBadge> - Danh sách ca coi thi được phân công trong học kỳ
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 shrink-0">
             <DataActionsDropdown
               onExportExcel={exportExcel}
               exportLabel="Xuất file Excel"
