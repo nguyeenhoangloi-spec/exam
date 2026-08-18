@@ -6,4 +6,5 @@ export * from './IdentifierBadge';
 export * from './Tabs';
 export * from './FilterSelect';
 export * from './PaginationBar';
+export * from './DataActionsDropdown';
 export { StatusBadge } from '../common/StatusBadge';

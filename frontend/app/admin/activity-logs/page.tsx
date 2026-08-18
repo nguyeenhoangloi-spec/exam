@@ -9,6 +9,7 @@ import { getAuthUser } from '../../../lib/auth';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import { Button } from '../../../components/ui/Button';
+import { DataActionsDropdown } from '../../../components/ui/DataActionsDropdown';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { SortDropdown } from '../../../components/ui/SortDropdown';
 import { Toast } from '../../../components/Toast';
@@ -500,26 +501,11 @@ export default function ActivityLogsPage() {
                     </p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        size="md"
-                        onClick={exportExcel}
-                        leftIcon={<Download className="h-4 w-4 text-slate-500" />}
-                    >
-                        Xuất Excel
-                    </Button>
-
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        size="md"
-                        onClick={handlePrintReport}
-                        leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
-                    >
-                        In Báo cáo
-                    </Button>
+                <div className="flex items-center gap-2.5 shrink-0">
+                    <DataActionsDropdown
+                        onExport={exportExcel}
+                        onPrint={handlePrintReport}
+                    />
                 </div>
             </div>
 

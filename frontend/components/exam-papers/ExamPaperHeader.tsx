@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Download, Sparkles, Printer } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Sparkles } from 'lucide-react';
+import { DataActionsDropdown } from '../ui';
 
 interface ExamPaperHeaderProps {
   onExportAll?: () => void;
@@ -30,29 +30,14 @@ export function ExamPaperHeader({
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2.5">
-        {onExportAll && (
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            onClick={onExportAll}
-            leftIcon={<Download className="h-4 w-4 text-slate-500" />}
-          >
-            Xuất báo cáo
-          </Button>
-        )}
-
-        {onPrintAll && (
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            onClick={onPrintAll}
-            leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
-          >
-            In danh sách
-          </Button>
+      <div className="flex items-center gap-2.5 shrink-0">
+        {(onExportAll || onPrintAll) && (
+          <DataActionsDropdown
+            onExportAll={onExportAll}
+            exportLabel="Xuất báo cáo"
+            onPrintAll={onPrintAll}
+            printLabel="In danh sách"
+          />
         )}
       </div>
     </div>

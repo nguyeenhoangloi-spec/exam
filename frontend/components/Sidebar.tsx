@@ -234,7 +234,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onToggle();
             }
           }}
-          className="flex items-center min-w-0 cursor-pointer group"
+          className="flex items-center min-w-0 cursor-pointer group outline-none focus:outline-none ring-0 focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
           title={collapsed ? 'Nhấn để mở rộng thanh bên' : 'Exam System - Hệ thống khảo thí'}
         >
           {/* Logo Box: 40px với Icon 24px sắc nét, cố định vị trí tuyệt đối */}
@@ -261,7 +261,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <button
           type="button"
           onClick={onToggle}
-          className={`absolute right-3.5 top-1/2 -translate-y-1/2 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-[opacity,transform] active:scale-95 cursor-pointer ${
+          className={`absolute right-3.5 top-1/2 -translate-y-1/2 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 outline-none focus:outline-none ring-0 focus:ring-0 focus-visible:outline-none focus-visible:ring-0 transition-[opacity,transform] active:scale-95 cursor-pointer ${
             collapsed
               ? 'opacity-0 scale-75 pointer-events-none duration-100 delay-0'
               : 'opacity-100 scale-100 duration-200 delay-150'

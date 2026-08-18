@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Printer, FileText } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { FileText, Printer } from 'lucide-react';
+import { DataActionsDropdown } from '../ui';
 
 interface ExamArrangementHeaderProps {
   onPrintDoorList: () => void;
@@ -26,26 +26,21 @@ export function ExamArrangementHeader({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-wrap items-center gap-2.5">
-        <Button
-          type="button"
-          variant="secondary"
-          size="md"
-          onClick={onPrintDoorList}
-          leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
-        >
-          In Dán Cửa
-        </Button>
-
-        <Button
-          type="button"
-          variant="secondary"
-          size="md"
-          onClick={onPrintAttendance}
-          leftIcon={<FileText className="h-4 w-4 text-slate-500" />}
-        >
-          In Báo Cáo
-        </Button>
+      <div className="flex items-center gap-2.5 shrink-0">
+        <DataActionsDropdown
+          customItems={[
+            {
+              label: 'In dán cửa',
+              icon: <Printer className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0" strokeWidth={1.5} />,
+              onClick: onPrintDoorList,
+            },
+            {
+              label: 'In điểm danh',
+              icon: <FileText className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0" strokeWidth={1.5} />,
+              onClick: onPrintAttendance,
+            },
+          ]}
+        />
       </div>
     </div>
   );

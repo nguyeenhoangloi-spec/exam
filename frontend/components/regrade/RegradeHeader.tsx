@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Button } from '../ui/Button';
-import { RefreshCw, Download, Printer } from 'lucide-react';
+import { DataActionsDropdown } from '../ui';
 
 interface RegradeHeaderProps {
   onRefresh?: () => void;
@@ -12,10 +11,8 @@ interface RegradeHeaderProps {
 }
 
 export function RegradeHeader({
-  onRefresh,
   onExportExcel,
   onPrintReport,
-  loading = false,
 }: RegradeHeaderProps) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
@@ -28,29 +25,12 @@ export function RegradeHeader({
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-        {onExportExcel && (
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            onClick={onExportExcel}
-            leftIcon={<Download className="h-4 w-4 text-slate-500" />}
-          >
-            Xuất Excel
-          </Button>
-        )}
-
-        {onPrintReport && (
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            onClick={onPrintReport}
-            leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
-          >
-            In báo cáo
-          </Button>
+      <div className="flex items-center gap-2.5 shrink-0">
+        {(onExportExcel || onPrintReport) && (
+          <DataActionsDropdown
+            onExportExcel={onExportExcel}
+            onPrintReport={onPrintReport}
+          />
         )}
       </div>
     </div>

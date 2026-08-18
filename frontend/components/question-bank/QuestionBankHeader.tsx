@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Upload, Plus } from 'lucide-react';
-import { Button } from '../ui';
+import { Plus } from 'lucide-react';
+import { Button, DataActionsDropdown } from '../ui';
 
 interface QuestionBankHeaderProps {
   onAdd: () => void;
@@ -14,6 +14,7 @@ interface QuestionBankHeaderProps {
 export function QuestionBankHeader({
   onAdd,
   onImport,
+  onPrint,
 }: QuestionBankHeaderProps) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
@@ -27,17 +28,14 @@ export function QuestionBankHeader({
         </p>
       </div>
 
-      {/* Right Action Buttons: 1 Primary Blue Filled + Secondary Buttons */}
-      <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-        <Button
-          type="button"
-          variant="secondary"
-          size="md"
-          onClick={onImport}
-          leftIcon={<Upload className="h-4 w-4 text-slate-500" />}
-        >
-          Nhập dữ liệu
-        </Button>
+      {/* Right Action Buttons: 1 Action dropdown + 1 Primary Blue Filled */}
+      <div className="flex items-center gap-2.5 shrink-0">
+        {(onImport || onPrint) && (
+          <DataActionsDropdown
+            onImport={onImport}
+            onPrint={onPrint}
+          />
+        )}
 
         <Button
           type="button"

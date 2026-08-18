@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Download, Printer } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { DataActionsDropdown } from '../ui';
 
 interface ExamReportHeaderProps {
   onExport?: () => void;
@@ -28,29 +27,12 @@ export function ExamReportHeader({
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2.5">
-        {handleExport && (
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            onClick={handleExport}
-            leftIcon={<Download className="h-4 w-4 text-slate-500" />}
-          >
-            Xuất Excel
-          </Button>
-        )}
-
-        {onPrint && (
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            onClick={onPrint}
-            leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
-          >
-            In Báo cáo Tổng kết
-          </Button>
+      <div className="flex items-center gap-2.5 shrink-0">
+        {(handleExport || onPrint) && (
+          <DataActionsDropdown
+            onExport={handleExport}
+            onPrint={onPrint}
+          />
         )}
       </div>
     </div>

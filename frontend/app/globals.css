@@ -85,6 +85,11 @@ html.dark {
 }
 
 @layer base {
+  *:focus:not(:focus-visible) {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
   body {
     @apply bg-slate-50 text-slate-900 subpixel-antialiased;
     overflow-x: clip;

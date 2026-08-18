@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Download, Plus, Printer } from 'lucide-react';
-import { Button } from '../ui';
+import { Plus } from 'lucide-react';
+import { Button, DataActionsDropdown } from '../ui';
 
 interface StudentHeaderProps {
   onAdd?: () => void;
@@ -28,29 +28,12 @@ export function StudentHeader({
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2.5">
-        {onExport && (
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            onClick={onExport}
-            leftIcon={<Download className="h-4 w-4 text-slate-500" />}
-          >
-            Xuất Excel
-          </Button>
-        )}
-
-        {onPrint && (
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            onClick={onPrint}
-            leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
-          >
-            In Báo cáo
-          </Button>
+      <div className="flex items-center gap-2.5 shrink-0">
+        {(onExport || onPrint) && (
+          <DataActionsDropdown
+            onExport={onExport}
+            onPrint={onPrint}
+          />
         )}
 
         {isAdmin && onAdd && (
