@@ -139,6 +139,12 @@ font-family:
   - `xs`: cao **32px** (`h-8`) — Action phụ rất gọn
   - `icon`: **36×36px** (`h-9 w-9`) — Chuông thông báo, icon đơn
   - `icon-lg`: **40×40px** (`h-10 w-10`) — Làm mới, xem lưới
+- **Phân cấp 5 Bậc Nút Bấm (Button Hierarchy 2026)**:
+  - **Bậc 1 (Primary CTA)**: Nền xanh dương đậm `bg-primary-600 hover:bg-primary-700 text-white font-semibold shadow-2xs` (Duy nhất 1 nút chính trong nhóm: `[ + Phân công ]`, `[ Lưu ]`).
+  - **Bậc 2 (Soft Accent)**: `variant="soft"` — Nền xanh siêu nhạt `bg-blue-50 dark:bg-blue-950/60`, chữ xanh đậm `text-blue-700 dark:text-blue-300 font-semibold`, **KHÔNG VIỀN**, **KHÔNG ICON**, dùng cho tính năng tự động / AI / sinh ma trận (`[ Tự động ]`, `[ Sinh ma trận ]`).
+  - **Bậc 3 (Secondary)**: `variant="secondary"` — Nền trắng viền mảnh `bg-white border-slate-200/90 text-slate-800` (Bộ lọc, Chọn cột, Xuất Excel).
+  - **Bậc 4 (Ghost)**: `variant="ghost"` — Trong suốt, không viền (Đóng, Hủy, Bỏ qua).
+  - **Bậc 5 (Danger)**: `variant="danger"` / `variant="danger-outline"` — Nút xóa nguy hiểm, đặt tách biệt sang trái.
 - **Quy tắc Một nút Primary**: Chỉ có duy nhất 1 nút Primary trong cùng một nhóm thao tác hoặc một vùng chức năng (Toolbar, Modal Footer, Form Action Bar).
 - **Typography button**: 15px, `font-semibold` (weight 600).
 - **Nội dung button**: Cấu trúc `Động từ + Đối tượng` (Ví dụ: `Tạo lịch thi`, `Xuất Excel`, `Đăng nhập`). Không viết câu dài, không IN HOA toàn bộ.

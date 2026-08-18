@@ -3,7 +3,7 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'danger-outline' | 'success' | 'warning';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'soft' | 'danger' | 'danger-outline' | 'success' | 'warning';
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'icon' | 'icon-lg';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -19,6 +19,8 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
     'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 border border-transparent shadow-2xs focus-visible:ring-2 focus-visible:ring-blue-500/30 focus-visible:outline-none font-semibold cursor-pointer rounded-xl',
+  soft:
+    'bg-blue-50 text-blue-700 hover:bg-blue-100/90 active:bg-blue-200/80 dark:bg-blue-950/60 dark:text-blue-300 dark:hover:bg-blue-900/60 dark:active:bg-blue-900/80 border border-transparent focus-visible:ring-2 focus-visible:ring-blue-500/30 focus-visible:outline-none font-semibold cursor-pointer rounded-xl',
   secondary:
     'bg-white text-slate-800 hover:bg-slate-50 active:bg-slate-100 border border-slate-200 hover:border-slate-300 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-800 dark:active:bg-slate-700 dark:hover:border-slate-600 focus-visible:ring-2 focus-visible:ring-slate-400/20 focus-visible:outline-none font-semibold cursor-pointer rounded-xl shadow-2xs',
   outline:

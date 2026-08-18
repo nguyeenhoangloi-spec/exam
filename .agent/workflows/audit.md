@@ -161,10 +161,15 @@ Khi thực hiện audit giao diện Web UI, bắt buộc đối chiếu với [u
    - Tiêu đề Section viết Sentence case, có thanh chỉ báo dọc xanh (`h-4 w-1 rounded-full bg-blue-600`).
    - Thanh trạng thái/khớp điểm inline phẳng trong suốt, không dùng nền màu đặc dày.
 
-3. **Buttons & Controls:**
+3. **Buttons & Controls (Phân cấp 5 Bậc Nút Bấm 2026):**
    - Bo góc chuẩn `rounded-xl` (12px). Ngoại lệ: Submenu items trong Sidebar, Badge nhỏ, Tooltip và Chip trạng thái vi mô được phép dùng `rounded-lg` (8px).
    - Chiều cao: Nút chính 44px (`lg`), Toolbar/Filter/search/input 40px (`md`), Nút phụ 36px (`sm`), Icon 36–40px, Mobile vùng chạm tối thiểu 44px.
-   - Nhóm nút: Chỉ có duy nhất 1 nút Primary trong cùng một nhóm thao tác hoặc một vùng chức năng (Toolbar, Modal Footer, Form Action Bar). Phân cấp 3 bậc thị giác: `Ghost` (phẳng) ➔ `Secondary` (viền) ➔ `Primary` (đặc).
+   - **Phân cấp 5 Bậc Nút:**
+     * **Bậc 1 (Primary CTA):** Duy nhất 1 nút chính trong nhóm (`bg-blue-600 text-white`).
+     * **Bậc 2 (Soft Accent):** Nền xanh siêu nhạt (`bg-blue-50 text-blue-700`), **không viền**, **không icon**, dùng cho tính năng tự động / AI / sinh ma trận (`variant="soft"`).
+     * **Bậc 3 (Secondary):** Thao tác bảng, bộ lọc, xuất file (`bg-white border-slate-200/90 text-slate-800`).
+     * **Bậc 4 (Ghost):** Phụ tối giản, đóng, hủy (`bg-transparent text-slate-600`).
+     * **Bậc 5 (Danger):** Thao tác xóa, hủy nguy hiểm (`bg-danger-600` hoặc viền đỏ, tách biệt sang trái).
    - Gradient: Không dùng gradient trong màn hình quản trị và dữ liệu; ngoại lệ cho phép: Trang đăng nhập (Login), Khu vực thương hiệu và Nút Active Tab Sidebar.
 
 4. **Hệ Thống Màu Chữ 5 Tầng Cool Slate & Quy Chuẩn WCAG Thực Tế:**

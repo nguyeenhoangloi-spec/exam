@@ -60,6 +60,7 @@ Lập kế hoạch triển khai chi tiết, bao gồm:
   - Phân loại NÊN DÙNG Badge (Kỳ thi, Câu hỏi, Đề thi, Lịch thi, Sao lưu, Tài khoản, Phúc khảo, Kết quả) vs KHÔNG DÙNG Badge (Mã KT-1/SV, Tên khoa/môn, Điểm/Ngày, Nút bấm, Mô tả).
   - Thang cỡ chữ 8 tầng (12px ➔ 32px) kèm Line-Height chuẩn 24px/15px cho tiếng Việt.
   - Phân định chiều cao nút: Primary CTA 44px (`lg`), Toolbar/Filter 40px (`md`), Nút phụ 36px (`sm`), Mobile tối thiểu 44px.
+  - Phân cấp 5 Bậc Nút Bấm: Bậc 1: Primary CTA (duy nhất 1 nút chính `bg-blue-600 text-white`); Bậc 2: Soft Accent (`variant="soft"`, `bg-blue-50 text-blue-700`, **không viền**, **không icon**, cho tính năng tự động/AI); Bậc 3: Secondary (`bg-white border-slate-200/90 text-slate-800` cho bộ lọc/thao tác); Bậc 4: Ghost (`bg-transparent text-slate-600` cho Đóng/Hủy); Bậc 5: Danger (`bg-danger-600` hoặc viền đỏ, tách riêng sang trái).
   - Bo góc chuẩn `rounded-xl` (12px), ghi nhận ngoại lệ `rounded-lg` (8px) cho submenu Sidebar, badge, chip, tooltip.
   - Quy tắc chỉ 1 nút Primary trong cùng 1 nhóm thao tác/vùng chức năng.
   - Quy tắc hạn chế gradient (chỉ dùng cho Login, Vùng thương hiệu, Active Tab Sidebar).

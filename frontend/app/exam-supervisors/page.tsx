@@ -609,16 +609,16 @@ export default function ExamSupervisorsPage() {
 
               {currentUser?.role === 'ADMIN' && (
                 <>
-                  {/* Nút 2: Tự động */}
+                  {/* Nút 2: Tự động (Soft Blue, Borderless, Không Icon) */}
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="soft"
                     size="md"
                     onClick={previewAutoAssign}
                     className={
                       activeInlinePanel === 'auto'
-                        ? 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200/80'
+                        ? '!bg-blue-200/90 dark:!bg-blue-900 !text-blue-900 dark:!text-blue-100'
+                        : ''
                     }
                   >
                     Tự động
