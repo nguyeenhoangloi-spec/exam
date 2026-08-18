@@ -63,32 +63,26 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
     switch (type) {
       case 'danger':
         return {
-          icon: <LogOut className="h-4.5 w-4.5 text-rose-600" />,
+          icon: <LogOut className="h-4.5 w-4.5 text-rose-600 dark:text-rose-400" />,
           iconShell: 'bg-rose-50 border-rose-200 dark:bg-rose-950/30 dark:border-rose-800/60',
           btnVariant: 'danger' as const,
         };
       case 'success':
         return {
-          icon: <CheckCircle className="h-4.5 w-4.5 text-emerald-600" />,
+          icon: <CheckCircle className="h-4.5 w-4.5 text-emerald-600 dark:text-emerald-400" />,
           iconShell: 'bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-800/60',
-          btnVariant: (confirmVariant || (cancelText ? 'primary' : 'secondary')) as
-            | 'primary'
-            | 'secondary'
-            | 'danger'
-            | 'ghost'
-            | 'success'
-            | 'warning',
+          btnVariant: confirmVariant || ('success' as const),
         };
       case 'warning':
         return {
-          icon: <AlertTriangle className="h-4.5 w-4.5 text-amber-600" />,
+          icon: <AlertTriangle className="h-4.5 w-4.5 text-amber-600 dark:text-amber-400" />,
           iconShell: 'bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:border-amber-800/60',
           btnVariant: 'warning' as const,
         };
       case 'info':
       default:
         return {
-          icon: <Info className="h-4.5 w-4.5 text-blue-600" />,
+          icon: <Info className="h-4.5 w-4.5 text-blue-600 dark:text-blue-400" />,
           iconShell: 'bg-blue-50 border-blue-200 dark:bg-blue-950/30 dark:border-blue-800/60',
           btnVariant: 'primary' as const,
         };
