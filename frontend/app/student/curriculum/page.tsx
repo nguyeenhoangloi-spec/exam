@@ -7,13 +7,17 @@ import { getAuthUser } from '../../../lib/auth';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Toast } from '../../../components/Toast';
 import { Modal } from '../../../components/Modal';
-import { SortDropdown } from '../../../components/ui/SortDropdown';
-import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
-import { TabBar } from '../../../components/ui/TabBar';
-import { Button } from '../../../components/ui/Button';
-import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
-import { FilterSelect } from '../../../components/ui/FilterSelect';
-import { PaginationBar } from '../../../components/ui/PaginationBar';
+import {
+  Button,
+  DataActionsDropdown,
+  IdentifierBadge,
+  FilterSelect,
+  PaginationBar,
+  SortDropdown,
+  ColumnToggleDropdown,
+  ViewModeSegmentedControl,
+  TabBar,
+} from '../../../components/ui';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { StudentCurriculumFilterPopover } from '../../../components/student-curriculum/StudentCurriculumFilterPopover';
@@ -399,24 +403,13 @@ export default function StudentCurriculumPage() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={handleExportExcel}
-              leftIcon={<Download className="h-4 w-4 text-slate-500" />}
-            >
-              Xuất Excel
-            </Button>
-
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={handlePrintReport}
-              leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
-            >
-              In khung đào tạo
-            </Button>
+          <div className="flex items-center gap-2.5 shrink-0">
+            <DataActionsDropdown
+              onExportExcel={handleExportExcel}
+              exportLabel="Xuất file Excel"
+              onPrint={handlePrintReport}
+              printLabel="In khung đào tạo"
+            />
           </div>
         </div>
 
@@ -558,45 +551,11 @@ export default function StudentCurriculumPage() {
               onToggle={handleColumnToggle}
             />
 
-            {/* View Mode Pills */}
-            <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
-              <button
-                type="button"
-                onClick={() => setViewMode('list')}
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-                  viewMode === 'list'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                }`}
-                title="Dạng danh sách"
-              >
-                <List className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('grid')}
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-                  viewMode === 'grid'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                }`}
-                title="Dạng thẻ"
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('compact')}
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-                  viewMode === 'compact'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                }`}
-                title="Dạng thu gọn"
-              >
-                <Layers className="h-4 w-4" />
-              </button>
-            </div>
+            {/* View Mode Segmented Control */}
+            <ViewModeSegmentedControl
+              viewMode={viewMode}
+              onChange={(mode) => setViewMode(mode)}
+            />
 
             {/* Refresh Button */}
             <button
@@ -648,9 +607,8 @@ export default function StudentCurriculumPage() {
               return (
                 <div
                   key={item.id}
-                  className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
-                    isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                  }`}
+                  className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                    }`}
                 >
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
@@ -742,9 +700,8 @@ export default function StudentCurriculumPage() {
               return (
                 <div
                   key={item.id}
-                  className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
-                    isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                  }`}
+                  className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                    }`}
                 >
                   {/* Left: Checkbox + CodeBadge + Name + Meta Chips */}
                   <div className="flex items-center gap-3 min-w-0">
@@ -838,9 +795,8 @@ export default function StudentCurriculumPage() {
                     return (
                       <tr
                         key={item.id}
-                        className={`hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors ${
-                          isChecked ? 'bg-blue-50/20' : ''
-                        }`}
+                        className={`hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors ${isChecked ? 'bg-blue-50/20' : ''
+                          }`}
                       >
                         <td className="py-3.5 px-4 text-center">
                           <input

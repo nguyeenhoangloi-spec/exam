@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { List, LayoutGrid, Layers, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { SortDropdown } from '../ui/SortDropdown';
 import { ColumnToggleDropdown } from '../ui/ColumnToggleDropdown';
+import { ViewModeSegmentedControl } from '../ui/ViewModeSegmentedControl';
 
 interface SubjectTableToolbarProps {
   totalCount: number;
@@ -82,45 +83,11 @@ export function SubjectTableToolbar({
           onToggle={(key) => onColumnToggle?.(key)}
         />
 
-        {/* View Mode Pills */}
-        <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
-          <button
-            type="button"
-            onClick={() => onViewModeChange?.('list')}
-            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-              viewMode === 'list'
-                ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-                : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-            }`}
-            title="Dạng danh sách"
-          >
-            <List className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => onViewModeChange?.('grid')}
-            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-              viewMode === 'grid'
-                ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-                : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-            }`}
-            title="Dạng thẻ"
-          >
-            <LayoutGrid className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => onViewModeChange?.('compact')}
-            className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-              viewMode === 'compact'
-                ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-                : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-            }`}
-            title="Dạng thu gọn"
-          >
-            <Layers className="h-4 w-4" />
-          </button>
-        </div>
+        {/* View Mode Segmented Control */}
+        <ViewModeSegmentedControl
+          viewMode={viewMode}
+          onChange={(mode) => onViewModeChange?.(mode)}
+        />
 
         {/* Refresh button (borderless) */}
         <button

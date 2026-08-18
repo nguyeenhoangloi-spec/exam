@@ -12,12 +12,13 @@ import { QuestionStatusChart } from '../../components/dashboard/QuestionStatusCh
 import { TaskAttention } from '../../components/dashboard/TaskAttention';
 import { RecentActivityList } from '../../components/dashboard/RecentActivityList';
 import { Button } from '../../components/ui/Button';
+import { DataActionsDropdown } from '../../components/ui/DataActionsDropdown';
 import { printReport } from '../../lib/export-print';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { User } from '../../types';
 import { DashboardOverview } from '../../types/dashboard';
-import { Printer, RefreshCw, BarChart2, FileText, CheckCircle2, Clock } from 'lucide-react';
+import { RefreshCw, BarChart2, FileText, CheckCircle2, Clock } from 'lucide-react';
 
 export default function ReportsPage() {
   usePageTitle('Báo cáo tổng quan');
@@ -114,15 +115,10 @@ export default function ReportsPage() {
             Làm mới
           </Button>
 
-          <Button
-            type="button"
-            variant="primary"
-            size="md"
-            onClick={handlePrint}
-            leftIcon={<Printer className="h-4 w-4" />}
-          >
-            In / Xuất báo cáo PDF
-          </Button>
+          <DataActionsDropdown
+            onPrintReport={handlePrint}
+            printLabel="In / Xuất báo cáo PDF"
+          />
         </div>
       </div>
 

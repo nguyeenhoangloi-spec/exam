@@ -143,11 +143,10 @@ export function DataActionsDropdown({
         aria-label="Tùy chọn xuất nhập dữ liệu"
         title="Tùy chọn xuất nhập dữ liệu"
         onClick={() => setIsOpen(!isOpen)}
-        className={`ui-pressable h-10 w-10 flex items-center justify-center rounded-xl text-[15px] font-medium outline-none focus:outline-none ring-0 focus:ring-0 focus-visible:outline-none focus-visible:ring-0 transition-all duration-150 cursor-pointer select-none ${
-          isOpen
+        className={`ui-pressable h-10 w-10 flex items-center justify-center rounded-xl text-[15px] font-medium outline-none focus:outline-none ring-0 focus:ring-0 focus-visible:outline-none focus-visible:ring-0 transition-all duration-150 cursor-pointer select-none ${isOpen
             ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
             : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/80'
-        }`}
+          }`}
       >
         <Upload className="h-5 w-5" strokeWidth={1.75} />
       </button>

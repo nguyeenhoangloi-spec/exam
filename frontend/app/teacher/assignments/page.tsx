@@ -11,14 +11,18 @@ import { printReport } from '../../../lib/export-print';
 import { Toast } from '../../../components/Toast';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
-import { Button } from '../../../components/ui/Button';
-import { StatusBadge } from '../../../components/common/StatusBadge';
-import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
-import { TabBar } from '../../../components/ui/TabBar';
-import { PaginationBar } from '../../../components/ui/PaginationBar';
+import {
+  Button,
+  DataActionsDropdown,
+  IdentifierBadge,
+  TabBar,
+  PaginationBar,
+  SortDropdown,
+  ColumnToggleDropdown,
+  ViewModeSegmentedControl,
+  StatusBadge,
+} from '../../../components/ui';
 import { TeacherAssignmentBulkAction } from '../../../components/exam-supervisors/TeacherAssignmentBulkAction';
-import { SortDropdown } from '../../../components/ui/SortDropdown';
-import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
 import {
   ShieldCheck,
   Calendar,
@@ -106,7 +110,7 @@ export default function TeacherAssignmentsPage() {
     title: '',
     message: '',
     type: 'warning',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   useEffect(() => {
@@ -217,8 +221,8 @@ export default function TeacherAssignmentsPage() {
       </thead>
       <tbody>
       ${(data.students || [])
-        .map(
-          (st: any, idx: number) => `
+          .map(
+            (st: any, idx: number) => `
       <tr>
       <td class="center">${idx + 1}</td>
       <td class="center"><strong>${st.examNumber || idx + 1}</strong></td>
@@ -230,8 +234,8 @@ export default function TeacherAssignmentsPage() {
       <td></td>
       </tr>
       `,
-        )
-        .join('')}
+          )
+          .join('')}
       </tbody>
       </table>
 
@@ -453,24 +457,13 @@ export default function TeacherAssignmentsPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={exportExcel}
-              leftIcon={<Download className="h-4 w-4 text-slate-500" />}
-            >
-              Xuất Excel
-            </Button>
-
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={handlePrintReport}
-              leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
-            >
-              In lịch coi thi
-            </Button>
+          <div className="flex items-center gap-2.5">
+            <DataActionsDropdown
+              onExportExcel={exportExcel}
+              exportLabel="Xuất file Excel"
+              onPrint={handlePrintReport}
+              printLabel="In lịch coi thi"
+            />
           </div>
         </div>
 
@@ -583,45 +576,11 @@ export default function TeacherAssignmentsPage() {
               onToggle={(key) => setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }))}
             />
 
-            {/* View Mode Pills */}
-            <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
-              <button
-                type="button"
-                onClick={() => setViewMode('list')}
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-                  viewMode === 'list'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                }`}
-                title="Dạng danh sách"
-              >
-                <List className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('grid')}
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-                  viewMode === 'grid'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                }`}
-                title="Dạng thẻ"
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('compact')}
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-                  viewMode === 'compact'
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-                    : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                }`}
-                title="Dạng thu gọn"
-              >
-                <Layers className="h-4 w-4" />
-              </button>
-            </div>
+            {/* View Mode Segmented Control */}
+            <ViewModeSegmentedControl
+              viewMode={viewMode}
+              onChange={(mode) => setViewMode(mode)}
+            />
 
             {/* Refresh */}
             <button
@@ -680,9 +639,8 @@ export default function TeacherAssignmentsPage() {
               return (
                 <div
                   key={item.id}
-                  className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
-                    isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                  }`}
+                  className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                    }`}
                 >
                   {/* Left: Checkbox + CodeBadge + Name + Meta Chips */}
                   <div className="flex items-center gap-3 min-w-0">
@@ -784,9 +742,8 @@ export default function TeacherAssignmentsPage() {
               return (
                 <div
                   key={item.id}
-                  className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
-                    isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                  }`}
+                  className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                    }`}
                 >
                   <div className="space-y-3">
                     {/* Card top badges */}
@@ -923,9 +880,8 @@ export default function TeacherAssignmentsPage() {
                     return (
                       <tr
                         key={item.id}
-                        className={`hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors ${
-                          isChecked ? 'bg-blue-50/20' : ''
-                        }`}
+                        className={`hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors ${isChecked ? 'bg-blue-50/20' : ''
+                          }`}
                       >
                         <td className="py-3.5 px-4 text-center">
                           <input

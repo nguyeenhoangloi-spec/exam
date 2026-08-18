@@ -21,6 +21,7 @@ import {
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { SortDropdown } from '../../components/ui/SortDropdown';
 import { ColumnToggleDropdown } from '../../components/ui/ColumnToggleDropdown';
+import { ViewModeSegmentedControl } from '../../components/ui/ViewModeSegmentedControl';
 
 interface TrashItem {
   id: number | string;
@@ -575,45 +576,11 @@ function TrashPageContent() {
                 onToggle={(key) => setVisibleColumns((prev: any) => ({ ...prev, [key]: !prev[key] }))}
               />
 
-              {/* View Mode Pills */}
-              <div className="h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs">
-                <button
-                  type="button"
-                  onClick={() => setViewMode('list')}
-                  className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-                    viewMode === 'list'
-                       ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-                      : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                  }`}
-                  title="Xem dạng danh sách"
-                >
-                  <List className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode('grid')}
-                  className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-                    viewMode === 'grid'
-                       ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-                      : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                  }`}
-                  title="Xem dạng lưới"
-                >
-                  <LayoutGrid className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode('compact')}
-                  className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
-                    viewMode === 'compact'
-                       ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-                      : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                  }`}
-                  title="Xem dạng thu gọn"
-                >
-                  <Layers className="h-4 w-4" />
-                </button>
-              </div>
+              {/* View Mode Segmented Control */}
+              <ViewModeSegmentedControl
+                viewMode={viewMode}
+                onChange={(mode) => setViewMode(mode)}
+              />
 
               {/* Refresh Button */}
               <button

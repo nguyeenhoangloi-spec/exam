@@ -11,6 +11,7 @@ import { Toast } from '../../../components/Toast';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import { TabBar } from '../../../components/ui/TabBar';
 import { Button } from '../../../components/ui/Button';
+import { DataActionsDropdown } from '../../../components/ui/DataActionsDropdown';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import {
@@ -229,24 +230,13 @@ export default function StudentExamSchedulePage() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={exportCsv}
-              leftIcon={<Download className="h-4 w-4 text-slate-500" />}
-            >
-              Xuất CSV
-            </Button>
-
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={handlePrintReport}
-              leftIcon={<Printer className="h-4 w-4 text-slate-500" />}
-            >
-              In Lịch Thi
-            </Button>
+          <div className="flex items-center gap-2.5">
+            <DataActionsDropdown
+              onExport={exportCsv}
+              exportLabel="Xuất file CSV"
+              onPrint={handlePrintReport}
+              printLabel="In lịch thi cá nhân"
+            />
           </div>
         </div>
 
@@ -458,8 +448,8 @@ export default function StudentExamSchedulePage() {
                         </span>
                         <span className="tabular-nums font-medium text-xs text-blue-600 dark:text-blue-400">
                           {(item as any).attempt.totalScore !== null &&
-                          (item as any).attempt.totalScore !== undefined &&
-                          (item as any).attempt.totalScore !== ''
+                            (item as any).attempt.totalScore !== undefined &&
+                            (item as any).attempt.totalScore !== ''
                             ? `${(item as any).attempt.totalScore}đ`
                             : 'Chưa có điểm'}{' '}
                           {(item as any).attempt.penaltyReason ? `(${(item as any).attempt.penaltyReason})` : ''}
