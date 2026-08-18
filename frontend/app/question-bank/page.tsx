@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useState, useRef, startTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, X } from 'lucide-react';
 import api, { getCachedData } from '../../lib/api';
+import { cachedGet, invalidateCache } from '../../lib/api-cache';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { exportToFormattedExcel } from '../../lib/export-excel';
@@ -179,8 +180,8 @@ export default function QuestionBankPage() {
 
     try {
       const [list, stats] = await Promise.all([
-        api.get(`/questions?${params}`),
-        api.get(`/questions/statistics?${statsParams}`),
+        cachedGet(`/questions?${params}`),
+        cachedGet(`/questions/statistics?${statsParams}`),
       ]);
       setQuestions(list.data.data);
       setTotalPages(list.data.totalPages);
@@ -198,6 +199,7 @@ export default function QuestionBankPage() {
   }, [load]);
 
   const handleRefresh = async () => {
+    invalidateCache('/questions');
     await load();
     setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
   };
@@ -218,6 +220,7 @@ export default function QuestionBankPage() {
     if (name === 'submit') {
       try {
         await api.post(`/questions/${q.id}/submit`);
+        invalidateCache('/questions');
         setToast({ message: `Đã gửi duyệt câu hỏi ${q.code || `QH${q.id}`} thành công.`, type: 'success' });
         load();
       } catch (e: any) {
@@ -229,6 +232,7 @@ export default function QuestionBankPage() {
     if (name === 'duplicate') {
       try {
         const res = await api.post(`/questions/${q.id}/duplicate`);
+        invalidateCache('/questions');
         setToast({ message: `Đã nhân bản câu hỏi thành công (Mã mới: ${res.data?.code || ''})!`, type: 'success' });
         load();
       } catch (e: any) {
@@ -248,6 +252,7 @@ export default function QuestionBankPage() {
           closeConfirm();
           try {
             await api.post(`/questions/${q.id}/archive`);
+            invalidateCache('/questions');
             setToast({ message: `Đã chuyển câu hỏi ${q.code || `QH${q.id}`} sang trạng thái lưu trữ.`, type: 'success' });
             load();
           } catch (e: any) {
@@ -261,6 +266,7 @@ export default function QuestionBankPage() {
     if (name === 'restore') {
       try {
         await api.post(`/questions/${q.id}/restore`);
+        invalidateCache('/questions');
         setToast({ message: `Đã khôi phục câu hỏi ${q.code || `QH${q.id}`} thành công.`, type: 'success' });
         load();
       } catch (e: any) {
@@ -280,6 +286,7 @@ export default function QuestionBankPage() {
           closeConfirm();
           try {
             await api.post(`/questions/${q.id}/approve`);
+            invalidateCache('/questions');
             setToast({ message: `Đã duyệt câu hỏi thành công.`, type: 'success' });
             load();
           } catch (e: any) {
@@ -303,6 +310,7 @@ export default function QuestionBankPage() {
           closeConfirm();
           try {
             await api.post(`/questions/${q.id}/reject`, { reason });
+            invalidateCache('/questions');
             setToast({ message: `Đã từ chối câu hỏi.`, type: 'success' });
             load();
           } catch (e: any) {
@@ -324,6 +332,7 @@ export default function QuestionBankPage() {
           closeConfirm();
           try {
             await api.delete(`/questions/${q.id}`);
+            invalidateCache('/questions');
             setToast({ message: `Đã xóa câu hỏi.`, type: 'success' });
             load();
           } catch (e: any) {
@@ -362,6 +371,7 @@ export default function QuestionBankPage() {
         closeConfirm();
         try {
           const r = await api.post('/questions/bulk-action', { ids: actionIds, action: name, reason });
+          invalidateCache('/questions');
           setToast({
             message: `Thành công ${r.data.successCount}, thất bại ${r.data.failedCount}.`,
             type: r.data.failedCount ? 'error' : 'success',
@@ -624,6 +634,7 @@ export default function QuestionBankPage() {
           setEditing(null);
         }}
         onSaved={(msg) => {
+          invalidateCache('/questions');
           setToast({ message: msg || (editing ? 'Đã cập nhật câu hỏi thành công!' : 'Đã thêm mới câu hỏi thành công!'), type: 'success' });
           load();
         }}
@@ -637,6 +648,7 @@ export default function QuestionBankPage() {
         subjects={subjects}
         onClose={() => setImportOpen(false)}
         onDone={(count) => {
+          invalidateCache('/questions');
           setToast({ message: typeof count === 'number' ? `Đã nhập thành công ${count} câu hỏi vào ngân hàng dữ liệu!` : (count || 'Đã nhập dữ liệu câu hỏi thành công!'), type: 'success' });
           load();
         }}
@@ -647,6 +659,7 @@ export default function QuestionBankPage() {
         subjects={subjects}
         onClose={() => setAiOpen(false)}
         onDone={(msg) => {
+          invalidateCache('/questions');
           setToast({ message: (typeof msg === 'string' && msg) || 'Đã sinh câu hỏi bằng AI thành công!', type: 'success' });
           load();
         }}

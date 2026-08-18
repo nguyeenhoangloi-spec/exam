@@ -1191,3 +1191,36 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
   font-size: var(--fs-badge) !important;
   line-height: var(--lh-badge) !important;
 }
+
+/* 5-Tier Cool Slate Semantic Typography Utility Shortcuts */
+.text-main {
+  color: var(--ui-text-primary);
+}
+.text-sub {
+  color: var(--ui-text-secondary);
+}
+.text-helper {
+  color: var(--ui-text-muted-soft);
+}
+.text-placeholder {
+  color: var(--ui-text-disabled);
+}
+.text-inverse {
+  color: #ffffff;
+}
+
+.dark .text-main {
+  color: #f8fafc;
+}
+.dark .text-sub {
+  color: #e2e8f0;
+}
+.dark .text-helper {
+  color: #94a3b8;
+}
+.dark .text-placeholder {
+  color: #64748b;
+}
+.dark .text-inverse {
+  color: #ffffff;
+}

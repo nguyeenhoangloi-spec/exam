@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { startTransition } from 'react';
 
 interface ExamScheduleTabsBarProps {
   activeStatus: string;
@@ -27,6 +27,12 @@ export function ExamScheduleTabsBar({
     { key: 'CANCELLED', label: 'Đã hủy', count: counts.cancelled ?? 8 },
   ];
 
+  const handleTabClick = (key: string) => {
+    startTransition(() => {
+      onSelectStatus(key);
+    });
+  };
+
   return (
     <div className="flex items-center gap-2 border-b border-slate-200/80 overflow-x-auto no-scrollbar pt-2">
       {tabs.map((tab) => {
@@ -35,7 +41,7 @@ export function ExamScheduleTabsBar({
           <button
             key={tab.key}
             type="button"
-            onClick={() => onSelectStatus(tab.key)}
+            onClick={() => handleTabClick(tab.key)}
             className={`group relative flex items-center gap-1.5 px-4 py-3 text-[15px] font-medium transition-all cursor-pointer whitespace-nowrap ${
               isActive ? 'text-blue-600 font-semibold' : 'text-slate-500 hover:text-slate-900'
             }`}

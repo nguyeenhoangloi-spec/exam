@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { startTransition } from 'react';
 
 interface QuestionBankTabsBarProps {
   activeStatus: string;
@@ -27,6 +27,12 @@ export function QuestionBankTabsBar({
     { key: 'REJECTED', label: 'Bị từ chối', count: rejectedCount },
   ];
 
+  const handleTabClick = (key: string) => {
+    startTransition(() => {
+      onSelectStatus(key);
+    });
+  };
+
   return (
     <div className="flex items-center gap-2 border-b border-slate-200/80 overflow-x-auto no-scrollbar pt-2">
       {tabs.map((tab) => {
@@ -35,7 +41,7 @@ export function QuestionBankTabsBar({
           <button
             key={tab.key}
             type="button"
-            onClick={() => onSelectStatus(tab.key)}
+            onClick={() => handleTabClick(tab.key)}
             className={`group relative flex items-center gap-2 px-4 py-3 text-base font-medium transition-all cursor-pointer whitespace-nowrap ${isActive ? 'text-primary-600 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
               }`}
           >

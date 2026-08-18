@@ -115,30 +115,33 @@ Ví dụ trong bảng:
 - Trạng thái: 500–600 kèm màu/icon semantic.
 - Điểm quan trọng: 600.
 
-## 6. Màu chữ
+## 6. Màu chữ (Cool Slate 5-Tier Typography System)
 
-### Light mode — black-forward palette
+Áp dụng chuẩn hóa 5 tầng màu chữ dựa trên dải **Cool Slate** (pha sắc xanh đen sâu), vừa đảm bảo độ tương phản sắc nét tuyệt đối theo chuẩn WCAG AAA/AA, vừa tự động thích ứng mượt mà giữa Light Mode và Dark Mode.
 
-Không dùng màu đen tuyệt đối `#000000` cho mọi nơi và không dùng xám lợt làm màu chữ chính.
+### 6.1 Bảng phân cấp 5 tầng màu chuẩn
 
-| Token | Màu | Vai trò |
-|---|---|---|
-| `ui-text-primary` | `#0F172A` | Tiêu đề, nội dung chính |
-| `ui-text-body` | `#111827` | Nội dung thường |
-| `ui-text-secondary` | `#1F2937` | Label, dữ liệu phụ, header bảng |
-| `ui-text-muted-soft` | `#374151` | Metadata, mô tả, thông tin phụ |
-| `ui-text-disabled` | `#64748B` | Disabled hoặc không khả dụng |
+| Cấp bậc | Vai trò | Light Mode (Hex & Tailwind) | Dark Mode (Hex & Tailwind) | Utility Shortcut | Mục đích sử dụng |
+|---|---|---|---|---|---|
+| **Tầng 1** | **Tiêu đề & Nội dung chính** | `#0F172A` (`slate-900`) | `#F8FAFC` (`slate-50`) | `.text-main` | Tên trang, KPI, tiêu đề card, họ tên sinh viên/giảng viên, mã đề |
+| **Tầng 2** | **Chữ phụ, Label, Cột bảng** | `#334155` (`slate-700`) | `#E2E8F0` (`slate-200`) | `.text-sub` | Nhãn form, header cột bảng, tên khoa/lớp, điều hướng |
+| **Tầng 3** | **Mô tả, Helper, Ghi chú** | `#64748B` (`slate-500`) | `#94A3B8` (`slate-400`) | `.text-helper` | Ghi chú ca thi, hướng dẫn tải file, thời gian diễn ra, metadata |
+| **Tầng 4** | **Placeholder, Vô hiệu hóa** | `#94A3B8` (`slate-400`) | `#64748B` (`slate-500`) | `.text-placeholder` | Chữ mờ trong ô input (`Tìm kiếm...`), nút bị khóa, icon mờ |
+| **Tầng 5** | **Chữ trên nền đậm/xanh** | `#FFFFFF` (`white`) | `#FFFFFF` (`white`) | `.text-inverse` | Chữ trên nút Primary xanh, badge trạng thái đặc biệt |
 
-Nguyên tắc:
+### 6.2 Tokens CSS tương thích hệ thống
+| Token CSS | Giá trị Light | Giá trị Dark | Vai trò |
+|---|---|---|---|
+| `ui-text-primary` | `#0F172A` | `#F1F5F9` | Tiêu đề, nội dung chính |
+| `ui-text-body` | `#111827` | `#E2E8F0` | Nội dung thường |
+| `ui-text-secondary` | `#1F2937` / `#334155` | `#CBD5E1` | Label, dữ liệu phụ, header bảng |
+| `ui-text-muted-soft` | `#374151` / `#64748B` | `#94A3B8` | Metadata, mô tả, thông tin phụ |
+| `ui-text-disabled` | `#64748B` / `#94A3B8` | `#64748B` | Disabled hoặc không khả dụng |
 
-- Chữ chính phải nhìn gần như đen và rõ trên nền trắng.
-- Chữ phụ vẫn phải đọc dễ, không được nhạt quá.
-- Chỉ metadata, placeholder và disabled mới được nhẹ hơn.
-- Không tạo phân cấp chỉ bằng màu; kết hợp cỡ chữ, weight, vị trí và spacing.
-
-### Dark mode
-
-Dark mode dùng chữ sáng có tương phản phù hợp trên nền tối; không ép palette đen của light mode sang dark mode.
+### 6.3 Nguyên tắc sử dụng
+- **Không dùng màu đen tuyệt đối `#000000`** và không dùng xám lợt làm màu chữ chính.
+- Ưu tiên dùng các class semantic shortcut (`text-main`, `text-sub`, `text-helper`, `text-placeholder`, `text-inverse`) để code ngắn gọn và tự động đảo màu khi chuyển Dark Mode.
+- Không tạo phân cấp chỉ bằng màu; kết hợp linh hoạt cỡ chữ, weight, vị trí và spacing.
 
 ## 7. Quy chuẩn nút bấm
 

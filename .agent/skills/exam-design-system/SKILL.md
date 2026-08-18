@@ -84,17 +84,17 @@ font-family:
 
 ---
 
-## 3. Bảng màu chuẩn (Black-forward Palette)
+## 3. Bảng màu chuẩn (Cool Slate 5-Tier Typography & Status Palette)
 
-### 3.1 Text Colors (Light Mode)
+### 3.1 Text Colors (5-Tier Cool Slate System)
 
-| Token | Hex | Vai trò |
-|---|---|---|
-| `ui-text-primary` | `#0F172A` | Tiêu đề, nội dung chính |
-| `ui-text-body` | `#111827` | Nội dung thường |
-| `ui-text-secondary` | `#1F2937` | Label, dữ liệu phụ, header bảng |
-| `ui-text-muted-soft` | `#374151` | Metadata, mô tả, thông tin phụ |
-| `ui-text-disabled` | `#64748B` | Disabled hoặc không khả dụng |
+| Cấp bậc | Vai trò | Light Mode (Hex & Tailwind) | Dark Mode (Hex & Tailwind) | Utility Shortcut | Mục đích sử dụng |
+|---|---|---|---|---|---|
+| **Tầng 1** | **Tiêu đề & Nội dung chính** | `#0F172A` (`slate-900`) | `#F8FAFC` (`slate-50`) | `.text-main` | Tên trang, KPI, tiêu đề card, họ tên sinh viên/giảng viên, mã đề |
+| **Tầng 2** | **Chữ phụ, Label, Cột bảng** | `#334155` (`slate-700`) | `#E2E8F0` (`slate-200`) | `.text-sub` | Nhãn form, header cột bảng, tên khoa/lớp, điều hướng |
+| **Tầng 3** | **Mô tả, Helper, Ghi chú** | `#64748B` (`slate-500`) | `#94A3B8` (`slate-400`) | `.text-helper` | Ghi chú ca thi, hướng dẫn tải file, thời gian diễn ra, metadata |
+| **Tầng 4** | **Placeholder, Vô hiệu hóa** | `#94A3B8` (`slate-400`) | `#64748B` (`slate-500`) | `.text-placeholder` | Chữ mờ trong ô input (`Tìm kiếm...`), nút bị khóa, icon mờ |
+| **Tầng 5** | **Chữ trên nền đậm/xanh** | `#FFFFFF` (`white`) | `#FFFFFF` (`white`) | `.text-inverse` | Chữ trên nút Primary xanh, badge trạng thái đặc biệt |
 
 ### 3.2 Semantic Brand & Status Colors
 
@@ -106,7 +106,7 @@ font-family:
 
 ### 3.3 Quy tắc màu TUYỆT ĐỐI
 
-- KHÔNG thêm màu hex trực tiếp trong JSX/TSX (trừ các trường hợp print/export có phạm vi riêng).
+- KHÔNG thêm màu hex trực tiếp trong JSX/TSX (ưu tiên dùng utility shortcuts `.text-main`, `.text-sub`, `.text-helper`, `.text-placeholder`, `.text-inverse` hoặc các class `slate-*`).
 - Biểu đồ và SVG dùng biến `--ui-chart-*`.
 - KHÔNG dùng accent tím/indigo/pink ngoài hệ màu chuẩn.
 - KHÔNG truyền đạt trạng thái chỉ bằng màu sắc (phải kèm icon hoặc text).

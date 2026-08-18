@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
+import { cachedGet, invalidateCache } from '../../lib/api-cache';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { exportToFormattedExcel } from '../../lib/export-excel';
@@ -184,8 +185,8 @@ export default function StudentsPage() {
     setLoading(true);
     try {
       const [resStudents, resClasses] = await Promise.all([
-        api.get('/students'),
-        api.get('/classes'),
+        cachedGet('/students'),
+        cachedGet('/classes'),
       ]);
       setStudents(resStudents.data || []);
       setClasses(resClasses.data || []);
@@ -209,6 +210,8 @@ export default function StudentsPage() {
   }, [fetchData, router]);
 
   const handleRefresh = async () => {
+    invalidateCache('/students');
+    invalidateCache('/classes');
     if (await fetchData()) setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
   };
 
@@ -296,9 +299,11 @@ export default function StudentsPage() {
       const payload = { ...formData, classId: Number(formData.classId) };
       if (editingStudent) {
         await api.patch(`/students/${editingStudent.id}`, payload);
+        invalidateCache('/students');
         setToast({ message: 'Cập nhật sinh viên thành công!', type: 'success' });
       } else {
         await api.post('/students', payload);
+        invalidateCache('/students');
         setToast({ message: 'Thêm sinh viên mới thành công!', type: 'success' });
       }
       setIsModalOpen(false);
@@ -319,6 +324,7 @@ export default function StudentsPage() {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.delete(`/students/${id}`);
+          invalidateCache('/students');
           setToast({ message: 'Đã xóa sinh viên thành công!', type: 'success' });
           fetchData();
         } catch (err: any) {
@@ -342,6 +348,7 @@ export default function StudentsPage() {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.post(`/students/${s.id}/${isLocked ? 'unlock' : 'lock'}`);
+          invalidateCache('/students');
           setToast({ message: `Đã ${isLocked ? 'mở khóa' : 'khóa'} tài khoản sinh viên thành công!`, type: 'success' });
           fetchData();
         } catch (err: any) {
@@ -777,6 +784,7 @@ export default function StudentsPage() {
         title="Nhập Danh sách Sinh viên từ Excel"
         templateFileName="danh_sach_sinh_vien_mau.csv"
         onImportSuccess={(data: any[]) => {
+          invalidateCache('/students');
           setToast({ message: `Đã nhập thành công ${data.length} sinh viên từ file Excel!`, type: 'success' });
           fetchData();
         }}

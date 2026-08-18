@@ -54,6 +54,7 @@ Lập kế hoạch triển khai chi tiết, bao gồm:
 * File dự kiến cần sửa.
 * File dự kiến tạo mới nếu thực sự cần.
 * Shared component/token/style nào nên chỉnh trước.
+* Đối chiếu quy chuẩn UI với [ui-design-system-rules.md](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/ui-design-system-rules.md) (đặc biệt là Hệ thống màu chữ 5 Tầng Cool Slate `.text-main`, `.text-sub`, `.text-helper`, `.text-placeholder`, `.text-inverse`).
 * Thứ tự triển khai.
 * Phạm vi ảnh hưởng.
 * Cách kiểm tra sau mỗi bước.

@@ -1,9 +1,9 @@
 'use client';
-import { FilterSelect } from '../../components/ui/FilterSelect';
 
-import React, { useCallback, useEffect, useState, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useMemo, useRef, startTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
+import { cachedGet, invalidateCache } from '../../lib/api-cache';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { exportToFormattedExcel } from '../../lib/export-excel';
@@ -14,6 +14,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { Button } from '../../components/ui/Button';
+import { FilterSelect } from '../../components/ui/FilterSelect';
 import { ExamSchedule, ExamPeriod, ExamRoom } from '../../types';
 
 import { ExamScheduleHeader } from '../../components/exam-schedules/ExamScheduleHeader';
@@ -132,10 +133,10 @@ export default function ExamSchedulesPage() {
     setLoading(true);
     try {
       const [resPeriods, resRooms, resSubjects, resSchedules] = await Promise.all([
-        api.get('/exam-periods'),
-        api.get('/exam-rooms'),
-        api.get('/subjects'),
-        api.get('/exam-schedules'),
+        cachedGet('/exam-periods'),
+        cachedGet('/exam-rooms'),
+        cachedGet('/subjects'),
+        cachedGet('/exam-schedules'),
       ]);
 
       const realPeriods = resPeriods.data || [];
@@ -180,6 +181,10 @@ export default function ExamSchedulesPage() {
   }, [fetchInitialData, router]);
 
   const handleRefresh = async () => {
+    invalidateCache('/exam-schedules');
+    invalidateCache('/exam-periods');
+    invalidateCache('/exam-rooms');
+    invalidateCache('/subjects');
     if (await fetchInitialData()) setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
   };
 
@@ -345,9 +350,11 @@ export default function ExamSchedulesPage() {
     try {
       if (editingSchedule) {
         await api.patch(`/exam-schedules/${editingSchedule.id}`, payload);
+        invalidateCache('/exam-schedules');
         setToast({ message: 'Cập nhật lịch thi thành công!', type: 'success' });
       } else {
         await api.post('/exam-schedules', payload);
+        invalidateCache('/exam-schedules');
         setToast({ message: 'Tạo lịch thi mới thành công!', type: 'success' });
       }
       setIsModalOpen(false);
@@ -369,6 +376,7 @@ export default function ExamSchedulesPage() {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.delete(`/exam-schedules/${id}`);
+          invalidateCache('/exam-schedules');
           setSchedules((prev) => prev.filter((x) => x.id !== id));
           setToast({ message: 'Đã xóa lịch thi thành công!', type: 'success' });
         } catch (error: any) {
@@ -674,13 +682,14 @@ export default function ExamSchedulesPage() {
             const count = selected.length;
             setConfirmModal({
               isOpen: true,
-      title: 'Xóa hàng loạt lịch thi',
+              title: 'Xóa hàng loạt lịch thi',
               message: `Bạn có chắc chắn muốn xóa ${count} ca thi đã chọn? Hành động này không thể hoàn tác.`,
               type: 'danger',
               onConfirm: async () => {
                 setConfirmModal((prev) => ({ ...prev, isOpen: false }));
                 try {
                   const results = await Promise.allSettled(selected.map((id) => api.delete(`/exam-schedules/${id}`)));
+                  invalidateCache('/exam-schedules');
                   const deletedIds = selected.filter((_, index) => results[index].status === 'fulfilled');
                   const failedCount = count - deletedIds.length;
                   if (deletedIds.length) setSchedules((prev) => prev.filter((item) => !deletedIds.includes(item.id)));
@@ -916,6 +925,7 @@ export default function ExamSchedulesPage() {
         title="Import danh sách lịch thi từ Excel"
         templateFileName="danh_sach_lich_thi_mau.csv"
         onImportSuccess={async () => {
+          invalidateCache('/exam-schedules');
           await fetchInitialData();
           setToast({ message: 'Nhập danh sách lịch thi từ file thành công!', type: 'success' });
         }}

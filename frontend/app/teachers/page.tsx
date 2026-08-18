@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
+import { cachedGet, invalidateCache } from '../../lib/api-cache';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { exportToFormattedExcel } from '../../lib/export-excel';
@@ -146,8 +147,8 @@ export default function TeachersPage() {
     setLoading(true);
     try {
       const [resTeachers, resDepts] = await Promise.all([
-        api.get('/teachers'),
-        api.get('/departments'),
+        cachedGet('/teachers'),
+        cachedGet('/departments'),
       ]);
       setTeachers(resTeachers.data || []);
       setDepartments(resDepts.data || []);
@@ -161,6 +162,8 @@ export default function TeachersPage() {
   }, []);
 
   const handleRefresh = async () => {
+    invalidateCache('/teachers');
+    invalidateCache('/departments');
     if (await fetchData()) setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
   };
 
@@ -256,9 +259,11 @@ export default function TeachersPage() {
       const payload = { ...formData, departmentId: Number(formData.departmentId) };
       if (editingTeacher) {
         await api.patch(`/teachers/${editingTeacher.id}`, payload);
+        invalidateCache('/teachers');
         setToast({ message: 'Cập nhật giảng viên thành công!', type: 'success' });
       } else {
         await api.post('/teachers', payload);
+        invalidateCache('/teachers');
         setToast({ message: 'Thêm giảng viên mới thành công!', type: 'success' });
       }
       setIsModalOpen(false);
@@ -279,6 +284,7 @@ export default function TeachersPage() {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.delete(`/teachers/${id}`);
+          invalidateCache('/teachers');
           setToast({ message: 'Đã xóa giảng viên thành công!', type: 'success' });
           fetchData();
         } catch (err: any) {
@@ -302,6 +308,7 @@ export default function TeachersPage() {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.post(`/teachers/${t.id}/${isLocked ? 'unlock' : 'lock'}`);
+          invalidateCache('/teachers');
           setToast({ message: `Đã ${isLocked ? 'mở khóa' : 'khóa'} tài khoản giảng viên thành công!`, type: 'success' });
           fetchData();
         } catch (err: any) {
@@ -746,6 +753,7 @@ export default function TeachersPage() {
         title="Nhập Danh sách Giảng viên từ Excel"
         templateFileName="danh_sach_giang_vien_mau.csv"
         onImportSuccess={(data: any[]) => {
+          invalidateCache('/teachers');
           setToast({ message: `Đã nhập thành công ${data.length} giảng viên từ file Excel!`, type: 'success' });
           fetchData();
         }}
