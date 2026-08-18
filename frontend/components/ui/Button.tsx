@@ -14,11 +14,12 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   rightIcon?: React.ReactNode;
   icon?: React.ReactNode;
   children?: React.ReactNode;
+  shimmer?: boolean;
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 border border-transparent shadow-2xs focus-visible:ring-2 focus-visible:ring-blue-500/30 focus-visible:outline-none font-semibold cursor-pointer rounded-xl',
+    'group overflow-hidden bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 border border-transparent shadow-xs shadow-blue-500/25 hover:shadow-blue-500/35 hover:-translate-y-0.5 active:translate-y-0 focus-visible:ring-2 focus-visible:ring-blue-500/30 focus-visible:outline-none font-semibold cursor-pointer rounded-xl',
   soft:
     'bg-blue-100 text-blue-700 hover:bg-blue-200/90 active:bg-blue-300/80 dark:bg-blue-900/40 dark:text-blue-200 dark:hover:bg-blue-800/60 dark:active:bg-blue-800/80 border border-transparent focus-visible:ring-2 focus-visible:ring-blue-500/30 focus-visible:outline-none font-semibold cursor-pointer rounded-xl',
   secondary:
@@ -55,6 +56,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       leftIcon,
       rightIcon,
       icon,
+      shimmer = true,
       className = '',
       disabled,
       children,
@@ -65,6 +67,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const isBtnDisabled = disabled || isLoading;
     const effectiveLeftIcon = leftIcon || icon;
+    const shouldShowShimmer = shimmer && variant === 'primary' && !isBtnDisabled;
 
     return (
       <button
@@ -76,6 +79,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={`relative ui-pressable inline-flex items-center justify-center font-sans tracking-tight transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out cursor-pointer select-none disabled:bg-slate-200 disabled:text-slate-500 dark:disabled:bg-slate-700 dark:disabled:text-slate-400 disabled:border-transparent disabled:shadow-none disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
         {...props}
       >
+        {/* Shimmer / Glass light sweep effect on hover for Primary CTA Buttons */}
+        {shouldShowShimmer && (
+          <span className="absolute inset-0 w-1/2 h-full bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-700 ease-out pointer-events-none" />
+        )}
+
         {/* Spinner overlay — absolute, does NOT affect button width */}
         {isLoading && (
           <span className="absolute inset-0 flex items-center justify-center">
