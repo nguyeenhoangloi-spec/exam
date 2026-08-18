@@ -55,7 +55,7 @@ export class ExamPapersService {
   ) { }
 
   private assertOwner(actor: Actor, paper: { createdById: number }) {
-    if (actor.role !== 'ADMIN' && paper.createdById !== actor.id && (paper as any).status !== ExamPaperStatus.PUBLISHED) {
+    if (actor.role !== 'ADMIN' && paper.createdById !== actor.id) {
       throw new ForbiddenException('Bạn chỉ được quản lý đề thi do mình tạo.');
     }
   }
@@ -356,7 +356,7 @@ export class ExamPapersService {
       deletedAt: null,
       examSchedule: { deletedAt: null },
       ...(examScheduleId && { examScheduleId }),
-      ...(actor.role === 'TEACHER' && { OR: [{ createdById: actor.id }, { status: ExamPaperStatus.PUBLISHED }] }),
+      ...(actor.role === 'TEACHER' && { createdById: actor.id }),
     };
     const papers = await this.prisma.examPaper.findMany({
       where,
@@ -379,10 +379,18 @@ export class ExamPapersService {
       orderBy: { createdAt: 'desc' },
     });
 
-    return papers.map((paper: any) => ({
-      ...paper,
-      hasExamPassword: Boolean(paper.examSchedule?.onlineExamConfig?.examPasswordHash),
-    }));
+    return papers.map((paper: any) => {
+      const config = paper.examSchedule?.onlineExamConfig;
+      const { examPasswordHash: _secretHash, ...safeConfig } = config || {};
+      return {
+        ...paper,
+        examSchedule: {
+          ...paper.examSchedule,
+          onlineExamConfig: config ? safeConfig : null,
+        },
+        hasExamPassword: Boolean(config?.examPasswordHash),
+      };
+    });
   }
 
   async findOne(actor: Actor, id: number) {

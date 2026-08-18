@@ -18,10 +18,19 @@ function rateLimit(req: express.Request, res: express.Response, next: express.Ne
 
   const now = Date.now();
   const ip = String(req.ip || req.headers['x-forwarded-for'] || 'unknown').split(',')[0].trim();
-  const isAuthSensitive = /^\/auth\/(login|google)/.test(req.path) || req.path === '/contact/send';
-  const windowMs = isAuthSensitive ? 15 * 60 * 1000 : 60 * 1000;
-  const max = isAuthSensitive ? 100 : 600;
-  const key = `${isAuthSensitive ? 'sensitive' : 'api'}:${ip}`;
+  const isCredentialAction = /^\/auth\/(login|forgot-password|verify-otp|reset-password)$/.test(req.path);
+  const isSessionAction = /^\/auth\/(google|refresh)/.test(req.path);
+  const isContactAction = req.path === '/contact/send';
+  const isSensitive = isCredentialAction || isSessionAction || isContactAction;
+  const windowMs = isSensitive ? 15 * 60 * 1000 : 60 * 1000;
+  const max = isCredentialAction ? 10 : isContactAction ? 20 : isSessionAction ? 120 : 600;
+  const identity = String(
+    req.body?.username
+      || req.body?.identifier
+      || req.body?.resetSessionId
+      || 'anonymous',
+  ).trim().toLowerCase().slice(0, 160);
+  const key = `${isCredentialAction ? `credential:${identity}` : isContactAction ? 'contact' : isSessionAction ? 'session' : 'api'}:${ip}`;
   const current = rateBuckets.get(key);
   const bucket = !current || current.resetAt <= now
     ? { count: 0, resetAt: now + windowMs }

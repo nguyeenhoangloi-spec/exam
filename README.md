@@ -67,6 +67,8 @@ exam-management/
 
 Hệ thống đã có file seed mẫu tạo sẵn các tài khoản:
 
+> Chỉ dùng các tài khoản và mật khẩu dưới đây trong môi trường phát triển. Không chạy seed demo hoặc giữ mật khẩu mặc định ở production. Quy tắc bảo vệ dữ liệu thi được mô tả tại [docs/SECURITY-EXAM-DATA.md](docs/SECURITY-EXAM-DATA.md).
+
 | Vai trò (Role) | Username | Password | Chức năng chính |
 | :--- | :--- | :--- | :--- |
 | **Quản trị viên (ADMIN)** | `admin` | `admin123` | Quản lý danh mục, xếp phòng thi tự động, phân công giám thị, duyệt câu hỏi, rút đề thi. |

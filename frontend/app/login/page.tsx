@@ -513,39 +513,56 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* ── HERO PRIMARY ACTION: Google OAuth Login Button (48px Height) ── */}
+            {/* ── HERO PRIMARY ACTION: Google OAuth Login Button (Tactile Elevated 3D) ── */}
             <button
               type="button"
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-slate-300/90 bg-white px-5 text-[15px] font-semibold text-slate-800 shadow-2xs transition-all duration-200 hover:border-blue-500 hover:bg-blue-50/50 hover:text-blue-700 hover:shadow-xs active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 cursor-pointer"
+              className={`group relative flex h-[50px] w-full items-center justify-center gap-3 rounded-2xl px-5 text-[15px] font-semibold transition-all duration-200 cursor-pointer overflow-hidden ${
+                isDark
+                  ? 'border border-slate-700/80 bg-gradient-to-b from-slate-800 to-slate-850 text-slate-100 shadow-[0_4px_16px_rgba(0,0,0,0.45),0_1px_2px_rgba(0,0,0,0.3)] hover:border-blue-500/70 hover:from-slate-750 hover:to-slate-800 hover:shadow-[0_12px_28px_-4px_rgba(66,133,244,0.3)]'
+                  : 'border border-slate-200/90 bg-gradient-to-b from-white via-white to-slate-50/90 text-slate-800 shadow-[0_4px_14px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.03)] hover:border-blue-300 hover:from-blue-50/30 hover:via-white hover:to-white hover:text-blue-700 hover:shadow-[0_14px_30px_-4px_rgba(66,133,244,0.22),0_4px_10px_-2px_rgba(0,0,0,0.04)]'
+              } hover:-translate-y-0.5 active:translate-y-0.5 active:scale-[0.985] active:shadow-xs focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/25 disabled:cursor-not-allowed disabled:opacity-60 disabled:transform-none disabled:shadow-none`}
             >
-              <svg
-                className="w-5.5 h-5.5 shrink-0"
-                width="22"
-                height="22"
-                style={{ width: '22px', height: '22px', minWidth: '22px', minHeight: '22px' }}
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  fill="var(--ui-brand-google-blue)"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="var(--ui-brand-google-green)"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="var(--ui-brand-google-yellow)"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                />
-                <path
-                  fill="var(--ui-brand-google-red)"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.49 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                />
-              </svg>
-              <span>{loading ? 'Đang kết nối...' : 'Đăng nhập với Google'}</span>
+              {/* Subtle Ambient Light Sheen on Hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+              {/* Icon Container with Smooth Micro-Animation */}
+              <div className="flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-110">
+                {loading ? (
+                  <div className="h-5 w-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <svg
+                    className="w-5.5 h-5.5 shrink-0"
+                    width="22"
+                    height="22"
+                    style={{ width: '22px', height: '22px', minWidth: '22px', minHeight: '22px' }}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="var(--ui-brand-google-blue)"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    />
+                    <path
+                      fill="var(--ui-brand-google-green)"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    />
+                    <path
+                      fill="var(--ui-brand-google-yellow)"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                    />
+                    <path
+                      fill="var(--ui-brand-google-red)"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.49 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                    />
+                  </svg>
+                )}
+              </div>
+
+              <span className="tracking-tight text-[15px]">
+                {loading ? 'Đang kết nối tài khoản Google...' : 'Đăng nhập với Google'}
+              </span>
             </button>
 
             {/* Subtle Divider */}
@@ -661,7 +678,7 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={loading || !username || !password}
-                      className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-[15px] shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-2"
+                      className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 via-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:-translate-y-0.5 active:translate-y-0.5 active:scale-[0.985] active:shadow-xs text-white font-semibold text-[15px] shadow-md shadow-blue-600/25 hover:shadow-lg hover:shadow-blue-600/35 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 disabled:transform-none disabled:shadow-none cursor-pointer mt-2"
                     >
                       {loading ? (
                         <div className="flex items-center gap-2">

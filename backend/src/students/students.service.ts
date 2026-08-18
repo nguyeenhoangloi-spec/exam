@@ -284,11 +284,10 @@ export class StudentsService {
         attempt: attempt
           ? {
               id: attempt.id,
-              totalScore: attempt.totalScore,
               gradingStatus: attempt.gradingStatus,
               status: attempt.status,
               publishedAt: attempt.publishedAt,
-              penaltyReason: attempt.penaltyReason,
+              hasPublishedResult: Boolean(attempt.publishedAt),
             }
           : null,
       };
@@ -633,12 +632,19 @@ export class StudentsService {
     if (!attempt || attempt.studentId !== student.id) {
       throw new BadRequestException('Lượt thi không hợp lệ hoặc không thuộc quyền sở hữu.');
     }
+    if (!attempt.publishedAt || attempt.totalScore === null || attempt.totalScore === undefined) {
+      throw new BadRequestException('Chỉ được gửi phúc khảo sau khi kết quả đã được công bố.');
+    }
+    const cleanReason = String(reason || '').trim();
+    if (cleanReason.length < 10 || cleanReason.length > 2000) {
+      throw new BadRequestException('Lý do phúc khảo phải có từ 10 đến 2000 ký tự.');
+    }
     await this.prisma.examAttempt.update({
       where: { id: attemptId },
       data: {
         penaltyReason: attempt.penaltyReason
-          ? `${attempt.penaltyReason} [Phúc khảo: ${reason}]`
-          : `[Phúc khảo: ${reason}]`,
+          ? `${attempt.penaltyReason} [Phúc khảo: ${cleanReason}]`
+          : `[Phúc khảo: ${cleanReason}]`,
       },
     });
     return { message: 'Đã gửi yêu cầu phúc khảo thành công!' };

@@ -25,6 +25,24 @@ export class QuestionsService {
     private readonly audit: AuditService,
   ) {}
   private access(a: Actor) { if (!['ADMIN', 'TEACHER'].includes(a.role)) throw new ForbiddenException('Không có quyền truy cập.'); }
+  private async teacherDepartmentId(a: Actor) {
+    if (a.role !== 'TEACHER') return null;
+    const teacher = await this.prisma.teacher.findUnique({
+      where: { userId: a.id },
+      select: { departmentId: true },
+    });
+    if (!teacher) throw new ForbiddenException('Tài khoản giảng viên chưa được liên kết với khoa.');
+    return teacher.departmentId;
+  }
+  private async assertSubjectAccess(a: Actor, subjectId: number) {
+    const departmentId = await this.teacherDepartmentId(a);
+    if (departmentId === null) return;
+    const subject = await this.prisma.subject.findFirst({
+      where: { id: subjectId, departmentId },
+      select: { id: true },
+    });
+    if (!subject) throw new ForbiddenException('Bạn chỉ được truy cập ngân hàng câu hỏi thuộc khoa của mình.');
+  }
   private json(v: unknown) { return JSON.parse(JSON.stringify(v)) as Prisma.InputJsonValue; }
   private rich(v: unknown) {
     if (!v || typeof v !== 'object') return undefined;
@@ -120,6 +138,7 @@ export class QuestionsService {
   async saveAi(a: Actor, d: SaveAiQuestionsDto) {
     this.access(a);
     for (const question of d.questions) {
+      await this.assertSubjectAccess(a, question.subjectId);
       await this.chapter(question.subjectId, question.chapterId);
       validateQuestionOptions(question.type, question.options);
       validateFillBlankAnswers(question.type, question.content, question.score, question.fillBlankAnswers);
@@ -160,8 +179,10 @@ export class QuestionsService {
 
   async findAll(a: Actor, q: QuestionQueryDto) {
     this.access(a); const page = q.page || 1, limit = q.limit || 20;
+    const departmentId = await this.teacherDepartmentId(a);
     const where: Prisma.QuestionWhereInput = {
       deletedAt: null, ...(q.subjectId && { subjectId: q.subjectId }), ...(q.chapterId && { chapterId: q.chapterId }),
+      ...(departmentId !== null && { subject: { departmentId } }),
       ...(q.type && { type: q.type }), ...(q.difficulty && { difficulty: q.difficulty }), ...(q.bloomLevel && { bloomLevel: q.bloomLevel }),
       ...(q.status && { status: q.status }),
       ...(q.search && { OR: [{ content: { contains: q.search, mode: 'insensitive' as const } }, { code: { contains: q.search, mode: 'insensitive' as const } }] }),
@@ -171,12 +192,25 @@ export class QuestionsService {
       this.prisma.question.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy: { [q.sortBy || 'createdAt']: q.sortOrder || 'desc' }, include: { subject: true, chapter: true, media: { orderBy: { sortOrder: 'asc' } }, options: { orderBy: { order: 'asc' }, include: { media: { orderBy: { sortOrder: 'asc' } } } }, fillBlankAnswers: { orderBy: { blankIndex: 'asc' } }, createdBy: { select: { id: true, username: true, teacher: { select: { fullName: true } } } }, statistic: true, _count: { select: { options: true, examPaperQuestions: true } } } }),
       this.prisma.question.count({ where }),
     ]);
-    return { data, total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) };
+    const safeData = a.role === 'TEACHER'
+      ? data.map((question: any) => ({
+        ...question,
+        options: (question.options || []).map(({ isCorrect: _isCorrect, ...option }: any) => option),
+        fillBlankAnswers: (question.fillBlankAnswers || []).map((answer: any) => ({
+          blankIndex: answer.blankIndex,
+          score: answer.score,
+        })),
+        explanation: undefined,
+      }))
+      : data;
+    return { data: safeData, total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) };
   }
   async statistics(a: Actor, q?: QuestionQueryDto) {
     this.access(a);
+    const departmentId = await this.teacherDepartmentId(a);
     const where: Prisma.QuestionWhereInput = {
       deletedAt: null,
+      ...(departmentId !== null && { subject: { departmentId } }),
       ...(q?.subjectId ? { subjectId: Number(q.subjectId) } : {}),
       ...(q?.chapterId ? { chapterId: String(q.chapterId) } : {}),
       ...(q?.type ? { type: q.type } : {}),
@@ -200,15 +234,15 @@ export class QuestionsService {
     return out;
   }
   async filterOptions(a: Actor) {
-    this.access(a); return { subjects: await this.prisma.subject.findMany({ include: { chapters: { orderBy: { order: 'asc' } } }, orderBy: { subjectName: 'asc' } }), types: Object.values(QuestionType), difficulties: Object.values(QuestionDifficulty), bloomLevels: Object.values(BloomLevel), statuses: Object.values(QuestionStatus) };
+    this.access(a); const departmentId = await this.teacherDepartmentId(a); return { subjects: await this.prisma.subject.findMany({ where: departmentId === null ? {} : { departmentId }, include: { chapters: { orderBy: { order: 'asc' } } }, orderBy: { subjectName: 'asc' } }), types: Object.values(QuestionType), difficulties: Object.values(QuestionDifficulty), bloomLevels: Object.values(BloomLevel), statuses: Object.values(QuestionStatus) };
   }
   async findOne(a: Actor, id: string) {
-    this.access(a); const q = await this.prisma.question.findFirst({ where: { id, deletedAt: null }, include });
+    this.access(a); const departmentId = await this.teacherDepartmentId(a); const q = await this.prisma.question.findFirst({ where: { id, deletedAt: null, ...(departmentId !== null && { subject: { departmentId } }) }, include });
     if (!q) throw new NotFoundException('Không tìm thấy câu hỏi.');
     return { ...q, statistic: q.statistic ? { ...q.statistic, correctRate: q.statistic.totalAnswers ? q.statistic.correctAnswers / q.statistic.totalAnswers : null } : null };
   }
   async create(a: Actor, d: CreateQuestionDto) {
-    this.access(a); await this.chapter(d.subjectId, d.chapterId);
+    this.access(a); await this.assertSubjectAccess(a, d.subjectId); await this.chapter(d.subjectId, d.chapterId);
     if (d.type === 'FILL_BLANK') {
       const formatted = autoFormatFillBlankData(d.type, d.content, d.score, d.fillBlankAnswers);
       d.content = formatted.content;
@@ -222,7 +256,7 @@ export class QuestionsService {
     if (await this.prisma.examPaperQuestion.count({ where: { questionId: id } })) {
       throw new BadRequestException('Không thể sửa câu hỏi đã được đưa vào đề thi. Hãy nhân bản câu hỏi để chỉnh sửa.');
     }
-    const subjectId = d.subjectId ?? old.subjectId, chapterId = d.chapterId === null ? null : (d.chapterId ?? old.chapterId); await this.chapter(subjectId, chapterId);
+    const subjectId = d.subjectId ?? old.subjectId, chapterId = d.chapterId === null ? null : (d.chapterId ?? old.chapterId); await this.assertSubjectAccess(a, subjectId); await this.chapter(subjectId, chapterId);
     let nextType = d.type ?? old.type, nextContent = d.content ?? old.content, nextScore = d.score ?? old.score;
     let nextFillBlank = d.fillBlankAnswers ?? old.fillBlankAnswers;
     if (nextType === 'FILL_BLANK') {
@@ -259,7 +293,7 @@ export class QuestionsService {
     });
   }
   async duplicate(a: Actor, id: string) {
-    const old = await this.current(id); return this.prisma.$transaction(async tx => {
+    const old = await this.current(id); await this.assertSubjectAccess(a, old.subjectId); return this.prisma.$transaction(async tx => {
       const q = await tx.question.create({ data: { code: await this.code(tx), subject: { connect: { id: old.subjectId } }, ...(old.chapterId ? { chapter: { connect: { id: old.chapterId } } } : {}), content: `${old.content} (Bản sao)`, normalizedContent: `${old.normalizedContent} ban sao ${Date.now()}`, type: old.type, difficulty: old.difficulty, bloomLevel: old.bloomLevel, score: old.score, explanation: old.explanation, keywords: old.keywords, createdBy: { connect: { id: a.id } }, options: { create: old.options.map(o => ({ label: o.label, content: o.content, isCorrect: o.isCorrect, order: o.order })) }, statistic: { create: {} } }, include });
       await tx.questionHistory.create({ data: { questionId: q.id, action: QuestionHistoryAction.DUPLICATE, note: `Từ ${old.code}`, changedById: a.id } });
       await this.audit.write({ actorId: a.id, action: 'DUPLICATE', entityType: 'QUESTION', entityId: q.id, description: `Đã nhân bản câu hỏi ${old.code} thành ${q.code}`, metadata: { sourceQuestionCode: old.code, questionCode: q.code } }, tx);
@@ -268,6 +302,7 @@ export class QuestionsService {
   }
   private async transition(a: Actor, id: string, action: QuestionHistoryAction, from: QuestionStatus[], to: QuestionStatus, note?: string) {
     const old = await this.current(id);
+    await this.assertSubjectAccess(a, old.subjectId);
     if (!from.includes(old.status)) {
       const labels: Record<string, string> = { DRAFT: 'bản nháp', PENDING: 'chờ duyệt', APPROVED: 'đã duyệt', REJECTED: 'bị từ chối', ARCHIVED: 'lưu trữ' };
       throw new BadRequestException(`Không thể chuyển từ ${labels[old.status] || old.status} sang ${labels[to] || to}.`);
@@ -410,6 +445,7 @@ export class QuestionsService {
       if (!subject && meta.subjectId) {
         subject = await this.prisma.subject.findUnique({ where: { id: Number(meta.subjectId) } });
       }
+      if (subject) await this.assertSubjectAccess(a, subject.id);
       let chapter = v.chapterId ? await this.prisma.chapter.findUnique({ where: { id: String(v.chapterId) } }) : (subject && v.chapterCode ? await this.prisma.chapter.findFirst({ where: { subjectId: subject.id, code: v.chapterCode } }) : null);
       if (!chapter && meta.chapterId && subject && String(subject.id) === String(meta.subjectId)) {
         chapter = await this.prisma.chapter.findUnique({ where: { id: String(meta.chapterId) } });

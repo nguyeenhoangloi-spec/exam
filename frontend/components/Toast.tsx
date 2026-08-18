@@ -10,6 +10,11 @@ interface ToastProps {
 
 export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
   const [mounted, setMounted] = useState(false);
+  const onCloseRef = React.useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     setMounted(true);
@@ -17,10 +22,10 @@ export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      onClose();
+      onCloseRef.current();
     }, 4000);
     return () => clearTimeout(timer);
-  }, [onClose]);
+  }, [message, type]);
 
   if (!mounted) return null;
 

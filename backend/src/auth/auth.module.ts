@@ -5,9 +5,12 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 
+import { ContactModule } from '../contact/contact.module';
+
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
+    ContactModule,
     JwtModule.registerAsync({
       useFactory: () => {
         if (!process.env.JWT_SECRET) {

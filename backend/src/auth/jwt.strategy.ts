@@ -16,15 +16,29 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: { sub: number; username: string; role: string }) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: payload.sub },
+  async validate(payload: { sub: number; username: string; role: string; sid?: string }) {
+    if (!payload.sid) {
+      throw new UnauthorizedException('Phiên đăng nhập không hợp lệ.');
+    }
+
+    const session = await this.prisma.authSession.findFirst({
+      where: {
+        id: payload.sid,
+        userId: payload.sub,
+        revokedAt: null,
+        expiresAt: { gt: new Date() },
+      },
       include: {
-        student: true,
-        teacher: true,
+        user: {
+          include: {
+            student: true,
+            teacher: true,
+          },
+        },
       },
     });
 
+    const user = session?.user;
     if (!user || user.status !== 'ACTIVE') {
       throw new UnauthorizedException('Tài khoản không tồn tại hoặc đã bị khóa.');
     }

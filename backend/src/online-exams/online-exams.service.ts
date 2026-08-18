@@ -17,6 +17,7 @@ import { OnlineExamCore } from './online-exam.core';
 import { OnlineExamGradingCore } from './online-exam-grading.core';
 import { OnlineExamProctoringCore } from './online-exam-proctoring.core';
 import { OnlineExamAnswerCore } from './online-exam-answer.core';
+import { OnlineExamVisibilityCore } from './online-exam-visibility.core';
 
 @Injectable()
 export class OnlineExamsService {
@@ -25,6 +26,7 @@ export class OnlineExamsService {
   private readonly gradingCore = new OnlineExamGradingCore();
   private readonly proctoringCore = new OnlineExamProctoringCore();
   private readonly answerCore = new OnlineExamAnswerCore();
+  private readonly visibilityCore = new OnlineExamVisibilityCore();
 
   constructor(
     private readonly prisma: PrismaService,
@@ -49,6 +51,19 @@ export class OnlineExamsService {
     if (!assignment) {
       throw new ForbiddenException('Bạn không được phân công giám thị lịch thi này.');
     }
+  }
+
+  private safeExistingAttempt(attempt: any) {
+    if (!attempt) return null;
+    const isActive = ['IN_PROGRESS', 'DISCONNECTED', 'DEVICE_CHECK', 'READY'].includes(attempt.status);
+    return {
+      id: attempt.id,
+      status: attempt.status,
+      startTime: attempt.startTime,
+      expectedEndTime: attempt.expectedEndTime,
+      submittedAt: attempt.submittedAt,
+      ...(isActive && attempt.attemptToken ? { attemptToken: attempt.attemptToken } : {}),
+    };
   }
 
   /**
@@ -95,6 +110,15 @@ export class OnlineExamsService {
         ...(dto.showVideos !== undefined ? { showVideos: Boolean(dto.showVideos) } : {}),
         ...(dto.showAudios !== undefined ? { showAudios: Boolean(dto.showAudios) } : {}),
       },
+      select: {
+        id: true,
+        examScheduleId: true,
+        examPaperId: true,
+        showImages: true,
+        showVideos: true,
+        showAudios: true,
+        updatedAt: true,
+      },
     });
 
     await this.audit.write({
@@ -128,7 +152,7 @@ export class OnlineExamsService {
         isEligible: false,
         errorCode: result.errorCode,
         reason: result.reason,
-        existingAttempt: result.data?.existingAttempt,
+        existingAttempt: this.safeExistingAttempt(result.data?.existingAttempt),
         examInfo: result.data?.schedule
           ? {
             subjectName: result.data.schedule.subject?.subjectName,
@@ -177,7 +201,7 @@ export class OnlineExamsService {
         serverTime: d.serverTime,
         remainingEntrySeconds: d.remainingEntrySeconds,
       },
-      existingAttempt: d.existingAttempt,
+      existingAttempt: this.safeExistingAttempt(d.existingAttempt),
       student: {
         id: d.student?.id,
         studentCode: (d.student as any)?.studentCode,
@@ -405,6 +429,10 @@ export class OnlineExamsService {
       throw new ForbiddenException('Phiên thi không hợp lệ hoặc không thuộc về sinh viên này');
     }
 
+    if (!['IN_PROGRESS', 'DISCONNECTED', 'DEVICE_CHECK', 'READY'].includes(attempt.status)) {
+      throw new ForbiddenException('Bài thi đã kết thúc. Không thể tải lại nội dung câu hỏi.');
+    }
+
     const now = new Date();
     const isExpired = attempt.expectedEndTime && now.getTime() > attempt.expectedEndTime.getTime() + 10000;
 
@@ -456,7 +484,6 @@ export class OnlineExamsService {
         version: ans.version,
         textAnswerRich: ans.textAnswerRich,
         fillBlankAnswers: ans.fillBlankAnswers,
-        fillBlankScore: ans.fillBlankScore,
         lastSavedAt: ans.serverTimestamp,
         files: ans.submissionFiles,
       })),
@@ -715,7 +742,7 @@ export class OnlineExamsService {
         student: true,
         snapshot: true,
         attemptAnswers: true,
-        onlineExamConfig: true,
+        onlineExamConfig: { include: { examSchedule: true } },
       },
     });
 
@@ -724,13 +751,14 @@ export class OnlineExamsService {
     }
 
     if (['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'INVALIDATED'].includes(attempt.status)) {
-      const essayPending = attempt.gradingStatus === 'SUBMITTED' || attempt.gradingStatus === 'UNDER_GRADING' || attempt.gradingStatus === 'WAITING_APPROVAL';
+      const scheduleEnded = this.visibilityCore.isScheduleEnded(attempt.onlineExamConfig?.examSchedule);
+      const visibility = this.visibilityCore.evaluate(attempt, attempt.onlineExamConfig, scheduleEnded);
       return {
         message: 'Bài thi đã được nộp từ trước',
         status: attempt.status,
-        totalScore: attempt.totalScore ?? 0,
+        totalScore: visibility.canShowScore ? (attempt.totalScore ?? 0) : null,
         maxScore: attempt.maxScore ?? 10,
-        showResultImmediately: !essayPending || attempt.gradingStatus === 'PUBLISHED',
+        showResultImmediately: visibility.canShowScore,
       };
     }
 
@@ -768,14 +796,17 @@ export class OnlineExamsService {
       }
     }
 
+    const scheduleEnded = this.visibilityCore.isScheduleEnded(attempt.onlineExamConfig?.examSchedule);
+    const visibility = this.visibilityCore.evaluate(updated, attempt.onlineExamConfig, scheduleEnded);
+
     return {
       success: true,
       message: isAutoSubmit ? 'Bài thi đã tự động nộp do hết giờ' : 'Nộp bài thi thành công',
       status: updated.status,
       submittedAt: updated.submittedAt,
-      totalScore: hasEssay ? null : calculatedScore,
+      totalScore: visibility.canShowScore ? calculatedScore : null,
       maxScore: attempt.maxScore ?? 10,
-      showResultImmediately: !hasEssay,
+      showResultImmediately: visibility.canShowScore,
     };
   }
 
@@ -811,29 +842,12 @@ export class OnlineExamsService {
     let examEndTimeStr = '';
 
     if (schedule) {
-      const [hours, minutes] = (schedule.endTime || '23:59').split(':').map(Number);
-      const dt = new Date(schedule.examDate);
-      dt.setHours(hours, minutes, 0, 0);
-      isExamEnded = now >= dt;
+      isExamEnded = this.visibilityCore.isScheduleEnded(schedule, now);
       examEndTimeStr = `${schedule.endTime} ngày ${new Date(schedule.examDate).toLocaleDateString('vi-VN')}`;
-    } else {
-      isExamEnded = true;
     }
 
-    const hasEssay = attempt.gradingStatus !== 'NOT_SUBMITTED';
-    const canShowScore = hasEssay
-      ? attempt.gradingStatus === 'PUBLISHED'
-      : Boolean(config?.showResultImmediately) || isExamEnded || attempt.status === 'GRADED';
-
-    // Student score visibility and answer-review visibility are separate policies.
-    // A score may be visible while the answer key is still withheld.
-    const canStudentReview = Boolean(config?.allowReview)
-      && canShowScore
-      && (
-        Boolean(config?.showResultImmediately)
-        || Boolean(attempt.publishedAt)
-        || attempt.gradingStatus === 'PUBLISHED'
-      );
+    const visibility = this.visibilityCore.evaluate(attempt, config, isExamEnded);
+    const { hasEssay, canShowScore, canReviewAnswers: canStudentReview } = visibility;
 
     return {
       attemptId: attempt.id,
@@ -904,12 +918,7 @@ export class OnlineExamsService {
         select: { id: true },
       });
 
-      const hasAppeal = await this.prisma.gradeAppeal?.findFirst?.({
-        where: { attemptId: attempt.id },
-        select: { id: true },
-      });
-
-      if (!isSupervisor && !hasAppeal) {
+      if (!isSupervisor) {
         throw new ForbiddenException('Bạn không được phân công giám thị lịch thi này.');
       }
     }
@@ -917,22 +926,12 @@ export class OnlineExamsService {
     // Never expose the answer key to students before the review is explicitly
     // released. This is enforced server-side; hiding a UI button is not enough.
     const config = attempt.onlineExamConfig;
-    const hasEssay = attempt.gradingStatus !== 'NOT_SUBMITTED';
-    const isExamEnded = hasEssay
-      ? attempt.gradingStatus === 'PUBLISHED'
-      : Boolean(attempt.submittedAt)
-        && (
-          Boolean(config?.showResultImmediately)
-          || attempt.status === 'GRADED'
-          || Boolean(attempt.publishedAt)
-        );
-    const canStudentReview = Boolean(config?.allowReview)
-      && isExamEnded
-      && (
-        Boolean(config?.showResultImmediately)
-        || Boolean(attempt.publishedAt)
-        || attempt.gradingStatus === 'PUBLISHED'
-      );
+    const scheduleEnded = this.visibilityCore.isScheduleEnded(config?.examSchedule);
+    const { canReviewAnswers: canStudentReview } = this.visibilityCore.evaluate(
+      attempt,
+      config,
+      scheduleEnded,
+    );
 
     if (!isAdminOrTeacher && !canStudentReview) {
       throw new ForbiddenException('Phần đáp án và review chưa được công bố cho sinh viên');

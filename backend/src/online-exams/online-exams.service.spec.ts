@@ -118,6 +118,82 @@ describe('OnlineExamsService review visibility', () => {
     ]);
     expect(JSON.stringify(result)).not.toContain('isCorrect');
   });
+
+  it('does not expose server-side fill-blank grading metadata while taking the exam', async () => {
+    const service = createService({
+      id: 'attempt-1',
+      student: { userId: studentUser.id },
+      snapshot: { snapshotData: [] },
+      attemptAnswers: [{
+        questionId: 'question-1',
+        fillBlankAnswers: [{ blankIndex: 1, value: 'test' }],
+        fillBlankScore: 1,
+        selectedOptionIds: null,
+        textAnswer: null,
+        isFlaggedForReview: false,
+        version: 1,
+        textAnswerRich: null,
+        serverTimestamp: new Date(),
+        submissionFiles: [],
+      }],
+      onlineExamConfig: {
+        showImages: true,
+        showVideos: true,
+        showAudios: true,
+        requireFullscreen: false,
+        preventTabSwitch: false,
+        preventCopyPaste: false,
+        essayEnabled: false,
+        allowEssayFileUpload: false,
+        maxEssayFileSizeMb: 5,
+      },
+      status: 'IN_PROGRESS',
+      expectedEndTime: new Date(Date.now() + 15 * 60 * 1000),
+    });
+
+    const result = await service.getAttemptQuestions(studentUser.id, 'attempt-1');
+    expect(result.savedAnswers[0]).not.toHaveProperty('fillBlankScore');
+  });
+
+  it('blocks re-downloading question content after submission', async () => {
+    const service = createService({
+      id: 'attempt-1',
+      student: { userId: studentUser.id },
+      snapshot: { snapshotData: [] },
+      attemptAnswers: [],
+      onlineExamConfig: {},
+      status: 'SUBMITTED',
+    });
+
+    await expect(service.getAttemptQuestions(studentUser.id, 'attempt-1'))
+      .rejects
+      .toBeInstanceOf(ForbiddenException);
+  });
+
+  it('does not return an official score from a repeated submit while the exam is open', async () => {
+    const service = createService({
+      id: 'attempt-1',
+      student: { userId: studentUser.id },
+      status: 'SUBMITTED',
+      mode: 'OFFICIAL',
+      gradingStatus: 'NOT_SUBMITTED',
+      totalScore: 8,
+      maxScore: 10,
+      onlineExamConfig: {
+        mode: 'OFFICIAL',
+        showResultImmediately: true,
+        examSchedule: {
+          examDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          endTime: '23:59',
+        },
+      },
+    });
+
+    await expect(service.submitAttempt(studentUser.id, 'attempt-1')).resolves.toMatchObject({
+      totalScore: null,
+      showResultImmediately: false,
+    });
+  });
 });
 
 describe('OnlineExamsService report permissions', () => {

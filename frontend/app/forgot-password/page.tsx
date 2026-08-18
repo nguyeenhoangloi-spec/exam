@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { Toast } from '../../components/Toast';
 import { Button } from '../../components/ui/Button';
+import api from '../../lib/api';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,10 +40,20 @@ export default function ForgotPasswordPage() {
 
   // Form Fields
   const [identifier, setIdentifier] = useState('');
-  const [otpCode, setOtpCode] = useState('');
+  const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  // Backend reset session
+  const [resetSessionId, setResetSessionId] = useState('');
+  const [resetToken, setResetToken] = useState('');
+  const [emailMasked, setEmailMasked] = useState('');
+  const [resendCountdown, setResendCountdown] = useState(0);
+
+  // 6-box input refs & animations
+  const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [isOtpShaking, setIsOtpShaking] = useState(false);
 
   // UI state
   const [loading, setLoading] = useState(false);
@@ -57,6 +68,24 @@ export default function ForgotPasswordPage() {
     }
   }, []);
 
+  useEffect(() => {
+    if (resendCountdown <= 0) return;
+    const timer = setInterval(() => {
+      setResendCountdown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendCountdown]);
+
+  // Focus the first empty OTP input when moving to Step 2
+  useEffect(() => {
+    if (step === 2) {
+      const timer = setTimeout(() => {
+        otpInputRefs.current[0]?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [step]);
+
   const toggleDark = useCallback(() => {
     setIsDark((prev) => {
       const next = !prev;
@@ -67,44 +96,189 @@ export default function ForgotPasswordPage() {
   }, []);
 
   // Step 1: Request OTP
-  const handleRequestOtp = (e: React.FormEvent) => {
+  const handleRequestOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!identifier.trim()) {
+    const raw = identifier.trim();
+    if (!raw) {
       setError('Vui lòng nhập Mã số sinh viên/giảng viên hoặc Email đã đăng ký.');
       return;
     }
 
     setLoading(true);
     setError('');
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const res = await api.post('/auth/forgot-password', { identifier: raw });
+      const { message, emailMasked: masked, resetSessionId: sid } = res.data || {};
+      setResetSessionId(sid || '');
+      setEmailMasked(masked || '');
+      setResendCountdown(60);
       setToast({
-        message: 'Mã xác thực OTP (6 chữ số) đã được gửi đến email đăng ký của bạn!',
+        message: message || `Mã xác thực OTP (6 chữ số) đã được gửi đến email ${masked || 'của bạn'}!`,
         type: 'success',
       });
+      setOtpDigits(['', '', '', '', '', '']);
       setStep(2);
-    }, 800);
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || 'Không tìm thấy tài khoản hoặc gửi mã thất bại.';
+      setError(msg);
+      setToast({ message: msg, type: 'error' });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Step 2: Verify OTP
-  const handleVerifyOtp = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (otpCode.trim().length < 6) {
+  // Submit OTP Verification (Manual or Auto-Submit)
+  const submitOtpCode = useCallback(async (codeToVerify: string) => {
+    const rawCode = codeToVerify.trim();
+    if (rawCode.length < 6) {
       setError('Mã OTP xác thực phải gồm đúng 6 chữ số.');
       return;
     }
 
     setLoading(true);
     setError('');
-    setTimeout(() => {
-      setLoading(false);
-      setToast({ message: 'Xác thực mã OTP thành công! Vui lòng đặt mật khẩu mới.', type: 'success' });
+    try {
+      const res = await api.post('/auth/verify-otp', {
+        identifier: identifier.trim(),
+        otp: rawCode,
+        resetSessionId,
+      });
+      const { resetToken: token, message } = res.data || {};
+      if (!token) throw new Error('Không nhận được token đặt lại mật khẩu.');
+      setResetToken(token);
+      setToast({ message: message || 'Xác thực mã OTP thành công! Vui lòng đặt mật khẩu mới.', type: 'success' });
       setStep(3);
-    }, 800);
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || 'Mã OTP không chính xác hoặc đã hết hạn.';
+      setError(msg);
+      setToast({ message: msg, type: 'error' });
+      // Trigger error shake animation
+      setIsOtpShaking(true);
+      setTimeout(() => setIsOtpShaking(false), 650);
+    } finally {
+      setLoading(false);
+    }
+  }, [identifier, resetSessionId]);
+
+  // Step 2: Verify OTP via Form Submit button
+  const handleVerifyOtp = (e: React.FormEvent) => {
+    e.preventDefault();
+    void submitOtpCode(otpDigits.join(''));
+  };
+
+  // Handle individual digit typing & auto-advance
+  const handleDigitChange = (index: number, value: string) => {
+    // If multiple characters pasted directly into input
+    const cleanDigits = value.replace(/\D/g, '');
+    if (!cleanDigits) {
+      const updated = [...otpDigits];
+      updated[index] = '';
+      setOtpDigits(updated);
+      return;
+    }
+
+    if (cleanDigits.length > 1) {
+      // Pasted or autofilled multiple digits
+      const nextDigits = [...otpDigits];
+      const chars = cleanDigits.slice(0, 6).split('');
+      chars.forEach((c, idx) => {
+        if (index + idx < 6) nextDigits[index + idx] = c;
+      });
+      setOtpDigits(nextDigits);
+      if (error) setError('');
+
+      const filledCount = nextDigits.filter(Boolean).length;
+      if (filledCount === 6) {
+        void submitOtpCode(nextDigits.join(''));
+      } else {
+        const nextFocus = Math.min(index + chars.length, 5);
+        otpInputRefs.current[nextFocus]?.focus();
+      }
+      return;
+    }
+
+    // Single digit entry
+    const updated = [...otpDigits];
+    updated[index] = cleanDigits;
+    setOtpDigits(updated);
+    if (error) setError('');
+
+    // Auto-advance to next input
+    if (index < 5) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+
+    // Auto-submit if all 6 digits are now filled
+    const fullCode = updated.join('');
+    if (fullCode.length === 6 && updated.every((d) => d.length === 1)) {
+      void submitOtpCode(fullCode);
+    }
+  };
+
+  // Handle keyboard navigation (Backspace, Left/Right arrows)
+  const handleDigitKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace') {
+      if (!otpDigits[index] && index > 0) {
+        // If current is empty, focus previous and clear it
+        const updated = [...otpDigits];
+        updated[index - 1] = '';
+        setOtpDigits(updated);
+        otpInputRefs.current[index - 1]?.focus();
+      } else {
+        // Clear current digit
+        const updated = [...otpDigits];
+        updated[index] = '';
+        setOtpDigits(updated);
+      }
+    } else if (e.key === 'ArrowLeft' && index > 0) {
+      e.preventDefault();
+      otpInputRefs.current[index - 1]?.focus();
+    } else if (e.key === 'ArrowRight' && index < 5) {
+      e.preventDefault();
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  // Handle native paste event on any OTP box
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (pasteData) {
+      const nextDigits = pasteData.split('').concat(Array(6).fill('')).slice(0, 6);
+      setOtpDigits(nextDigits);
+      if (error) setError('');
+      if (pasteData.length === 6) {
+        void submitOtpCode(pasteData);
+      } else {
+        otpInputRefs.current[pasteData.length]?.focus();
+      }
+    }
+  };
+
+  // Resend OTP
+  const handleResendOtp = async () => {
+    if (resendCountdown > 0 || loading) return;
+    setLoading(true);
+    setError('');
+    try {
+      const res = await api.post('/auth/forgot-password', { identifier: identifier.trim() });
+      const { message, emailMasked: masked, resetSessionId: sid } = res.data || {};
+      if (sid) setResetSessionId(sid);
+      if (masked) setEmailMasked(masked);
+      setOtpDigits(['', '', '', '', '', '']);
+      setResendCountdown(60);
+      setToast({ message: message || 'Đã gửi lại mã OTP mới qua Email!', type: 'success' });
+      otpInputRefs.current[0]?.focus();
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || 'Không thể gửi lại mã OTP lúc này.';
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Step 3: Reset Password
-  const handleResetPassword = (e: React.FormEvent) => {
+  const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword.length < 6) {
       setError('Mật khẩu mới phải có tối thiểu 6 ký tự.');
@@ -117,11 +291,21 @@ export default function ForgotPasswordPage() {
 
     setLoading(true);
     setError('');
-    setTimeout(() => {
-      setLoading(false);
-      setToast({ message: 'Đổi mật khẩu thành công! Hãy đăng nhập lại bằng mật khẩu mới.', type: 'success' });
+    try {
+      const res = await api.post('/auth/reset-password', {
+        resetToken,
+        newPassword,
+        confirmPassword,
+      });
+      setToast({ message: res.data?.message || 'Đổi mật khẩu thành công! Hãy đăng nhập lại bằng mật khẩu mới.', type: 'success' });
       setStep(4);
-    }, 900);
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || 'Đổi mật khẩu thất bại. Vui lòng thử lại.';
+      setError(msg);
+      setToast({ message: msg, type: 'error' });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -484,7 +668,7 @@ export default function ForgotPasswordPage() {
               </h2>
               <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1 font-normal leading-relaxed">
                 {step === 1 && 'Nhập mã số sinh viên, giảng viên hoặc email đăng ký.'}
-                {step === 2 && `Mã xác thực gồm 6 chữ số đã gửi đến email của ${identifier}.`}
+                {step === 2 && (emailMasked ? `Mã xác thực gồm 6 chữ số đã gửi đến email ${emailMasked}.` : `Mã xác thực gồm 6 chữ số đã gửi đến email của ${identifier}.`)}
                 {step === 3 && 'Tạo mật khẩu mới an toàn gồm tối thiểu 6 ký tự.'}
                 {step === 4 && 'Tài khoản của bạn đã được cập nhật mật khẩu mới an toàn.'}
               </p>
@@ -539,57 +723,151 @@ export default function ForgotPasswordPage() {
               </form>
             )}
 
-            {/* STEP 2: Verify OTP Form */}
+            {/* STEP 2: Verify OTP Form (6 Segmented Pin Boxes) */}
             {step === 2 && (
               <form onSubmit={handleVerifyOtp} noValidate className="space-y-4">
-                <div className="space-y-1">
-                  <label className="block text-[15px] font-medium text-slate-600 dark:text-slate-300">
-                    Mã xác thực OTP (6 chữ số)
+                <div className="space-y-2.5">
+                  <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                    Mã xác thực 6 chữ số
                   </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                      <ShieldCheck className="h-4.5 w-4.5" />
+
+                  {/* 6 Individual Square Boxes in 2 Pods of 3 */}
+                  <div
+                    className={`flex items-center justify-center gap-2 sm:gap-2.5 py-1 ${
+                      isOtpShaking ? 'animate-shake' : ''
+                    }`}
+                  >
+                    {/* Pod 1: Boxes 0, 1, 2 */}
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      {[0, 1, 2].map((idx) => {
+                        const val = otpDigits[idx];
+                        return (
+                          <input
+                            key={idx}
+                            ref={(el) => {
+                              otpInputRefs.current[idx] = el;
+                            }}
+                            type="text"
+                            inputMode="numeric"
+                            autoComplete="one-time-code"
+                            maxLength={1}
+                            value={val}
+                            onChange={(e) => handleDigitChange(idx, e.target.value)}
+                            onKeyDown={(e) => handleDigitKeyDown(idx, e)}
+                            onPaste={handleOtpPaste}
+                            className={`w-11 h-13 sm:w-12 sm:h-14 rounded-2xl border-2 text-center text-[20px] sm:text-[24px] font-semibold tabular-nums outline-none transition-all duration-150 ${
+                              isOtpShaking
+                                ? 'border-rose-500 bg-rose-50/50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'
+                                : val
+                                ? 'border-blue-600 dark:border-blue-500 bg-blue-50/30 dark:bg-blue-950/30 text-slate-900 dark:text-white shadow-xs'
+                                : isDark
+                                ? 'border-slate-700 bg-slate-800/80 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
+                                : 'border-slate-200/90 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15 focus:bg-white'
+                            }`}
+                          />
+                        );
+                      })}
                     </div>
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={otpCode}
-                      onChange={(e) => {
-                        setOtpCode(e.target.value);
-                        if (error) setError('');
-                      }}
-                      placeholder="123456"
-                      required
-                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-center tracking-widest text-[18px] font-semibold outline-none transition tabular-nums ${
-                        isDark
-                          ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                          : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
-                      }`}
-                    />
+
+                    {/* Middle Divider Dot/Dash */}
+                    <div className="flex items-center justify-center px-0.5 sm:px-1 select-none">
+                      <span className="h-1 w-2.5 sm:w-3 rounded-full bg-slate-300 dark:bg-slate-700" />
+                    </div>
+
+                    {/* Pod 2: Boxes 3, 4, 5 */}
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      {[3, 4, 5].map((idx) => {
+                        const val = otpDigits[idx];
+                        return (
+                          <input
+                            key={idx}
+                            ref={(el) => {
+                              otpInputRefs.current[idx] = el;
+                            }}
+                            type="text"
+                            inputMode="numeric"
+                            autoComplete="one-time-code"
+                            maxLength={1}
+                            value={val}
+                            onChange={(e) => handleDigitChange(idx, e.target.value)}
+                            onKeyDown={(e) => handleDigitKeyDown(idx, e)}
+                            onPaste={handleOtpPaste}
+                            className={`w-11 h-13 sm:w-12 sm:h-14 rounded-2xl border-2 text-center text-[20px] sm:text-[24px] font-semibold tabular-nums outline-none transition-all duration-150 ${
+                              isOtpShaking
+                                ? 'border-rose-500 bg-rose-50/50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'
+                                : val
+                                ? 'border-blue-600 dark:border-blue-500 bg-blue-50/30 dark:bg-blue-950/30 text-slate-900 dark:text-white shadow-xs'
+                                : isDark
+                                ? 'border-slate-700 bg-slate-800/80 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
+                                : 'border-slate-200/90 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15 focus:bg-white'
+                            }`}
+                          />
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
 
+                {/* Sub Action Links with Animated SVG Circular Countdown Ring */}
                 <div className="flex items-center justify-between text-xs pt-1">
                   <button
                     type="button"
-                    onClick={() => setStep(1)}
-                    className="text-slate-500 hover:text-blue-600 transition cursor-pointer"
+                    onClick={() => {
+                      setStep(1);
+                      setOtpDigits(['', '', '', '', '', '']);
+                    }}
+                    className="text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition cursor-pointer flex items-center gap-1 font-medium"
                   >
-                    Nhập thông tin khác
+                    <ArrowLeft className="h-3.5 w-3.5" />
+                    <span>Đổi tài khoản khác</span>
                   </button>
+
                   <button
                     type="button"
-                    onClick={() => setToast({ message: 'Đã gửi lại mã OTP mới qua Email!', type: 'success' })}
-                    className="font-semibold text-blue-600 hover:text-blue-700 transition cursor-pointer flex items-center gap-1"
+                    disabled={resendCountdown > 0 || loading}
+                    onClick={handleResendOtp}
+                    className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:cursor-not-allowed transition cursor-pointer flex items-center gap-2"
                   >
-                    <RefreshCw className="h-3 w-3" />
-                    <span>Gửi lại mã</span>
+                    {resendCountdown > 0 ? (
+                      <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700">
+                        {/* Circular Progress SVG Ring */}
+                        <svg className="h-3.5 w-3.5 -rotate-90" viewBox="0 0 24 24">
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="9"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            className="text-slate-200 dark:text-slate-700"
+                            fill="none"
+                          />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="9"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            className="text-blue-600 dark:text-blue-400 transition-all duration-1000 ease-linear"
+                            fill="none"
+                            strokeDasharray={2 * Math.PI * 9}
+                            strokeDashoffset={2 * Math.PI * 9 * (1 - resendCountdown / 60)}
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        <span className="tabular-nums font-semibold text-[12px]">{resendCountdown}s</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1 hover:underline">
+                        <RefreshCw className={`h-3 w-3 ${loading ? 'animate-spin' : ''}`} />
+                        <span>Gửi lại mã OTP</span>
+                      </div>
+                    )}
                   </button>
                 </div>
 
                 <button
                   type="submit"
-                  disabled={loading || otpCode.trim().length < 6}
+                  disabled={loading || otpDigits.join('').length < 6}
                   className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-[15px] shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-2"
                 >
                   {loading ? (
@@ -733,7 +1011,6 @@ export default function ForgotPasswordPage() {
         </p>
         <p className="text-[12px] text-slate-400 dark:text-slate-500">© 2026 EXAMSYS. All rights reserved.</p>
       </footer>
-      {error && <Toast message={error} type="error" onClose={() => setError('')} />}
     </div>
   );
 }

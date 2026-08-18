@@ -65,6 +65,16 @@ export class EssayService {
         showEssayResultAfterApproval:
           data.showEssayResultAfterApproval === undefined ? true : Boolean(data.showEssayResultAfterApproval),
       },
+      select: {
+        id: true,
+        examScheduleId: true,
+        examPaperId: true,
+        essayEnabled: true,
+        allowEssayFileUpload: true,
+        maxEssayFileSizeMb: true,
+        showEssayResultAfterApproval: true,
+        updatedAt: true,
+      },
     });
     await this.audit.write({
       actorId: actor.id,

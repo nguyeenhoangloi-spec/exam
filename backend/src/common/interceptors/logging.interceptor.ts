@@ -16,7 +16,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
   private safeUrl(url: string) {
     return url
-      .replace(/([?&](?:token|code|access_token|id_token|google_token)=)[^&]+/gi, '$1[redacted]')
+      .replace(/([?&](?:token|code|access_token|id_token|google_token|accessCode|examPassword|deviceFingerprint)=)[^&]+/gi, '$1[redacted]')
       .replace(/\/attempt\/[^/]+/gi, '/attempt/[redacted]');
   }
 
@@ -29,7 +29,7 @@ export class LoggingInterceptor implements NestInterceptor {
     if (value instanceof Date || Buffer.isBuffer(value)) return value;
     const result: Record<string, any> = {};
     for (const [key, item] of Object.entries(value)) {
-      if (/^(password|tokenHash|sessionToken|examPasswordHash|clientSecret|apiKey)$/i.test(key)) continue;
+      if (/^(password|tokenHash|sessionToken|examPasswordHash|accessCode|clientSecret|apiKey)$/i.test(key)) continue;
       result[key] = this.redact(item);
     }
     return result;

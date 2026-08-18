@@ -3,14 +3,19 @@ import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { Public } from '../common/decorators/public.decorator';
+import { randomBytes, timingSafeEqual } from 'node:crypto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   private readonly refreshCookieName = 'exam_refresh_token';
+  private readonly oauthStateCookieName = 'exam_oauth_state';
 
   private cookieOptions() {
     const secure = process.env.COOKIE_SECURE === 'true' || process.env.NODE_ENV === 'production';
@@ -24,9 +29,21 @@ export class AuthController {
   }
 
   private readRefreshToken(req: any) {
+    return this.readCookie(req, this.refreshCookieName);
+  }
+
+  private readCookie(req: any, name: string) {
     const raw = String(req.headers?.cookie || '');
-    const match = raw.match(new RegExp(`(?:^|;\\s*)${this.refreshCookieName}=([^;]+)`));
+    const match = raw.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`));
     return match ? decodeURIComponent(match[1]) : undefined;
+  }
+
+  private validOAuthState(received?: string, expected?: string) {
+    if (!received || !expected) return false;
+    const receivedBuffer = Buffer.from(received);
+    const expectedBuffer = Buffer.from(expected);
+    return receivedBuffer.length === expectedBuffer.length
+      && timingSafeEqual(receivedBuffer, expectedBuffer);
   }
 
   private sendSession(result: any, response: Response) {
@@ -45,11 +62,38 @@ export class AuthController {
   }
 
   @Public()
+  @Post('forgot-password')
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto);
+  }
+
+  @Public()
+  @Post('verify-otp')
+  async verifyOtp(@Body() dto: VerifyOtpDto) {
+    return this.authService.verifyOtp(dto);
+  }
+
+  @Public()
+  @Post('reset-password')
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPasswordWithToken(dto);
+  }
+
+  @Public()
   @Get('google')
   googleAuth(@Res() res: Response) {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     try {
-      const url = this.authService.getGoogleAuthUrl();
+      const state = randomBytes(32).toString('base64url');
+      const secure = process.env.COOKIE_SECURE === 'true' || process.env.NODE_ENV === 'production';
+      res.cookie(this.oauthStateCookieName, state, {
+        httpOnly: true,
+        secure,
+        sameSite: 'lax',
+        path: '/auth/google/callback',
+        maxAge: 10 * 60 * 1000,
+      });
+      const url = this.authService.getGoogleAuthUrl(state);
       return res.redirect(url);
     } catch (err: any) {
       const errorMsg = encodeURIComponent(err.message || 'Chưa cấu hình Google Client ID.');
@@ -59,9 +103,14 @@ export class AuthController {
 
   @Public()
   @Get('google/callback')
-  async googleAuthCallback(@Query('code') code: string, @Res() res: Response) {
+  async googleAuthCallback(@Request() req: any, @Query('code') code: string, @Query('state') state: string, @Res() res: Response) {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     try {
+      const expectedState = this.readCookie(req, this.oauthStateCookieName);
+      res.clearCookie(this.oauthStateCookieName, { path: '/auth/google/callback' });
+      if (!this.validOAuthState(state, expectedState)) {
+        throw new BadRequestException('Phiên đăng nhập Google không hợp lệ hoặc đã hết hạn.');
+      }
       const result = await this.authService.handleGoogleCallback(code);
       this.sendSession(result, res);
       return res.redirect(`${frontendUrl}/login?google=success`);

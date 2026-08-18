@@ -14,7 +14,7 @@ describe('ExamPapersService permissions', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  it('giới hạn danh sách TEACHER theo người tạo và đề đã phát hành', async () => {
+  it('giới hạn danh sách TEACHER chỉ theo người tạo', async () => {
     prisma.examPaper.findMany.mockResolvedValue([]);
     await service.findAll({ id: 7, role: 'TEACHER' }, 2);
 
@@ -23,7 +23,7 @@ describe('ExamPapersService permissions', () => {
         where: expect.objectContaining({
           deletedAt: null,
           examScheduleId: 2,
-          OR: [{ createdById: 7 }, { status: 'PUBLISHED' }],
+          createdById: 7,
           examSchedule: { deletedAt: null },
         }),
       }),
@@ -38,6 +38,22 @@ describe('ExamPapersService permissions', () => {
     expect(call.where).toEqual({ deletedAt: null, examSchedule: { deletedAt: null } });
   });
 
+  it('không trả hash mật khẩu ca thi ra API danh sách đề', async () => {
+    prisma.examPaper.findMany.mockResolvedValue([{
+      id: 1,
+      examSchedule: {
+        id: 2,
+        onlineExamConfig: { id: 3, examPasswordHash: 'bcrypt-secret-hash' },
+      },
+    }]);
+
+    const result = await service.findAll({ id: 1, role: 'ADMIN' });
+
+    expect(result[0].hasExamPassword).toBe(true);
+    expect(result[0].examSchedule.onlineExamConfig).toEqual({ id: 3 });
+    expect(JSON.stringify(result)).not.toContain('bcrypt-secret-hash');
+  });
+
   it('không cho TEACHER xem đề bản nháp của người khác', async () => {
     prisma.examPaper.findFirst.mockResolvedValue({
       id: 1,
@@ -47,6 +63,17 @@ describe('ExamPapersService permissions', () => {
     });
 
     await expect(service.findOne({ id: 7, role: 'TEACHER' }, 1)).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('không cho TEACHER xem đáp án của đề đã phát hành do người khác tạo', async () => {
+    prisma.examPaper.findFirst.mockResolvedValue({
+      id: 2,
+      createdById: 99,
+      paperCode: '002',
+      status: 'PUBLISHED',
+    });
+
+    await expect(service.findOne({ id: 7, role: 'TEACHER' }, 2)).rejects.toBeInstanceOf(ForbiddenException);
   });
 
   it('từ chối đề có thời lượng dài hơn ca thi', async () => {

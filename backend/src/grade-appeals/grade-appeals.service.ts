@@ -1,9 +1,18 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { CreateGradeAppealDto } from './dto/create-grade-appeal.dto';
 import { ReviewGradeAppealDto } from './dto/review-grade-appeal.dto';
 import { GradeAppealStatus } from '@prisma/client';
+
+const safeOnlineExamConfig = {
+  select: {
+    id: true,
+    examScheduleId: true,
+    examPaperId: true,
+    examSchedule: { include: { subject: true } },
+  },
+} as const;
 
 @Injectable()
 export class GradeAppealsService {
@@ -11,6 +20,21 @@ export class GradeAppealsService {
     private readonly prisma: PrismaService,
     private readonly auditService: AuditService,
   ) {}
+
+  private teacherScope(actor: { id: number; role: string }) {
+    if (actor.role !== 'TEACHER') return {};
+    return {
+      attempt: {
+        onlineExamConfig: {
+          examSchedule: {
+            examScheduleRooms: {
+              some: { supervisors: { some: { teacher: { userId: actor.id } } } },
+            },
+          },
+        },
+      },
+    };
+  }
 
   async createAppeal(userId: number, dto: CreateGradeAppealDto) {
     const student = await this.prisma.student.findUnique({
@@ -23,13 +47,7 @@ export class GradeAppealsService {
     const attempt = await this.prisma.examAttempt.findUnique({
       where: { id: dto.attemptId },
       include: {
-        onlineExamConfig: {
-          include: {
-            examSchedule: {
-              include: { subject: true },
-            },
-          },
-        },
+        onlineExamConfig: safeOnlineExamConfig,
       },
     });
 
@@ -37,9 +55,8 @@ export class GradeAppealsService {
       throw new NotFoundException('Không tìm thấy bài thi tương ứng của sinh viên.');
     }
 
-    const allowedStatuses = ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'];
-    if (!allowedStatuses.includes(attempt.status)) {
-      throw new BadRequestException('Bài thi chưa được hoàn thành hoặc chưa công bố kết quả để phúc khảo.');
+    if (!attempt.publishedAt || attempt.totalScore === null || attempt.totalScore === undefined) {
+      throw new BadRequestException('Kết quả chưa được công bố nên chưa thể gửi phúc khảo.');
     }
 
     const existingAppeal = await this.prisma.gradeAppeal.findFirst({
@@ -66,13 +83,7 @@ export class GradeAppealsService {
         student: true,
         attempt: {
           include: {
-            onlineExamConfig: {
-              include: {
-                examSchedule: {
-                  include: { subject: true },
-                },
-              },
-            },
+            onlineExamConfig: safeOnlineExamConfig,
           },
         },
       },
@@ -103,13 +114,7 @@ export class GradeAppealsService {
       include: {
         attempt: {
           include: {
-            onlineExamConfig: {
-              include: {
-                examSchedule: {
-                  include: { subject: true },
-                },
-              },
-            },
+            onlineExamConfig: safeOnlineExamConfig,
           },
         },
         reviewer: {
@@ -124,8 +129,8 @@ export class GradeAppealsService {
     });
   }
 
-  async findAll(query: { status?: string; subjectId?: string; search?: string }) {
-    const where: any = {};
+  async findAll(actor: { id: number; role: string }, query: { status?: string; subjectId?: string; search?: string }) {
+    const where: any = { ...this.teacherScope(actor) };
 
     if (query.status && Object.values(GradeAppealStatus).includes(query.status as any)) {
       where.status = query.status as GradeAppealStatus;
@@ -143,13 +148,18 @@ export class GradeAppealsService {
     if (query.subjectId) {
       const subId = Number(query.subjectId);
       if (!isNaN(subId)) {
-        where.attempt = {
-          onlineExamConfig: {
-            examSchedule: {
-              subjectId: subId,
+        where.AND = [
+          ...(where.AND || []),
+          {
+            attempt: {
+              onlineExamConfig: {
+                examSchedule: {
+                  subjectId: subId,
+                },
+              },
             },
           },
-        };
+        ];
       }
     }
 
@@ -163,13 +173,7 @@ export class GradeAppealsService {
         },
         attempt: {
           include: {
-            onlineExamConfig: {
-              include: {
-                examSchedule: {
-                  include: { subject: true },
-                },
-              },
-            },
+            onlineExamConfig: safeOnlineExamConfig,
           },
         },
         reviewer: {
@@ -189,6 +193,7 @@ export class GradeAppealsService {
       where: {
         id,
         ...(actor.role === 'STUDENT' ? { student: { userId: actor.id } } : {}),
+        ...this.teacherScope(actor),
       },
       include: {
         student: {
@@ -200,13 +205,7 @@ export class GradeAppealsService {
         },
         attempt: {
           include: {
-            onlineExamConfig: {
-              include: {
-                examSchedule: {
-                  include: { subject: true },
-                },
-              },
-            },
+            onlineExamConfig: safeOnlineExamConfig,
             attemptAnswers: {
               include: {
                 essayGrades: {
@@ -234,14 +233,28 @@ export class GradeAppealsService {
     return appeal;
   }
 
-  async reviewAppeal(reviewerUserId: number, id: string, dto: ReviewGradeAppealDto) {
-    const appeal = await this.prisma.gradeAppeal.findUnique({
-      where: { id },
+  async reviewAppeal(actor: { id: number; role: string }, id: string, dto: ReviewGradeAppealDto) {
+    const terminalStatuses = new Set<GradeAppealStatus>([
+      GradeAppealStatus.APPROVED_REGRADE,
+      GradeAppealStatus.REJECTED,
+    ]);
+    if (!terminalStatuses.has(dto.status)) {
+      throw new BadRequestException('Chỉ được chấp nhận chấm lại hoặc từ chối đơn phúc khảo.');
+    }
+
+    const appeal = await this.prisma.gradeAppeal.findFirst({
+      where: { id, ...this.teacherScope(actor) },
       include: { attempt: true },
     });
 
     if (!appeal) {
+      if (actor.role === 'TEACHER') {
+        throw new ForbiddenException('Bạn không được phân công xử lý đơn phúc khảo này.');
+      }
       throw new NotFoundException('Không tìm thấy đơn phúc khảo.');
+    }
+    if (terminalStatuses.has(appeal.status)) {
+      throw new BadRequestException('Đơn phúc khảo này đã được xử lý.');
     }
 
     const isApprove = dto.status === GradeAppealStatus.APPROVED_REGRADE;
@@ -252,6 +265,9 @@ export class GradeAppealsService {
         throw new BadRequestException('Khi chấp nhận phúc khảo, bắt buộc phải nhập điểm mới.');
       }
       newScore = Number(dto.revisedScore);
+      if (newScore > Number(appeal.attempt.maxScore ?? 10)) {
+        throw new BadRequestException('Điểm mới không được vượt quá thang điểm của bài thi.');
+      }
 
       // Update attempt score & status
       await this.prisma.examAttempt.update({
@@ -270,20 +286,14 @@ export class GradeAppealsService {
         status: dto.status,
         revisedScore: isApprove ? newScore : appeal.revisedScore,
         reviewerNote: dto.reviewerNote,
-        reviewerId: reviewerUserId,
+        reviewerId: actor.id,
         reviewedAt: new Date(),
       },
       include: {
         student: true,
         attempt: {
           include: {
-            onlineExamConfig: {
-              include: {
-                examSchedule: {
-                  include: { subject: true },
-                },
-              },
-            },
+            onlineExamConfig: safeOnlineExamConfig,
           },
         },
         reviewer: {
@@ -297,7 +307,7 @@ export class GradeAppealsService {
     });
 
     await this.auditService.write({
-      actorId: reviewerUserId,
+      actorId: actor.id,
       action: 'REVIEW_GRADE_APPEAL',
       entityType: 'grade_appeals',
       entityId: appeal.id,

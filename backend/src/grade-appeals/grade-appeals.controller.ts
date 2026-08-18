@@ -26,11 +26,12 @@ export class GradeAppealsController {
   @Get()
   @Roles('ADMIN', 'TEACHER')
   async findAll(
+    @Request() req: any,
     @Query('status') status?: string,
     @Query('subjectId') subjectId?: string,
     @Query('search') search?: string,
   ) {
-    return this.gradeAppealsService.findAll({ status, subjectId, search });
+    return this.gradeAppealsService.findAll(req.user, { status, subjectId, search });
   }
 
   @Get(':id')
@@ -46,6 +47,6 @@ export class GradeAppealsController {
     @Param('id') id: string,
     @Body() dto: ReviewGradeAppealDto,
   ) {
-    return this.gradeAppealsService.reviewAppeal(req.user.id, id, dto);
+    return this.gradeAppealsService.reviewAppeal(req.user, id, dto);
   }
 }
