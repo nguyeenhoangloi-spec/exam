@@ -440,7 +440,11 @@ function TrashPageContent() {
             <button
               key={item.key}
               type="button"
-              onClick={() => setActiveCategory(item.key)}
+              onClick={() => {
+                setActiveCategory(item.key);
+                setPage(1);
+                router.push(`/trash?type=${item.key}`);
+              }}
               className={`group relative flex flex-col justify-between p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer shadow-2xs hover:-translate-y-0.5 hover:shadow-md ${
                 isSelected
                   ? 'bg-blue-50/40 dark:bg-blue-950/30 border-blue-500 ring-2 ring-blue-500/20'
@@ -527,6 +531,7 @@ function TrashPageContent() {
             onActiveCategoryChange={(val) => {
               setActiveCategory(val);
               setPage(1);
+              router.push(`/trash?type=${val}`);
             }}
             expiryFilter={expiryFilter}
             onExpiryFilterChange={(val) => {
@@ -540,6 +545,7 @@ function TrashPageContent() {
               setActiveCategory('schedules');
               setExpiryFilter('');
               setPage(1);
+              router.push('/trash?type=schedules');
             }}
           />
         </div>

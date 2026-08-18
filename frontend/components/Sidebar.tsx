@@ -179,10 +179,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             href: '/trash',
             icon: Trash2,
             children: [
-              { name: 'Câu hỏi đã xóa', href: '/trash?type=questions' },
-              { name: 'Kỳ thi đã xóa', href: '/trash?type=periods' },
               { name: 'Lịch thi đã xóa', href: '/trash?type=schedules' },
               { name: 'Đề thi đã xóa', href: '/trash?type=papers' },
+              { name: 'Câu hỏi đã xóa', href: '/trash?type=questions' },
+              { name: 'Tài khoản / khác', href: '/trash?type=users' },
             ],
           },
         ],
@@ -261,7 +261,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const isSubItemActive = (href: string) => {
     const [path, query] = href.split('?');
     if (pathname !== path) return false;
-    return query ? new URLSearchParams(query).get('type') === searchParams.get('type') : true;
+    const currentType = searchParams.get('type') || (path === '/trash' ? 'schedules' : '');
+    const itemType = query ? new URLSearchParams(query).get('type') || '' : '';
+    return itemType === currentType;
   };
 
   return (
