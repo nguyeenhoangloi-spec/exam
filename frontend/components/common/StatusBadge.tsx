@@ -22,7 +22,7 @@ interface StatusConfig {
 
 const success = 'text-success-600 dark:text-emerald-400';
 const active = 'text-primary-600 dark:text-blue-400';
-const pending = 'text-warning-600 dark:text-amber-400';
+const pending = 'text-amber-700 dark:text-amber-400';
 const danger = 'text-danger-600 dark:text-rose-400';
 const neutral = 'text-slate-600 dark:text-slate-400';
 
@@ -46,7 +46,7 @@ const statusConfigs: Record<string, StatusConfig> = {
 
   WAITING_APPROVAL: { label: 'Chờ phê duyệt', textClass: pending, icon: Clock },
   PENDING: { label: 'Chờ duyệt', textClass: pending, icon: Clock },
-  CHANGE_REQUESTED: { label: 'Yêu cầu sửa', textClass: pending, icon: AlertCircle },
+  CHANGE_REQUESTED: { label: 'Yêu cầu sửa', textClass: active, icon: AlertCircle },
   GRADING: { label: 'Đang chấm thi', textClass: active, icon: Clock },
   UNDER_REVIEW: { label: 'Đang xem xét', textClass: pending, icon: Eye },
   MAINTENANCE: { label: 'Bảo trì', textClass: pending, icon: AlertTriangle },
@@ -66,8 +66,8 @@ const statusConfigs: Record<string, StatusConfig> = {
 
 const dotBgConfigs: Record<string, string> = {
   PUBLISHED: 'bg-emerald-500', APPROVED: 'bg-emerald-500', CONFIRMED: 'bg-emerald-500', COMPLETED: 'bg-emerald-500', READY: 'bg-emerald-500', GRADED: 'bg-emerald-500', SUBMITTED: 'bg-emerald-500', AUTO_SUBMITTED: 'bg-emerald-500',
-  SCHEDULED: 'bg-blue-500', UPCOMING: 'bg-blue-500', IN_PROGRESS: 'bg-blue-500', ONGOING: 'bg-blue-500', IN_USE: 'bg-blue-500', DEVICE_CHECK: 'bg-blue-500', GRADING: 'bg-blue-500',
-  WAITING_APPROVAL: 'bg-amber-500', PENDING: 'bg-amber-500', CHANGE_REQUESTED: 'bg-amber-500', UNDER_REVIEW: 'bg-amber-500', MAINTENANCE: 'bg-amber-500', BUSY: 'bg-amber-500', DISCONNECTED: 'bg-amber-500',
+  SCHEDULED: 'bg-blue-500', UPCOMING: 'bg-blue-500', IN_PROGRESS: 'bg-blue-500', ONGOING: 'bg-blue-500', IN_USE: 'bg-blue-500', DEVICE_CHECK: 'bg-blue-500', GRADING: 'bg-blue-500', CHANGE_REQUESTED: 'bg-blue-500',
+  WAITING_APPROVAL: 'bg-amber-500', PENDING: 'bg-amber-500', UNDER_REVIEW: 'bg-amber-500', MAINTENANCE: 'bg-amber-500', BUSY: 'bg-amber-500', DISCONNECTED: 'bg-amber-500',
   CANCELLED: 'bg-rose-500', REJECTED: 'bg-rose-500', ABSENT: 'bg-rose-500',
   DRAFT: 'bg-slate-400', ARCHIVED: 'bg-slate-400', LOCKED: 'bg-slate-400', NOT_STARTED: 'bg-slate-400', ROOM_COMPUTER: 'bg-slate-400', ROOM_THEORY: 'bg-slate-400',
 };

@@ -176,7 +176,17 @@ Khi thực hiện audit giao diện Web UI, bắt buộc đối chiếu với [u
    - **WCAG tương phản:** Cặp màu chữ quan trọng phải đạt chuẩn **WCAG AA** ($\ge 4.5:1$ text thường, $\ge 3:1$ text lớn/đậm), ưu tiên AAA khi có thể.
    - **Giới hạn màu nhạt:** `text-slate-400` chỉ dùng cho Placeholder, Disabled, Copyright footer và Metadata phụ; tuyệt đối không dùng cho nội dung cần đọc.
 
-5. **Lệnh kiểm tra kỹ thuật tự động:**
+5. **Quy Tắc Sử Dụng Màu Sắc & Màu Trạng Thái (Color Usage & Semantic Status):**
+   - Nền trang, card, control giữ trắng và trắng xanh (`bg-white`, `bg-slate-50/50`, `bg-blue-50/30`), không dùng màu trạng thái làm nền lớn toàn trang.
+   - Nội dung thường bắt buộc dùng Cool Slate (`slate-900`, `slate-700`, `slate-500`), không dùng xanh lá, đỏ, cam cho văn bản đọc thông thường.
+   - Màu trạng thái chỉ dùng cho icon, chữ trạng thái, viền hoặc nền nhạt:
+     - **Đã duyệt / Thành công:** Xanh lá (`emerald-600`).
+     - **Chờ duyệt / Đang chờ:** Vàng cam (`amber-700` đạt chuẩn WCAG AA $\ge 4.5:1$ trên nền trắng).
+     - **Bị từ chối / Đã hủy / Lỗi:** Đỏ (`rose-600`).
+     - **Cần sửa / Thông tin / Tiến trình:** Xanh dương (`blue-600`).
+   - Nút trạng thái nền đậm bắt buộc dùng chữ màu trắng (`text-white`).
+
+6. **Lệnh kiểm tra kỹ thuật tự động:**
    - Chạy lệnh: `npm run audit:ui` trong thư mục `frontend` và đảm bảo đạt kết quả **0 violations**.
 
 ---

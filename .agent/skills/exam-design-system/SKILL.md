@@ -100,15 +100,19 @@ font-family:
 
 ### 3.2 Semantic Brand & Status Colors
 
-- **Primary (Blue)**: `primary-50` (#EFF6FF), `primary-600` (#2563EB - chuẩn action chính), `primary-700` (#1D4ED8 - hover), `primary-800` (#1E40AF - active).
-- **Success (Green)**: `success-600` (#15803D), Toast/Badge emerald (#10B981) — Duyệt, hoàn thành, thành công.
-- **Warning (Amber)**: `warning-600` (#D97706), amber (#F59E0B) — Chờ duyệt, cảnh báo.
-- **Danger (Red)**: `danger-600` (#DC2626), Toast/Alert red (#EF4444) — Lỗi, từ chối, xóa.
+- **Primary (Blue)**: `primary-50` (#EFF6FF), `primary-600` (#2563EB - chuẩn action chính), `primary-700` (#1D4ED8 - hover), `primary-800` (#1E40AF - active) — Thông tin, tiến trình, cần chỉnh sửa.
+- **Success (Green)**: `emerald-600` (#059669), `bg-emerald-50`, Toast/Badge emerald (#10B981) — Đã duyệt, hoàn thành, thành công.
+- **Warning (Amber)**: `amber-700` (#B45309), `bg-amber-50`, Toast/Badge amber (#F59E0B) — Chờ duyệt, tạm hoãn, đang xử lý.
+- **Danger (Red)**: `rose-600` (#E11D48), `bg-rose-50`, Toast/Alert red (#EF4444) — Bị từ chối, đã hủy, thất bại, lỗi.
 - **Neutral Surface**: `surface-page` (`#F8FAFC` / `slate-50`), `surface` (`#FFFFFF`), `border-default` (`#E2E8F0` / `slate-200`).
 
-### 3.3 Quy tắc màu TUYỆT ĐỐI & WCAG thực tế
+### 3.3 Quy tắc sử dụng màu sắc TUYỆT ĐỐI & WCAG thực tế
 
-- **Quy chuẩn tương phản WCAG:** Các cặp màu chữ quan trọng phải được kiểm tra tương phản theo chuẩn **WCAG AA** (tỷ lệ $\ge 4.5:1$ cho văn bản thường, $\ge 3:1$ cho văn bản lớn/đậm); nội dung nhỏ ưu tiên đạt **AAA** ($\ge 7:1$) khi có thể.
+- **Nền trang, card, control:** Vẫn giữ nguyên nền trắng và trắng xanh (`bg-white`, `bg-slate-50/50`, `bg-blue-50/30`, `dark:bg-slate-900`). Tuyệt đối KHÔNG dùng các màu trạng thái (xanh lá, đỏ, cam) làm nền lớn toàn trang.
+- **Màu văn bản thông thường:** Bắt buộc dùng dải màu **Cool Slate** (`slate-900`, `slate-700`, `slate-500`). CẤM dùng xanh lá, đỏ, cam cho văn bản đọc thông thường.
+- **Màu trạng thái Semantic:** Chỉ dùng cho icon, chữ chỉ báo trạng thái, viền hoặc nền nhạt (pill/badge nhạt).
+- **Nút trạng thái nền đậm:** Nút có nền màu đậm (`bg-blue-600`, `bg-emerald-600`, `bg-rose-600`, `bg-amber-600`) bắt buộc dùng chữ màu trắng (`text-white`).
+- **Quy chuẩn tương phản WCAG:** Các cặp màu chữ quan trọng phải được kiểm tra tương phản theo chuẩn **WCAG AA** (tỷ lệ $\ge 4.5:1$ cho văn bản thường, $\ge 3:1$ cho văn bản lớn/đậm). Chữ màu vàng/cam không được đặt trên nền trắng nếu độ tương phản thấp; bắt buộc dùng `text-amber-700` (`#B45309`, 4.8:1) hoặc `text-amber-800`.
 - **Giới hạn màu xám nhạt (`text-slate-400` / `text-slate-400/80`):** Chỉ dùng cho Placeholder, Disabled state, Copyright footer và Metadata phụ; tuyệt đối không dùng cho nội dung cần đọc.
 - **Quy tắc Gradient & Ngoại lệ:** Không dùng gradient trong màn hình quản trị và dữ liệu; ngoại lệ cho phép: Trang đăng nhập (Login), Khu vực thương hiệu và Nút Active Tab trên Sidebar.
 - KHÔNG thêm màu hex trực tiếp trong JSX/TSX (ưu tiên dùng utility shortcuts `.text-main`, `.text-sub`, `.text-helper`, `.text-placeholder`, `.text-inverse` hoặc các class `slate-*`).

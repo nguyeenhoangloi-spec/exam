@@ -444,6 +444,15 @@ Nhằm đảm bảo giao diện luôn thanh thoát, hiện đại, thoáng đãn
 - [ ] Tiêu đề Section viết Sentence case, có thanh pill xanh (`h-4 w-1 bg-blue-600`).
 - [ ] Thanh trạng thái/khớp điểm inline phẳng, không dùng nền hộp thô.
 
+### Màu sắc & Trạng thái (Color & Status)
+
+- [ ] Nền trang, card, control giữ trắng và trắng xanh (`bg-white`, `bg-slate-50/50`).
+- [ ] Không dùng màu trạng thái (xanh lá, đỏ, cam) làm nền lớn toàn trang.
+- [ ] Không dùng xanh lá, đỏ, cam cho nội dung thông thường (chỉ dùng Cool Slate).
+- [ ] Màu trạng thái chỉ dùng cho icon, chữ chỉ báo trạng thái, viền hoặc nền nhạt.
+- [ ] Nút trạng thái nền đậm bắt buộc dùng chữ màu trắng (`text-white`).
+- [ ] Chữ màu vàng/cam trên nền trắng đạt tương phản WCAG AA ($\ge 4.5:1$, dùng `text-amber-700` hoặc `text-amber-800`).
+
 ### Button/control
 
 - [ ] Nút chính cao 44px.
@@ -499,3 +508,31 @@ Khi có xung đột, ưu tiên theo thứ tự:
 ```
 
 Không chỉnh từng page riêng nếu có thể chuẩn hóa ở shared component hoặc token dùng chung.
+
+## 18. Quy tắc Sử dụng Màu sắc & Màu Trạng thái (Color Usage & Semantic Status System)
+
+Nhằm đảm bảo giao diện luôn trang nhã, chuyên nghiệp, dịu mắt và đạt chuẩn tiếp cận WCAG:
+
+### 18.1 Nền trang, Card và Control
+- **Nền trang, card, control:** Vẫn giữ nguyên nền trắng (`bg-white`) và trắng xanh (`bg-slate-50`, `bg-slate-50/50`, `bg-blue-50/30`, `dark:bg-slate-900`, `dark:bg-slate-950`).
+- **Giới hạn tuyệt đối:** Không dùng các màu trạng thái (xanh lá, đỏ, cam) làm nền lớn toàn bộ trang hoặc nền các khối section to.
+
+### 18.2 Màu văn bản thông thường
+- **Nội dung thông thường:** Bắt buộc dùng dải màu **Cool Slate** (`text-slate-900`, `text-slate-700`, `text-slate-500`).
+- **Cấm:** Không dùng xanh lá, đỏ, cam cho văn bản mô tả, nhãn form, tên cột hoặc nội dung đọc thông thường.
+
+### 18.3 Màu trạng thái Semantic
+Màu trạng thái chỉ dùng cho **icon, chữ chỉ báo trạng thái, viền hoặc nền nhạt** (pill/badge nhạt):
+
+1. **Đã duyệt / Hoàn thành / Thành công:**
+   - Màu: **Xanh lá** (`text-emerald-600 dark:text-emerald-400`, `bg-emerald-50 dark:bg-emerald-950/40`, `border-emerald-200 dark:border-emerald-800/60`).
+2. **Chờ duyệt / Đang xử lý / Tạm hoãn:**
+   - Màu: **Vàng cam đậm** (`text-amber-700 dark:text-amber-400`, `bg-amber-50 dark:bg-amber-950/40`, `border-amber-200 dark:border-amber-800/60`).
+   - *Quy chuẩn WCAG:* Chữ màu vàng/cam không được đặt trên nền trắng nếu độ tương phản thấp; bắt buộc dùng `text-amber-700` (`#B45309`) hoặc `text-amber-800` để đạt tỷ lệ tương phản $\ge 4.5:1$ (WCAG AA).
+3. **Bị từ chối / Đã hủy / Thất bại / Lỗi:**
+   - Màu: **Đỏ** (`text-rose-600 dark:text-rose-400`, `bg-rose-50 dark:bg-rose-950/40`, `border-rose-200 dark:border-rose-800/60`).
+4. **Cần chỉnh sửa / Thông tin / Tiến trình:**
+   - Màu: **Xanh dương** (`text-blue-600 dark:text-blue-400`, `bg-blue-50 dark:bg-blue-950/40`, `border-blue-200 dark:border-blue-800/60`).
+
+### 18.4 Nút trạng thái (Status Buttons)
+- Nút trạng thái có nền màu đậm (`bg-blue-600`, `bg-emerald-600`, `bg-rose-600`, `bg-amber-600`): Chữ bắt buộc dùng màu trắng (`text-white`).

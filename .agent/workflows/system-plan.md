@@ -56,6 +56,7 @@ Lập kế hoạch triển khai chi tiết, bao gồm:
 * Shared component/token/style nào nên chỉnh trước.
 * Đối chiếu quy chuẩn UI với [ui-design-system-rules.md](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/ui-design-system-rules.md):
   - Hệ thống màu chữ 5 Tầng Cool Slate (`.text-main`, `.text-sub`, `.text-helper`, `.text-placeholder`, `.text-inverse`) & Giới hạn màu nhạt `text-slate-400`.
+  - Quy tắc sử dụng màu sắc & trạng thái: Nền trắng/trắng xanh, không dùng màu trạng thái làm nền lớn, chữ thường dùng Cool Slate, nút trạng thái đậm dùng chữ trắng, chữ vàng/cam đạt WCAG AA (`text-amber-700`).
   - Thang cỡ chữ 8 tầng (12px ➔ 32px) kèm Line-Height chuẩn 24px/15px cho tiếng Việt.
   - Phân định chiều cao nút: Primary CTA 44px (`lg`), Toolbar/Filter 40px (`md`), Nút phụ 36px (`sm`), Mobile tối thiểu 44px.
   - Bo góc chuẩn `rounded-xl` (12px), ghi nhận ngoại lệ `rounded-lg` (8px) cho submenu Sidebar, badge, chip, tooltip.
