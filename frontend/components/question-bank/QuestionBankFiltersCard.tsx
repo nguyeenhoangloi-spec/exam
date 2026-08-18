@@ -34,8 +34,7 @@ const DIFFICULTY_LABELS: Record<string, string> = {
 
 const TYPE_LABELS: Record<string, string> = {
   SINGLE_CHOICE: 'Trắc nghiệm',
-  MULTIPLE_CHOICE: 'Nhiều đáp án',
-  TRUE_FALSE: 'Đúng / Sai',
+  MULTIPLE_CHOICE: 'Trắc nghiệm',
   FILL_BLANK: 'Điền khuyết',
   ESSAY: 'Tự luận',
 };

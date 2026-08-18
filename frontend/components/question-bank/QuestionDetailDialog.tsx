@@ -260,7 +260,101 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                 </h3>
               </div>
 
-              {question.options && question.options.length > 0 ? (
+              {question.type === 'FILL_BLANK' ? (
+                <div className="space-y-2.5">
+                  {(() => {
+                    const fbList =
+                      Array.isArray(question.fillBlankAnswers) && question.fillBlankAnswers.length > 0
+                        ? question.fillBlankAnswers
+                        : Array.isArray((question as any).answers) && (question as any).answers.length > 0
+                        ? (question as any).answers
+                        : [];
+
+                    if (!fbList.length) {
+                      const matches = Array.from(question.content?.matchAll(/\{\{blank_(\d+)\}\}/g) || []);
+                      if (matches.length > 0) {
+                        return (
+                          <div className="space-y-2">
+                            {matches.map((m, idx) => (
+                              <div
+                                key={idx}
+                                className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 flex items-center justify-between gap-3"
+                              >
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold text-xs border border-blue-200/80 dark:border-blue-800">
+                                  Ô trống #{m[1] || idx + 1}
+                                </span>
+                                <span className="text-xs text-slate-500 italic">Chưa thiết lập đáp án</span>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      }
+                      return <p className="text-[14px] text-slate-500 italic">Chưa có cấu hình đáp án điền khuyết.</p>;
+                    }
+
+                    return (
+                      <div className="space-y-2.5">
+                        {fbList.map((ans: any, idx: number) => {
+                          const bIdx = ans.blankIndex || idx + 1;
+                          const mainAns = ans.answer || ans.value || ans.content || '---';
+                          let altList: string[] = [];
+                          if (Array.isArray(ans.acceptedAnswers)) {
+                            altList = ans.acceptedAnswers;
+                          } else if (typeof ans.acceptedAnswers === 'string') {
+                            try {
+                              const parsed = JSON.parse(ans.acceptedAnswers);
+                              if (Array.isArray(parsed)) altList = parsed;
+                              else altList = ans.acceptedAnswers.split(',').map((s: string) => s.trim()).filter(Boolean);
+                            } catch {
+                              altList = ans.acceptedAnswers.split(',').map((s: string) => s.trim()).filter(Boolean);
+                            }
+                          }
+
+                          return (
+                            <div
+                              key={ans.id || idx}
+                              className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 transition flex items-start gap-3"
+                            >
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold text-xs border border-blue-200/80 dark:border-blue-800 shrink-0">
+                                Ô trống #{bIdx}
+                              </span>
+
+                              <div className="flex-1 min-w-0 pt-0.5 space-y-1.5">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Đáp án chính xác:</span>
+                                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 text-[13.5px] font-semibold text-emerald-800 dark:text-emerald-300">
+                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                    {mainAns}
+                                  </span>
+                                  {ans.score !== undefined && (
+                                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                                      ({ans.score} điểm)
+                                    </span>
+                                  )}
+                                </div>
+
+                                {altList.length > 0 && (
+                                  <div className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1.5 flex-wrap">
+                                    <span className="text-slate-500">Chấp nhận thêm:</span>
+                                    {altList.map((alt, aIdx) => (
+                                      <span
+                                        key={aIdx}
+                                        className="rounded bg-slate-200/80 dark:bg-slate-700 px-1.5 py-0.5 text-slate-800 dark:text-slate-200 font-medium"
+                                      >
+                                        {alt}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+                </div>
+              ) : question.options && question.options.length > 0 ? (
                 <div className="space-y-2.5">
                   {question.options.map((o) => (
                     <div

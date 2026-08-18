@@ -235,6 +235,52 @@ export function QuestionCard({
         )}
       </div>
 
+      {/* Fill Blank Answers in Card */}
+      {q.type === 'FILL_BLANK' && (
+        <div className="space-y-2 pt-1">
+          <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-2.5">
+            <span className="text-[13px] font-semibold tracking-wider text-slate-500 dark:text-slate-400">
+              Đáp án điền khuyết ({(q.fillBlankAnswers || []).length || 1} ô trống)
+            </span>
+            <button
+              onClick={() => setShowOptions(!showOptions)}
+              className="text-[13px] font-medium text-primary-600 dark:text-primary-400 hover:text-blue-700 flex items-center gap-1 transition"
+            >
+              {showOptions ? (
+                <>Thu gọn <ChevronUp className="w-3.5 h-3.5" /></>
+              ) : (
+                <>Hiện đáp án <ChevronDown className="w-3.5 h-3.5" /></>
+              )}
+            </button>
+          </div>
+
+          {showOptions && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {(q.fillBlankAnswers && q.fillBlankAnswers.length > 0 ? q.fillBlankAnswers : [{ blankIndex: 1, answer: 'Chưa thiết lập' }]).map((ans: any, idx: number) => {
+                const bIdx = ans.blankIndex || idx + 1;
+                const mainAns = ans.answer || ans.value || ans.content || '---';
+                return (
+                  <div
+                    key={ans.id || idx}
+                    className="flex items-center justify-between rounded-xl border border-emerald-200/80 dark:border-emerald-800/80 bg-emerald-50/60 dark:bg-emerald-950/40 p-2.5 text-[14px] font-normal text-slate-700 dark:text-slate-300 transition"
+                  >
+                    <div className="flex items-center gap-2 min-w-0 pr-2">
+                      <span className="flex h-5 px-1.5 shrink-0 items-center justify-center rounded-md bg-emerald-600 text-xs font-semibold text-white">
+                        Ô #{bIdx}
+                      </span>
+                      <span className="truncate font-semibold text-emerald-800 dark:text-emerald-300">{mainAns}</span>
+                    </div>
+                    {ans.score !== undefined && (
+                      <span className="text-xs font-medium text-slate-500 shrink-0">{ans.score}đ</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Options List directly in Card */}
       {options.length > 0 && (
         <div className="space-y-2 pt-1">
@@ -261,15 +307,25 @@ export function QuestionCard({
                 return (
                   <div
                     key={opt.id || idx}
-                    className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 p-2.5 text-[15px] font-normal text-slate-700 dark:text-slate-300 transition"
+                    className={`flex items-center justify-between rounded-xl border p-2.5 text-[15px] font-normal transition ${
+                      opt.isCorrect
+                        ? 'border-emerald-200/90 dark:border-emerald-800/80 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200'
+                        : 'border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300'
+                    }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0 pr-2">
                       <span
-                        className="flex h-6 min-w-6 shrink-0 items-center justify-center rounded-lg bg-slate-200 dark:bg-slate-700 px-1.5 text-[13px] font-semibold text-slate-900 dark:text-slate-100"
+                        className={`flex h-6 min-w-6 shrink-0 items-center justify-center rounded-lg px-1.5 text-[13px] font-semibold ${
+                          opt.isCorrect
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100'
+                        }`}
                       >
                         {label}
                       </span>
-                      <span className="truncate leading-tight">{opt.content}</span>
+                      <span className={`truncate leading-tight ${opt.isCorrect ? 'font-semibold text-emerald-800 dark:text-emerald-300' : ''}`}>
+                        {opt.content}
+                      </span>
                     </div>
                   </div>
                 );

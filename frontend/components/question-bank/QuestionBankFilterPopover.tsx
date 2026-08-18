@@ -191,11 +191,9 @@ export function QuestionBankFilterPopover({
 
   const typeList = [
     { value: '', label: 'Tất cả loại câu', desc: 'Mọi định dạng câu hỏi', count: optionCounts.total },
-    { value: 'SINGLE_CHOICE', label: 'Trắc nghiệm đơn', desc: 'Chọn 1 đáp án đúng duy nhất', count: optionCounts.typeCounts['SINGLE_CHOICE'] || 0 },
-    { value: 'MULTIPLE_CHOICE', label: 'Nhiều đáp án', desc: 'Chọn nhiều đáp án đúng', count: optionCounts.typeCounts['MULTIPLE_CHOICE'] || 0 },
-    { value: 'TRUE_FALSE', label: 'Đúng / Sai', desc: 'Xác định tính đúng sai', count: optionCounts.typeCounts['TRUE_FALSE'] || 0 },
-    { value: 'FILL_BLANK', label: 'Điền khuyết', desc: 'Điền vào chỗ trống', count: optionCounts.typeCounts['FILL_BLANK'] || 0 },
+    { value: 'SINGLE_CHOICE', label: 'Trắc nghiệm', desc: 'Câu hỏi trắc nghiệm khách quan', count: (optionCounts.typeCounts['SINGLE_CHOICE'] || 0) + (optionCounts.typeCounts['MULTIPLE_CHOICE'] || 0) },
     { value: 'ESSAY', label: 'Tự luận', desc: 'Câu hỏi trình bày tự luận', count: optionCounts.typeCounts['ESSAY'] || 0 },
+    { value: 'FILL_BLANK', label: 'Điền khuyết', desc: 'Câu hỏi điền vào chỗ trống', count: optionCounts.typeCounts['FILL_BLANK'] || 0 },
   ];
 
   const bloomList = [

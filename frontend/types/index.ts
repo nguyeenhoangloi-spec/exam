@@ -149,6 +149,19 @@ export interface QuestionMedia {
   altText?: string | null;
 }
 
+export interface FillBlankAnswer {
+  id?: string;
+  questionId?: string;
+  blankIndex: number;
+  answer: string;
+  normalizedAnswer?: string;
+  acceptedAnswers?: string[] | string | null;
+  score?: number;
+  caseSensitive?: boolean;
+  ignoreWhitespace?: boolean;
+  ignoreVietnameseTone?: boolean;
+}
+
 export interface Question {
   id: string;
   code: string;
@@ -165,6 +178,7 @@ export interface Question {
   explanation?: string;
   status: 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'ARCHIVED';
   options: QuestionOption[];
+  fillBlankAnswers?: FillBlankAnswer[];
   media?: QuestionMedia[];
   createdById: number;
   createdBy?: Pick<User, 'id' | 'username' | 'role'> & { fullName?: string };

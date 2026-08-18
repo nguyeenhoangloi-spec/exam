@@ -387,19 +387,71 @@ export function QuestionBankTable({
                           </button>
                         </div>
 
-                        {/* Tầng 2: Dải Đáp án trắc nghiệm (Chỉ hiển thị khi có đáp án trắc nghiệm) */}
-                        {q.type !== 'ESSAY' && optionsList.length > 0 ? (
-                          <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                        {/* Tầng 2: Dải Đáp án Trắc nghiệm hoặc Điền khuyết */}
+                        {q.type === 'FILL_BLANK' ? (
+                          (() => {
+                            const fbList =
+                              Array.isArray(q.fillBlankAnswers) && q.fillBlankAnswers.length > 0
+                                ? q.fillBlankAnswers
+                                : Array.isArray((q as any).answers) && (q as any).answers.length > 0
+                                ? (q as any).answers
+                                : [];
+                            if (!fbList.length) return null;
+
+                            return (
+                              <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                                {fbList.map((ans: any, aIdx: number) => {
+                                  const bIdx = ans.blankIndex || aIdx + 1;
+                                  const mainAns = ans.answer || ans.value || ans.content || '---';
+                                  return (
+                                    <span
+                                      key={ans.id || aIdx}
+                                      className="table-badge inline-flex items-center gap-1.5 rounded-lg border border-emerald-200/80 dark:border-emerald-800/80 bg-emerald-50/70 dark:bg-emerald-950/40 px-2 py-0.5 text-[13px] font-medium text-emerald-900 dark:text-emerald-200 shadow-2xs max-w-[200px]"
+                                      title={`Ô trống #${bIdx}: ${mainAns}`}
+                                    >
+                                      <span className="table-badge flex h-4.5 px-1.5 shrink-0 items-center justify-center rounded bg-emerald-600 text-xs font-medium text-white">
+                                        Ô #{bIdx}
+                                      </span>
+                                      <span className="table-badge truncate font-medium text-emerald-800 dark:text-emerald-300">
+                                        {mainAns}
+                                      </span>
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            );
+                          })()
+                        ) : q.type !== 'ESSAY' && optionsList.length > 0 ? (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1 w-full max-w-3xl">
                             {optionsList.map((opt) => (
                               <span
                                 key={opt.label + opt.content}
-                                className="table-badge inline-flex items-center gap-1.5 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/60 px-2 py-0.5 text-[13px] font-medium text-slate-700 dark:text-slate-300 max-w-[160px] shadow-2xs"
-                                title={`${opt.label}. ${opt.content}`}
+                                className={`table-badge inline-flex items-center gap-2 rounded-lg border px-2.5 py-1 text-[13px] font-medium w-full min-w-0 shadow-2xs transition-colors ${
+                                  opt.isCorrect
+                                    ? 'border-emerald-300 dark:border-emerald-700 bg-emerald-50/50 dark:bg-emerald-950/30 text-slate-800 dark:text-slate-200'
+                                    : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300'
+                                }`}
+                                title={`${opt.label}. ${opt.content}${opt.isCorrect ? ' (Đáp án đúng)' : ''}`}
                               >
-                                <span className="table-badge flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded bg-slate-200/80 dark:bg-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                                <span
+                                  className={`table-badge flex h-5 w-5 min-w-[20px] shrink-0 items-center justify-center rounded text-xs font-medium ${
+                                    opt.isCorrect
+                                      ? 'bg-emerald-600 text-white shadow-xs'
+                                      : 'bg-slate-200/90 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                                  }`}
+                                >
                                   {opt.label}
                                 </span>
-                                <span className="truncate">{opt.content}</span>
+                                <span
+                                  className={`table-badge truncate leading-tight flex-1 ${
+                                    opt.isCorrect ? 'font-medium text-emerald-900 dark:text-emerald-200' : 'text-slate-700 dark:text-slate-300'
+                                  }`}
+                                >
+                                  {opt.content}
+                                </span>
+                                {opt.isCorrect && (
+                                  <CheckCircle2 className="table-badge h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 ml-auto" />
+                                )}
                               </span>
                             ))}
                           </div>
