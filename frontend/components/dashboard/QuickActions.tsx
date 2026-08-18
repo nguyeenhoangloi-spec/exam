@@ -111,7 +111,7 @@ export function QuickActions() {
             key={title}
             type="button"
             onClick={() => router.push(route)}
-            className="group flex flex-col items-center justify-center rounded-xl border border-slate-200/80 bg-white p-2.5 text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs hover:border-blue-300 hover:bg-blue-50/20 active:scale-98 cursor-pointer"
+            className="group flex flex-col items-center justify-center rounded-xl border border-slate-200/80 bg-white p-2.5 text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs hover:border-slate-300/90 hover:bg-slate-50/60 outline-none focus:outline-none ring-0 focus:ring-0 active:scale-98 cursor-pointer"
           >
             <div className={`flex h-8 w-8 items-center justify-center rounded-xl font-semibold transition-transform group-hover:scale-110 mb-1.5 ${iconBg} ${iconColor}`}>
               <Icon className="h-4 w-4 stroke-[2.2]" />

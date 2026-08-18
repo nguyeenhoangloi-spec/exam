@@ -120,7 +120,7 @@ export function DashboardStatistics({
                 router.push(spec.route);
               }
             }}
-            className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md cursor-pointer overflow-visible"
+            className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer overflow-visible"
           >
             {/* Top row: Title + Big Value on Left, Icon on Right */}
             <div className="flex items-start justify-between gap-3">

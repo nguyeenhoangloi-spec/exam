@@ -35,10 +35,10 @@ export function QuestionStatistics({
                 onSelectStatus?.(item.key);
               }
             }}
-            className={`group flex flex-col justify-between rounded-2xl border p-4 shadow-2xs cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md ${
+            className={`group flex flex-col justify-between rounded-2xl border p-4 shadow-2xs cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md ${
               isActive
                 ? 'border-blue-500 bg-blue-50/80 ring-2 ring-blue-500/20'
-                : 'border-slate-200/90 bg-white'
+                : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900'
             }`}
           >
             <div className="flex items-start justify-between gap-3 w-full">

@@ -216,7 +216,7 @@ export function QuestionBankTable({
           return (
             <div
               key={q.id}
-              className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
+              className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-xs transition duration-200 gap-3.5 ${
                 isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
               }`}
             >
@@ -419,7 +419,7 @@ export function QuestionBankTable({
                                   key={m.id || idx}
                                   type="button"
                                   onClick={(e) => { e.stopPropagation(); setLightboxUrl(m.url); }}
-                                  className="table-action group inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 shadow-2xs transition cursor-zoom-in shrink-0 select-none"
+                                  className="table-action group inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:text-blue-600 dark:hover:text-blue-400 shadow-2xs transition cursor-zoom-in shrink-0 select-none"
                                   title="Bấm để phóng to xem ảnh"
                                 >
                                   <ImageIcon className="w-3.5 h-3.5 text-blue-500 group-hover:scale-110 transition-transform" />
