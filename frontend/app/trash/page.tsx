@@ -440,10 +440,10 @@ function TrashPageContent() {
               key={item.key}
               type="button"
               onClick={() => setActiveCategory(item.key)}
-              className={`group relative flex flex-col justify-between p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer shadow-2xs hover:-translate-y-1 hover:shadow-md ${
+              className={`group relative flex flex-col justify-between p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer shadow-2xs hover:-translate-y-0.5 hover:shadow-md ${
                 isSelected
                   ? 'bg-blue-50/40 dark:bg-blue-950/30 border-blue-500 ring-2 ring-blue-500/20'
-                  : 'bg-white dark:bg-slate-900 border-slate-200/90 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-600'
+                  : 'bg-white dark:bg-slate-900 border-slate-200/90 dark:border-slate-800 hover:border-slate-300/90 dark:hover:border-slate-700'
               }`}
             >
               <div className="flex items-start justify-between gap-3 w-full">

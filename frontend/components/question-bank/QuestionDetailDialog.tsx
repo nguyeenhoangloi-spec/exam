@@ -200,7 +200,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                           key={media.id || media.url}
                           type="button"
                           onClick={() => setVideoLightbox({ url: media.url, fileName: media.fileName })}
-                          className="group relative h-20 w-32 overflow-hidden rounded-xl border border-slate-200 bg-black shadow-2xs hover:border-blue-400 hover:shadow-md transition cursor-pointer"
+                          className="group relative h-20 w-32 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-black shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md transition cursor-pointer"
                         >
                           <video src={fullUrl} className="h-full w-full object-cover opacity-60 group-hover:opacity-80 transition" />
                           <div className="absolute inset-0 flex items-center justify-center">
@@ -231,7 +231,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                             setLightboxUrl(media.url);
                           }
                         }}
-                        className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 transition hover:border-blue-400 hover:shadow-md"
+                        className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 p-1 transition hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md"
                         title="Bấm để xem phóng to"
                       >
                         <DynamicImage

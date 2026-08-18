@@ -75,6 +75,53 @@ export const Sidebar: React.FC<SidebarProps> = ({
     '/trash': true,
   });
 
+  // State quản lý Hover Flyout Popover khi Sidebar thu nhỏ (collapsed = true)
+  const [hoveredNav, setHoveredNav] = useState<{
+    item: NavItem;
+    groupName?: string;
+    top: number;
+  } | null>(null);
+  const hideTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const handleItemMouseEnter = (item: NavItem, groupName: string | undefined, el: HTMLElement) => {
+    if (!collapsed) return;
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+    const rect = el.getBoundingClientRect();
+    setHoveredNav({
+      item,
+      groupName,
+      top: rect.top,
+    });
+  };
+
+  const handleItemMouseLeave = () => {
+    if (!collapsed) return;
+    hideTimeoutRef.current = setTimeout(() => {
+      setHoveredNav(null);
+    }, 150);
+  };
+
+  const handleFlyoutMouseEnter = () => {
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+  };
+
+  const handleFlyoutMouseLeave = () => {
+    setHoveredNav(null);
+  };
+
+  // Tự động đóng flyout khi mở rộng thanh bên
+  React.useEffect(() => {
+    if (!collapsed) {
+      setHoveredNav(null);
+    }
+  }, [collapsed]);
+
   const toggleSubMenu = (parentHref: string) => {
     setOpenSubMenus((prev) => ({ ...prev, [parentHref]: !prev[parentHref] }));
   };
@@ -285,6 +332,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           return (
             <div key={groupName} className="space-y-1 w-full">
+              {/* Khoảng trống phân nhóm tự nhiên khi thu nhỏ (Pure Spacing) */}
+              {collapsed && groupIdx > 0 && <div className="h-2 w-full" />}
+
               {/* Accordion Group Header */}
               {group.group && (
                 <div
@@ -329,14 +379,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           <button
                             type="button"
                             onClick={() => {
-                              if (!collapsed) toggleSubMenu(item.href);
+                              if (collapsed) {
+                                router.push(item.href);
+                                setHoveredNav(null);
+                              } else {
+                                router.push(item.href);
+                                setOpenSubMenus((prev) => ({ ...prev, [item.href]: true }));
+                              }
                             }}
+                            onMouseEnter={(e) => handleItemMouseEnter(item, group.group, e.currentTarget)}
+                            onMouseLeave={handleItemMouseLeave}
                             className={`group relative w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-sm transition-all duration-150 cursor-pointer overflow-hidden ${
                               isActive
                                 ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold shadow-md shadow-blue-600/25'
                                 : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white font-medium'
                             }`}
-                            title={collapsed ? item.name : undefined}
                           >
                             {/* Magnetic Pill Indicator */}
                             <span
@@ -366,8 +423,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
                               </span>
                             </div>
                             <div
-                              className={`transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden shrink-0 ${
-                                collapsed ? 'max-w-0 opacity-0' : 'max-w-6 opacity-100'
+                              role="button"
+                              tabIndex={0}
+                              onClick={(e) => {
+                                if (!collapsed) {
+                                  e.stopPropagation();
+                                  toggleSubMenu(item.href);
+                                }
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  if (!collapsed) {
+                                    e.stopPropagation();
+                                    toggleSubMenu(item.href);
+                                  }
+                                }
+                              }}
+                              className={`transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden shrink-0 p-1 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 ${
+                                collapsed ? 'max-w-0 opacity-0 pointer-events-none' : 'max-w-6 opacity-100'
                               }`}
                             >
                               <ChevronDown
@@ -416,12 +489,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         key={item.href}
                         href={item.href}
                         prefetch={true}
+                        onMouseEnter={(e) => handleItemMouseEnter(item, group.group, e.currentTarget)}
+                        onMouseLeave={handleItemMouseLeave}
                         className={`group relative flex items-center justify-between px-2.5 py-2 rounded-xl text-sm transition-all duration-150 overflow-hidden ${
                           isActive
                             ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold shadow-md shadow-blue-600/25'
                             : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white font-medium'
                         }`}
-                        title={collapsed ? item.name : undefined}
                       >
                         {/* Magnetic Pill Indicator */}
                         <span
@@ -473,6 +547,82 @@ export const Sidebar: React.FC<SidebarProps> = ({
           © 2026 Exam Management System
         </span>
       </div>
+
+      {/* ── 4. Smart Floating Flyout Popover khi Sidebar thu nhỏ (Collapsed Mode) ── */}
+      {collapsed && hoveredNav && (
+        hoveredNav.item.children && hoveredNav.item.children.length > 0 ? (
+          /* Submenu Floating Card */
+          <div
+            className="fixed left-[76px] z-50 w-52 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-2xl p-2 select-none pointer-events-auto animate-in fade-in-0 slide-in-from-left-2 duration-150"
+            style={{
+              top: typeof window !== 'undefined'
+                ? Math.min(Math.max(hoveredNav.top - 8, 12), window.innerHeight - 260)
+                : hoveredNav.top,
+            }}
+            onMouseEnter={handleFlyoutMouseEnter}
+            onMouseLeave={handleFlyoutMouseLeave}
+          >
+            {/* Header mục cha - Bấm vào chuyển thẳng tới trang tổng */}
+            <Link
+              href={hoveredNav.item.href}
+              prefetch={true}
+              onClick={() => setHoveredNav(null)}
+              className="flex items-center gap-2 px-2 py-1.5 mb-1.5 border-b border-slate-100 dark:border-slate-800 rounded-xl hover:bg-slate-100/90 dark:hover:bg-slate-800/80 transition-colors cursor-pointer group/header"
+            >
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 group-hover/header:scale-105 transition-transform">
+                <hoveredNav.item.icon className="h-3.5 w-3.5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate group-hover/header:text-blue-600 dark:group-hover/header:text-blue-400 transition-colors">
+                  {hoveredNav.item.name}
+                </div>
+                {hoveredNav.groupName && (
+                  <div className="text-[12px] font-medium text-slate-400 dark:text-slate-500 truncate">
+                    {hoveredNav.groupName}
+                  </div>
+                )}
+              </div>
+            </Link>
+
+            {/* Danh sách link con */}
+            <div className="space-y-0.5">
+              {hoveredNav.item.children.map((sub) => {
+                const isSubActive = isSubItemActive(sub.href);
+                return (
+                  <Link
+                    key={sub.href}
+                    href={sub.href}
+                    prefetch={true}
+                    onClick={() => setHoveredNav(null)}
+                    className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                      isSubActive
+                        ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold'
+                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <span className="truncate">{sub.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          /* Single Item Floating Tooltip Pill */
+          <div
+            className="fixed left-[76px] z-50 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white shadow-xl border border-slate-700/60 pointer-events-none animate-in fade-in-0 slide-in-from-left-2 duration-150"
+            style={{ top: `${hoveredNav.top + 4}px` }}
+          >
+            <span className="text-xs font-semibold text-white whitespace-nowrap">
+              {hoveredNav.item.name}
+            </span>
+            {hoveredNav.groupName && (
+              <span className="text-[12px] font-medium text-slate-400 border-l border-slate-700/80 pl-2 whitespace-nowrap">
+                {hoveredNav.groupName}
+              </span>
+            )}
+          </div>
+        )
+      )}
     </aside>
   );
 };

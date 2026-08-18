@@ -255,14 +255,14 @@ export default function StudentExamSchedulePage() {
           {KPI.map(({ label, value, subtext, progressPercent, icon: Icon }) => (
             <div
               key={label}
-              className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md cursor-pointer"
+              className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1 min-w-0">
                   <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
                     {label}
                   </span>
-                  <div className="text-[32px] font-semibold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                  <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                     {value}
                   </div>
                 </div>
@@ -376,7 +376,7 @@ export default function StudentExamSchedulePage() {
             {filteredSchedules.map((item) => (
               <div
                 key={item.id}
-                className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-5 flex flex-col justify-between hover:shadow-md hover:border-blue-400 dark:hover:border-blue-600 transition duration-200 relative overflow-hidden group"
+                className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-5 flex flex-col justify-between hover:shadow-md hover:border-slate-300/90 dark:hover:border-slate-700 transition duration-200 relative overflow-hidden group"
               >
                 <div className="space-y-3.5">
                   {/* Card top badges */}

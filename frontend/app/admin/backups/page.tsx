@@ -498,7 +498,7 @@ export default function BackupsPage() {
             {/* Operational System Cards (Worker, Storage, System Tools, KPI) */}
             <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
                 {/* Card 1: Worker Status */}
-                <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md cursor-pointer">
+                <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer">
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0 flex-1">
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
@@ -536,7 +536,7 @@ export default function BackupsPage() {
                 </div>
 
                 {/* Card 2: Storage Connection */}
-                <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md cursor-pointer">
+                <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer">
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0 flex-1">
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
@@ -565,7 +565,7 @@ export default function BackupsPage() {
                 </div>
 
                 {/* Card 3: System Tools pg_dump/pg_restore */}
-                <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md cursor-pointer">
+                <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer">
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0 flex-1">
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
@@ -608,7 +608,7 @@ export default function BackupsPage() {
                 </div>
 
                 {/* Card 4: Total Capacity & Health */}
-                <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md cursor-pointer">
+                <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer">
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0 flex-1">
                             <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
