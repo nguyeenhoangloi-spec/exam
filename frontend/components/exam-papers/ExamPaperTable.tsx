@@ -472,8 +472,8 @@ export function ExamPaperTable({
                               }}
                               className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 dark:hover:bg-blue-950/50 text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer whitespace-nowrap"
                             >
-                              <KeyRound className="h-3.5 w-3.5 text-blue-600 shrink-0" />
-                              <span>Đổi mật khẩu ca thi</span>
+                              <KeyRound className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                              <span>Đổi mật khẩu</span>
                             </button>
                           )}
 
@@ -486,10 +486,10 @@ export function ExamPaperTable({
                                     closeMenu();
                                     onAction(p, 'publish');
                                   }}
-                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer whitespace-nowrap"
+                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap text-[15px] font-medium select-none"
                                 >
-                                  <Send className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                                  <span>Phát hành đề thi</span>
+                                  <Send className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                  <span>Phát hành</span>
                                 </button>
                               )}
 
@@ -500,10 +500,10 @@ export function ExamPaperTable({
                                     closeMenu();
                                     onAction(p, 'archive');
                                   }}
-                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap"
+                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap text-[15px] font-medium select-none"
                                 >
-                                  <Archive className="h-3.5 w-3.5 text-slate-500 shrink-0" />
-                                  <span>Lưu trữ đề thi</span>
+                                  <Archive className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400 shrink-0" />
+                                  <span>Lưu trữ</span>
                                 </button>
                               )}
 
@@ -514,12 +514,14 @@ export function ExamPaperTable({
                                     closeMenu();
                                     onAction(p, 'restore');
                                   }}
-                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap"
+                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-blue-600 dark:text-blue-400 transition-colors cursor-pointer whitespace-nowrap text-[15px] font-medium select-none"
                                 >
-                                  <RotateCcw className="h-3.5 w-3.5 text-slate-500 shrink-0" />
-                                  <span>Khôi phục đề thi</span>
+                                  <RotateCcw className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                                  <span>Khôi phục</span>
                                 </button>
                               )}
+
+                              <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
 
                               <button
                                 type="button"
@@ -527,10 +529,10 @@ export function ExamPaperTable({
                                   closeMenu();
                                   onAction(p, 'delete');
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 transition-colors cursor-pointer whitespace-nowrap"
+                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 transition-colors cursor-pointer whitespace-nowrap text-[15px] font-medium select-none"
                               >
-                                <Trash2 className="h-3.5 w-3.5 text-rose-500 shrink-0" />
-                                <span>Xóa đề thi</span>
+                                <Trash2 className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400 shrink-0" />
+                                <span>Xóa</span>
                               </button>
                             </>
                           )}

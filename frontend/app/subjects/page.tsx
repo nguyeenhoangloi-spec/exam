@@ -266,23 +266,23 @@ export default function SubjectsPage() {
  };
 
  const handleDelete = (id: number) => {
- const item = subjects.find((s) => s.id === id);
- setConfirmModal({
- isOpen: true,
- title: 'Xóa môn học',
- message: `Bạn có chắc chắn muốn xóa môn ${item?.subjectName || ''}?`,
- type: 'danger',
- onConfirm: async () => {
- setConfirmModal((prev) => ({ ...prev, isOpen: false }));
- try {
- await api.delete(`/subjects/${id}`);
- setToast({ message: 'Đã xóa môn học thành công!', type: 'success' });
- fetchData();
- } catch (err: any) {
- setToast({ message: err.message || 'Lỗi xóa môn học', type: 'error' });
- }
- },
- });
+  const item = subjects.find((s) => s.id === id);
+  setConfirmModal({
+  isOpen: true,
+  title: 'Xóa môn học?',
+  message: `Bạn có chắc chắn muốn xóa môn học ${item?.subjectName || ''}? Dữ liệu sẽ được chuyển vào thùng rác.`,
+  type: 'danger',
+  onConfirm: async () => {
+  setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+  try {
+  await api.delete(`/subjects/${id}`);
+  setToast({ message: 'Đã chuyển môn học vào thùng rác thành công!', type: 'success' });
+  fetchData();
+  } catch (err: any) {
+  setToast({ message: err.message || 'Lỗi xóa môn học', type: 'error' });
+  }
+  },
+  });
  };
 
  // Enroll by Class Handlers

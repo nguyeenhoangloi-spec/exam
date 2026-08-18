@@ -526,9 +526,9 @@ export function ExamScheduleTable({
                               closeMenu();
                               onDetail(s);
                             }}
-                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-slate-700 dark:text-slate-200 cursor-pointer text-[15px] font-medium"
+                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[15px] font-medium transition cursor-pointer select-none"
                           >
-                            <Eye className="h-4 w-4 text-slate-500" />
+                            <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                             <span>Xem chi tiết</span>
                           </button>
 
@@ -542,10 +542,10 @@ export function ExamScheduleTable({
                                       closeMenu();
                                       onRestore?.(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-blue-600 dark:text-blue-400 cursor-pointer text-[15px] font-medium"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-blue-600 dark:text-blue-400 cursor-pointer text-[15px] font-medium transition select-none"
                                   >
-                                    <RotateCcw className="h-4 w-4 text-blue-600" />
-                                    <span>Khôi phục lịch thi</span>
+                                    <RotateCcw className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                                    <span>Khôi phục</span>
                                   </button>
                                   <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
                                   <button
@@ -554,9 +554,9 @@ export function ExamScheduleTable({
                                       closeMenu();
                                       onHardDelete?.(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[15px] font-medium"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[15px] font-medium transition select-none"
                                   >
-                                    <Trash2 className="h-4 w-4 text-rose-600" />
+                                    <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400" />
                                     <span>Xóa vĩnh viễn</span>
                                   </button>
                                 </>
@@ -568,10 +568,10 @@ export function ExamScheduleTable({
                                       closeMenu();
                                       onEdit(s);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 text-slate-700 dark:text-slate-200 cursor-pointer text-[15px] font-medium"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-[15px] font-medium transition select-none"
                                   >
-                                    <Edit className="h-4 w-4 text-blue-600" />
-                                    <span>Chỉnh sửa ca thi</span>
+                                    <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                                    <span>Chỉnh sửa</span>
                                   </button>
                                   <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
                                   <button
@@ -580,10 +580,10 @@ export function ExamScheduleTable({
                                       closeMenu();
                                       onDelete(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[15px] font-medium"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[15px] font-medium transition select-none"
                                   >
-                                    <Trash2 className="h-4 w-4 text-rose-600" />
-                                    <span>Xóa lịch thi</span>
+                                    <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+                                    <span>Xóa</span>
                                   </button>
                                 </>
                               )}

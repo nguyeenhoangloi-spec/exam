@@ -324,8 +324,8 @@ export default function QuestionBankPage() {
     if (name === 'delete') {
       setConfirmConfig({
         isOpen: true,
-        title: 'Xóa câu hỏi',
-        message: `Bạn có chắc chắn muốn xóa câu hỏi mã ${q.code || `QH${q.id}`}?`,
+        title: 'Xóa câu hỏi?',
+        message: `Bạn có chắc chắn muốn xóa câu hỏi mã ${q.code || `QH${q.id}`}? Dữ liệu sẽ được chuyển vào thùng rác.`,
         type: 'danger',
         confirmText: 'Xóa câu hỏi',
         onConfirm: async () => {
@@ -333,7 +333,7 @@ export default function QuestionBankPage() {
           try {
             await api.delete(`/questions/${q.id}`);
             invalidateCache('/questions');
-            setToast({ message: `Đã xóa câu hỏi.`, type: 'success' });
+            setToast({ message: `Đã chuyển câu hỏi vào thùng rác thành công!`, type: 'success' });
             load();
           } catch (e: any) {
             setToast({ message: e.message || 'Không thể xóa câu hỏi.', type: 'error' });

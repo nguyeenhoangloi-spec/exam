@@ -277,14 +277,14 @@ export default function ClassesPage() {
     const item = classes.find((c) => c.id === id);
     setConfirmModal({
       isOpen: true,
-      title: 'Xóa lớp học',
-      message: `Bạn có chắc chắn muốn xóa lớp ${item?.name || ''}?`,
+      title: 'Xóa lớp học?',
+      message: `Bạn có chắc chắn muốn xóa lớp học ${item?.name || ''}? Dữ liệu sẽ được chuyển vào thùng rác.`,
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.delete(`/classes/${id}`);
-          setToast({ message: 'Đã xóa lớp học thành công!', type: 'success' });
+          setToast({ message: 'Đã chuyển lớp học vào thùng rác thành công!', type: 'success' });
           fetchData();
         } catch (err: any) {
           setToast({ message: err.message || 'Lỗi xóa lớp học', type: 'error' });

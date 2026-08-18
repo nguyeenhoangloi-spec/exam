@@ -598,15 +598,21 @@ export default function ExamPapersPage() {
       return;
     }
 
+    const titles = {
+      archive: 'Lưu trữ đề thi?',
+      restore: 'Khôi phục đề thi?',
+      delete: 'Xóa đề thi?',
+    };
+
     const messages = {
-      archive: `Bạn muốn lưu trữ đề thi ${paper.paperCode}?`,
-      restore: `Khôi phục đề thi ${paper.paperCode} về bản nháp?`,
-      delete: `Bạn có chắc muốn xóa đề thi ${paper.paperCode}?`,
+      archive: `Bạn có chắc chắn muốn chuyển đề thi ${paper.paperCode} vào kho lưu trữ?`,
+      restore: `Khôi phục đề thi ${paper.paperCode} về bản nháp để tiếp tục chỉnh sửa?`,
+      delete: `Bạn có chắc chắn muốn xóa đề thi ${paper.paperCode}? Dữ liệu sẽ được chuyển vào thùng rác.`,
     };
 
     setConfirmModal({
       isOpen: true,
-      title: 'Xác nhận thao tác',
+      title: titles[action] || 'Xác nhận thao tác?',
       message: messages[action] || 'Xác nhận thực hiện thao tác?',
       type: action === 'delete' ? 'danger' : 'warning',
       onConfirm: async () => {
@@ -614,7 +620,7 @@ export default function ExamPapersPage() {
         try {
           if (action === 'delete') {
             await api.delete(`/exam-papers/${paper.id}`);
-            setToast({ message: `Đã xóa đề thi ${paper.paperCode}.`, type: 'success' });
+            setToast({ message: `Đã chuyển đề thi ${paper.paperCode} vào thùng rác thành công.`, type: 'success' });
           } else {
             await api.post(`/exam-papers/${paper.id}/${action}`);
             setToast({ message: `Cập nhật trạng thái đề ${paper.paperCode} thành công.`, type: 'success' });

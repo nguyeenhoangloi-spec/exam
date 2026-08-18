@@ -223,14 +223,14 @@ export default function ExamPeriodsPage() {
     const item = periods.find((p) => p.id === id);
     setConfirmModal({
       isOpen: true,
-      title: 'Xóa kỳ thi',
-      message: `Bạn có chắc chắn muốn xóa kỳ thi ${item?.name || ''}?`,
+      title: 'Xóa kỳ thi?',
+      message: `Bạn có chắc chắn muốn xóa kỳ thi ${item?.name || ''}? Dữ liệu sẽ được chuyển vào thùng rác.`,
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.delete(`/exam-periods/${id}`);
-          setToast({ message: 'Đã xóa kỳ thi thành công!', type: 'success' });
+          setToast({ message: 'Đã chuyển kỳ thi vào thùng rác thành công!', type: 'success' });
           fetchData();
         } catch (err: any) {
           setToast({ message: err?.response?.data?.message || err?.message || 'Không thể xóa kỳ thi vì đang có dữ liệu liên quan.', type: 'error' });

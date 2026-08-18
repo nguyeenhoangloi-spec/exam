@@ -375,52 +375,52 @@ export function StudentTable({
  <ActionDropdownPortal>
  {(closeMenu) => (
  <>
- <button
- type="button"
- onClick={() => { closeMenu(); onDetail(s); }}
- className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700"
- >
- <Eye className="h-4 w-4 text-slate-500" />
- <span>Xem hồ sơ</span>
- </button>
- <button
- type="button"
- onClick={() => { closeMenu(); onEdit(s); }}
- className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700"
- >
- <Edit className="h-4 w-4 text-primary-600" />
- <span>Chỉnh sửa</span>
- </button>
- {onToggleLock && (
- <button
- type="button"
- onClick={() => { closeMenu(); onToggleLock(s); }}
- className={`flex w-full items-center gap-2 rounded-xl px-2.5 py-2 ${
- s.user?.status === 'LOCKED' ? 'hover:bg-emerald-50 text-emerald-600' : 'hover:bg-amber-50 text-amber-600'
- }`}
- >
- {s.user?.status === 'LOCKED' ? (
- <>
- <Unlock className="h-4 w-4 text-emerald-600" />
- <span>Mở khóa tài khoản</span>
- </>
- ) : (
- <>
- <Lock className="h-4 w-4 text-amber-600" />
- <span>Khóa đăng nhập</span>
- </>
- )}
- </button>
- )}
- <div className="my-1 border-t border-slate-200" />
- <button
- type="button"
- onClick={() => { closeMenu(); onDelete(s.id); }}
- className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-danger-50 text-danger-600"
- >
- <Trash2 className="h-4 w-4 text-danger-600" />
- <span>Xóa sinh viên</span>
- </button>
+  <button
+  type="button"
+  onClick={() => { closeMenu(); onDetail(s); }}
+  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[15px] font-medium transition cursor-pointer select-none"
+  >
+  <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+  <span>Xem chi tiết</span>
+  </button>
+  <button
+  type="button"
+  onClick={() => { closeMenu(); onEdit(s); }}
+  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[15px] font-medium transition cursor-pointer select-none"
+  >
+  <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+  <span>Chỉnh sửa</span>
+  </button>
+  {onToggleLock && (
+  <button
+  type="button"
+  onClick={() => { closeMenu(); onToggleLock(s); }}
+  className={`flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[15px] font-medium transition cursor-pointer select-none ${
+  s.user?.status === 'LOCKED' ? 'hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400' : 'hover:bg-amber-50 dark:hover:bg-amber-950/40 text-amber-600 dark:text-amber-400'
+  }`}
+  >
+  {s.user?.status === 'LOCKED' ? (
+  <>
+  <Unlock className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+  <span>Mở khóa tài khoản</span>
+  </>
+  ) : (
+  <>
+  <Lock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+  <span>Khóa tài khoản</span>
+  </>
+  )}
+  </button>
+  )}
+  <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
+  <button
+  type="button"
+  onClick={() => { closeMenu(); onDelete(s.id); }}
+  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-[15px] font-medium transition cursor-pointer select-none"
+  >
+  <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+  <span>Xóa</span>
+  </button>
  </>
  )}
  </ActionDropdownPortal>

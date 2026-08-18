@@ -317,15 +317,15 @@ export default function StudentsPage() {
     const s = students.find((item) => item.id === id);
     setConfirmModal({
       isOpen: true,
-      title: 'Xóa sinh viên',
-      message: `Bạn có chắc chắn muốn xóa sinh viên ${s?.fullName || ''} (${s?.studentCode || ''})? Hành động này không thể hoàn tác.`,
+      title: 'Xóa sinh viên?',
+      message: `Bạn có chắc chắn muốn xóa sinh viên ${s?.fullName || ''} (${s?.studentCode || ''})? Dữ liệu sẽ được chuyển vào thùng rác.`,
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.delete(`/students/${id}`);
           invalidateCache('/students');
-          setToast({ message: 'Đã xóa sinh viên thành công!', type: 'success' });
+          setToast({ message: 'Đã chuyển sinh viên vào thùng rác thành công!', type: 'success' });
           fetchData();
         } catch (err: any) {
           setToast({ message: err.message || 'Xóa sinh viên thất bại. Vui lòng thử lại.', type: 'error' });
@@ -336,10 +336,9 @@ export default function StudentsPage() {
 
   const handleToggleLock = (s: Student) => {
     const isLocked = s.user?.status === 'LOCKED';
-    const actionText = isLocked ? 'Mở khóa đăng nhập' : 'Khóa đăng nhập';
     setConfirmModal({
       isOpen: true,
-      title: `${actionText} tài khoản sinh viên`,
+      title: isLocked ? 'Mở khóa tài khoản sinh viên?' : 'Khóa tài khoản sinh viên?',
       message: isLocked
         ? `Bạn có chắc chắn muốn MỞ KHÓA tài khoản cho sinh viên "${s.fullName}" (${s.studentCode})? Sinh viên sẽ có thể đăng nhập lại hệ thống.`
         : `Bạn có chắc chắn muốn KHÓA ĐĂNG NHẬP tài khoản sinh viên "${s.fullName}" (${s.studentCode})? Sinh viên sẽ KHÔNG THỂ ĐĂNG NHẬP vào hệ thống nữa!`,

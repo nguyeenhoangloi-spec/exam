@@ -547,3 +547,31 @@ Nhằm đảm bảo giao diện luôn trang nhã, chuyên nghiệp, dịu mắt 
 ### 18.5 Nền trang & Nút trạng thái
 - **Nền trang, card, control:** Vẫn giữ nguyên nền trắng (`bg-white`) và trắng xanh (`bg-slate-50`, `bg-slate-50/50`). Tuyệt đối KHÔNG dùng màu trạng thái làm nền lớn toàn trang.
 - **Nút trạng thái nền đậm:** Nút có nền màu đậm (`bg-blue-600`, `bg-emerald-600`, `bg-rose-600`, `bg-amber-600`) bắt buộc dùng chữ màu trắng (`text-white`).
+
+## 19. Quy tắc Chuẩn Hóa Nhãn Hành Động (Action Dropdown & Confirm Modals)
+
+Nhằm đảm bảo giao diện luôn tinh gọn, hiện đại và nhất quán 100% trên tất cả các trang quản lý:
+
+### 19.1 Nhãn Thao Tác trong Dropdown Menu Dòng Bảng (Row Actions)
+Vì người dùng đã ở trong ngữ cảnh trang quản lý của đối tượng, Dropdown menu bắt buộc dùng **Động từ ngắn gọn chuẩn mực**, tuyệt đối không thêm đuôi đối tượng dài dòng:
+- 👁️ **`Xem chi tiết`** (áp dụng đồng nhất cho Sinh viên, Giảng viên, Môn học, Lớp, Phòng thi, Ca thi, Đề thi, Câu hỏi; không dùng "Xem hồ sơ" hay "Xem chi tiết ca thi").
+- ✏️ **`Chỉnh sửa`** (không dùng "Chỉnh sửa ca thi", "Chỉnh sửa môn", "Chỉnh sửa phòng thi"...).
+- 🗑️ **`Xóa`** (màu chữ & icon `text-rose-600 dark:text-rose-400`; không dùng "Xóa lịch thi", "Xóa môn học", "Xóa phòng thi"...).
+- *(Trong Thùng rác)*:
+  - 🔄 **`Khôi phục`** (Icon `RotateCcw`, chữ `text-blue-600 dark:text-blue-400`).
+  - 💥 **`Xóa vĩnh viễn`** (Icon `Trash2`, chữ `text-rose-600 dark:text-rose-400`).
+- *(Thao tác nghiệp vụ đặc thù)*:
+  - 🔒 **`Khóa tài khoản`** / 🔓 **`Mở khóa tài khoản`**
+  - 📦 **`Lưu trữ`**
+  - ⚙️ **`Cấu hình Rubric`**
+  - ✅ **`Phê duyệt`** / ❌ **`Từ chối`**
+
+### 19.2 Style Quy Chuẩn cho Dropdown Menu Item
+- Item bình thường: `flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[14.5px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer select-none`
+- Item Danger: `flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[14.5px] font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer select-none`
+- Đường kẻ phân cách trước nút Xóa: `<div className="my-1 border-t border-slate-100 dark:border-slate-800" />`
+
+### 19.3 Tiêu Đề Modal Xác Nhận (ConfirmModal)
+Ngược lại với Dropdown menu, tiêu đề của `ConfirmModal` khi xóa **bắt buộc nêu rõ tên đối tượng cụ thể** để người dùng không bấm nhầm:
+- `Xóa ca thi?`, `Xóa phòng thi?`, `Xóa lớp học?`, `Xóa môn học?`, `Xóa sinh viên?`, `Xóa giảng viên?`, `Xóa kỳ thi?`, `Xóa câu hỏi?`, `Xóa đề thi?`.
+

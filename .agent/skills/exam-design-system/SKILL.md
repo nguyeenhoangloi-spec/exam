@@ -285,6 +285,16 @@ font-family:
 - **Tiêu đề Section:** Dùng Sentence case (`Đề bài câu hỏi`, `Đáp án mẫu & Hướng dẫn giải`), chữ `15px font-semibold`, có thanh chỉ báo dọc xanh (`h-4 w-1 rounded-full bg-blue-600`). TUYỆT ĐỐI KHÔNG dùng chữ IN HOA toàn bộ.
 - **Thanh trạng thái / Cảnh báo inline:** Không dùng nền hộp màu đặc dày (`bg-amber-50`); ưu tiên dạng dòng chữ phẳng trong suốt kèm icon semantic (`CheckCircle2` / `AlertTriangle`).
 
+### 7.4 Quy Chuẩn Nhãn Hành Động (Action Dropdown & Confirm Modals)
+
+- **Dropdown Menu dòng bảng (Row Actions):** Bắt buộc dùng **Động từ ngắn gọn**, không thêm đuôi đối tượng dài dòng:
+  - 👁️ `Xem chi tiết` (không dùng "Xem hồ sơ" hay "Xem chi tiết ca thi").
+  - ✏️ `Chỉnh sửa` (không dùng "Chỉnh sửa ca thi", "Chỉnh sửa môn"...).
+  - 🗑️ `Xóa` (màu chữ & icon `text-rose-600 dark:text-rose-400`).
+  - 🔄 `Khôi phục` & 💥 `Xóa vĩnh viễn` (trong Thùng rác).
+  - Thao tác đặc thù: 🔒 `Khóa tài khoản` / 🔓 `Mở khóa tài khoản`, 📦 `Lưu trữ`, ⚙️ `Cấu hình Rubric`, ✅ `Phê duyệt`, ❌ `Từ chối`.
+- **Hộp thoại xác nhận (ConfirmModal):** Tiêu đề bắt buộc nêu rõ tên đối tượng cụ thể (`Xóa ca thi?`, `Xóa phòng thi?`, `Xóa môn học?`, `Xóa sinh viên?`, `Xóa giảng viên?`, `Xóa lớp học?`, `Xóa đề thi?`, `Xóa câu hỏi?`).
+
 ---
 
 ## 8. Dark Mode & Responsive

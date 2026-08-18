@@ -269,14 +269,14 @@ export default function DepartmentsPage() {
     const item = departments.find((d) => d.id === id);
     setConfirmModal({
       isOpen: true,
-      title: 'Xóa khoa đào tạo',
-      message: `Bạn có chắc chắn muốn xóa khoa ${item?.name || ''}? Thao tác này sẽ ảnh hưởng tới các lớp học và sinh viên trực thuộc!`,
+      title: 'Xóa khoa?',
+      message: `Bạn có chắc chắn muốn xóa khoa ${item?.name || ''}? Dữ liệu sẽ được chuyển vào thùng rác.`,
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.delete(`/departments/${id}`);
-          setToast({ message: 'Đã xóa Khoa thành công!', type: 'success' });
+          setToast({ message: 'Đã chuyển khoa vào thùng rác thành công!', type: 'success' });
           fetchData();
         } catch (err: any) {
           setToast({ message: err.message || 'Lỗi xóa khoa', type: 'error' });

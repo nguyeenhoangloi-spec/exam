@@ -369,8 +369,8 @@ export default function ExamSchedulesPage() {
     const item = schedules.find((s) => s.id === id);
     setConfirmModal({
       isOpen: true,
-      title: 'Xóa lịch thi',
-      message: `Bạn có chắc chắn muốn xóa lịch thi ${item?.code || ''} (${item?.periodName || ''})?`,
+      title: 'Xóa ca thi?',
+      message: `Bạn có chắc chắn muốn xóa ca thi ${item?.code || ''} (${item?.periodName || ''})? Dữ liệu sẽ được chuyển vào thùng rác.`,
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -378,9 +378,9 @@ export default function ExamSchedulesPage() {
           await api.delete(`/exam-schedules/${id}`);
           invalidateCache('/exam-schedules');
           setSchedules((prev) => prev.filter((x) => x.id !== id));
-          setToast({ message: 'Đã xóa lịch thi thành công!', type: 'success' });
+          setToast({ message: 'Đã chuyển ca thi vào thùng rác thành công!', type: 'success' });
         } catch (error: any) {
-          setToast({ message: error?.response?.data?.message || error?.message || 'Không thể xóa lịch thi. Vui lòng kiểm tra các dữ liệu liên quan.', type: 'error' });
+          setToast({ message: error?.response?.data?.message || error?.message || 'Không thể xóa ca thi. Vui lòng kiểm tra các dữ liệu liên quan.', type: 'error' });
         }
       },
     });

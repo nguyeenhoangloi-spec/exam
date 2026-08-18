@@ -250,14 +250,14 @@ export default function ExamRoomsPage() {
     const item = rooms.find((r) => r.id === id);
     setConfirmModal({
       isOpen: true,
-      title: 'Xóa phòng thi',
-      message: `Bạn có chắc chắn muốn xóa phòng ${item?.roomName || item?.name || ''}?`,
+      title: 'Xóa phòng thi?',
+      message: `Bạn có chắc chắn muốn xóa phòng thi ${item?.roomName || item?.name || ''}? Dữ liệu sẽ được chuyển vào thùng rác.`,
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         try {
           await api.delete(`/exam-rooms/${id}`);
-          setToast({ message: 'Đã xóa phòng thi thành công!', type: 'success' });
+          setToast({ message: 'Đã chuyển phòng thi vào thùng rác thành công!', type: 'success' });
           fetchData();
         } catch (err: any) {
           setToast({ message: err?.response?.data?.message || err?.message || 'Không thể xóa phòng thi vì phòng đang được sử dụng.', type: 'error' });

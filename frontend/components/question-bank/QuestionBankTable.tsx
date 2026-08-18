@@ -618,7 +618,7 @@ export function QuestionBankTable({
                                   className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
                                 >
                                   <Trash2 className="h-4 w-4 text-rose-500" />
-                                  <span>Xóa câu hỏi</span>
+                                  <span>Xóa</span>
                                 </button>
                               </>
                             )}

@@ -323,9 +323,9 @@ export function ClassTable({
                               closeMenu();
                               onDetail(c);
                             }}
-                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-[15px] font-medium"
+                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[15px] font-medium transition cursor-pointer select-none"
                           >
-                            <Eye className="h-4 w-4 text-slate-500" />
+                            <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                             <span>Xem chi tiết</span>
                           </button>
 
@@ -337,13 +337,13 @@ export function ClassTable({
                                   closeMenu();
                                   onEdit(c);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-primary-50 text-slate-700 text-[15px] font-medium"
+                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[15px] font-medium transition cursor-pointer select-none"
                               >
-                                <Edit className="h-4 w-4 text-primary-600" />
-                                <span>Chỉnh sửa lớp</span>
+                                <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                                <span>Chỉnh sửa</span>
                               </button>
 
-                              <div className="my-1 border-t border-slate-200" />
+                              <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
 
                               <button
                                 type="button"
@@ -351,10 +351,10 @@ export function ClassTable({
                                   closeMenu();
                                   onDelete(c.id);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-danger-50 text-danger-600 text-[15px] font-medium"
+                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-[15px] font-medium transition cursor-pointer select-none"
                               >
-                                <Trash2 className="h-4 w-4 text-danger-600" />
-                                <span>Xóa lớp học</span>
+                                <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+                                <span>Xóa</span>
                               </button>
                             </>
                           )}
