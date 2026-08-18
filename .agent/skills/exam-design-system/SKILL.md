@@ -106,8 +106,11 @@ font-family:
 - **Danger (Red)**: `danger-600` (#DC2626), Toast/Alert red (#EF4444) — Lỗi, từ chối, xóa.
 - **Neutral Surface**: `surface-page` (`#F8FAFC` / `slate-50`), `surface` (`#FFFFFF`), `border-default` (`#E2E8F0` / `slate-200`).
 
-### 3.3 Quy tắc màu TUYỆT ĐỐI
+### 3.3 Quy tắc màu TUYỆT ĐỐI & WCAG thực tế
 
+- **Quy chuẩn tương phản WCAG:** Các cặp màu chữ quan trọng phải được kiểm tra tương phản theo chuẩn **WCAG AA** (tỷ lệ $\ge 4.5:1$ cho văn bản thường, $\ge 3:1$ cho văn bản lớn/đậm); nội dung nhỏ ưu tiên đạt **AAA** ($\ge 7:1$) khi có thể.
+- **Giới hạn màu xám nhạt (`text-slate-400` / `text-slate-400/80`):** Chỉ dùng cho Placeholder, Disabled state, Copyright footer và Metadata phụ; tuyệt đối không dùng cho nội dung cần đọc.
+- **Quy tắc Gradient & Ngoại lệ:** Không dùng gradient trong màn hình quản trị và dữ liệu; ngoại lệ cho phép: Trang đăng nhập (Login), Khu vực thương hiệu và Nút Active Tab trên Sidebar.
 - KHÔNG thêm màu hex trực tiếp trong JSX/TSX (ưu tiên dùng utility shortcuts `.text-main`, `.text-sub`, `.text-helper`, `.text-placeholder`, `.text-inverse` hoặc các class `slate-*`).
 - Biểu đồ và SVG dùng biến `--ui-chart-*`.
 - KHÔNG dùng accent tím/indigo/pink ngoài hệ màu chuẩn.
@@ -119,14 +122,16 @@ font-family:
 
 ### 4.1 Button ([components/ui/Button.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/ui/Button.tsx))
 
-- **Bo góc**: `rounded-xl` (12px). Tuyệt đối không dùng `rounded-lg` hay `rounded-full` cho button thông thường.
+- **Bo góc**: `rounded-xl` (12px).
+- **Ngoại lệ bo góc:** Submenu items trong Sidebar, Badge nhỏ, Tooltip và Chip trạng thái vi mô được phép dùng `rounded-lg` (8px).
 - **Kích thước**:
-  - `lg`: cao **44px** (`h-11`) — Đăng nhập, Tạo lịch thi...
-  - `md`: cao **40px** (`h-10`) — Lọc kết quả, Bộ lọc, Xuất Excel...
-  - `sm`: cao **36px** (`h-9`) — Đóng, Hủy...
+  - `lg`: cao **44px** (`h-11`) — Nút hành động chính của trang (Primary CTA), Đăng nhập, Tạo lịch thi...
+  - `md`: cao **40px** (`h-10`) — Nút thao tác bảng, toolbar, Lọc kết quả, Bộ lọc, Xuất Excel...
+  - `sm`: cao **36px** (`h-9`) — Nút phụ, Đóng, Hủy...
   - `xs`: cao **32px** (`h-8`) — Action phụ rất gọn
   - `icon`: **36×36px** (`h-9 w-9`) — Chuông thông báo, icon đơn
   - `icon-lg`: **40×40px** (`h-10 w-10`) — Làm mới, xem lưới
+- **Quy tắc Một nút Primary**: Chỉ có duy nhất 1 nút Primary trong cùng một nhóm thao tác hoặc một vùng chức năng (Toolbar, Modal Footer, Form Action Bar).
 - **Typography button**: 15px, `font-semibold` (weight 600).
 - **Nội dung button**: Cấu trúc `Động từ + Đối tượng` (Ví dụ: `Tạo lịch thi`, `Xuất Excel`, `Đăng nhập`). Không viết câu dài, không IN HOA toàn bộ.
 - **State bắt buộc**: Hover, focus-visible, active (`scale-[0.98]`), disabled, loading (`disabled={isLoading}` + `aria-busy={isLoading}`).

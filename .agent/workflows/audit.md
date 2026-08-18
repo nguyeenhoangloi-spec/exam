@@ -162,17 +162,19 @@ Khi thực hiện audit giao diện Web UI, bắt buộc đối chiếu với [u
    - Thanh trạng thái/khớp điểm inline phẳng trong suốt, không dùng nền màu đặc dày.
 
 3. **Buttons & Controls:**
-   - Bo góc chuẩn `rounded-xl` (12px). Tuyệt đối không dùng `rounded-lg` hay `rounded-full` cho button/control thông thường.
-   - Chiều cao: Nút chính 44px (`h-11`), Filter/search/input 40px (`h-10`), Nút phụ 36px (`h-9`).
-   - Nhóm 2-3 nút: Chỉ có duy nhất 1 nút Primary, cùng chiều cao, nút Danger tách biệt hẳn sang bên trái. Phân cấp 3 bậc thị giác: `Ghost` (phẳng) ➔ `Secondary` (viền) ➔ `Primary` (đặc).
+   - Bo góc chuẩn `rounded-xl` (12px). Ngoại lệ: Submenu items trong Sidebar, Badge nhỏ, Tooltip và Chip trạng thái vi mô được phép dùng `rounded-lg` (8px).
+   - Chiều cao: Nút chính 44px (`lg`), Toolbar/Filter/search/input 40px (`md`), Nút phụ 36px (`sm`), Icon 36–40px, Mobile vùng chạm tối thiểu 44px.
+   - Nhóm nút: Chỉ có duy nhất 1 nút Primary trong cùng một nhóm thao tác hoặc một vùng chức năng (Toolbar, Modal Footer, Form Action Bar). Phân cấp 3 bậc thị giác: `Ghost` (phẳng) ➔ `Secondary` (viền) ➔ `Primary` (đặc).
+   - Gradient: Không dùng gradient trong màn hình quản trị và dữ liệu; ngoại lệ cho phép: Trang đăng nhập (Login), Khu vực thương hiệu và Nút Active Tab Sidebar.
 
-4. **Hệ Thống Màu Chữ 5 Tầng Cool Slate (5-Tier Typography Palette):**
+4. **Hệ Thống Màu Chữ 5 Tầng Cool Slate & Quy Chuẩn WCAG Thực Tế:**
    - **Tầng 1 (Chính/Tiêu đề):** `#0F172A` (`slate-900` / Dark: `#F8FAFC` - `slate-50`) hoặc `.text-main`.
    - **Tầng 2 (Phụ/Label/Cột):** `#334155` (`slate-700` / Dark: `#E2E8F0` - `slate-200`) hoặc `.text-sub`.
    - **Tầng 3 (Mô tả/Helper):** `#64748B` (`slate-500` / Dark: `#94A3B8` - `slate-400`) hoặc `.text-helper`.
    - **Tầng 4 (Placeholder/Khóa):** `#94A3B8` (`slate-400` / Dark: `#64748B` - `slate-500`) hoặc `.text-placeholder`.
    - **Tầng 5 (Nền xanh/đậm):** `#FFFFFF` (`white`) hoặc `.text-inverse`.
-   - Tuyệt đối không dùng xám lợt hoặc hardcode mã hex lạ làm sai lệch bảng màu chuẩn.
+   - **WCAG tương phản:** Cặp màu chữ quan trọng phải đạt chuẩn **WCAG AA** ($\ge 4.5:1$ text thường, $\ge 3:1$ text lớn/đậm), ưu tiên AAA khi có thể.
+   - **Giới hạn màu nhạt:** `text-slate-400` chỉ dùng cho Placeholder, Disabled, Copyright footer và Metadata phụ; tuyệt đối không dùng cho nội dung cần đọc.
 
 5. **Lệnh kiểm tra kỹ thuật tự động:**
    - Chạy lệnh: `npm run audit:ui` trong thư mục `frontend` và đảm bảo đạt kết quả **0 violations**.

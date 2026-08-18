@@ -331,19 +331,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             onClick={() => {
                               if (!collapsed) toggleSubMenu(item.href);
                             }}
-                            className={`w-full flex items-center justify-between px-2 py-2 rounded-xl text-sm transition-colors duration-150 cursor-pointer ${
+                            className={`group relative w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-sm transition-all duration-150 cursor-pointer overflow-hidden ${
                               isActive
-                                ? 'bg-blue-600 text-white font-semibold shadow-md shadow-blue-500/20'
-                                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white font-medium'
+                                ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold shadow-md shadow-blue-600/25'
+                                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white font-medium'
                             }`}
                             title={collapsed ? item.name : undefined}
                           >
-                            <div className="flex items-center gap-3 min-w-0">
+                            {/* Magnetic Pill Indicator */}
+                            <span
+                              className={`absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full transition-all duration-200 ${
+                                isActive
+                                  ? 'w-1.5 h-5 bg-white/95 shadow-xs opacity-100'
+                                  : 'w-1 h-3.5 bg-blue-500/50 opacity-0 group-hover:opacity-100'
+                              }`}
+                            />
+
+                            <div className="flex items-center gap-2.5 min-w-0">
                               <div
-                                className={`flex h-8 w-8 shrink-0 items-center justify-center transition-colors ${
+                                className={`flex h-8 w-8 shrink-0 items-center justify-center transition-all duration-150 ${
                                   isActive
                                     ? 'text-white'
-                                    : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600'
+                                    : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:scale-105 group-hover:translate-x-0.5'
                                 }`}
                               >
                                 <Icon className="h-4.5 w-4.5" />
@@ -363,7 +372,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             >
                               <ChevronDown
                                 className={`h-4 w-4 transition-transform duration-200 ${
-                                  isActive ? 'text-white' : 'text-slate-400'
+                                  isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200'
                                 } ${isSubOpen ? 'rotate-180' : ''}`}
                               />
                             </div>
@@ -385,10 +394,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     key={sub.href}
                                     href={sub.href}
                                     prefetch={true}
-                                    className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                                    className={`group/sub flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 ${
                                       isSubActive
-                                        ? 'text-blue-600 dark:text-blue-400 font-semibold bg-blue-50/60 dark:bg-blue-950/40'
-                                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/40'
+                                        ? 'text-blue-600 dark:text-blue-400 font-semibold bg-blue-50/80 dark:bg-blue-950/50 border-l-2 border-blue-600 dark:border-blue-500 pl-2.5 shadow-2xs'
+                                        : 'text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/50 hover:pl-3.5'
                                     }`}
                                   >
                                     <span className="truncate">{sub.name}</span>
@@ -407,19 +416,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         key={item.href}
                         href={item.href}
                         prefetch={true}
-                        className={`group flex items-center justify-between px-2 py-2 rounded-xl text-sm transition-colors duration-150 ${
+                        className={`group relative flex items-center justify-between px-2.5 py-2 rounded-xl text-sm transition-all duration-150 overflow-hidden ${
                           isActive
-                            ? 'bg-blue-600 text-white font-semibold shadow-md shadow-blue-500/20'
-                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white font-medium'
+                            ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold shadow-md shadow-blue-600/25'
+                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white font-medium'
                         }`}
                         title={collapsed ? item.name : undefined}
                       >
-                        <div className="flex items-center gap-3 min-w-0">
+                        {/* Magnetic Pill Indicator */}
+                        <span
+                          className={`absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full transition-all duration-200 ${
+                            isActive
+                              ? 'w-1.5 h-5 bg-white/95 shadow-xs opacity-100'
+                              : 'w-1 h-3.5 bg-blue-500/50 opacity-0 group-hover:opacity-100'
+                          }`}
+                        />
+
+                        <div className="flex items-center gap-2.5 min-w-0">
                           <div
-                            className={`flex h-8 w-8 shrink-0 items-center justify-center transition-colors ${
+                            className={`flex h-8 w-8 shrink-0 items-center justify-center transition-all duration-150 ${
                               isActive
                                 ? 'text-white'
-                                : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600'
+                                : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:scale-105 group-hover:translate-x-0.5'
                             }`}
                           >
                             <Icon className="h-4.5 w-4.5" />

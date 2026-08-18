@@ -54,7 +54,13 @@ Lập kế hoạch triển khai chi tiết, bao gồm:
 * File dự kiến cần sửa.
 * File dự kiến tạo mới nếu thực sự cần.
 * Shared component/token/style nào nên chỉnh trước.
-* Đối chiếu quy chuẩn UI với [ui-design-system-rules.md](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/ui-design-system-rules.md) (đặc biệt là Hệ thống màu chữ 5 Tầng Cool Slate `.text-main`, `.text-sub`, `.text-helper`, `.text-placeholder`, `.text-inverse` và Thang cỡ chữ 8 tầng kèm Line-Height chuẩn 24px/15px cho tiếng Việt).
+* Đối chiếu quy chuẩn UI với [ui-design-system-rules.md](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/ui-design-system-rules.md):
+  - Hệ thống màu chữ 5 Tầng Cool Slate (`.text-main`, `.text-sub`, `.text-helper`, `.text-placeholder`, `.text-inverse`) & Giới hạn màu nhạt `text-slate-400`.
+  - Thang cỡ chữ 8 tầng (12px ➔ 32px) kèm Line-Height chuẩn 24px/15px cho tiếng Việt.
+  - Phân định chiều cao nút: Primary CTA 44px (`lg`), Toolbar/Filter 40px (`md`), Nút phụ 36px (`sm`), Mobile tối thiểu 44px.
+  - Bo góc chuẩn `rounded-xl` (12px), ghi nhận ngoại lệ `rounded-lg` (8px) cho submenu Sidebar, badge, chip, tooltip.
+  - Quy tắc chỉ 1 nút Primary trong cùng 1 nhóm thao tác/vùng chức năng.
+  - Quy tắc hạn chế gradient (chỉ dùng cho Login, Vùng thương hiệu, Active Tab Sidebar).
 * Thứ tự triển khai.
 * Phạm vi ảnh hưởng.
 * Cách kiểm tra sau mỗi bước.

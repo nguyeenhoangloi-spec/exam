@@ -17,15 +17,16 @@ Không thay đổi API, database, route, permission, RBAC hoặc logic nghiệp 
 
 ```text
 Font Web UI       = Inter
-Màu chữ chính     = đen xanh đậm, không dùng xám lợt
-Cỡ chữ chuẩn      = 15px
+Màu chữ chính     = Đen xanh đậm (Cool Slate), không dùng xám lợt
+Cỡ chữ chuẩn      = 15px (cỡ mặc định cho nội dung và control chính)
 Weight tối thiểu  = 400
 Bố cục            = Phẳng, hạn chế khung hộp, dùng đường kẻ ngang (divide-y / border-t)
-Nút/control       = rounded-xl
-Nút chính         = cao 44px
-Control/filter    = cao 40px
-Nút phụ           = cao 36px
-Nhóm 2-3 nút      = Chỉ 1 Primary, cùng chiều cao, tách nút Danger sang trái
+Nút/control       = rounded-xl (12px); ngoại lệ rounded-lg (8px) cho submenu Sidebar, badge nhỏ, chip
+Nút chính (CTA)   = cao 44px (lg)
+Control/filter/md = cao 40px (md)
+Nút phụ/đóng      = cao 36px (sm)
+Icon buttons      = 36px (icon) hoặc 40px (icon-lg)
+Nhóm nút          = Chỉ 1 Primary trong cùng một nhóm thao tác/vùng chức năng, cùng chiều cao, tách Danger sang trái
 Mobile            = vùng chạm tối thiểu 44px
 ```
 
@@ -77,12 +78,13 @@ Hệ thống có 8 cỡ chữ semantic chính trên desktop đi kèm **Line-heig
 | `fs-badge` | 12px | 18px | 1.5x | Badge, chip trạng thái nhỏ | `Đã duyệt` |
 
 ### Quy tắc line-height & cỡ chữ bắt buộc:
-1. **Chống đè dấu tiếng Việt:** Cỡ chữ chính `15px` bắt buộc đi kèm `line-height: 24px` (để lại 4.5px đệm trên/dưới) giúp các ký tự có dấu mũ (`ế`, `ắ`, `ổ`, `ữ`) và dấu nặng/đuôi móc (`g`, `y`, `p`, `.`) hiển thị sắc nét, không bị dính vào dòng trên hoặc dòng dưới.
-2. **Căn giữa nút & ô nhập:** Trong button (`h-11`, `h-10`, `h-9`) và input, line-height chuẩn kết hợp flexbox giúp chữ luôn nằm ngay ngắn tại tâm giữa hộp.
-3. **Nội dung bảng (Table body):** 15px, line-height 22–24px.
-4. **Header bảng (Table header):** 14px, line-height 20px.
-5. **Mobile viewport:** Tiêu đề trang 24px (line-height 32px), tiêu đề section 18px (line-height 26px).
-6. **Không dùng cỡ chữ dưới 12px:** Tuyệt đối không dùng 10px hoặc 11px cho nội dung Web UI thông thường.
+1. **Làm rõ cỡ chữ 15px:** `15px` là cỡ chữ mặc định cho nội dung chính và control (Base Body), không có nghĩa mọi chữ trong hệ thống đều phải là 15px (các tầng 12px, 13px, 14px, 18-32px được sử dụng đúng vai trò phân cấp).
+2. **Chống đè dấu tiếng Việt:** Cỡ chữ chính `15px` bắt buộc đi kèm `line-height: 24px` (để lại 4.5px đệm trên/dưới) giúp các ký tự có dấu mũ (`ế`, `ắ`, `ổ`, `ữ`) và dấu nặng/đuôi móc (`g`, `y`, `p`, `.`) hiển thị sắc nét, không bị dính vào dòng trên hoặc dòng dưới.
+3. **Căn giữa nút & ô nhập:** Trong button (`h-11`, `h-10`, `h-9`) và input, line-height chuẩn kết hợp flexbox giúp chữ luôn nằm ngay ngắn tại tâm giữa hộp.
+4. **Nội dung bảng (Table body):** 15px, line-height 22–24px.
+5. **Header bảng (Table header):** 14px, line-height 20px.
+6. **Mobile viewport:** Tiêu đề trang 24px (line-height 32px), tiêu đề section 18px (line-height 26px).
+7. **Không dùng cỡ chữ dưới 12px:** Tuyệt đối không dùng 10px hoặc 11px cho nội dung Web UI thông thường.
 
 ## 5. Font weight và phân cấp thông tin
 
@@ -97,7 +99,7 @@ Không dùng:
 
 - `font-light`, `font-thin`, `font-extralight`.
 - Font weight dưới 400 hoặc trên 700 trong UI bình thường.
-- Không làm nhiều phần tử cạnh nhau cùng đậm nhất.
+- Không làm nhiều phần tử cạnh nhau cùng đậm nhất. Mỗi nhóm chỉ nên có một cấp nhấn mạnh chính.
 
 Phân loại trước khi style:
 
@@ -116,7 +118,7 @@ Ví dụ trong bảng:
 
 ## 6. Màu chữ (Cool Slate 5-Tier Typography System)
 
-Áp dụng chuẩn hóa 5 tầng màu chữ dựa trên dải **Cool Slate** (pha sắc xanh đen sâu), vừa đảm bảo độ tương phản sắc nét tuyệt đối theo chuẩn WCAG AAA/AA, vừa tự động thích ứng mượt mà giữa Light Mode và Dark Mode.
+Áp dụng chuẩn hóa 5 tầng màu chữ dựa trên dải **Cool Slate** (pha sắc xanh đen sâu), vừa đảm bảo độ tương phản sắc nét thực tế theo chuẩn WCAG AA/AAA, vừa tự động thích ứng mượt mà giữa Light Mode và Dark Mode.
 
 ### 6.1 Bảng phân cấp 5 tầng màu chuẩn
 
@@ -131,13 +133,15 @@ Ví dụ trong bảng:
 ### 6.2 Tokens CSS tương thích hệ thống
 | Token CSS | Giá trị Light | Giá trị Dark | Vai trò |
 |---|---|---|---|
-| `ui-text-primary` | `#0F172A` | `#F1F5F9` | Tiêu đề, nội dung chính |
-| `ui-text-body` | `#111827` | `#E2E8F0` | Nội dung thường |
-| `ui-text-secondary` | `#1F2937` / `#334155` | `#CBD5E1` | Label, dữ liệu phụ, header bảng |
-| `ui-text-muted-soft` | `#374151` / `#64748B` | `#94A3B8` | Metadata, mô tả, thông tin phụ |
-| `ui-text-disabled` | `#64748B` / `#94A3B8` | `#64748B` | Disabled hoặc không khả dụng |
+| `ui-text-primary` | `#0F172A` (`slate-900`) | `#F8FAFC` (`slate-50`) | Tiêu đề, KPI, nội dung chính |
+| `ui-text-body` | `#0F172A` (`slate-900`) | `#F8FAFC` (`slate-50`) | Nội dung văn bản thường |
+| `ui-text-secondary` | `#334155` (`slate-700`) | `#E2E8F0` (`slate-200`) | Label form, header bảng, điều hướng |
+| `ui-text-muted-soft` | `#64748B` (`slate-500`) | `#94A3B8` (`slate-400`) | Metadata, mô tả, thông tin phụ |
+| `ui-text-disabled` | `#94A3B8` (`slate-400`) | `#64748B` (`slate-500`) | Placeholder, disabled, copyright |
 
-### 6.3 Nguyên tắc sử dụng
+### 6.3 Nguyên tắc sử dụng & Quy chuẩn WCAG thực tế
+- **Quy chuẩn tương phản WCAG:** Các cặp màu chữ quan trọng phải được kiểm tra tương phản theo chuẩn **WCAG AA** (tỷ lệ $\ge 4.5:1$ cho văn bản thường, $\ge 3:1$ cho văn bản lớn/đậm); nội dung nhỏ ưu tiên đạt **AAA** ($\ge 7:1$) khi có thể.
+- **Giới hạn màu xám nhạt (`text-slate-400` / `text-slate-400/80`):** Chỉ dùng cho Placeholder, Disabled state, Copyright footer và Metadata phụ; tuyệt đối không dùng cho nội dung cần đọc.
 - **Không dùng màu đen tuyệt đối `#000000`** và không dùng xám lợt làm màu chữ chính.
 - Ưu tiên dùng các class semantic shortcut (`text-main`, `text-sub`, `text-helper`, `text-placeholder`, `text-inverse`) để code ngắn gọn và tự động đảo màu khi chuyển Dark Mode.
 - Không tạo phân cấp chỉ bằng màu; kết hợp linh hoạt cỡ chữ, weight, vị trí và spacing.
@@ -146,16 +150,16 @@ Ví dụ trong bảng:
 
 ### Kích thước chuẩn
 
-| Variant | Kích thước | Ví dụ |
+| Variant | Chiều cao | Vai trò & Ví dụ thực tế |
 |---|---:|---|
-| `xs` | cao 32px | action phụ rất gọn |
-| `sm` | cao 36px | `Đóng`, `Hủy` |
-| `md` | cao 40px | `Bộ lọc`, `Lọc kết quả`, `Xuất Excel` |
-| `lg` | cao 44px | `Đăng nhập`, `Tạo lịch thi` |
-| `icon` | 36×36px | chuông, thao tác nhỏ |
-| `icon-lg` | 40×40px | làm mới, xem dạng lưới |
+| `xs` | 32px | Thao tác phụ cực gọn, badge hành động micro |
+| `sm` | 36px | Nút phụ, `Đóng`, `Hủy`, thao tác nhỏ |
+| `md` (mặc định) | 40px | Nút thao tác bảng, toolbar, `Bộ lọc`, `Lọc kết quả`, `Xuất Excel` |
+| `lg` | 44px | Nút hành động chính của trang (Primary CTA), `Đăng nhập`, `Tạo lịch thi` |
+| `icon` | 36×36px | Chuông thông báo, thao tác icon nhỏ |
+| `icon-lg` | 40×40px | Làm mới, xem dạng lưới/danh sách |
 
-Mobile áp dụng vùng chạm tối thiểu 44px, kể cả khi variant desktop là `xs`, `sm` hoặc icon.
+Mobile áp dụng vùng chạm tối thiểu 44px (touch target), kể cả khi variant desktop là `xs`, `sm` hoặc icon.
 
 ### Ví dụ trong hệ thống
 
@@ -163,7 +167,7 @@ Mobile áp dụng vùng chạm tối thiểu 44px, kể cả khi variant desktop
 |---|---|
 | `Đăng nhập với Google` | `lg`, 44px |
 | `Đăng nhập` | `lg`, 44px |
-| `Tạo lịch thi` | `lg`, 44px |
+| `Tạo lịch thi` | `lg`, 44px (Primary CTA) |
 | `Lọc kết quả` | `md`, 40px |
 | `Bộ lọc` | `md`, 40px |
 | `Mới nhất`, `Chọn cột` | `md`, 40px |
@@ -175,9 +179,12 @@ Mobile áp dụng vùng chạm tối thiểu 44px, kể cả khi variant desktop
 ### Hình dạng và typography
 
 - Nút/control thông thường dùng `rounded-xl` — 12px.
+- **Ngoại lệ bo góc:** Submenu items trong Sidebar, Badge nhỏ, Tooltip và Chip trạng thái vi mô được phép dùng `rounded-lg` (8px).
 - Chữ button: 15px, weight 600, line-height khoảng 22–24px.
 - Khoảng cách icon và chữ: 8px.
 - Padding ngang: khoảng 12–18px tùy kích thước.
+- **Quy tắc "Một nút Primary":** Chỉ có duy nhất 1 nút Primary trong cùng một nhóm thao tác hoặc một vùng chức năng (Toolbar, Modal Footer, Form Action Bar). Không cấm việc một trang có nhiều nút Primary ở các khối chức năng tách biệt.
+- **Quy tắc Gradient & Ngoại lệ:** Không lạm dụng gradient trong màn hình quản trị và bảng dữ liệu; ngoại lệ cho phép: Trang đăng nhập (Login), Khu vực thương hiệu và Nút Active Tab trên Sidebar.
 - Không dùng chữ IN HOA toàn bộ cho button thông thường.
 - Không dùng `rounded-full` cho button thông thường.
 
@@ -478,7 +485,7 @@ Khi kiểm tra thủ công, dùng DevTools → Computed Styles và xác nhận:
 - Chiều cao đúng variant.
 - Focus-visible hiển thị rõ.
 
-## 16. Nguyên tắc ưu tiên
+## 17. Nguyên tắc ưu tiên
 
 Khi có xung đột, ưu tiên theo thứ tự:
 
