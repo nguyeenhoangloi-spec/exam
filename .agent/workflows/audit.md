@@ -166,7 +166,7 @@ Khi thực hiện audit giao diện Web UI, bắt buộc đối chiếu với [u
    - Chiều cao: Nút chính 44px (`lg`), Toolbar/Filter/search/input 40px (`md`), Nút phụ 36px (`sm`), Icon 36–40px, Mobile vùng chạm tối thiểu 44px.
    - **Phân cấp 5 Bậc Nút:**
      * **Bậc 1 (Primary CTA):** Duy nhất 1 nút chính trong nhóm (`bg-blue-600 text-white`).
-     * **Bậc 2 (Soft Accent):** Nền xanh siêu nhạt (`bg-blue-50 text-blue-700`), **không viền**, **không icon**, dùng cho tính năng tự động / AI / sinh ma trận (`variant="soft"`).
+     * **Bậc 2 (Soft Accent):** Nền xanh nhạt vừa vặn (`bg-blue-100 text-blue-700`, hover/active `bg-blue-200 text-blue-800`), **không viền**, **không icon**, dùng cho tính năng tự động / AI / sinh ma trận (`variant="soft"`).
      * **Bậc 3 (Secondary):** Thao tác bảng, bộ lọc, xuất file (`bg-white border-slate-200/90 text-slate-800`).
      * **Bậc 4 (Ghost):** Phụ tối giản, đóng, hủy (`bg-transparent text-slate-600`).
      * **Bậc 5 (Danger):** Thao tác xóa, hủy nguy hiểm (`bg-danger-600` hoặc viền đỏ, tách biệt sang trái).

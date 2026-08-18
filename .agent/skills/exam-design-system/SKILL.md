@@ -141,7 +141,7 @@ font-family:
   - `icon-lg`: **40×40px** (`h-10 w-10`) — Làm mới, xem lưới
 - **Phân cấp 5 Bậc Nút Bấm (Button Hierarchy 2026)**:
   - **Bậc 1 (Primary CTA)**: Nền xanh dương đậm `bg-primary-600 hover:bg-primary-700 text-white font-semibold shadow-2xs` (Duy nhất 1 nút chính trong nhóm: `[ + Phân công ]`, `[ Lưu ]`).
-  - **Bậc 2 (Soft Accent)**: `variant="soft"` — Nền xanh siêu nhạt `bg-blue-50 dark:bg-blue-950/60`, chữ xanh đậm `text-blue-700 dark:text-blue-300 font-semibold`, **KHÔNG VIỀN**, **KHÔNG ICON**, dùng cho tính năng tự động / AI / sinh ma trận (`[ Tự động ]`, `[ Sinh ma trận ]`).
+  - **Bậc 2 (Soft Accent)**: `variant="soft"` — Nền xanh nhạt vừa vặn `bg-blue-100 dark:bg-blue-900/40`, chữ xanh đậm `text-blue-700`, hover/active `bg-blue-200 text-blue-800 font-semibold`, **KHÔNG VIỀN**, **KHÔNG ICON**, dùng cho tính năng tự động / AI / sinh ma trận (`[ Tự động ]`, `[ Sinh ma trận ]`).
   - **Bậc 3 (Secondary)**: `variant="secondary"` — Nền trắng viền mảnh `bg-white border-slate-200/90 text-slate-800` (Bộ lọc, Chọn cột, Xuất Excel).
   - **Bậc 4 (Ghost)**: `variant="ghost"` — Trong suốt, không viền (Đóng, Hủy, Bỏ qua).
   - **Bậc 5 (Danger)**: `variant="danger"` / `variant="danger-outline"` — Nút xóa nguy hiểm, đặt tách biệt sang trái.

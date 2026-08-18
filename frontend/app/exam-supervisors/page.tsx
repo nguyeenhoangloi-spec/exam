@@ -617,7 +617,7 @@ export default function ExamSupervisorsPage() {
                     onClick={previewAutoAssign}
                     className={
                       activeInlinePanel === 'auto'
-                        ? '!bg-blue-200/90 dark:!bg-blue-900 !text-blue-900 dark:!text-blue-100'
+                        ? '!bg-blue-200/90 dark:!bg-blue-900 !text-blue-800 dark:!text-blue-100 font-semibold'
                         : ''
                     }
                   >
