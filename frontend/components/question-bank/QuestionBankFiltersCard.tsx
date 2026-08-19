@@ -95,22 +95,23 @@ export function QuestionBankFiltersCard({
 
   return (
     <div className="space-y-2.5">
-      {/* 1. Unified Search + Filter Popover Row */}
-      <div className="flex items-center gap-2 max-w-2xl">
-        {/* Search Input Field */}
-        <div className="relative flex-1 min-w-[240px]">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-          <input
-            ref={searchInputRef}
-            type="text"
-            value={localSearch}
-            onChange={(e) => {
-              setLocalSearch(e.target.value);
-              set('search', e.target.value);
-            }}
-            placeholder="Tìm theo nội dung, mã câu hỏi..."
-            className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
-          />
+      {/* 1. Unified Search Bar with Embedded ListFilter Popover (Cách 1) */}
+      <div className="relative max-w-xl">
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+        <input
+          ref={searchInputRef}
+          type="text"
+          value={localSearch}
+          onChange={(e) => {
+            setLocalSearch(e.target.value);
+            set('search', e.target.value);
+          }}
+          placeholder="Tìm theo nội dung, mã câu hỏi..."
+          className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+        />
+
+        {/* Right embedded action container inside input */}
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
           {localSearch ? (
             <button
               type="button"
@@ -118,31 +119,34 @@ export function QuestionBankFiltersCard({
                 setLocalSearch('');
                 set('search', '');
               }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer p-0.5"
               title="Xoá từ khoá"
             >
               <X className="h-3.5 w-3.5" />
             </button>
           ) : (
             <kbd
-              className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
+              className="hidden sm:inline-flex h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
               onClick={() => searchInputRef.current?.focus()}
               title="Nhấn phím / để tìm nhanh"
             >
               /
             </kbd>
           )}
-        </div>
 
-        {/* 1 Nút Bộ Lọc Duy Nhất Đa Chiều */}
-        <QuestionBankFilterPopover
-          filters={filters}
-          onChange={onChange}
-          subjects={subjects}
-          questions={questions}
-          totalFilteredCount={questions.length}
-          onResetAll={onReset}
-        />
+          {/* Đường ngăn cách mảnh trong suốt */}
+          <div className="h-4 w-px bg-slate-200 dark:bg-slate-700" />
+
+          {/* 1 Nút ListFilter Nhúng Trực Tiếp Bên Trong Góc Phải Ô Search */}
+          <QuestionBankFilterPopover
+            filters={filters}
+            onChange={onChange}
+            subjects={subjects}
+            questions={questions}
+            totalFilteredCount={questions.length}
+            onResetAll={onReset}
+          />
+        </div>
       </div>
 
       {/* 2. Active Filter Badges Bar (Dòng chip tag nhỏ gọn khi đang lọc) */}

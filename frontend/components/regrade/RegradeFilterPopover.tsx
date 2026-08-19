@@ -213,7 +213,7 @@ export function RegradeFilterPopover({
             <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40">
               <div className="flex items-center gap-2.5">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm shadow-blue-600/20">
-                  <Filter className="h-3.5 w-3.5" />
+                  <SlidersHorizontal className="h-3.5 w-3.5" />
                 </div>
                 <div>
                   <h4 className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
