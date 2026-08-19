@@ -480,17 +480,17 @@ export const Header: React.FC<HeaderProps> = ({
                   {/* Subtle Top Pointer Tip */}
                   <div className="absolute -top-1.5 right-6 h-3 w-3 rotate-45 border-l border-t border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 z-10" />
 
-                  {/* Account Header: Flat & Compact Email Identifier with Instant Hover Tooltip */}
+                  {/* Account Header: Clean Profile Identity with Soft Secondary Email */}
                   <div className="group/email relative px-2.5 py-2 mb-1 border-b border-slate-100 dark:border-slate-800">
-                    <p className="text-type-helper font-medium text-slate-500 dark:text-slate-400">
-                      Tài khoản
+                    <p className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
+                      {displayName}
                     </p>
                     <div className="relative mt-0.5">
                       <p
-                        className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate cursor-default select-text"
+                        className="text-type-helper font-normal text-slate-500 dark:text-slate-400 truncate cursor-default select-text"
                         title={user?.email || ''}
                       >
-                        {user?.email || (user?.username ? `@${user.username}` : displayName)}
+                        {user?.email || (user?.username ? `@${user.username}` : displayRoleLabel)}
                       </p>
 
                       {/* Instant Floating Hover Tooltip (Full Email View on Hover) */}
@@ -545,42 +545,6 @@ export const Header: React.FC<HeaderProps> = ({
                       </div>
                       <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" strokeWidth={1.5} />
                     </Link>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="relative z-20 my-1 border-t border-slate-100 dark:border-slate-800" />
-
-                  {/* Clean Theme Toggle Switch */}
-                  <div className="relative z-20">
-                    <button
-                      type="button"
-                      role="menuitem"
-                      onClick={toggleTheme}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-1.5 text-type-body-sm text-slate-700 dark:text-slate-200 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800/70 transition-colors duration-150 cursor-pointer group"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-slate-100/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 group-hover:bg-blue-50 dark:group-hover:bg-blue-950/60 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                          {isDark ? (
-                            <Moon className="h-3.5 w-3.5" strokeWidth={1.5} />
-                          ) : (
-                            <Sun className="h-3.5 w-3.5" strokeWidth={1.5} />
-                          )}
-                        </div>
-                        <span>Chế độ tối</span>
-                      </div>
-                      {/* Compact Toggle Switch */}
-                      <div
-                        className={`relative inline-flex h-4.5 w-8 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out ${
-                          isDark ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-700'
-                        }`}
-                      >
-                        <span
-                          className={`pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-xs transition duration-200 ease-in-out ${
-                            isDark ? 'translate-x-3.5' : 'translate-x-0'
-                          }`}
-                        />
-                      </div>
-                    </button>
                   </div>
 
                   {/* Divider */}
