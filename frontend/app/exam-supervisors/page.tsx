@@ -12,6 +12,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { Button } from '../../components/ui/Button';
 import { FilterSelect } from '../../components/ui/FilterSelect';
+import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { Search, X, Calendar, Clock, DoorOpen, GraduationCap, ShieldCheck, Trash2, ChevronDown, ChevronUp, Plus, ArrowLeftRight } from 'lucide-react';
 
 import { ExamSupervisorHeader } from '../../components/exam-supervisors/ExamSupervisorHeader';
@@ -24,6 +25,17 @@ import { ExamSupervisorBulkAction } from '../../components/exam-supervisors/Exam
 import { InlineCreateAssignmentPanel } from '../../components/exam-supervisors/InlineCreateAssignmentPanel';
 import { InlineAutoProposalPanel } from '../../components/exam-supervisors/InlineAutoProposalPanel';
 import { SchedulePickerModal } from '../../components/exam-supervisors/SchedulePickerModal';
+
+function getTeacherInitials(fullName?: string): string {
+  if (!fullName) return 'GV';
+  const clean = fullName.replace(/^(TS\.|ThS\.|PGS\.|GS\.|ThS|TS|PGS|GS|Thầy|Cô)\s+/i, '').trim();
+  const words = clean.split(/\s+/).filter(Boolean);
+  if (words.length === 0) return 'GV';
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  const firstChar = words[0][0];
+  const lastChar = words[words.length - 1][0];
+  return (firstChar + lastChar).toUpperCase();
+}
 
 // ── Module-level cache: survives tab switch, renders instantly on remount ──
 let _cache: { schedules: any[]; teachers: any[]; selectedSchedule: any; supervisors: any[] } | null = null;
@@ -476,42 +488,6 @@ export default function ExamSupervisorsPage() {
         onSelectSchedule={selectSchedule}
       />
 
-      {/* Supervisor Profile Drawer */}
-      <ProfileDrawer
-        isOpen={Boolean(drawerSupervisor)}
-        onClose={() => setDrawerSupervisor(null)}
-        title={drawerSupervisor?.teacher?.fullName || ''}
-        subtitle={drawerSupervisor?.teacher?.teacherCode ? `Mã cán bộ: ${drawerSupervisor.teacher.teacherCode}` : ''}
-        avatarText={drawerSupervisor?.teacher?.fullName ? drawerSupervisor.teacher.fullName.slice(-1) : 'GT'}
-        badge={drawerSupervisor?.status ? {
-          status: drawerSupervisor.status,
-          label: drawerSupervisor.status === 'CONFIRMED' ? 'Đã xác nhận' : drawerSupervisor.status === 'CHANGE_REQUESTED' ? 'Đề nghị thay đổi' : 'Đã phân công',
-        } : undefined}
-        details={[
-          { label: 'Họ và tên cán bộ', value: drawerSupervisor?.teacher?.fullName },
-          { label: 'Mã số cán bộ', value: drawerSupervisor?.teacher?.teacherCode },
-          { label: 'Học vị / Học hàm', value: drawerSupervisor?.teacher?.degree || 'TS', icon: GraduationCap },
-          {
-            label: 'Nhiệm vụ phân công',
-            value:
-              drawerSupervisor?.role === 'SUPERVISOR_1'
-                ? 'Cán bộ coi thi chính (Giám thị 1)'
-                : 'Cán bộ coi thi phụ (Giám thị 2)',
-            icon: ShieldCheck,
-          },
-          {
-            label: 'Trạng thái xác nhận',
-            value:
-              drawerSupervisor?.status === 'CONFIRMED'
-                ? 'Đã xác nhận tham gia'
-                : drawerSupervisor?.status === 'CHANGE_REQUESTED'
-                  ? 'Đang gửi yêu cầu đổi ca'
-                  : 'Đang chờ phản hồi',
-          },
-          { label: 'Ghi chú phân công', value: drawerSupervisor?.note || 'Không có ghi chú' },
-        ]}
-      />
-
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950/50 min-h-screen">
         {/* ── 1. Page Header ── */}
         <ExamSupervisorHeader
@@ -874,15 +850,15 @@ export default function ExamSupervisorsPage() {
         isOpen={Boolean(drawerSupervisor)}
         onClose={() => setDrawerSupervisor(null)}
         title={drawerSupervisor?.teacher?.fullName || 'Chi tiết phân công giám thị'}
-        subtitle={drawerSupervisor?.teacher?.teacherCode ? `Mã cán bộ: ${drawerSupervisor.teacher.teacherCode}` : ''}
-        avatarText={drawerSupervisor?.teacher?.fullName?.trim().split(' ').pop()?.slice(0, 2).toUpperCase() || 'GT'}
+        subtitle={drawerSupervisor?.teacher?.teacherCode || ''}
+        avatarText={getTeacherInitials(drawerSupervisor?.teacher?.fullName)}
         badge={drawerSupervisor?.status ? {
-          status: drawerSupervisor.status,
+          status: drawerSupervisor.status === 'CONFIRMED' ? 'CONFIRMED' : drawerSupervisor.status === 'CHANGE_REQUESTED' ? 'CHANGE_REQUESTED' : 'ASSIGNED',
           label: drawerSupervisor.status === 'CONFIRMED' ? 'Đã xác nhận' : drawerSupervisor.status === 'CHANGE_REQUESTED' ? 'Đề nghị thay đổi' : 'Đã phân công',
         } : undefined}
         details={[
           { label: 'Họ và tên cán bộ', value: drawerSupervisor?.teacher?.fullName, icon: GraduationCap },
-          { label: 'Mã số cán bộ', value: drawerSupervisor?.teacher?.teacherCode, icon: GraduationCap },
+          { label: 'Mã số cán bộ', value: <IdentifierBadge tone="neutral">{drawerSupervisor?.teacher?.teacherCode || 'GV'}</IdentifierBadge>, icon: GraduationCap },
           { label: 'Học vị / Học hàm', value: drawerSupervisor?.teacher?.degree || 'Thạc sĩ / Tiến sĩ', icon: GraduationCap },
           { label: 'Khoa / Bộ môn', value: drawerSupervisor?.teacher?.department?.name || '---', icon: GraduationCap },
           { label: 'Vai trò coi thi', value: drawerSupervisor?.role === 'CHINH' || drawerSupervisor?.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ', icon: ShieldCheck },

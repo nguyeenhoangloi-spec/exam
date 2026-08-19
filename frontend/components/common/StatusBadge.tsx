@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 export type StatusType =
-  | 'PUBLISHED' | 'APPROVED' | 'CONFIRMED' | 'COMPLETED' | 'READY' | 'DRAFT'
+  | 'PUBLISHED' | 'APPROVED' | 'CONFIRMED' | 'ASSIGNED' | 'COMPLETED' | 'READY' | 'DRAFT'
   | 'CHANGE_REQUESTED' | 'WAITING_APPROVAL' | 'PENDING' | 'GRADING'
   | 'IN_PROGRESS' | 'SCHEDULED' | 'UPCOMING' | 'ONGOING' | 'CANCELLED'
   | 'REJECTED' | 'ABSENT' | 'ARCHIVED' | 'LOCKED' | 'SUBMITTED' | 'GRADED'
@@ -68,6 +68,7 @@ const statusConfigs: Record<string, StatusConfig> = {
   PUBLISHED: { label: 'Đã công bố', category: 'success', icon: CheckCircle2 },
   APPROVED: { label: 'Đã duyệt', category: 'success', icon: CheckCircle2 },
   CONFIRMED: { label: 'Đã xác nhận', category: 'success', icon: CheckCircle2 },
+  ASSIGNED: { label: 'Đã phân công', category: 'success', icon: CheckCircle2 },
   COMPLETED: { label: 'Đã hoàn thành', category: 'success', icon: CheckCircle2 },
   READY: { label: 'Sẵn sàng', category: 'success', icon: CheckCircle2 },
   GRADED: { label: 'Đã chấm điểm', category: 'success', icon: CheckSquare },

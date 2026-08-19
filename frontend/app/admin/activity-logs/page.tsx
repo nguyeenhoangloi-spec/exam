@@ -1238,7 +1238,7 @@ export default function ActivityLogsPage() {
                                                     setTimeout(() => setCopied(false), 2000);
                                                 });
                                             }}
-                                            className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-type-helper font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-750"
+                                            className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-type-helper font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-700/80"
                                         >
                                             {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-slate-500" />}
                                             <span>{copied ? 'Đã sao chép!' : 'Sao chép JSON'}</span>
