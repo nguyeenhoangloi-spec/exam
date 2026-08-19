@@ -32,9 +32,20 @@ import { Toast } from '../../components/Toast';
 import { Modal } from '../../components/Modal';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
-import { ProfileDrawer } from '../../components/ProfileDrawer';
-import { Eye, Info } from 'lucide-react';
 import api from '../../lib/api';
+import { getAuthUser } from '../../lib/auth';
+import { User } from '../../types';
+
+function getSmartMonogram(fullName?: string): string {
+  if (!fullName || !fullName.trim()) return 'U';
+  const clean = fullName
+    .replace(/^(TS\.|ThS\.|PGS\.|GS\.|Thầy|Cô)\s+/i, '')
+    .trim();
+  const parts = clean.split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return 'U';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
 
 interface ArticleItem {
   id: string;
@@ -52,6 +63,7 @@ export const dynamic = 'force-dynamic';
 
 export default function ContactSupportPage() {
   const router = useRouter();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>('ALL');
@@ -80,6 +92,27 @@ export default function ContactSupportPage() {
     },
   ]);
   const [chatInput, setChatInput] = useState('');
+
+  useEffect(() => {
+    setCurrentUser(getAuthUser());
+    const handleAuthChange = () => {
+      setCurrentUser(getAuthUser());
+    };
+    window.addEventListener('auth-change', handleAuthChange);
+    return () => window.removeEventListener('auth-change', handleAuthChange);
+  }, []);
+
+  const dashboardRoute = useMemo(() => {
+    if (!currentUser) return '/login';
+    if (currentUser.role === 'ADMIN') return '/dashboard';
+    if (currentUser.role === 'TEACHER') return '/teacher/assignments';
+    return '/student/exam-schedule';
+  }, [currentUser]);
+
+  const currentDisplayName = useMemo(() => {
+    if (!currentUser) return '';
+    return currentUser.teacher?.fullName || currentUser.student?.fullName || currentUser.username || 'User';
+  }, [currentUser]);
 
   useEffect(() => {
     if (localStorage.getItem('theme') === 'dark') {
@@ -314,7 +347,7 @@ export default function ContactSupportPage() {
       {/* ── Top Header Navigation ── */}
       <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md transition-colors">
         <div className="mx-auto flex py-3.5 max-w-[1380px] items-center justify-between px-6 sm:px-10">
-          <Link href="/login" className="flex items-center gap-3.5 group cursor-pointer">
+          <Link href={dashboardRoute} className="flex items-center gap-3.5 group cursor-pointer">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 to-blue-500 text-white shadow-lg shadow-blue-500/25 ring-4 ring-blue-50 dark:ring-blue-950/50 transition-transform duration-300 group-hover:scale-105">
               <GraduationCap className="h-6 w-6" />
             </div>
@@ -329,28 +362,29 @@ export default function ContactSupportPage() {
           </Link>
 
           <div className="flex items-center gap-3">
-            {/* Button Xem chi tiết Trung tâm Khảo thí */}
-            <button
-              type="button"
-              onClick={() => setShowSupportDrawer(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-type-body-sm font-semibold transition active:scale-95 cursor-pointer"
-              title="Xem thông tin chi tiết Trung tâm Khảo thí & Hotline"
-            >
-              <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-              <span className="hidden sm:inline">Thông tin Trung tâm</span>
-            </button>
-
-            {/* Creative Login Action Button with Guaranteed Padding */}
-            <button
-              type="button"
-              onClick={() => router.push('/login')}
-              className="group relative inline-flex items-center gap-2.5 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-type-body-sm font-semibold shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0"
-            >
-              <span>Đăng nhập</span>
-              <div className="flex h-5 w-5 items-center justify-center rounded-lg bg-white/20 text-white transition-transform duration-200 group-hover:translate-x-0.5">
-                <LogIn className="h-3.5 w-3.5" />
-              </div>
-            </button>
+            {currentUser ? (
+              /* Visual Smart Return Avatar Button (Zero-Text & Intuitive) */
+              <Link
+                href={dashboardRoute}
+                title={`Quay lại không gian làm việc (${currentDisplayName})`}
+                className="group flex items-center gap-2 p-1.5 pr-2.5 rounded-2xl bg-blue-50/80 hover:bg-blue-100 dark:bg-blue-950/60 dark:hover:bg-blue-900/60 border border-blue-200/80 dark:border-blue-800/60 transition-all duration-200 cursor-pointer shadow-2xs active:scale-95"
+              >
+                <div className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-blue-600 font-semibold text-white text-type-helper shadow-xs group-hover:scale-105 transition-transform duration-200">
+                  {getSmartMonogram(currentDisplayName)}
+                  <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
+                </div>
+                <ArrowLeft className="h-4 w-4 text-blue-600 dark:text-blue-400 group-hover:-translate-x-0.5 transition-transform duration-200" strokeWidth={1.5} />
+              </Link>
+            ) : (
+              /* Compact Minimalist Login Icon Button (Zero-Text) */
+              <Link
+                href="/login"
+                title="Đăng nhập"
+                className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+              >
+                <LogIn className="h-4 w-4" strokeWidth={1.5} />
+              </Link>
+            )}
 
             <button
               type="button"
@@ -889,42 +923,6 @@ export default function ContactSupportPage() {
           </div>
         )}
       </div>
-
-      {/* Support Center Detail Drawer */}
-      <ProfileDrawer
-        isOpen={showSupportDrawer}
-        onClose={() => setShowSupportDrawer(false)}
-        title="Trung Tâm Khảo Thí & Đảm Bảo Chất Lượng"
-        subtitle="Bộ phận Tiếp nhận & Hỗ trợ Kỹ thuật"
-        avatarText="TTKT"
-        badge={{
-          label: 'Hỗ trợ 24/7',
-          status: 'OFFICIAL',
-        }}
-        details={[
-          { label: 'Đơn vị phụ trách', value: 'Trung tâm Khảo thí & Đảm bảo Chất lượng', icon: Building2 },
-          { label: 'Hotline khẩn cấp 24/7', value: <span className="inline-flex items-center gap-1.5"><IdentifierBadge tone="blue">1800-EXAM-HELP</IdentifierBadge><span className="text-type-helper text-slate-500 font-normal">(Miễn phí)</span></span>, icon: Phone },
-          { label: 'Email tiếp nhận hỗ trợ', value: 'support@exam.edu.vn', icon: Mail },
-          { label: 'Địa chỉ phòng trực tiếp', value: 'Phòng A1-102, Tòa nhà Khảo thí Trung tâm', icon: MapPin },
-          { label: 'Khung giờ trực hỗ trợ', value: '07:00 – 21:00 (Thứ 2 đến Chủ nhật)', icon: Clock },
-          { label: 'Thời gian xử lý phúc khảo', value: '03 - 05 ngày làm việc' },
-        ]}
-        extraSections={[
-          {
-            title: 'Quy trình xử lý sự cố khẩn cấp',
-            content: (
-              <div className="space-y-3 text-type-helper text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
-                <p>
-                  • Trường hợp mất kết nối mạng hoặc lỗi phần mềm trong phòng thi, thí sinh báo ngay cho Giám thị phòng thi để lập biên bản xử lý kịp thời.
-                </p>
-                <p>
-                  • Mọi yêu cầu hỗ trợ qua form điện tử sẽ được kỹ thuật viên tiếp nhận và phản hồi qua email trong vòng 30 phút.
-                </p>
-              </div>
-            ),
-          },
-        ]}
-      />
 
       {/* ── Page Bottom Footer ── */}
       <footer className="mt-auto relative z-10 w-full py-6 shrink-0 text-center text-type-helper text-slate-500 dark:text-slate-400 space-y-1 border-t border-slate-200/60 dark:border-slate-800/60">
