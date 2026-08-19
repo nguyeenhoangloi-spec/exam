@@ -2,8 +2,8 @@
 import { FilterSelect } from '../ui/FilterSelect';
 
 import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { ChevronDown, Plus, Upload, FileText, FolderPlus, ArrowRight } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { Plus, Upload, FileText, FolderPlus, ArrowRight } from 'lucide-react';
 
 interface QuestionBankSidebarProps {
   counts?: Record<string, number>;
@@ -197,7 +197,7 @@ export function QuestionBankSidebar({
           >
             <span className="flex items-center gap-2">
               <Plus className="h-4 w-4 text-blue-600" />
-              <span>Thêm câu hỏi mới</span>
+              <span>Thêm câu hỏi</span>
             </span>
             <ArrowRight className="h-3.5 w-3.5 text-blue-500" />
           </button>

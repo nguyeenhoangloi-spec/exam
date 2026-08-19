@@ -213,7 +213,7 @@ export function QuestionFormDialog({
 
   return (
     <>
-      <Modal isOpen={open} onClose={onClose} title={question ? 'Chỉnh sửa câu hỏi' : 'Thêm câu hỏi mới'} size="2xl">
+      <Modal isOpen={open} onClose={onClose} title={question ? 'Chỉnh sửa câu hỏi' : 'Thêm câu hỏi'} size="2xl">
         <form onSubmit={handleSubmit(submit, onInvalid)} className="space-y-4">
           {/* Thuộc tính cơ bản câu hỏi */}
           <div className="grid gap-3 md:grid-cols-2">

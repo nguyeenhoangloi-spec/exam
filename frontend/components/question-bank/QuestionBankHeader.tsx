@@ -44,7 +44,7 @@ export function QuestionBankHeader({
           onClick={onAdd}
           leftIcon={<Plus className="h-4 w-4" />}
         >
-          Thêm câu hỏi mới
+          Thêm câu hỏi
         </Button>
       </div>
     </div>
