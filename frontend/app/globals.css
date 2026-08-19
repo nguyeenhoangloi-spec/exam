@@ -258,38 +258,83 @@ html.dark {
 
   /* ── Motion System 2026: Keyframes & Hardware-Accelerated Animations ── */
   @keyframes ui-motion-slide-from-top {
-    from { opacity: 0; transform: translateY(-6px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes ui-motion-slide-from-bottom-2 {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes ui-motion-fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
   }
 
   @keyframes ui-motion-scale-fade-in {
-    from { opacity: 0; transform: scale(0.96); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
   @keyframes ui-motion-slide-in-right {
-    from { opacity: 0; transform: translateX(12px); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+      opacity: 0;
+      transform: translateX(12px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
 
   @keyframes ui-motion-slide-up {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes toast-progress {
-    from { width: 100%; }
-    to { width: 0%; }
+    from {
+      width: 100%;
+    }
+
+    to {
+      width: 0%;
+    }
   }
 
   .animate-in {
@@ -356,6 +401,7 @@ html.dark {
 }
 
 @layer components {
+
   /*
    * App-shell typography guardrails.
    * Semantic utility classes remain free to opt into badge/helper scales,
@@ -995,21 +1041,17 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
  * exceptions below (helper text, badges and technical pre blocks) remain
  * explicit and use the shared tokens instead of raw pixel values.
  */
-.typography-scale :where(
-  input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']),
+.typography-scale :where(input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']),
   select,
-  textarea
-) {
+  textarea) {
   font-size: var(--fs-body) !important;
   line-height: var(--lh-body) !important;
 }
 
 /* All native form controls share the standard 40px touch target. Textareas
  * remain content-sized so multi-line fields keep their intended layout. */
-.typography-scale :where(
-  input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']):not([type='range']),
-  select
-) {
+.typography-scale :where(input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']):not([type='range']),
+  select) {
   min-height: 2.5rem;
 }
 
@@ -1047,10 +1089,8 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
     min-height: 2.75rem !important;
   }
 
-  .typography-scale :where(
-    input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']):not([type='range']),
-    select
-  ) {
+  .typography-scale :where(input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']):not([type='range']),
+    select) {
     min-height: 2.75rem !important;
   }
 
@@ -1090,13 +1130,11 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
 
 /* Small technical and status elements are the only intentional compact
  * exceptions. They stay readable while remaining below normal body text. */
-.typography-scale :where(
-  .table-badge,
+.typography-scale :where(.table-badge,
   .table-avatar,
   .edu-badge,
   pre,
-  code
-) {
+  code) {
   font-size: var(--fs-badge) !important;
   line-height: var(--lh-badge) !important;
 }
@@ -1105,15 +1143,19 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
 .text-main {
   color: var(--ui-text-primary);
 }
+
 .text-sub {
   color: var(--ui-text-secondary);
 }
+
 .text-helper {
   color: var(--ui-text-muted-soft);
 }
+
 .text-placeholder {
   color: var(--ui-text-disabled);
 }
+
 .text-inverse {
   color: #ffffff;
 }
@@ -1135,15 +1177,19 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
 .dark .text-main {
   color: var(--ui-text-primary);
 }
+
 .dark .text-sub {
   color: var(--ui-text-secondary);
 }
+
 .dark .text-helper {
   color: var(--ui-text-muted-soft);
 }
+
 .dark .text-placeholder {
   color: var(--ui-text-disabled);
 }
+
 .dark .text-inverse {
   color: #ffffff;
 }
