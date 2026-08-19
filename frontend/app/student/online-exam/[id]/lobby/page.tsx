@@ -365,12 +365,10 @@ export default function StudentExamLobbyPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           {/* ════════════ CỘT TRÁI (8 / 12): THÔNG TIN MÔN THI, THÍ SINH & KIỂM TRA HỆ THỐNG ════════════ */}
-          <div className="lg:col-span-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 border-t-4 border-t-blue-600 dark:border-t-blue-500 shadow-sm p-6 sm:p-8 space-y-7 relative overflow-hidden">
-            {/* Subtle blue accent ambient glow */}
-            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-72 h-72 rounded-full bg-blue-500/5 dark:bg-blue-400/5 blur-3xl pointer-events-none" />
+          <div className="lg:col-span-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-7">
             
             {/* 1. Header Môn thi & Đồ họa Khảo thí 3D */}
-            <div className="space-y-5 relative">
+            <div className="space-y-5">
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <span className="ui-pill inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-type-helper font-medium text-blue-700 dark:text-blue-300 border border-blue-200/90 dark:border-blue-800/80 bg-blue-50/70 dark:bg-blue-950/40">
                   <Ticket className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
@@ -387,11 +385,11 @@ export default function StudentExamLobbyPage() {
                     {schedule?.subject?.subjectName || examInfo?.subjectName || 'Trí tuệ nhân tạo'}
                   </h2>
 
-                  {/* 3 Ô chỉ số tròn chuẩn mockup */}
+                  {/* 3 Chỉ số Specs phẳng, thông thoáng */}
                   <div className="flex flex-wrap items-center gap-x-8 gap-y-4 pt-1">
                     {/* Mã môn */}
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 shadow-2xs border border-blue-100/60 dark:border-blue-900/40">
+                      <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 border border-blue-100/80 dark:border-blue-900/50">
                         <Ticket className="w-5 h-5" />
                       </div>
                       <div>
@@ -402,7 +400,7 @@ export default function StudentExamLobbyPage() {
 
                     {/* Thời lượng */}
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 shadow-2xs border border-blue-100/60 dark:border-blue-900/40">
+                      <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 border border-blue-100/80 dark:border-blue-900/50">
                         <Clock className="w-5 h-5" />
                       </div>
                       <div>
@@ -413,7 +411,7 @@ export default function StudentExamLobbyPage() {
 
                     {/* Khung giờ thi */}
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 shadow-2xs border border-blue-100/60 dark:border-blue-900/40">
+                      <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 border border-blue-100/80 dark:border-blue-900/50">
                         <Calendar className="w-5 h-5" />
                       </div>
                       <div>
@@ -427,45 +425,30 @@ export default function StudentExamLobbyPage() {
                 {/* 3D Exam Screen + Clock Illustration */}
                 <div className="hidden lg:flex items-center justify-center shrink-0 select-none relative w-44 h-32 pr-2">
                   <svg viewBox="0 0 200 150" className="w-full h-full drop-shadow-sm" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    {/* Background glow aura */}
                     <ellipse cx="100" cy="85" rx="75" ry="45" className="fill-blue-200/40 dark:fill-blue-900/30" />
-                    
-                    {/* Monitor Stand */}
                     <path d="M85 115 L115 115 L120 128 L80 128 Z" className="fill-blue-500" />
                     <ellipse cx="100" cy="128" rx="30" ry="6" className="fill-blue-600" />
-
-                    {/* Monitor Body / 3D Bevel */}
                     <rect x="24" y="20" width="130" height="92" rx="14" className="fill-blue-600" />
                     <rect x="28" y="24" width="122" height="84" rx="10" className="fill-blue-500" />
                     <rect x="34" y="30" width="110" height="72" rx="6" className="fill-white dark:fill-slate-900" />
-
-                    {/* Checklist Lines & Checkmarks */}
                     <path d="M44 45 L48 49 L58 39" className="stroke-blue-500" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                     <rect x="64" y="42" width="68" height="4" rx="2" className="fill-blue-300 dark:fill-blue-800" />
-
                     <path d="M44 63 L48 67 L58 57" className="stroke-blue-500" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                     <rect x="64" y="60" width="60" height="4" rx="2" className="fill-blue-300 dark:fill-blue-800" />
-
                     <path d="M44 81 L48 85 L58 75" className="stroke-blue-500" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                     <rect x="64" y="78" width="52" height="4" rx="2" className="fill-blue-300 dark:fill-blue-800" />
-
-                    {/* Floating Stylized Pencil */}
                     <g transform="rotate(-32 150 50)">
                       <rect x="135" y="35" width="10" height="45" rx="3" className="fill-blue-400" />
                       <polygon points="135,80 145,80 140,92" className="fill-blue-600" />
                       <circle cx="140" cy="91" r="1.5" className="fill-blue-900" />
                     </g>
-
-                    {/* 3D Round Analog Clock in Foreground */}
                     <g transform="translate(132, 72)">
                       <circle cx="28" cy="28" r="26" className="fill-slate-200 dark:fill-slate-700" />
                       <circle cx="28" cy="28" r="23" className="fill-white dark:fill-slate-800 stroke-slate-400 dark:stroke-slate-600" strokeWidth="1.5" />
-                      {/* Hour markers */}
                       <circle cx="28" cy="10" r="1.5" className="fill-slate-500" />
                       <circle cx="46" cy="28" r="1.5" className="fill-slate-500" />
                       <circle cx="28" cy="46" r="1.5" className="fill-slate-500" />
                       <circle cx="10" cy="28" r="1.5" className="fill-slate-500" />
-                      {/* Needles */}
                       <line x1="28" y1="28" x2="28" y2="15" className="stroke-slate-800 dark:stroke-slate-200" strokeWidth="2" strokeLinecap="round" />
                       <line x1="28" y1="28" x2="38" y2="28" className="stroke-blue-500" strokeWidth="2" strokeLinecap="round" />
                       <circle cx="28" cy="28" r="2.5" className="fill-blue-600" />
@@ -475,8 +458,8 @@ export default function StudentExamLobbyPage() {
               </div>
             </div>
 
-            {/* 2. Thông tin thí sinh & Phòng thi */}
-            <div className="space-y-3.5 pt-4 border-t border-slate-100 dark:border-slate-800">
+            {/* 2. Thông tin thí sinh & Phòng thi (Bố cục phẳng với vách ngăn ngang) */}
+            <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-slate-900 dark:text-slate-100 font-semibold text-type-body-sm">
                   <span className="h-3.5 w-1 rounded-full bg-blue-600" />
@@ -493,47 +476,47 @@ export default function StudentExamLobbyPage() {
                 </button>
               </div>
 
-              {/* 4 Cột thông số Thí sinh & Phòng thi chuẩn theo ảnh */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center pt-1 text-type-helper">
-                {/* Col 1: Candidate */}
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold flex items-center justify-center text-type-body-sm shrink-0">
+              {/* 4 Cột thông số tự co giãn theo nội dung (Flexbox), 100% không bao giờ cắt chữ */}
+              <div className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-4 pt-1 text-type-helper">
+                {/* Col 1: Thí sinh & Mã SV/Lớp */}
+                <div className="flex items-center gap-3.5 shrink-0">
+                  <div className="w-11 h-11 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold flex items-center justify-center text-type-body shrink-0 border border-blue-200/60 dark:border-blue-800/60">
                     {fullName.split(' ').pop()?.[0] || 'A'}
                   </div>
-                  <div className="min-w-0">
-                    <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{fullName}</h3>
-                    <div className="flex items-center gap-1.5 mt-0.5">
-                      <IdentifierBadge tone="blue">{studentCode}</IdentifierBadge>
+                  <div className="shrink-0">
+                    <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">{fullName}</h3>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <IdentifierBadge tone="blue" className="shrink-0 whitespace-nowrap">{studentCode}</IdentifierBadge>
                       <span className="text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap">{studentClass}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Col 2: Room & Building */}
-                <div className="border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800 pt-2 sm:pt-0 sm:pl-4">
+                {/* Col 2: Phòng & Tòa */}
+                <div className="border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800 pt-2 sm:pt-0 sm:pl-5 shrink-0">
                   <span className="text-slate-400 dark:text-slate-500 block text-type-helper">Phòng & Tòa</span>
                   <button
                     type="button"
                     onClick={() => setShowSeatMapModal(true)}
-                    className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 block mt-0.5 hover:text-blue-600 dark:hover:text-blue-400 transition text-left cursor-pointer"
+                    className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 block mt-0.5 hover:text-blue-600 dark:hover:text-blue-400 transition text-left cursor-pointer whitespace-nowrap"
                     title="Bấm để xem sơ đồ phòng thi"
                   >
                     {roomName}
                   </button>
-                  <span className="text-type-helper text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+                  <span className="text-type-helper text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5 whitespace-nowrap">
                     <MapPin className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
                     <span>({building})</span>
                   </span>
                 </div>
 
-                {/* Col 3: Seat */}
-                <div className="border-t lg:border-t-0 lg:border-l border-slate-100 dark:border-slate-800 pt-2 lg:pt-0 lg:pl-4">
+                {/* Col 3: Vị trí ngồi */}
+                <div className="border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800 pt-2 sm:pt-0 sm:pl-5 shrink-0">
                   <span className="text-slate-400 dark:text-slate-500 block text-type-helper">Vị trí ngồi</span>
                   <div className="mt-1">
                     <button
                       type="button"
                       onClick={() => setShowSeatMapModal(true)}
-                      className="ui-pill inline-flex items-center px-3 py-0.5 rounded-full font-medium text-type-helper text-blue-700 dark:text-blue-300 border border-blue-200/90 dark:border-blue-800/80 bg-blue-50/40 hover:bg-blue-100/60 dark:hover:bg-blue-900/60 transition cursor-pointer"
+                      className="ui-pill inline-flex items-center px-3 py-0.5 rounded-full font-medium text-type-helper text-blue-700 dark:text-blue-300 border border-blue-200/90 dark:border-blue-800/80 bg-blue-50/40 hover:bg-blue-100/60 dark:hover:bg-blue-900/60 transition cursor-pointer whitespace-nowrap"
                       title="Bấm để xem vị trí ghế trên sơ đồ"
                     >
                       GHẾ {seatNumber}
@@ -541,18 +524,18 @@ export default function StudentExamLobbyPage() {
                   </div>
                 </div>
 
-                {/* Col 4: Exam Number */}
-                <div className="border-t lg:border-t-0 lg:border-l border-slate-100 dark:border-slate-800 pt-2 lg:pt-0 lg:pl-4">
+                {/* Col 4: Số báo danh */}
+                <div className="border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800 pt-2 sm:pt-0 sm:pl-5 shrink-0 min-w-max">
                   <span className="text-slate-400 dark:text-slate-500 block text-type-helper">Số báo danh</span>
                   <div className="mt-1">
-                    <IdentifierBadge tone="neutral">{examNumber}</IdentifierBadge>
+                    <IdentifierBadge tone="neutral" className="shrink-0 whitespace-nowrap">{examNumber}</IdentifierBadge>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* 3. Kiểm tra hệ thống (4 Cards chẩn đoán) */}
-            <div className="space-y-3.5 pt-4 border-t border-slate-100 dark:border-slate-800">
+            {/* 3. Kiểm tra hệ thống (Bố cục phẳng với vách ngăn ngang) */}
+            <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-slate-900 dark:text-slate-100 font-semibold text-type-body-sm">
                   <span className="h-3.5 w-1 rounded-full bg-blue-600" />
@@ -560,7 +543,7 @@ export default function StudentExamLobbyPage() {
                 </div>
               </div>
 
-              {/* 4 Diagnostic Cards */}
+              {/* 4 Cards chẩn đoán thoáng đãng */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-type-helper">
                 <div className="flex items-center justify-between p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
                   <div className="flex items-center gap-2.5">
@@ -632,7 +615,7 @@ export default function StudentExamLobbyPage() {
           </div>
 
           {/* ════════════ CỘT PHẢI (4 / 12): ĐẾM NGƯỢC, TRẠNG THÁI & NÚT VÀO THI ════════════ */}
-          <div className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 border-t-4 border-t-blue-600 dark:border-t-blue-500 shadow-sm p-6 sm:p-7 space-y-5">
+          <div className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-6 sm:p-7 space-y-5">
             
             {/* 1. Circular Countdown Gauge */}
             <div className="flex flex-col items-center justify-center py-2 text-center">
