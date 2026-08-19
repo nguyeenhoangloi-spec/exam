@@ -78,12 +78,12 @@ export function SlidingSegmentedControl<T extends string = string>({
     >
       {/* Sliding Background Indicator Pill */}
       <div
-        className="absolute top-1 bottom-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700/80 shadow-xs shadow-slate-900/5 dark:shadow-black/20 pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-[transform,width]"
+        className="absolute top-1 bottom-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700/80 shadow-xs shadow-slate-900/5 dark:shadow-black/20 pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[transform,width]"
         style={{
           transform: `translateX(${indicatorStyle.left}px)`,
           width: `${indicatorStyle.width}px`,
           opacity: indicatorStyle.opacity,
-          transition: isReady ? 'transform 300ms cubic-bezier(0.4, 0, 0.2, 1), width 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 150ms ease' : 'none',
+          transition: isReady ? 'transform 300ms cubic-bezier(0.16, 1, 0.3, 1), width 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease' : 'none',
         }}
       />
 

@@ -101,7 +101,7 @@ export function TabBar<T extends string = string>({
             width: `${indicatorStyle.width}px`,
             opacity: indicatorStyle.opacity,
             transition: isReady
-              ? 'transform 300ms cubic-bezier(0.4, 0, 0.2, 1), width 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 150ms ease'
+              ? 'transform 300ms cubic-bezier(0.16, 1, 0.3, 1), width 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease'
               : 'none',
           }}
         />
@@ -173,7 +173,7 @@ export function TabBar<T extends string = string>({
           width: `${indicatorStyle.width}px`,
           opacity: indicatorStyle.opacity,
           transition: isReady
-            ? 'transform 300ms cubic-bezier(0.4, 0, 0.2, 1), width 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 150ms ease'
+            ? 'transform 300ms cubic-bezier(0.16, 1, 0.3, 1), width 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease'
             : 'none',
         }}
       />

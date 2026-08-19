@@ -1382,8 +1382,8 @@ export default function ProctorDashboardPage() {
         const meta = actionMeta[actionType];
         const MetaIcon = meta.icon;
         return (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-            <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800">
+          <div role="dialog" aria-modal="true" aria-label={meta.title} className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop">
+            <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800 animate-modal-dialog will-change-transform">
               {/* Modal header */}
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
                 <div className="flex items-center gap-3">
@@ -1636,8 +1636,8 @@ export default function ProctorDashboardPage() {
 
       {/* ═══════ MULTI-STUDENT EXTEND MODAL ═══════ */}
       {mounted && showMultiExtendModal && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800">
+        <div role="dialog" aria-modal="true" aria-label="Gia hạn nhóm thí sinh" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop">
+          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800 animate-modal-dialog will-change-transform">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
               <div className="flex items-center gap-3">
@@ -1748,8 +1748,8 @@ export default function ProctorDashboardPage() {
 
       {/* ═══════ BROADCAST ANNOUNCEMENT MODAL ═══════ */}
       {mounted && showBroadcastModal && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800">
+        <div role="dialog" aria-modal="true" aria-label="Phát loa thông báo" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop">
+          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800 animate-modal-dialog will-change-transform">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
               <div className="flex items-center gap-3">
@@ -1935,8 +1935,8 @@ export default function ProctorDashboardPage() {
 
       {/* ═══════ BULK EXTEND MODAL ═══════ */}
       {mounted && showBulkModal && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800">
+        <div role="dialog" aria-modal="true" aria-label="Bù giờ toàn phòng thi" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop">
+          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800 animate-modal-dialog will-change-transform">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
               <div className="flex items-center gap-3">
@@ -2080,8 +2080,8 @@ export default function ProctorDashboardPage() {
 
       {/* ═══════ REOPEN ENTRY MODAL ═══════ */}
       {mounted && showReopenEntryModal && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800">
+        <div role="dialog" aria-modal="true" aria-label="Mở giờ cho vào thi muộn" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop">
+          <div className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800 animate-modal-dialog will-change-transform">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
               <div className="flex items-center gap-3">

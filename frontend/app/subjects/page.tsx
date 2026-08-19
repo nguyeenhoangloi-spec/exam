@@ -805,7 +805,7 @@ export default function SubjectsPage() {
  <div role="dialog" aria-modal="true" aria-label="Chi tiết môn học" className="fixed inset-0 z-[100] overflow-hidden">
  {/* Backdrop mờ nền */}
  <div
- className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+ className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
  drawerVisible ? 'opacity-100' : 'opacity-0'
  }`}
  onClick={() => setDrawerSubject(null)}
@@ -813,7 +813,7 @@ export default function SubjectsPage() {
 
  <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
  <div
- className={`w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform ${
+ className={`w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
  drawerVisible ? 'translate-x-0' : 'translate-x-full'
  }`}
  >

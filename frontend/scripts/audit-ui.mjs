@@ -345,6 +345,10 @@ for (const folder of sourceRoots) {
       report(file, 'ảnh động phải dùng DynamicImage thay vì thẻ img trực tiếp');
     }
 
+    if (/cubic-bezier\(0\.4,\s*0,\s*0\.2,\s*1\)/i.test(content)) {
+      report(file, 'phải dùng Out-Expo cubic-bezier(0.16, 1, 0.3, 1) cho chuyển động 60 FPS mượt mà; không dùng bezier cũ');
+    }
+
     for (const form of content.matchAll(/<form\b[^>]*>([\s\S]*?)<\/form>/g)) {
       for (const button of form[1].matchAll(/<button\b[^>]*>/g)) {
         if (!/\btype\s*=/.test(button[0])) {
@@ -521,6 +525,8 @@ if (!/--fs-page-title:\s*28px/.test(globalCss)
 if (!/variant\s*=\s*['"]default['"]/.test(modal)
   || !/bg-slate-50 dark:bg-slate-800/.test(modal)
   || !/(?:text-lg|text-type-card|text-\[18px\]) font-semibold/.test(modal)
+  || !/animate-modal-backdrop/.test(modal)
+  || !/animate-modal-dialog/.test(modal)
   || !/fixed inset-0 z-\[100\]/.test(modal)) {
   violations.push('components/Modal.tsx: Modal popup specification is incomplete');
 }
@@ -530,6 +536,8 @@ if (!/max-w-sm/.test(confirmModal)
   || !/(?:text-sm|text-type-body-sm) font-semibold/.test(confirmModal)
   || !/(?:text-xs sm:text-sm|text-type-helper sm:text-type-body-sm)/.test(confirmModal)
   || !/(?:text-xs leading-\[18px\]|text-type-helper leading-\[18px\]) font-semibold text-rose-600/.test(confirmModal)
+  || !/animate-modal-backdrop/.test(confirmModal)
+  || !/animate-modal-dialog/.test(confirmModal)
   || !/z-\[9999\]/.test(confirmModal)) {
   violations.push('components/ConfirmModal.tsx: ConfirmModal popup specification is incomplete');
 }

@@ -84,7 +84,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
     <div role="dialog" aria-modal="true" aria-label="Thông tin chi tiết" className="fixed inset-0 z-[100] overflow-hidden">
       {/* Backdrop mờ nền với hiệu ứng Fade-in / Fade-out */}
       <div
-        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isVisible ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={onClose}
@@ -92,7 +92,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
         <div
-          className={`w-screen ${maxWidth === 'md' ? 'max-w-md' : 'max-w-[540px]'} bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform ${
+          className={`w-screen ${maxWidth === 'md' ? 'max-w-md' : 'max-w-[540px]'} bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
             isVisible ? 'translate-x-0' : 'translate-x-full'
           }`}
         >

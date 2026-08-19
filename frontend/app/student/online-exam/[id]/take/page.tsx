@@ -977,8 +977,8 @@ export default function StudentExamTakePage() {
 
   {/* ── MODAL 1: CẢNH BÁO VI PHẠM QUY CHẾ THI ── */}
   {violationModal.isOpen && (
-    <div role="dialog" aria-modal="true" aria-label="Cảnh báo vi phạm quy chế thi" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-2xl overflow-hidden">
+    <div role="dialog" aria-modal="true" aria-label="Cảnh báo vi phạm quy chế thi" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-2xl overflow-hidden animate-modal-dialog will-change-transform">
         {/* Header */}
         <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/90 dark:border-slate-700 flex items-center gap-3.5">
           <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200/80 dark:border-blue-800 flex items-center justify-center shrink-0 text-blue-600 dark:text-blue-400">
@@ -1031,8 +1031,8 @@ export default function StudentExamTakePage() {
 
   {/* ── MODAL 2: BÀI THI ĐÃ ĐƯỢC NỘP TỰ ĐỘNG DO VI PHẠM ── */}
   {violationSubmittedModal.isOpen && (
-    <div role="dialog" aria-modal="true" aria-label="Bài thi đã bị khóa" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-2xl overflow-hidden">
+    <div role="dialog" aria-modal="true" aria-label="Bài thi đã bị khóa" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-modal-backdrop">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-2xl overflow-hidden animate-modal-dialog will-change-transform">
         {/* Header */}
         <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/90 dark:border-slate-700 flex items-center gap-3.5">
           <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200/80 dark:border-blue-800 flex items-center justify-center shrink-0 text-blue-600 dark:text-blue-400">
