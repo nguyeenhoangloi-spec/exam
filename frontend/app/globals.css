@@ -255,6 +255,11 @@ html.dark {
     to { opacity: 1; transform: translateY(0); }
   }
 
+  @keyframes toast-progress {
+    from { width: 100%; }
+    to { width: 0%; }
+  }
+
   .animate-in {
     animation-fill-mode: both;
   }
