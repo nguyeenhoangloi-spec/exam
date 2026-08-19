@@ -28,8 +28,8 @@ import {
   Camera,
   Upload,
   Trash2,
-  ImageIcon,
   Calendar,
+  UserCheck,
 } from 'lucide-react';
 
 interface ProfileData {
@@ -228,11 +228,47 @@ export default function ProfilePage() {
     profile?.teacher?.department?.name ||
     profile?.student?.class?.className ||
     profile?.student?.class?.name ||
-    'Ban Quản trị Khảo thí Trung tâm';
+    'Ban Quản trị Khảo thí';
 
   const actualDepartment = profile?.teacher?.department?.departmentName || profile?.teacher?.department?.name || profile?.student?.class?.className || profile?.student?.class?.name;
   const profileFields = [profile?.username, displayName, (profile as any)?.email, userCode, actualDepartment];
   const profileCompletion = Math.round((profileFields.filter(Boolean).length / profileFields.length) * 100);
+
+  // 4 Standardized KPI Cards with uniform min-height & balanced sizing
+  const kpis = [
+    {
+      key: 'completion',
+      title: 'Hồ sơ cá nhân',
+      value: `${profileCompletion}% Hoàn tất`,
+      subtext: profileCompletion === 100 ? 'Tất cả thông tin đã xác thực' : 'Cập nhật thêm để đạt 100%',
+      progressPercent: profileCompletion,
+      icon: UserCheck,
+    },
+    {
+      key: 'role',
+      title: 'Vai trò hệ thống',
+      value: roleName,
+      subtext: 'Quyền hạn truy cập chuẩn',
+      progressPercent: 100,
+      icon: BadgeCheck,
+    },
+    {
+      key: 'unit',
+      title: 'Đơn vị quản lý',
+      value: deptOrClass,
+      subtext: 'Hệ thống khảo thí',
+      progressPercent: 100,
+      icon: Building2,
+    },
+    {
+      key: 'security',
+      title: 'Bảo mật tài khoản',
+      value: 'An toàn',
+      subtext: 'JWT Token mã hóa 256-bit',
+      progressPercent: 100,
+      icon: ShieldCheck,
+    },
+  ];
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto p-4 sm:p-6 pb-12 animate-fade-in">
@@ -262,7 +298,7 @@ export default function ProfilePage() {
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
             {/* Avatar Circle with Camera Overlay */}
             <div className="relative group shrink-0">
-              <div className="edu-kpi flex h-20 w-20 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-xl overflow-hidden">
+              <div className="edu-kpi flex h-20 w-20 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-xl overflow-hidden text-type-kpi font-bold">
                 {avatarUrl ? (
                   <DynamicImage src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
                 ) : (
@@ -306,7 +342,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Quick Action Buttons */}
+          {/* Quick Action Sibling Buttons */}
           <div className="flex flex-wrap items-center gap-2.5 shrink-0 w-full sm:w-auto justify-center sm:justify-end">
             <button
               type="button"
@@ -329,34 +365,50 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* 4 KPI Statistic Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-type-helper font-semibold text-slate-500 tracking-wider">Hồ sơ cá nhân</span>
-          <div className="text-type-section font-semibold text-slate-900">{profileCompletion}% Hoàn tất</div>
-          <span className="text-type-helper font-semibold text-emerald-600 flex items-center gap-1">
-            <CheckCircle2 className="h-3.5 w-3.5" /> {profileCompletion === 100 ? 'Tất cả thông tin đã xác thực' : 'Cập nhật thêm thông tin để hoàn tất hồ sơ'}
-          </span>
-        </div>
+      {/* ── 4 Standardized KPI Statistic Cards (Uniform Height & Balanced Typography) ── */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        {kpis.map((spec) => {
+          const Icon = spec.icon;
+          return (
+            <div
+              key={spec.key}
+              className="group relative flex flex-col justify-between min-h-[118px] rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-1 min-w-0">
+                  <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                    {spec.title}
+                  </span>
+                  <div className="text-type-section font-semibold leading-[28px] tracking-tight text-slate-900 dark:text-slate-100 truncate">
+                    {spec.value}
+                  </div>
+                </div>
 
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-type-helper font-semibold text-slate-500 tracking-wider">Vai trò hệ thống</span>
-          <div className="text-type-section font-semibold text-blue-600">{roleName}</div>
-          <span className="text-type-helper font-normal text-slate-500">Quyền hạn truy cập chuẩn</span>
-        </div>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
+                  <Icon className="h-5 w-5 stroke-[2.2]" />
+                </div>
+              </div>
 
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-type-helper font-semibold text-slate-500 tracking-wider">Đơn vị quản lý</span>
-          <div className="text-type-section font-semibold text-slate-900 truncate">{deptOrClass}</div>
-          <span className="text-type-helper font-normal text-slate-500">Hệ thống khảo thí</span>
-        </div>
+              {/* Micro Progress Track */}
+              <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
+                <div
+                  className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(Math.max(spec.progressPercent, 5), 100)}%` }}
+                />
+              </div>
 
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-type-helper font-semibold text-slate-500 tracking-wider">Bảo mật tài khoản</span>
-          <div className="text-type-section font-semibold text-emerald-700">An toàn</div>
-          <span className="text-type-helper font-normal text-slate-500">JWT Token mã hóa 256-bit</span>
-        </div>
-      </div>
+              <div className="mt-2.5">
+                <span
+                  title={spec.subtext}
+                  className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+                >
+                  {spec.subtext}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </section>
 
       {/* Navigation Tabs */}
       <TabBar
@@ -371,41 +423,43 @@ export default function ProfilePage() {
 
       {/* Tab 1: Info Details */}
       {activeTab === 'info' && (
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs space-y-6">
-          <h2 className="text-type-section font-semibold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <User className="h-5 w-5 text-blue-600" />
+        <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xs space-y-6">
+          <h2 className="text-type-section font-semibold text-slate-900 dark:text-slate-100 border-b border-slate-100 dark:border-slate-800 pb-3 flex items-center gap-2">
+            <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             <span>Thông tin tài khoản khảo thí</span>
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-type-body text-slate-700">
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-              <span className="text-type-helper font-semibold text-slate-500 block">Họ và tên đầy đủ</span>
-              <span className="text-type-body font-medium text-slate-900">{displayName}</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-type-body text-slate-700 dark:text-slate-300">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
+              <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block">Họ và tên đầy đủ</span>
+              <span className="text-type-body font-medium text-slate-900 dark:text-slate-100">{displayName}</span>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-              <span className="text-type-helper font-semibold text-slate-500 block">Tên đăng nhập hệ thống</span>
-              <span className="text-type-body font-medium text-slate-900">{profile?.username || '—'}</span>
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
+              <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block">Tên đăng nhập hệ thống</span>
+              <span className="text-type-body font-medium text-slate-900 dark:text-slate-100">{profile?.username || '—'}</span>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-              <span className="text-type-helper font-semibold text-slate-500 block">Mã định danh (ID/Code)</span>
-              <span className="text-type-body font-semibold text-blue-700">{userCode}</span>
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
+              <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block">Mã định danh (ID/Code)</span>
+              <span className="text-type-body font-semibold text-blue-600 dark:text-blue-400">
+                <IdentifierBadge tone="neutral">{userCode}</IdentifierBadge>
+              </span>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-              <span className="text-type-helper font-semibold text-slate-500 block">Email liên hệ</span>
-              <span className="text-type-body font-medium text-slate-900">{email}</span>
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
+              <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block">Email liên hệ</span>
+              <span className="text-type-body font-medium text-slate-900 dark:text-slate-100">{email}</span>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-              <span className="text-type-helper font-semibold text-slate-500 block">Số điện thoại liên lạc</span>
-              <span className="text-type-body font-medium text-slate-900">{phone}</span>
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
+              <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block">Số điện thoại liên lạc</span>
+              <span className="text-type-body font-medium text-slate-900 dark:text-slate-100">{phone || 'Chưa cập nhật'}</span>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-              <span className="text-type-helper font-semibold text-slate-500 block">Đơn vị / Lớp học</span>
-              <span className="text-type-body font-medium text-slate-900">{deptOrClass}</span>
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
+              <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block">Đơn vị / Lớp học</span>
+              <span className="text-type-body font-medium text-slate-900 dark:text-slate-100">{deptOrClass}</span>
             </div>
           </div>
         </div>
@@ -413,26 +467,26 @@ export default function ProfilePage() {
 
       {/* Tab 2: Permissions */}
       {activeTab === 'permissions' && (
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs space-y-6">
-          <h2 className="text-type-section font-semibold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-blue-600" />
+        <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xs space-y-6">
+          <h2 className="text-type-section font-semibold text-slate-900 dark:text-slate-100 border-b border-slate-100 dark:border-slate-800 pb-3 flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             <span>Phân quyền và Nhật ký hoạt động</span>
           </h2>
 
           <div className="space-y-3">
-            <div className="p-4 rounded-xl bg-blue-50/60 border border-blue-100 space-y-1">
-              <span className="text-type-body font-semibold text-blue-700 block">Quyền hạn tài khoản ({roleName})</span>
-              <p className="text-type-body font-normal text-slate-700 leading-relaxed">
-                Tài khoản của bạn được cấp quyền <strong className="font-semibold text-slate-900">{roleName}</strong> trong hệ thống quản lý khảo thí. Bạn có thể truy cập và thao tác đúng phạm vi chức năng được giao.
+            <div className="p-4 rounded-xl bg-blue-50/60 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/60 space-y-1">
+              <span className="text-type-body font-semibold text-blue-700 dark:text-blue-300 block">Quyền hạn tài khoản ({roleName})</span>
+              <p className="text-type-body font-normal text-slate-700 dark:text-slate-300 leading-relaxed">
+                Tài khoản của bạn được cấp quyền <strong className="font-semibold text-slate-900 dark:text-slate-100">{roleName}</strong> trong hệ thống quản lý khảo thí. Bạn có thể truy cập và thao tác đúng phạm vi chức năng được giao.
               </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
-              <span className="text-type-body font-semibold text-slate-900 flex items-center gap-1.5">
-                <Activity className="h-4 w-4 text-blue-600" />
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-2">
+              <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                <Activity className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 <span>Phiên đăng nhập gần đây</span>
               </span>
-              <p className="text-type-body-sm font-normal text-slate-500">Trình duyệt web • IP 127.0.0.1 • Đã xác thực JWT token thành công</p>
+              <p className="text-type-body-sm font-normal text-slate-500 dark:text-slate-400">Trình duyệt web • IP 127.0.0.1 • Đã xác thực JWT token thành công</p>
             </div>
           </div>
         </div>
@@ -440,18 +494,18 @@ export default function ProfilePage() {
 
       {/* Tab 3: Edit Profile Form */}
       {activeTab === 'edit' && (
-        <form onSubmit={handleSaveProfile} className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs space-y-4">
-          <h2 className="text-type-section font-semibold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <User className="h-5 w-5 text-blue-600" />
+        <form onSubmit={handleSaveProfile} className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xs space-y-4">
+          <h2 className="text-type-section font-semibold text-slate-900 dark:text-slate-100 border-b border-slate-100 dark:border-slate-800 pb-3 flex items-center gap-2">
+            <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             <span>Chỉnh sửa thông tin tài khoản & liên hệ</span>
           </h2>
 
           <div className="space-y-3">
             {/* Avatar Upload Section */}
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3">
-              <label className="block text-type-body font-medium text-slate-900">Ảnh đại diện tài khoản</label>
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 space-y-3">
+              <label className="block text-type-body font-medium text-slate-900 dark:text-slate-100">Ảnh đại diện tài khoản</label>
               <div className="flex flex-wrap items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white border border-slate-300 font-semibold text-blue-600 text-type-section shadow-xs overflow-hidden shrink-0">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 font-semibold text-blue-600 dark:text-blue-400 text-type-section shadow-xs overflow-hidden shrink-0">
                   {avatarUrl ? (
                     <DynamicImage src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
                   ) : (
@@ -475,13 +529,13 @@ export default function ProfilePage() {
                         variant="secondary"
                         size="md"
                         onClick={handleRemoveAvatar}
-                        leftIcon={<Trash2 className="h-4 w-4 text-slate-500" />}
+                        leftIcon={<Trash2 className="h-4 w-4 text-rose-500" />}
                       >
                         Gỡ ảnh đại diện
                       </Button>
                     )}
                   </div>
-                  <p className="text-type-helper font-normal text-slate-500">
+                  <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400">
                     Chấp nhận định dạng PNG, JPG, WEBP. Dung lượng tối đa 5MB.
                   </p>
                 </div>
@@ -489,50 +543,63 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-type-body font-medium text-slate-900">Họ và tên hiển thị</label>
+              <label className="block text-type-body font-medium text-slate-900 dark:text-slate-100">
+                Họ và tên hiển thị <span className="text-rose-500">*</span>
+              </label>
               <input
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
- className="w-full rounded-xl border border-slate-300 p-3 text-type-body font-normal text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-type-body font-medium text-slate-900">Email nhận thông báo</label>
+              <label className="block text-type-body font-medium text-slate-900 dark:text-slate-100">
+                Email nhận thông báo <span className="text-rose-500">*</span>
+              </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
- className="w-full rounded-xl border border-slate-300 p-3 text-type-body font-normal text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-type-body font-medium text-slate-900">Số điện thoại cá nhân</label>
+              <label className="block text-type-body font-medium text-slate-900 dark:text-slate-100">Số điện thoại cá nhân</label>
               <input
                 type="text"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                required
- className="w-full rounded-xl border border-slate-300 p-3 text-type-body font-normal text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                placeholder="Nhập số điện thoại..."
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-type-body font-medium text-slate-900">Địa chỉ liên hệ</label>
+              <label className="block text-type-body font-medium text-slate-900 dark:text-slate-100">Địa chỉ liên hệ</label>
               <input
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
- className="w-full rounded-xl border border-slate-300 p-3 text-type-body font-normal text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                placeholder="Nhập địa chỉ liên hệ..."
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition"
               />
             </div>
           </div>
 
-          <div className="pt-3 border-t border-slate-100 flex justify-end">
+          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2.5">
+            <Button
+              type="button"
+              variant="secondary"
+              size="md"
+              onClick={() => setActiveTab('info')}
+            >
+              Hủy
+            </Button>
             <Button
               type="submit"
               variant="primary"
