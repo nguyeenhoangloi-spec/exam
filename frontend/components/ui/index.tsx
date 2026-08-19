@@ -11,4 +11,5 @@ export * from './ColumnToggleDropdown';
 export * from './PaginationBar';
 export * from './DataActionsDropdown';
 export * from './ViewModeSegmentedControl';
+export * from './SlidingSegmentedControl';
 export { StatusBadge } from '../common/StatusBadge';

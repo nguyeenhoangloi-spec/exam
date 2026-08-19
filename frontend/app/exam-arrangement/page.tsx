@@ -11,6 +11,7 @@ import { TabBar } from '../../components/ui/TabBar';
 import { Button } from '../../components/ui/Button';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
+import { SlidingSegmentedControl } from '../../components/ui/SlidingSegmentedControl';
 import {
   DoorOpen,
   Users,
@@ -1022,31 +1023,15 @@ export default function ExamArrangementPage() {
                   {/* Filter & View Switcher Row */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
                     <div className="flex items-center gap-2.5 flex-wrap">
-                      {/* View Switcher Tabs */}
-                      <div className="flex items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1 text-type-helper font-semibold">
-                        <button
-                          type="button"
-                          onClick={() => setViewMode('matrix')}
-                          className={`px-3 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${viewMode === 'matrix'
-                            ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-2xs font-semibold'
-                            : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                            }`}
-                        >
-                          <LayoutGrid className="h-3.5 w-3.5 text-blue-600" />
-                          Sơ Đồ Ghế
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setViewMode('table')}
-                          className={`px-3 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 ${viewMode === 'table'
-                            ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-2xs font-semibold'
-                            : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                            }`}
-                        >
-                          <List className="h-3.5 w-3.5 text-slate-500" />
-                          Danh Sách Bảng
-                        </button>
-                      </div>
+                      {/* View Switcher Tabs (Hiệu ứng con trượt mượt mà) */}
+                      <SlidingSegmentedControl<'matrix' | 'table'>
+                        value={viewMode}
+                        onChange={(mode) => setViewMode(mode)}
+                        options={[
+                          { value: 'matrix', label: 'Sơ Đồ Ghế', icon: LayoutGrid },
+                          { value: 'table', label: 'Danh Sách Bảng', icon: List },
+                        ]}
+                      />
 
                       {/* Filter by Room */}
                       <FilterSelect
