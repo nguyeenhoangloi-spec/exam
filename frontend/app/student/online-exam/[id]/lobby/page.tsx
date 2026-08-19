@@ -324,7 +324,7 @@ export default function StudentExamLobbyPage() {
         <div className="flex items-center gap-4">
           <div className="ui-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-type-helper font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-200/90 dark:border-emerald-800/80 bg-emerald-50/50 dark:bg-emerald-950/40">
             <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-            <span className="font-semibold">Cổng thi an toàn</span>
+            <span>Cổng thi an toàn</span>
           </div>
 
           <div className="flex items-center gap-2.5 pl-2 select-none">
@@ -347,7 +347,7 @@ export default function StudentExamLobbyPage() {
       </header>
 
       {/* ── Main Content Grid (8 Cols Left / 4 Cols Right) ── */}
-      <main className="w-full max-w-7xl mx-auto my-6 flex-1">
+      <main className="w-full max-w-7xl mx-auto my-4 sm:my-5 flex-1">
         
         {/* Top Preview Mode Bar (Nếu có) */}
         {eligibility?.isPreviewMode && (
@@ -362,13 +362,13 @@ export default function StudentExamLobbyPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           
           {/* ════════════ CỘT TRÁI (8 / 12): THÔNG TIN MÔN THI, THÍ SINH & KIỂM TRA HỆ THỐNG ════════════ */}
-          <div className="lg:col-span-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-7">
+          <div className="lg:col-span-8 h-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 border-t-4 border-t-blue-600 dark:border-t-blue-500 shadow-sm p-5 sm:p-6 flex flex-col justify-between space-y-5">
             
             {/* 1. Header Môn thi & Đồ họa Khảo thí 3D */}
-            <div className="space-y-5">
+            <div className="space-y-4">
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <span className="ui-pill inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-type-helper font-medium text-blue-700 dark:text-blue-300 border border-blue-200/90 dark:border-blue-800/80 bg-blue-50/70 dark:bg-blue-950/40">
                   <Ticket className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
@@ -380,17 +380,17 @@ export default function StudentExamLobbyPage() {
               </div>
 
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="space-y-4 min-w-0 flex-1">
+                <div className="space-y-3.5 min-w-0 flex-1">
                   <h2 className="text-type-section font-semibold text-slate-900 dark:text-slate-100 tracking-tight leading-snug">
                     {schedule?.subject?.subjectName || examInfo?.subjectName || 'Trí tuệ nhân tạo'}
                   </h2>
 
                   {/* 3 Chỉ số Specs phẳng, thông thoáng */}
-                  <div className="flex flex-wrap items-center gap-x-8 gap-y-4 pt-1">
+                  <div className="flex flex-wrap items-center gap-x-7 gap-y-3 pt-0.5">
                     {/* Mã môn */}
                     <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 border border-blue-100/80 dark:border-blue-900/50">
-                        <Ticket className="w-5 h-5" />
+                      <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 border border-blue-100/80 dark:border-blue-900/50">
+                        <Ticket className="w-4 h-4" />
                       </div>
                       <div>
                         <span className="text-slate-400 dark:text-slate-500 block text-type-helper leading-tight">Mã môn</span>
@@ -400,8 +400,8 @@ export default function StudentExamLobbyPage() {
 
                     {/* Thời lượng */}
                     <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 border border-blue-100/80 dark:border-blue-900/50">
-                        <Clock className="w-5 h-5" />
+                      <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 border border-blue-100/80 dark:border-blue-900/50">
+                        <Clock className="w-4 h-4" />
                       </div>
                       <div>
                         <span className="text-slate-400 dark:text-slate-500 block text-type-helper leading-tight">Thời lượng</span>
@@ -411,8 +411,8 @@ export default function StudentExamLobbyPage() {
 
                     {/* Khung giờ thi */}
                     <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 border border-blue-100/80 dark:border-blue-900/50">
-                        <Calendar className="w-5 h-5" />
+                      <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 border border-blue-100/80 dark:border-blue-900/50">
+                        <Calendar className="w-4 h-4" />
                       </div>
                       <div>
                         <span className="text-slate-400 dark:text-slate-500 block text-type-helper leading-tight">Khung giờ thi</span>
@@ -423,7 +423,7 @@ export default function StudentExamLobbyPage() {
                 </div>
 
                 {/* 3D Exam Screen + Clock Illustration */}
-                <div className="hidden lg:flex items-center justify-center shrink-0 select-none relative w-44 h-32 pr-2">
+                <div className="hidden lg:flex items-center justify-center shrink-0 select-none relative w-40 h-28 pr-1">
                   <svg viewBox="0 0 200 150" className="w-full h-full drop-shadow-sm" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <ellipse cx="100" cy="85" rx="75" ry="45" className="fill-blue-200/40 dark:fill-blue-900/30" />
                     <path d="M85 115 L115 115 L120 128 L80 128 Z" className="fill-blue-500" />
@@ -459,7 +459,7 @@ export default function StudentExamLobbyPage() {
             </div>
 
             {/* 2. Thông tin thí sinh & Phòng thi (Bố cục phẳng với vách ngăn ngang) */}
-            <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800">
+            <div className="space-y-3.5 pt-4 border-t border-slate-100 dark:border-slate-800">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-slate-900 dark:text-slate-100 font-semibold text-type-body-sm">
                   <span className="h-3.5 w-1 rounded-full bg-blue-600" />
@@ -468,7 +468,7 @@ export default function StudentExamLobbyPage() {
                 <button
                   type="button"
                   onClick={() => setShowProfileDrawer(true)}
-                  className="inline-flex items-center gap-1 text-type-helper font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 hover:underline cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-type-helper font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 hover:underline cursor-pointer transition-colors"
                   title="Xem chi tiết hồ sơ thí sinh"
                 >
                   <Eye className="w-3.5 h-3.5" />
@@ -480,7 +480,7 @@ export default function StudentExamLobbyPage() {
               <div className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-4 pt-1 text-type-helper">
                 {/* Col 1: Thí sinh & Mã SV/Lớp */}
                 <div className="flex items-center gap-3.5 shrink-0">
-                  <div className="w-11 h-11 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold flex items-center justify-center text-type-body shrink-0 border border-blue-200/60 dark:border-blue-800/60">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold flex items-center justify-center text-type-body-sm shrink-0 border border-blue-200/60 dark:border-blue-800/60">
                     {fullName.split(' ').pop()?.[0] || 'A'}
                   </div>
                   <div className="shrink-0">
@@ -535,7 +535,7 @@ export default function StudentExamLobbyPage() {
             </div>
 
             {/* 3. Kiểm tra hệ thống (Bố cục phẳng với vách ngăn ngang) */}
-            <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800">
+            <div className="space-y-3.5 pt-4 border-t border-slate-100 dark:border-slate-800">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-slate-900 dark:text-slate-100 font-semibold text-type-body-sm">
                   <span className="h-3.5 w-1 rounded-full bg-blue-600" />
@@ -599,12 +599,12 @@ export default function StudentExamLobbyPage() {
               </div>
 
               {/* Nút Kiểm tra lại */}
-              <div className="text-center pt-1">
+              <div className="text-center pt-0.5">
                 <button
                   type="button"
                   onClick={handleRecheckDevice}
                   disabled={checkingDevice}
-                  className="inline-flex items-center gap-1.5 text-type-helper font-semibold text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 text-type-helper font-medium text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer disabled:opacity-50"
                   title="Kiểm tra lại đường truyền thiết bị"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${checkingDevice ? 'animate-spin text-blue-600' : ''}`} />
@@ -615,7 +615,7 @@ export default function StudentExamLobbyPage() {
           </div>
 
           {/* ════════════ CỘT PHẢI (4 / 12): ĐẾM NGƯỢC, TRẠNG THÁI & NÚT VÀO THI ════════════ */}
-          <div className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-6 sm:p-7 space-y-5">
+          <div className="lg:col-span-4 h-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-5 sm:p-6 flex flex-col justify-between space-y-4">
             
             {/* 1. Circular Countdown Gauge */}
             <div className="flex flex-col items-center justify-center py-2 text-center">
