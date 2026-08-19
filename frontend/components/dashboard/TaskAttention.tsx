@@ -48,8 +48,8 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
       {/* Header */}
       <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5 min-w-0">
         <h3 className="edu-card-title truncate whitespace-nowrap min-w-0">Công việc cần xử lý</h3>
-        <span className="inline-flex items-center gap-1 text-type-helper font-medium text-blue-600 dark:text-blue-400 px-2 py-0.5 ui-pill rounded-full whitespace-nowrap shrink-0">
-          <span>Ưu tiên</span>
+        <span className="text-type-helper font-semibold text-blue-600 dark:text-blue-400 whitespace-nowrap shrink-0">
+          Ưu tiên
         </span>
       </div>
 

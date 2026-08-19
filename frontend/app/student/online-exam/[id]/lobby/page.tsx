@@ -726,7 +726,7 @@ export default function StudentExamLobbyPage() {
         isOpen={showProfileDrawer}
         onClose={() => setShowProfileDrawer(false)}
         title={fullName}
-        subtitle={studentCode ? `MSSV: ${studentCode}` : ''}
+        subtitle={studentCode || ''}
         avatarText={fullName?.slice(0, 2)?.toUpperCase() || 'SV'}
         badge={{
           label: schedule?.examPeriod?.name || examInfo?.examPeriodName || 'Kỳ thi chính thức',

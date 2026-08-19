@@ -57,8 +57,8 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
           </span>
         </div>
 
-        <span className="inline-flex items-center gap-1 text-type-helper font-medium text-blue-600 dark:text-blue-400 px-2 py-0.5 ui-pill rounded-full">
-          <TrendingUp className="w-3 h-3" />
+        <span className="inline-flex items-center gap-1.5 text-type-helper font-medium text-blue-600 dark:text-blue-400">
+          <TrendingUp className="w-3.5 h-3.5" />
           <span>Theo tiến độ</span>
         </span>
       </div>

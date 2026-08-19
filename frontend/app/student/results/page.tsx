@@ -1116,7 +1116,7 @@ export default function StudentResultsPage() {
           isOpen={Boolean(detailItem)}
           onClose={() => setDetailItem(null)}
           title={detailItem?.subjectName || ''}
-          subtitle={`Mã môn: ${detailItem?.subjectCode}`}
+          subtitle={detailItem?.subjectCode || ''}
           avatarText={detailItem?.subjectCode?.slice(0, 2)?.toUpperCase() || 'KQ'}
           badge={detailItem ? {
             status: detailItem.status,

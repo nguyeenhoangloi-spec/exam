@@ -936,7 +936,7 @@ function TrashPageContent() {
           isOpen={Boolean(detailItem)}
           onClose={() => setDetailItem(null)}
           title={detailItem?.title || 'Chi tiết bản ghi'}
-          subtitle={detailItem?.id ? `Mã #${detailItem.id}` : ''}
+          subtitle={detailItem?.id ? String(detailItem.id) : ''}
           avatarText={detailItem?.title?.slice(0, 2)?.toUpperCase() || 'TR'}
           badge={{
             status: 'DELETED',

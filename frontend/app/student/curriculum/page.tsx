@@ -967,7 +967,7 @@ export default function StudentCurriculumPage() {
           isOpen={Boolean(detailItem)}
           onClose={() => setDetailItem(null)}
           title={detailItem?.subjectName || ''}
-          subtitle={`Mã môn: ${detailItem?.subjectCode}`}
+          subtitle={detailItem?.subjectCode || ''}
           avatarText={detailItem?.subjectCode?.slice(0, 2)?.toUpperCase() || 'CT'}
           badge={{
             label: detailItem?.isCompleted ? 'Đã hoàn thành' : 'Chưa hoàn thành',

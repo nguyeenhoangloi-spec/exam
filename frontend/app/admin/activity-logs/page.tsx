@@ -1140,8 +1140,8 @@ export default function ActivityLogsPage() {
                                                 <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words">
                                                     Chi tiết Nhật ký
                                                 </h2>
-                                                <IdentifierBadge tone="neutral" className="max-w-[200px] truncate" title={`#${drawerOpenLog.id}`}>
-                                                    #{drawerOpenLog.id}
+                                                <IdentifierBadge tone="neutral" className="max-w-[200px] truncate" title={String(drawerOpenLog.id)}>
+                                                    {drawerOpenLog.id}
                                                 </IdentifierBadge>
                                             </div>
                                             <p className="mt-1 text-type-helper font-medium text-slate-500 dark:text-slate-400 tabular-nums truncate">

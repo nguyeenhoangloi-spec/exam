@@ -502,7 +502,7 @@ export default function StudentExamSchedulePage() {
         isOpen={Boolean(drawerSchedule)}
         onClose={() => setDrawerSchedule(null)}
         title={drawerSchedule?.subjectName || ''}
-        subtitle={`Mã môn: ${drawerSchedule?.subjectCode}`}
+        subtitle={drawerSchedule?.subjectCode || ''}
         avatarText={drawerSchedule?.subjectCode?.slice(0, 2)?.toUpperCase() || 'LT'}
         badge={drawerSchedule ? {
           status: (drawerSchedule as any).status || 'UPCOMING',

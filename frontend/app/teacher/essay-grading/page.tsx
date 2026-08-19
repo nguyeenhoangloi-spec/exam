@@ -1361,7 +1361,7 @@ function TeacherEssayGradingContent() {
         isOpen={!!profileCandidate}
         onClose={() => setProfileCandidate(null)}
         title={profileCandidate?.student?.fullName || 'Hồ Sơ & Bài Thi Sinh Viên'}
-        subtitle={profileCandidate?.student?.studentCode ? `Mã sinh viên: ${profileCandidate.student.studentCode}` : ''}
+        subtitle={profileCandidate?.student?.studentCode || ''}
         avatarText={profileCandidate?.student?.fullName?.trim().split(' ').pop()?.slice(0, 2)?.toUpperCase() || 'SV'}
         badge={{
           label: profileCandidate?.gradingStatus === 'PUBLISHED'

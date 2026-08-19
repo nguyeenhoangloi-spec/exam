@@ -197,7 +197,7 @@ Quy tắc responsive:
 
 ## 8. Phạm vi giữ nguyên
 
-Không đổi font thương hiệu, màu sắc, khoảng cách tổng thể hoặc bố cục trang. Các bước tiếp theo nếu cần sẽ tiếp tục theo từng nhóm component, review ảnh hưởng và kiểm tra trực quan trước khi áp dụng diện rộng.
+Không đổi font thương hiệu, màu semantic, spacing tổng thể, bố cục trang, API, database, route, permission hoặc logic nghiệp vụ. Riêng màu chữ trung tính Web UI đã được chốt và áp dụng theo Deep Ink ở mục 9; màu trạng thái xanh dương, xanh lá, amber và rose vẫn giữ vai trò semantic riêng.
 
 ## 9. Trạng thái triển khai
 
@@ -241,3 +241,27 @@ Toàn bộ `app/` và `components/` phải dùng các token trên. Audit tự đ
 - Mã sinh viên, mã môn, mã đề và mã kỹ thuật là identifier badge, không phải status pill: tiếp tục dùng `rounded-lg`, Inter, `tabular-nums` theo `IdentifierBadge`.
 - Button, ô tìm kiếm, select và control tiếp tục dùng `rounded-xl`; card/modal dùng `rounded-2xl`. Không đổi các phần này thành pill.
 - Audit UI phải chặn pill thiếu `rounded-full`, sai cỡ/weight hoặc dùng nền đặc mà không khai báo `ui-pill-solid`.
+
+### Cập nhật đồng bộ màu chữ và kiểm tra artifact
+
+- Cập nhật tài liệu chuẩn tại `ui-design-system-rules.md`, bao gồm bảng Deep Ink, tỷ lệ tương phản, quy tắc không dùng opacity cho nội dung, checklist Computed Styles và tiêu chí kiểm tra CSS sau biên dịch.
+- Chuẩn hóa token light mode: chữ chính `#020617`, chữ phụ `#111827`, helper `#1F2937`, placeholder/disabled `#475569`.
+- Chuẩn hóa token dark mode: chữ chính `#F8FAFC`, chữ phụ `#E2E8F0`, helper `#CBD5E1`, placeholder/disabled `#94A3B8`.
+- Áp dụng remap ở shell `.typography-scale` cho utility trung tính cũ, nên các page/component tái sử dụng vẫn nhận cùng một palette mà không cần sửa hàng loạt class riêng lẻ.
+- Input, select, textarea, button và dropdown disabled dùng màu disabled trực tiếp với `opacity: 1`; không làm mờ toàn control.
+- Status pill mặc định dùng `ui-pill` outline, `rounded-full`, 13/18 và weight 500; nền đặc phải khai báo rõ `ui-pill-solid`.
+- Các nhãn trong `admin/essay-review` và `teacher/essay-grading` đã được đưa về contract pill dùng chung; opacity trên chip/nội dung đã loại bỏ.
+- Thêm `frontend/scripts/audit-ui-artifact.mjs` và lệnh `npm run audit:ui:artifact` để kiểm tra CSS/JS runtime bundle sau dev/build.
+- Artifact audit xác nhận CSS runtime có Inter, `typography-scale`, đủ token Deep Ink light/dark, remap neutral, disabled opacity và pill contract.
+
+### Cổng kiểm tra bắt buộc sau mỗi lần thay đổi
+
+```bash
+npm run audit:ui
+npm run audit:ui:artifact
+npx tsc --noEmit
+npm run lint
+npm run build
+```
+
+DevTools cần kiểm tra thêm tối thiểu một trang đại diện cho Admin, Giảng viên và Sinh viên: `font-family`, `color`, `opacity`, `font-size`, `font-weight` và `border-radius`. Nếu không thể đọc Computed Styles do môi trường trình duyệt, phải ghi rõ là chưa xác minh runtime; không được dùng audit source thay thế cho bằng chứng DOM.

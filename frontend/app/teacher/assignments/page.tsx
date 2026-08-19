@@ -1088,7 +1088,7 @@ export default function TeacherAssignmentsPage() {
         isOpen={Boolean(drawerDuty)}
         onClose={() => setDrawerDuty(null)}
         title={drawerDuty?.subjectName || ''}
-        subtitle={`Mã môn: ${drawerDuty?.subjectCode}`}
+        subtitle={drawerDuty?.subjectCode || ''}
         avatarText="GT"
         badge={drawerDuty ? {
           status: drawerIsExpired ? 'CANCELLED' : drawerDuty.status,
