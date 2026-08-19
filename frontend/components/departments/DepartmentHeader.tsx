@@ -19,7 +19,7 @@ export function DepartmentHeader({
 }: DepartmentHeaderProps) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         <h1 className="text-type-page font-semibold leading-[36px] tracking-tight text-slate-900 dark:text-slate-100">
           Quản lý khoa
         </h1>

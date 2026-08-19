@@ -91,14 +91,14 @@ export default function ReportsPage() {
   };
 
   return (
-    <main className="w-full px-6 py-6 space-y-6 bg-slate-50/50 min-h-screen">
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
       {/* Page Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-1">
-        <div className="space-y-1">
-          <h1 className="text-type-page font-semibold leading-[36px] tracking-tight text-slate-900">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
+        <div className="space-y-0.5">
+          <h1 className="text-type-page font-semibold leading-[36px] tracking-tight text-slate-900 dark:text-slate-100">
             Báo cáo tổng quan hệ thống
           </h1>
-          <p className="text-type-body font-normal leading-[24px] text-slate-500">
+          <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
             Số liệu tổng hợp thời gian thực từ PostgreSQL về Lịch thi, Ngân hàng đề, Phòng thi và Hoạt động khảo thí.
           </p>
         </div>
@@ -127,7 +127,7 @@ export default function ReportsPage() {
       ) : error || !data ? (
         <DashboardErrorState message={error || 'Báo cáo không khả dụng.'} onRetry={() => load(true)} />
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-5">
           {/* Section 1: KPI Stats (6 Cards) */}
           <DashboardStatistics summary={data.summary} questionStatus={data.questionStatus} />
 

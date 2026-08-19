@@ -458,7 +458,7 @@ export default function BackupsPage() {
 
     {/* Shared control sizing is applied globally; keep this page behavior unchanged. */}
     return (
-        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
             {/* Header matching standard page header across all management pages */}
