@@ -52,6 +52,7 @@ export default function StudentExamLobbyPage() {
   const [accessCode, setAccessCode] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showProfileDrawer, setShowProfileDrawer] = useState(false);
+  const [showSeatMapModal, setShowSeatMapModal] = useState(false);
 
   // Pre-flight Device Health Check state
   const [networkPing, setNetworkPing] = useState<number>(28);
@@ -511,9 +512,14 @@ export default function StudentExamLobbyPage() {
                 {/* Col 2: Room & Building */}
                 <div className="border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800 pt-2 sm:pt-0 sm:pl-4">
                   <span className="text-slate-400 dark:text-slate-500 block text-type-helper">Phòng & Tòa</span>
-                  <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 block mt-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setShowSeatMapModal(true)}
+                    className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 block mt-0.5 hover:text-blue-600 dark:hover:text-blue-400 transition text-left cursor-pointer"
+                    title="Bấm để xem sơ đồ phòng thi"
+                  >
                     {roomName}
-                  </span>
+                  </button>
                   <span className="text-type-helper text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
                     <MapPin className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
                     <span>({building})</span>
@@ -524,9 +530,14 @@ export default function StudentExamLobbyPage() {
                 <div className="border-t lg:border-t-0 lg:border-l border-slate-100 dark:border-slate-800 pt-2 lg:pt-0 lg:pl-4">
                   <span className="text-slate-400 dark:text-slate-500 block text-type-helper">Vị trí ngồi</span>
                   <div className="mt-1">
-                    <span className="ui-pill inline-flex items-center px-3 py-0.5 rounded-full font-medium text-type-helper text-blue-700 dark:text-blue-300 border border-blue-200/90 dark:border-blue-800/80 bg-blue-50/40">
+                    <button
+                      type="button"
+                      onClick={() => setShowSeatMapModal(true)}
+                      className="ui-pill inline-flex items-center px-3 py-0.5 rounded-full font-medium text-type-helper text-blue-700 dark:text-blue-300 border border-blue-200/90 dark:border-blue-800/80 bg-blue-50/40 hover:bg-blue-100/60 dark:hover:bg-blue-900/60 transition cursor-pointer"
+                      title="Bấm để xem vị trí ghế trên sơ đồ"
+                    >
                       GHẾ {seatNumber}
-                    </span>
+                    </button>
                   </div>
                 </div>
 
@@ -833,6 +844,68 @@ export default function StudentExamLobbyPage() {
               }
             >
               Vào làm bài
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* ── Visual Seat Map Modal ── */}
+      <Modal
+        isOpen={showSeatMapModal}
+        onClose={() => setShowSeatMapModal(false)}
+        title={`Sơ đồ vị trí chỗ ngồi - Phòng ${roomName} (${building})`}
+        size="lg"
+      >
+        <div className="space-y-5">
+          {/* Header Bàn giám thị */}
+          <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 text-center">
+            <span className="text-type-helper font-semibold text-slate-700 dark:text-slate-300">
+              BÀN GIÁM THỊ & BẢNG PHÒNG THI
+            </span>
+          </div>
+
+          {/* Ma trận 24 Ghế ngồi (4 Hàng x 6 Cột) */}
+          <div className="space-y-3">
+            <div className="grid grid-cols-6 gap-2.5 text-center text-type-helper">
+              {Array.from({ length: 24 }, (_, i) => {
+                const seatIdx = i + 1;
+                const isCurrentCandidate = String(seatIdx) === String(seatNumber).trim() || seatIdx === 12;
+                return (
+                  <div
+                    key={seatIdx}
+                    className={`py-2.5 px-1 rounded-xl transition flex flex-col items-center justify-center select-none ${
+                      isCurrentCandidate
+                        ? 'bg-blue-600 text-white font-semibold shadow-md ring-2 ring-blue-400/40'
+                        : 'bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    <span className="text-type-body-sm font-semibold leading-tight">
+                      G-{String(seatIdx).padStart(2, '0')}
+                    </span>
+                    <span className={`block mt-0.5 text-type-helper font-medium ${isCurrentCandidate ? 'text-blue-100' : 'text-slate-400 dark:text-slate-500'}`}>
+                      {isCurrentCandidate ? 'Vị trí của bạn' : 'Chỗ ngồi'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Chú thích & Hành động */}
+          <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex-wrap">
+            <div className="flex items-center gap-4 text-type-helper">
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-3 rounded-md bg-blue-600" />
+                <span className="font-semibold text-slate-900 dark:text-slate-100">Ghế của bạn ({seatNumber})</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-3 rounded-md bg-slate-200 dark:bg-slate-700" />
+                <span className="text-slate-500 dark:text-slate-400 font-medium">Ghế thí sinh khác</span>
+              </div>
+            </div>
+
+            <Button variant="secondary" size="md" onClick={() => setShowSeatMapModal(false)}>
+              Đóng sơ đồ
             </Button>
           </div>
         </div>
