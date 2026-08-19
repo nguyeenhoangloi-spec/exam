@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, HelpCircle, FileText, ImageIcon, BookOpen, Sliders } from 'lucide-react';
+import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, HelpCircle, FileText, ImageIcon, BookOpen, Sliders, ChevronDown, ChevronUp } from 'lucide-react';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { RubricDialog } from './RubricDialog';
@@ -54,6 +54,13 @@ export function QuestionBankTable({
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [videoLightbox, setVideoLightbox] = useState<{ url: string; fileName?: string } | null>(null);
   const [audioLightbox, setAudioLightbox] = useState<{ url: string; fileName?: string } | null>(null);
+  const [expandedQuestionIds, setExpandedQuestionIds] = useState<Record<string, boolean>>({});
+
+  const toggleExpand = (qId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setExpandedQuestionIds((prev) => ({ ...prev, [qId]: !prev[qId] }));
+  };
+
   const allSelected = questions.length > 0 && selected.length === questions.length;
 
   const formatDate = (dateStr?: string) => {
@@ -87,9 +94,8 @@ export function QuestionBankTable({
           return (
             <div
               key={q.id}
-              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-              }`}
+              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                }`}
             >
               <div className="space-y-2.5">
                 {/* Header Row: Checkbox, Code Pill, Badges */}
@@ -119,15 +125,43 @@ export function QuestionBankTable({
                   </div>
                 </div>
 
-                {/* Content: Truncated 2 Lines */}
-                <button
-                  type="button"
-                  className="block w-full text-left text-type-body font-normal text-slate-900 leading-snug cursor-pointer hover:text-primary-600 transition line-clamp-2 min-h-[34px]"
-                  onClick={() => onDetail(q)}
-                  title={q.content}
-                >
-                  {q.content}
-                </button>
+                {/* Content: Expandable or Clamped 2 Lines */}
+                {(() => {
+                  const isExpanded = !!expandedQuestionIds[q.id];
+                  const isLong = (q.content || '').length > 90 || (q.content || '').includes('\n');
+
+                  return (
+                    <div className="space-y-1">
+                      <div
+                        className={`text-type-body font-normal text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition break-words ${isExpanded ? '' : 'line-clamp-2'
+                          }`}
+                        onClick={() => onDetail(q)}
+                        title={isExpanded ? undefined : q.content}
+                      >
+                        {q.content}
+                      </div>
+                      {isLong && (
+                        <button
+                          type="button"
+                          onClick={(e) => toggleExpand(q.id, e)}
+                          className="inline-flex items-center gap-1 text-type-helper font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition cursor-pointer"
+                        >
+                          {isExpanded ? (
+                            <>
+                              <span>Thu gọn</span>
+                              <ChevronUp className="w-3.5 h-3.5" />
+                            </>
+                          ) : (
+                            <>
+                              <span>Xem thêm</span>
+                              <ChevronDown className="w-3.5 h-3.5" />
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {/* ESSAY vs MULTIPLE_CHOICE Display */}
                 {isEssay ? (
@@ -216,9 +250,8 @@ export function QuestionBankTable({
           return (
             <div
               key={q.id}
-              className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-xs transition duration-200 gap-3.5 ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-              }`}
+              className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-xs transition duration-200 gap-3.5 ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                }`}
             >
               {/* Left: Checkbox + Identifier Code Badge */}
               <div className="flex items-center gap-3 min-w-0">
@@ -344,9 +377,8 @@ export function QuestionBankTable({
               return (
                 <tr
                   key={q.id}
-                  className={`group transition hover:bg-slate-50/70 dark:hover:bg-slate-800/70 ${
-                    isChecked ? 'bg-blue-50/50 dark:bg-blue-950/50' : ''
-                  }`}
+                  className={`group transition hover:bg-slate-50/70 dark:hover:bg-slate-800/70 ${isChecked ? 'bg-blue-50/50 dark:bg-blue-950/50' : ''
+                    }`}
                 >
                   {/* Checkbox */}
                   <td className="py-3.5 pl-3 pr-2 text-center align-top pt-4">
@@ -375,17 +407,43 @@ export function QuestionBankTable({
                   {visibleColumns.content !== false && (
                     <td className="px-3 py-3.5 min-w-[240px] align-top">
                       <div className="space-y-2">
-                        {/* Tầng 1: Nội dung câu hỏi & Indicator đính kèm */}
-                        <div className="flex items-start justify-between gap-2">
-                          <button
-                            type="button"
-                            className="block text-left text-type-body font-medium text-slate-900 dark:text-slate-100 leading-relaxed cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition line-clamp-2"
-                            onClick={() => onDetail(q)}
-                            title={q.content}
-                          >
-                            {q.content}
-                          </button>
-                        </div>
+                        {/* Tầng 1: Nội dung câu hỏi & Toggle thu gọn/sổ rộng */}
+                        {(() => {
+                          const isExpanded = !!expandedQuestionIds[q.id];
+                          const isLong = (q.content || '').length > 90 || (q.content || '').includes('\n');
+
+                          return (
+                            <div className="space-y-1">
+                              <div
+                                className={`text-type-body font-medium text-slate-900 dark:text-slate-100 leading-relaxed cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition break-words ${isExpanded ? '' : 'line-clamp-2'
+                                  }`}
+                                onClick={() => onDetail(q)}
+                                title={isExpanded ? undefined : q.content}
+                              >
+                                {q.content}
+                              </div>
+                              {isLong && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => toggleExpand(q.id, e)}
+                                  className="table-action inline-flex items-center gap-1 text-type-helper font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition cursor-pointer pt-0.5"
+                                >
+                                  {isExpanded ? (
+                                    <>
+                                      <span>Thu gọn</span>
+                                      <ChevronUp className="w-3.5 h-3.5" />
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span>Xem thêm</span>
+                                      <ChevronDown className="w-3.5 h-3.5" />
+                                    </>
+                                  )}
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })()}
 
                         {/* Tầng 2: Dải Đáp án Trắc nghiệm hoặc Điền khuyết */}
                         {q.type === 'FILL_BLANK' ? (
@@ -394,8 +452,8 @@ export function QuestionBankTable({
                               Array.isArray(q.fillBlankAnswers) && q.fillBlankAnswers.length > 0
                                 ? q.fillBlankAnswers
                                 : Array.isArray((q as any).answers) && (q as any).answers.length > 0
-                                ? (q as any).answers
-                                : [];
+                                  ? (q as any).answers
+                                  : [];
                             if (!fbList.length) return null;
 
                             return (
@@ -426,26 +484,23 @@ export function QuestionBankTable({
                             {optionsList.map((opt) => (
                               <span
                                 key={opt.label + opt.content}
-                                className={`table-badge inline-flex items-center gap-2 rounded-lg border px-2.5 py-1 text-type-helper font-medium w-full min-w-0 shadow-2xs transition-colors ${
-                                  opt.isCorrect
+                                className={`table-badge inline-flex items-center gap-2 rounded-lg border px-2.5 py-1 text-type-helper font-medium w-full min-w-0 shadow-2xs transition-colors ${opt.isCorrect
                                     ? 'border-emerald-300 dark:border-emerald-700 bg-emerald-50/50 dark:bg-emerald-950/30 text-slate-800 dark:text-slate-200'
                                     : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300'
-                                }`}
+                                  }`}
                                 title={`${opt.label}. ${opt.content}${opt.isCorrect ? ' (Đáp án đúng)' : ''}`}
                               >
                                 <span
-                                  className={`table-badge flex h-5 w-5 min-w-[20px] shrink-0 items-center justify-center rounded text-type-helper font-medium ${
-                                    opt.isCorrect
+                                  className={`table-badge flex h-5 w-5 min-w-[20px] shrink-0 items-center justify-center rounded text-type-helper font-medium ${opt.isCorrect
                                       ? 'bg-emerald-600 text-white shadow-xs'
                                       : 'bg-slate-200/90 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-                                  }`}
+                                    }`}
                                 >
                                   {opt.label}
                                 </span>
                                 <span
-                                  className={`table-badge truncate leading-tight flex-1 ${
-                                    opt.isCorrect ? 'font-medium text-emerald-900 dark:text-emerald-200' : 'text-slate-700 dark:text-slate-300'
-                                  }`}
+                                  className={`table-badge truncate leading-tight flex-1 ${opt.isCorrect ? 'font-medium text-emerald-900 dark:text-emerald-200' : 'text-slate-700 dark:text-slate-300'
+                                    }`}
                                 >
                                   {opt.content}
                                 </span>
@@ -500,7 +555,7 @@ export function QuestionBankTable({
                                   className="table-action inline-flex items-center gap-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800 px-2.5 py-1 text-type-helper font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition cursor-pointer shrink-0 select-none"
                                   title="Bấm để nghe audio"
                                 >
-                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>
                                   <span className="max-w-[130px] truncate">{cleanMediaFileName(m.fileName, 'Nghe audio')}</span>
                                 </button>
                               );
