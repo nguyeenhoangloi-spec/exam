@@ -133,19 +133,18 @@ export function ExamPaperDetailDrawer({
   const isBusy = busyId === Number(paper.id);
 
   return (
-    <>
+    <div role="dialog" aria-modal="true" aria-label="Chi tiết đề thi" className={`fixed inset-0 z-[100] overflow-hidden ${isOpen ? '' : 'pointer-events-none'}`}>
       {/* ── Overlay Backdrop ── */}
       <div
-        className={`fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-xs transition-opacity duration-300 ease-out ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity duration-300 ease-out ${
+          isOpen ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={onClose}
-        aria-hidden="true"
       />
 
       {/* ── Sliding Drawer Panel ── */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 w-full max-w-3xl bg-white dark:bg-slate-900 border-l border-slate-200/90 dark:border-slate-800 shadow-2xl flex flex-col transform transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
+        className={`fixed inset-y-0 right-0 z-[101] w-full max-w-3xl bg-white dark:bg-slate-900 border-l border-slate-200/90 dark:border-slate-800 shadow-2xl flex flex-col transform transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform pointer-events-auto ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -523,6 +522,6 @@ export function ExamPaperDetailDrawer({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

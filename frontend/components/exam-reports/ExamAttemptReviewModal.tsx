@@ -319,12 +319,12 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
     <div role="dialog" aria-modal="true" aria-label="Chi tiết bài làm" className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
       {/* Dark Blur Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+        className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs animate-modal-backdrop"
         onClick={onClose}
       />
 
       {/* Main Modal Container */}
-      <div className="relative z-[101] w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-150">
+      <div className="relative z-[101] w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-slate-200 dark:border-slate-800 animate-modal-dialog will-change-transform">
         {/* ── 1. Clean Flat Modal Header ── */}
         <div className="bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 px-6 py-4 shrink-0">
           <div className="flex items-start justify-between gap-4">

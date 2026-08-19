@@ -104,6 +104,22 @@ module.exports = {
           '0%': { opacity: '0', transform: 'scale(0.96)' },
           '100%': { opacity: '1', transform: 'scale(1)' },
         },
+        'modal-backdrop-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'modal-dialog-in': {
+          '0%': { opacity: '0', transform: 'scale(0.96) translateY(6px)' },
+          '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+        },
+        'drawer-slide-in-right': {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+        'popover-in': {
+          '0%': { opacity: '0', transform: 'scale(0.96) translateY(-4px)' },
+          '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+        },
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
@@ -118,6 +134,10 @@ module.exports = {
         'slide-up': 'slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both',
         'slide-in-right': 'slide-in-right 0.3s ease-out both',
         'scale-in': 'scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) both',
+        'modal-backdrop': 'modal-backdrop-in 180ms cubic-bezier(0.16, 1, 0.3, 1) both',
+        'modal-dialog': 'modal-dialog-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both',
+        'drawer-in': 'drawer-slide-in-right 240ms cubic-bezier(0.16, 1, 0.3, 1) both',
+        'popover-in': 'popover-in 150ms cubic-bezier(0.16, 1, 0.3, 1) both',
         shimmer: 'shimmer 1.8s linear infinite',
         ripple: 'ripple 600ms ease-out forwards',
       },

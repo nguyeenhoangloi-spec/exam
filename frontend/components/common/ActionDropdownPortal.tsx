@@ -84,7 +84,7 @@ export const ActionDropdownPortal: React.FC<ActionDropdownPortalProps> = ({ chil
               bottom: coords.openUp ? `${window.innerHeight - coords.top}px` : 'auto',
               right: `${coords.right}px`,
             }}
-            className="z-[99999] min-w-[210px] w-max max-w-xs rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-2xl text-type-body-sm font-medium text-slate-700 dark:text-slate-200 space-y-0.5 text-left animate-in fade-in-50 zoom-in-95 duration-150"
+            className="z-[99999] min-w-[210px] w-max max-w-xs rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-2xl text-type-body-sm font-medium text-slate-700 dark:text-slate-200 space-y-0.5 text-left animate-popover-in will-change-transform"
           >
             {children(() => setIsOpen(false))}
           </div>,

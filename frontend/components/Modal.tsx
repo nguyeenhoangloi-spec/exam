@@ -52,7 +52,7 @@ export const Modal: React.FC<ModalProps> = ({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-slate-950/55 p-4 backdrop-blur-[2px] animate-in fade-in duration-200 ease-out"
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-slate-950/55 p-4 backdrop-blur-[2px] animate-modal-backdrop"
       role="presentation"
       onMouseDown={onClose}
     >
@@ -61,7 +61,7 @@ export const Modal: React.FC<ModalProps> = ({
         aria-modal="true"
         aria-label={typeof title === 'string' ? title : 'Modal'}
         onMouseDown={(event) => event.stopPropagation()}
-        className={`relative my-auto flex max-h-[calc(100vh-2rem)] w-full ${widthClass} flex-col overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl shadow-slate-950/20 animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${className}`}
+        className={`relative my-auto flex max-h-[calc(100vh-2rem)] w-full ${widthClass} flex-col overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl shadow-slate-950/20 animate-modal-dialog will-change-transform ${className}`}
       >
         {isGradient ? (
           <div className={`bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 sm:p-6 text-white shrink-0 shadow-xs ${headerClassName}`}>

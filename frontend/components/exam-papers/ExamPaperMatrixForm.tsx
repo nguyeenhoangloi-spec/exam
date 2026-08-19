@@ -3,7 +3,7 @@ import { FilterSelect } from '../ui/FilterSelect';
 
 import React, { FormEvent, useState } from 'react';
 import {
-  AlertTriangle, X, ArrowLeftRight, Sparkles,
+  AlertTriangle, X, ArrowLeftRight,
 } from 'lucide-react';
 import { ExamSchedule } from '../../types';
 import { Button } from '../ui/Button';
@@ -56,7 +56,6 @@ export function ExamPaperMatrixForm({
   selectedSchedule,
   scheduleDuration,
   currentTotal,
-  requiredTotal,
 }: ExamPaperMatrixFormProps) {
   const [showPanel, setShowPanel] = useState(false);
 
@@ -330,12 +329,12 @@ export function ExamPaperMatrixForm({
           {showPanel && (
             <>
               <div
-                className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-sm"
+                className="fixed inset-0 z-[100] bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop"
                 onClick={() => setShowPanel(false)}
               />
 
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-                <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden">
+              <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-none">
+                <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden animate-modal-dialog will-change-transform">
                   <div className="flex items-center justify-between px-6 py-4 bg-blue-600 text-white">
                     <div>
                       <p className="text-type-card font-semibold text-white tracking-tight">Chọn Ca thi / Lịch thi</p>
