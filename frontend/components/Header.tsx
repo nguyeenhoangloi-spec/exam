@@ -480,14 +480,26 @@ export const Header: React.FC<HeaderProps> = ({
                   {/* Subtle Top Pointer Tip */}
                   <div className="absolute -top-1.5 right-6 h-3 w-3 rotate-45 border-l border-t border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 z-10" />
 
-                  {/* Account Header: Flat & Compact Email Identifier (Zero Redundancy) */}
-                  <div className="px-2.5 py-2 mb-1 border-b border-slate-100 dark:border-slate-800">
+                  {/* Account Header: Flat & Compact Email Identifier with Instant Hover Tooltip */}
+                  <div className="group/email relative px-2.5 py-2 mb-1 border-b border-slate-100 dark:border-slate-800">
                     <p className="text-type-helper font-medium text-slate-500 dark:text-slate-400">
                       Tài khoản
                     </p>
-                    <p className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate mt-0.5" title={user?.email || ''}>
-                      {user?.email || (user?.username ? `@${user.username}` : displayName)}
-                    </p>
+                    <div className="relative mt-0.5">
+                      <p
+                        className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate cursor-default select-text"
+                        title={user?.email || ''}
+                      >
+                        {user?.email || (user?.username ? `@${user.username}` : displayName)}
+                      </p>
+
+                      {/* Instant Floating Hover Tooltip (Full Email View on Hover) */}
+                      {user?.email && (
+                        <div className="absolute left-0 top-[calc(100%+4px)] z-50 hidden group-hover/email:block max-w-[280px] rounded-xl bg-slate-900/95 dark:bg-slate-800/95 border border-slate-700/80 px-2.5 py-1.5 text-type-helper font-medium text-white shadow-xl backdrop-blur-xs break-all animate-in fade-in-0 zoom-in-95 duration-150 pointer-events-none">
+                          <span className="select-all">{user.email}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Navigation Links */}
