@@ -447,13 +447,13 @@ export default function TeacherAssignmentsPage() {
     <>
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
         {/* ── 1. Standard Page Header ── */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">
             <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
               Lịch coi thi
             </h1>
             <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-              Giảng viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{currentUser?.fullName || currentUser?.teacher?.fullName || currentUser?.username || '---'}</strong> <IdentifierBadge tone="neutral">{currentUser?.teacher?.teacherCode || currentUser?.teacherCode || currentUser?.code || currentUser?.username || '---'}</IdentifierBadge> - Danh sách ca coi thi được phân công trong học kỳ
+              Theo dõi danh sách ca coi thi cá nhân, xác nhận lịch trực và quản lý yêu cầu đổi ca
             </p>
           </div>
 
