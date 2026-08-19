@@ -15,26 +15,6 @@ const printExportFiles = new Set([
   'lib/export-excel.ts',
   'lib/export-print.ts',
 ]);
-const kpiBoldFiles = new Set([
-  'components/KPICards.tsx',
-  'components/dashboard/DashboardStatistics.tsx',
-  'components/classes/ClassKPICards.tsx',
-  'components/departments/DepartmentKPICards.tsx',
-  'components/exam-papers/ExamPaperKPICards.tsx',
-  'components/exam-periods/ExamPeriodKPICards.tsx',
-  'components/exam-reports/ExamReportKPICards.tsx',
-  'components/exam-rooms/ExamRoomKPICards.tsx',
-  'components/exam-schedules/ExamScheduleKPICards.tsx',
-  'components/regrade/RegradeKPICards.tsx',
-  'components/students/StudentKPICards.tsx',
-  'components/subjects/SubjectKPICards.tsx',
-  'components/teachers/TeacherKPICards.tsx',
-  'app/admin/activity-logs/page.tsx',
-  'app/trash/page.tsx',
-  'app/student/online-exam/[id]/lobby/page.tsx',
-  'app/student/online-exam/[id]/take/page.tsx',
-  'app/student/online-exam/[id]/result/page.tsx',
-]);
 const popupBoldFiles = new Set([
   'components/ConfirmModal.tsx',
   'components/CriticalConfirmModal.tsx',
@@ -126,12 +106,46 @@ function inspectJsxControlClasses(content) {
   return elements;
 }
 
+function inspectJsxClassLists(content) {
+  const sourceFile = ts.createSourceFile('audit.tsx', content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const variables = new Map();
+  const classLists = [];
+
+  function visit(node) {
+    if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name)) {
+      const value = getStaticClassText(node.initializer, sourceFile, variables);
+      if (value) variables.set(node.name.text, value);
+    }
+    if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
+      const classAttribute = node.attributes.properties.find(
+        (attribute) => ts.isJsxAttribute(attribute) && attribute.name.text === 'className',
+      );
+      if (classAttribute) {
+        classLists.push(getStaticClassText(classAttribute.initializer, sourceFile, variables));
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return classLists;
+}
+
 for (const folder of sourceRoots) {
   const files = await collectFiles(join(root, folder));
   for (const file of files) {
     const relativeFile = relative(root, file).replaceAll('\\', '/');
     if (skippedFiles.has(relativeFile)) continue;
     const content = await readFile(file, 'utf8');
+
+    if (file.endsWith('.tsx') && !popupBoldFiles.has(relativeFile)) {
+      for (const classes of inspectJsxClassLists(content)) {
+        if (/\bfont-bold\b/i.test(classes) && !/\btext-type-kpi\b/i.test(classes)) {
+          report(file, 'font-bold (700) chỉ được dùng trực tiếp cho KPI/tổng số quan trọng');
+          break;
+        }
+      }
+    }
 
     for (const control of inspectJsxControlClasses(content)) {
       if (['input', 'select', 'textarea'].includes(control.tagName) && !['hidden', 'file', 'checkbox', 'radio'].includes(control.type)) {
@@ -272,11 +286,6 @@ for (const folder of sourceRoots) {
     }
     if (relativeFile !== 'app/exam-arrangement/page.tsx' && !popupBoldFiles.has(relativeFile) && (/font-(thin|extralight|light|black|extrabold)/i.test(content) || /font-weight:\s*(100|200|300|800|900)/i.test(content))) {
       report(file, 'Web UI chi duoc dung font weight 400-700');
-    }
-
-    const hasKpiMarker = /(?:edu-kpi|text-\[32px\][^"'\n]*font-bold|font-bold[^"'\n]*text-\[32px\]|text-type-kpi[^"'\n]*font-bold|font-bold[^"'\n]*text-type-kpi)/i.test(content);
-    if (file.endsWith('.tsx') && /font-bold/i.test(content) && !kpiBoldFiles.has(relativeFile) && !hasKpiMarker && !popupBoldFiles.has(relativeFile)) {
-      report(file, 'font-bold (700) chi danh cho component KPI/tong so da duoc phe duyet');
     }
 
     if (/(?:bg|text|border|from|to|via)-\[#(?:[0-9a-f]{3,8})\]/i.test(content)) {
@@ -546,4 +555,4 @@ if (violations.length) {
   process.exit(1);
 }
 
-console.log('UI audit passed: Inter, màu nhấn và DynamicImage đều đúng chuẩn.');
+console.log('UI audit passed: Inter, cỡ chữ, độ đậm, màu nhấn và DynamicImage đều đúng chuẩn.');

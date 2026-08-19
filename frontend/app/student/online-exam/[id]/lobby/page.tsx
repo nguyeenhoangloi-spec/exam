@@ -335,7 +335,7 @@ export default function StudentExamLobbyPage() {
           </div>
 
           <div className="space-y-2">
-            <h1 className="text-type-section sm:text-type-section font-bold text-slate-900 dark:text-slate-100 tracking-tight leading-snug">
+            <h1 className="text-type-section sm:text-type-section font-semibold text-slate-900 dark:text-slate-100 tracking-tight leading-snug">
               {schedule?.subject?.subjectName || examInfo?.subjectName || 'Bài thi trực tuyến'}
             </h1>
             <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-type-helper text-slate-600 dark:text-slate-400">
@@ -363,7 +363,7 @@ export default function StudentExamLobbyPage() {
             <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400 flex items-center justify-center mx-auto shadow-xs">
               <CheckCircle2 className="w-6 h-6" />
             </div>
-            <h2 className="text-type-card font-bold text-slate-900 dark:text-slate-100">Bạn đã hoàn thành bài thi này</h2>
+            <h2 className="text-type-card font-semibold text-slate-900 dark:text-slate-100">Bạn đã hoàn thành bài thi này</h2>
             <p className="text-type-helper sm:text-type-body-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
               Bài làm đã được nộp thành công và lưu trữ trên hệ thống khảo thí.
             </p>
@@ -404,12 +404,12 @@ export default function StudentExamLobbyPage() {
                 {/* Thí sinh & SBD */}
                 <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-3 shadow-2xs">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200/60 dark:border-blue-800/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0 font-bold text-type-body-sm">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200/60 dark:border-blue-800/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0 font-semibold text-type-body-sm">
                       {fullName.split(' ').pop()?.[0] || 'SV'}
                     </div>
                     <div className="min-w-0 flex-1">
                       <span className="text-type-helper font-medium text-slate-400 dark:text-slate-500 block">Thí sinh</span>
-                      <h3 className="text-type-body-sm font-bold text-slate-900 dark:text-slate-100 truncate">{fullName}</h3>
+                      <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{fullName}</h3>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-type-helper">
@@ -431,12 +431,12 @@ export default function StudentExamLobbyPage() {
                       <span className="text-type-helper font-medium text-slate-400 dark:text-slate-500 block">Phòng & Tòa nhà</span>
                       <div className="flex items-center gap-1.5 mt-0.5">
                         <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
-                        <span className="text-type-body-sm font-bold text-slate-900 dark:text-slate-100">{roomName} ({building})</span>
+                        <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">{roomName} ({building})</span>
                       </div>
                     </div>
                     <div className="text-right">
                       <span className="text-type-helper font-medium text-slate-400 dark:text-slate-500 block">Vị trí ngồi</span>
-                      <span className="inline-block mt-0.5 px-2.5 py-0.5 rounded-lg font-bold text-type-helper bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800/80">
+                      <span className="inline-block mt-0.5 px-2.5 py-0.5 rounded-lg font-semibold text-type-helper bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800/80">
                         GHẾ {seatNumber}
                       </span>
                     </div>
@@ -465,21 +465,21 @@ export default function StudentExamLobbyPage() {
                   </div>
                   <div className="flex items-center justify-center gap-2 sm:gap-3 py-1">
                     <div className="flex flex-col items-center">
-                      <div className="w-14 sm:w-16 h-12 sm:h-14 rounded-xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-800/80 flex items-center justify-center text-type-section font-bold text-slate-900 dark:text-slate-100 tabular-nums shadow-xs">
+                      <div className="w-14 sm:w-16 h-12 sm:h-14 rounded-xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-800/80 flex items-center justify-center text-type-section font-semibold text-slate-900 dark:text-slate-100 tabular-nums shadow-xs">
                         {String(countdown.hours).padStart(2, '0')}
                       </div>
                       <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 mt-1">Giờ</span>
                     </div>
-                    <span className="text-type-section font-bold text-amber-500 pb-4">:</span>
+                    <span className="text-type-section font-semibold text-amber-500 pb-4">:</span>
                     <div className="flex flex-col items-center">
-                      <div className="w-14 sm:w-16 h-12 sm:h-14 rounded-xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-800/80 flex items-center justify-center text-type-section font-bold text-slate-900 dark:text-slate-100 tabular-nums shadow-xs">
+                      <div className="w-14 sm:w-16 h-12 sm:h-14 rounded-xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-800/80 flex items-center justify-center text-type-section font-semibold text-slate-900 dark:text-slate-100 tabular-nums shadow-xs">
                         {String(countdown.minutes).padStart(2, '0')}
                       </div>
                       <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 mt-1">Phút</span>
                     </div>
-                    <span className="text-type-section font-bold text-amber-500 pb-4">:</span>
+                    <span className="text-type-section font-semibold text-amber-500 pb-4">:</span>
                     <div className="flex flex-col items-center">
-                      <div className="w-14 sm:w-16 h-12 sm:h-14 rounded-xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-800/80 flex items-center justify-center text-type-section font-bold text-amber-600 dark:text-amber-400 tabular-nums shadow-xs">
+                      <div className="w-14 sm:w-16 h-12 sm:h-14 rounded-xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-800/80 flex items-center justify-center text-type-section font-semibold text-amber-600 dark:text-amber-400 tabular-nums shadow-xs">
                         {String(countdown.seconds).padStart(2, '0')}
                       </div>
                       <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 mt-1">Giây</span>
@@ -496,7 +496,7 @@ export default function StudentExamLobbyPage() {
                       <CheckCircle2 className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-type-body-sm font-bold text-emerald-900 dark:text-emerald-200">Ca thi đang mở — Sẵn sàng vào thi</h3>
+                      <h3 className="text-type-body-sm font-semibold text-emerald-900 dark:text-emerald-200">Ca thi đang mở — Sẵn sàng vào thi</h3>
                       <p className="text-type-helper text-emerald-700 dark:text-emerald-400 mt-0.5">Xác nhận quy chế bên dưới và bấm nút bắt đầu để mở đề thi.</p>
                     </div>
                   </div>

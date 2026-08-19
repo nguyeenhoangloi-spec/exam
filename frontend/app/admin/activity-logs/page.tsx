@@ -620,7 +620,7 @@ export default function ActivityLogsPage() {
                     <div className="flex flex-wrap items-center justify-between gap-3 py-1">
                         <div className="flex items-center gap-2">
                             <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400">
-                                Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{totalCount.toLocaleString('vi-VN')}</span> nhật ký
+                                Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{totalCount.toLocaleString('vi-VN')}</span> nhật ký
                             </span>
                         </div>
 

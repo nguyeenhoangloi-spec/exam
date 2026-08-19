@@ -205,7 +205,10 @@ Không đổi font thương hiệu, màu sắc, khoảng cách tổng thể ho�
 
 - Thêm typography tokens cho title, section, card, body, bảng, helper, badge và mobile.
 - Bổ sung xử lý font kerning, tắt font synthesis và tối ưu hiển thị chữ.
-- Giới hạn `font-black`/`font-extrabold` về weight 700 để khớp các weight Inter đang tải.
+- Loại bỏ weight dưới 400 và trên 700; Web UI chỉ dùng 400/500/600/700 đúng các weight Inter đang tải.
+- Chuẩn hóa vai trò: nội dung 400; label, table header, navigation và mã 500; heading, tên chính, trạng thái và hành động 600; KPI/tổng số quan trọng 700.
+- Hạ các tiêu đề, pagination, thông tin phòng thi và countdown từng dùng 700 sai vai trò về 600.
+- Audit kiểm tra từng phần tử: `font-bold` chỉ hợp lệ khi nằm trực tiếp cùng `text-type-kpi`; không còn ngoại lệ cho phép toàn bộ file dùng 700.
 - Nâng metadata dưới 12px trong `.app-shell-main` lên badge scale 12/18.
 - Bổ sung token đọc dài và số liệu căn cột (`edu-reading`, `edu-numeric`).
 - Tăng độ tương phản chữ phụ trên nền sáng: `slate-400` → `slate-500`, `slate-500`/`#64748B` → `#475569`.

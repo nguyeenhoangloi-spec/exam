@@ -589,8 +589,8 @@ html.dark {
 
 /* Muted neutral text must not become louder merely because a legacy
  * component attached a stronger utility. Status/action colors are excluded. */
-.typography-scale :where(.text-slate-400, .text-slate-500, .text-gray-400, .text-gray-500).font-semibold,
-.typography-scale :where(.text-slate-400, .text-slate-500, .text-gray-400, .text-gray-500).font-bold {
+.typography-scale :where(.text-slate-400, .text-slate-500, .text-gray-400, .text-gray-500).font-semibold:not(:where(button, a, [role='button'])),
+.typography-scale :where(.text-slate-400, .text-slate-500, .text-gray-400, .text-gray-500).font-bold:not(:where(button, a, [role='button'])) {
   font-weight: 400;
 }
 
