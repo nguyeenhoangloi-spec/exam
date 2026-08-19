@@ -17,13 +17,13 @@ export default function NotFound() {
         </div>
 
         <div className="space-y-2">
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 inline-block">
+          <span className="text-type-helper font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 inline-block">
             Mã lỗi: 404 Not Found
           </span>
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+          <h1 className="text-type-section font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
             Không tìm thấy trang yêu cầu
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-xs mx-auto">
+          <p className="text-type-helper text-slate-500 dark:text-slate-400 leading-relaxed max-w-xs mx-auto">
             Trang bạn đang truy cập không tồn tại, đã bị xóa hoặc đã chuyển sang đường dẫn khác trên hệ thống.
           </p>
         </div>

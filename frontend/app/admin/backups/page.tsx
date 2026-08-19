@@ -464,10 +464,10 @@ export default function BackupsPage() {
             {/* Header matching standard page header across all management pages */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
                 <div className="space-y-0.5">
-                    <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+                    <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
                         Sao lưu dữ liệu
                     </h1>
-                    <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
+                    <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
                         Màn hình vận hành an toàn database, file upload và các snapshot hệ thống khảo thí
                     </p>
                 </div>
@@ -502,10 +502,10 @@ export default function BackupsPage() {
                 <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer">
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0 flex-1">
-                            <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                            <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Backup Worker
                             </span>
-                            <div className="h-[38px] flex items-center text-[18px] sm:text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-[28px] truncate">
+                            <div className="h-[38px] flex items-center text-type-card sm:text-type-section font-semibold text-slate-900 dark:text-slate-100 leading-[28px] truncate">
                                 {overview?.worker?.enabled ? (
                                     <span className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-semibold">
                                         <CheckCircle2 className="h-4 w-4" /> Đang hoạt động
@@ -530,7 +530,7 @@ export default function BackupsPage() {
                     </div>
 
                     <div className="mt-2.5">
-                        <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+                        <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                             Lịch chạy: {overview?.worker?.schedule || '02:00'} ({overview?.timezone || 'Asia/Ho_Chi_Minh'})
                         </span>
                     </div>
@@ -540,10 +540,10 @@ export default function BackupsPage() {
                 <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer">
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0 flex-1">
-                            <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                            <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Nơi lưu trữ (Storage)
                             </span>
-                            <div className="h-[38px] flex items-center text-[18px] sm:text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-[28px] truncate">
+                            <div className="h-[38px] flex items-center text-type-card sm:text-type-section font-semibold text-slate-900 dark:text-slate-100 leading-[28px] truncate">
                                 {overview?.storage?.provider === 'S3' ? 'Amazon S3 / MinIO' : 'Ổ đĩa máy chủ (Local)'}
                             </div>
                         </div>
@@ -559,7 +559,7 @@ export default function BackupsPage() {
                     </div>
 
                     <div className="mt-2.5">
-                        <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+                        <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                             {overview?.storage?.provider === 'S3' ? 'Lưu trữ offsite đã cấu hình' : 'Thư mục máy chủ cục bộ'}
                         </span>
                     </div>
@@ -569,18 +569,18 @@ export default function BackupsPage() {
                 <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer">
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0 flex-1">
-                            <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                            <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Công cụ Database CLI
                             </span>
-                            <div className="h-[38px] flex items-center gap-2 text-[12px] font-semibold flex-wrap">
-                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[12px] font-semibold border ${overview?.tools?.pgDumpAvailable
+                            <div className="h-[38px] flex items-center gap-2 text-type-helper font-semibold flex-wrap">
+                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-type-helper font-semibold border ${overview?.tools?.pgDumpAvailable
                                     ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200/80 dark:border-blue-800/60'
                                     : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700'
                                     }`}>
                                     {overview?.tools?.pgDumpAvailable ? <CheckCircle2 className="h-3 w-3 text-blue-600 dark:text-blue-400" /> : <XCircle className="h-3 w-3" />}
                                     pg_dump
                                 </span>
-                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[12px] font-semibold border ${overview?.tools?.pgRestoreAvailable
+                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-type-helper font-semibold border ${overview?.tools?.pgRestoreAvailable
                                     ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200/80 dark:border-blue-800/60'
                                     : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700'
                                     }`}>
@@ -602,7 +602,7 @@ export default function BackupsPage() {
                     </div>
 
                     <div className="mt-2.5">
-                        <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+                        <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                             {overview?.tools?.pgDumpAvailable && overview?.tools?.pgRestoreAvailable ? 'Sẵn sàng sao lưu & phục hồi' : 'Thiếu công cụ PostgreSQL CLI'}
                         </span>
                     </div>
@@ -612,10 +612,10 @@ export default function BackupsPage() {
                 <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer">
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0 flex-1">
-                            <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                            <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Dung lượng tổng
                             </span>
-                            <div className="h-[38px] flex items-center text-[28px] sm:text-[30px] font-semibold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums truncate">
+                            <div className="h-[38px] flex items-center text-type-kpi font-semibold text-slate-900 dark:text-slate-100 tracking-tight tabular-nums truncate">
                                 {formatBytes(overview?.totalBytes)}
                             </div>
                         </div>
@@ -632,7 +632,7 @@ export default function BackupsPage() {
                     </div>
 
                     <div className="mt-2.5">
-                        <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+                        <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                             {verifiedJobs.length} bản hợp lệ · {overview?.failed24h || 0} lỗi 24h
                         </span>
                     </div>
@@ -651,7 +651,7 @@ export default function BackupsPage() {
                             placeholder="Tìm theo Snapshot ID, mã lỗi..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                            className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
                         />
                         {search ? (
                             <button
@@ -664,7 +664,7 @@ export default function BackupsPage() {
                             </button>
                         ) : (
                             <kbd
-                                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                                 onClick={() => searchInputRef.current?.focus()}
                                 title="Nhấn phím / để tìm nhanh"
                             >
@@ -692,7 +692,7 @@ export default function BackupsPage() {
                 <div className="shrink-0">
                     <div className="flex flex-wrap items-center justify-between gap-3 py-1">
                         <div className="flex items-center gap-2">
-                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                            <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400">
                                 Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{sortedJobs.length.toLocaleString('vi-VN')}</span> bản snapshot
                             </span>
                         </div>
@@ -749,8 +749,8 @@ export default function BackupsPage() {
                     </div>
 
                     <div className="max-w-md mx-auto space-y-1.5">
-                        <h3 className="text-lg font-semibold text-slate-900">Chưa có bản sao lưu snapshot nào</h3>
-                        <p className="text-xs font-medium text-slate-600 leading-relaxed">
+                        <h3 className="text-type-card font-semibold text-slate-900">Chưa có bản sao lưu snapshot nào</h3>
+                        <p className="text-type-helper font-medium text-slate-600 leading-relaxed">
                             Hệ thống chưa ghi nhận bản snapshot nào. Bạn có thể bấm nút tạo bên dưới để thực hiện sao lưu dữ liệu ngay lập tức.
                         </p>
                     </div>
@@ -792,7 +792,7 @@ export default function BackupsPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => setDetailJob(job)}
-                                                className="min-w-0 truncate text-left text-[14px] font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer tabular-nums"
+                                                className="min-w-0 truncate text-left text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer tabular-nums"
                                                 title={job.snapshotId}
                                             >
                                                 {job.snapshotId}
@@ -800,7 +800,7 @@ export default function BackupsPage() {
                                         </div>
                                         {getBackupStatusBadge(job.status)}
                                     </div>
-                                    <div className="mt-3 grid grid-cols-2 gap-3 text-[14px]">
+                                    <div className="mt-3 grid grid-cols-2 gap-3 text-type-body-sm">
                                         <div>
                                             <p className="text-slate-500 dark:text-slate-400">Loại</p>
                                             <p className="mt-0.5 font-medium text-slate-900 dark:text-slate-100">{job.type}</p>
@@ -822,7 +822,7 @@ export default function BackupsPage() {
                                         <button
                                             type="button"
                                             onClick={() => setDetailJob(job)}
-                                            className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-[14px] font-medium transition cursor-pointer"
+                                            className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-type-body-sm font-medium transition cursor-pointer"
                                         >
                                             <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                                             <span>Xem chi tiết</span>
@@ -865,7 +865,7 @@ export default function BackupsPage() {
                                         <button
                                             type="button"
                                             onClick={() => setDetailJob(job)}
-                                            className="tabular-nums text-[14px] font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
+                                            className="tabular-nums text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
                                             title={job.snapshotId}
                                         >
                                             {job.snapshotId}
@@ -874,7 +874,7 @@ export default function BackupsPage() {
                                         <div className="min-w-0">
                                             <div className="flex items-center gap-2 flex-wrap">
                                                 <span
-                                                    className={`text-xs font-semibold px-2 py-0.5 rounded-md tabular-nums border ${
+                                                    className={`text-type-helper font-semibold px-2 py-0.5 rounded-md tabular-nums border ${
                                                         job.type === 'FULL'
                                                             ? 'bg-blue-600 text-white border-blue-600'
                                                             : job.type === 'DATABASE'
@@ -886,12 +886,12 @@ export default function BackupsPage() {
                                                 >
                                                     {job.type}
                                                 </span>
-                                                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                                <span className="text-type-helper text-slate-500 dark:text-slate-400 font-medium">
                                                     {formatBytes(job.sizeBytes)}
                                                 </span>
                                             </div>
 
-                                            <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                                            <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                                                 <span className="flex items-center gap-1">
                                                     {job.initiatedBy ? (
                                                         <>
@@ -948,8 +948,8 @@ export default function BackupsPage() {
                     </div>
                 ) : (
                 <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-                    <table className="ui-table w-full text-left border-collapse text-slate-700 dark:text-slate-300 text-[15px]">
-                        <thead className="bg-slate-50 dark:bg-slate-800 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+                    <table className="ui-table w-full text-left border-collapse text-slate-700 dark:text-slate-300 text-type-body">
+                        <thead className="bg-slate-50 dark:bg-slate-800 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
                             <tr>
                                 <th scope="col" className="p-3.5 pl-4 text-center w-10">
                                     <input
@@ -985,13 +985,13 @@ export default function BackupsPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => setDetailJob(job)}
-                                                className="tabular-nums text-[15px] leading-[22px] font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition text-left cursor-pointer"
+                                                className="tabular-nums text-type-body leading-[22px] font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition text-left cursor-pointer"
                                                 title={job.snapshotId}
                                             >
                                                 {job.snapshotId}
                                             </button>
                                             {job.checksum && (
-                                                <div className="table-meta mt-0.5 text-[13px] leading-[20px] tabular-nums text-slate-500 dark:text-slate-400">
+                                                <div className="table-meta mt-0.5 text-type-helper leading-[20px] tabular-nums text-slate-500 dark:text-slate-400">
                                                     SHA-256: {job.checksum.slice(0, 12)}…
                                                 </div>
                                             )}
@@ -999,7 +999,7 @@ export default function BackupsPage() {
 
                                         <td className="p-3.5 whitespace-nowrap">
                                             <span
-                                                className={`table-badge font-medium text-[13px] leading-[18px] px-2.5 py-1 rounded-lg ${job.type === 'FULL'
+                                                className={`table-badge font-medium text-type-helper leading-[18px] px-2.5 py-1 rounded-lg ${job.type === 'FULL'
                                                     ? 'bg-blue-600 text-white shadow-2xs'
                                                     : job.type === 'DATABASE'
                                                         ? 'bg-blue-50 text-blue-700 border border-blue-200/80 dark:bg-blue-950/60 dark:text-blue-400'
@@ -1012,7 +1012,7 @@ export default function BackupsPage() {
                                             </span>
                                         </td>
 
-                                        <td className="p-3.5 whitespace-nowrap text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                                        <td className="p-3.5 whitespace-nowrap text-type-body font-medium text-slate-700 dark:text-slate-300">
                                             {job.initiatedBy ? (
                                                 <span className="inline-flex items-center gap-1 text-blue-700 dark:text-blue-400 font-medium">
                                                     <UserIcon className="h-3 w-3" /> {job.initiatedBy.username}
@@ -1024,14 +1024,14 @@ export default function BackupsPage() {
                                             )}
                                         </td>
 
-                                        <td className="p-3.5 whitespace-nowrap text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                                        <td className="p-3.5 whitespace-nowrap text-type-body font-medium text-slate-700 dark:text-slate-300">
                                             {formatDate(job.completedAt || job.createdAt)}
-                                            <span className="table-meta block text-[13px] leading-[20px] text-slate-400 mt-0.5">
+                                            <span className="table-meta block text-type-helper leading-[20px] text-slate-400 mt-0.5">
                                                 Thời lượng: {calculateDuration(job.startedAt || job.createdAt, job.completedAt)}
                                             </span>
                                         </td>
 
-                                        <td className="p-3.5 whitespace-nowrap font-medium text-slate-900 dark:text-slate-100 text-[15px]">
+                                        <td className="p-3.5 whitespace-nowrap font-medium text-slate-900 dark:text-slate-100 text-type-body">
                                             {formatBytes(job.sizeBytes)}
                                         </td>
 
@@ -1058,7 +1058,7 @@ export default function BackupsPage() {
                                                         <RotateCcw className="h-4 w-4" />
                                                     </button>
                                                 ) : (
-                                                    <span className="table-badge text-[13px] font-medium text-slate-400">
+                                                    <span className="table-badge text-type-helper font-medium text-slate-400">
                                                         {job.status === 'SUCCEEDED' ? 'Hết retention' : 'Không khả dụng'}
                                                     </span>
                                                 )}
@@ -1101,29 +1101,29 @@ export default function BackupsPage() {
                     <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-2 min-w-0">
                             <span className="h-4 w-1 rounded-full bg-amber-500 shrink-0" />
-                            <h2 className="text-[18px] font-semibold text-slate-900 dark:text-slate-100">
+                            <h2 className="text-type-card font-semibold text-slate-900 dark:text-slate-100">
                                 Yêu cầu khôi phục đang chờ xử lý
                             </h2>
-                            <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60 tabular-nums">
+                            <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-type-helper font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60 tabular-nums">
                                 {restoreRequests.length}
                             </span>
                         </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 hidden sm:block shrink-0">
+                        <p className="text-type-helper text-slate-500 dark:text-slate-400 hidden sm:block shrink-0">
                             Các yêu cầu chờ Admin thứ hai phê duyệt
                         </p>
                     </div>
 
                     {/* Table */}
                     <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-                        <table className="ui-table w-full text-left border-collapse text-slate-700 dark:text-slate-300 text-[15px]">
+                        <table className="ui-table w-full text-left border-collapse text-slate-700 dark:text-slate-300 text-type-body">
                             <thead>
                                 <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Snapshot ID</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Môi trường</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-600 dark:text-slate-300">Lý do khôi phục</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Người tạo yêu cầu</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Thời hạn</th>
-                                    <th scope="col" className="px-4 py-3.5 text-[14px] font-medium tracking-wide text-slate-600 dark:text-slate-300 text-right whitespace-nowrap">Thao tác</th>
+                                    <th scope="col" className="px-4 py-3.5 text-type-body-sm font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Snapshot ID</th>
+                                    <th scope="col" className="px-4 py-3.5 text-type-body-sm font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Môi trường</th>
+                                    <th scope="col" className="px-4 py-3.5 text-type-body-sm font-medium tracking-wide text-slate-600 dark:text-slate-300">Lý do khôi phục</th>
+                                    <th scope="col" className="px-4 py-3.5 text-type-body-sm font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Người tạo yêu cầu</th>
+                                    <th scope="col" className="px-4 py-3.5 text-type-body-sm font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Thời hạn</th>
+                                    <th scope="col" className="px-4 py-3.5 text-type-body-sm font-medium tracking-wide text-slate-600 dark:text-slate-300 text-right whitespace-nowrap">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1134,19 +1134,19 @@ export default function BackupsPage() {
                                     return (
                                         <tr key={request.id} className="border-t border-slate-100 transition-colors hover:bg-primary-50/30 dark:border-slate-800 dark:hover:bg-slate-800/40">
                                             {/* Snapshot ID */}
-                                            <td className="px-4 py-3.5 tabular-nums text-[15px] font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap" title={request.backupJob.snapshotId}>
+                                            <td className="px-4 py-3.5 tabular-nums text-type-body font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap" title={request.backupJob.snapshotId}>
                                                 {request.backupJob.snapshotId}
                                             </td>
 
                                             {/* Environment — flat Sentence case */}
                                             <td className="px-4 py-3.5 whitespace-nowrap">
                                                 {request.target === 'PRODUCTION' ? (
-                                                    <span className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-rose-600 dark:text-rose-400">
+                                                    <span className="inline-flex items-center gap-1.5 text-type-body font-semibold text-rose-600 dark:text-rose-400">
                                                         <ShieldAlert className="h-4 w-4 shrink-0" />
                                                         Production
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-amber-600 dark:text-amber-400">
+                                                    <span className="inline-flex items-center gap-1.5 text-type-body font-semibold text-amber-600 dark:text-amber-400">
                                                         <Server className="h-4 w-4 shrink-0" />
                                                         Staging
                                                     </span>
@@ -1155,25 +1155,25 @@ export default function BackupsPage() {
 
                                             {/* Reason */}
                                             <td className="px-4 py-3.5">
-                                                <p className="text-[15px] font-normal text-slate-700 dark:text-slate-300 max-w-[240px] line-clamp-2">
+                                                <p className="text-type-body font-normal text-slate-700 dark:text-slate-300 max-w-[240px] line-clamp-2">
                                                     {request.reason || 'Chưa nhập lý do'}
                                                 </p>
                                             </td>
 
                                             {/* Requested by */}
                                             <td className="px-4 py-3.5 whitespace-nowrap">
-                                                <span className="inline-flex items-center gap-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                                                <span className="inline-flex items-center gap-1.5 text-type-body font-medium text-slate-700 dark:text-slate-300">
                                                     <UserIcon className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                                                     {request.requestedBy?.username || 'admin'}
                                                 </span>
                                             </td>
 
                                             {/* Expires at */}
-                                            <td className="px-4 py-3.5 whitespace-nowrap text-[15px] text-slate-600 dark:text-slate-400 tabular-nums">
+                                            <td className="px-4 py-3.5 whitespace-nowrap text-type-body text-slate-600 dark:text-slate-400 tabular-nums">
                                                 {isExpired ? (
                                                     <div className="table-meta flex flex-col">
-                                                        <span className="table-meta text-xs font-semibold text-rose-600 dark:text-rose-400">Đã hết hạn</span>
-                                                        <span className="table-meta text-xs text-slate-400">{formatDate(request.expiresAt)}</span>
+                                                        <span className="table-meta text-type-helper font-semibold text-rose-600 dark:text-rose-400">Đã hết hạn</span>
+                                                        <span className="table-meta text-type-helper text-slate-400">{formatDate(request.expiresAt)}</span>
                                                     </div>
                                                 ) : (
                                                     <span>{formatDate(request.expiresAt)}</span>
@@ -1187,7 +1187,7 @@ export default function BackupsPage() {
                                                         {selfBlocked ? (
                                                             <span
                                                                 title="Cần Admin thứ 2 phê duyệt — người tạo yêu cầu không được tự phê duyệt"
-                                                                className="table-meta inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 dark:text-slate-500 cursor-default select-none mr-1"
+                                                                className="table-meta inline-flex items-center gap-1.5 text-type-helper font-medium text-slate-400 dark:text-slate-500 cursor-default select-none mr-1"
                                                             >
                                                                 <LockKeyhole className="h-3.5 w-3.5 shrink-0" />
                                                                 Cần Admin khác duyệt
@@ -1258,18 +1258,18 @@ export default function BackupsPage() {
                             <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
                                             <DatabaseBackup className="h-6 w-6 text-white" />
                                         </div>
 
                                         <div className="min-w-0 flex-1">
                                             <div className="flex items-center gap-2 flex-wrap">
-                                                <h2 className="text-[18px] font-semibold leading-snug text-slate-900 dark:text-white break-words">
+                                                <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words">
                                                     Bản sao lưu Snapshot
                                                 </h2>
                                                 <StatusBadge status={drawerOpenJob.status} />
                                             </div>
-                                            <div className="mt-1 flex items-center gap-2 flex-wrap text-xs font-medium text-slate-500 dark:text-slate-400 tabular-nums">
+                                            <div className="mt-1 flex items-center gap-2 flex-wrap text-type-helper font-medium text-slate-500 dark:text-slate-400 tabular-nums">
                                                 <span>Mã: {drawerOpenJob.snapshotId}</span>
                                             </div>
                                         </div>
@@ -1288,45 +1288,45 @@ export default function BackupsPage() {
                             </div>
 
                             {/* Content Body */}
-                            <div className="flex-1 space-y-6 overflow-y-auto bg-white dark:bg-slate-900 p-6 text-[15px]">
+                            <div className="flex-1 space-y-6 overflow-y-auto bg-white dark:bg-slate-900 p-6 text-type-body">
                                 {/* Section 1: Thông số tổng quan */}
                                 <div className="space-y-3">
                                     <div className="flex items-center gap-2">
                                         <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                                        <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                                        <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                                             Thông số tổng quan bản sao lưu
                                         </h3>
                                     </div>
 
                                     <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">Loại sao lưu:</span>
                                             <span className="font-semibold text-blue-600 dark:text-blue-400">{drawerOpenJob.type}</span>
                                         </div>
 
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">Dung lượng tổng:</span>
                                             <span className="font-semibold text-slate-900 dark:text-white tabular-nums">{formatBytes(drawerOpenJob.sizeBytes)}</span>
                                         </div>
 
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">Người khởi tạo:</span>
                                             <span className="font-semibold text-slate-900 dark:text-white">
                                                 {drawerOpenJob.initiatedBy ? drawerOpenJob.initiatedBy.username : 'Hệ thống (Tự động)'}
                                             </span>
                                         </div>
 
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">Thời gian khởi tạo:</span>
                                             <span className="font-semibold text-slate-900 dark:text-white tabular-nums">{formatDate(drawerOpenJob.createdAt)}</span>
                                         </div>
 
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">Thời gian hoàn thành:</span>
                                             <span className="font-semibold text-slate-900 dark:text-white tabular-nums">{formatDate(drawerOpenJob.completedAt)}</span>
                                         </div>
 
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">Thời lượng thực thi:</span>
                                             <span className="font-semibold text-slate-900 dark:text-white tabular-nums">{calculateDuration(drawerOpenJob.startedAt, drawerOpenJob.completedAt)}</span>
                                         </div>
@@ -1337,18 +1337,18 @@ export default function BackupsPage() {
                                 <div className="space-y-3">
                                     <div className="flex items-center gap-2">
                                         <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                                        <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                                        <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                                             Thông số mã nguồn &amp; Cơ sở dữ liệu
                                         </h3>
                                     </div>
 
                                     <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">Prisma Migration Version:</span>
                                             <span className="font-semibold text-slate-900 dark:text-white tabular-nums break-all text-right">{drawerOpenJob.migration || 'Không xác định'}</span>
                                         </div>
 
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">App Commit Hash:</span>
                                             <span className="font-semibold text-slate-900 dark:text-white tabular-nums break-all text-right">{drawerOpenJob.appCommit || 'Latest HEAD'}</span>
                                         </div>
@@ -1360,7 +1360,7 @@ export default function BackupsPage() {
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                                            <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                                            <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                                                 Mã băm SHA-256 Checksum
                                             </h3>
                                         </div>
@@ -1369,7 +1369,7 @@ export default function BackupsPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => handleCopyChecksum(drawerOpenJob.checksum)}
-                                                className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-[13px] font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50"
+                                                className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-type-helper font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50"
                                             >
                                                 {copiedChecksum ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-slate-500" />}
                                                 <span>{copiedChecksum ? 'Đã sao chép!' : 'Sao chép SHA-256'}</span>
@@ -1377,7 +1377,7 @@ export default function BackupsPage() {
                                         )}
                                     </div>
 
-                                    <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850/60 p-4 text-[13px] font-normal leading-relaxed text-slate-800 dark:text-slate-200 tabular-nums break-all">
+                                    <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850/60 p-4 text-type-helper font-normal leading-relaxed text-slate-800 dark:text-slate-200 tabular-nums break-all">
                                         {drawerOpenJob.checksum || 'Chưa có checksum cho snapshot này'}
                                     </div>
                                 </div>
@@ -1387,11 +1387,11 @@ export default function BackupsPage() {
                                     <div className="space-y-2">
                                         <div className="flex items-center gap-2">
                                             <span className="h-4 w-1 rounded-full bg-rose-600 shrink-0" />
-                                            <h3 className="text-[15px] font-semibold text-rose-700 dark:text-rose-400">
+                                            <h3 className="text-type-body font-semibold text-rose-700 dark:text-rose-400">
                                                 Chi tiết nhật ký lỗi
                                             </h3>
                                         </div>
-                                        <div className="rounded-xl border border-rose-200/90 dark:border-rose-900/60 bg-rose-50/70 dark:bg-rose-950/30 p-4 text-[13px] font-normal leading-relaxed text-rose-900 dark:text-rose-200 whitespace-pre-wrap">
+                                        <div className="rounded-xl border border-rose-200/90 dark:border-rose-900/60 bg-rose-50/70 dark:bg-rose-950/30 p-4 text-type-helper font-normal leading-relaxed text-rose-900 dark:text-rose-200 whitespace-pre-wrap">
                                             {drawerOpenJob.errorMessage}
                                         </div>
                                     </div>
@@ -1413,7 +1413,7 @@ export default function BackupsPage() {
             <Modal isOpen={restoreOpen} onClose={() => !actionLoading && setRestoreOpen(false)} title="Tạo yêu cầu khôi phục dữ liệu" size="md">
                 <div className="space-y-4 py-1">
                     {/* Frameless Notice */}
-                    <div className="flex items-start gap-2 text-xs font-medium text-amber-800 pb-1 border-b border-slate-100">
+                    <div className="flex items-start gap-2 text-type-helper font-medium text-amber-800 pb-1 border-b border-slate-100">
                         <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
                         <span>
                             <strong className="font-semibold text-amber-900">Lưu ý an toàn:</strong> Khôi phục dữ liệu sẽ ghi đè dữ liệu trên môi trường được chọn. Hãy chọn đúng môi trường và nhập lý do rõ ràng.
@@ -1422,19 +1422,19 @@ export default function BackupsPage() {
 
                     {/* Frameless Selected Snapshot Info */}
                     <div className="space-y-0.5 pb-2 border-b border-slate-100">
-                        <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
+                        <p className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
                             {selectedJob?.snapshotId}
                         </p>
-                        <p className="text-xs font-semibold text-slate-500 mt-0.5">
+                        <p className="text-type-helper font-semibold text-slate-500 mt-0.5">
                             {formatDate(selectedJob?.completedAt)} · {formatBytes(selectedJob?.sizeBytes)}
                         </p>
                     </div>
 
                     <div className="space-y-1.5">
-                        <label className="block text-[15px] font-medium text-slate-500">Môi trường đích:</label>
+                        <label className="block text-type-body font-medium text-slate-500">Môi trường đích:</label>
                         <FilterSelect
                             size="md"
-                            className="w-full text-sm font-semibold text-slate-900"
+                            className="w-full text-type-body-sm font-semibold text-slate-900"
                             containerClassName="w-full"
                             value={target}
                             onChange={(e) => setTarget(e.target.value as RestoreTarget)}
@@ -1445,7 +1445,7 @@ export default function BackupsPage() {
                     </div>
 
                     <div className="space-y-1.5">
-                        <label className="block text-[15px] font-medium text-slate-500">
+                        <label className="block text-type-body font-medium text-slate-500">
                             Lý do khôi phục <span className="text-rose-500">*</span>
                         </label>
                         <textarea
@@ -1454,7 +1454,7 @@ export default function BackupsPage() {
                             onChange={(e) => setReason(e.target.value)}
                             maxLength={500}
                             placeholder="Mô tả cụ thể sự cố cần phục hồi hoặc mục đích thử nghiệm..."
-                            className="w-full rounded-xl border border-slate-200 bg-white p-3 text-[15px] font-normal text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+                            className="w-full rounded-xl border border-slate-200 bg-white p-3 text-type-body font-normal text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
                         />
                     </div>
 
@@ -1519,15 +1519,15 @@ export default function BackupsPage() {
                     <div className="space-y-2.5">
                         <div className="flex items-center gap-2">
                             <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                            <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
                                 <Clock className="h-4 w-4 text-blue-600 shrink-0" />
                                 <span>Thời gian lưu trữ dữ liệu (Retention Policy)</span>
                             </h4>
                         </div>
-                        <p className="text-[14px] text-slate-600 dark:text-slate-400 leading-relaxed pl-6">
+                        <p className="text-type-body-sm text-slate-600 dark:text-slate-400 leading-relaxed pl-6">
                             Hệ thống tự động thực hiện sao lưu định kỳ và dọn dẹp các bản ghi snapshot cũ theo chính sách:
                         </p>
-                        <ul className="text-[14px] space-y-1.5 list-disc pl-11 font-medium text-slate-700 dark:text-slate-300 leading-relaxed">
+                        <ul className="text-type-body-sm space-y-1.5 list-disc pl-11 font-medium text-slate-700 dark:text-slate-300 leading-relaxed">
                             <li><strong>Bản sao lưu Hàng ngày (Daily):</strong> Lưu trữ <strong>{overview?.retention?.daily || 14} ngày</strong> gần nhất.</li>
                             <li><strong>Bản sao lưu Hàng tuần (Weekly):</strong> Lưu trữ <strong>{overview?.retention?.weekly || 8} tuần</strong> liên tiếp.</li>
                             <li><strong>Bản sao lưu Hàng tháng (Monthly):</strong> Lưu trữ <strong>{overview?.retention?.monthly || 12} tháng</strong> chính thức.</li>
@@ -1538,12 +1538,12 @@ export default function BackupsPage() {
                     <div className="space-y-2.5">
                         <div className="flex items-center gap-2">
                             <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                            <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
                                 <ShieldCheck className="h-4 w-4 text-blue-600 shrink-0" />
                                 <span>Quy định An toàn & Khôi phục (Security Policy)</span>
                             </h4>
                         </div>
-                        <ul className="text-[14px] space-y-2 list-disc pl-11 font-medium text-slate-700 dark:text-slate-300 leading-relaxed">
+                        <ul className="text-type-body-sm space-y-2 list-disc pl-11 font-medium text-slate-700 dark:text-slate-300 leading-relaxed">
                             <li>
                                 <strong>Phê duyệt kép (Dual-Admin Approval):</strong> Thao tác khôi phục trên môi trường Production yêu cầu phê duyệt độc lập từ Quản trị viên thứ hai để đảm bảo an toàn tuyệt đối.
                             </li>
@@ -1560,16 +1560,16 @@ export default function BackupsPage() {
                     <div className="space-y-2.5">
                         <div className="flex items-center gap-2">
                             <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                            <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
                                 <FileCode className="h-4 w-4 text-blue-600 shrink-0" />
                                 <span>Tham chiếu Cấu hình Hệ thống (`backend/.env`)</span>
                             </h4>
                         </div>
-                        <p className="text-[14px] text-slate-600 dark:text-slate-400 leading-relaxed pl-6">
+                        <p className="text-type-body-sm text-slate-600 dark:text-slate-400 leading-relaxed pl-6">
                             Các thông số thiết lập trong tập tin cấu hình môi trường server:
                         </p>
                         <div className="pl-6 pt-1">
-                            <pre className="p-4 rounded-xl bg-slate-950 text-emerald-400 border border-slate-800 tabular-nums text-[13px] leading-relaxed overflow-x-auto shadow-inner custom-scrollbar">
+                            <pre className="p-4 rounded-xl bg-slate-950 text-emerald-400 border border-slate-800 tabular-nums text-type-helper leading-relaxed overflow-x-auto shadow-inner custom-scrollbar">
 {`BACKUP_WORKER_ENABLED="true" # Bật/tắt tiến trình tự động
 BACKUP_SCHEDULE="02:00" # Khung giờ chạy sao lưu hàng ngày
 BACKUP_TIMEZONE="Asia/Ho_Chi_Minh" # Múi giờ hệ thống

@@ -450,7 +450,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
               border: 'none',
               background: 'transparent',
             }}
-            className="no-focus-outline w-full text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 bg-transparent border-0 ring-0 outline-none focus:ring-0 focus:outline-none focus:border-0 shadow-none p-0 !outline-none !shadow-none !border-none !ring-0"
+            className="no-focus-outline w-full text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 bg-transparent border-0 ring-0 outline-none focus:ring-0 focus:outline-none focus:border-0 shadow-none p-0 !outline-none !shadow-none !border-none !ring-0"
           />
 
           {query ? (
@@ -463,14 +463,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
               <X className="h-4 w-4" />
             </button>
           ) : (
-            <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[12px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md">
+            <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-type-helper font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md">
               ESC
             </kbd>
           )}
         </div>
 
         {/* ── 2. Results / Recommendations List ── */}
-        <div ref={listRef} className="p-3 max-h-[420px] overflow-y-auto space-y-1 text-[14.5px] no-scrollbar">
+        <div ref={listRef} className="p-3 max-h-[420px] overflow-y-auto space-y-1 text-type-body-sm no-scrollbar">
           {filteredItems.length > 0 ? (
             filteredItems.map((item, idx) => {
               const Icon = item.icon;
@@ -504,7 +504,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span
-                        className={`font-semibold text-[14.5px] truncate transition-colors ${
+                        className={`font-semibold text-type-body truncate transition-colors ${
                           isSelected
                             ? 'text-blue-600 dark:text-blue-400'
                             : 'text-slate-900 dark:text-slate-100'
@@ -513,24 +513,24 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
                         {item.title}
                       </span>
                       {item.badge && (
-                        <span className="px-1.5 py-0.5 rounded text-[12px] font-semibold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 shrink-0">
+                        <span className="px-1.5 py-0.5 rounded text-type-helper font-semibold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 shrink-0">
                           {item.badge}
                         </span>
                       )}
                     </div>
-                    <p className="text-[13px] text-slate-500 dark:text-slate-400 truncate mt-0.5 font-normal">
+                    <p className="text-type-helper text-slate-500 dark:text-slate-400 truncate mt-0.5 font-normal">
                       {item.desc}
                     </p>
                   </div>
 
                   {/* Category Tag & Action Indicator */}
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="hidden sm:inline-block px-2 py-0.5 rounded-md text-[12px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                    <span className="hidden sm:inline-block px-2 py-0.5 rounded-md text-type-helper font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
                       {item.category}
                     </span>
 
                     {isSelected ? (
-                      <span className="flex items-center gap-1 text-[12px] font-semibold text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded bg-blue-100/80 dark:bg-blue-900/50">
+                      <span className="flex items-center gap-1 text-type-helper font-semibold text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded bg-blue-100/80 dark:bg-blue-900/50">
                         <span>Mở</span>
                         <CornerDownLeft className="w-3 h-3" />
                       </span>
@@ -544,10 +544,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
           ) : (
             <div className="py-12 text-center text-slate-500">
               <Search className="w-8 h-8 mx-auto mb-2 opacity-30 text-slate-400" />
-              <p className="font-semibold text-slate-900 dark:text-slate-200 text-[15px]">
+              <p className="font-semibold text-slate-900 dark:text-slate-200 text-type-body">
                 Không tìm thấy chức năng phù hợp
               </p>
-              <p className="text-[13px] text-slate-500 mt-1 font-normal">
+              <p className="text-type-helper text-slate-500 mt-1 font-normal">
                 Thử tìm với các từ khóa như &quot;kỳ thi&quot;, &quot;lịch thi&quot;, &quot;phòng thi&quot;, &quot;sinh viên&quot;...
               </p>
             </div>
@@ -555,23 +555,23 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
         </div>
 
         {/* ── 3. Footer Navigation Hints Bar ── */}
-        <div className="px-5 py-3 bg-slate-50/80 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[12.5px] text-slate-500">
+        <div className="px-5 py-3 bg-slate-50/80 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-type-helper text-slate-500">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1.5">
-              <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[12px] font-semibold">↑</kbd>
-              <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[12px] font-semibold">↓</kbd>
+              <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-type-helper font-semibold">↑</kbd>
+              <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-type-helper font-semibold">↓</kbd>
               <span className="text-slate-500 font-medium">Điều hướng</span>
             </span>
             <span className="text-slate-300 dark:text-slate-600">•</span>
             <span className="flex items-center gap-1.5">
-              <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[12px] font-semibold">↵</kbd>
+              <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-type-helper font-semibold">↵</kbd>
               <span className="text-slate-500 font-medium">Chọn</span>
             </span>
           </div>
 
           <div>
-            <span className="text-slate-400 text-[12px]">
-              Nhấn <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[12px] font-semibold">ESC</kbd> để đóng
+            <span className="text-slate-400 text-type-helper">
+              Nhấn <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-type-helper font-semibold">ESC</kbd> để đóng
             </span>
           </div>
         </div>

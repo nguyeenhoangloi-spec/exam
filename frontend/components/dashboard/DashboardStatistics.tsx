@@ -125,10 +125,10 @@ export function DashboardStatistics({
             {/* Top row: Title + Big Value on Left, Icon on Right */}
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1 min-w-0">
-                <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                   {spec.title}
                 </span>
-                <div className="text-[32px] font-bold leading-[38px] tracking-tight text-slate-900 dark:text-slate-100">
+                <div className="text-type-kpi font-bold leading-[38px] tracking-tight text-slate-900 dark:text-slate-100">
                   {formatNumber(spec.value)}
                 </div>
               </div>
@@ -150,7 +150,7 @@ export function DashboardStatistics({
             <div className="mt-2.5">
               <span
                 title={spec.subtext}
-                className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+                className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
               >
                 {spec.subtext}
               </span>

@@ -79,7 +79,7 @@ export function TeacherTable({
                     <button
                       type="button"
                       onClick={() => onDetail(t)}
-                      className="tabular-nums text-[15px] leading-[22px] font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer"
+                      className="tabular-nums text-type-body leading-[22px] font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer"
                     >
                       <IdentifierBadge>{t.teacherCode}</IdentifierBadge>
                     </button>
@@ -96,13 +96,13 @@ export function TeacherTable({
                 <div>
                   <h4
                     onClick={() => onDetail(t)}
-                    className="text-[18px] font-semibold text-slate-900 leading-snug cursor-pointer hover:text-primary-600 transition"
+                    className="text-type-card font-semibold text-slate-900 leading-snug cursor-pointer hover:text-primary-600 transition"
                   >
                     {t.fullName}
                   </h4>
                 </div>
 
-                <div className="space-y-1.5 text-[14px] text-slate-600 font-normal pt-1">
+                <div className="space-y-1.5 text-type-body-sm text-slate-600 font-normal pt-1">
                   <div className="flex items-center gap-1.5">
                     <Building2 className="h-4 w-4 text-slate-400 shrink-0" />
                     <span className="truncate">{t.department?.name || '---'}</span>
@@ -120,7 +120,7 @@ export function TeacherTable({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-[14px] font-medium">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-type-body-sm font-medium">
                 <button
                   type="button"
                   onClick={() => onDetail(t)}
@@ -184,7 +184,7 @@ export function TeacherTable({
                 <button
                   type="button"
                   onClick={() => onDetail(t)}
-                  className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
+                  className="tabular-nums text-type-helper font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
                 >
                   <IdentifierBadge tone="blue">{t.teacherCode}</IdentifierBadge>
                 </button>
@@ -194,7 +194,7 @@ export function TeacherTable({
                   <div className="flex items-center gap-2 flex-wrap">
                     <h4
                       onClick={() => onDetail(t)}
-                      className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                      className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
                     >
                       {t.fullName}
                     </h4>
@@ -205,7 +205,7 @@ export function TeacherTable({
                     )}
                   </div>
 
-                  <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                  <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                     <span className="flex items-center gap-1">
                       <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       <span className="text-slate-700 dark:text-slate-300 font-medium">{t.department?.name || 'Chưa phân khoa'}</span>
@@ -282,8 +282,8 @@ export function TeacherTable({
   // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
   return (
     <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-      <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
-        <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
+      <table className="ui-table w-full text-left text-type-body text-slate-700 border-collapse">
+        <thead className="bg-slate-50 text-type-body-sm font-medium tracking-wider text-slate-600 border-b border-slate-200">
           <tr>
             <th className="p-3.5 pl-4 text-center w-10">
               <input
@@ -325,7 +325,7 @@ export function TeacherTable({
                     <button
                       type="button"
                       onClick={() => onDetail(t)}
-                      className="tabular-nums text-[15px] leading-[22px] font-semibold text-primary-600 hover:text-primary-700 transition cursor-pointer"
+                      className="tabular-nums text-type-body leading-[22px] font-semibold text-primary-600 hover:text-primary-700 transition cursor-pointer"
                     >
                       <IdentifierBadge>{t.teacherCode}</IdentifierBadge>
                     </button>
@@ -337,7 +337,7 @@ export function TeacherTable({
                     <button
                       type="button"
                       onClick={() => onDetail(t)}
-                      className="font-medium text-slate-900 cursor-pointer hover:text-primary-600 transition leading-tight text-[15px]"
+                      className="font-medium text-slate-900 cursor-pointer hover:text-primary-600 transition leading-tight text-type-body"
                     >
                       {t.fullName}
                     </button>
@@ -345,7 +345,7 @@ export function TeacherTable({
                 )}
 
                 {visibleColumns.degree !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-[15px] font-medium text-slate-800">
+                  <td className="p-3.5 whitespace-nowrap text-type-body font-medium text-slate-800">
                     {t.degree || 'TS'}
                   </td>
                 )}
@@ -395,7 +395,7 @@ export function TeacherTable({
                             <button
                               type="button"
                               onClick={() => { closeMenu(); onDetail(t); }}
-                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[15px] font-medium transition cursor-pointer select-none"
+                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
                             >
                               <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                               <span>Xem chi tiết</span>
@@ -403,7 +403,7 @@ export function TeacherTable({
                             <button
                               type="button"
                               onClick={() => { closeMenu(); onEdit(t); }}
-                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[15px] font-medium transition cursor-pointer select-none"
+                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
                             >
                               <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                               <span>Chỉnh sửa</span>
@@ -412,7 +412,7 @@ export function TeacherTable({
                               <button
                                 type="button"
                                 onClick={() => { closeMenu(); onToggleLock(t); }}
-                                className={`flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[15px] font-medium transition cursor-pointer select-none ${
+                                className={`flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-type-body font-medium transition cursor-pointer select-none ${
                                   t.user?.status === 'LOCKED' ? 'hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400' : 'hover:bg-amber-50 dark:hover:bg-amber-950/40 text-amber-600 dark:text-amber-400'
                                 }`}
                               >
@@ -433,7 +433,7 @@ export function TeacherTable({
                             <button
                               type="button"
                               onClick={() => { closeMenu(); onDelete(t.id); }}
-                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-[15px] font-medium transition cursor-pointer select-none"
+                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-type-body font-medium transition cursor-pointer select-none"
                             >
                               <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400" />
                               <span>Xóa</span>

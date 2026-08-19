@@ -23,10 +23,10 @@ type BadgeProps = {
 /** Inline semantic label for categories and priorities; no filled container. */
 export function Badge({ children, tone = 'slate', size, className = '', leftIcon }: BadgeProps) {
   const sizeClass = size === 'xs'
-    ? 'text-xs'
+    ? 'text-type-badge'
     : size === 'lg'
-      ? 'text-sm'
-      : 'text-xs';
+      ? 'text-type-body-sm'
+      : 'text-type-badge';
 
   return (
     <span

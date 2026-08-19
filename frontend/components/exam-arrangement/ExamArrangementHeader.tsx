@@ -17,10 +17,10 @@ export function ExamArrangementHeader({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       {/* Title & Description */}
       <div className="space-y-0.5">
-        <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+        <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
           Xếp phòng thi tự động
         </h1>
-        <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
+        <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
           Tự động phân bổ sinh viên vào phòng máy tính, kiểm tra phòng trống thời gian thực & lưu lịch sử
         </p>
       </div>

@@ -105,7 +105,7 @@ export function ColumnToggleDropdown({
         aria-expanded={isOpen}
         aria-haspopup="menu"
         onClick={() => setIsOpen(!isOpen)}
-        className={`ui-pressable h-10 flex items-center gap-1.5 rounded-xl border px-3 text-[15px] font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out shadow-2xs cursor-pointer select-none ${
+        className={`ui-pressable h-10 flex items-center gap-1.5 rounded-xl border px-3 text-type-body font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out shadow-2xs cursor-pointer select-none ${
           isOpen
             ? 'border-blue-500 ring-2 ring-blue-500/20 text-slate-900 bg-white dark:bg-slate-900 dark:border-blue-500 dark:ring-blue-500/30 dark:text-slate-100'
             : 'border-slate-200/90 bg-white text-slate-700 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-600'
@@ -129,8 +129,8 @@ export function ColumnToggleDropdown({
             className="w-56 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-2xl animate-in fade-in-50 zoom-in-95 duration-150 space-y-2"
           >
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
-              <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs">{title}</span>
-              <span className="text-xs text-slate-400 dark:text-slate-500 font-normal">Click để ẩn/hiện</span>
+              <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper">{title}</span>
+              <span className="text-type-helper text-slate-400 dark:text-slate-500 font-normal">Click để ẩn/hiện</span>
             </div>
 
             <div className="space-y-1 max-h-56 overflow-y-auto pr-1 custom-scrollbar">
@@ -141,7 +141,7 @@ export function ColumnToggleDropdown({
                     key={col.key}
                     type="button"
                     onClick={() => onToggle(col.key)}
-                    className={`w-full flex items-center justify-between rounded-xl px-2.5 py-1.5 text-left font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-colors duration-150 cursor-pointer select-none text-[15px] ${
+                    className={`w-full flex items-center justify-between rounded-xl px-2.5 py-1.5 text-left font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-colors duration-150 cursor-pointer select-none text-type-body ${
                       isVisible
                         ? 'text-slate-900 dark:text-slate-100 font-semibold bg-transparent'
                         : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'

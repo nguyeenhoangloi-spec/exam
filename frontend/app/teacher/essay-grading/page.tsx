@@ -628,10 +628,10 @@ function TeacherEssayGradingContent() {
     <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
       {/* ── 1. Standard Page Header ── */}
       <div className="pb-1 space-y-0.5">
-        <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+        <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
           Chấm bài tự luận
         </h1>
-        <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
+        <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
           Chấm điểm và đánh giá bài làm tự luận của sinh viên theo chuẩn Rubric.
         </p>
       </div>
@@ -654,10 +654,10 @@ function TeacherEssayGradingContent() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                    <h3 className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100">
+                    <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
                       Danh sách bài thi
                     </h3>
-                    <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full border border-blue-200/60 dark:border-blue-800/60 tabular-nums">
+                    <span className="text-type-helper font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full border border-blue-200/60 dark:border-blue-800/60 tabular-nums">
                       {filteredRows.length}/{rows.length}
                     </span>
                   </div>
@@ -696,7 +696,7 @@ function TeacherEssayGradingContent() {
                     placeholder="Tìm mã SV, tên SV, môn..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full h-9 bg-white dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/80 rounded-xl pl-9 pr-8 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                    className="w-full h-9 bg-white dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/80 rounded-xl pl-9 pr-8 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                   />
                   {searchQuery ? (
                     <button
@@ -709,7 +709,7 @@ function TeacherEssayGradingContent() {
                     </button>
                   ) : (
                     <kbd
-                      className="hidden sm:inline-flex absolute right-2.5 top-1/2 -translate-y-1/2 h-4 items-center justify-center px-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-xs text-slate-400 select-none cursor-pointer"
+                      className="hidden sm:inline-flex absolute right-2.5 top-1/2 -translate-y-1/2 h-4 items-center justify-center px-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                       onClick={() => searchInputRef.current?.focus()}
                       title="Nhấn phím / để tìm nhanh"
                     >
@@ -738,7 +738,7 @@ function TeacherEssayGradingContent() {
                       value={subjectFilter}
                       onChange={(e) => setSubjectFilter(e.target.value)}
                       containerClassName="w-full"
-                      className="w-full text-xs"
+                      className="w-full text-type-helper"
                     >
                       <option value="ALL">Tất cả môn học ({availableSubjects.length})</option>
                       {availableSubjects.map((s) => (
@@ -755,7 +755,7 @@ function TeacherEssayGradingContent() {
                         value={dateFilter}
                         onChange={(e) => setDateFilter(e.target.value)}
                         containerClassName="w-full"
-                        className="w-full text-xs"
+                        className="w-full text-type-helper"
                       >
                         <option value="ALL">Tất cả ngày</option>
                         {availableDates.map((d) => (
@@ -771,7 +771,7 @@ function TeacherEssayGradingContent() {
                         containerClassName="w-full"
                         value={scheduleFilter}
                         onChange={(e) => setScheduleFilter(e.target.value)}
-                        className="w-full text-xs"
+                        className="w-full text-type-helper"
                       >
                         <option value="ALL">Tất cả ca thi</option>
                         {availableSchedules.map((s) => (
@@ -788,12 +788,12 @@ function TeacherEssayGradingContent() {
               {/* Attempts Flat List (Divider-First & No Nested Card Borders) */}
               <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[calc(100vh-380px)] min-h-[380px] overflow-y-auto">
                 {loading ? (
-                  <div className="p-8 text-center text-xs font-medium text-slate-400 flex flex-col items-center gap-2">
+                  <div className="p-8 text-center text-type-helper font-medium text-slate-400 flex flex-col items-center gap-2">
                     <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
                     <span>Đang tải danh sách bài thi...</span>
                   </div>
                 ) : paginatedRows.length === 0 ? (
-                  <div className="p-8 text-center text-xs font-medium text-slate-400">
+                  <div className="p-8 text-center text-type-helper font-medium text-slate-400">
                     Không tìm thấy bài thi phù hợp
                   </div>
                 ) : (
@@ -816,7 +816,7 @@ function TeacherEssayGradingContent() {
                         <div className="flex justify-between items-center gap-2">
                           <div className="flex items-center gap-2 min-w-0 flex-1">
                             <div
-                              className={`w-7 h-7 rounded-full flex items-center justify-center font-semibold text-xs shrink-0 select-none ${
+                              className={`w-7 h-7 rounded-full flex items-center justify-center font-semibold text-type-helper shrink-0 select-none ${
                                 isCur
                                   ? 'bg-blue-600 text-white'
                                   : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
@@ -831,7 +831,7 @@ function TeacherEssayGradingContent() {
                                 e.stopPropagation();
                                 setProfileCandidate(r);
                               }}
-                              className={`font-semibold text-sm truncate transition cursor-pointer text-left ${
+                              className={`font-semibold text-type-body-sm truncate transition cursor-pointer text-left ${
                                 isCur
                                   ? 'text-blue-700 dark:text-blue-300'
                                   : 'text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400'
@@ -843,12 +843,12 @@ function TeacherEssayGradingContent() {
                           </div>
 
                           <span
-                            className={`font-semibold tabular-nums text-sm shrink-0 ${
+                            className={`font-semibold tabular-nums text-type-body-sm shrink-0 ${
                               notSub
-                                ? 'text-slate-400 text-xs'
+                                ? 'text-slate-400 text-type-helper'
                                 : r.totalScore !== undefined && r.totalScore !== null
                                   ? 'text-blue-600 dark:text-blue-400'
-                                  : 'text-slate-400 text-xs'
+                                  : 'text-slate-400 text-type-helper'
                             }`}
                           >
                             {notSub ? 'Chưa nộp' : r.totalScore !== undefined && r.totalScore !== null ? `${r.totalScore}đ` : '--'}
@@ -856,7 +856,7 @@ function TeacherEssayGradingContent() {
                         </div>
 
                         {/* Row 2: MSSV identifier + Subject name + Status dot */}
-                        <div className="flex items-center justify-between gap-2 mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                        <div className="flex items-center justify-between gap-2 mt-1.5 text-type-helper text-slate-500 dark:text-slate-400">
                           <div className="flex items-center gap-1.5 min-w-0">
                             <IdentifierBadge tone={isCur ? 'blue' : 'neutral'}>
                               {r.student?.studentCode || '---'}
@@ -881,7 +881,7 @@ function TeacherEssayGradingContent() {
 
               {/* Pagination Controls in Footer */}
               {totalPages > 1 && (
-                <div className="p-3 bg-slate-50/40 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-medium text-slate-500 dark:text-slate-400">
+                <div className="p-3 bg-slate-50/40 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-type-helper font-medium text-slate-500 dark:text-slate-400">
                   <span>
                     Trang {page} / {totalPages}
                   </span>
@@ -914,7 +914,7 @@ function TeacherEssayGradingContent() {
         {/* Right Panel: Grading Question Content (Smooth flex-1 auto fill) */}
         <div className="flex-1 min-w-0 space-y-4">
           {!selected ? (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-12 text-center text-slate-400 text-xs font-medium shadow-2xs space-y-3">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-12 text-center text-slate-400 text-type-helper font-medium shadow-2xs space-y-3">
               <p>Vui lòng chọn bài thi từ danh sách bên trái để chấm điểm.</p>
               {collapseList && (
                 <div className="pt-1">
@@ -946,7 +946,7 @@ function TeacherEssayGradingContent() {
 
                   <div
                     onClick={() => setProfileCandidate(selected)}
-                    className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 flex items-center justify-center font-semibold text-sm shrink-0 cursor-pointer hover:ring-2 hover:ring-blue-400 transition"
+                    className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 flex items-center justify-center font-semibold text-type-body-sm shrink-0 cursor-pointer hover:ring-2 hover:ring-blue-400 transition"
                     title="Xem chi tiết hồ sơ thí sinh"
                   >
                     {selected.student?.fullName?.charAt(0) || 'S'}
@@ -956,14 +956,14 @@ function TeacherEssayGradingContent() {
                       <button
                         type="button"
                         onClick={() => setProfileCandidate(selected)}
-                        className="text-base font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                        className="text-type-body font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
                         title="Xem chi tiết hồ sơ thí sinh"
                       >
                         {selected.student?.fullName}
                       </button>
                       <StatusBadge status={selected.gradingStatus} />
                     </div>
-                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 mt-0.5">
+                    <div className="flex flex-wrap items-center gap-1.5 text-type-helper text-slate-500 mt-0.5">
                       <span>Mã SV:</span><IdentifierBadge tone="neutral">{selected.student?.studentCode}</IdentifierBadge>
                       <span>· Môn: <strong className="text-slate-800 dark:text-slate-200">{selected.onlineExamConfig?.examSchedule?.subject?.subjectName || selected.subjectName || 'Môn thi'}</strong></span>
                     </div>
@@ -972,11 +972,11 @@ function TeacherEssayGradingContent() {
 
                 <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
                   <div className="text-right">
-                    <span className="text-xl tabular-nums font-semibold text-slate-900 dark:text-slate-100">
-                      {liveTotalScore !== null && liveTotalScore !== undefined ? liveTotalScore : (selected.totalScore ?? '--')} <span className="text-xs text-slate-500 font-normal">/ {selected.maxScore || 10}đ</span>
+                    <span className="text-type-section tabular-nums font-semibold text-slate-900 dark:text-slate-100">
+                      {liveTotalScore !== null && liveTotalScore !== undefined ? liveTotalScore : (selected.totalScore ?? '--')} <span className="text-type-helper text-slate-500 font-normal">/ {selected.maxScore || 10}đ</span>
                     </span>
                     {selected.penaltyPoints > 0 && (
-                      <p className="text-xs font-semibold text-rose-600 mt-0.5">
+                      <p className="text-type-helper font-semibold text-rose-600 mt-0.5">
                         Điểm phạt: -{selected.penaltyPoints}đ ({selected.penaltyReason})
                       </p>
                     )}
@@ -987,12 +987,12 @@ function TeacherEssayGradingContent() {
                     {!isNotSubmitted(selected) && !selected.isVirtual && (
                       isReadOnly ? (
                         selected.gradingStatus === 'PUBLISHED' ? (
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-xs font-semibold select-none shadow-2xs">
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-type-helper font-semibold select-none shadow-2xs">
                             <Lock className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                             <span>Đã công bố (Khóa điểm)</span>
                           </div>
                         ) : (
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/80 text-amber-800 dark:text-amber-300 text-xs font-semibold select-none shadow-2xs">
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/80 text-amber-800 dark:text-amber-300 text-type-helper font-semibold select-none shadow-2xs">
                             <Clock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
                             <span>Đang chờ Admin duyệt</span>
                           </div>
@@ -1056,7 +1056,7 @@ function TeacherEssayGradingContent() {
                       >
                         <ChevronLeft className="h-4 w-4" />
                       </button>
-                      <span className="text-[12px] font-semibold tabular-nums text-slate-500 px-1 select-none">
+                      <span className="text-type-helper font-semibold tabular-nums text-slate-500 px-1 select-none">
                         {currentIndex >= 0 ? `${currentIndex + 1}/${filteredRows.length}` : ''}
                       </span>
                       <button
@@ -1080,12 +1080,12 @@ function TeacherEssayGradingContent() {
                     <FileText className="h-6 w-6" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-[15px] font-semibold text-slate-800 dark:text-slate-200">
+                    <h3 className="text-type-body font-semibold text-slate-800 dark:text-slate-200">
                       {!(selected.questions || []).filter((q: any) => q.type === 'ESSAY').length && !isNotSubmitted(selected)
                         ? 'Đề thi trắc nghiệm / tự động chấm'
                         : 'Thí sinh chưa nộp bài hoặc chưa làm bài tự luận'}
                     </h3>
-                    <p className="text-[14px] text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed font-normal">
+                    <p className="text-type-body-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed font-normal">
                       {!(selected.questions || []).filter((q: any) => q.type === 'ESSAY').length && !isNotSubmitted(selected)
                         ? 'Đề thi này không có câu hỏi tự luận nào cần chấm thủ công. Điểm số trắc nghiệm đã được hệ thống tự động tính toán.'
                         : `Sinh viên ${selected.student?.fullName || ''} (mã SV: ${selected.student?.studentCode || ''}) chưa gửi bài làm tự luận để thực hiện chấm điểm.`}
@@ -1121,10 +1121,10 @@ function TeacherEssayGradingContent() {
                         {/* Question Header & Action */}
                         <div className="flex justify-between items-start gap-4 border-b border-slate-100 dark:border-slate-800 pb-3.5">
                           <div className="flex items-start gap-2.5 flex-1">
-                            <span className="px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-xs font-semibold border border-blue-200 dark:border-blue-800/80 shrink-0 select-none">
+                            <span className="px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-type-helper font-semibold border border-blue-200 dark:border-blue-800/80 shrink-0 select-none">
                               Câu {idx + 1}
                             </span>
-                            <div className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-snug">
+                            <div className="text-type-body font-semibold text-slate-900 dark:text-slate-100 leading-snug">
                               {q.content}
                             </div>
                           </div>
@@ -1133,29 +1133,29 @@ function TeacherEssayGradingContent() {
                             <button
                               type="button"
                               onClick={() => setViewingRubricQuestion({ ...q, id: q.questionId, code: `Câu ${idx + 1}` })}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-helper font-semibold hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs"
                               title="Xem đáp án mẫu và tiêu chuẩn chấm Rubric của câu này"
                             >
                               <BookOpen className="h-3.5 w-3.5 text-slate-500" />
                               <span>Xem Rubric & Đáp án</span>
                             </button>
-                            <span className="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold tabular-nums text-sm text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700">
-                              {currentScore} <span className="text-xs font-normal text-slate-400">/ {q.score}đ</span>
+                            <span className="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold tabular-nums text-type-body-sm text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700">
+                              {currentScore} <span className="text-type-helper font-normal text-slate-400">/ {q.score}đ</span>
                             </span>
                           </div>
                         </div>
 
                         {/* Student Answer Box */}
                         <div className="space-y-1.5">
-                          <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+                          <div className="flex items-center justify-between text-type-helper font-semibold text-slate-500">
                             <span className="tracking-wide">Bài làm của thí sinh:</span>
                             {ans?.textAnswer && (
-                              <span className="text-xs font-normal text-slate-400">
+                              <span className="text-type-helper font-normal text-slate-400">
                                 {ans.textAnswer.trim().split(/\s+/).length} từ
                               </span>
                             )}
                           </div>
-                          <div className="p-4 bg-slate-50/60 dark:bg-slate-800/40 rounded-xl border border-slate-200/70 dark:border-slate-800/80 border-l-4 border-l-blue-500 text-[15px] text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed font-normal shadow-2xs">
+                          <div className="p-4 bg-slate-50/60 dark:bg-slate-800/40 rounded-xl border border-slate-200/70 dark:border-slate-800/80 border-l-4 border-l-blue-500 text-type-body text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed font-normal shadow-2xs">
                             {ans?.textAnswer || (
                               <span className="italic text-slate-400">Sinh viên không nhập nội dung văn bản</span>
                             )}
@@ -1165,7 +1165,7 @@ function TeacherEssayGradingContent() {
                         {/* Attachment Files */}
                         {ans?.submissionFiles?.length > 0 && (
                           <div className="space-y-1.5">
-                            <div className="text-xs font-semibold text-slate-500">File đính kèm ({ans.submissionFiles.length}):</div>
+                            <div className="text-type-helper font-semibold text-slate-500">File đính kèm ({ans.submissionFiles.length}):</div>
                             <div className="flex gap-2 flex-wrap">
                               {ans.submissionFiles.map((f: any) => (
                                 <a
@@ -1173,11 +1173,11 @@ function TeacherEssayGradingContent() {
                                   href={f.url}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-blue-700 dark:text-blue-400 text-xs font-semibold hover:bg-blue-50 hover:border-blue-300 transition shadow-2xs"
+                                  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-blue-700 dark:text-blue-400 text-type-helper font-semibold hover:bg-blue-50 hover:border-blue-300 transition shadow-2xs"
                                 >
                                   <Download className="h-4 w-4 text-blue-500" />
                                   <span>{f.fileName}</span>
-                                  <span className="text-xs text-slate-400 font-normal">({(f.size / 1024 / 1024).toFixed(2)} MB)</span>
+                                  <span className="text-type-helper text-slate-400 font-normal">({(f.size / 1024 / 1024).toFixed(2)} MB)</span>
                                 </a>
                               ))}
                             </div>
@@ -1187,7 +1187,7 @@ function TeacherEssayGradingContent() {
                         {/* Rubric Criteria Section */}
                         {q.rubric?.length > 0 ? (
                           <div className="space-y-2.5 pt-1">
-                            <div className="text-xs font-semibold text-slate-600 dark:text-slate-400 tracking-wide flex items-center justify-between">
+                            <div className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 tracking-wide flex items-center justify-between">
                               <span>Tiêu chí chấm Rubric ({q.rubric.length}):</span>
                             </div>
                             <div className="space-y-2.5">
@@ -1198,12 +1198,12 @@ function TeacherEssayGradingContent() {
                                 >
                                   <div className="flex justify-between items-start gap-2">
                                     <div>
-                                      <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">{r.label}</span>
+                                      <span className="font-semibold text-type-body-sm text-slate-900 dark:text-slate-100">{r.label}</span>
                                       {r.description && (
-                                        <p className="text-xs text-slate-500 mt-0.5 font-normal leading-relaxed">{r.description}</p>
+                                        <p className="text-type-helper text-slate-500 mt-0.5 font-normal leading-relaxed">{r.description}</p>
                                       )}
                                     </div>
-                                    <span className="tabular-nums text-xs font-semibold text-slate-500 shrink-0 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700">
+                                    <span className="tabular-nums text-type-helper font-semibold text-slate-500 shrink-0 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700">
                                       Tối đa {r.maxScore}đ
                                     </span>
                                   </div>
@@ -1219,7 +1219,7 @@ function TeacherEssayGradingContent() {
                                       disabled={isReadOnly}
                                       readOnly={isReadOnly}
                                       onChange={(e) => handleScoreChange(r.id, e.target.value, r.maxScore)}
-                                      className="w-20 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-center text-[15px] font-semibold tabular-nums text-blue-600 dark:text-blue-400 focus:border-blue-500 focus:outline-none shadow-2xs disabled:bg-slate-100 dark:disabled:bg-slate-800/60 disabled:text-slate-500 dark:disabled:text-slate-400 disabled:cursor-not-allowed"
+                                      className="w-20 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-center text-type-body font-semibold tabular-nums text-blue-600 dark:text-blue-400 focus:border-blue-500 focus:outline-none shadow-2xs disabled:bg-slate-100 dark:disabled:bg-slate-800/60 disabled:text-slate-500 dark:disabled:text-slate-400 disabled:cursor-not-allowed"
                                     />
 
                                     {/* Quick Score Chips */}
@@ -1230,7 +1230,7 @@ function TeacherEssayGradingContent() {
                                           type="button"
                                           disabled={isReadOnly}
                                           onClick={() => handleScoreChange(r.id, String(presetVal), r.maxScore)}
-                                          className={`px-2.5 py-1 rounded-xl text-xs font-semibold border transition select-none ${
+                                          className={`px-2.5 py-1 rounded-xl text-type-helper font-semibold border transition select-none ${
                                             scores[r.id] === presetVal
                                               ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
                                               : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 hover:text-slate-900'
@@ -1251,12 +1251,12 @@ function TeacherEssayGradingContent() {
                                         setComments((prev) => ({ ...prev, [r.id]: e.target.value }));
                                         setHasUnsavedChanges(true);
                                       }}
-                                      className="flex-1 min-w-[200px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-[15px] font-normal text-slate-800 dark:text-slate-200 focus:border-blue-500 focus:outline-none shadow-2xs disabled:bg-slate-100 dark:disabled:bg-slate-800/60 disabled:text-slate-500 dark:disabled:text-slate-400 disabled:cursor-not-allowed"
+                                      className="flex-1 min-w-[200px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-type-body font-normal text-slate-800 dark:text-slate-200 focus:border-blue-500 focus:outline-none shadow-2xs disabled:bg-slate-100 dark:disabled:bg-slate-800/60 disabled:text-slate-500 dark:disabled:text-slate-400 disabled:cursor-not-allowed"
                                     />
                                   </div>
 
                                   {aiEvidence[r.id] && (
-                                    <div className="rounded-xl border border-blue-100 bg-blue-50/70 px-3 py-2 text-xs leading-relaxed text-blue-950 dark:border-blue-900 dark:bg-blue-950/30 dark:text-blue-100 mt-1">
+                                    <div className="rounded-xl border border-blue-100 bg-blue-50/70 px-3 py-2 text-type-helper leading-relaxed text-blue-950 dark:border-blue-900 dark:bg-blue-950/30 dark:text-blue-100 mt-1">
                                       <span className="font-semibold text-blue-700 dark:text-blue-300">Minh chứng AI: </span>
                                       {aiEvidence[r.id]}
                                     </div>
@@ -1269,10 +1269,10 @@ function TeacherEssayGradingContent() {
                           <div className="bg-slate-50/40 dark:bg-slate-800/30 p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 space-y-2.5 shadow-2xs">
                             <div className="flex justify-between items-start gap-2">
                               <div>
-                                <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">Chấm điểm câu hỏi</span>
-                                <p className="text-xs text-slate-500 mt-0.5 font-normal leading-relaxed">Nhập điểm cho câu tự luận này</p>
+                                <span className="font-semibold text-type-body-sm text-slate-900 dark:text-slate-100">Chấm điểm câu hỏi</span>
+                                <p className="text-type-helper text-slate-500 mt-0.5 font-normal leading-relaxed">Nhập điểm cho câu tự luận này</p>
                               </div>
-                              <span className="tabular-nums text-xs font-semibold text-slate-500 shrink-0 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700">
+                              <span className="tabular-nums text-type-helper font-semibold text-slate-500 shrink-0 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700">
                                 Tối đa {q.score}đ
                               </span>
                             </div>
@@ -1288,7 +1288,7 @@ function TeacherEssayGradingContent() {
                                 disabled={isReadOnly}
                                 readOnly={isReadOnly}
                                 onChange={(e) => handleScoreChange(`q_${q.questionId}`, e.target.value, q.score)}
-                                className="w-20 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-center text-[15px] font-semibold tabular-nums text-blue-600 dark:text-blue-400 focus:border-blue-500 focus:outline-none shadow-2xs disabled:bg-slate-100 dark:disabled:bg-slate-800/60 disabled:text-slate-500 dark:disabled:text-slate-400 disabled:cursor-not-allowed"
+                                className="w-20 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-center text-type-body font-semibold tabular-nums text-blue-600 dark:text-blue-400 focus:border-blue-500 focus:outline-none shadow-2xs disabled:bg-slate-100 dark:disabled:bg-slate-800/60 disabled:text-slate-500 dark:disabled:text-slate-400 disabled:cursor-not-allowed"
                               />
 
                               {/* Quick Score Chips */}
@@ -1299,7 +1299,7 @@ function TeacherEssayGradingContent() {
                                     type="button"
                                     disabled={isReadOnly}
                                     onClick={() => handleScoreChange(`q_${q.questionId}`, String(presetVal), q.score)}
-                                    className={`px-2.5 py-1 rounded-xl text-xs font-semibold border transition select-none ${
+                                    className={`px-2.5 py-1 rounded-xl text-type-helper font-semibold border transition select-none ${
                                       (scores[`q_${q.questionId}`] ?? ans?.finalScore) === presetVal
                                         ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
                                         : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 hover:text-slate-900'
@@ -1315,7 +1315,7 @@ function TeacherEssayGradingContent() {
 
                         {/* Overall Teacher Comment */}
                         <div className="space-y-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
-                          <label className="text-[15px] font-medium text-slate-600 dark:text-slate-400">Nhận xét tổng quát cho câu này:</label>
+                          <label className="text-type-body font-medium text-slate-600 dark:text-slate-400">Nhận xét tổng quát cho câu này:</label>
                           <input
                             type="text"
                             placeholder="Nhập nhận xét tổng quát cho câu tự luận này..."
@@ -1326,7 +1326,7 @@ function TeacherEssayGradingContent() {
                               setTeacherComments((prev) => ({ ...prev, [q.questionId]: e.target.value }));
                               setHasUnsavedChanges(true);
                             }}
-                            className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-[15px] font-normal text-slate-800 dark:text-slate-200 focus:bg-white focus:border-blue-500 focus:outline-none shadow-2xs"
+                            className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-type-body font-normal text-slate-800 dark:text-slate-200 focus:bg-white focus:border-blue-500 focus:outline-none shadow-2xs"
                           />
                         </div>
                       </div>
@@ -1383,7 +1383,7 @@ function TeacherEssayGradingContent() {
           {
             label: 'Tổng điểm bài thi',
             value: (
-              <span className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
+              <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
                 {profileCandidate?.totalScore !== undefined && profileCandidate?.totalScore !== null
                   ? `${profileCandidate.totalScore} / ${profileCandidate.maxScore || 10} điểm`
                   : 'Chưa có điểm'}
@@ -1393,7 +1393,7 @@ function TeacherEssayGradingContent() {
           {
             label: 'Điểm phạt vi phạm',
             value: profileCandidate?.penaltyPoints > 0 ? (
-              <span className="text-[15px] font-semibold text-rose-600">
+              <span className="text-type-body font-semibold text-rose-600">
                 -{profileCandidate.penaltyPoints} điểm ({profileCandidate.penaltyReason || 'Vi phạm quy chế'})
               </span>
             ) : (
@@ -1417,7 +1417,7 @@ function TeacherEssayGradingContent() {
           {
             title: 'Tóm Tắt Bài Thi Tự Luận',
             content: (
-              <div className="space-y-2 text-xs font-normal text-slate-600 dark:text-slate-400">
+              <div className="space-y-2 text-type-helper font-normal text-slate-600 dark:text-slate-400">
                 <p>
                   Bài thi được cấu hình trong hệ thống khảo thí trực tuyến. Giảng viên phụ trách chấm các câu hỏi tự luận theo biểu điểm Rubric chuẩn xác.
                 </p>
@@ -1455,7 +1455,7 @@ function TeacherEssayGradingContent() {
 
 export default function TeacherEssayGradingPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-[400px] text-xs font-semibold text-slate-500">Đang tải trang chấm bài tự luận...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[400px] text-type-helper font-semibold text-slate-500">Đang tải trang chấm bài tự luận...</div>}>
       <TeacherEssayGradingContent />
     </Suspense>
   );

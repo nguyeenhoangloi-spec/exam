@@ -45,7 +45,7 @@ export function ExamScheduleFiltersCard({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Row 1, Col 1: Kỳ thi */}
         <div className="space-y-1">
-          <label className="block text-[15px] font-medium text-slate-700 mb-1">Kỳ thi</label>
+          <label className="block text-type-body font-medium text-slate-700 mb-1">Kỳ thi</label>
           <FilterSelect
             size="md"
             className="w-full"
@@ -64,7 +64,7 @@ export function ExamScheduleFiltersCard({
 
         {/* Row 1, Col 2: Ca thi */}
         <div className="space-y-1">
-          <label className="block text-[15px] font-medium text-slate-700 mb-1">Ca thi</label>
+          <label className="block text-type-body font-medium text-slate-700 mb-1">Ca thi</label>
           <FilterSelect
             size="md"
             className="w-full"
@@ -82,7 +82,7 @@ export function ExamScheduleFiltersCard({
 
         {/* Row 1, Col 3: Phòng thi */}
         <div className="space-y-1">
-          <label className="block text-[15px] font-medium text-slate-700 mb-1">Phòng thi</label>
+          <label className="block text-type-body font-medium text-slate-700 mb-1">Phòng thi</label>
           <FilterSelect
             size="md"
             className="w-full"
@@ -101,13 +101,13 @@ export function ExamScheduleFiltersCard({
 
         {/* Row 1, Col 4: Ngày thi */}
         <div className="space-y-1">
-          <label className="block text-[15px] font-medium text-slate-700 mb-1">Ngày thi</label>
+          <label className="block text-type-body font-medium text-slate-700 mb-1">Ngày thi</label>
           <div className="relative">
             <input
               type="date"
               value={filters.examDate}
               onChange={(e) => handleChange('examDate', e.target.value)}
-              className="h-10 w-full rounded-xl border border-slate-200 bg-white pl-3.5 pr-9 text-[15px] font-normal text-slate-800 outline-none hover:border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all cursor-pointer shadow-2xs [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+              className="h-10 w-full rounded-xl border border-slate-200 bg-white pl-3.5 pr-9 text-type-body font-normal text-slate-800 outline-none hover:border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all cursor-pointer shadow-2xs [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
             />
             <Calendar className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           </div>
@@ -115,7 +115,7 @@ export function ExamScheduleFiltersCard({
 
         {/* Row 2, Col 1: Trạng thái */}
         <div className="space-y-1">
-          <label className="block text-[15px] font-medium text-slate-700 mb-1">Trạng thái</label>
+          <label className="block text-type-body font-medium text-slate-700 mb-1">Trạng thái</label>
           <FilterSelect
             size="md"
             className="w-full"
@@ -133,7 +133,7 @@ export function ExamScheduleFiltersCard({
 
         {/* Row 2, Col 2: Học kỳ */}
         <div className="space-y-1">
-          <label className="block text-[15px] font-medium text-slate-700 mb-1">Học kỳ</label>
+          <label className="block text-type-body font-medium text-slate-700 mb-1">Học kỳ</label>
           <FilterSelect
             size="md"
             className="w-full"
@@ -150,7 +150,7 @@ export function ExamScheduleFiltersCard({
 
         {/* Row 2, Col 3: Năm học */}
         <div className="space-y-1">
-          <label className="block text-[15px] font-medium text-slate-700 mb-1">Năm học</label>
+          <label className="block text-type-body font-medium text-slate-700 mb-1">Năm học</label>
           <FilterSelect
             size="md"
             className="w-full"
@@ -167,7 +167,7 @@ export function ExamScheduleFiltersCard({
 
         {/* Row 2, Col 4: Giám thị */}
         <div className="space-y-1">
-          <label className="block text-[15px] font-medium text-slate-700 mb-1">Giám thị</label>
+          <label className="block text-type-body font-medium text-slate-700 mb-1">Giám thị</label>
           <FilterSelect
             size="md"
             className="w-full"

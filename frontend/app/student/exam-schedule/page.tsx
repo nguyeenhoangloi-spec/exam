@@ -214,10 +214,10 @@ export default function StudentExamSchedulePage() {
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">
-            <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+            <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
               Lịch thi cá nhân
             </h1>
-            <div className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-1">
+            <div className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-1">
               <span>
                 Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || currentUser?.student?.fullName || (currentUser as any)?.fullName || currentUser?.username || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || currentUser?.student?.studentCode || currentUser?.code || currentUser?.username || '---'}</IdentifierBadge>
               </span>
@@ -249,10 +249,10 @@ export default function StudentExamSchedulePage() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1 min-w-0">
-                  <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                  <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                     {label}
                   </span>
-                  <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                  <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                     {value}
                   </div>
                 </div>
@@ -273,7 +273,7 @@ export default function StudentExamSchedulePage() {
               <div className="mt-2.5">
                 <span
                   title={subtext}
-                  className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+                  className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
                 >
                   {subtext}
                 </span>
@@ -303,7 +303,7 @@ export default function StudentExamSchedulePage() {
                 placeholder="Tìm môn thi, kỳ thi, phòng..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+                className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
               />
               {searchQuery && (
                 <button
@@ -335,7 +335,7 @@ export default function StudentExamSchedulePage() {
                   setStatusFilter('ALL');
                   setModeFilter('ALL');
                 }}
-                className="h-9 px-2.5 flex items-center gap-1 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-colors cursor-pointer shrink-0"
+                className="h-9 px-2.5 flex items-center gap-1 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-type-helper font-semibold transition-colors cursor-pointer shrink-0"
                 title="Xóa tất cả bộ lọc"
               >
                 <X className="w-3.5 h-3.5" />
@@ -349,15 +349,15 @@ export default function StudentExamSchedulePage() {
         {loading ? (
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Đang tra cứu lịch thi cá nhân...</p>
+            <p className="text-type-body-sm font-semibold text-slate-500 dark:text-slate-400">Đang tra cứu lịch thi cá nhân...</p>
           </div>
         ) : filteredSchedules.length === 0 ? (
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
             <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center">
               <BookMarked className="w-7 h-7 text-blue-600 dark:text-blue-400" />
             </div>
-            <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Không tìm thấy lịch thi nào</h3>
-            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 max-w-sm">
+            <h3 className="text-type-body font-semibold text-slate-800 dark:text-slate-200">Không tìm thấy lịch thi nào</h3>
+            <p className="text-type-helper font-medium text-slate-500 dark:text-slate-400 max-w-sm">
               Không có ca thi nào phù hợp với bộ lọc hiện tại.
             </p>
           </div>
@@ -373,15 +373,15 @@ export default function StudentExamSchedulePage() {
                   <div className="flex items-center justify-between gap-2">
                     <IdentifierBadge>{item.subjectCode}</IdentifierBadge>
                     <div className="flex items-center gap-2">
-                      <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400 truncate max-w-[140px] sm:max-w-[180px]" title={item.periodName}>
+                      <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 truncate max-w-[140px] sm:max-w-[180px]" title={item.periodName}>
                         {item.periodName}
                       </span>
                       {item.mode === 'MOCK' ? (
-                        <span className="text-[13px] font-semibold text-blue-600 dark:text-blue-400 shrink-0">
+                        <span className="text-type-helper font-semibold text-blue-600 dark:text-blue-400 shrink-0">
                           Thi thử
                         </span>
                       ) : (
-                        <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300 shrink-0">
+                        <span className="text-type-helper font-semibold text-slate-700 dark:text-slate-300 shrink-0">
                           Chính thức
                         </span>
                       )}
@@ -391,14 +391,14 @@ export default function StudentExamSchedulePage() {
                   {/* Title */}
                   <h3
                     onClick={() => setDrawerSchedule(item)}
-                    className="text-base font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition line-clamp-1 cursor-pointer"
+                    className="text-type-body font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition line-clamp-1 cursor-pointer"
                     title="Xem chi tiết ca thi"
                   >
                     {item.subjectName}
                   </h3>
 
                   {/* Details grid */}
-                  <div className="space-y-2 text-xs text-slate-600 dark:text-slate-300 font-medium bg-slate-50/70 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                  <div className="space-y-2 text-type-helper text-slate-600 dark:text-slate-300 font-medium bg-slate-50/70 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800">
                     <div className="flex items-center justify-between">
                       <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                         <Calendar className="w-3.5 h-3.5 text-blue-600" />
@@ -446,7 +446,7 @@ export default function StudentExamSchedulePage() {
                           <Award className="w-3.5 h-3.5 text-blue-600" />
                           Điểm công bố:
                         </span>
-                        <span className="tabular-nums font-medium text-xs text-blue-600 dark:text-blue-400">
+                        <span className="tabular-nums font-medium text-type-helper text-blue-600 dark:text-blue-400">
                           {(item as any).attempt.totalScore !== null &&
                             (item as any).attempt.totalScore !== undefined &&
                             (item as any).attempt.totalScore !== ''
@@ -525,7 +525,7 @@ export default function StudentExamSchedulePage() {
             title: 'Thao Tác Nhanh Ca Thi',
             content: (
               <div className="space-y-3 pt-1">
-                <p className="text-xs text-slate-500 font-normal leading-relaxed">
+                <p className="text-type-helper text-slate-500 font-normal leading-relaxed">
                   Vui lòng có mặt tại phòng thi hoặc vào phòng chờ trực tuyến trước giờ bắt đầu ít nhất 15 phút để chuẩn bị thiết bị và làm thủ tục điểm danh.
                 </p>
                 <div className="flex items-center justify-end gap-2 pt-1">

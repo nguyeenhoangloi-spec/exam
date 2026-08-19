@@ -449,10 +449,10 @@ export default function TeacherAssignmentsPage() {
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-0.5">
-            <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+            <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
               Lịch coi thi
             </h1>
-            <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
+            <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
               Giảng viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{currentUser?.fullName || currentUser?.teacher?.fullName || currentUser?.username || '---'}</strong> <IdentifierBadge tone="neutral">{currentUser?.teacher?.teacherCode || currentUser?.teacherCode || currentUser?.code || currentUser?.username || '---'}</IdentifierBadge> - Danh sách ca coi thi được phân công trong học kỳ
             </p>
           </div>
@@ -476,10 +476,10 @@ export default function TeacherAssignmentsPage() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1 min-w-0">
-                  <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                  <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                     {label}
                   </span>
-                  <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                  <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                     {value}
                   </div>
                 </div>
@@ -500,7 +500,7 @@ export default function TeacherAssignmentsPage() {
               <div className="mt-2.5">
                 <span
                   title={subtext}
-                  className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+                  className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
                 >
                   {subtext}
                 </span>
@@ -524,7 +524,7 @@ export default function TeacherAssignmentsPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -540,7 +540,7 @@ export default function TeacherAssignmentsPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
@@ -614,15 +614,15 @@ export default function TeacherAssignmentsPage() {
         {loading ? (
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Đang tra cứu lịch coi thi...</p>
+            <p className="text-type-body-sm font-semibold text-slate-500 dark:text-slate-400">Đang tra cứu lịch coi thi...</p>
           </div>
         ) : totalItems === 0 ? (
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
             <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
               <ShieldCheck className="w-7 h-7 text-slate-400" />
             </div>
-            <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Không tìm thấy ca coi thi nào</h3>
-            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 max-w-sm">
+            <h3 className="text-type-body font-semibold text-slate-800 dark:text-slate-200">Không tìm thấy ca coi thi nào</h3>
+            <p className="text-type-helper font-medium text-slate-500 dark:text-slate-400 max-w-sm">
               Không có ca phân công coi thi nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
             </p>
           </div>
@@ -664,16 +664,16 @@ export default function TeacherAssignmentsPage() {
                         <button
                           type="button"
                           onClick={() => setDrawerDuty(item)}
-                          className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                          className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
                         >
                           {item.subjectName}
                         </button>
-                        <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900/50">
+                        <span className="text-type-helper font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900/50">
                           {item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                      <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                         <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
                           <Calendar className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                           <span>{new Date(item.examDate).toLocaleDateString('vi-VN')}</span>
@@ -758,14 +758,14 @@ export default function TeacherAssignmentsPage() {
                         <button
                           type="button"
                           onClick={() => setDrawerDuty(item)}
-                          className="tabular-nums font-medium text-xs text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer shrink-0"
+                          className="tabular-nums font-medium text-type-helper text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer shrink-0"
                         >
                           <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
                         </button>
                       </div>
 
                       <div className="flex items-center gap-1.5 shrink-0">
-                        <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900/50">
+                        <span className="text-type-helper font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900/50">
                           {item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
                         </span>
                         <StatusBadge
@@ -779,31 +779,31 @@ export default function TeacherAssignmentsPage() {
                     <div>
                       <h3
                         onClick={() => setDrawerDuty(item)}
-                        className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition line-clamp-1"
+                        className="text-type-body font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition line-clamp-1"
                       >
                         {item.subjectName}
                       </h3>
                     </div>
 
                     {/* Details grid box */}
-                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-400 font-normal pt-1 border-t border-slate-100/70 dark:border-slate-800/70">
+                    <div className="grid grid-cols-2 gap-2 text-type-helper text-slate-600 dark:text-slate-400 font-normal pt-1 border-t border-slate-100/70 dark:border-slate-800/70">
                       <div>
-                        <span className="text-slate-400 text-[12px] block">Ngày thi</span>
-                        <strong className="font-semibold text-slate-900 dark:text-slate-100 text-xs block">
+                        <span className="text-slate-400 text-type-helper block">Ngày thi</span>
+                        <strong className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper block">
                           {new Date(item.examDate).toLocaleDateString('vi-VN')}
                         </strong>
                       </div>
 
                       <div>
-                        <span className="text-slate-400 text-[12px] block">Khung giờ</span>
-                        <span className="font-semibold text-blue-600 dark:text-blue-400 text-xs block">
+                        <span className="text-slate-400 text-type-helper block">Khung giờ</span>
+                        <span className="font-semibold text-blue-600 dark:text-blue-400 text-type-helper block">
                           {item.startTime} - {item.endTime}
                         </span>
                       </div>
 
                       <div className="col-span-2">
-                        <span className="text-slate-400 text-[12px] block">Phòng thi & Địa điểm</span>
-                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs block truncate">
+                        <span className="text-slate-400 text-type-helper block">Phòng thi & Địa điểm</span>
+                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper block truncate">
                           {item.roomName || item.roomCode} {item.building ? `(${item.building})` : ''}
                         </span>
                       </div>
@@ -811,11 +811,11 @@ export default function TeacherAssignmentsPage() {
                   </div>
 
                   {/* Footer Area */}
-                  <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+                  <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-type-helper">
                     <button
                       type="button"
                       onClick={() => setDrawerDuty(item)}
-                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-[14px] font-medium transition cursor-pointer"
+                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-type-body-sm font-medium transition cursor-pointer"
                     >
                       <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                       <span>Xem chi tiết</span>
@@ -850,9 +850,9 @@ export default function TeacherAssignmentsPage() {
           /* ── 5.3 List View Mode (Dạng bảng danh sách) ── */
           <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="ui-table w-full text-left text-[15px] text-slate-700 dark:text-slate-300 border-collapse">
+              <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 text-[14px] font-medium text-slate-600 dark:text-slate-400 select-none">
+                  <tr className="border-b border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 text-type-body-sm font-medium text-slate-600 dark:text-slate-400 select-none">
                     <th className="py-3 px-4 w-12 text-center">
                       <input
                         type="checkbox"
@@ -895,7 +895,7 @@ export default function TeacherAssignmentsPage() {
                           <td className="py-3.5 px-4">
                             <div
                               onClick={() => setDrawerDuty(item)}
-                              className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-[15px]"
+                              className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-type-body"
                             >
                               {item.subjectName}
                             </div>
@@ -904,20 +904,20 @@ export default function TeacherAssignmentsPage() {
                         )}
                         {visibleColumns.time !== false && (
                           <td className="py-3.5 px-4 whitespace-nowrap">
-                            <div className="font-semibold text-slate-900 dark:text-slate-100 text-[15px]">
+                            <div className="font-semibold text-slate-900 dark:text-slate-100 text-type-body">
                               {new Date(item.examDate).toLocaleDateString('vi-VN')}
                             </div>
-                            <div className="table-meta text-[13px] font-medium text-blue-600 dark:text-blue-400">
+                            <div className="table-meta text-type-helper font-medium text-blue-600 dark:text-blue-400">
                               {item.startTime} - {item.endTime}
                             </div>
                           </td>
                         )}
                         {visibleColumns.room !== false && (
                           <td className="py-3.5 px-4 whitespace-nowrap">
-                            <div className="font-semibold text-slate-900 dark:text-slate-100 text-[15px]">
+                            <div className="font-semibold text-slate-900 dark:text-slate-100 text-type-body">
                               {item.roomName || item.roomCode}
                             </div>
-                            <div className="table-meta text-[13px] text-slate-400 font-normal">
+                            <div className="table-meta text-type-helper text-slate-400 font-normal">
                               {item.building || 'Nhà A1'}
                             </div>
                           </td>
@@ -925,11 +925,11 @@ export default function TeacherAssignmentsPage() {
                         {visibleColumns.role !== false && (
                           <td className="py-3.5 px-4 whitespace-nowrap">
                             {item.role === 'SUPERVISOR_1' ? (
-                              <span className="table-badge inline-flex items-center text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900/50">
+                              <span className="table-badge inline-flex items-center text-type-helper font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900/50">
                                 Giám thị 1
                               </span>
                             ) : (
-                              <span className="table-badge inline-flex items-center text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                              <span className="table-badge inline-flex items-center text-type-helper font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
                                 Giám thị 2
                               </span>
                             )}

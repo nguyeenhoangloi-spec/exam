@@ -465,8 +465,8 @@ export default function StudentExamTakePage() {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col items-center justify-center space-y-4">
         <div className="w-10 h-10 border-3 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
         <div className="text-center space-y-1">
-          <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">Đã nộp bài thi thành công</h3>
-          <p className="text-xs font-normal text-slate-500 dark:text-slate-400">Đang chuyển tiếp đến trang kết quả...</p>
+          <h3 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">Đã nộp bài thi thành công</h3>
+          <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400">Đang chuyển tiếp đến trang kết quả...</p>
         </div>
       </div>
     );
@@ -479,8 +479,8 @@ export default function StudentExamTakePage() {
           <Clock className="h-7 w-7" />
         </div>
         <div className="text-center space-y-1">
-          <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">Đang tải đề thi bảo mật...</h3>
-          <p className="text-xs font-normal text-slate-500 dark:text-slate-400">Vui lòng chờ trong giây lát để hệ thống khởi tạo phòng thi trực tuyến</p>
+          <h3 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">Đang tải đề thi bảo mật...</h3>
+          <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400">Vui lòng chờ trong giây lát để hệ thống khởi tạo phòng thi trực tuyến</p>
         </div>
       </div>
     );
@@ -494,8 +494,8 @@ export default function StudentExamTakePage() {
             <AlertTriangle className="w-8 h-8" />
           </div>
           <div className="space-y-1">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Không thể truy cập bài thi</h2>
-            <p className="text-slate-500 dark:text-slate-400 text-xs font-normal leading-relaxed">{error}</p>
+            <h2 className="text-type-card font-semibold text-slate-900 dark:text-slate-100">Không thể truy cập bài thi</h2>
+            <p className="text-slate-500 dark:text-slate-400 text-type-helper font-normal leading-relaxed">{error}</p>
           </div>
           <Button
             type="button"
@@ -528,15 +528,15 @@ export default function StudentExamTakePage() {
           className="flex items-center space-x-3.5 cursor-pointer group"
           title="Bấm để xem chi tiết thông tin ca thi & quy chế"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md border border-white/20 font-semibold text-white text-base shadow-sm group-hover:bg-white/20 transition">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md border border-white/20 font-semibold text-white text-type-body shadow-sm group-hover:bg-white/20 transition">
             {attemptData.paperTitle ? attemptData.paperTitle.charAt(0).toUpperCase() : 'T'}
           </div>
           <div>
-            <span className="font-semibold text-white text-sm sm:text-base tracking-tight block truncate max-w-xs sm:max-w-md group-hover:text-blue-200 transition">
+            <span className="font-semibold text-white text-type-body-sm sm:text-type-body tracking-tight block truncate max-w-xs sm:max-w-md group-hover:text-blue-200 transition">
               {attemptData.paperTitle}
             </span>
             <div className="flex items-center gap-2 mt-0.5">
-              <span className="inline-flex items-center px-2.5 py-0.5 bg-white/15 border border-white/20 text-blue-100 text-[13px] font-semibold rounded-md">
+              <span className="inline-flex items-center px-2.5 py-0.5 bg-white/15 border border-white/20 text-blue-100 text-type-helper font-semibold rounded-md">
                 <Shield className="w-3.5 h-3.5 mr-1 text-emerald-300" /> Giám sát trực tuyến kích hoạt
               </span>
             </div>
@@ -546,7 +546,7 @@ export default function StudentExamTakePage() {
         {/* Header Right Actions */}
         <div className="flex items-center space-x-4 sm:space-x-5">
           {/* Sync Status Badge - Chỉ hiển thị khi Đang đồng bộ hoặc Mất kết nối */}
-          <div className="hidden sm:flex items-center text-[15px] font-medium">
+          <div className="hidden sm:flex items-center text-type-body font-medium">
             {syncState === 'SAVING' && (
               <span className="text-amber-300 flex items-center gap-1.5 animate-pulse">
                 <Wifi className="w-3.5 h-3.5 text-amber-400" /> Đang đồng bộ...
@@ -561,7 +561,7 @@ export default function StudentExamTakePage() {
 
           {/* Countdown Clock Box - Ô đếm ngược thời gian tinh tế */}
           <div
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl tabular-nums text-sm sm:text-base font-semibold transition-all ${
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl tabular-nums text-type-body-sm sm:text-type-body font-semibold transition-all ${
               remainingSeconds < 300
                 ? 'bg-rose-600 text-white animate-pulse shadow-md shadow-rose-950/40'
                 : 'bg-white/15 text-white backdrop-blur-xs'
@@ -575,7 +575,7 @@ export default function StudentExamTakePage() {
           <button
             type="button"
             onClick={() => setShowIncidentModal(true)}
-            className="px-3 py-1.5 text-amber-300 hover:text-amber-100 hover:bg-amber-500/20 font-semibold text-xs rounded-xl flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+            className="px-3 py-1.5 text-amber-300 hover:text-amber-100 hover:bg-amber-500/20 font-semibold text-type-helper rounded-xl flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
             title="Gửi báo cáo sự cố kỹ thuật cho giám thị"
           >
             <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
@@ -586,7 +586,7 @@ export default function StudentExamTakePage() {
           <button
             type="button"
             onClick={() => setShowSubmitModal(true)}
-            className="px-4 sm:px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5 shadow-md shadow-emerald-950/30 transition active:scale-95 cursor-pointer"
+            className="px-4 sm:px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-type-helper rounded-xl flex items-center gap-1.5 shadow-md shadow-emerald-950/30 transition active:scale-95 cursor-pointer"
           >
             <Send className="w-3.5 h-3.5" />
             <span>Nộp bài</span>
@@ -603,11 +603,11 @@ export default function StudentExamTakePage() {
               {/* Question Header Status */}
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                 <div className="flex items-center space-x-3">
-                  <span className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-semibold text-sm shadow-xs">
+                  <span className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-semibold text-type-body-sm shadow-xs">
                     {currentIdx + 1}
                   </span>
                   <IdentifierBadge tone="neutral">Mã: {currentQ.code}</IdentifierBadge>
-                  <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
+                  <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-300">
                     {currentQ.score} điểm
                   </span>
                 </div>
@@ -615,7 +615,7 @@ export default function StudentExamTakePage() {
                 <button
                   type="button"
                   onClick={() => handleToggleFlag(currentQ.questionId)}
-                  className={`flex items-center space-x-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl border transition cursor-pointer active:scale-95 ${currentAns.isFlagged
+                  className={`flex items-center space-x-1.5 text-type-helper font-semibold px-3.5 py-2 rounded-xl border transition cursor-pointer active:scale-95 ${currentAns.isFlagged
         ? 'bg-amber-500 text-white border-amber-500 shadow-2xs'
                     : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100'
                   }`}
@@ -635,7 +635,7 @@ export default function StudentExamTakePage() {
                 )}
 
                 {/* Question Text / Rich Text Content */}
-                <div className="text-slate-900 dark:text-slate-100 text-base sm:text-lg leading-relaxed font-semibold space-y-3">
+                <div className="text-slate-900 dark:text-slate-100 text-type-reading font-semibold space-y-3">
                   {currentQ.type === 'FILL_BLANK' ? (
                     <FillBlankQuestionRenderer
                       content={currentQ.content}
@@ -695,7 +695,7 @@ export default function StudentExamTakePage() {
                               className="max-h-52 rounded-lg object-contain bg-white transition duration-200 group-hover:scale-105"
                             />
                             <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
-                              <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-3 py-1.5 text-xs font-semibold text-white shadow-lg backdrop-blur-xs">
+                              <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-3 py-1.5 text-type-helper font-semibold text-white shadow-lg backdrop-blur-xs">
                                 <Maximize2 className="h-4 w-4 text-blue-400" /> Phóng to xem rõ ảnh
                               </span>
                             </div>
@@ -709,14 +709,14 @@ export default function StudentExamTakePage() {
  {/* Answer area */}
  {currentQ.type === 'ESSAY' ? (
  <div className="space-y-3 pt-2">
- <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">Bài làm tự luận</label>
+ <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">Bài làm tự luận</label>
  <textarea
  value={currentAns.textAnswer || ''}
  onChange={(e) => handleEssayChange(currentQ.questionId, e.target.value)}
- className="min-h-[260px] w-full resize-y rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4 text-[15px] leading-7 text-slate-800 dark:text-slate-200 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+ className="min-h-[260px] w-full resize-y rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4 text-type-reading text-slate-800 dark:text-slate-200 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
  placeholder="Nhập bài làm của bạn..."
  />
- <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
+ <div className="flex flex-wrap items-center justify-between gap-3 text-type-helper text-slate-500 dark:text-slate-400">
  <span>{(currentAns.textAnswer || '').length} ký tự · Tự động lưu khi nhập</span>
  <label className="cursor-pointer rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">
  Đính kèm PDF/DOCX/JPG/PNG
@@ -724,7 +724,7 @@ export default function StudentExamTakePage() {
  </label>
  </div>
  {(currentAns as any).files && (currentAns as any).files.length > 0 && (
- <div className="space-y-1 rounded-lg bg-blue-50 p-3 text-xs text-blue-800">
+ <div className="space-y-1 rounded-lg bg-blue-50 p-3 text-type-helper text-blue-800">
  {(currentAns as any).files.map((file: any) => (
  <div key={file.id || file.url}>📎 {file.fileName || 'Tệp bài làm'}</div>
  ))}
@@ -732,7 +732,7 @@ export default function StudentExamTakePage() {
  )}
  </div>
  ) : currentQ.type === 'FILL_BLANK' ? (
- <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/60 p-4 text-xs font-normal text-slate-600 dark:text-slate-300 space-y-1">
+ <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/60 p-4 text-type-helper font-normal text-slate-600 dark:text-slate-300 space-y-1">
  <p>💡 <strong>Hướng dẫn:</strong> Nhập trực tiếp đáp án vào từng ô trống trong câu hỏi phía trên. Hệ thống tự động ghi nhận và lưu bài làm của bạn khi bạn nhập.</p>
  </div>
  ) : (
@@ -756,9 +756,9 @@ export default function StudentExamTakePage() {
  : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-medium'
  }`}
  >
- <span className="text-xs">{opt.label}</span>
+ <span className="text-type-helper">{opt.label}</span>
  </div>
- <div className="text-xs sm:text-sm leading-relaxed pt-0.5 font-normal text-slate-800 dark:text-slate-200">{opt.content}</div>
+ <div className="text-type-reading pt-0.5 font-normal text-slate-800 dark:text-slate-200">{opt.content}</div>
  </div>
  );
  })}
@@ -771,18 +771,18 @@ export default function StudentExamTakePage() {
  type="button"
  disabled={currentIdx === 0}
  onClick={() => setCurrentIdx((prev) => prev - 1)}
- className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100 text-[15px] font-medium disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-2xs"
+ className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100 text-type-body font-medium disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-2xs"
  >
  <ChevronLeft className="h-4 w-4" /> Câu trước
  </button>
- <span className="text-[15px] font-medium text-slate-500 dark:text-slate-400">
+ <span className="text-type-body font-medium text-slate-500 dark:text-slate-400">
  Câu <strong className="font-semibold text-slate-900 dark:text-slate-100">{currentIdx + 1}</strong> / {totalCount}
  </span>
  <button
  type="button"
  disabled={currentIdx === totalCount - 1}
  onClick={() => setCurrentIdx((prev) => prev + 1)}
- className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[15px] font-medium disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-xs"
+ className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-type-body font-medium disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-xs"
  >
  Câu tiếp <ChevronRight className="h-4 w-4" />
  </button>
@@ -794,12 +794,12 @@ export default function StudentExamTakePage() {
  {/* Sidebar Question Navigator */}
  <aside className="w-full lg:w-80 bg-white dark:bg-slate-900 border-l border-slate-200/90 dark:border-slate-700 p-6 flex flex-col shrink-0 space-y-4">
  <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
- <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100">Danh sách câu hỏi</h3>
- <span className="text-[13px] font-medium text-slate-500 dark:text-slate-400">{answeredCount}/{totalCount} đã hoàn thành</span>
+ <h3 className="text-type-section font-semibold text-slate-900 dark:text-slate-100">Danh sách câu hỏi</h3>
+ <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">{answeredCount}/{totalCount} đã hoàn thành</span>
  </div>
 
  {/* Legend Indicators */}
- <div className="flex items-center justify-between text-[13px] font-medium text-slate-500 dark:text-slate-400 gap-1 pb-1">
+ <div className="flex items-center justify-between text-type-helper font-medium text-slate-500 dark:text-slate-400 gap-1 pb-1">
  <span className="flex items-center gap-1.5">
  <span className="w-2 h-2 rounded-full bg-blue-600"></span> Đã làm ({answeredCount})
  </span>
@@ -839,7 +839,7 @@ export default function StudentExamTakePage() {
  key={q.questionId}
  type="button"
  onClick={() => setCurrentIdx(idx)}
- className={`h-9.5 rounded-xl border text-xs flex items-center justify-center relative transition duration-150 cursor-pointer ${btnStyle}`}
+ className={`h-9.5 rounded-xl border text-type-helper flex items-center justify-center relative transition duration-150 cursor-pointer ${btnStyle}`}
  >
  {idx + 1}
  {isFlagged && <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-amber-200 rounded-full"></span>}
@@ -858,12 +858,12 @@ export default function StudentExamTakePage() {
     size="md"
   >
     <div className="space-y-4">
-      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+      <p className="text-type-helper sm:text-type-body-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
         Bạn có chắc chắn muốn nộp bài thi? Sau khi nộp bài, hệ thống sẽ khóa bài làm và tính điểm ngay lập tức.
       </p>
 
       {/* Statistics Summary - Layout phẳng với đường phân cách thanh mảnh */}
-      <div className="divide-y divide-slate-100 dark:divide-slate-800 text-xs sm:text-sm">
+      <div className="divide-y divide-slate-100 dark:divide-slate-800 text-type-helper sm:text-type-body-sm">
         <div className="flex items-center justify-between py-2.5 text-slate-600 dark:text-slate-400">
           <span>Tổng số câu hỏi</span>
           <span className="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">{totalCount}</span>
@@ -908,12 +908,12 @@ export default function StudentExamTakePage() {
     size="md"
   >
     <div className="space-y-4">
-      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+      <p className="text-type-helper sm:text-type-body-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
         Gửi yêu cầu trợ giúp tới giám thị phòng thi nếu gặp trục trặc kỹ thuật trong quá trình làm bài.
       </p>
 
       <div className="space-y-2">
-        <label className="block text-[15px] font-medium text-slate-800 dark:text-slate-100">
+        <label className="block text-type-body font-medium text-slate-800 dark:text-slate-100">
           Chọn loại sự cố gặp phải:
         </label>
         <div className="grid grid-cols-2 gap-2">
@@ -922,7 +922,7 @@ export default function StudentExamTakePage() {
               key={quickMsg}
               type="button"
               onClick={() => setIncidentText(quickMsg)}
-              className={`p-2.5 rounded-xl text-left text-xs font-medium border transition cursor-pointer ${
+              className={`p-2.5 rounded-xl text-left text-type-helper font-medium border transition cursor-pointer ${
                 incidentText === quickMsg
                   ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-500 text-blue-700 dark:text-blue-300'
                   : 'bg-slate-50/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:bg-blue-50/40 hover:border-blue-300 text-slate-700 dark:text-slate-300'
@@ -935,7 +935,7 @@ export default function StudentExamTakePage() {
       </div>
 
       <div className="space-y-1.5">
-        <label className="block text-[15px] font-medium text-slate-800 dark:text-slate-100">
+        <label className="block text-type-body font-medium text-slate-800 dark:text-slate-100">
           Mô tả chi tiết:
         </label>
         <textarea
@@ -943,12 +943,12 @@ export default function StudentExamTakePage() {
           value={incidentText}
           onChange={(e) => setIncidentText(e.target.value)}
           placeholder="Mô tả cụ thể vấn đề bạn đang gặp phải..."
-          className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition resize-none shadow-2xs"
+          className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition resize-none shadow-2xs"
         />
       </div>
 
       {incidentMsg && (
-        <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-200 text-xs font-semibold text-center">
+        <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-200 text-type-helper font-semibold text-center">
           {incidentMsg}
         </div>
       )}
@@ -985,27 +985,27 @@ export default function StudentExamTakePage() {
             <Shield className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Cảnh báo vi phạm quy chế thi</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Hệ thống giám sát phòng thi trực tuyến</p>
+            <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">Cảnh báo vi phạm quy chế thi</h3>
+            <p className="text-type-helper text-slate-500 dark:text-slate-400">Hệ thống giám sát phòng thi trực tuyến</p>
           </div>
         </div>
 
         <div className="p-6 space-y-4">
           <div className="space-y-1">
-            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Hành vi ghi nhận:</span>
-            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-relaxed">
+            <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">Hành vi ghi nhận:</span>
+            <p className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 leading-relaxed">
               {violationModal.reason}
             </p>
           </div>
 
-          <div className="flex items-center justify-between py-2.5 border-y border-slate-100 dark:border-slate-800 text-xs">
+          <div className="flex items-center justify-between py-2.5 border-y border-slate-100 dark:border-slate-800 text-type-helper">
             <span className="text-slate-600 dark:text-slate-400">Số lần vi phạm:</span>
             <span className="font-semibold text-slate-900 dark:text-slate-100">
               {violationModal.violationCount} / {violationModal.maxAllowed} lần
             </span>
           </div>
 
-          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+          <p className="text-type-helper text-slate-500 dark:text-slate-400 leading-relaxed">
             Vui lòng không thoát toàn màn hình hoặc chuyển sang ứng dụng khác. Nếu vi phạm quá {violationModal.maxAllowed} lần, bài thi sẽ tự động khóa và nộp bài.
           </p>
 
@@ -1039,17 +1039,17 @@ export default function StudentExamTakePage() {
             <Shield className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">Bài thi đã được nộp tự động</h3>
-            <p className="text-[13px] text-slate-500 dark:text-slate-400">Vượt quá số lần vi phạm quy chế cho phép</p>
+            <h3 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">Bài thi đã được nộp tự động</h3>
+            <p className="text-type-helper text-slate-500 dark:text-slate-400">Vượt quá số lần vi phạm quy chế cho phép</p>
           </div>
         </div>
 
         <div className="p-6 space-y-4">
           <div className="space-y-1.5">
-            <p className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 leading-relaxed">
+            <p className="text-type-body font-semibold text-slate-900 dark:text-slate-100 leading-relaxed">
               Bạn đã vi phạm quy chế thi <span className="text-rose-600 dark:text-rose-400 font-semibold">{violationSubmittedModal.violationCount}/{violationSubmittedModal.maxAllowed}</span> lần cho phép.
             </p>
-            <p className="text-[13.5px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            <p className="text-type-helper text-slate-500 dark:text-slate-400 leading-relaxed">
               Toàn bộ dữ liệu bài làm và nhật ký giám sát đã được gửi về cho giám thị phòng thi.
             </p>
           </div>
@@ -1093,7 +1093,7 @@ export default function StudentExamTakePage() {
           {
             title: 'Lưu ý giám sát an toàn thi',
             content: (
-              <div className="space-y-2 text-xs text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
+              <div className="space-y-2 text-type-helper text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
                 <p>• Mọi thay đổi đáp án được tự động đồng bộ tức thời với máy chủ.</p>
                 <p>• Không bấm F5, không chuyển tab hoặc mở ứng dụng ngoài để tránh bị ghi nhận vi phạm quy chế.</p>
               </div>

@@ -145,18 +145,18 @@ export function RegradeReviewDrawer({
             <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
                     {shortAvatar}
                   </div>
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h2 className="text-[18px] font-semibold leading-snug text-slate-900 dark:text-white break-words">
+                      <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words">
                         Thẩm định Đơn Phúc khảo
                       </h2>
                       <IdentifierBadge tone="neutral">{selectedAppeal.student.studentCode}</IdentifierBadge>
                     </div>
-                    <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400 mt-1 truncate">
+                    <p className="text-type-helper font-medium text-slate-500 dark:text-slate-400 mt-1 truncate">
                       Sinh viên: <strong className="font-semibold text-slate-900 dark:text-slate-100">{selectedAppeal.student.fullName}</strong>
                       {selectedAppeal.student.class?.code ? ` (${selectedAppeal.student.class.code})` : ''}
                     </p>
@@ -182,15 +182,15 @@ export function RegradeReviewDrawer({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                    <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                    <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                       Thông tin hồ sơ phúc khảo
                     </h3>
                   </div>
-                  <StatusBadge status={badgeStatus} className="text-xs" />
+                  <StatusBadge status={badgeStatus} className="text-type-helper" />
                 </div>
 
                 <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
-                  <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                  <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                     <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-medium shrink-0">
                       <BookOpen className="h-4 w-4 text-blue-600 shrink-0" />
                       Môn thi:
@@ -200,7 +200,7 @@ export function RegradeReviewDrawer({
                     </span>
                   </div>
 
-                  <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                  <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                     <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-medium shrink-0">
                       <Award className="h-4 w-4 text-blue-600 shrink-0" />
                       Điểm thi ban đầu:
@@ -210,7 +210,7 @@ export function RegradeReviewDrawer({
                     </span>
                   </div>
 
-                  <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                  <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                     <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-medium shrink-0">
                       <GraduationCap className="h-4 w-4 text-blue-600 shrink-0" />
                       Lớp sinh viên:
@@ -220,7 +220,7 @@ export function RegradeReviewDrawer({
                     </span>
                   </div>
 
-                  <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                  <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                     <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-medium shrink-0">
                       <Clock className="h-4 w-4 text-blue-600 shrink-0" />
                       Thời gian gửi đơn:
@@ -247,7 +247,7 @@ export function RegradeReviewDrawer({
                         router.push(targetUrl);
                       }}
                       leftIcon={<ExternalLink className="h-3.5 w-3.5" />}
-                      className="flex-1 justify-center text-xs font-semibold shadow-2xs"
+                      className="flex-1 justify-center text-type-helper font-semibold shadow-2xs"
                     >
                       Chấm lại trên Rubric
                     </Button>
@@ -258,7 +258,7 @@ export function RegradeReviewDrawer({
                       size="sm"
                       onClick={() => setViewingAttemptModal(true)}
                       leftIcon={<Eye className="h-3.5 w-3.5 text-blue-600" />}
-                      className="flex-1 justify-center text-xs font-semibold"
+                      className="flex-1 justify-center text-type-helper font-semibold"
                     >
                       Xem toàn bộ bài làm
                     </Button>
@@ -270,11 +270,11 @@ export function RegradeReviewDrawer({
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                  <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                     Lý do &amp; Nguyện vọng xin phúc khảo
                   </h3>
                 </div>
-                <div className="rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/90 dark:border-slate-800 p-3.5 text-slate-800 dark:text-slate-200 leading-relaxed font-normal text-[14.5px] flex items-start gap-2.5 shadow-2xs">
+                <div className="rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/90 dark:border-slate-800 p-3.5 text-slate-800 dark:text-slate-200 leading-relaxed font-normal text-type-body-sm flex items-start gap-2.5 shadow-2xs">
                   <MessageSquareQuote className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
                   <span className="flex-1 break-words">{selectedAppeal.reason}</span>
                 </div>
@@ -284,7 +284,7 @@ export function RegradeReviewDrawer({
               <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-2">
                   <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                  <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                     Quyết định thẩm định &amp; Chấm lại
                   </h3>
                 </div>
@@ -294,7 +294,7 @@ export function RegradeReviewDrawer({
                   <button
                     type="button"
                     onClick={() => setReviewStatus('APPROVED_REGRADE')}
-                    className={`flex items-center justify-center gap-2 rounded-xl py-2 px-3 text-[13px] font-semibold transition cursor-pointer ${
+                    className={`flex items-center justify-center gap-2 rounded-xl py-2 px-3 text-type-helper font-semibold transition cursor-pointer ${
                       reviewStatus === 'APPROVED_REGRADE'
                         ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs ring-1 ring-emerald-500/30'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
@@ -307,7 +307,7 @@ export function RegradeReviewDrawer({
                   <button
                     type="button"
                     onClick={() => setReviewStatus('REJECTED')}
-                    className={`flex items-center justify-center gap-2 rounded-xl py-2 px-3 text-[13px] font-semibold transition cursor-pointer ${
+                    className={`flex items-center justify-center gap-2 rounded-xl py-2 px-3 text-type-helper font-semibold transition cursor-pointer ${
                       reviewStatus === 'REJECTED'
                         ? 'bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 shadow-xs ring-1 ring-rose-500/30'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
@@ -320,7 +320,7 @@ export function RegradeReviewDrawer({
 
                 {reviewStatus === 'APPROVED_REGRADE' && (
                   <div className="space-y-1.5 pt-1">
-                    <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                    <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">
                       Điểm số mới sau phúc khảo (Thang điểm 10):
                     </label>
                     <div className="relative">
@@ -331,10 +331,10 @@ export function RegradeReviewDrawer({
                         max="10"
                         value={revisedScore}
                         onChange={(e) => setRevisedScore(e.target.value)}
-                        className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 pr-14 text-[15px] font-semibold text-emerald-600 dark:text-emerald-400 focus:border-emerald-500 focus:outline-none transition shadow-2xs"
+                        className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 pr-14 text-type-body font-semibold text-emerald-600 dark:text-emerald-400 focus:border-emerald-500 focus:outline-none transition shadow-2xs"
                         placeholder="Nhập điểm mới..."
                       />
-                      <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 pointer-events-none">
+                      <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-type-helper font-semibold text-slate-400 pointer-events-none">
                         / 10 đ
                       </span>
                     </div>
@@ -342,14 +342,14 @@ export function RegradeReviewDrawer({
                 )}
 
                 <div className="space-y-1.5">
-                  <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                  <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">
                     Ghi chú &amp; Nhận xét của CB Thẩm định:
                   </label>
                   <textarea
                     rows={3}
                     value={reviewerNote}
                     onChange={(e) => setReviewerNote(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-[15px] font-normal text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-blue-600 focus:outline-none transition shadow-2xs"
+                    className="w-full rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-type-body font-normal text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-blue-600 focus:outline-none transition shadow-2xs"
                     placeholder="Nhập lý do chấp nhận / từ chối hoặc giải trình điểm chấm lại..."
                   />
                 </div>

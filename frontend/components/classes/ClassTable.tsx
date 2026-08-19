@@ -67,13 +67,13 @@ export function ClassTable({
                     <button
                       type="button"
                       onClick={() => onDetail(c)}
-                      className="tabular-nums text-[15px] leading-[22px] font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer"
+                      className="tabular-nums text-type-body leading-[22px] font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer"
                     >
                       <IdentifierBadge>{c.code}</IdentifierBadge>
                     </button>
                   </div>
 
-                  <span className="inline-flex items-center gap-1 rounded-lg bg-slate-50 px-2.5 py-0.5 text-[13px] font-medium text-slate-600 border border-slate-200">
+                  <span className="inline-flex items-center gap-1 rounded-lg bg-slate-50 px-2.5 py-0.5 text-type-helper font-medium text-slate-600 border border-slate-200">
                     <Users className="h-3.5 w-3.5 text-slate-500" /> {studentCount} SV
                   </span>
                 </div>
@@ -81,19 +81,19 @@ export function ClassTable({
                 <div>
                   <h4
                     onClick={() => onDetail(c)}
-                    className="text-[18px] font-semibold text-slate-900 leading-snug cursor-pointer hover:text-primary-600 transition"
+                    className="text-type-card font-semibold text-slate-900 leading-snug cursor-pointer hover:text-primary-600 transition"
                   >
                     {c.name}
                   </h4>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-[14px] font-normal text-slate-600 pt-1">
+                <div className="flex items-center gap-1.5 text-type-body-sm font-normal text-slate-600 pt-1">
                   <Building2 className="h-4 w-4 text-slate-400 shrink-0" />
                   <span className="truncate">{deptName}</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-[14px] font-medium">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-type-body-sm font-medium">
                 <button
                   type="button"
                   onClick={() => onDetail(c)}
@@ -158,7 +158,7 @@ export function ClassTable({
                 <button
                   type="button"
                   onClick={() => onDetail(c)}
-                  className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
+                  className="tabular-nums text-type-helper font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
                 >
                   <IdentifierBadge tone="blue">{c.code}</IdentifierBadge>
                 </button>
@@ -167,12 +167,12 @@ export function ClassTable({
                 <div className="min-w-0">
                   <h4
                     onClick={() => onDetail(c)}
-                    className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                    className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
                   >
                     {c.name}
                   </h4>
 
-                  <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                  <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                     <span className="flex items-center gap-1">
                       <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       <span className="text-slate-700 dark:text-slate-300 font-medium">{deptName}</span>
@@ -227,8 +227,8 @@ export function ClassTable({
   // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
   return (
     <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-      <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
-        <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
+      <table className="ui-table w-full text-left text-type-body text-slate-700 border-collapse">
+        <thead className="bg-slate-50 text-type-body-sm font-medium tracking-wider text-slate-600 border-b border-slate-200">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input
@@ -272,7 +272,7 @@ export function ClassTable({
                     <button
                       type="button"
                       onClick={() => onDetail(c)}
-                      className="tabular-nums text-[15px] leading-[22px] font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer"
+                      className="tabular-nums text-type-body leading-[22px] font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer"
                     >
                       <IdentifierBadge>{c.code}</IdentifierBadge>
                     </button>
@@ -284,7 +284,7 @@ export function ClassTable({
                     <button
                       type="button"
                       onClick={() => onDetail(c)}
-                      className="font-medium text-slate-900 cursor-pointer hover:text-primary-600 transition text-[15px]"
+                      className="font-medium text-slate-900 cursor-pointer hover:text-primary-600 transition text-type-body"
                     >
                       {c.name}
                     </button>
@@ -292,13 +292,13 @@ export function ClassTable({
                 )}
 
                 {visibleColumns.department !== false && (
-                  <td className="p-3.5 min-w-[200px] text-[15px] font-normal text-slate-700">
+                  <td className="p-3.5 min-w-[200px] text-type-body font-normal text-slate-700">
                     {deptName}
                   </td>
                 )}
 
                 {visibleColumns.studentCount !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap text-type-body">
                     <span className="font-medium text-slate-900">{studentCount} sinh viên</span>
                   </td>
                 )}
@@ -323,7 +323,7 @@ export function ClassTable({
                               closeMenu();
                               onDetail(c);
                             }}
-                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[15px] font-medium transition cursor-pointer select-none"
+                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
                           >
                             <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                             <span>Xem chi tiết</span>
@@ -337,7 +337,7 @@ export function ClassTable({
                                   closeMenu();
                                   onEdit(c);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[15px] font-medium transition cursor-pointer select-none"
+                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
                               >
                                 <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                                 <span>Chỉnh sửa</span>
@@ -351,7 +351,7 @@ export function ClassTable({
                                   closeMenu();
                                   onDelete(c.id);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-[15px] font-medium transition cursor-pointer select-none"
+                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-type-body font-medium transition cursor-pointer select-none"
                               >
                                 <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400" />
                                 <span>Xóa</span>

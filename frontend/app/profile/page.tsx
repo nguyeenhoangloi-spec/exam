@@ -281,19 +281,19 @@ export default function ProfilePage() {
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-center sm:justify-start gap-2">
-                <span className={`inline-flex items-center gap-1 rounded-lg px-3 py-0.5 text-[13px] font-semibold border ${roleBadgeBg}`}>
+                <span className={`inline-flex items-center gap-1 rounded-lg px-3 py-0.5 text-type-helper font-semibold border ${roleBadgeBg}`}>
                   <BadgeCheck className="h-4 w-4" />
                   <span>{roleName}</span>
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2.5 py-0.5 text-[13px] font-semibold text-blue-100 border border-white/20">
+                <span className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2.5 py-0.5 text-type-helper font-semibold text-blue-100 border border-white/20">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
                   <span>Đã xác thực</span>
                 </span>
               </div>
 
-              <h1 className="text-[28px] font-semibold leading-[36px] text-white tracking-tight">{displayName}</h1>
+              <h1 className="text-type-page font-semibold leading-[36px] text-white tracking-tight">{displayName}</h1>
 
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-[15px] text-blue-100/90 font-normal leading-[22px]">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-type-body text-blue-100/90 font-normal leading-[22px]">
                 <span className="flex items-center gap-1">
                   <Sparkles className="h-4 w-4 text-blue-300" />
                   Mã số: <strong className="font-semibold text-white">{userCode}</strong>
@@ -311,7 +311,7 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={() => router.push('/settings')}
-              className="flex items-center gap-2 rounded-xl bg-white hover:bg-slate-100 text-blue-700 px-4 py-2 text-[15px] font-medium shadow-sm transition active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 rounded-xl bg-white hover:bg-slate-100 text-blue-700 px-4 py-2 text-type-body font-medium shadow-sm transition active:scale-95 cursor-pointer"
             >
               <Settings className="h-4 w-4 text-blue-700" />
               <span>Cài đặt</span>
@@ -320,7 +320,7 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={() => router.push('/change-password')}
-              className="flex items-center gap-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 text-[15px] font-medium transition active:scale-95 cursor-pointer border border-blue-400/20"
+              className="flex items-center gap-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 text-type-body font-medium transition active:scale-95 cursor-pointer border border-blue-400/20"
             >
               <Lock className="h-4 w-4 text-white" />
               <span>Đổi mật khẩu</span>
@@ -332,29 +332,29 @@ export default function ProfilePage() {
       {/* 4 KPI Statistic Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-500 tracking-wider">Hồ sơ cá nhân</span>
-          <div className="text-[20px] font-semibold text-slate-900">{profileCompletion}% Hoàn tất</div>
-          <span className="text-[13px] font-semibold text-emerald-600 flex items-center gap-1">
+          <span className="text-type-helper font-semibold text-slate-500 tracking-wider">Hồ sơ cá nhân</span>
+          <div className="text-type-section font-semibold text-slate-900">{profileCompletion}% Hoàn tất</div>
+          <span className="text-type-helper font-semibold text-emerald-600 flex items-center gap-1">
             <CheckCircle2 className="h-3.5 w-3.5" /> {profileCompletion === 100 ? 'Tất cả thông tin đã xác thực' : 'Cập nhật thêm thông tin để hoàn tất hồ sơ'}
           </span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-500 tracking-wider">Vai trò hệ thống</span>
-          <div className="text-[20px] font-semibold text-blue-600">{roleName}</div>
-          <span className="text-[13px] font-normal text-slate-500">Quyền hạn truy cập chuẩn</span>
+          <span className="text-type-helper font-semibold text-slate-500 tracking-wider">Vai trò hệ thống</span>
+          <div className="text-type-section font-semibold text-blue-600">{roleName}</div>
+          <span className="text-type-helper font-normal text-slate-500">Quyền hạn truy cập chuẩn</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-500 tracking-wider">Đơn vị quản lý</span>
-          <div className="text-[20px] font-semibold text-slate-900 truncate">{deptOrClass}</div>
-          <span className="text-[13px] font-normal text-slate-500">Hệ thống khảo thí</span>
+          <span className="text-type-helper font-semibold text-slate-500 tracking-wider">Đơn vị quản lý</span>
+          <div className="text-type-section font-semibold text-slate-900 truncate">{deptOrClass}</div>
+          <span className="text-type-helper font-normal text-slate-500">Hệ thống khảo thí</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-500 tracking-wider">Bảo mật tài khoản</span>
-          <div className="text-[20px] font-semibold text-emerald-700">An toàn</div>
-          <span className="text-[13px] font-normal text-slate-500">JWT Token mã hóa 256-bit</span>
+          <span className="text-type-helper font-semibold text-slate-500 tracking-wider">Bảo mật tài khoản</span>
+          <div className="text-type-section font-semibold text-emerald-700">An toàn</div>
+          <span className="text-type-helper font-normal text-slate-500">JWT Token mã hóa 256-bit</span>
         </div>
       </div>
 
@@ -372,40 +372,40 @@ export default function ProfilePage() {
       {/* Tab 1: Info Details */}
       {activeTab === 'info' && (
         <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs space-y-6">
-          <h2 className="text-[20px] font-semibold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+          <h2 className="text-type-section font-semibold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
             <User className="h-5 w-5 text-blue-600" />
             <span>Thông tin tài khoản khảo thí</span>
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[15px] text-slate-700">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-type-body text-slate-700">
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-              <span className="text-[13px] font-semibold text-slate-500 block">Họ và tên đầy đủ</span>
-              <span className="text-[15px] font-medium text-slate-900">{displayName}</span>
+              <span className="text-type-helper font-semibold text-slate-500 block">Họ và tên đầy đủ</span>
+              <span className="text-type-body font-medium text-slate-900">{displayName}</span>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-              <span className="text-[13px] font-semibold text-slate-500 block">Tên đăng nhập hệ thống</span>
-              <span className="text-[15px] font-medium text-slate-900">{profile?.username || '—'}</span>
+              <span className="text-type-helper font-semibold text-slate-500 block">Tên đăng nhập hệ thống</span>
+              <span className="text-type-body font-medium text-slate-900">{profile?.username || '—'}</span>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-              <span className="text-[13px] font-semibold text-slate-500 block">Mã định danh (ID/Code)</span>
-              <span className="text-[15px] font-semibold text-blue-700">{userCode}</span>
+              <span className="text-type-helper font-semibold text-slate-500 block">Mã định danh (ID/Code)</span>
+              <span className="text-type-body font-semibold text-blue-700">{userCode}</span>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-              <span className="text-[13px] font-semibold text-slate-500 block">Email liên hệ</span>
-              <span className="text-[15px] font-medium text-slate-900">{email}</span>
+              <span className="text-type-helper font-semibold text-slate-500 block">Email liên hệ</span>
+              <span className="text-type-body font-medium text-slate-900">{email}</span>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-              <span className="text-[13px] font-semibold text-slate-500 block">Số điện thoại liên lạc</span>
-              <span className="text-[15px] font-medium text-slate-900">{phone}</span>
+              <span className="text-type-helper font-semibold text-slate-500 block">Số điện thoại liên lạc</span>
+              <span className="text-type-body font-medium text-slate-900">{phone}</span>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-              <span className="text-[13px] font-semibold text-slate-500 block">Đơn vị / Lớp học</span>
-              <span className="text-[15px] font-medium text-slate-900">{deptOrClass}</span>
+              <span className="text-type-helper font-semibold text-slate-500 block">Đơn vị / Lớp học</span>
+              <span className="text-type-body font-medium text-slate-900">{deptOrClass}</span>
             </div>
           </div>
         </div>
@@ -414,25 +414,25 @@ export default function ProfilePage() {
       {/* Tab 2: Permissions */}
       {activeTab === 'permissions' && (
         <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs space-y-6">
-          <h2 className="text-[20px] font-semibold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+          <h2 className="text-type-section font-semibold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-blue-600" />
             <span>Phân quyền và Nhật ký hoạt động</span>
           </h2>
 
           <div className="space-y-3">
             <div className="p-4 rounded-xl bg-blue-50/60 border border-blue-100 space-y-1">
-              <span className="text-[15px] font-semibold text-blue-700 block">Quyền hạn tài khoản ({roleName})</span>
-              <p className="text-[15px] font-normal text-slate-700 leading-relaxed">
+              <span className="text-type-body font-semibold text-blue-700 block">Quyền hạn tài khoản ({roleName})</span>
+              <p className="text-type-body font-normal text-slate-700 leading-relaxed">
                 Tài khoản của bạn được cấp quyền <strong className="font-semibold text-slate-900">{roleName}</strong> trong hệ thống quản lý khảo thí. Bạn có thể truy cập và thao tác đúng phạm vi chức năng được giao.
               </p>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
-              <span className="text-[15px] font-semibold text-slate-900 flex items-center gap-1.5">
+              <span className="text-type-body font-semibold text-slate-900 flex items-center gap-1.5">
                 <Activity className="h-4 w-4 text-blue-600" />
                 <span>Phiên đăng nhập gần đây</span>
               </span>
-              <p className="text-[14px] font-normal text-slate-500">Trình duyệt web • IP 127.0.0.1 • Đã xác thực JWT token thành công</p>
+              <p className="text-type-body-sm font-normal text-slate-500">Trình duyệt web • IP 127.0.0.1 • Đã xác thực JWT token thành công</p>
             </div>
           </div>
         </div>
@@ -441,7 +441,7 @@ export default function ProfilePage() {
       {/* Tab 3: Edit Profile Form */}
       {activeTab === 'edit' && (
         <form onSubmit={handleSaveProfile} className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs space-y-4">
-          <h2 className="text-[20px] font-semibold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+          <h2 className="text-type-section font-semibold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
             <User className="h-5 w-5 text-blue-600" />
             <span>Chỉnh sửa thông tin tài khoản & liên hệ</span>
           </h2>
@@ -449,9 +449,9 @@ export default function ProfilePage() {
           <div className="space-y-3">
             {/* Avatar Upload Section */}
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3">
-              <label className="block text-[15px] font-medium text-slate-900">Ảnh đại diện tài khoản</label>
+              <label className="block text-type-body font-medium text-slate-900">Ảnh đại diện tài khoản</label>
               <div className="flex flex-wrap items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white border border-slate-300 font-semibold text-blue-600 text-xl shadow-xs overflow-hidden shrink-0">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white border border-slate-300 font-semibold text-blue-600 text-type-section shadow-xs overflow-hidden shrink-0">
                   {avatarUrl ? (
                     <DynamicImage src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
                   ) : (
@@ -481,7 +481,7 @@ export default function ProfilePage() {
                       </Button>
                     )}
                   </div>
-                  <p className="text-[13px] font-normal text-slate-500">
+                  <p className="text-type-helper font-normal text-slate-500">
                     Chấp nhận định dạng PNG, JPG, WEBP. Dung lượng tối đa 5MB.
                   </p>
                 </div>
@@ -489,45 +489,45 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-[15px] font-medium text-slate-900">Họ và tên hiển thị</label>
+              <label className="block text-type-body font-medium text-slate-900">Họ và tên hiển thị</label>
               <input
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
- className="w-full rounded-xl border border-slate-300 p-3 text-[15px] font-normal text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+ className="w-full rounded-xl border border-slate-300 p-3 text-type-body font-normal text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-[15px] font-medium text-slate-900">Email nhận thông báo</label>
+              <label className="block text-type-body font-medium text-slate-900">Email nhận thông báo</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
- className="w-full rounded-xl border border-slate-300 p-3 text-[15px] font-normal text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+ className="w-full rounded-xl border border-slate-300 p-3 text-type-body font-normal text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-[15px] font-medium text-slate-900">Số điện thoại cá nhân</label>
+              <label className="block text-type-body font-medium text-slate-900">Số điện thoại cá nhân</label>
               <input
                 type="text"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
- className="w-full rounded-xl border border-slate-300 p-3 text-[15px] font-normal text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+ className="w-full rounded-xl border border-slate-300 p-3 text-type-body font-normal text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-[15px] font-medium text-slate-900">Địa chỉ liên hệ</label>
+              <label className="block text-type-body font-medium text-slate-900">Địa chỉ liên hệ</label>
               <input
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
- className="w-full rounded-xl border border-slate-300 p-3 text-[15px] font-normal text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+ className="w-full rounded-xl border border-slate-300 p-3 text-type-body font-normal text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
             </div>
           </div>

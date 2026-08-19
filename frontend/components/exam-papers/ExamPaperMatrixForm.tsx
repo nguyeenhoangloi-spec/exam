@@ -129,16 +129,16 @@ export function ExamPaperMatrixForm({
       {/* ── HEADER (Thuần túy, không khung, không nền, không icon) ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-6 py-4 border-b border-slate-100 dark:border-slate-800">
         <div>
-          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+          <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
             Tạo đề thi theo ma trận
           </h3>
-          <p className="text-xs font-normal text-slate-400 dark:text-slate-500 mt-0.5">
+          <p className="text-type-helper font-normal text-slate-400 dark:text-slate-500 mt-0.5">
             Tự động chọn ngẫu nhiên từ Ngân hàng đề
           </p>
         </div>
 
         {/* Preset switch — không khung, không nền */}
-        <div className="flex items-center gap-3 text-xs font-semibold shrink-0">
+        <div className="flex items-center gap-3 text-type-helper font-semibold shrink-0">
           <button
             type="button"
             onClick={() => handleDurationChange('60')}
@@ -170,14 +170,14 @@ export function ExamPaperMatrixForm({
 
           {/* 1. Loại đề */}
           <div className="space-y-1.5">
-            <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">
+            <label className="block text-type-body font-medium text-slate-900 dark:text-slate-100">
               Loại đề <span className="text-rose-500">*</span>
             </label>
             <div className="grid grid-cols-3 gap-1">
               <button
                 type="button"
                 onClick={() => switchType('TRAC_NGHIEM')}
-                className={`flex h-10 items-center justify-center gap-1 rounded-xl text-xs font-semibold border transition cursor-pointer ${examType === 'TRAC_NGHIEM'
+                className={`flex h-10 items-center justify-center gap-1 rounded-xl text-type-helper font-semibold border transition cursor-pointer ${examType === 'TRAC_NGHIEM'
                     ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
                     : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                   }`}
@@ -187,7 +187,7 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => switchType('DIEN_LO')}
-                className={`flex h-10 items-center justify-center gap-1 rounded-xl text-xs font-semibold border transition cursor-pointer ${examType === 'DIEN_LO' || examType === 'FILL_BLANK'
+                className={`flex h-10 items-center justify-center gap-1 rounded-xl text-type-helper font-semibold border transition cursor-pointer ${examType === 'DIEN_LO' || examType === 'FILL_BLANK'
                     ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
                     : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                   }`}
@@ -197,7 +197,7 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => switchType('TU_LUAN')}
-                className={`flex h-10 items-center justify-center gap-1 rounded-xl text-xs font-semibold border transition cursor-pointer ${examType === 'TU_LUAN'
+                className={`flex h-10 items-center justify-center gap-1 rounded-xl text-type-helper font-semibold border transition cursor-pointer ${examType === 'TU_LUAN'
                     ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
                     : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                   }`}
@@ -205,14 +205,14 @@ export function ExamPaperMatrixForm({
                 TL
               </button>
             </div>
-            <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">
+            <p className="text-type-helper text-slate-400 dark:text-slate-500 font-medium">
               {examType === 'DIEN_LO' || examType === 'FILL_BLANK' ? 'Điền vào chỗ trống' : isEssay ? 'Tự luận' : 'Trắc nghiệm'}
             </p>
           </div>
 
           {/* 2. Mã đề gốc */}
           <div className="space-y-1.5">
-            <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">
+            <label className="block text-type-body font-medium text-slate-900 dark:text-slate-100">
               Mã đề gốc
             </label>
             <input
@@ -221,13 +221,13 @@ export function ExamPaperMatrixForm({
               value={formData.paperCode}
               onChange={(e) => setFormData((p: any) => ({ ...p, paperCode: e.target.value }))}
               placeholder="101"
-              className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 px-3.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition"
+              className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition"
             />
           </div>
 
           {/* 3. Số mã đảo */}
           <div className="space-y-1.5">
-            <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">
+            <label className="block text-type-body font-medium text-slate-900 dark:text-slate-100">
               Số mã đảo
             </label>
             <input
@@ -236,13 +236,13 @@ export function ExamPaperMatrixForm({
               max={10}
               value={formData.variantCount}
               onChange={(e) => setFormData((p: any) => ({ ...p, variantCount: e.target.value }))}
-              className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 px-3.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition"
+              className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition"
             />
           </div>
 
           {/* 4. Thời gian */}
           <div className="space-y-1.5">
-            <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">
+            <label className="block text-type-body font-medium text-slate-900 dark:text-slate-100">
               Thời gian (phút)
             </label>
             <input
@@ -251,10 +251,10 @@ export function ExamPaperMatrixForm({
               max={scheduleDuration || 180}
               value={formData.durationMinutes}
               onChange={(e) => handleDurationChange(e.target.value)}
-              className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 px-3.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition"
+              className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition"
             />
             {scheduleDuration > 0 && (
-              <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">
+              <p className="text-type-helper text-slate-400 dark:text-slate-500 font-medium">
                 Tối đa: {scheduleDuration} phút
               </p>
             )}
@@ -263,24 +263,24 @@ export function ExamPaperMatrixForm({
 
         {/* ── ROW 2: Ca thi (Thuần túy, không khung, không nền, không icon thừa) ── */}
         <div className="space-y-1 pt-1">
-          <label className="block text-[15px] font-medium text-slate-900 dark:text-slate-100">
+          <label className="block text-type-body font-medium text-slate-900 dark:text-slate-100">
             Chọn Ca thi / Lịch thi <span className="text-rose-500">*</span>
           </label>
 
           {selectedSchedule ? (
             <div className="py-0.5 space-y-0.5">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-600 text-white tracking-wide">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-type-helper font-semibold bg-blue-600 text-white tracking-wide">
                   {(selectedSchedule as any)?.mode === 'MOCK' ? 'THI THỬ' : 'CHÍNH THỨC'}
                 </span>
-                <span className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+                <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
                   {(selectedSchedule as any).subjectName || (selectedSchedule as any).subject?.subjectName || 'Môn thi'}
                 </span>
-                <span className="text-xs font-medium text-slate-400">
+                <span className="text-type-helper font-medium text-slate-400">
                   #{(selectedSchedule as any).subjectCode || (selectedSchedule as any).subject?.subjectCode || 'MH'}
                 </span>
                 {((selectedSchedule as any).periodName || (selectedSchedule as any).examPeriod?.name) && (
-                  <span className="text-xs font-normal text-slate-400 hidden sm:inline">
+                  <span className="text-type-helper font-normal text-slate-400 hidden sm:inline">
                     — {(selectedSchedule as any).periodName || (selectedSchedule as any).examPeriod?.name}
                   </span>
                 )}
@@ -297,7 +297,7 @@ export function ExamPaperMatrixForm({
                 </button>
               </div>
 
-              <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
+              <div className="flex items-center gap-3 text-type-helper text-slate-500 dark:text-slate-400 flex-wrap">
                 {selectedSchedule.examDate && (
                   <span>{fmt(selectedSchedule.examDate)}</span>
                 )}
@@ -313,7 +313,7 @@ export function ExamPaperMatrixForm({
             </div>
           ) : (
             <div className="flex items-center gap-2 py-1">
-              <span className="text-xs font-medium text-slate-500">Chưa chọn ca thi</span>
+              <span className="text-type-helper font-medium text-slate-500">Chưa chọn ca thi</span>
               <button
                 type="button"
                 onClick={() => setShowPanel(true)}
@@ -338,8 +338,8 @@ export function ExamPaperMatrixForm({
                 <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden">
                   <div className="flex items-center justify-between px-6 py-4 bg-blue-600 text-white">
                     <div>
-                      <p className="text-lg font-semibold text-white tracking-tight">Chọn Ca thi / Lịch thi</p>
-                      <p className="text-xs font-semibold text-blue-100 mt-0.5">
+                      <p className="text-type-card font-semibold text-white tracking-tight">Chọn Ca thi / Lịch thi</p>
+                      <p className="text-type-helper font-semibold text-blue-100 mt-0.5">
                         {pending.length} ca chưa có đề · {created.length} ca đã có đề
                       </p>
                     </div>
@@ -355,12 +355,12 @@ export function ExamPaperMatrixForm({
                   <div className="grid grid-cols-2 divide-x divide-slate-100 dark:divide-slate-700" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
                     <div>
                       <div className="sticky top-0 bg-slate-50 dark:bg-slate-800 px-4 py-2 border-b border-slate-100 dark:border-slate-700 z-10">
-                        <span className="text-xs font-semibold text-slate-500 tracking-wider">
+                        <span className="text-type-helper font-semibold text-slate-500 tracking-wider">
                           Chưa có đề ({pending.length})
                         </span>
                       </div>
                       {pending.length === 0 ? (
-                        <p className="px-4 py-6 text-xs text-slate-400 text-center font-semibold">Không có ca thi cần tạo đề</p>
+                        <p className="px-4 py-6 text-type-helper text-slate-400 text-center font-semibold">Không có ca thi cần tạo đề</p>
                       ) : (
                         pending.map((s: any) => {
                           const { subCode, subName, periodName } = label(s);
@@ -373,13 +373,13 @@ export function ExamPaperMatrixForm({
                               className={`w-full text-left px-4 py-3 border-b border-slate-100 dark:border-slate-800 last:border-0 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer ${active ? 'bg-blue-50 dark:bg-blue-950/50 border-l-[3px] border-l-blue-500' : ''
                                 }`}
                             >
-                              <p className={`text-xs font-semibold truncate ${active ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-100'}`}>
+                              <p className={`text-type-helper font-semibold truncate ${active ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-100'}`}>
                                 [{subCode}] {subName}
                               </p>
-                              <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5 truncate">
+                              <p className="text-type-helper text-slate-500 dark:text-slate-400 font-semibold mt-0.5 truncate">
                                 {periodName} · {fmt(s.examDate)}
                               </p>
-                              <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{s.startTime} – {s.endTime}</p>
+                              <p className="text-type-helper text-slate-400 dark:text-slate-500 mt-0.5">{s.startTime} – {s.endTime}</p>
                             </button>
                           );
                         })
@@ -388,7 +388,7 @@ export function ExamPaperMatrixForm({
                       {expired.length > 0 && (
                         <div className="border-t border-slate-200 dark:border-slate-700 bg-slate-100/50 dark:bg-slate-800/50 pt-2">
                           <div className="px-4 py-1.5 bg-slate-200/60 dark:bg-slate-700/60">
-                            <span className="text-xs font-semibold text-slate-500 dark:text-slate-300 tracking-wider">
+                            <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-300 tracking-wider">
                               📁 Đã quá hạn / Đã kết thúc ({expired.length})
                             </span>
                           </div>
@@ -400,15 +400,15 @@ export function ExamPaperMatrixForm({
                                 className="w-full text-left px-4 py-2.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/60 opacity-60 cursor-not-allowed select-none"
                               >
                                 <div className="flex items-center justify-between gap-1">
-                                  <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 truncate">
+                                  <p className="text-type-helper font-semibold text-slate-600 dark:text-slate-300 truncate">
                                     [{subCode}] {subName}
                                   </p>
-                                  <span className="inline-flex items-center gap-[6px] shrink-0 text-[13px] leading-5 font-semibold text-danger-600">
+                                  <span className="inline-flex items-center gap-[6px] shrink-0 text-type-helper leading-5 font-semibold text-danger-600">
                                     <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                                     Đã quá hạn
                                   </span>
                                 </div>
-                                <p className="text-xs text-slate-400 dark:text-slate-500 font-semibold mt-0.5 truncate">
+                                <p className="text-type-helper text-slate-400 dark:text-slate-500 font-semibold mt-0.5 truncate">
                                   {periodName} · {fmt(s.examDate)} ({s.startTime} – {s.endTime})
                                 </p>
                               </div>
@@ -420,12 +420,12 @@ export function ExamPaperMatrixForm({
 
                     <div>
                       <div className="sticky top-0 bg-slate-50 dark:bg-slate-800 px-4 py-2 border-b border-slate-100 dark:border-slate-700 z-10">
-                        <span className="text-xs font-semibold text-slate-500 dark:text-slate-300 tracking-wider">
+                        <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-300 tracking-wider">
                           Đã có đề ({created.length})
                         </span>
                       </div>
                       {created.length === 0 ? (
-                        <p className="px-4 py-6 text-xs text-slate-400 text-center font-semibold">Chưa có</p>
+                        <p className="px-4 py-6 text-type-helper text-slate-400 text-center font-semibold">Chưa có</p>
                       ) : (
                         created.map((s: any) => {
                           const { subCode, subName, periodName } = label(s);
@@ -440,14 +440,14 @@ export function ExamPaperMatrixForm({
                                 }`}
                             >
                               <div className="flex items-center gap-1.5">
-                                <p className={`text-xs font-semibold truncate flex-1 ${active ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'}`}>
+                                <p className={`text-type-helper font-semibold truncate flex-1 ${active ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'}`}>
                                   [{subCode}] {subName}
                                 </p>
-                                <span className="shrink-0 text-[13px] font-semibold text-slate-600 dark:text-slate-300">
+                                <span className="shrink-0 text-type-helper font-semibold text-slate-600 dark:text-slate-300">
                                   {count} đề
                                 </span>
                               </div>
-                              <p className="text-xs text-slate-400 dark:text-slate-500 font-semibold mt-0.5 truncate">
+                              <p className="text-type-helper text-slate-400 dark:text-slate-500 font-semibold mt-0.5 truncate">
                                 {periodName} · {fmt(s.examDate)}
                               </p>
                             </button>
@@ -476,7 +476,7 @@ export function ExamPaperMatrixForm({
         {/* ── ROW 3: Ma trận phân bổ đề thi ── */}
         <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h4 className="text-[15px] font-medium text-slate-700 dark:text-slate-300">
+            <h4 className="text-type-body font-medium text-slate-700 dark:text-slate-300">
               Ma trận phân bổ đề thi
             </h4>
 
@@ -485,7 +485,7 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_COUNT' }))}
-                className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${formData.selectionMode !== 'BY_SCORE'
+                className={`px-3 py-1 rounded-xl text-type-helper font-semibold transition-all cursor-pointer ${formData.selectionMode !== 'BY_SCORE'
                     ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}
@@ -495,7 +495,7 @@ export function ExamPaperMatrixForm({
               <button
                 type="button"
                 onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_SCORE', easyScore: '3', mediumScore: '4', hardScore: '3' }))}
-                className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${formData.selectionMode === 'BY_SCORE'
+                className={`px-3 py-1 rounded-xl text-type-helper font-semibold transition-all cursor-pointer ${formData.selectionMode === 'BY_SCORE'
                     ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}
@@ -513,7 +513,7 @@ export function ExamPaperMatrixForm({
                 { label: 'Khó (Điểm)', key: 'hardScore' },
               ].map(({ label: lb, key }) => (
                 <div key={key} className="space-y-1">
-                  <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">{lb}</label>
+                  <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">{lb}</label>
                   <input
                     type="number"
                     step="0.25"
@@ -521,7 +521,7 @@ export function ExamPaperMatrixForm({
                     max={10}
                     value={(formData as any)[key] || ''}
                     onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
-                    className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 outline-none transition"
+                    className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 outline-none transition"
                   />
                 </div>
               ))}
@@ -534,13 +534,13 @@ export function ExamPaperMatrixForm({
                 { label: 'Khó (Số câu)', key: 'hardCount' },
               ].map(({ label: lb, key }) => (
                 <div key={key} className="space-y-1">
-                  <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">{lb}</label>
+                  <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">{lb}</label>
                   <input
                     type="number"
                     min={0}
                     value={(formData as any)[key]}
                     onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
-                    className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 outline-none transition"
+                    className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 outline-none transition"
                   />
                 </div>
               ))}
@@ -551,17 +551,17 @@ export function ExamPaperMatrixForm({
         {/* ── ROW 4: Cấu hình Media (Không icon, không khung nền thừa) ── */}
         <div className="flex flex-wrap items-center justify-between gap-4 py-1 border-t border-slate-100 dark:border-slate-800 pt-3">
           <div className="flex flex-col min-w-0 flex-1">
-            <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+            <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
               Số lần phát Video/Audio mặc định cho đề thi
             </span>
-            <span className="text-xs font-normal text-slate-400 dark:text-slate-500 mt-0.5">
+            <span className="text-type-helper font-normal text-slate-400 dark:text-slate-500 mt-0.5">
               Tất cả câu hỏi nghe/xem trong đề thi này sẽ tự động áp dụng số lượt phát tối đa này
             </span>
           </div>
           <FilterSelect
             value={formData.mediaMaxPlays || '2'}
             onChange={(e) => setFormData((p: any) => ({ ...p, mediaMaxPlays: e.target.value }))}
-            className="h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-[15px] font-medium text-slate-800 dark:text-slate-200 shadow-2xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none cursor-pointer shrink-0"
+            className="h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-type-body font-medium text-slate-800 dark:text-slate-200 shadow-2xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none cursor-pointer shrink-0"
           >
             <option value="1">1 lần (Ngặt nghèo / Thi Nghe)</option>
             <option value="2">2 lần (Chuẩn Khảo thí / IELTS)</option>
@@ -574,17 +574,17 @@ export function ExamPaperMatrixForm({
         {/* ── ROW 5: Footer ── */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
           {isPublished ? (
-            <p className="text-xs font-semibold text-rose-600 flex items-center gap-1.5">
+            <p className="text-type-helper font-semibold text-rose-600 flex items-center gap-1.5">
               <AlertTriangle className="h-4 w-4 shrink-0 text-rose-500" />
               Lịch thi này đã có đề công bố. Không thể sinh thêm đề tự động.
             </p>
           ) : !isValidMatrix ? (
-            <p className="text-xs font-semibold text-red-600 flex items-center gap-1">
+            <p className="text-type-helper font-semibold text-red-600 flex items-center gap-1">
               <AlertTriangle className="h-3.5 w-3.5" />
               {isByScoreMode ? 'Cần nhập tổng điểm phân bổ > 0' : 'Cần ít nhất 1 câu hỏi'}
             </p>
           ) : (
-            <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+            <span className="text-type-helper font-semibold text-emerald-600 dark:text-emerald-400">
               ✓ Sẵn sàng tạo đề
             </span>
           )}

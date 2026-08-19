@@ -83,7 +83,7 @@ export function RegradeTable({
                     />
                     <IdentifierBadge tone="blue">{item.student.studentCode}</IdentifierBadge>
                     {item.student.class && (
-                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700 truncate">
+                      <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700 truncate">
                         {item.student.class.code || item.student.class.name}
                       </span>
                     )}
@@ -95,7 +95,7 @@ export function RegradeTable({
                 <div>
                   <h3
                     onClick={() => onReview(item)}
-                    className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition line-clamp-1"
+                    className="text-type-body font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition line-clamp-1"
                   >
                     {item.student.fullName}
                   </h3>
@@ -104,23 +104,23 @@ export function RegradeTable({
                 {/* Subject Box */}
                 <div className="bg-slate-50/80 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 space-y-0.5">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs truncate">{subjectName}</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper truncate">{subjectName}</span>
                     {subjectCode && <IdentifierBadge tone="neutral">{subjectCode}</IdentifierBadge>}
                   </div>
                 </div>
 
                 {/* Reason & Time */}
                 <div className="space-y-1">
-                  <p className="text-xs text-slate-700 dark:text-slate-300 line-clamp-2 leading-relaxed font-normal">
+                  <p className="text-type-helper text-slate-700 dark:text-slate-300 line-clamp-2 leading-relaxed font-normal">
                     {item.reason}
                   </p>
-                  <span className="text-[12px] table-meta text-slate-400 block font-normal">
+                  <span className="text-type-helper table-meta text-slate-400 block font-normal">
                     {new Date(item.createdAt).toLocaleString('vi-VN')}
                   </span>
                 </div>
 
                 {/* Scores Box */}
-                <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-type-helper">
                   <span className="text-slate-500 dark:text-slate-400">Điểm ban đầu: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{item.originalScore.toFixed(1)} đ</strong></span>
                   {item.status === 'APPROVED_REGRADE' && item.revisedScore !== null && (
                     <span className="font-semibold text-emerald-600 dark:text-emerald-400">➔ Sau PK: {item.revisedScore.toFixed(1)} đ</span>
@@ -174,17 +174,17 @@ export function RegradeTable({
 
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 truncate">
+                    <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
                       {item.student.fullName}
                     </span>
                     {item.student.class && (
-                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700">
+                      <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700">
                         {item.student.class.code || item.student.class.name}
                       </span>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                  <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                     <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
                       <BookOpen className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                       <span>{subjectName}</span>
@@ -227,8 +227,8 @@ export function RegradeTable({
   // 3. Default List View Mode (Table)
   return (
     <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-      <table className="ui-table w-full text-left text-[15px] leading-[22px] text-slate-700 dark:text-slate-300 border-collapse">
-        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800 select-none">
+      <table className="ui-table w-full text-left text-type-body leading-[22px] text-slate-700 dark:text-slate-300 border-collapse">
+        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800 select-none">
           <tr>
             <th scope="col" className="py-3 px-4 w-12 text-center">
               <input
@@ -273,13 +273,13 @@ export function RegradeTable({
                 {visibleColumns.student !== false && (
                   <td className="p-3.5 whitespace-nowrap">
                     <div>
-                      <p className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] leading-[22px]">
+                      <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body leading-[22px]">
                         {item.student.fullName}
                       </p>
                       <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
                         <IdentifierBadge tone="blue">{item.student.studentCode}</IdentifierBadge>
                         {item.student.class && (
-                          <span className="table-badge text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700">
+                          <span className="table-badge text-type-helper font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700">
                             {item.student.class.code || item.student.class.name}
                           </span>
                         )}
@@ -290,7 +290,7 @@ export function RegradeTable({
 
                 {visibleColumns.subject !== false && (
                   <td className="p-3.5 min-w-[200px]">
-                    <p className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] leading-[22px]">{subjectName}</p>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body leading-[22px]">{subjectName}</p>
                     {subjectCode && (
                       <IdentifierBadge tone="neutral">{subjectCode}</IdentifierBadge>
                     )}
@@ -299,23 +299,23 @@ export function RegradeTable({
 
                 {visibleColumns.reason !== false && (
                   <td className="p-3.5 min-w-[280px]">
-                    <p className="text-slate-700 dark:text-slate-300 text-[15px] leading-[22px] font-normal line-clamp-2 max-w-sm" title={item.reason}>
+                    <p className="text-slate-700 dark:text-slate-300 text-type-body leading-[22px] font-normal line-clamp-2 max-w-sm" title={item.reason}>
                       {item.reason}
                     </p>
-                    <span className="table-meta text-[12px] font-normal text-slate-400 block mt-0.5">
+                    <span className="table-meta text-type-helper font-normal text-slate-400 block mt-0.5">
                       {new Date(item.createdAt).toLocaleString('vi-VN')}
                     </span>
                   </td>
                 )}
 
                 {visibleColumns.originalScore !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-center font-semibold text-slate-900 dark:text-slate-100 text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap text-center font-semibold text-slate-900 dark:text-slate-100 text-type-body">
                     {item.originalScore.toFixed(1)} đ
                   </td>
                 )}
 
                 {visibleColumns.revisedScore !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-center text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap text-center text-type-body">
                     {item.status === 'APPROVED_REGRADE' && item.revisedScore !== null ? (
                       <span className="font-semibold text-emerald-600 dark:text-emerald-400">{item.revisedScore.toFixed(1)} đ</span>
                     ) : (

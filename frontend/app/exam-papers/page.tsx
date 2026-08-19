@@ -811,7 +811,7 @@ export default function ExamPapersPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -827,7 +827,7 @@ export default function ExamPapersPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
@@ -1061,36 +1061,36 @@ export default function ExamPapersPage() {
             {/* Header thông tin câu hỏi đang thay thế */}
             <div className="pb-3 border-b border-slate-100 dark:border-slate-800 space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Câu hỏi đang thay thế:</span>
-                <span className="px-2 py-0.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">Câu hỏi đang thay thế:</span>
+                <span className="px-2 py-0.5 rounded-lg text-type-helper font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                   {swapModal.targetQuestion?.type === 'ESSAY' ? 'Tự luận' : swapModal.targetQuestion?.type === 'FILL_BLANK' ? 'Điền khuyết' : 'Trắc nghiệm'} • {swapModal.targetQuestion?.difficulty || 'Trung bình'}
                 </span>
               </div>
-              <p className="text-[14.5px] font-medium text-slate-900 dark:text-slate-100 leading-relaxed italic border-l-2 border-blue-500 pl-3">
+              <p className="text-type-body-sm font-medium text-slate-900 dark:text-slate-100 leading-relaxed italic border-l-2 border-blue-500 pl-3">
                 &ldquo;{swapModal.targetQuestion?.content}&rdquo;
               </p>
-              <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+              <p className="text-type-helper text-blue-600 dark:text-blue-400 font-medium">
                 Tìm thấy {swapModal.alternatives.length} câu hỏi tương đương từ ngân hàng đề.
               </p>
             </div>
 
             {swapModal.loading ? (
-              <div className="py-10 text-center text-xs text-slate-400 font-semibold flex items-center justify-center gap-2">
+              <div className="py-10 text-center text-type-helper text-slate-400 font-semibold flex items-center justify-center gap-2">
                 <RefreshCw className="w-4 h-4 animate-spin text-blue-600" />
                 <span>Đang tải câu hỏi tương đương từ Ngân hàng đề...</span>
               </div>
             ) : swapModal.alternatives.length === 0 ? (
               <div className="py-10 text-center space-y-1.5">
                 <FileText className="h-8 w-8 text-slate-300 dark:text-slate-600 mx-auto" />
-                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Không tìm thấy câu hỏi tương đương</p>
-                <p className="text-xs text-slate-400">Ngân hàng đề hiện chưa có thêm câu hỏi khác cùng dạng và độ khó này.</p>
+                <p className="text-type-body-sm font-semibold text-slate-700 dark:text-slate-300">Không tìm thấy câu hỏi tương đương</p>
+                <p className="text-type-helper text-slate-400">Ngân hàng đề hiện chưa có thêm câu hỏi khác cùng dạng và độ khó này.</p>
               </div>
             ) : (
               <div className="max-h-[50vh] overflow-y-auto space-y-3 pr-1 divide-y divide-slate-100 dark:divide-slate-800">
                 {swapModal.alternatives.map((altQ: any) => (
                   <div key={altQ.id} className="pt-3 first:pt-0 space-y-2">
                     <div className="flex items-start justify-between gap-3">
-                      <p className="text-[14.5px] font-medium text-slate-900 dark:text-slate-100 leading-relaxed flex-1">
+                      <p className="text-type-body-sm font-medium text-slate-900 dark:text-slate-100 leading-relaxed flex-1">
                         {altQ.content}
                       </p>
                       <Button
@@ -1103,7 +1103,7 @@ export default function ExamPapersPage() {
                       </Button>
                     </div>
 
-                    <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                    <div className="flex items-center gap-2 text-type-helper text-slate-500 dark:text-slate-400">
                       <span className="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">
                         Mã: #{altQ.id}
                       </span>

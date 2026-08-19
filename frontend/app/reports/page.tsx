@@ -95,10 +95,10 @@ export default function ReportsPage() {
       {/* Page Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-1">
         <div className="space-y-1">
-          <h1 className="text-[28px] font-semibold leading-[36px] tracking-tight text-slate-900">
+          <h1 className="text-type-page font-semibold leading-[36px] tracking-tight text-slate-900">
             Báo cáo tổng quan hệ thống
           </h1>
-          <p className="text-[15px] font-normal leading-[24px] text-slate-500">
+          <p className="text-type-body font-normal leading-[24px] text-slate-500">
             Số liệu tổng hợp thời gian thực từ PostgreSQL về Lịch thi, Ngân hàng đề, Phòng thi và Hoạt động khảo thí.
           </p>
         </div>

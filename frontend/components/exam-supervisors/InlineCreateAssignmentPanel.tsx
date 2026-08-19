@@ -99,11 +99,11 @@ export function InlineCreateAssignmentPanel({
     <form onSubmit={handleSubmit} className="space-y-3">
       {/* ── 1. Header tinh gọn (Giống 100% bản Tự Động) ── */}
       <div className="flex items-center gap-2 flex-wrap">
-        <h3 className="text-xs font-semibold text-slate-800 dark:text-slate-200  tracking-wider">
+        <h3 className="text-type-helper font-semibold text-slate-800 dark:text-slate-200  tracking-wider">
           Phân Công Phòng Thi
         </h3>
         {selectedRoomCap && (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-type-helper font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
             {selectedRoomName} ({selectedRoomCap})
           </span>
         )}
@@ -114,7 +114,7 @@ export function InlineCreateAssignmentPanel({
         {/* Nếu chưa cố định 1 phòng thi thì hiển thị ô chọn phòng */}
         {!isPreselectedSingleRoom && rooms.length > 1 && (
           <div className="space-y-1">
-            <label className="text-[15px] font-medium text-slate-700 dark:text-slate-300">
+            <label className="text-type-body font-medium text-slate-700 dark:text-slate-300">
               Phòng thi cần phân công *
             </label>
             <FilterSelect
@@ -139,11 +139,11 @@ export function InlineCreateAssignmentPanel({
           {/* Cột 1: Giám thị 1 */}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <label className="text-[15px] font-medium text-blue-700 dark:text-blue-300">
+              <label className="text-type-body font-medium text-blue-700 dark:text-blue-300">
                 Giám thị 1 (Chính)
               </label>
               {t1 && (
-                <span className="text-xs font-normal text-slate-400">
+                <span className="text-type-helper font-normal text-slate-400">
                   {t1.teacherCode}
                 </span>
               )}
@@ -164,11 +164,11 @@ export function InlineCreateAssignmentPanel({
           {/* Cột 2: Giám thị 2 */}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <label className="text-[15px] font-medium text-slate-700 dark:text-slate-300">
+              <label className="text-type-body font-medium text-slate-700 dark:text-slate-300">
                 Giám thị 2 (Phụ)
               </label>
               {t2 && (
-                <span className="text-xs font-normal text-slate-400">
+                <span className="text-type-helper font-normal text-slate-400">
                   {t2.teacherCode}
                 </span>
               )}
@@ -185,7 +185,7 @@ export function InlineCreateAssignmentPanel({
 
       {/* ── 3. Footer Hành Động (Giống 100% bản Tự Động) ── */}
       <div className="flex items-center justify-between pt-1">
-        <span className="text-xs font-medium text-slate-500">
+        <span className="text-type-helper font-medium text-slate-500">
           Chỉ định cán bộ coi thi cho phòng thi
         </span>
 

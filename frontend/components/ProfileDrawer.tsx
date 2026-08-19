@@ -87,12 +87,12 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3.5 min-w-0 flex-1">
                 {/* Avatar / Icon Badge thương hiệu */}
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
                   {shortAvatar}
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-[17px] font-semibold leading-snug text-slate-900 dark:text-white break-words" title={title}>
+                  <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words" title={title}>
                     {title}
                   </h2>
 
@@ -117,7 +117,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                               {subtitle}
                             </IdentifierBadge>
                           ) : (
-                            <p className="text-[14px] font-semibold text-slate-600 dark:text-slate-300 tabular-nums truncate">
+                            <p className="text-type-body-sm font-semibold text-slate-600 dark:text-slate-300 tabular-nums truncate">
                               {subtitle}
                             </p>
                           )}
@@ -146,7 +146,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
               {/* Tiêu đề mục có thanh nhấn xanh thương hiệu */}
               <div className="flex items-center gap-2 mb-3">
                 <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                   Thông tin chi tiết
                 </h3>
               </div>
@@ -163,7 +163,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                       className="py-3 px-3 -mx-3 rounded-xl flex items-center justify-between gap-4 transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40 group"
                     >
                       {/* Cột Trái: Icon + Label rõ nét */}
-                      <span className="flex items-center gap-3 text-slate-700 dark:text-slate-200 text-[14px] font-semibold shrink-0">
+                      <span className="flex items-center gap-3 text-slate-700 dark:text-slate-200 text-type-body-sm font-semibold shrink-0">
                         {Icon && (
                           <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100/70 dark:border-blue-900/50 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                             <Icon className="h-4 w-4" />
@@ -173,7 +173,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                       </span>
 
                       {/* Cột Phải: Giá trị đậm nét, chuẩn 15px */}
-                      <span className="font-semibold text-slate-900 dark:text-white text-right text-[15px] leading-snug break-words max-w-[62%]">
+                      <span className="font-semibold text-slate-900 dark:text-white text-right text-type-body leading-snug break-words max-w-[62%]">
                         {typeof item.value === 'string' && item.label.toLowerCase().includes('trạng thái') ? (
                           <StatusBadge status={item.value} />
                         ) : isIdentifier && typeof item.value === 'string' ? (
@@ -197,11 +197,11 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                   <div key={i} className="space-y-2.5">
                     <div className="flex items-center gap-2">
                       <span className="h-3.5 w-1 rounded-full bg-blue-600 shrink-0" />
-                      <h3 className="text-[14px] font-semibold text-slate-900 dark:text-white">
+                      <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-white">
                         {sec.title}
                       </h3>
                     </div>
-                    <div className="text-[14px] font-medium text-slate-700 dark:text-slate-300">
+                    <div className="text-type-body-sm font-medium text-slate-700 dark:text-slate-300">
                       {sec.content}
                     </div>
                   </div>

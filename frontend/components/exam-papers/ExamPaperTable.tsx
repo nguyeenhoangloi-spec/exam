@@ -80,7 +80,7 @@ export function ExamPaperTable({
                     <button
                       type="button"
                       onClick={() => onDetail(p.id)}
-                      className="tabular-nums text-xs font-semibold text-slate-900 hover:text-blue-600 transition cursor-pointer"
+                      className="tabular-nums text-type-helper font-semibold text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
                       <IdentifierBadge>Mã đề: {p.paperCode}</IdentifierBadge>
                     </button>
@@ -92,46 +92,46 @@ export function ExamPaperTable({
                 <div>
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {subCode && (
-                      <span className="text-[13px] font-semibold text-slate-600 tabular-nums">
+                      <span className="text-type-helper font-semibold text-slate-600 tabular-nums">
                         {subCode}
                       </span>
                     )}
                     <h4
                       onClick={() => onDetail(p.id)}
-                      className="text-[15px] font-semibold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition truncate"
+                      className="text-type-body font-semibold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition truncate"
                     >
                       {subName}
                     </h4>
                   </div>
                   {periodName && (
-                    <p className="text-[13px] font-normal text-slate-500 mt-0.5 truncate">
+                    <p className="text-type-helper font-normal text-slate-500 mt-0.5 truncate">
                       {periodName}
                     </p>
                   )}
 
-                  <div className="mt-2 space-y-0.5 text-[14px] font-normal text-slate-600">
+                  <div className="mt-2 space-y-0.5 text-type-body-sm font-normal text-slate-600">
                     <span className="flex items-center gap-1 text-slate-700">
                       <Clock className="h-4 w-4 text-blue-600 shrink-0" />
                       {dateStr ? `${dateStr} (${timeStr || 'Chưa có giờ'})` : 'Chưa xếp lịch thi'}
                     </span>
-                    <span className="text-[13px] text-slate-500 font-normal block pl-5">
+                    <span className="text-type-helper text-slate-500 font-normal block pl-5">
                       Thời gian làm bài: {p.durationMinutes} phút
                     </span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-600 pt-1">
-                  <div className="flex items-center gap-[6px] text-[13px] text-slate-600">
+                <div className="grid grid-cols-2 gap-2 text-type-helper font-semibold text-slate-600 pt-1">
+                  <div className="flex items-center gap-[6px] text-type-helper text-slate-600">
                     <HelpCircle className="h-3.5 w-3.5 text-blue-600 shrink-0" />
                     <span>{qCount} câu hỏi</span>
                   </div>
-                  <div className="flex items-center gap-[6px] text-[13px] text-slate-600">
+                  <div className="flex items-center gap-[6px] text-type-helper text-slate-600">
                     <Award className="h-3.5 w-3.5 text-blue-600 shrink-0" />
                     <span>{p.totalScore} điểm</span>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-xs font-semibold">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-type-helper font-semibold">
                 <button
                   type="button"
                   onClick={() => onDetail(p.id)}
@@ -212,18 +212,18 @@ export function ExamPaperTable({
                 <button
                   type="button"
                   onClick={() => onDetail(p.id)}
-                  className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
+                  className="tabular-nums text-type-helper font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
                 >
                   <IdentifierBadge tone="blue">{p.paperCode}</IdentifierBadge>
                 </button>
                 <div className="min-w-0">
                   <h4
                     onClick={() => onDetail(p.id)}
-                    className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition truncate"
+                    className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition truncate"
                   >
                     {title}
                   </h4>
-                  <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-400">
+                  <div className="flex items-center gap-2 mt-0.5 text-type-helper text-slate-400">
                     {subCode && <span className="font-medium text-slate-500 dark:text-slate-400">#{subCode}</span>}
                     <span>• {qCount} câu hỏi</span>
                     <span>• {p.durationMinutes} phút</span>
@@ -288,8 +288,8 @@ export function ExamPaperTable({
   // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
   return (
     <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-      <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
-        <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
+      <table className="ui-table w-full text-left text-type-body text-slate-700 border-collapse">
+        <thead className="bg-slate-50 text-type-body-sm font-medium tracking-wider text-slate-600 border-b border-slate-200">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input
@@ -340,11 +340,11 @@ export function ExamPaperTable({
                       <button
                         type="button"
                         onClick={() => onDetail(p.id)}
-                        className="tabular-nums text-[15px] leading-[22px] font-medium text-slate-900 hover:text-blue-600 transition cursor-pointer"
+                        className="tabular-nums text-type-body leading-[22px] font-medium text-slate-900 hover:text-blue-600 transition cursor-pointer"
                       >
                         <IdentifierBadge>{p.paperCode}</IdentifierBadge>
                       </button>
-                      <p className="text-[15px] leading-[22px] font-medium text-slate-400">
+                      <p className="text-type-body leading-[22px] font-medium text-slate-400">
                         {formatExamType(examType)}
                       </p>
                     </div>
@@ -356,20 +356,20 @@ export function ExamPaperTable({
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 whitespace-nowrap">
                         {subCode && (
-                          <span className="tabular-nums font-medium text-slate-900 text-[15px] leading-[22px]">
+                          <span className="tabular-nums font-medium text-slate-900 text-type-body leading-[22px]">
                             [{subCode}]
                           </span>
                         )}
                         <button
                           type="button"
                           onClick={() => onDetail(p.id)}
-                          className="font-medium text-slate-900 cursor-pointer hover:text-blue-600 transition text-[15px] leading-[22px] whitespace-nowrap"
+                          className="font-medium text-slate-900 cursor-pointer hover:text-blue-600 transition text-type-body leading-[22px] whitespace-nowrap"
                         >
                           {subName}
                         </button>
                       </div>
                       {periodName && (
-                        <p className="text-[15px] leading-[22px] font-medium text-slate-400 mt-0.5 whitespace-nowrap block">
+                        <p className="text-type-body leading-[22px] font-medium text-slate-400 mt-0.5 whitespace-nowrap block">
                           {periodName}
                         </p>
                       )}
@@ -384,7 +384,7 @@ export function ExamPaperTable({
                 )}
 
                 {visibleColumns.questionCount !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap text-type-body">
                     <span className="font-medium text-slate-900">{qCount} câu</span>
                   </td>
                 )}
@@ -393,16 +393,16 @@ export function ExamPaperTable({
                   <td className="p-3.5 whitespace-nowrap text-slate-700">
                     <div className="space-y-0.5">
                       {dateStr ? (
-                        <p className="text-[15px] leading-[22px]">
+                        <p className="text-type-body leading-[22px]">
                           <span className="font-medium text-slate-900">{dateStr}</span>
                           {timeStr && <span className="text-slate-500 ml-1.5 font-medium">({timeStr})</span>}
                         </p>
                       ) : (
-                        <p className="text-[15px] leading-[22px] font-medium text-slate-400">
+                        <p className="text-type-body leading-[22px] font-medium text-slate-400">
                           Chưa xếp lịch thi
                         </p>
                       )}
-                      <p className="text-[15px] leading-[22px] font-medium text-slate-400">
+                      <p className="text-type-body leading-[22px] font-medium text-slate-400">
                         Làm bài: <span className="font-medium text-slate-700">{p.durationMinutes} phút</span>
                       </p>
                     </div>
@@ -410,7 +410,7 @@ export function ExamPaperTable({
                 )}
 
                 {visibleColumns.totalScore !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-center text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap text-center text-type-body">
                     <span className="font-medium text-slate-900">{p.totalScore}đ</span>
                   </td>
                 )}
@@ -486,7 +486,7 @@ export function ExamPaperTable({
                                     closeMenu();
                                     onAction(p, 'publish');
                                   }}
-                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap text-[15px] font-medium select-none"
+                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
                                 >
                                   <Send className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                                   <span>Phát hành</span>
@@ -500,7 +500,7 @@ export function ExamPaperTable({
                                     closeMenu();
                                     onAction(p, 'archive');
                                   }}
-                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap text-[15px] font-medium select-none"
+                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
                                 >
                                   <Archive className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400 shrink-0" />
                                   <span>Lưu trữ</span>
@@ -514,7 +514,7 @@ export function ExamPaperTable({
                                     closeMenu();
                                     onAction(p, 'restore');
                                   }}
-                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-blue-600 dark:text-blue-400 transition-colors cursor-pointer whitespace-nowrap text-[15px] font-medium select-none"
+                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-blue-600 dark:text-blue-400 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
                                 >
                                   <RotateCcw className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
                                   <span>Khôi phục</span>
@@ -529,7 +529,7 @@ export function ExamPaperTable({
                                   closeMenu();
                                   onAction(p, 'delete');
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 transition-colors cursor-pointer whitespace-nowrap text-[15px] font-medium select-none"
+                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
                               >
                                 <Trash2 className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400 shrink-0" />
                                 <span>Xóa</span>

@@ -453,21 +453,21 @@ export default function StudentResultsPage() {
     switch (status) {
       case 'PASSED':
         return (
-          <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-success-500">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-type-helper text-success-500">
             <CheckCircle2 className="w-4 h-4 shrink-0 text-success-500" />
             <span>Đạt</span>
           </span>
         );
       case 'FAILED':
         return (
-          <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-danger-600">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-type-helper text-danger-600">
             <XCircle className="w-4 h-4 shrink-0 text-danger-600" />
             <span>Chưa đạt</span>
           </span>
         );
       case 'GRADING':
         return (
-          <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-primary-600">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-type-helper text-primary-600">
             <Loader2 className="w-4 h-4 shrink-0 text-primary-600 animate-spin" />
             <span>Đang chấm</span>
           </span>
@@ -475,7 +475,7 @@ export default function StudentResultsPage() {
       case 'UNPUBLISHED':
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 font-semibold text-xs text-warning-600">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-type-helper text-warning-600">
             <Clock className="w-4 h-4 shrink-0 text-warning-600" />
             <span>Chờ công bố</span>
           </span>
@@ -512,10 +512,10 @@ export default function StudentResultsPage() {
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">
-            <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+            <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
               Kết quả bài thi
             </h1>
-            <div className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-1">
+            <div className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-1">
               <span>
                 Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '---'}</IdentifierBadge>
               </span>
@@ -549,10 +549,10 @@ export default function StudentResultsPage() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1 min-w-0">
-                    <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                    <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                       {item.title}
                     </span>
-                    <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                    <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                       {item.value}
                       {item.unit || ''}
                     </div>
@@ -573,7 +573,7 @@ export default function StudentResultsPage() {
                 <div className="mt-2.5">
                   <span
                     title={item.subtext}
-                    className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+                    className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
                   >
                     {item.subtext}
                   </span>
@@ -598,7 +598,7 @@ export default function StudentResultsPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -614,7 +614,7 @@ export default function StudentResultsPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
@@ -713,15 +713,15 @@ export default function StudentResultsPage() {
         {loading ? (
           <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs p-12 flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-            <p className="text-xs font-semibold text-slate-500">Đang tải kết quả thi sinh viên...</p>
+            <p className="text-type-helper font-semibold text-slate-500">Đang tải kết quả thi sinh viên...</p>
           </div>
         ) : totalItems === 0 ? (
           <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
             <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
               <Award className="w-7 h-7 text-slate-400" />
             </div>
-            <h3 className="text-base font-semibold text-slate-800">Không tìm thấy kết quả thi nào</h3>
-            <p className="text-xs font-medium text-slate-500 max-w-sm">
+            <h3 className="text-type-body font-semibold text-slate-800">Không tìm thấy kết quả thi nào</h3>
+            <p className="text-type-helper font-medium text-slate-500 max-w-sm">
               Không có kết quả thi nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
             </p>
           </div>
@@ -748,13 +748,13 @@ export default function StudentResultsPage() {
                         <button
                           type="button"
                           onClick={() => setDetailItem(item)}
-                          className="tabular-nums font-medium text-xs text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer shrink-0"
+                          className="tabular-nums font-medium text-type-helper text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer shrink-0"
                         >
                           <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
                         </button>
                       </div>
 
-                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700">
+                      <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700">
                         {item.schoolYear}
                       </span>
                     </div>
@@ -762,40 +762,40 @@ export default function StudentResultsPage() {
                     <div>
                       <h4
                         onClick={() => setDetailItem(item)}
-                        className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
+                        className="text-type-body font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
                       >
                         {item.subjectName}
                       </h4>
-                      <p className="text-xs text-slate-400 font-normal mt-0.5 truncate">{item.periodName}</p>
+                      <p className="text-type-helper text-slate-400 font-normal mt-0.5 truncate">{item.periodName}</p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-400 font-normal pt-1 border-t border-slate-100/70 dark:border-slate-800/70">
+                    <div className="grid grid-cols-2 gap-2 text-type-helper text-slate-600 dark:text-slate-400 font-normal pt-1 border-t border-slate-100/70 dark:border-slate-800/70">
                       <div>
-                        <span className="text-slate-400 text-[12px] block">Hình thức</span>
-                        <strong className="font-semibold text-slate-900 dark:text-slate-100 text-xs block truncate">{formatExamType(item.examType)}</strong>
+                        <span className="text-slate-400 text-type-helper block">Hình thức</span>
+                        <strong className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper block truncate">{formatExamType(item.examType)}</strong>
                       </div>
                       <div>
-                        <span className="text-slate-400 text-[12px] block">Ngày thi</span>
-                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs block">{new Date(item.examDate).toLocaleDateString('vi-VN')}</span>
+                        <span className="text-slate-400 text-type-helper block">Ngày thi</span>
+                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper block">{new Date(item.examDate).toLocaleDateString('vi-VN')}</span>
                       </div>
                       <div>
-                        <span className="text-slate-400 text-[12px] block">Số tín chỉ</span>
-                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs block">{item.credits} tín chỉ</span>
+                        <span className="text-slate-400 text-type-helper block">Số tín chỉ</span>
+                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper block">{item.credits} tín chỉ</span>
                       </div>
                       <div>
-                        <span className="text-slate-400 text-[12px] block">Điểm số</span>
-                        <span className={`font-semibold text-xs block ${item.score !== null && item.score >= 4.0 ? 'text-slate-900 dark:text-slate-100' : item.score !== null ? 'text-rose-600' : 'text-slate-400'}`}>
+                        <span className="text-slate-400 text-type-helper block">Điểm số</span>
+                        <span className={`font-semibold text-type-helper block ${item.score !== null && item.score >= 4.0 ? 'text-slate-900 dark:text-slate-100' : item.score !== null ? 'text-rose-600' : 'text-slate-400'}`}>
                           {item.score !== null ? `${item.score.toFixed(1)} / 10` : '---'}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+                  <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-type-helper">
                     <button
                       type="button"
                       onClick={() => setDetailItem(item)}
-                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-[14px] font-medium transition cursor-pointer"
+                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-type-body-sm font-medium transition cursor-pointer"
                     >
                       <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                       <span>Xem chi tiết</span>
@@ -841,16 +841,16 @@ export default function StudentResultsPage() {
                         <button
                           type="button"
                           onClick={() => setDetailItem(item)}
-                          className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                          className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
                         >
                           {item.subjectName}
                         </button>
-                        <span className="text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                        <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
                           {formatExamType(item.examType)}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                      <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                         <span className="text-slate-800 dark:text-slate-200 font-medium">{item.periodName}</span>
                         <span className="flex items-center gap-1">
                           <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -871,7 +871,7 @@ export default function StudentResultsPage() {
                   {/* Right: Score, Status & Action */}
                   <div className="flex items-center gap-3 shrink-0">
                     {item.score !== null && (
-                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg border tabular-nums ${item.score >= 4.0
+                      <span className={`text-type-helper font-semibold px-2.5 py-1 rounded-lg border tabular-nums ${item.score >= 4.0
                           ? 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700'
                           : 'bg-rose-50 text-rose-700 border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-300'
                         }`}>
@@ -898,8 +898,8 @@ export default function StudentResultsPage() {
         ) : (
           /* ── 5.3 Standard List View Mode (Default Table) ── */
           <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-            <table className="ui-table w-full text-left text-[15px] text-slate-700 dark:text-slate-300 border-collapse">
-              <thead className="bg-slate-50 dark:bg-slate-800 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+            <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
+              <thead className="bg-slate-50 dark:bg-slate-800 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
                 <tr>
                   <th scope="col" className="p-3.5 pl-4 text-center w-10">
                     <input
@@ -943,7 +943,7 @@ export default function StudentResultsPage() {
                           <button
                             type="button"
                             onClick={() => setDetailItem(item)}
-                            className="tabular-nums font-medium text-[15px] leading-[22px] text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer"
+                            className="tabular-nums font-medium text-type-body leading-[22px] text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer"
                           >
                             <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
                           </button>
@@ -955,18 +955,18 @@ export default function StudentResultsPage() {
                         <td className="p-3.5 min-w-[240px]">
                           <p
                             onClick={() => setDetailItem(item)}
-                            className="font-medium text-slate-900 dark:text-slate-100 text-[15px] leading-[22px] cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
+                            className="font-medium text-slate-900 dark:text-slate-100 text-type-body leading-[22px] cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
                           >
                             {item.subjectName}
                           </p>
-                          <p className="table-meta text-[13px] leading-[20px] text-slate-400 font-normal mt-0.5">{item.credits} tín chỉ</p>
+                          <p className="table-meta text-type-helper leading-[20px] text-slate-400 font-normal mt-0.5">{item.credits} tín chỉ</p>
                         </td>
                       )}
 
                       {/* Period */}
                       {visibleColumns.period !== false && (
                         <td className="p-3.5 whitespace-nowrap">
-                          <span className="text-[15px] leading-[22px] font-medium text-slate-700 dark:text-slate-300">
+                          <span className="text-type-body leading-[22px] font-medium text-slate-700 dark:text-slate-300">
                             {item.periodName}
                           </span>
                         </td>
@@ -975,7 +975,7 @@ export default function StudentResultsPage() {
                       {/* Date */}
                       {visibleColumns.date !== false && (
                         <td className="p-3.5 whitespace-nowrap text-center">
-                          <span className="text-[15px] leading-[22px] font-medium text-slate-600 dark:text-slate-400">
+                          <span className="text-type-body leading-[22px] font-medium text-slate-600 dark:text-slate-400">
                             {new Date(item.examDate).toLocaleDateString('vi-VN')}
                           </span>
                         </td>
@@ -984,7 +984,7 @@ export default function StudentResultsPage() {
                       {/* Type */}
                       {visibleColumns.type !== false && (
                         <td className="p-3.5 whitespace-nowrap">
-                          <span className="text-[15px] leading-[22px] font-medium text-slate-600 dark:text-slate-400">
+                          <span className="text-type-body leading-[22px] font-medium text-slate-600 dark:text-slate-400">
                             {formatExamType(item.examType)}
                           </span>
                         </td>
@@ -994,11 +994,11 @@ export default function StudentResultsPage() {
                       {visibleColumns.score !== false && (
                         <td className="p-3.5 whitespace-nowrap text-center">
                           {item.score !== null ? (
-                            <span className={`font-semibold text-[15px] leading-[22px] ${item.score >= 4.0 ? 'text-slate-900 dark:text-slate-100' : 'text-rose-600 dark:text-rose-400'}`}>
+                            <span className={`font-semibold text-type-body leading-[22px] ${item.score >= 4.0 ? 'text-slate-900 dark:text-slate-100' : 'text-rose-600 dark:text-rose-400'}`}>
                               {item.score.toFixed(1)}
                             </span>
                           ) : (
-                            <span className="table-meta text-slate-400 font-normal text-[14px] leading-[22px] italic">---</span>
+                            <span className="table-meta text-slate-400 font-normal text-type-body-sm leading-[22px] italic">---</span>
                           )}
                         </td>
                       )}
@@ -1140,31 +1140,31 @@ export default function StudentResultsPage() {
                   {detailItem.score !== null ? (
                     <div className="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700 p-3.5 space-y-2">
                       {detailItem.mcqScore !== null && (
-                        <div className="flex items-center justify-between text-[13px] text-slate-700 dark:text-slate-300">
+                        <div className="flex items-center justify-between text-type-helper text-slate-700 dark:text-slate-300">
                           <span className="font-medium">Trắc nghiệm</span>
                           <span className="font-semibold tabular-nums">{detailItem.mcqScore.toFixed(1)} / {detailItem.mcqMax?.toFixed(1) || '10.0'}</span>
                         </div>
                       )}
                       {detailItem.essayScore !== null && (
-                        <div className="flex items-center justify-between text-[13px] text-slate-700 dark:text-slate-300">
+                        <div className="flex items-center justify-between text-type-helper text-slate-700 dark:text-slate-300">
                           <span className="font-medium">Tự luận</span>
                           <span className="font-semibold tabular-nums">{detailItem.essayScore.toFixed(1)} / {detailItem.essayMax?.toFixed(1) || '10.0'}</span>
                         </div>
                       )}
                       <div className="border-t border-slate-200 dark:border-slate-700 pt-2 flex items-center justify-between">
-                        <span className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">Tổng điểm bài thi</span>
-                        <span className={`tabular-nums font-semibold text-lg ${detailItem.score >= 4.0 ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600'}`}>{detailItem.score.toFixed(1)} / 10 điểm</span>
+                        <span className="text-type-helper font-semibold text-slate-800 dark:text-slate-200">Tổng điểm bài thi</span>
+                        <span className={`tabular-nums font-semibold text-type-card ${detailItem.score >= 4.0 ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600'}`}>{detailItem.score.toFixed(1)} / 10 điểm</span>
                       </div>
                     </div>
                   ) : (
-                    <div className={`flex items-center gap-2 text-[13px] font-semibold ${detailItem.status === 'GRADING' ? 'text-blue-600' : 'text-amber-600'}`}>
+                    <div className={`flex items-center gap-2 text-type-helper font-semibold ${detailItem.status === 'GRADING' ? 'text-blue-600' : 'text-amber-600'}`}>
                       {detailItem.status === 'GRADING' ? <Loader2 className="w-4 h-4 animate-spin shrink-0" /> : <Clock className="w-4 h-4 shrink-0" />}
                       {detailItem.status === 'GRADING' ? 'Bài thi đang trong quá trình chấm điểm.' : 'Điểm số chưa được duyệt công bố.'}
                     </div>
                   )}
 
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">Trạng thái:</span>
+                    <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">Trạng thái:</span>
                     {renderInlineStatus(detailItem.status)}
                   </div>
 
@@ -1206,7 +1206,7 @@ export default function StudentResultsPage() {
               content: (
                 <div className="flex items-start gap-2">
                   <MessageSquare className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
-                  <p className="text-[13px] text-slate-700 dark:text-slate-300 leading-relaxed font-normal">{detailItem.lecturerComments}</p>
+                  <p className="text-type-helper text-slate-700 dark:text-slate-300 leading-relaxed font-normal">{detailItem.lecturerComments}</p>
                 </div>
               ),
             }] : []),
@@ -1225,11 +1225,11 @@ export default function StudentResultsPage() {
           size="md"
         >
           {detailItem && (
-            <div className="space-y-4 text-xs -mt-1">
+            <div className="space-y-4 text-type-helper -mt-1">
               <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
                 Môn học: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{detailItem.subjectName}</strong> ({detailItem.subjectCode})
               </p>
-              <label className="block font-medium text-slate-700 dark:text-slate-300 text-[15px]">
+              <label className="block font-medium text-slate-700 dark:text-slate-300 text-type-body">
                 Lý do xin phúc khảo:
               </label>
               <textarea
@@ -1237,7 +1237,7 @@ export default function StudentResultsPage() {
                 value={appealReason}
                 onChange={(e) => setAppealReason(e.target.value)}
                 placeholder="Nhập chi tiết lý do đề nghị chấm lại bài thi..."
-                className="w-full min-h-[100px] rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none transition shadow-2xs"
+                className="w-full min-h-[100px] rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none transition shadow-2xs"
               />
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">

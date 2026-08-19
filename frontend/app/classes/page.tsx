@@ -380,7 +380,7 @@ export default function ClassesPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -396,7 +396,7 @@ export default function ClassesPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
@@ -582,31 +582,31 @@ export default function ClassesPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">Mã lớp</label>
+            <label className="block text-type-body font-medium text-slate-500 mb-1">Mã lớp</label>
             <input
               type="text"
               required
               placeholder="VD: CNTT-K66A"
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+              className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-type-body font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
             />
           </div>
 
           <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">Tên lớp học</label>
+            <label className="block text-type-body font-medium text-slate-500 mb-1">Tên lớp học</label>
             <input
               type="text"
               required
               placeholder="VD: Công nghệ thông tin K66 - Lớp A"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-[15px] font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+              className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-type-body font-normal text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
             />
           </div>
 
           <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">Khoa trực thuộc</label>
+            <label className="block text-type-body font-medium text-slate-500 mb-1">Khoa trực thuộc</label>
             <FilterSelect
               value={formData.departmentId}
               onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}

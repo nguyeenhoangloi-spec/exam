@@ -21,7 +21,7 @@ export function QuestionFilters({
 }) {
   const set = (key: keyof Filters, next: string) => onChange({ ...value, [key]: next });
 
-  const select = 'h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-3 text-[15px] font-normal text-slate-800 dark:text-slate-200 outline-none transition focus:border-blue-600 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-blue-500/15 cursor-pointer';
+  const select = 'h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-200 outline-none transition focus:border-blue-600 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-blue-500/15 cursor-pointer';
 
   return (
     <div className="flex flex-wrap gap-2.5">

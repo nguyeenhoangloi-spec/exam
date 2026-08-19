@@ -315,7 +315,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {/* 2. Breadcrumb Navigation (Đứng sau nút tìm kiếm) */}
-            <nav className="flex items-center gap-1.5 text-[13px] font-medium text-slate-400 dark:text-slate-500 min-w-0 truncate" aria-label="Breadcrumb">
+            <nav className="flex items-center gap-1.5 text-type-helper font-medium text-slate-400 dark:text-slate-500 min-w-0 truncate" aria-label="Breadcrumb">
               <button
                 type="button"
                 className="flex items-center gap-1.5 cursor-pointer text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors shrink-0 py-1"
@@ -344,7 +344,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <Bell className="h-5 w-5" />
                 {effectiveUnreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex min-w-[18px] h-[18px] px-1 items-center justify-center rounded-full bg-rose-600 text-[12px] font-semibold text-white shadow-xs leading-none">
+                  <span className="absolute -top-1 -right-1 flex min-w-[18px] h-[18px] px-1 items-center justify-center rounded-full bg-rose-600 text-type-badge font-semibold text-white shadow-xs">
                     {effectiveUnreadCount > 99 ? '99+' : effectiveUnreadCount}
                   </span>
                 )}
@@ -352,9 +352,9 @@ export const Header: React.FC<HeaderProps> = ({
 
               {/* Notifications Dropdown Panel */}
               {openPanel === 'notifications' && (
-                <div className="absolute right-0 top-[calc(100%+10px)] w-80 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl shadow-slate-200/60 dark:shadow-slate-950/60 text-[15px] z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div className="absolute right-0 top-[calc(100%+10px)] w-80 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl shadow-slate-200/60 dark:shadow-slate-950/60 text-type-body z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="mb-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-2.5">
-                    <p className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] flex items-center gap-1.5">
+                    <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body flex items-center gap-1.5">
                       <Bell className="w-4 h-4 text-blue-600" />
                       <span>Thông báo hệ thống</span>
                     </p>
@@ -362,7 +362,7 @@ export const Header: React.FC<HeaderProps> = ({
                       <button
                         type="button"
                         onClick={handleMarkAllAsRead}
-                        className="inline-flex items-center gap-1 text-[13px] font-semibold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition cursor-pointer"
+                        className="inline-flex items-center gap-1 text-type-helper font-semibold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition cursor-pointer"
                       >
                         <CheckCheck className="w-3.5 h-3.5" />
                         <span>Đọc tất cả</span>
@@ -391,7 +391,7 @@ export const Header: React.FC<HeaderProps> = ({
                                 }`}
                             >
                               <div className="flex items-center justify-between gap-1.5">
-                                <p className="font-semibold text-slate-900 dark:text-slate-100 text-[14px] group-hover:text-blue-600 transition flex items-center gap-2">
+                                <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body-sm group-hover:text-blue-600 transition flex items-center gap-2">
                                   {isUnread ? (
                                     <span className="h-2 w-2 rounded-full bg-blue-600 shrink-0" />
                                   ) : (
@@ -401,7 +401,7 @@ export const Header: React.FC<HeaderProps> = ({
                                 </p>
                                 <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition shrink-0" />
                               </div>
-                              <p className="text-[13px] text-slate-500 dark:text-slate-400 font-normal leading-relaxed pl-4">
+                              <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal leading-relaxed pl-4">
                                 {item.desc}
                               </p>
                             </div>
@@ -412,8 +412,8 @@ export const Header: React.FC<HeaderProps> = ({
                   ) : (
                     <div className="py-6 text-center space-y-2 text-slate-400 dark:text-slate-500">
                       <Inbox className="w-8 h-8 mx-auto text-slate-700 dark:bg-slate-600" />
-                      <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">Không có thông báo mới</p>
-                      <p className="text-[12px] text-slate-400 dark:text-slate-500">Bạn đã xem toàn bộ thông báo hệ thống.</p>
+                      <p className="text-type-helper font-semibold text-slate-600 dark:text-slate-300">Không có thông báo mới</p>
+                      <p className="text-type-helper text-slate-400 dark:text-slate-500">Bạn đã xem toàn bộ thông báo hệ thống.</p>
                     </div>
                   )}
                 </div>
@@ -444,7 +444,7 @@ export const Header: React.FC<HeaderProps> = ({
                       className="h-8 w-8 sm:h-9 sm:w-9 rounded-full object-cover ring-2 ring-blue-500/20"
                     />
                   ) : (
-                    <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-blue-600 font-semibold text-white text-xs sm:text-sm tracking-tight shadow-xs">
+                    <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-blue-600 font-semibold text-white text-type-helper sm:text-type-body-sm tracking-tight shadow-xs">
                       {displayName?.charAt(0) || 'U'}
                     </div>
                   )}
@@ -453,10 +453,10 @@ export const Header: React.FC<HeaderProps> = ({
 
                 {/* Name & Role text */}
                 <div className="hidden sm:block text-left leading-tight">
-                  <span className="block truncate max-w-[130px] text-[14px] font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <span className="block truncate max-w-[130px] text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {displayName}
                   </span>
-                  <span className="block text-[12px] font-medium text-blue-600 dark:text-blue-400">
+                  <span className="block text-type-badge font-medium text-blue-600 dark:text-blue-400">
                     {displayRoleLabel}
                   </span>
                 </div>
@@ -475,7 +475,7 @@ export const Header: React.FC<HeaderProps> = ({
                   id="user-account-dropdown"
                   role="menu"
                   aria-orientation="vertical"
-                  className="absolute right-0 top-[calc(100%+8px)] w-64 origin-top-right rounded-2xl border border-slate-100/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 p-1.5 shadow-2xl shadow-blue-900/10 dark:shadow-slate-950/70 ring-1 ring-slate-900/5 dark:ring-white/10 text-xs z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200 ease-out backdrop-blur-2xl"
+                  className="absolute right-0 top-[calc(100%+8px)] w-64 origin-top-right rounded-2xl border border-slate-100/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 p-1.5 shadow-2xl shadow-blue-900/10 dark:shadow-slate-950/70 ring-1 ring-slate-900/5 dark:ring-white/10 text-type-helper z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200 ease-out backdrop-blur-2xl"
                 >
                   {/* Isometric Top Pointer Tip */}
                   <div className="absolute -top-1.5 right-6 h-3 w-3 rotate-45 border-l border-t border-slate-100/90 dark:border-slate-800 bg-white dark:bg-slate-900 z-10" />
@@ -486,13 +486,13 @@ export const Header: React.FC<HeaderProps> = ({
                     <div className="absolute -right-4 -top-4 h-12 w-12 rounded-full bg-blue-500/10 dark:bg-blue-400/10 blur-lg pointer-events-none" />
 
                     <div className="flex items-center justify-between gap-1.5">
-                      <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400">Tài khoản</p>
-                      <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-emerald-600 dark:text-emerald-400">
+                      <p className="text-type-helper font-medium text-slate-500 dark:text-slate-400">Tài khoản</p>
+                      <span className="inline-flex items-center gap-1 text-type-helper font-semibold text-emerald-600 dark:text-emerald-400">
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                         Trực tuyến
                       </span>
                     </div>
-                    <p className="truncate text-[14px] font-semibold text-slate-900 dark:text-slate-100 mt-0.5">
+                    <p className="truncate text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 mt-0.5">
                       {user?.email || (user?.username ? `@${user.username}` : displayName)}
                     </p>
                   </div>
@@ -502,7 +502,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <Link
                       href="/profile"
                       onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-[14px] text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
                     >
                       <div className="flex items-center gap-2.5">
                         <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:scale-110 transition-transform duration-150" />
@@ -514,7 +514,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <Link
                       href="/settings"
                       onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-[14px] text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
                     >
                       <div className="flex items-center gap-2.5">
                         <Settings className="h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:scale-110 transition-transform duration-150" />
@@ -526,7 +526,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <Link
                       href="/contact"
                       onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-[14px] text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
                     >
                       <div className="flex items-center gap-2.5">
                         <Headphones className="h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:scale-110 transition-transform duration-150" />
@@ -545,7 +545,7 @@ export const Header: React.FC<HeaderProps> = ({
                       type="button"
                       role="menuitem"
                       onClick={toggleTheme}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-[14px] text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
                     >
                       <div className="flex items-center gap-2.5">
                         {isDark ? (
@@ -582,7 +582,7 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         setShowLogoutConfirm(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-[14px] text-rose-600 dark:text-rose-400 font-semibold hover:bg-rose-50/90 dark:hover:bg-rose-950/40 transition-all duration-150 cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-rose-600 dark:text-rose-400 font-semibold hover:bg-rose-50/90 dark:hover:bg-rose-950/40 transition-all duration-150 cursor-pointer group"
                     >
                       <div className="flex items-center gap-2.5">
                         <LogOut className="h-4 w-4 text-rose-600 dark:text-rose-400 group-hover:translate-x-0.5 transition-transform duration-150" />

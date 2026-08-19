@@ -61,7 +61,7 @@ export function ExamPaperTableToolbar({
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-      <span className="text-xs font-semibold text-slate-600">
+      <span className="text-type-helper font-semibold text-slate-600">
         <span className="font-semibold text-slate-900">{totalCount.toLocaleString('vi-VN')}</span> kết quả
       </span>
 

@@ -21,7 +21,7 @@ export function IdentifierBadge({ children, tone = 'blue', className = '', title
     <span
       title={title}
       className={[
-        'inline-flex min-w-0 max-w-full items-center rounded-lg border px-2 py-0.5 text-[13px] font-medium leading-5 tabular-nums whitespace-nowrap',
+        'inline-flex min-w-0 max-w-full items-center rounded-lg border px-2 py-0.5 text-type-helper font-medium leading-5 tabular-nums whitespace-nowrap',
         toneClasses[tone],
         className,
       ].join(' ')}

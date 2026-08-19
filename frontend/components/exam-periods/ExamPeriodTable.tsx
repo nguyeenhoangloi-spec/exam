@@ -114,7 +114,7 @@ export function ExamPeriodTable({
                     <button
                       type="button"
                       onClick={() => onDetail(p)}
-                      className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer"
+                      className="tabular-nums text-type-helper font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer"
                     >
                       <IdentifierBadge tone="neutral">{codeText}</IdentifierBadge>
                     </button>
@@ -125,13 +125,13 @@ export function ExamPeriodTable({
                 <div>
                   <h4
                     onClick={() => onDetail(p)}
-                    className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
+                    className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
                   >
                     {p.name}
                   </h4>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400 pt-1">
+                <div className="grid grid-cols-2 gap-2 text-type-helper font-semibold text-slate-600 dark:text-slate-400 pt-1">
                   <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 p-2 border border-slate-100 dark:border-slate-700/60">
                     <Calendar className="h-3.5 w-3.5 text-blue-500 shrink-0" />
                     <span>Học kỳ: <strong className="font-semibold text-slate-800 dark:text-slate-200">{p.semester}</strong></span>
@@ -142,12 +142,12 @@ export function ExamPeriodTable({
                   </div>
                 </div>
 
-                <div className="text-[13px] font-normal text-slate-500 dark:text-slate-400 flex items-center justify-between pt-1">
+                <div className="text-type-helper font-normal text-slate-500 dark:text-slate-400 flex items-center justify-between pt-1">
                   <span>Thời gian: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{formatDate(p.startDate)} - {formatDate(p.endDate)}</strong></span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-xs font-semibold">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-type-helper font-semibold">
                 <button
                   type="button"
                   onClick={() => onDetail(p)}
@@ -209,14 +209,14 @@ export function ExamPeriodTable({
                 <button
                   type="button"
                   onClick={() => onDetail(p)}
-                  className="text-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition truncate text-left"
+                  className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition truncate text-left"
                 >
                   {p.name}
                 </button>
                 <IdentifierBadge tone="neutral">{p.semester} - {p.schoolYear}</IdentifierBadge>
               </div>
 
-              <div className="flex items-center gap-4 shrink-0 text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex items-center gap-4 shrink-0 text-type-helper text-slate-500 dark:text-slate-400">
                 <span className="hidden sm:inline-block">
                   {formatDate(p.startDate)} - {formatDate(p.endDate)}
                 </span>
@@ -263,8 +263,8 @@ export function ExamPeriodTable({
   // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
   return (
     <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-      <table className="ui-table w-full text-left text-[14.5px] text-slate-700 dark:text-slate-300 border-collapse">
-        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-[13px] font-medium text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800">
+      <table className="ui-table w-full text-left text-type-body-sm text-slate-700 dark:text-slate-300 border-collapse">
+        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-type-helper font-medium text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input
@@ -356,7 +356,7 @@ export function ExamPeriodTable({
                               closeMenu();
                               onDetail(p);
                             }}
-                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-[15px] font-medium transition select-none"
+                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-type-body font-medium transition select-none"
                           >
                             <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                             <span>Xem chi tiết</span>
@@ -370,7 +370,7 @@ export function ExamPeriodTable({
                                   closeMenu();
                                   onEdit(p);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-[15px] font-medium transition select-none"
+                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-type-body font-medium transition select-none"
                               >
                                 <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                                 <span>Chỉnh sửa</span>
@@ -384,7 +384,7 @@ export function ExamPeriodTable({
                                   closeMenu();
                                   onDelete(p.id);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[15px] font-medium transition select-none"
+                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-type-body font-medium transition select-none"
                               >
                                 <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400" />
                                 <span>Xóa</span>

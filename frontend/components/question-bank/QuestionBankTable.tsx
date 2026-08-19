@@ -104,11 +104,11 @@ export function QuestionBankTable({
                     <button
                       type="button"
                       onClick={() => onDetail(q)}
-                      className="tabular-nums text-[15px] font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer shrink-0"
+                      className="tabular-nums text-type-body font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer shrink-0"
                     >
                       <IdentifierBadge>{codeText}</IdentifierBadge>
                     </button>
-                    <span className="truncate rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[12px] font-semibold text-slate-700 dark:text-slate-300 max-w-[160px]">
+                    <span className="truncate rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-type-helper font-semibold text-slate-700 dark:text-slate-300 max-w-[160px]">
                       {subjectName}
                     </span>
                   </div>
@@ -122,7 +122,7 @@ export function QuestionBankTable({
                 {/* Content: Truncated 2 Lines */}
                 <button
                   type="button"
-                  className="block w-full text-left text-[15px] font-normal text-slate-900 leading-snug cursor-pointer hover:text-primary-600 transition line-clamp-2 min-h-[34px]"
+                  className="block w-full text-left text-type-body font-normal text-slate-900 leading-snug cursor-pointer hover:text-primary-600 transition line-clamp-2 min-h-[34px]"
                   onClick={() => onDetail(q)}
                   title={q.content}
                 >
@@ -131,7 +131,7 @@ export function QuestionBankTable({
 
                 {/* ESSAY vs MULTIPLE_CHOICE Display */}
                 {isEssay ? (
-                  <div className="rounded-xl bg-blue-50/80 border border-blue-200/70 p-2.5 text-[13px] font-semibold text-blue-900 space-y-1">
+                  <div className="rounded-xl bg-blue-50/80 border border-blue-200/70 p-2.5 text-type-helper font-semibold text-blue-900 space-y-1">
                     <p className="font-semibold text-blue-700 flex items-center gap-1.5">
                       <FileText className="w-3.5 h-3.5 text-blue-600 shrink-0" /> Câu tự luận
                     </p>
@@ -144,12 +144,12 @@ export function QuestionBankTable({
                     {optionsList.map((opt) => (
                       <div
                         key={opt.label + opt.content}
-                        className="flex min-w-0 items-center gap-1.5 rounded-xl border border-slate-200/80 bg-slate-50 px-2.5 py-1.5 text-[13px] font-medium text-slate-700 transition"
+                        className="flex min-w-0 items-center gap-1.5 rounded-xl border border-slate-200/80 bg-slate-50 px-2.5 py-1.5 text-type-helper font-medium text-slate-700 transition"
                       >
-                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-slate-200 text-[13px] font-semibold text-slate-700">
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-slate-200 text-type-helper font-semibold text-slate-700">
                           {opt.label}
                         </span>
-                        <span className="truncate leading-tight text-[13px]" title={opt.content}>
+                        <span className="truncate leading-tight text-type-helper" title={opt.content}>
                           {opt.content}
                         </span>
                       </div>
@@ -159,7 +159,7 @@ export function QuestionBankTable({
               </div>
 
               {/* Card Footer: Metadata & Actions */}
-              <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-slate-800 text-xs font-semibold">
+              <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-slate-800 text-type-helper font-semibold">
                 <button
                   type="button"
                   onClick={() => onDetail(q)}
@@ -170,7 +170,7 @@ export function QuestionBankTable({
                 </button>
 
                 <div className="flex items-center gap-1">
-                  <span className="text-xs text-slate-400 font-normal mr-1 hidden sm:inline-block">
+                  <span className="text-type-helper text-slate-400 font-normal mr-1 hidden sm:inline-block">
                     {formatDate(q.createdAt).slice(0, 10)}
                   </span>
                   {isAdmin && (
@@ -231,7 +231,7 @@ export function QuestionBankTable({
                 <button
                   type="button"
                   onClick={() => onDetail(q)}
-                  className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
+                  className="tabular-nums text-type-helper font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
                 >
                   <IdentifierBadge tone="blue">{codeText}</IdentifierBadge>
                 </button>
@@ -240,13 +240,13 @@ export function QuestionBankTable({
                 <div className="min-w-0">
                   <h4
                     onClick={() => onDetail(q)}
-                    className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition truncate max-w-2xl"
+                    className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition truncate max-w-2xl"
                     title={q.content}
                   >
                     {q.content}
                   </h4>
 
-                  <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                  <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                     <span className="flex items-center gap-1">
                       <BookOpen className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       <span className="text-slate-700 dark:text-slate-300 font-medium">{subName}</span>
@@ -310,8 +310,8 @@ export function QuestionBankTable({
   return (
     <>
       <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-        <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
-          <thead className="bg-slate-50 dark:bg-slate-800/90 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+        <table className="ui-table w-full text-left text-type-body text-slate-700 border-collapse">
+          <thead className="bg-slate-50 dark:bg-slate-800/90 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
             <tr>
               <th scope="col" className="py-3.5 pl-3 pr-2 text-center w-8">
                 <input
@@ -364,7 +364,7 @@ export function QuestionBankTable({
                       <button
                         type="button"
                         onClick={() => onDetail(q)}
-                        className="tabular-nums text-[15px] leading-[22px] font-normal text-slate-900 dark:text-slate-100 hover:text-primary-600 transition cursor-pointer"
+                        className="tabular-nums text-type-body leading-[22px] font-normal text-slate-900 dark:text-slate-100 hover:text-primary-600 transition cursor-pointer"
                       >
                         <IdentifierBadge>{codeText}</IdentifierBadge>
                       </button>
@@ -379,7 +379,7 @@ export function QuestionBankTable({
                         <div className="flex items-start justify-between gap-2">
                           <button
                             type="button"
-                            className="block text-left text-[15px] font-medium text-slate-900 dark:text-slate-100 leading-relaxed cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition line-clamp-2"
+                            className="block text-left text-type-body font-medium text-slate-900 dark:text-slate-100 leading-relaxed cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition line-clamp-2"
                             onClick={() => onDetail(q)}
                             title={q.content}
                           >
@@ -406,10 +406,10 @@ export function QuestionBankTable({
                                   return (
                                     <span
                                       key={ans.id || aIdx}
-                                      className="table-badge inline-flex items-center gap-1.5 rounded-lg border border-emerald-200/80 dark:border-emerald-800/80 bg-emerald-50/70 dark:bg-emerald-950/40 px-2 py-0.5 text-[13px] font-medium text-emerald-900 dark:text-emerald-200 shadow-2xs max-w-[200px]"
+                                      className="table-badge inline-flex items-center gap-1.5 rounded-lg border border-emerald-200/80 dark:border-emerald-800/80 bg-emerald-50/70 dark:bg-emerald-950/40 px-2 py-0.5 text-type-helper font-medium text-emerald-900 dark:text-emerald-200 shadow-2xs max-w-[200px]"
                                       title={`Ô trống #${bIdx}: ${mainAns}`}
                                     >
-                                      <span className="table-badge flex h-4.5 px-1.5 shrink-0 items-center justify-center rounded bg-emerald-600 text-xs font-medium text-white">
+                                      <span className="table-badge flex h-4.5 px-1.5 shrink-0 items-center justify-center rounded bg-emerald-600 text-type-helper font-medium text-white">
                                         Ô #{bIdx}
                                       </span>
                                       <span className="table-badge truncate font-medium text-emerald-800 dark:text-emerald-300">
@@ -426,7 +426,7 @@ export function QuestionBankTable({
                             {optionsList.map((opt) => (
                               <span
                                 key={opt.label + opt.content}
-                                className={`table-badge inline-flex items-center gap-2 rounded-lg border px-2.5 py-1 text-[13px] font-medium w-full min-w-0 shadow-2xs transition-colors ${
+                                className={`table-badge inline-flex items-center gap-2 rounded-lg border px-2.5 py-1 text-type-helper font-medium w-full min-w-0 shadow-2xs transition-colors ${
                                   opt.isCorrect
                                     ? 'border-emerald-300 dark:border-emerald-700 bg-emerald-50/50 dark:bg-emerald-950/30 text-slate-800 dark:text-slate-200'
                                     : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300'
@@ -434,7 +434,7 @@ export function QuestionBankTable({
                                 title={`${opt.label}. ${opt.content}${opt.isCorrect ? ' (Đáp án đúng)' : ''}`}
                               >
                                 <span
-                                  className={`table-badge flex h-5 w-5 min-w-[20px] shrink-0 items-center justify-center rounded text-xs font-medium ${
+                                  className={`table-badge flex h-5 w-5 min-w-[20px] shrink-0 items-center justify-center rounded text-type-helper font-medium ${
                                     opt.isCorrect
                                       ? 'bg-emerald-600 text-white shadow-xs'
                                       : 'bg-slate-200/90 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
@@ -471,7 +471,7 @@ export function QuestionBankTable({
                                   key={m.id || idx}
                                   type="button"
                                   onClick={(e) => { e.stopPropagation(); setLightboxUrl(m.url); }}
-                                  className="table-action group inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:text-blue-600 dark:hover:text-blue-400 shadow-2xs transition cursor-zoom-in shrink-0 select-none"
+                                  className="table-action group inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 py-1 text-type-helper font-medium text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:text-blue-600 dark:hover:text-blue-400 shadow-2xs transition cursor-zoom-in shrink-0 select-none"
                                   title="Bấm để phóng to xem ảnh"
                                 >
                                   <ImageIcon className="w-3.5 h-3.5 text-blue-500 group-hover:scale-110 transition-transform" />
@@ -484,7 +484,7 @@ export function QuestionBankTable({
                                   key={m.id || idx}
                                   type="button"
                                   onClick={(e) => { e.stopPropagation(); setVideoLightbox({ url: m.url, fileName: m.fileName }); }}
-                                  className="table-action inline-flex items-center gap-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white px-2.5 py-1 text-xs font-medium hover:bg-slate-800 dark:hover:bg-slate-700 shadow-2xs transition cursor-pointer shrink-0 select-none"
+                                  className="table-action inline-flex items-center gap-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white px-2.5 py-1 text-type-helper font-medium hover:bg-slate-800 dark:hover:bg-slate-700 shadow-2xs transition cursor-pointer shrink-0 select-none"
                                   title="Bấm để phát video"
                                 >
                                   <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 text-amber-400"><polygon points="5,3 19,12 5,21" /></svg>
@@ -497,7 +497,7 @@ export function QuestionBankTable({
                                   key={m.id || idx}
                                   type="button"
                                   onClick={(e) => { e.stopPropagation(); setAudioLightbox({ url: m.url, fileName: m.fileName }); }}
-                                  className="table-action inline-flex items-center gap-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800 px-2.5 py-1 text-xs font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition cursor-pointer shrink-0 select-none"
+                                  className="table-action inline-flex items-center gap-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800 px-2.5 py-1 text-type-helper font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition cursor-pointer shrink-0 select-none"
                                   title="Bấm để nghe audio"
                                 >
                                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
@@ -506,7 +506,7 @@ export function QuestionBankTable({
                               );
 
                               return (
-                                <span key={m.id || idx} className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-500 shrink-0">
+                                <span key={m.id || idx} className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-type-helper font-medium text-slate-500 shrink-0">
                                   <FileText className="h-3.5 w-3.5 text-slate-400" />
                                   {cleanMediaFileName(m.fileName, 'Tập tin')}
                                 </span>
@@ -525,12 +525,12 @@ export function QuestionBankTable({
                         className="group relative inline-block max-w-[140px] cursor-pointer"
                         title={subjectName}
                       >
-                        <span className="block truncate text-[15px] font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        <span className="block truncate text-type-body font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                           {subjectName}
                         </span>
 
                         {subjectName.length > 12 && (
-                          <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-[15px] font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
+                          <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-type-body font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
                             <span>{subjectName}</span>
                             <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />
                           </div>
@@ -555,7 +555,7 @@ export function QuestionBankTable({
 
                   {/* Điểm số */}
                   <td className="px-2 py-3.5 whitespace-nowrap align-top pt-4 text-center">
-                    <span className="text-[15px] font-medium text-slate-900 dark:text-slate-100">
+                    <span className="text-type-body font-medium text-slate-900 dark:text-slate-100">
                       {q.score ?? (q.type === 'ESSAY' ? 1.0 : 0.25)}đ
                     </span>
                   </td>
@@ -570,8 +570,8 @@ export function QuestionBankTable({
                   {/* Người tạo */}
                   {visibleColumns.creator !== false && (
                     <td className="px-2.5 py-3.5 whitespace-nowrap align-top pt-4">
-                      <div className="flex items-center gap-1.5 text-[15px] font-normal text-slate-700 dark:text-slate-300">
-                        <div className="table-avatar h-5 w-5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center font-medium text-[15px] border border-slate-200 dark:border-slate-600">
+                      <div className="flex items-center gap-1.5 text-type-body font-normal text-slate-700 dark:text-slate-300">
+                        <div className="table-avatar h-5 w-5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center font-medium text-type-body border border-slate-200 dark:border-slate-600">
                           {creatorName.charAt(0).toUpperCase()}
                         </div>
                         <span>{creatorName}</span>
@@ -581,7 +581,7 @@ export function QuestionBankTable({
 
                   {/* Ngày tạo */}
                   {visibleColumns.createdAt !== false && (
-                    <td className="table-meta px-2.5 py-3.5 whitespace-nowrap text-[15px] text-slate-500 dark:text-slate-400 font-normal align-top pt-4">
+                    <td className="table-meta px-2.5 py-3.5 whitespace-nowrap text-type-body text-slate-500 dark:text-slate-400 font-normal align-top pt-4">
                       {formatDate(q.createdAt)}
                     </td>
                   )}

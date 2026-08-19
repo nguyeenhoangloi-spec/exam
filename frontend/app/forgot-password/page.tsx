@@ -367,10 +367,10 @@ export default function ForgotPasswordPage() {
             <GraduationCap className="h-6.5 w-6.5" />
           </div>
           <div>
-            <span className="text-[21px] font-semibold tracking-tight text-slate-900 dark:text-white leading-none block">
+            <span className="text-type-section font-semibold tracking-tight text-slate-900 dark:text-white block">
               EXAMSYS
             </span>
-            <p className="text-[12px] font-semibold tracking-wider text-blue-600 dark:text-blue-400  mt-0.5">
+            <p className="text-type-helper font-semibold tracking-wider text-blue-600 dark:text-blue-400  mt-0.5">
               HỆ THỐNG KHẢO THÍ ĐIỆN TỬ
             </p>
           </div>
@@ -382,7 +382,7 @@ export default function ForgotPasswordPage() {
           <button
             type="button"
             onClick={() => router.push('/login')}
-            className="group relative inline-flex items-center gap-2.5 px-6 py-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/50 dark:hover:bg-blue-950/40 text-[13.5px] font-semibold text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0"
+            className="group relative inline-flex items-center gap-2.5 px-6 py-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/50 dark:hover:bg-blue-950/40 text-type-body-sm font-semibold text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0"
           >
             <div className="flex h-5 w-5 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 transition-transform duration-200 group-hover:-translate-x-0.5">
               <ArrowLeft className="h-3.5 w-3.5" />
@@ -408,13 +408,13 @@ export default function ForgotPasswordPage() {
         <section className="lg:col-span-7 flex flex-col justify-start space-y-9">
           {/* Headline */}
           <div className="space-y-3.5">
-            <h1 className="text-xl sm:text-xl lg:text-[46px] font-semibold tracking-tight leading-[1.15] text-slate-900 dark:text-white">
+            <h1 className="text-type-page lg:text-type-display font-semibold tracking-tight text-slate-900 dark:text-white">
               KHÔI PHỤC <br />
               <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-sky-300">
                 MẬT KHẨU TÀI KHOẢN
               </span>
             </h1>
-            <p className="text-[15.5px] sm:text-[16.5px] text-slate-600 dark:text-slate-300 max-w-xl font-normal leading-relaxed">
+            <p className="text-type-body sm:text-type-card text-slate-600 dark:text-slate-300 max-w-xl font-normal leading-relaxed">
               Quy trình khôi phục an toàn 2 lớp qua mã OTP email chính chủ hoặc hỗ trợ trực tiếp từ Quản trị viên hệ thống.
             </p>
           </div>
@@ -428,10 +428,10 @@ export default function ForgotPasswordPage() {
                   <Fingerprint className="h-5.5 w-5.5" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
+                  <h2 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
                     Xác thực 2 lớp OTP
                   </h2>
-                  <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <p className="text-type-helper text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Mã xác thực gửi về email
                   </p>
                 </div>
@@ -442,10 +442,10 @@ export default function ForgotPasswordPage() {
                   <ShieldCheck className="h-5.5 w-5.5" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
+                  <h2 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
                     Bảo mật tuyệt đối
                   </h2>
-                  <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <p className="text-type-helper text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Mã hóa chuẩn JWT SHA-256
                   </p>
                 </div>
@@ -456,10 +456,10 @@ export default function ForgotPasswordPage() {
                   <Zap className="h-5.5 w-5.5" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
+                  <h2 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
                     Tức thì & Tự động
                   </h2>
-                  <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <p className="text-type-helper text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Khôi phục chỉ trong 60 giây
                   </p>
                 </div>
@@ -470,10 +470,10 @@ export default function ForgotPasswordPage() {
                   <Headphones className="h-5.5 w-5.5" />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
+                  <h2 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 leading-tight group-hover:text-blue-600 transition-colors">
                     Hỗ trợ kỹ thuật 24/7
                   </h2>
-                  <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+                  <p className="text-type-helper text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
                     Hotline 1800-EXAM-HELP
                   </p>
                 </div>
@@ -573,10 +573,10 @@ export default function ForgotPasswordPage() {
                 <ShieldCheck className="h-5.5 w-5.5" />
               </div>
               <div className="min-w-0">
-                <p className="text-[15px] sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-type-card sm:text-type-card font-semibold text-slate-900 dark:text-white leading-tight truncate">
                   100%
                 </p>
-                <p className="text-[12.5px] text-slate-500 dark:text-slate-400 truncate">Bảo mật định danh</p>
+                <p className="text-type-helper text-slate-500 dark:text-slate-400 truncate">Bảo mật định danh</p>
               </div>
             </div>
 
@@ -585,10 +585,10 @@ export default function ForgotPasswordPage() {
                 <Clock className="h-5.5 w-5.5" />
               </div>
               <div className="min-w-0">
-                <p className="text-[15px] sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-type-card sm:text-type-card font-semibold text-slate-900 dark:text-white leading-tight truncate">
                   {'< 60s'}
                 </p>
-                <p className="text-[12.5px] text-slate-500 dark:text-slate-400 truncate">Thời gian cấp lại</p>
+                <p className="text-type-helper text-slate-500 dark:text-slate-400 truncate">Thời gian cấp lại</p>
               </div>
             </div>
 
@@ -597,10 +597,10 @@ export default function ForgotPasswordPage() {
                 <Headphones className="h-5.5 w-5.5" />
               </div>
               <div className="min-w-0">
-                <p className="text-[15px] sm:text-[17px] font-semibold text-slate-900 dark:text-white leading-tight truncate">
+                <p className="text-type-card sm:text-type-card font-semibold text-slate-900 dark:text-white leading-tight truncate">
                   24/7
                 </p>
-                <p className="text-[12.5px] text-slate-500 dark:text-slate-400 truncate">Hỗ trợ khẩn cấp</p>
+                <p className="text-type-helper text-slate-500 dark:text-slate-400 truncate">Hỗ trợ khẩn cấp</p>
               </div>
             </div>
           </div>
@@ -616,7 +616,7 @@ export default function ForgotPasswordPage() {
             }`}
           >
             {/* Top Step Progress Bar */}
-            <div className="mb-5 flex items-center justify-between gap-1.5 bg-slate-100/80 dark:bg-slate-800/80 p-1.5 rounded-2xl text-[12px] font-semibold">
+            <div className="mb-5 flex items-center justify-between gap-1.5 bg-slate-100/80 dark:bg-slate-800/80 p-1.5 rounded-2xl text-type-helper font-semibold">
               <span
                 className={`flex-1 text-center py-1.5 rounded-xl transition-all duration-200 ${
                   step === 1
@@ -660,13 +660,13 @@ export default function ForgotPasswordPage() {
                 {step === 3 && <KeyRound className="h-7 w-7" />}
                 {step === 4 && <CheckCircle2 className="h-7 w-7 text-emerald-500" />}
               </div>
-              <h2 className="text-[23px] sm:text-[25px] font-semibold text-slate-900 dark:text-white tracking-tight">
+              <h2 className="text-type-section font-semibold text-slate-900 dark:text-white tracking-tight">
                 {step === 1 && 'Quên mật khẩu?'}
                 {step === 2 && 'Xác thực mã OTP'}
                 {step === 3 && 'Đặt mật khẩu mới'}
                 {step === 4 && 'Đổi mật khẩu thành công!'}
               </h2>
-              <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1 font-normal leading-relaxed">
+              <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-1 font-normal leading-relaxed">
                 {step === 1 && 'Nhập mã số sinh viên, giảng viên hoặc email đăng ký.'}
                 {step === 2 && (emailMasked ? `Mã xác thực gồm 6 chữ số đã gửi đến email ${emailMasked}.` : `Mã xác thực gồm 6 chữ số đã gửi đến email của ${identifier}.`)}
                 {step === 3 && 'Tạo mật khẩu mới an toàn gồm tối thiểu 6 ký tự.'}
@@ -678,7 +678,7 @@ export default function ForgotPasswordPage() {
             {step === 1 && (
               <form onSubmit={handleRequestOtp} noValidate className="space-y-4">
                 <div className="space-y-1">
-                  <label className="block text-[15px] font-medium text-slate-600 dark:text-slate-300">
+                  <label className="block text-type-body font-medium text-slate-600 dark:text-slate-300">
                     Mã số hoặc Email đăng ký
                   </label>
                   <div className="relative">
@@ -694,7 +694,7 @@ export default function ForgotPasswordPage() {
                       }}
                       placeholder="Ví dụ: SV2026 hoặc nguyenvana@exam.edu.vn"
                       required
-                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-[15px] outline-none transition ${
+                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-type-body outline-none transition ${
                         isDark
                           ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                           : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -706,7 +706,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading || !identifier.trim()}
-                  className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-[15px] shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-2"
+                  className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-type-body shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-2"
                 >
                   {loading ? (
                     <div className="flex items-center gap-2">
@@ -727,7 +727,7 @@ export default function ForgotPasswordPage() {
             {step === 2 && (
               <form onSubmit={handleVerifyOtp} noValidate className="space-y-4">
                 <div className="space-y-2.5">
-                  <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                  <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">
                     Mã xác thực 6 chữ số
                   </label>
 
@@ -755,7 +755,7 @@ export default function ForgotPasswordPage() {
                             onChange={(e) => handleDigitChange(idx, e.target.value)}
                             onKeyDown={(e) => handleDigitKeyDown(idx, e)}
                             onPaste={handleOtpPaste}
-                            className={`w-11 h-13 sm:w-12 sm:h-14 rounded-2xl border-2 text-center text-[20px] sm:text-[24px] font-semibold tabular-nums outline-none transition-all duration-150 ${
+                            className={`w-11 h-13 sm:w-12 sm:h-14 rounded-2xl border-2 text-center text-type-section sm:text-type-otp font-semibold tabular-nums outline-none transition-all duration-150 ${
                               isOtpShaking
                                 ? 'border-rose-500 bg-rose-50/50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'
                                 : val
@@ -792,7 +792,7 @@ export default function ForgotPasswordPage() {
                             onChange={(e) => handleDigitChange(idx, e.target.value)}
                             onKeyDown={(e) => handleDigitKeyDown(idx, e)}
                             onPaste={handleOtpPaste}
-                            className={`w-11 h-13 sm:w-12 sm:h-14 rounded-2xl border-2 text-center text-[20px] sm:text-[24px] font-semibold tabular-nums outline-none transition-all duration-150 ${
+                            className={`w-11 h-13 sm:w-12 sm:h-14 rounded-2xl border-2 text-center text-type-section sm:text-type-otp font-semibold tabular-nums outline-none transition-all duration-150 ${
                               isOtpShaking
                                 ? 'border-rose-500 bg-rose-50/50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'
                                 : val
@@ -809,7 +809,7 @@ export default function ForgotPasswordPage() {
                 </div>
 
                 {/* Sub Action Links with Animated SVG Circular Countdown Ring */}
-                <div className="flex items-center justify-between text-xs pt-1">
+                <div className="flex items-center justify-between text-type-helper pt-1">
                   <button
                     type="button"
                     onClick={() => {
@@ -854,7 +854,7 @@ export default function ForgotPasswordPage() {
                             strokeLinecap="round"
                           />
                         </svg>
-                        <span className="tabular-nums font-semibold text-[12px]">{resendCountdown}s</span>
+                        <span className="tabular-nums font-semibold text-type-helper">{resendCountdown}s</span>
                       </div>
                     ) : (
                       <div className="flex items-center gap-1 hover:underline">
@@ -868,7 +868,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading || otpDigits.join('').length < 6}
-                  className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-[15px] shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-2"
+                  className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-type-body shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-2"
                 >
                   {loading ? (
                     <div className="flex items-center gap-2">
@@ -889,7 +889,7 @@ export default function ForgotPasswordPage() {
             {step === 3 && (
               <form onSubmit={handleResetPassword} noValidate className="space-y-3.5">
                 <div className="space-y-1">
-                  <label className="block text-[15px] font-medium text-slate-600 dark:text-slate-300">
+                  <label className="block text-type-body font-medium text-slate-600 dark:text-slate-300">
                     Mật khẩu mới
                   </label>
                   <div className="relative">
@@ -905,7 +905,7 @@ export default function ForgotPasswordPage() {
                       }}
                       placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)"
                       required
-                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-11 text-[15px] outline-none transition ${
+                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-11 text-type-body outline-none transition ${
                         isDark
                           ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                           : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -923,7 +923,7 @@ export default function ForgotPasswordPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-[15px] font-medium text-slate-600 dark:text-slate-300">
+                  <label className="block text-type-body font-medium text-slate-600 dark:text-slate-300">
                     Xác nhận mật khẩu mới
                   </label>
                   <div className="relative">
@@ -939,7 +939,7 @@ export default function ForgotPasswordPage() {
                       }}
                       placeholder="Nhập lại mật khẩu mới"
                       required
-                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-[15px] outline-none transition ${
+                      className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-type-body outline-none transition ${
                         isDark
                           ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                           : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -951,7 +951,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading || !newPassword || !confirmPassword}
-                  className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-[15px] shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-3"
+                  className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-type-body shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-3"
                 >
                   {loading ? (
                     <div className="flex items-center gap-2">
@@ -971,14 +971,14 @@ export default function ForgotPasswordPage() {
             {/* STEP 4: Success View */}
             {step === 4 && (
               <div className="text-center space-y-4 py-3">
-                <p className="text-xs sm:text-[13.5px] text-slate-600 dark:text-slate-300 font-medium">
+                <p className="text-type-helper sm:text-type-body-sm text-slate-600 dark:text-slate-300 font-medium">
                   Mật khẩu mới đã có hiệu lực ngay bây giờ. Hãy quay lại trang Đăng nhập để truy cập hệ thống.
                 </p>
 
                 <button
                   type="button"
                   onClick={() => router.push('/login')}
-                  className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-[15px] shadow-md shadow-blue-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-type-body shadow-md shadow-blue-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>Đăng nhập</span>
                   <ArrowRight className="h-4.5 w-4.5" />
@@ -987,7 +987,7 @@ export default function ForgotPasswordPage() {
             )}
 
             {/* Footer Help Link */}
-            <div className="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4 text-center text-xs sm:text-[13.5px] text-slate-500 dark:text-slate-400">
+            <div className="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4 text-center text-type-helper sm:text-type-body-sm text-slate-500 dark:text-slate-400">
               <p>
                 Cần hỗ trợ sự cố?{' '}
                 <button
@@ -1004,12 +1004,12 @@ export default function ForgotPasswordPage() {
       </main>
 
       {/* ── Page Bottom Footer ── */}
-      <footer className="mt-auto relative z-10 w-full py-5 shrink-0 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1">
-        <p className="flex items-center justify-center gap-2 font-medium text-slate-700 dark:text-slate-300 text-[12.5px]">
+      <footer className="mt-auto relative z-10 w-full py-5 shrink-0 text-center text-type-helper text-slate-500 dark:text-slate-400 space-y-1">
+        <p className="flex items-center justify-center gap-2 font-medium text-slate-700 dark:text-slate-300 text-type-helper">
           <ShieldCheck className="h-4 w-4 text-blue-600" />
           <span>Hệ thống khảo thí an toàn – Minh bạch – Hiệu quả</span>
         </p>
-        <p className="text-[12px] text-slate-400 dark:text-slate-500">© 2026 EXAMSYS. All rights reserved.</p>
+        <p className="text-type-helper text-slate-400 dark:text-slate-500">© 2026 EXAMSYS. All rights reserved.</p>
       </footer>
     </div>
   );

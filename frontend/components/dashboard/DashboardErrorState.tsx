@@ -9,8 +9,8 @@ export function DashboardErrorState({ message, onRetry }: { message: string; onR
         <AlertCircle className="h-6 w-6" />
       </span>
       <div>
-        <h2 className="text-base font-semibold text-slate-900">Không thể tải trang tổng quan</h2>
-        <p className="mx-auto mt-1 max-w-lg text-xs font-medium text-slate-500">{message}</p>
+        <h2 className="text-type-body font-semibold text-slate-900">Không thể tải trang tổng quan</h2>
+        <p className="mx-auto mt-1 max-w-lg text-type-helper font-medium text-slate-500">{message}</p>
       </div>
       <Button
         variant="secondary"

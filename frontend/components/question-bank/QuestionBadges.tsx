@@ -18,7 +18,7 @@ export const QuestionDifficultyBadge = ({ difficulty }: { difficulty: string }) 
       : 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/60';
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold select-none whitespace-nowrap ${badgeCls}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-type-helper font-semibold select-none whitespace-nowrap ${badgeCls}`}>
       {label}
     </span>
   );
@@ -35,7 +35,7 @@ const QUESTION_TYPE_SHORT_LABELS: Record<string, string> = {
 export const QuestionTypeBadge = ({ type }: { type: string }) => {
   const label = QUESTION_TYPE_SHORT_LABELS[type] || QUESTION_TYPE_LABELS[type] || 'Trắc nghiệm';
   return (
-    <span className="text-[13px] font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">
+    <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">
       {label}
     </span>
   );

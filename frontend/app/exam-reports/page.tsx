@@ -702,8 +702,8 @@ export default function ExamReportsPage() {
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70">
                   <div>
-                    <p className="text-[20px] font-semibold text-slate-900 tracking-tight leading-none">Chọn Lịch thi để xem Báo cáo</p>
-                    <p className="text-[13px] text-slate-500 font-semibold mt-1">
+                    <p className="text-type-section font-semibold text-slate-900 tracking-tight">Chọn Lịch thi để xem Báo cáo</p>
+                    <p className="text-type-helper text-slate-500 font-semibold mt-1">
                       Phân loại theo dạng lịch thi, môn học & trạng thái
                     </p>
                   </div>
@@ -726,13 +726,13 @@ export default function ExamReportsPage() {
                       placeholder="Tìm kiếm theo Tên môn, Mã môn, Kỳ thi..."
                       value={modalSearch}
                       onChange={(e) => setModalSearch(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2 text-[15px] font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                     />
                     {modalSearch && (
                       <button
                         type="button"
                         onClick={() => setModalSearch('')}
-                        className="absolute right-3 top-2 text-xs text-slate-400 hover:text-slate-600 cursor-pointer"
+                        className="absolute right-3 top-2 text-type-helper text-slate-400 hover:text-slate-600 cursor-pointer"
                       >
                         Xóa
                       </button>
@@ -756,7 +756,7 @@ export default function ExamReportsPage() {
                     <FilterSelect
                       value={modalFormatFilter}
                       onChange={(e) => setModalFormatFilter(e.target.value as any)}
-                      className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
+                      className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-type-body font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
                     >
                       <option value="ALL">Hình thức: Tất cả</option>
                       <option value="TRAC_NGHIEM">Hình thức: Trắc nghiệm</option>
@@ -769,7 +769,7 @@ export default function ExamReportsPage() {
                     <FilterSelect
                       value={modalSubjectFilter}
                       onChange={(e) => setModalSubjectFilter(e.target.value)}
-                      className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[200px]"
+                      className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-type-body font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[200px]"
                     >
                       <option value="ALL">Môn học: Tất cả</option>
                       {availableSubjects.map((sb) => (
@@ -782,7 +782,7 @@ export default function ExamReportsPage() {
                     <FilterSelect
                       value={modalStatusFilter}
                       onChange={(e) => setModalStatusFilter(e.target.value as any)}
-                      className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
+                      className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-type-body font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
                     >
                       <option value="ALL">Trạng thái: Tất cả</option>
                       <option value="ONGOING">Đang diễn ra</option>
@@ -811,7 +811,7 @@ export default function ExamReportsPage() {
 
                 {/* List of filtered schedules */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-2">
-                  <div className="flex items-center justify-between text-[12px] font-semibold text-slate-400 px-1">
+                  <div className="flex items-center justify-between text-type-helper font-semibold text-slate-400 px-1">
                     <span>
                       Hiển thị {modalFilteredSchedules.length} / {schedules.length} ca thi
                     </span>
@@ -819,7 +819,7 @@ export default function ExamReportsPage() {
 
                   {modalFilteredSchedules.length === 0 ? (
                     <div className="py-12 text-center">
-                      <p className="text-xs font-semibold text-slate-500">Không tìm thấy ca thi phù hợp với bộ lọc hiện tại.</p>
+                      <p className="text-type-helper font-semibold text-slate-500">Không tìm thấy ca thi phù hợp với bộ lọc hiện tại.</p>
                       <button
                         type="button"
                         onClick={() => {
@@ -829,7 +829,7 @@ export default function ExamReportsPage() {
                           setModalSubjectFilter('ALL');
                           setModalStatusFilter('ALL');
                         }}
-                        className="mt-2 text-xs font-semibold text-blue-600 hover:underline cursor-pointer"
+                        className="mt-2 text-type-helper font-semibold text-blue-600 hover:underline cursor-pointer"
                       >
                         Xóa bộ lọc để xem tất cả
                       </button>
@@ -860,8 +860,8 @@ export default function ExamReportsPage() {
                         >
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-semibold text-slate-900 dark:text-slate-100">{name}</span>
-                              <span className="text-[12px] tabular-nums font-medium text-slate-500 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded">
+                              <span className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">{name}</span>
+                              <span className="text-type-helper tabular-nums font-medium text-slate-500 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded">
                                 {code}
                               </span>
                             </div>
@@ -871,12 +871,12 @@ export default function ExamReportsPage() {
                             </div>
                           </div>
 
-                          <div className="flex flex-wrap items-center justify-between text-[12px] text-slate-500 dark:text-slate-400 gap-2">
+                          <div className="flex flex-wrap items-center justify-between text-type-helper text-slate-500 dark:text-slate-400 gap-2">
                             <div className="flex items-center gap-1.5">
-                              <span className={`px-2 py-0.5 rounded text-[12px] ${typeBadge.badgeClass}`}>
+                              <span className={`px-2 py-0.5 rounded text-type-helper ${typeBadge.badgeClass}`}>
                                 {typeBadge.label}
                               </span>
-                              <span className={`px-2 py-0.5 rounded text-[12px] ${formatBadge.badgeClass}`}>
+                              <span className={`px-2 py-0.5 rounded text-type-helper ${formatBadge.badgeClass}`}>
                                 {formatBadge.label}
                               </span>
                               <span className="text-slate-400 dark:text-slate-500">· {period}</span>
@@ -893,7 +893,7 @@ export default function ExamReportsPage() {
 
                 {/* Footer */}
                 <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60">
-                  <span className="text-[12px] font-semibold text-slate-500 dark:text-slate-400">
+                  <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">
                     Đã chọn lịch thi ID: <strong className="text-slate-800 dark:text-slate-100">#{selectedScheduleId || '---'}</strong>
                   </span>
                   <Button variant="secondary" size="md" onClick={() => setShowSchedulePicker(false)}>
@@ -920,7 +920,7 @@ export default function ExamReportsPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -936,7 +936,7 @@ export default function ExamReportsPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >

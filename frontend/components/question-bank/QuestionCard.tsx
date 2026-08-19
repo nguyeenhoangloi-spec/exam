@@ -48,19 +48,19 @@ export function QuestionCard({
           />
           <IdentifierBadge>{q.code}</IdentifierBadge>
           {q.subject?.subjectName && (
-            <span className="rounded-lg bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 px-2.5 py-0.5 text-[13px] font-medium text-primary-600 dark:text-primary-400 h-6 inline-flex items-center">
+            <span className="rounded-lg bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 px-2.5 py-0.5 text-type-helper font-medium text-primary-600 dark:text-primary-400 h-6 inline-flex items-center">
               {q.subject.subjectName}
             </span>
           )}
           {q.chapter?.name && (
-            <span className="rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-0.5 text-[13px] font-medium text-slate-700 dark:text-slate-300 h-6 inline-flex items-center">
+            <span className="rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-0.5 text-type-helper font-medium text-slate-700 dark:text-slate-300 h-6 inline-flex items-center">
               {q.chapter.name}
             </span>
           )}
           <QuestionTypeBadge type={q.type} />
           <QuestionDifficultyBadge difficulty={q.difficulty} />
           <QuestionStatusBadge status={q.status} />
-          <span className="text-[14px] font-semibold text-slate-900 dark:text-slate-100 ml-1">{q.score || (q.type === 'ESSAY' ? 1.0 : 0.25)}đ</span>
+          <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 ml-1">{q.score || (q.type === 'ESSAY' ? 1.0 : 0.25)}đ</span>
         </div>
 
         {/* Action Buttons on Card */}
@@ -154,7 +154,7 @@ export function QuestionCard({
       {/* Question Content */}
       <div className="space-y-3">
         <div
-          className="text-[15px] font-normal text-slate-900 dark:text-slate-100 leading-relaxed cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 transition"
+          className="text-type-body font-normal text-slate-900 dark:text-slate-100 leading-relaxed cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 transition"
           onClick={onDetail}
         >
           {q.contentRich && typeof q.contentRich === 'object' && 'html' in q.contentRich ? (
@@ -182,7 +182,7 @@ export function QuestionCard({
               if (mime.startsWith('audio/')) {
                 return (
                   <div key={mediaItem.id || idx} className="flex flex-col items-center justify-center gap-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 shadow-2xs">
-                    <span className="text-[13px] font-medium text-slate-500 dark:text-slate-400 max-w-[140px] truncate">
+                    <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 max-w-[140px] truncate">
                       {mediaItem.fileName || `Audio ${idx + 1}`}
                     </span>
                     <audio src={fullUrl} controls className="h-8 w-44" />
@@ -219,12 +219,12 @@ export function QuestionCard({
                       }}
                     />
                     <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
-                      <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-2.5 py-1 text-[13px] font-medium text-white shadow-lg backdrop-blur-xs">
+                      <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-2.5 py-1 text-type-helper font-medium text-white shadow-lg backdrop-blur-xs">
                         <Maximize2 className="h-3.5 w-3.5 text-blue-400" /> Xem rõ ảnh
                       </span>
                     </div>
                   </div>
-                  <div className="mt-1 flex items-center justify-center gap-1 text-[13px] font-normal text-slate-500 dark:text-slate-400">
+                  <div className="mt-1 flex items-center justify-center gap-1 text-type-helper font-normal text-slate-500 dark:text-slate-400">
                     <ImageIcon className="h-3.5 w-3.5 text-primary-600" />
                     <span className="truncate max-w-[110px]">{mediaItem.fileName || `Hình ${idx + 1}`}</span>
                   </div>
@@ -239,12 +239,12 @@ export function QuestionCard({
       {q.type === 'FILL_BLANK' && (
         <div className="space-y-2 pt-1">
           <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-2.5">
-            <span className="text-[13px] font-semibold tracking-wider text-slate-500 dark:text-slate-400">
+            <span className="text-type-helper font-semibold tracking-wider text-slate-500 dark:text-slate-400">
               Đáp án điền khuyết ({(q.fillBlankAnswers || []).length || 1} ô trống)
             </span>
             <button
               onClick={() => setShowOptions(!showOptions)}
-              className="text-[13px] font-medium text-primary-600 dark:text-primary-400 hover:text-blue-700 flex items-center gap-1 transition"
+              className="text-type-helper font-medium text-primary-600 dark:text-primary-400 hover:text-blue-700 flex items-center gap-1 transition"
             >
               {showOptions ? (
                 <>Thu gọn <ChevronUp className="w-3.5 h-3.5" /></>
@@ -262,16 +262,16 @@ export function QuestionCard({
                 return (
                   <div
                     key={ans.id || idx}
-                    className="flex items-center justify-between rounded-xl border border-emerald-200/80 dark:border-emerald-800/80 bg-emerald-50/60 dark:bg-emerald-950/40 p-2.5 text-[14px] font-normal text-slate-700 dark:text-slate-300 transition"
+                    className="flex items-center justify-between rounded-xl border border-emerald-200/80 dark:border-emerald-800/80 bg-emerald-50/60 dark:bg-emerald-950/40 p-2.5 text-type-body-sm font-normal text-slate-700 dark:text-slate-300 transition"
                   >
                     <div className="flex items-center gap-2 min-w-0 pr-2">
-                      <span className="flex h-5 px-1.5 shrink-0 items-center justify-center rounded-md bg-emerald-600 text-xs font-semibold text-white">
+                      <span className="flex h-5 px-1.5 shrink-0 items-center justify-center rounded-md bg-emerald-600 text-type-helper font-semibold text-white">
                         Ô #{bIdx}
                       </span>
                       <span className="truncate font-semibold text-emerald-800 dark:text-emerald-300">{mainAns}</span>
                     </div>
                     {ans.score !== undefined && (
-                      <span className="text-xs font-medium text-slate-500 shrink-0">{ans.score}đ</span>
+                      <span className="text-type-helper font-medium text-slate-500 shrink-0">{ans.score}đ</span>
                     )}
                   </div>
                 );
@@ -285,12 +285,12 @@ export function QuestionCard({
       {options.length > 0 && (
         <div className="space-y-2 pt-1">
           <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-2.5">
-            <span className="text-[13px] font-semibold tracking-wider text-slate-500 dark:text-slate-400">
+            <span className="text-type-helper font-semibold tracking-wider text-slate-500 dark:text-slate-400">
               Lựa chọn ({options.length} phương án)
             </span>
             <button
               onClick={() => setShowOptions(!showOptions)}
-              className="text-[13px] font-medium text-primary-600 dark:text-primary-400 hover:text-blue-700 flex items-center gap-1 transition"
+              className="text-type-helper font-medium text-primary-600 dark:text-primary-400 hover:text-blue-700 flex items-center gap-1 transition"
             >
               {showOptions ? (
                 <>Thu gọn <ChevronUp className="w-3.5 h-3.5" /></>
@@ -307,7 +307,7 @@ export function QuestionCard({
                 return (
                   <div
                     key={opt.id || idx}
-                    className={`flex items-center justify-between rounded-xl border p-2.5 text-[15px] font-normal transition ${
+                    className={`flex items-center justify-between rounded-xl border p-2.5 text-type-body font-normal transition ${
                       opt.isCorrect
                         ? 'border-emerald-200/90 dark:border-emerald-800/80 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200'
                         : 'border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300'
@@ -315,7 +315,7 @@ export function QuestionCard({
                   >
                     <div className="flex items-center gap-2.5 min-w-0 pr-2">
                       <span
-                        className={`flex h-6 min-w-6 shrink-0 items-center justify-center rounded-lg px-1.5 text-[13px] font-semibold ${
+                        className={`flex h-6 min-w-6 shrink-0 items-center justify-center rounded-lg px-1.5 text-type-helper font-semibold ${
                           opt.isCorrect
                             ? 'bg-emerald-600 text-white'
                             : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100'
@@ -337,7 +337,7 @@ export function QuestionCard({
 
       {/* Explanation if present */}
       {q.explanation && showOptions && (
-        <div className="rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-800 p-3 text-[14px] text-slate-700 dark:text-slate-300 flex items-start gap-2">
+        <div className="rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-800 p-3 text-type-body-sm text-slate-700 dark:text-slate-300 flex items-start gap-2">
           <HelpCircle className="w-4 h-4 text-primary-600 shrink-0 mt-0.5" />
           <div>
             <strong className="font-semibold text-slate-900 dark:text-slate-100">Giải thích: </strong>
@@ -347,7 +347,7 @@ export function QuestionCard({
       )}
 
       {/* Footer Info */}
-      <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[14px] text-slate-500 dark:text-slate-400 font-normal">
+      <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-type-body-sm text-slate-500 dark:text-slate-400 font-normal">
         <span>
           Người tạo: <strong className="text-slate-900 dark:text-slate-100 font-medium">{q.createdBy?.username || '—'}</strong>
         </span>

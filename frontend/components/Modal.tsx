@@ -73,11 +73,11 @@ export const Modal: React.FC<ModalProps> = ({
 
                 <div className="min-w-0 flex-1 pr-1 space-y-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-[18px] leading-[26px] font-semibold text-white">
+                    <h3 className="text-type-card leading-[26px] font-semibold text-white">
                       {title}
                     </h3>
                     {defaultBadge && (
-                      <span className="inline-flex items-center text-[12px] leading-[18px] font-semibold bg-white/20 text-white px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/30 tracking-wide">
+                      <span className="inline-flex items-center text-type-helper leading-[18px] font-semibold bg-white/20 text-white px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/30 tracking-wide">
                         {defaultBadge}
                       </span>
                     )}
@@ -86,7 +86,7 @@ export const Modal: React.FC<ModalProps> = ({
                     isIdentifierSubtitle ? (
                       <div><IdentifierBadge tone="inverse" title={defaultSubtitle}>{defaultSubtitle}</IdentifierBadge></div>
                     ) : (
-                      <p className="text-[13px] leading-[18px] font-medium text-blue-100/90 line-clamp-1">
+                      <p className="text-type-helper leading-[18px] font-medium text-blue-100/90 line-clamp-1">
                         {defaultSubtitle}
                       </p>
                     )
@@ -106,7 +106,7 @@ export const Modal: React.FC<ModalProps> = ({
           </div>
         ) : (
           <div className={`flex items-center justify-between px-6 py-4 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 ${headerClassName}`}>
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 tracking-tight">{title}</h3>
+            <h3 className="text-type-card font-semibold text-slate-900 dark:text-slate-100 tracking-tight">{title}</h3>
             <button
               type="button"
               onClick={onClose}

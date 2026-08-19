@@ -212,19 +212,19 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <div className="flex items-center gap-2">
                 <IdentifierBadge tone="blue">{question.code || 'Câu tự luận'}</IdentifierBadge>
-                <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">Đề bài:</span>
+                <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400">Đề bài:</span>
               </div>
-              <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-                Điểm câu hỏi: <strong className="text-blue-600 dark:text-blue-400 font-semibold text-sm">{expectedScore}đ</strong>
+              <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400">
+                Điểm câu hỏi: <strong className="text-blue-600 dark:text-blue-400 font-semibold text-type-body-sm">{expectedScore}đ</strong>
               </span>
             </div>
-            <p className="text-sm text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
+            <p className="text-type-body-sm text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
               {question.content}
             </p>
           </div>
 
           {/* Inline Status Line (Không dùng nền, phẳng 100%) */}
-          <div className="flex items-center justify-between gap-3 text-xs py-1">
+          <div className="flex items-center justify-between gap-3 text-type-helper py-1">
             <div className="flex items-center gap-2">
               {isMatched ? (
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
@@ -245,14 +245,14 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              <span className="font-semibold tabular-nums text-slate-900 dark:text-slate-100 text-sm">
+              <span className="font-semibold tabular-nums text-slate-900 dark:text-slate-100 text-type-body-sm">
                 {totalRubricScore} / {expectedScore}đ
               </span>
               {criteria.length > 1 && !isMatched && (
                 <button
                   type="button"
                   onClick={handleAutoDivideScores}
-                  className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                  className="text-type-helper font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
                 >
                   (Chia đều)
                 </button>
@@ -267,7 +267,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
           ) : (
             <div className="space-y-3 pt-1">
               <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
-                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <span className="text-type-body-sm font-semibold text-slate-700 dark:text-slate-300">
                   Các ý chấm điểm ({criteria.length})
                 </span>
                 <Button
@@ -286,7 +286,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                 {criteria.map((c, idx) => (
                   <div key={idx} className="py-3 space-y-2 first:pt-0 last:pb-0">
                     <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold text-xs flex items-center justify-center shrink-0">
+                      <div className="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold text-type-helper flex items-center justify-center shrink-0">
                         {idx + 1}
                       </div>
 
@@ -296,7 +296,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                           placeholder={`Nội dung ý ${idx + 1} (Ví dụ: Nêu đúng định nghĩa, giải thích đúng...)`}
                           value={c.label}
                           onChange={(e) => handleFieldChange(idx, 'label', e.target.value)}
-                          className="w-full bg-slate-50/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-[15px] text-slate-900 dark:text-slate-100 font-medium focus:bg-white focus:border-blue-500 focus:outline-none transition"
+                          className="w-full bg-slate-50/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-type-body text-slate-900 dark:text-slate-100 font-medium focus:bg-white focus:border-blue-500 focus:outline-none transition"
                         />
                       </div>
 
@@ -308,9 +308,9 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                           max={expectedScore}
                           value={c.maxScore}
                           onChange={(e) => handleFieldChange(idx, 'maxScore', Number(e.target.value))}
-                          className="w-full bg-slate-50/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl pl-3 pr-6 py-2 text-[15px] font-semibold text-blue-600 dark:text-blue-400 tabular-nums focus:bg-white focus:border-blue-500 focus:outline-none transition"
+                          className="w-full bg-slate-50/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl pl-3 pr-6 py-2 text-type-body font-semibold text-blue-600 dark:text-blue-400 tabular-nums focus:bg-white focus:border-blue-500 focus:outline-none transition"
                         />
-                        <span className="absolute right-2.5 top-2.5 text-xs text-slate-400 font-medium pointer-events-none">
+                        <span className="absolute right-2.5 top-2.5 text-type-helper text-slate-400 font-medium pointer-events-none">
                           đ
                         </span>
                       </div>
@@ -333,7 +333,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                         placeholder="Ghi chú chi tiết yêu cầu đạt (tùy chọn)..."
                         value={c.description}
                         onChange={(e) => handleFieldChange(idx, 'description', e.target.value)}
-                        className="w-full bg-transparent border-0 border-b border-transparent focus:border-slate-300 dark:focus:border-slate-700 px-0 py-0.5 text-[15px] text-slate-500 dark:text-slate-400 placeholder:text-slate-400 focus:outline-none transition"
+                        className="w-full bg-transparent border-0 border-b border-transparent focus:border-slate-300 dark:focus:border-slate-700 px-0 py-0.5 text-type-body text-slate-500 dark:text-slate-400 placeholder:text-slate-400 focus:outline-none transition"
                       />
                     </div>
                   </div>
@@ -344,8 +344,8 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
 
           {/* Standard Footer */}
           <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-            <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-              Tổng điểm ba-rem: <strong className="text-slate-900 dark:text-slate-100 font-semibold text-sm">{totalRubricScore}đ</strong> / {expectedScore}đ
+            <div className="text-type-body-sm text-slate-600 dark:text-slate-400 font-medium">
+              Tổng điểm ba-rem: <strong className="text-slate-900 dark:text-slate-100 font-semibold text-type-body-sm">{totalRubricScore}đ</strong> / {expectedScore}đ
             </div>
             <div className="flex gap-2.5 items-center">
               <Button type="button" variant="secondary" size="md" onClick={onClose}>

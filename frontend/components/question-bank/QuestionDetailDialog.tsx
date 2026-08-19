@@ -129,18 +129,18 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3.5 min-w-0 flex-1">
                 {/* Icon Squircle Thương hiệu */}
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
                   <HelpCircle className="h-6 w-6 text-white" />
                 </div>
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-[18px] font-semibold leading-snug text-slate-900 dark:text-white break-words">
+                    <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words">
                       Chi tiết câu hỏi
                     </h2>
                     <IdentifierBadge tone="neutral">{codeText}</IdentifierBadge>
                   </div>
-                  <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400 mt-1 truncate">
+                  <p className="text-type-helper font-medium text-slate-500 dark:text-slate-400 mt-1 truncate">
                     Môn học: <strong className="font-semibold text-slate-900 dark:text-slate-100">{question.subject?.subjectName || 'Chưa phân loại'}</strong>
                   </p>
                 </div>
@@ -165,14 +165,14 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                  <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                     Nội dung câu hỏi
                   </h3>
                 </div>
                 <QuestionStatusBadge status={question.status || 'APPROVED'} />
               </div>
 
-              <div className="text-[15px] font-medium text-slate-900 dark:text-slate-100 leading-relaxed bg-slate-50/70 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800">
+              <div className="text-type-body font-medium text-slate-900 dark:text-slate-100 leading-relaxed bg-slate-50/70 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800">
                 {rich ? <div dangerouslySetInnerHTML={{ __html: fixHtmlImageUrls(rich) }} /> : question.content}
               </div>
             </div>
@@ -182,7 +182,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                  <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                     Media đính kèm
                   </h3>
                 </div>
@@ -214,7 +214,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                     if (isAud) {
                       return (
                         <div key={media.id || media.url} className="flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-                          <span className="text-xs font-medium text-slate-600 max-w-[180px] truncate">{(media as any).fileName || 'Audio'}</span>
+                          <span className="text-type-helper font-medium text-slate-600 max-w-[180px] truncate">{(media as any).fileName || 'Audio'}</span>
                           <audio src={fullUrl} controls className="h-8 w-44" />
                         </div>
                       );
@@ -240,7 +240,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                           className="max-h-48 max-w-full rounded-lg object-contain bg-white transition duration-200 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
-                          <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-3 py-1.5 text-xs font-medium text-white shadow-lg backdrop-blur-xs">
+                          <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-3 py-1.5 text-type-helper font-medium text-white shadow-lg backdrop-blur-xs">
                             <Maximize2 className="h-4 w-4 text-blue-400" /> Phóng to
                           </span>
                         </div>
@@ -255,7 +255,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                   Danh sách đáp án
                 </h3>
               </div>
@@ -280,16 +280,16 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                                 key={idx}
                                 className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 flex items-center justify-between gap-3"
                               >
-                                <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold text-xs border border-blue-200/80 dark:border-blue-800">
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold text-type-helper border border-blue-200/80 dark:border-blue-800">
                                   Ô trống #{m[1] || idx + 1}
                                 </span>
-                                <span className="text-xs text-slate-500 italic">Chưa thiết lập đáp án</span>
+                                <span className="text-type-helper text-slate-500 italic">Chưa thiết lập đáp án</span>
                               </div>
                             ))}
                           </div>
                         );
                       }
-                      return <p className="text-[14px] text-slate-500 italic">Chưa có cấu hình đáp án điền khuyết.</p>;
+                      return <p className="text-type-body-sm text-slate-500 italic">Chưa có cấu hình đáp án điền khuyết.</p>;
                     }
 
                     return (
@@ -315,26 +315,26 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                               key={ans.id || idx}
                               className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 transition flex items-start gap-3"
                             >
-                              <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold text-xs border border-blue-200/80 dark:border-blue-800 shrink-0">
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold text-type-helper border border-blue-200/80 dark:border-blue-800 shrink-0">
                                 Ô trống #{bIdx}
                               </span>
 
                               <div className="flex-1 min-w-0 pt-0.5 space-y-1.5">
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Đáp án chính xác:</span>
-                                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 text-[13.5px] font-semibold text-emerald-800 dark:text-emerald-300">
+                                  <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">Đáp án chính xác:</span>
+                                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 text-type-helper font-semibold text-emerald-800 dark:text-emerald-300">
                                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                                     {mainAns}
                                   </span>
                                   {ans.score !== undefined && (
-                                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                                    <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">
                                       ({ans.score} điểm)
                                     </span>
                                   )}
                                 </div>
 
                                 {altList.length > 0 && (
-                                  <div className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1.5 flex-wrap">
+                                  <div className="text-type-helper text-slate-600 dark:text-slate-400 flex items-center gap-1.5 flex-wrap">
                                     <span className="text-slate-500">Chấp nhận thêm:</span>
                                     {altList.map((alt, aIdx) => (
                                       <span
@@ -366,16 +366,16 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                       }`}
                     >
                       <div
-                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-semibold ${
+                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-type-helper font-semibold ${
                           o.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white'
                         }`}
                       >
                         {o.label}
                       </div>
-                      <div className="flex-1 min-w-0 pt-0.5 text-[14px]">
+                      <div className="flex-1 min-w-0 pt-0.5 text-type-body-sm">
                         <p className="font-medium text-slate-900 dark:text-white leading-relaxed">{o.content}</p>
                         {o.isCorrect && (
-                          <span className="inline-flex items-center gap-1 text-[13px] font-semibold text-emerald-700 dark:text-emerald-400 mt-1.5">
+                          <span className="inline-flex items-center gap-1 text-type-helper font-semibold text-emerald-700 dark:text-emerald-400 mt-1.5">
                             <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" /> Đáp án chính xác
                           </span>
                         )}
@@ -384,11 +384,11 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                   ))}
                 </div>
               ) : (
-                <p className="text-[14px] text-slate-500 italic">Câu hỏi tự luận (không có đáp án trắc nghiệm chọn trước).</p>
+                <p className="text-type-body-sm text-slate-500 italic">Câu hỏi tự luận (không có đáp án trắc nghiệm chọn trước).</p>
               )}
 
               {question.explanation && (
-                <div className="rounded-2xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-800/60 p-4 text-[14px] text-slate-800 dark:text-slate-200 space-y-1.5">
+                <div className="rounded-2xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-800/60 p-4 text-type-body-sm text-slate-800 dark:text-slate-200 space-y-1.5">
                   <h5 className="font-semibold text-blue-900 dark:text-blue-200">Giải thích đáp án / Hướng dẫn chấm:</h5>
                   <p className="leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{question.explanation}</p>
                 </div>
@@ -400,7 +400,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                  <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                     Tiêu chí chấm Rubric ({rubrics.length > 0 ? rubrics.length : 1})
                   </h3>
                 </div>
@@ -414,22 +414,22 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                       >
                         <div className="space-y-1 min-w-0 flex-1">
                           <div className="flex items-center gap-2.5">
-                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold text-xs">
+                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold text-type-helper">
                               {i + 1}
                             </span>
-                            <span className="font-semibold text-[14px] text-slate-900 dark:text-slate-100">
+                            <span className="font-semibold text-type-body-sm text-slate-900 dark:text-slate-100">
                               {r.label}
                             </span>
                           </div>
                           {r.description && (
-                            <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-relaxed pl-7.5">
+                            <p className="text-type-helper text-slate-500 dark:text-slate-400 leading-relaxed pl-7.5">
                               {r.description}
                             </p>
                           )}
                         </div>
 
                         <div className="shrink-0 pt-0.5 text-right">
-                          <span className="font-semibold text-sm text-blue-600 dark:text-blue-400 tabular-nums">
+                          <span className="font-semibold text-type-body-sm text-blue-600 dark:text-blue-400 tabular-nums">
                             {rubrics.length === 1 && question.score ? question.score : r.maxScore}đ
                           </span>
                         </div>
@@ -437,7 +437,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                     ))}
                   </div>
                 ) : (
-                  <div className="py-3 text-[14px] text-slate-500 italic">
+                  <div className="py-3 text-type-body-sm text-slate-500 italic">
                     Chưa bóc tách tiêu chí chi tiết (Đang áp dụng 1 tiêu chí mặc định toàn vẹn {scoreText}).
                   </div>
                 )}
@@ -448,7 +448,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                   Thông tin thuộc tính
                 </h3>
               </div>
@@ -471,7 +471,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                       key={idx}
                       className="py-3 px-3 -mx-3 rounded-xl flex items-center justify-between gap-4 transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40 group"
                     >
-                      <span className="flex items-center gap-3 text-slate-700 dark:text-slate-200 text-[15px] font-semibold shrink-0">
+                      <span className="flex items-center gap-3 text-slate-700 dark:text-slate-200 text-type-body font-semibold shrink-0">
                         {Icon && (
                           <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100/70 dark:border-blue-900/50 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                             <Icon className="h-4 w-4" />
@@ -480,7 +480,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                         <span>{r.label}</span>
                       </span>
 
-                      <span className="font-semibold text-slate-900 dark:text-white text-right text-[15px] leading-snug break-words max-w-[62%]">
+                      <span className="font-semibold text-slate-900 dark:text-white text-right text-type-body leading-snug break-words max-w-[62%]">
                         {r.value}
                       </span>
                     </div>

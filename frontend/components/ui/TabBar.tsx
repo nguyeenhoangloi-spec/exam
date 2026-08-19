@@ -38,7 +38,7 @@ export function TabBar<T extends string = string>({
                   onChange(tab.key);
                 });
               }}
-              className={`group relative flex items-center justify-center gap-1.5 flex-1 px-2.5 py-1.5 text-xs font-semibold rounded-xl focus-visible:outline-none transition-all duration-150 cursor-pointer whitespace-nowrap select-none ${
+              className={`group relative flex items-center justify-center gap-1.5 flex-1 px-2.5 py-1.5 text-type-body font-semibold rounded-xl focus-visible:outline-none transition-all duration-150 cursor-pointer whitespace-nowrap select-none ${
                 isActive
                   ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
@@ -48,7 +48,7 @@ export function TabBar<T extends string = string>({
               <span>{tab.label}</span>
               {typeof tab.count === 'number' && (
                 <span
-                  className={`rounded-full px-1.5 py-0.5 text-xs font-semibold ${
+                  className={`rounded-full px-1.5 py-0.5 text-type-badge font-semibold ${
                     isActive
                       ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400'
                       : 'bg-slate-200/70 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
@@ -77,7 +77,7 @@ export function TabBar<T extends string = string>({
                 onChange(tab.key);
               });
             }}
-            className={`group relative flex items-center gap-1.5 px-3.5 py-2.5 text-base font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-colors duration-150 cursor-pointer whitespace-nowrap shrink-0 select-none ${
+            className={`group relative flex items-center gap-1.5 px-3.5 py-2.5 text-type-body font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-colors duration-150 cursor-pointer whitespace-nowrap shrink-0 select-none ${
               isActive
                 ? 'text-primary-600 dark:text-blue-400 font-semibold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -88,7 +88,7 @@ export function TabBar<T extends string = string>({
 
             {typeof tab.count === 'number' && (
               <span
-                className={`rounded-xl px-2.5 py-0.5 text-xs font-semibold transition-colors duration-150 ${
+                className={`rounded-xl px-2.5 py-0.5 text-type-badge font-semibold transition-colors duration-150 ${
                   isActive
                     ? 'bg-blue-50 dark:bg-blue-950/60 text-primary-600 dark:text-blue-400'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 group-hover:bg-slate-200 dark:group-hover:bg-slate-700'

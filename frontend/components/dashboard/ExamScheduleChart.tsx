@@ -52,19 +52,19 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/60 shrink-0">
             <Calendar className="h-3.5 w-3.5" />
           </div>
-          <span className="text-xs font-semibold text-slate-900 dark:text-slate-100">
+          <span className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
             {totalExams} kỳ thi sắp diễn ra
           </span>
         </div>
 
-        <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full">
+        <span className="inline-flex items-center gap-1 text-type-helper font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full">
           <TrendingUp className="w-3 h-3" />
           <span>Theo tiến độ</span>
         </span>
       </div>
 
       {/* Y-axis label */}
-      <div className="text-[12px] font-medium text-slate-400 pl-1">
+      <div className="text-type-helper font-medium text-slate-400 pl-1">
         Số ca thi
       </div>
 
@@ -84,13 +84,13 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
                 dataKey="label"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: 'var(--ui-text-disabled)', fontSize: 12, fontWeight: 500 }}
+                tick={{ fill: 'var(--ui-text-disabled)', fontSize: 'var(--fs-badge)', fontWeight: 500 }}
               />
               <YAxis
                 allowDecimals={false}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: 'var(--ui-text-disabled)', fontSize: 12, fontWeight: 500 }}
+                tick={{ fill: 'var(--ui-text-disabled)', fontSize: 'var(--fs-badge)', fontWeight: 500 }}
               />
               <Tooltip
                 cursor={{ stroke: 'var(--ui-border)', strokeWidth: 1, strokeDasharray: '4 4' }}
@@ -100,7 +100,7 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
                   backgroundColor: 'var(--ui-surface)',
                   color: 'var(--ui-text-primary)',
                   boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-                  fontSize: '12.5px',
+                  fontSize: 'var(--fs-helper)',
                   fontWeight: 600,
                 }}
                 formatter={(value) => [`${value} ca thi`, 'Số ca thi']}
@@ -123,7 +123,7 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
       </div>
 
       {/* Legend at bottom */}
-      <div className="flex items-center justify-center border-t border-slate-100 dark:border-slate-800 pt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+      <div className="flex items-center justify-center border-t border-slate-100 dark:border-slate-800 pt-2 text-type-helper font-semibold text-slate-500 dark:text-slate-400">
         <div className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-blue-600 inline-block" />
           <span>Số ca thi trong ngày</span>

@@ -122,8 +122,8 @@ export default function ChangePasswordPage() {
             <Lock className="h-7 w-7 text-white" />
           </div>
           <div>
-            <h1 className="text-[28px] font-semibold leading-[36px] text-white tracking-tight">Đổi mật khẩu tài khoản</h1>
-            <p className="text-[15px] font-normal leading-[22px] text-blue-100/80">Cập nhật mật khẩu để bảo vệ tài khoản khỏi truy cập trái phép</p>
+            <h1 className="text-type-page font-semibold leading-[36px] text-white tracking-tight">Đổi mật khẩu tài khoản</h1>
+            <p className="text-type-body font-normal leading-[22px] text-blue-100/80">Cập nhật mật khẩu để bảo vệ tài khoản khỏi truy cập trái phép</p>
           </div>
         </div>
       </div>
@@ -131,29 +131,29 @@ export default function ChangePasswordPage() {
       {/* 4 KPI Security Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-400 tracking-wider">Trạng thái mã hóa</span>
-          <div className="text-[20px] font-semibold text-emerald-700">Bcrypt 10-rounds</div>
-          <span className="text-[13px] font-semibold text-emerald-600 flex items-center gap-1">
+          <span className="text-type-helper font-semibold text-slate-400 tracking-wider">Trạng thái mã hóa</span>
+          <div className="text-type-section font-semibold text-emerald-700">Bcrypt 10-rounds</div>
+          <span className="text-type-helper font-semibold text-emerald-600 flex items-center gap-1">
             <CheckCircle2 className="h-3.5 w-3.5" /> Chuẩn mã hóa cao nhất
           </span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-400 tracking-wider">Độ dài tối thiểu</span>
-          <div className="text-[20px] font-semibold text-blue-600">Tối thiểu 6 ký tự</div>
-          <span className="text-[13px] font-normal text-slate-500">Bao gồm chữ & số</span>
+          <span className="text-type-helper font-semibold text-slate-400 tracking-wider">Độ dài tối thiểu</span>
+          <div className="text-type-section font-semibold text-blue-600">Tối thiểu 6 ký tự</div>
+          <span className="text-type-helper font-normal text-slate-500">Bao gồm chữ & số</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-400 tracking-wider">Đánh giá mật khẩu mới</span>
-          <div className={`text-[20px] font-semibold ${strength.text || 'text-slate-900'}`}>{strength.label}</div>
-          <span className="text-[13px] font-normal text-slate-500">Độ phức tạp mật khẩu</span>
+          <span className="text-type-helper font-semibold text-slate-400 tracking-wider">Đánh giá mật khẩu mới</span>
+          <div className={`text-type-section font-semibold ${strength.text || 'text-slate-900'}`}>{strength.label}</div>
+          <span className="text-type-helper font-normal text-slate-500">Độ phức tạp mật khẩu</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-400 tracking-wider">Xác thực phiên làm việc</span>
-          <div className="text-[20px] font-semibold text-slate-900">JWT Authenticated</div>
-          <span className="text-[13px] font-normal text-slate-500">Bảo mật tự động</span>
+          <span className="text-type-helper font-semibold text-slate-400 tracking-wider">Xác thực phiên làm việc</span>
+          <div className="text-type-section font-semibold text-slate-900">JWT Authenticated</div>
+          <span className="text-type-helper font-normal text-slate-500">Bảo mật tự động</span>
         </div>
       </div>
 
@@ -161,14 +161,14 @@ export default function ChangePasswordPage() {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
         {/* Left Form: 7 cols */}
         <form onSubmit={handleSubmit} className="md:col-span-7 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs space-y-4">
-          <h2 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+          <h2 className="text-type-body-sm font-semibold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
             <KeyRound className="h-4.5 w-4.5 text-blue-600" />
             <span>Biểu mẫu cập nhật mật khẩu</span>
           </h2>
 
           {/* Current Password */}
           <div className="space-y-1.5">
-            <label className="block text-[15px] font-medium text-slate-800">Mật khẩu hiện tại</label>
+            <label className="block text-type-body font-medium text-slate-800">Mật khẩu hiện tại</label>
             <div className="relative">
               <input
                 type={showCurrent ? 'text' : 'password'}
@@ -176,7 +176,7 @@ export default function ChangePasswordPage() {
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="Nhập mật khẩu hiện tại của bạn..."
                 required
-                className="w-full rounded-xl border border-slate-300 p-3 pr-10 text-[15px] font-normal focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-slate-300 p-3 pr-10 text-type-body font-normal focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
               <button
                 type="button"
@@ -190,7 +190,7 @@ export default function ChangePasswordPage() {
 
           {/* New Password */}
           <div className="space-y-1.5">
-            <label className="block text-[15px] font-medium text-slate-800">Mật khẩu mới</label>
+            <label className="block text-type-body font-medium text-slate-800">Mật khẩu mới</label>
             <div className="relative">
               <input
                 type={showNew ? 'text' : 'password'}
@@ -198,7 +198,7 @@ export default function ChangePasswordPage() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)..."
                 required
-                className="w-full rounded-xl border border-slate-300 p-3 pr-10 text-[15px] font-normal focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-slate-300 p-3 pr-10 text-type-body font-normal focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
               <button
                 type="button"
@@ -212,7 +212,7 @@ export default function ChangePasswordPage() {
             {/* Password Strength Indicator */}
             {newPassword.length > 0 && (
               <div className="space-y-1 pt-1">
-                <div className="flex items-center justify-between text-[12px] font-semibold">
+                <div className="flex items-center justify-between text-type-helper font-semibold">
                   <span className="text-slate-500">Độ mạnh mật khẩu:</span>
                   <span className={strength.text}>{strength.label}</span>
                 </div>
@@ -228,7 +228,7 @@ export default function ChangePasswordPage() {
 
           {/* Confirm Password */}
           <div className="space-y-1.5">
-            <label className="block text-[15px] font-medium text-slate-800">Xác nhận mật khẩu mới</label>
+            <label className="block text-type-body font-medium text-slate-800">Xác nhận mật khẩu mới</label>
             <div className="relative">
               <input
                 type={showConfirm ? 'text' : 'password'}
@@ -236,7 +236,7 @@ export default function ChangePasswordPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Nhập lại chính xác mật khẩu mới..."
                 required
-                className="w-full rounded-xl border border-slate-300 p-3 pr-10 text-[15px] font-normal focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-slate-300 p-3 pr-10 text-type-body font-normal focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
               <button
                 type="button"
@@ -264,12 +264,12 @@ export default function ChangePasswordPage() {
 
         {/* Right Info Box: 5 cols */}
         <div className="md:col-span-5 rounded-2xl border border-blue-100 bg-blue-50/60 p-5 space-y-4">
-          <h3 className="text-[14px] leading-5 font-semibold text-blue-700 flex items-center gap-2 border-b border-blue-200/60 pb-2.5">
+          <h3 className="text-type-body-sm leading-5 font-semibold text-blue-700 flex items-center gap-2 border-b border-blue-200/60 pb-2.5">
             <ShieldCheck className="h-4 w-4 text-blue-600" />
             <span>Quy tắc bảo mật mật khẩu</span>
           </h3>
 
-          <ul className="space-y-2.5 text-xs font-medium text-slate-700">
+          <ul className="space-y-2.5 text-type-helper font-medium text-slate-700">
             <li className="flex items-start gap-2">
               <CheckCircle2 className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
               <span>Độ dài tối thiểu <strong>6 ký tự</strong> (khuyên dùng từ 8 - 16 ký tự).</span>

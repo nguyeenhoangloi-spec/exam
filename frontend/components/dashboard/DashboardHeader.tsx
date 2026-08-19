@@ -46,10 +46,10 @@ export function DashboardHeader({
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-1">
       {/* Left: Page Title & Executive Subtitle */}
       <div className="space-y-0.5">
-        <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+        <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
           Tổng quan hệ thống
         </h1>
-        <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
+        <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
           Trung tâm điều hành và giám sát khảo thí toàn trường
         </p>
       </div>
@@ -72,7 +72,7 @@ export function DashboardHeader({
 
           {/* Real-time Date and Time right below the dropdown */}
           {currentDateStr && (
-            <div className="flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 select-none px-1">
+            <div className="flex items-center gap-1.5 text-type-helper font-medium text-slate-500 dark:text-slate-400 select-none px-1">
               <span className="text-slate-600 dark:text-slate-300">{currentDateStr}</span>
               {lastUpdatedStr && (
                 <span className="text-slate-400 font-normal">

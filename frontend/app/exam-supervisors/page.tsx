@@ -539,13 +539,13 @@ export default function ExamSupervisorsPage() {
 
               <div className="space-y-0.5 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-600 text-white tracking-wide">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-type-helper font-semibold bg-blue-600 text-white tracking-wide">
                     {selectedSchedule?.type || 'CHÍNH THỨC'}
                   </span>
-                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 truncate">
+                  <h3 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate">
                     {selectedSchedule?.subject?.subjectName || selectedSchedule?.subjectName || 'Chưa chọn ca thi'}
                   </h3>
-                  <span className="text-xs font-medium text-slate-400">
+                  <span className="text-type-helper font-medium text-slate-400">
                     #{selectedSchedule?.subject?.subjectCode || selectedSchedule?.subjectCode || 'MH'}
                   </span>
 
@@ -561,7 +561,7 @@ export default function ExamSupervisorsPage() {
                   </button>
                 </div>
 
-                <div className="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-400 flex-wrap min-h-[20px]">
+                <div className="flex items-center gap-2.5 text-type-helper text-slate-500 dark:text-slate-400 flex-wrap min-h-[20px]">
                   {selectedSchedule && (
                     <>
                       <span className="flex items-center gap-1">
@@ -697,7 +697,7 @@ export default function ExamSupervisorsPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -713,7 +713,7 @@ export default function ExamSupervisorsPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >

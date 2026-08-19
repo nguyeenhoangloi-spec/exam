@@ -332,7 +332,7 @@ export default function ExamPeriodsPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -348,7 +348,7 @@ export default function ExamPeriodsPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
@@ -546,20 +546,20 @@ export default function ExamPeriodsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">Tên kỳ thi</label>
+            <label className="block text-type-body font-medium text-slate-500 mb-1">Tên kỳ thi</label>
             <input
               type="text"
               required
               placeholder="VD: Kỳ thi học kỳ 1 năm học 2025-2026"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body focus:border-blue-500 focus:outline-none"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Học kỳ</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Học kỳ</label>
               <FilterSelect
                 value={formData.semester}
                 onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
@@ -571,37 +571,37 @@ export default function ExamPeriodsPage() {
               </FilterSelect>
             </div>
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Năm học</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Năm học</label>
               <input
                 type="text"
                 required
                 placeholder="VD: 2025-2026"
                 value={formData.schoolYear}
                 onChange={(e) => setFormData({ ...formData, schoolYear: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body focus:border-blue-500 focus:outline-none"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Ngày bắt đầu</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Ngày bắt đầu</label>
               <input
                 type="date"
                 required
                 value={formData.startDate}
                 onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body focus:border-blue-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Ngày kết thúc</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Ngày kết thúc</label>
               <input
                 type="date"
                 required
                 value={formData.endDate}
                 onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body focus:border-blue-500 focus:outline-none"
               />
             </div>
           </div>

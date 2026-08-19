@@ -49,7 +49,7 @@ export function PaginationBar({
 
   return (
     <div className={`flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-3.5 pb-1 ${className}`}>
-      <p className="text-sm font-normal text-slate-600 dark:text-slate-400">
+      <p className="text-type-body-sm font-normal text-slate-600 dark:text-slate-400">
         Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{startItem}</span> -{' '}
         <span className="font-semibold text-slate-900 dark:text-slate-100">{endItem}</span> trong{' '}
         <span className="font-semibold text-slate-900 dark:text-slate-100">{totalItems.toLocaleString('vi-VN')}</span> {unit}
@@ -71,7 +71,7 @@ export function PaginationBar({
           {pages.map((p, idx) => {
             if (p === '...') {
               return (
-                <span key={`dots-${idx}`} className="px-1 text-sm font-medium text-slate-500 dark:text-slate-400">
+                <span key={`dots-${idx}`} className="px-1 text-type-body-sm font-medium text-slate-500 dark:text-slate-400">
                   ...
                 </span>
               );
@@ -85,7 +85,7 @@ export function PaginationBar({
                 key={pNum}
                 type="button"
                 onClick={() => onPage(pNum)}
-                className={`ui-pressable flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-[15px] transition-colors duration-150 cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                className={`ui-pressable flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-type-body transition-colors duration-150 cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                   isCurrent
                     ? 'bg-blue-600 text-white shadow-xs font-semibold dark:bg-blue-600'
                     : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 font-medium'

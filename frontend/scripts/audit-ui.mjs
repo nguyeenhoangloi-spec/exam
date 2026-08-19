@@ -138,12 +138,12 @@ for (const folder of sourceRoots) {
         if (/\brounded-(?:sm|md|lg)\b/i.test(control.classes)) {
           report(file, 'input/select/textarea phải dùng radius control rounded-xl');
         }
-        if (/\btext-sm\b|\btext-xs\b|text-\[(?:12|13|14)(?:\.5)?px\]/i.test(control.classes)) {
+        if (/text-type-(?:badge|helper|body-sm)|\btext-(?:xs|sm)\b|text-\[(?:12|13|14)(?:\.5)?px\]/i.test(control.classes)) {
           report(file, 'input/select/textarea phải dùng cỡ chữ 15px');
         }
       }
       if (control.tagName === 'label') {
-        if (/\btext-sm\b|\btext-xs\b|text-\[(?:12|13|14)(?:\.5)?px\]/i.test(control.classes)) {
+        if (/text-type-(?:badge|helper|body-sm)|\btext-(?:xs|sm)\b|text-\[(?:12|13|14)(?:\.5)?px\]/i.test(control.classes)) {
           report(file, 'label phải dùng cỡ chữ 15px');
         }
         if (/\bfont-(?:semibold|bold|extrabold|black)\b/i.test(control.classes)) {
@@ -185,18 +185,23 @@ for (const folder of sourceRoots) {
       }
     }
 
-    const isCompactBrandSubtitle = file.replaceAll('\\', '/').endsWith('components/Sidebar.tsx')
-      && /<h2\b[^>]*text-\[10px\][^>]*>/.test(content);
-    if (/text-\[(?:[0-9]|10|10\.5|11|11\.5)px\]/i.test(content) && !isCompactBrandSubtitle) {
-      report(file, 'cỡ chữ Web UI không được thấp hơn 12px');
+    if (file.endsWith('.tsx')) {
+      if (/\btext-(?:xs|sm|base|lg|xl|[2-9]xl)\b/i.test(content)) {
+        report(file, 'Web UI phải dùng token text-type-*; không dùng thang cỡ mặc định của Tailwind');
+      }
+      if (/text-\[[0-9]+(?:\.[0-9]+)?px\]/i.test(content)) {
+        report(file, 'Web UI phải dùng token text-type-*; không dùng cỡ px tùy ý');
+      }
+      if (/fontSize\s*:\s*['"]?[0-9]+(?:\.[0-9]+)?(?:px)?['"]?/i.test(content)) {
+        report(file, 'Web UI phải dùng token cỡ chữ; không dùng fontSize inline dạng số');
+      }
+      if (/\bleading-none\b/i.test(content)) {
+        report(file, 'không dùng leading-none vì có thể cắt dấu tiếng Việt; dùng line-height của token typography');
+      }
     }
 
     if (file.endsWith('.tsx') && /fontSize\s*:\s*['"]?(?:10|11|[0-9])(?:px)?['"]?(?=\s*[,}])/i.test(content)) {
       report(file, 'fontSize inline của Web UI không được thấp hơn 12px');
-    }
-
-    if (/text-\[16px\]|\btext-(2xl|3xl|4xl)\b/i.test(content)) {
-      report(file, 'Web UI must use the semantic typography scale; avoid 16px/2xl/3xl/4xl');
     }
 
     if (/(?:<label|<input|<select|<textarea)[^<>]*\btext-xs\b/i.test(content)
@@ -227,7 +232,7 @@ for (const folder of sourceRoots) {
           .replace(/<svg[\s\S]*?<\/svg>/gi, '')
           .replace(/<td\b[^>]*colSpan[^>]*>[\s\S]*?<\/td>/gi, '')
           .replace(/[^\r\n]*(?:table-badge|table-avatar|table-action|table-tooltip|table-meta)[^\r\n]*/gi, '');
-        if (/text-xs|text-\[(?:12|13|14)(?:\.5)?px\]/i.test(body)) {
+        if (/text-type-(?:badge|helper|body-sm)|text-xs|text-\[(?:12|13|14)(?:\.5)?px\]/i.test(body)) {
           report(file, 'table body text must be 15px; compact size is limited to table-badge/table-avatar/table-tooltip/table-meta');
         }
 
@@ -269,7 +274,7 @@ for (const folder of sourceRoots) {
       report(file, 'Web UI chi duoc dung font weight 400-700');
     }
 
-    const hasKpiMarker = /(?:edu-kpi|text-\[32px\][^"'\n]*font-bold|font-bold[^"'\n]*text-\[32px\])/i.test(content);
+    const hasKpiMarker = /(?:edu-kpi|text-\[32px\][^"'\n]*font-bold|font-bold[^"'\n]*text-\[32px\]|text-type-kpi[^"'\n]*font-bold|font-bold[^"'\n]*text-type-kpi)/i.test(content);
     if (file.endsWith('.tsx') && /font-bold/i.test(content) && !kpiBoldFiles.has(relativeFile) && !hasKpiMarker && !popupBoldFiles.has(relativeFile)) {
       report(file, 'font-bold (700) chi danh cho component KPI/tong so da duoc phe duyet');
     }
@@ -415,24 +420,25 @@ if (!/--fs-page-title:\s*28px/.test(globalCss)
   || !/--fs-helper:\s*13px/.test(globalCss)
   || !/--fs-badge:\s*12px/.test(globalCss)
   || !/--fs-kpi:\s*32px/.test(globalCss)
-  || !/\[class\*='text-\[12\.5px\]'\][\s\S]*?font-size:\s*var\(--fs-helper\)/.test(globalCss)
-  || !/\[class\*='text-\[14\.5px\]'\][\s\S]*?font-size:\s*var\(--fs-body-sm\)/.test(globalCss)
-  || !/\[class\*='text-\[16\.5px\]'\][\s\S]*?font-size:\s*var\(--fs-body\)/.test(globalCss)) {
-  violations.push('app/globals.css: semantic typography scale hoặc các cỡ lẻ chưa được quy đổi đúng token');
+  || !/--fs-reading:\s*16px/.test(globalCss)
+  || !/'type-page':\s*\['var\(--fs-page-title\)'/.test(tailwindConfig)
+  || !/'type-body':\s*\['var\(--fs-body\)'/.test(tailwindConfig)
+  || !/'type-badge':\s*\['var\(--fs-badge\)'/.test(tailwindConfig)) {
+  violations.push('Tailwind/globals.css: semantic typography token chưa được cấu hình đầy đủ');
 }
 
 if (!/variant\s*=\s*['"]default['"]/.test(modal)
   || !/bg-slate-50 dark:bg-slate-800/.test(modal)
-  || !/text-lg font-semibold/.test(modal)
+  || !/(?:text-lg|text-type-card|text-\[18px\]) font-semibold/.test(modal)
   || !/fixed inset-0 z-\[100\]/.test(modal)) {
   violations.push('components/Modal.tsx: Modal popup specification is incomplete');
 }
 
 if (!/max-w-sm/.test(confirmModal)
   || !/bg-slate-50\/80 dark:bg-slate-800\/80/.test(confirmModal)
-  || !/text-sm font-semibold/.test(confirmModal)
-  || !/text-xs sm:text-sm/.test(confirmModal)
-  || !/text-xs leading-\[18px\] font-semibold text-rose-600/.test(confirmModal)
+  || !/(?:text-sm|text-type-body-sm) font-semibold/.test(confirmModal)
+  || !/(?:text-xs sm:text-sm|text-type-helper sm:text-type-body-sm)/.test(confirmModal)
+  || !/(?:text-xs leading-\[18px\]|text-type-helper leading-\[18px\]) font-semibold text-rose-600/.test(confirmModal)
   || !/z-\[9999\]/.test(confirmModal)) {
   violations.push('components/ConfirmModal.tsx: ConfirmModal popup specification is incomplete');
 }
@@ -466,7 +472,7 @@ if (!/rounded-xl/.test(button) || !/rounded-xl/.test(input)) {
 if (!/lg:\s*'[^']*\bh-11\b/.test(button)
   || !/icon:\s*'[^']*\bh-9\b[^']*\bw-9\b/.test(button)
   || !/['"]icon-lg['"]:\s*'[^']*\bh-10\b[^']*\bw-10\b/.test(button)
-  || !/text-\[15px\] font-semibold/.test(button)) {
+  || !/(?:text-\[15px\]|text-type-body) font-semibold/.test(button)) {
   violations.push('components/ui/Button.tsx: button sizes and typography must follow xs32/sm36/md40/lg44 and 15px/600');
 }
 
@@ -482,7 +488,6 @@ if (!/button:not\(\.rounded-full\)[\s\S]*border-radius:\s*var\(--ui-radius\)/.te
   || !/button,\s*\[role='button'\]\s*\{[\s\S]*font-size:\s*var\(--fs-body\)/.test(globalCss)
   || !/button,\s*\[role='button'\]\s*\{[\s\S]*font-weight:\s*600/.test(globalCss)
   || !/@media \(max-width: 767px\)[\s\S]*min-height:\s*2\.75rem !important/.test(globalCss)
-  || !/\.typography-scale button\.text-xs[\s\S]*font-size:\s*var\(--fs-body\) !important/.test(globalCss)
   || !/\.typography-scale :where\(button, \[role='button'\]\)[\s\S]*font-size:\s*var\(--fs-body\) !important/.test(globalCss)) {
   violations.push('app/globals.css: native buttons must share radius, touch target, and 15px control typography');
 }
@@ -502,7 +507,7 @@ for (const interactivePrimitive of [
 
 if (!/rounded-lg/.test(identifierBadge)
   || !/px-2 py-0\.5/.test(identifierBadge)
-  || !/text-\[13px\]/.test(identifierBadge)
+  || !/(?:text-\[13px\]|text-type-helper)/.test(identifierBadge)
   || !/font-medium/.test(identifierBadge)
   || !/tabular-nums/.test(identifierBadge)
   || !/whitespace-nowrap/.test(identifierBadge)
@@ -514,7 +519,8 @@ if (!/variant === 'pill'/.test(statusBadge)
   || !/categoryStyles/.test(statusBadge)
   || !/dark:/.test(statusBadge)
   || !/text-amber-700/.test(statusBadge)
-  || !/text-emerald-700/.test(statusBadge)) {
+  || !/text-emerald-700/.test(statusBadge)
+  || !/text-type-badge/.test(statusBadge)) {
   violations.push('components/common/StatusBadge.tsx: status badge phải có 5 nhóm màu semantic chuẩn và hỗ trợ 2 variants dot/pill');
 }
 

@@ -18,7 +18,7 @@ export function QuestionToolbar({ onAdd, onImport, onExport, onPrint }: Question
         <button
           type="button"
           onClick={onPrint}
-          className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 font-semibold px-3.5 py-2 text-[13px] text-white shadow-xs transition cursor-pointer"
+          className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 font-semibold px-3.5 py-2 text-type-helper text-white shadow-xs transition cursor-pointer"
         >
           <Printer className="h-4 w-4" />
           In Báo cáo
@@ -27,7 +27,7 @@ export function QuestionToolbar({ onAdd, onImport, onExport, onPrint }: Question
       <button
         type="button"
         onClick={onExport}
-        className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-[13px] font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs cursor-pointer"
+        className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-type-helper font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs cursor-pointer"
       >
         <Download className="h-4 w-4 text-slate-500 dark:text-slate-400" />
         Xuất CSV
@@ -36,7 +36,7 @@ export function QuestionToolbar({ onAdd, onImport, onExport, onPrint }: Question
       <button
         type="button"
         onClick={onImport}
-        className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-[13px] font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs cursor-pointer"
+        className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-type-helper font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs cursor-pointer"
       >
         <Upload className="h-4 w-4 text-slate-600" />
         Nhập dữ liệu
@@ -45,7 +45,7 @@ export function QuestionToolbar({ onAdd, onImport, onExport, onPrint }: Question
       <button
         type="button"
         onClick={onAdd}
-        className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-[13px] font-semibold text-white transition shadow-xs cursor-pointer"
+        className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-type-helper font-semibold text-white transition shadow-xs cursor-pointer"
       >
         <Plus className="h-4 w-4" />
         Thêm câu hỏi

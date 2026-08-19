@@ -101,7 +101,7 @@ export function QuickActions() {
         <span className="flex h-6 w-6 items-center justify-center rounded-md bg-blue-50 text-blue-600">
           <Zap className="h-3.5 w-3.5 fill-blue-600" />
         </span>
-        <h3 className="text-sm font-semibold text-slate-900">Thao tác nhanh</h3>
+        <h3 className="text-type-body-sm font-semibold text-slate-900">Thao tác nhanh</h3>
       </div>
 
       {/* Grid 8 Buttons Horizontally across 8 cols on desktop */}
@@ -116,10 +116,10 @@ export function QuickActions() {
             <div className={`flex h-8 w-8 items-center justify-center rounded-xl font-semibold transition-transform group-hover:scale-110 mb-1.5 ${iconBg} ${iconColor}`}>
               <Icon className="h-4 w-4 stroke-[2.2]" />
             </div>
-            <span className="text-[15px] font-semibold text-slate-900 group-hover:text-blue-700 leading-tight block truncate w-full">
+            <span className="text-type-body font-semibold text-slate-900 group-hover:text-blue-700 leading-tight block truncate w-full">
               {title}
             </span>
-            <span className="text-[13px] font-normal text-slate-500 block truncate w-full mt-0.5">
+            <span className="text-type-helper font-normal text-slate-500 block truncate w-full mt-0.5">
               {desc}
             </span>
           </button>

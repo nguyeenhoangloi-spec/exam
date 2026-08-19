@@ -39,10 +39,10 @@ const variantStyles: Record<ButtonVariant, string> = {
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  xs: 'h-8 min-h-0 px-2.5 text-[15px] font-semibold rounded-xl gap-1.5',
-  sm: 'h-9 min-h-0 px-3 text-[15px] font-semibold rounded-xl gap-1.5',
-  md: 'h-10 min-h-0 px-3.5 text-[15px] font-semibold rounded-xl gap-2',
-  lg: 'h-11 min-h-0 px-[18px] text-[15px] font-semibold rounded-xl gap-2',
+  xs: 'h-8 min-h-0 px-2.5 text-type-body font-semibold rounded-xl gap-1.5',
+  sm: 'h-9 min-h-0 px-3 text-type-body font-semibold rounded-xl gap-1.5',
+  md: 'h-10 min-h-0 px-3.5 text-type-body font-semibold rounded-xl gap-2',
+  lg: 'h-11 min-h-0 px-[18px] text-type-body font-semibold rounded-xl gap-2',
   icon: 'h-9 min-h-0 w-9 p-0 rounded-xl justify-center items-center shrink-0',
   'icon-lg': 'h-10 min-h-0 w-10 p-0 rounded-xl justify-center items-center shrink-0',
 };

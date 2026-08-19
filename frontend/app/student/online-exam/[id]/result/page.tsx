@@ -71,7 +71,7 @@ export default function StudentExamResultPage() {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Đang tải thông tin kết quả...</p>
+          <p className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">Đang tải thông tin kết quả...</p>
         </div>
       </div>
     );
@@ -82,8 +82,8 @@ export default function StudentExamResultPage() {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex items-center justify-center p-6">
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-8 rounded-2xl max-w-md text-center shadow-xl">
           <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Không thể tải kết quả</h2>
-          <p className="text-slate-600 dark:text-slate-300 text-sm mb-6">{error}</p>
+          <h2 className="text-type-section font-semibold mb-2">Không thể tải kết quả</h2>
+          <p className="text-slate-600 dark:text-slate-300 text-type-body-sm mb-6">{error}</p>
           <Button
             variant="primary"
             size="md"
@@ -104,8 +104,8 @@ export default function StudentExamResultPage() {
       <div className="min-h-screen bg-slate-50/60 dark:bg-slate-950 p-6 md:p-12 text-slate-900 dark:text-slate-100 flex items-center justify-center">
         <div className="mx-auto max-w-xl rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 text-center shadow-2xs space-y-4">
           <CheckCircle2 className="mx-auto h-12 w-12 text-blue-600" />
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Bài đã nộp, đang chờ chấm điểm</h1>
-          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+          <h1 className="text-type-section font-semibold text-slate-900 dark:text-slate-100">Bài đã nộp, đang chờ chấm điểm</h1>
+          <p className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 max-w-md mx-auto">
             Điểm tự luận sẽ hiển thị sau khi giảng viên hoàn tất chấm bài và ban quản trị duyệt công bố kết quả.
           </p>
           <Button
@@ -141,13 +141,13 @@ export default function StudentExamResultPage() {
                   <h1 className="edu-page-title text-white tracking-tight leading-snug">
                     {isUnderReview ? 'Bài thi cần được xem xét' : 'Hoàn thành bài thi trực tuyến'}
                   </h1>
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold bg-white/20 text-white px-3 py-1 rounded-full backdrop-blur-md border border-white/30">
+                  <span className="inline-flex items-center gap-1 text-type-helper font-semibold bg-white/20 text-white px-3 py-1 rounded-full backdrop-blur-md border border-white/30">
                     <Sparkles className="w-3 h-3 text-blue-200" />
                     {isUnderReview ? 'Chờ duyệt' : 'Đã nộp'}
                   </span>
                 </div>
 
-                <p className="text-xs sm:text-sm font-medium text-blue-100/90">
+                <p className="text-type-helper sm:text-type-body-sm font-medium text-blue-100/90">
                   {isUnderReview
                     ? 'Hệ thống ghi nhận một số sự kiện cần cán bộ coi thi phê duyệt.'
                     : 'Bài thi của bạn đã được lưu và gửi về hệ thống máy chủ khảo thí thành công.'}
@@ -160,29 +160,29 @@ export default function StudentExamResultPage() {
           <div className="p-6 sm:p-8 space-y-6">
             <div className="space-y-4">
               <div className="bg-slate-50/70 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 p-5 rounded-xl space-y-2.5">
-                <div className="flex justify-between border-b border-slate-200/60 dark:border-slate-700 pb-2.5 text-[15px]">
-                  <span className="text-slate-500 dark:text-slate-400 font-semibold text-[14px] leading-5 tracking-wide">Trạng thái bài thi:</span>
+                <div className="flex justify-between border-b border-slate-200/60 dark:border-slate-700 pb-2.5 text-type-body">
+                  <span className="text-slate-500 dark:text-slate-400 font-semibold text-type-body-sm leading-5 tracking-wide">Trạng thái bài thi:</span>
                   <StatusBadge status={result.status} />
                   <span className="sr-only">
                     {result.status === 'UNDER_REVIEW' ? 'Đang được xem xét' : result.status === 'GRADED' ? 'Đã chấm điểm' : result.status === 'SUBMITTED' ? 'Đã nộp bài' : result.status}
                   </span>
                 </div>
-                <div className="flex justify-between border-b border-slate-200/60 dark:border-slate-700 pb-2.5 text-[15px]">
-                  <span className="text-slate-500 dark:text-slate-400 font-semibold text-[14px] leading-5 tracking-wide">Thời điểm nộp bài:</span>
-                  <span className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] leading-6 tabular-nums">
+                <div className="flex justify-between border-b border-slate-200/60 dark:border-slate-700 pb-2.5 text-type-body">
+                  <span className="text-slate-500 dark:text-slate-400 font-semibold text-type-body-sm leading-5 tracking-wide">Thời điểm nộp bài:</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-body leading-6 tabular-nums">
                     {result.submittedAt ? new Date(result.submittedAt).toLocaleString('vi-VN') : 'Mới đây'}
                   </span>
                 </div>
 
                 {result.totalScore !== undefined && result.totalScore !== null ? (
-                  <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 dark:border-slate-700 text-[18px]">
-                    <span className="text-slate-900 dark:text-slate-100 font-semibold text-sm">Điểm số đạt được:</span>
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 dark:border-slate-700 text-type-card">
+                    <span className="text-slate-900 dark:text-slate-100 font-semibold text-type-body-sm">Điểm số đạt được:</span>
                     <span className="edu-kpi text-emerald-600">
                       {result.totalScore} / {result.maxScore || 10} điểm
                     </span>
                   </div>
                 ) : (
-                  <div className="p-3.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl text-amber-900 dark:text-amber-100 text-xs font-medium">
+                  <div className="p-3.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl text-amber-900 dark:text-amber-100 text-type-helper font-medium">
                     <strong>Quy chế công bố điểm thi:</strong> Điểm số chính thức sẽ được công bố sau khi ca thi kết thúc{result.examEndTime ? ` (Dự kiến lúc ${result.examEndTime})` : ''}.
                   </div>
                 )}
@@ -191,15 +191,15 @@ export default function StudentExamResultPage() {
 
             {isUnderReview && (
               <div className="bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-5 rounded-xl space-y-3">
-                <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-100 flex items-center gap-1.5">
+                <h3 className="text-type-body-sm font-semibold text-amber-900 dark:text-amber-100 flex items-center gap-1.5">
                   <FileText className="w-4 h-4 text-amber-700" /> Gửi giải trình sự cố
                 </h3>
-                <p className="text-[13px] text-amber-900 dark:text-amber-100 font-medium leading-[18px]">
+                <p className="text-type-helper text-amber-900 dark:text-amber-100 font-medium leading-[18px]">
                   Nếu bài thi bị gián đoạn do rớt mạng, lỗi trình duyệt hoặc lý do khách quan, bạn có thể gửi giải trình bên dưới.
                 </p>
 
                 {appealSuccess ? (
-                  <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-100 text-[13px] leading-[18px] font-semibold">
+                  <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-100 text-type-helper leading-[18px] font-semibold">
                     Đã gửi giải trình thành công. Giám thị sẽ tiến hành xem xét biên bản.
                   </div>
                 ) : (
@@ -209,7 +209,7 @@ export default function StudentExamResultPage() {
                       value={appealReason}
                       onChange={(e) => setAppealReason(e.target.value)}
                       placeholder="Nhập chi tiết lý do sự cố xảy ra..."
-                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-[15px] leading-6 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 font-normal"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-type-body leading-6 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 font-normal"
                       required
                     />
                     <Button
@@ -285,7 +285,7 @@ export default function StudentExamResultPage() {
           ...(result?.totalScore !== undefined && result?.totalScore !== null ? [{
             label: 'Điểm số bài thi',
             value: (
-              <span className="text-[15px] font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">
+              <span className="text-type-body font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">
                 {result.totalScore} / {result.maxScore || 10} điểm
               </span>
             ),
@@ -297,7 +297,7 @@ export default function StudentExamResultPage() {
             title: 'Thao tác liên quan',
             content: (
               <div className="space-y-3">
-                <p className="text-xs text-slate-500 font-normal leading-relaxed">
+                <p className="text-type-helper text-slate-500 font-normal leading-relaxed">
                   Kết quả bài thi được lưu trữ an toàn trong hồ sơ khảo thí điện tử của bạn. Bạn có thể xem lại lịch thi hoặc tra cứu bảng điểm tổng hợp.
                 </p>
                 <div className="flex items-center justify-end gap-2 pt-1">

@@ -743,13 +743,13 @@ export default function ExamArrangementPage() {
 
               <div className="space-y-0.5 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-600 text-white tracking-wide">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-type-helper font-semibold bg-blue-600 text-white tracking-wide">
                     {(currentSchedule as any)?.mode === 'MOCK' ? 'THI THỬ' : 'CHÍNH THỨC'}
                   </span>
-                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 truncate">
+                  <h3 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate">
                     {currentSchedule?.subject?.subjectName || 'Chưa chọn ca thi'}
                   </h3>
-                  <span className="text-xs font-medium text-slate-400">
+                  <span className="text-type-helper font-medium text-slate-400">
                     #{currentSchedule?.subject?.subjectCode || 'MH'}
                   </span>
 
@@ -765,7 +765,7 @@ export default function ExamArrangementPage() {
                   </button>
                 </div>
 
-                <div className="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-400 flex-wrap min-h-[20px]">
+                <div className="flex items-center gap-2.5 text-type-helper text-slate-500 dark:text-slate-400 flex-wrap min-h-[20px]">
                   {currentSchedule && (
                     <>
                       <span className="flex items-center gap-1">
@@ -830,15 +830,15 @@ export default function ExamArrangementPage() {
                 <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-3">
                   <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-xs font-semibold text-slate-800 dark:text-slate-200 tracking-wider">
+                      <h3 className="text-type-helper font-semibold text-slate-800 dark:text-slate-200 tracking-wider">
                         Phòng Thi Khả Dụng Trong Ca
                       </h3>
-                      <span className="text-xs font-medium text-slate-500">
+                      <span className="text-type-helper font-medium text-slate-500">
                         ({availableCount} phòng trống • Tổng sức chứa: {selectedCapacity} chỗ)
                       </span>
                     </div>
 
-                    <label className="inline-flex items-center gap-2 cursor-pointer select-none text-[15px] font-medium text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    <label className="inline-flex items-center gap-2 cursor-pointer select-none text-type-body font-medium text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                       <input
                         type="checkbox"
                         checked={availableCount > 0 && selectedRoomIds.length === availableCount}
@@ -879,20 +879,20 @@ export default function ExamArrangementPage() {
                           title={!r.isAvailable ? r.busyReason || 'Phòng bận' : undefined}
                         >
                           <div className="flex items-center justify-between">
-                            <span className="font-semibold text-xs truncate">
+                            <span className="font-semibold text-type-helper truncate">
                               {r.roomName || r.roomCode}
                             </span>
-                            <span className="text-xs text-slate-400 font-normal">
+                            <span className="text-type-helper text-slate-400 font-normal">
                               {r.building}
                             </span>
                           </div>
 
                           <div className="flex items-center justify-between pt-0.5">
-                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
+                            <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-300">
                               {r.capacity} chỗ
                             </span>
                             <span
-                              className={`text-xs font-semibold ${!r.isAvailable
+                              className={`text-type-helper font-semibold ${!r.isAvailable
                                 ? 'text-rose-600 dark:text-rose-400'
                                 : r.isAssignedToCurrent
                                   ? 'text-blue-600 dark:text-blue-400'
@@ -937,10 +937,10 @@ export default function ExamArrangementPage() {
                     <DoorOpen className="h-7 w-7 stroke-[2]" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                    <h3 className="text-type-body-sm font-semibold text-slate-800 dark:text-slate-200">
                       Sẵn sàng phân bổ phòng thi
                     </h3>
-                    <p className="text-xs text-slate-400 max-w-md">
+                    <p className="text-type-helper text-slate-400 max-w-md">
                       Chọn ca thi và phòng thi khả dụng ở trên, sau đó bấm <strong>&quot;Xếp Tự Động&quot;</strong> để tạo sơ đồ ma trận chỗ ngồi sinh viên.
                     </p>
                   </div>
@@ -951,20 +951,20 @@ export default function ExamArrangementPage() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                        <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
                           {result.preview ? 'Phương án phân bổ chỗ ngồi' : 'Dữ liệu phân bổ chỗ ngồi'}
                         </h3>
                         {result.preview ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[12px] font-semibold bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-type-helper font-semibold bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">
                             Xem trước
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[12px] font-semibold bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-type-helper font-semibold bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">
                             Chính thức
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                      <p className="text-type-helper text-slate-500 dark:text-slate-400">
                         Đã phân bổ <strong>{result.summary.totalStudents} thí sinh</strong> vào{' '}
                         <strong>{roomSummaries.length} phòng thi</strong>
                         {result.summary.timeSlot && ` (${result.summary.timeSlot})`}
@@ -1023,7 +1023,7 @@ export default function ExamArrangementPage() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
                     <div className="flex items-center gap-2.5 flex-wrap">
                       {/* View Switcher Tabs */}
-                      <div className="flex items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1 text-xs font-semibold">
+                      <div className="flex items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1 text-type-helper font-semibold">
                         <button
                           type="button"
                           onClick={() => setViewMode('matrix')}
@@ -1087,7 +1087,7 @@ export default function ExamArrangementPage() {
                           value={studentSearchQuery}
                           onChange={(e) => setStudentSearchQuery(e.target.value)}
                           placeholder="Tìm mã SV, họ tên, SBD..."
-                          className="h-9 pl-8 pr-8 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 text-[15px] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs min-w-[210px]"
+                          className="h-9 pl-8 pr-8 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 text-type-body text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs min-w-[210px]"
                         />
                         <Search className="h-3.5 w-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
                         {studentSearchQuery && (
@@ -1101,7 +1101,7 @@ export default function ExamArrangementPage() {
                         )}
                       </div>
                       {studentSearchQuery.trim() && (
-                        <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/80 px-2.5 py-1 rounded-lg shrink-0 border border-blue-100 dark:border-blue-900/50 animate-fadeIn">
+                        <span className="text-type-helper font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/80 px-2.5 py-1 rounded-lg shrink-0 border border-blue-100 dark:border-blue-900/50 animate-fadeIn">
                           Khớp {filteredDetails.length} SV
                         </span>
                       )}
@@ -1132,16 +1132,16 @@ export default function ExamArrangementPage() {
                                   </div>
                                   <div className="space-y-0.5">
                                     <div className="flex items-center gap-2">
-                                      <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-xs sm:text-[13px]  tracking-wider">
+                                      <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper sm:text-type-helper  tracking-wider">
                                         PHÒNG {room.roomName || room.roomCode}
                                       </h4>
                                       {room.building && (
-                                        <span className="text-[12px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                                        <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
                                           {room.building}
                                         </span>
                                       )}
                                     </div>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                    <p className="text-type-helper text-slate-500 dark:text-slate-400">
                                       Đã xếp <strong>{studentsInRoom.length}</strong>/{capacity} chỗ ({percentFilled}%)
                                     </p>
                                   </div>
@@ -1156,7 +1156,7 @@ export default function ExamArrangementPage() {
                                       />
                                     </div>
                                   </div>
-                                  <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/80 border border-blue-100 dark:border-blue-900/50 px-2.5 py-1 rounded-lg">
+                                  <span className="text-type-helper font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/80 border border-blue-100 dark:border-blue-900/50 px-2.5 py-1 rounded-lg">
                                     {studentsInRoom.length} Ghế
                                   </span>
                                 </div>
@@ -1165,7 +1165,7 @@ export default function ExamArrangementPage() {
                               {/* Bục Giảng / Bàn Giám Thị Mô Phỏng (Proctor Podium) */}
                               <div className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-slate-100 via-blue-50/50 to-slate-100 dark:from-slate-800/80 dark:via-blue-950/30 dark:to-slate-800/80 border border-blue-200/60 dark:border-blue-900/50 flex items-center justify-center gap-2 text-slate-700 dark:text-slate-200 shadow-2xs">
                                 <Monitor className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
-                                <span className="text-[12px] font-semibold  tracking-widest text-slate-700 dark:text-slate-200">
+                                <span className="text-type-helper font-semibold  tracking-widest text-slate-700 dark:text-slate-200">
                                   BỤC GIẢNG &amp; BÀN CÁN BỘ COI THI (HƯỚNG NHÌN)
                                 </span>
                               </div>
@@ -1190,27 +1190,27 @@ export default function ExamArrangementPage() {
                                       title="Bấm để xem chi tiết vị trí thi"
                                     >
                                       {/* Top: Ghế & Lớp */}
-                                      <div className="flex items-center justify-between text-xs gap-1">
-                                        <span className="font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/80 px-1.5 py-0.5 rounded-md text-[12px] shrink-0">
+                                      <div className="flex items-center justify-between text-type-helper gap-1">
+                                        <span className="font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/80 px-1.5 py-0.5 rounded-md text-type-helper shrink-0">
                                           #{st.seatNumber}
                                         </span>
-                                        <span className="font-semibold text-slate-500 dark:text-slate-400 text-[12px] truncate" title={st.className}>
+                                        <span className="font-semibold text-slate-500 dark:text-slate-400 text-type-helper truncate" title={st.className}>
                                           {st.className}
                                         </span>
                                       </div>
 
                                       {/* Middle: Họ Tên */}
                                       <p
-                                        className="font-semibold text-slate-900 dark:text-slate-100 text-xs truncate"
+                                        className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper truncate"
                                         title={st.fullName}
                                       >
                                         {st.fullName}
                                       </p>
 
                                       {/* Bottom: MSSV & SBD */}
-                                      <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100 dark:border-slate-800">
-                                        <span className="font-normal text-slate-500 dark:text-slate-400 text-[12px]">{st.studentCode}</span>
-                                        <span className="font-semibold font-normal text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded text-[12px]">
+                                      <div className="flex items-center justify-between text-type-helper pt-1 border-t border-slate-100 dark:border-slate-800">
+                                        <span className="font-normal text-slate-500 dark:text-slate-400 text-type-helper">{st.studentCode}</span>
+                                        <span className="font-semibold font-normal text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded text-type-helper">
                                           {st.examNumber}
                                         </span>
                                       </div>
@@ -1227,8 +1227,8 @@ export default function ExamArrangementPage() {
                   {/* ── View 2: Bảng Danh Sách Chi Tiết (Detailed Table) ── */}
                   {viewMode === 'table' && (
                     <div className="ui-table-wrap overflow-x-auto rounded-xl border border-slate-200/90 dark:border-slate-800 max-h-[520px] overflow-y-auto">
-                      <table className="ui-table w-full text-left text-[15px] text-slate-700 dark:text-slate-300 border-collapse">
-                        <thead className="bg-slate-50 dark:bg-slate-800/80 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700 sticky top-0">
+                      <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
+                        <thead className="bg-slate-50 dark:bg-slate-800/80 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700 sticky top-0">
                           <tr>
                             <th className="p-3">Phòng</th>
                             <th className="p-3 text-center">Vị trí</th>
@@ -1284,10 +1284,10 @@ export default function ExamArrangementPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
               <div>
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
                   Nhật ký thao tác &amp; Lịch sử Xếp phòng thi
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
                   Ghi lại toàn bộ lịch sử tạo phương án, lưu vết và hủy xếp phòng thi
                 </p>
               </div>
@@ -1328,7 +1328,7 @@ export default function ExamArrangementPage() {
                     value={historySearch}
                     onChange={(e) => setHistorySearch(e.target.value)}
                     placeholder="Tìm trong nhật ký..."
-                    className="h-8 pl-7 pr-7 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 text-[15px] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs min-w-[200px]"
+                    className="h-8 pl-7 pr-7 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 text-type-body text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs min-w-[200px]"
                   />
                   <Search className="h-3 w-3 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
                   {historySearch && (
@@ -1342,7 +1342,7 @@ export default function ExamArrangementPage() {
                   )}
                 </div>
                 {filteredHistoryLogs.length > 0 && (
-                  <span className="text-xs text-slate-400 font-medium shrink-0">
+                  <span className="text-type-helper text-slate-400 font-medium shrink-0">
                     {filteredHistoryLogs.length} mục
                   </span>
                 )}
@@ -1351,8 +1351,8 @@ export default function ExamArrangementPage() {
 
             {/* Standard Table View */}
             <div className="ui-table-wrap overflow-x-auto rounded-xl border border-slate-200/90 dark:border-slate-800">
-              <table className="ui-table w-full text-left text-[15px] text-slate-700 dark:text-slate-300 border-collapse">
-                <thead className="bg-slate-50 dark:bg-slate-800/80 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+              <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
+                <thead className="bg-slate-50 dark:bg-slate-800/80 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                   <tr>
                     <th className="p-3 whitespace-nowrap">Thời Gian</th>
                     <th className="p-3 whitespace-nowrap">Người Thực Hiện</th>
@@ -1407,7 +1407,7 @@ export default function ExamArrangementPage() {
 
                           {/* Người thực hiện */}
                           <td className="p-3 font-semibold text-slate-800 dark:text-slate-200 whitespace-nowrap">
-                            {username} <span className="text-slate-400 font-normal text-[15px]">({roleLabel})</span>
+                            {username} <span className="text-slate-400 font-normal text-type-body">({roleLabel})</span>
                           </td>
 
                           {/* Hành động */}

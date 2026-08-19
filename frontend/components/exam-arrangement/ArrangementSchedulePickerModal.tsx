@@ -86,17 +86,17 @@ export function ArrangementSchedulePickerModal({
         {/* Header Chuẩn Design System */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80">
           <div>
-            <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+            <h2 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
               Chọn Ca Thi Xếp Phòng
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
               Tổng cộng {schedules.length} ca thi trong kỳ thi
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 dark:hover:bg-slate-700 transition cursor-pointer text-sm font-semibold"
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 dark:hover:bg-slate-700 transition cursor-pointer text-type-body-sm font-semibold"
           >
             ✕
           </button>
@@ -110,12 +110,12 @@ export function ArrangementSchedulePickerModal({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Tìm theo tên môn, mã môn, ngày thi..."
-            className="w-full h-10 px-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 text-[15px] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+            className="w-full h-10 px-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 text-type-body text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
             autoFocus
           />
 
           {/* Segmented Filter Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 text-xs">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 text-type-helper">
             <button
               type="button"
               onClick={() => setActiveTab('ALL')}
@@ -166,7 +166,7 @@ export function ArrangementSchedulePickerModal({
         {/* Danh Sách Thẻ Ca Thi (Scrollable List) */}
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
           {filteredSchedules.length === 0 ? (
-            <div className="py-12 text-center text-xs text-slate-400">
+            <div className="py-12 text-center text-type-helper text-slate-400">
               Không tìm thấy ca thi nào phù hợp với bộ lọc
             </div>
           ) : (
@@ -198,25 +198,25 @@ export function ArrangementSchedulePickerModal({
                   {/* Left: Info */}
                   <div className="space-y-1 min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
+                      <span className="text-type-helper font-semibold text-slate-900 dark:text-slate-100 truncate">
                         {subName}
                       </span>
-                      <span className="text-xs font-normal text-slate-400">
+                      <span className="text-type-helper font-normal text-slate-400">
                         #{subCode}
                       </span>
                       {isMock && (
-                        <span className="px-1.5 py-0.2 rounded text-xs font-semibold bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
+                        <span className="px-1.5 py-0.2 rounded text-type-helper font-semibold bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
                           Thi thử
                         </span>
                       )}
                       {isSelected && (
-                        <span className="px-1.5 py-0.2 rounded text-xs font-semibold bg-blue-600 text-white">
+                        <span className="px-1.5 py-0.2 rounded text-type-helper font-semibold bg-blue-600 text-white">
                           Đang chọn
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
+                    <div className="flex items-center gap-2 text-type-helper text-slate-500 dark:text-slate-400 flex-wrap">
                       <span className="font-semibold text-slate-700 dark:text-slate-300">
                         {s.startTime} - {s.endTime}
                       </span>
@@ -227,15 +227,15 @@ export function ArrangementSchedulePickerModal({
                   {/* Right: Status Pill */}
                   <div className="shrink-0 flex items-center gap-2">
                     {isExpired ? (
-                      <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                      <span className="px-2 py-0.5 rounded text-type-helper font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
                         Đã kết thúc
                       </span>
                     ) : isArranged ? (
-                      <span className="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">
+                      <span className="px-2 py-0.5 rounded text-type-helper font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">
                         Đã xếp {roomCount} phòng
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded text-xs font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">
+                      <span className="px-2 py-0.5 rounded text-type-helper font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">
                         Chưa xếp phòng
                       </span>
                     )}
@@ -248,7 +248,7 @@ export function ArrangementSchedulePickerModal({
 
         {/* Footer */}
         <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60">
-          <span className="text-xs text-slate-500">
+          <span className="text-type-helper text-slate-500">
             Hiển thị <strong>{filteredSchedules.length}</strong> ca thi
           </span>
           <Button type="button" variant="secondary" size="md" onClick={onClose}>

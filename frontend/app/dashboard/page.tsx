@@ -270,7 +270,7 @@ export default function DashboardPage() {
       >
         <div className="space-y-4">
           <div>
-            <label htmlFor="reject-reason" className="mb-1.5 block text-[15px] font-medium text-slate-700">
+            <label htmlFor="reject-reason" className="mb-1.5 block text-type-body font-medium text-slate-700">
               Lý do từ chối <span className="text-rose-500">*</span>
             </label>
             <textarea
@@ -282,14 +282,14 @@ export default function DashboardPage() {
                 if (reasonError) setReasonError('');
               }}
               placeholder="Nhập chi tiết lý do từ chối để giảng viên chỉnh sửa..."
-              className={`w-full resize-none rounded-xl border px-3 py-2.5 text-[15px] font-normal outline-none transition focus:ring-2 ${
+              className={`w-full resize-none rounded-xl border px-3 py-2.5 text-type-body font-normal outline-none transition focus:ring-2 ${
                 reasonError
                   ? 'border-rose-300 bg-rose-50/40 focus:ring-rose-200'
                   : 'border-slate-200 bg-white focus:border-blue-500 focus:ring-blue-100'
               }`}
             />
             {reasonError && (
-              <p className="mt-1 text-[12px] font-semibold text-rose-600 flex items-center gap-1">
+              <p className="mt-1 text-type-helper font-semibold text-rose-600 flex items-center gap-1">
                 <AlertCircle className="h-3 w-3 shrink-0" />
                 {reasonError}
               </p>

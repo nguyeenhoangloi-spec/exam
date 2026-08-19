@@ -42,26 +42,26 @@ export function ExamReportFiltersCard({
 
           <div className="space-y-0.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2 py-0.5 rounded-md bg-blue-600 text-white text-[12px] font-semibold tracking-wider shrink-0  shadow-2xs">
+              <span className="px-2 py-0.5 rounded-md bg-blue-600 text-white text-type-helper font-semibold tracking-wider shrink-0  shadow-2xs">
                 {activeTypeBadge?.label || 'Chính thức'}
               </span>
 
               {reportSchedule ? (
                 <>
-                  <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 tracking-tight truncate">
+                  <h2 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 tracking-tight truncate">
                     {reportSchedule.subjectName}
                   </h2>
                   <IdentifierBadge>{reportSchedule.subjectCode}</IdentifierBadge>
                 </>
               ) : (
-                <span className="text-sm text-slate-500 font-medium">
+                <span className="text-type-body-sm text-slate-500 font-medium">
                   {loadingSchedules ? 'Đang tải ca thi...' : 'Chưa chọn ca thi cụ thể'}
                 </span>
               )}
             </div>
 
             {reportSchedule && (
-              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-medium truncate">
+              <div className="flex items-center gap-2 text-type-helper text-slate-500 dark:text-slate-400 font-medium truncate">
                 <span className="text-slate-600 dark:text-slate-300 font-semibold">{reportSchedule.periodName}</span>
                 <span>•</span>
                 <span className="flex items-center gap-1 text-slate-700 dark:text-slate-300">

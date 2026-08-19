@@ -154,12 +154,12 @@ export function ExamPaperDetailDrawer({
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-2 min-w-0 flex-1">
               <div className="flex items-center gap-2.5 flex-wrap">
-                <h2 className="text-[18px] font-semibold text-slate-900 dark:text-white leading-tight truncate">
+                <h2 className="text-type-card font-semibold text-slate-900 dark:text-white leading-tight truncate">
                   {subjectName}
                 </h2>
                 <IdentifierBadge tone="blue">Mã đề: {paper.paperCode}</IdentifierBadge>
                 <span
-                  className={`px-2.5 py-0.5 rounded-xl text-xs font-semibold border ${
+                  className={`px-2.5 py-0.5 rounded-xl text-type-helper font-semibold border ${
                     paper.status === 'PUBLISHED'
                       ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60'
                       : paper.status === 'ARCHIVED'
@@ -171,7 +171,7 @@ export function ExamPaperDetailDrawer({
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 text-xs font-normal text-slate-500 dark:text-slate-400 truncate">
+              <div className="flex items-center gap-2 text-type-helper font-normal text-slate-500 dark:text-slate-400 truncate">
                 <CalendarDays className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                 <span>Kỳ thi: <strong className="font-semibold text-slate-700 dark:text-slate-300">{periodName}</strong></span>
               </div>
@@ -193,7 +193,7 @@ export function ExamPaperDetailDrawer({
         <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-850/70 border-b border-slate-100 dark:border-slate-800 space-y-3.5 shrink-0">
           {/* Hàng 1: Quick Metric Chips */}
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 font-medium flex-wrap">
+            <div className="flex items-center gap-2 text-type-helper text-slate-600 dark:text-slate-300 font-medium flex-wrap">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs">
                 <HelpCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 <strong className="font-semibold">{questionCount}</strong> câu hỏi
@@ -241,7 +241,7 @@ export function ExamPaperDetailDrawer({
                 placeholder="Tìm nội dung câu hỏi trong đề..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
               />
               {searchTerm && (
                 <button
@@ -255,7 +255,7 @@ export function ExamPaperDetailDrawer({
             </div>
 
             {/* Filter by Difficulty */}
-            <div className="inline-flex rounded-xl bg-slate-200/70 dark:bg-slate-800 p-1 shrink-0 text-xs font-semibold gap-0.5">
+            <div className="inline-flex rounded-xl bg-slate-200/70 dark:bg-slate-800 p-1 shrink-0 text-type-helper font-semibold gap-0.5">
               <button
                 type="button"
                 onClick={() => setActiveFilter('ALL')}
@@ -309,8 +309,8 @@ export function ExamPaperDetailDrawer({
           {filteredQuestions.length === 0 ? (
             <div className="py-16 text-center space-y-2">
               <FileText className="h-10 w-10 text-slate-300 dark:text-slate-600 mx-auto" />
-              <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Không tìm thấy câu hỏi phù hợp</p>
-              <p className="text-xs text-slate-400">Thử thay đổi từ khóa tìm kiếm hoặc chọn lọc độ khó khác</p>
+              <p className="text-type-body-sm font-semibold text-slate-700 dark:text-slate-300">Không tìm thấy câu hỏi phù hợp</p>
+              <p className="text-type-helper text-slate-400">Thử thay đổi từ khóa tìm kiếm hoặc chọn lọc độ khó khác</p>
             </div>
           ) : (
             filteredQuestions.map(({ detail, originalIndex }) => {
@@ -329,19 +329,19 @@ export function ExamPaperDetailDrawer({
                   {/* Question Header */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-2.5 flex-wrap">
-                      <span className="flex h-6.5 items-center px-3 rounded-xl text-xs font-semibold bg-blue-600 text-white shadow-2xs">
+                      <span className="flex h-6.5 items-center px-3 rounded-xl text-type-helper font-semibold bg-blue-600 text-white shadow-2xs">
                         Câu {originalIndex + 1}
                       </span>
-                      <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                      <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">
                         {typeLabel}
                       </span>
-                      <span className={`px-2.5 py-0.5 rounded-xl text-xs font-semibold border ${diffBadge.color}`}>
+                      <span className={`px-2.5 py-0.5 rounded-xl text-type-helper font-semibold border ${diffBadge.color}`}>
                         {diffBadge.text}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2.5 shrink-0">
-                      <span className="px-2.5 py-1 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      <span className="px-2.5 py-1 rounded-xl text-type-helper font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
                         {score}đ
                       </span>
 
@@ -350,7 +350,7 @@ export function ExamPaperDetailDrawer({
                         <button
                           type="button"
                           onClick={() => onSwapQuestion(originalIndex, q)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-blue-950/60 transition-colors cursor-pointer"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-type-helper font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-blue-950/60 transition-colors cursor-pointer"
                           title="Đổi câu hỏi ngẫu nhiên tương đương từ Ngân hàng đề"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
@@ -369,7 +369,7 @@ export function ExamPaperDetailDrawer({
                               score: detail.score || 1,
                             })
                           }
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-semibold text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 hover:bg-emerald-50/80 dark:hover:bg-emerald-950/60 transition-colors cursor-pointer"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-type-helper font-semibold text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 hover:bg-emerald-50/80 dark:hover:bg-emerald-950/60 transition-colors cursor-pointer"
                           title="Cấu hình thang điểm chi tiết (Rubric)"
                         >
                           <Award className="w-3.5 h-3.5" />
@@ -380,13 +380,13 @@ export function ExamPaperDetailDrawer({
                   </div>
 
                   {/* Question Content */}
-                  <div className="text-[15px] font-medium text-slate-900 dark:text-slate-100 leading-relaxed break-words pl-0.5">
+                  <div className="text-type-body font-medium text-slate-900 dark:text-slate-100 leading-relaxed break-words pl-0.5">
                     {q.content}
                   </div>
 
                   {/* Multiple Choice Options (A, B, C, D) */}
                   {choices.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-[15px] pt-1">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-type-body pt-1">
                       {choices.map((c) => {
                         const isCorrect = c.isCorrect;
                         const isHighlighted = showAnswers && isCorrect;
@@ -401,7 +401,7 @@ export function ExamPaperDetailDrawer({
                             }`}
                           >
                             <span
-                              className={`flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-xl text-xs font-semibold ${
+                              className={`flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-xl text-type-helper font-semibold ${
                                 isHighlighted
                                   ? 'bg-emerald-600 text-white'
                                   : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600'
@@ -411,7 +411,7 @@ export function ExamPaperDetailDrawer({
                             </span>
                             <span className="flex-1 min-w-0 break-words leading-relaxed pt-0.5">{c.text}</span>
                             {isHighlighted && (
-                              <span className="shrink-0 inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-semibold text-xs pt-0.5">
+                              <span className="shrink-0 inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-semibold text-type-helper pt-0.5">
                                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Đúng
                               </span>
                             )}
@@ -421,10 +421,10 @@ export function ExamPaperDetailDrawer({
                     </div>
                   ) : q.type === 'FILL_BLANK' ? (
                     /* Điền khuyết */
-                    <div className="text-[15px] pt-1 space-y-2">
+                    <div className="text-type-body pt-1 space-y-2">
                       {showAnswers ? (
                         <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/70 dark:bg-emerald-950/40 p-3.5 space-y-2 text-emerald-900 dark:text-emerald-200">
-                          <p className="font-semibold text-emerald-800 dark:text-emerald-300 text-xs flex items-center gap-1.5">
+                          <p className="font-semibold text-emerald-800 dark:text-emerald-300 text-type-helper flex items-center gap-1.5">
                             <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Đáp án chính xác cho các chỗ trống:
                           </p>
                           <div className="flex flex-wrap gap-2 pt-1">
@@ -432,30 +432,30 @@ export function ExamPaperDetailDrawer({
                               (q.fillBlankAnswers || (q as any).answers).map((ans: any, idx: number) => (
                                 <span
                                   key={idx}
-                                  className="rounded-xl bg-emerald-100/90 dark:bg-emerald-900/60 px-3 py-1.5 text-xs font-semibold text-emerald-900 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700"
+                                  className="rounded-xl bg-emerald-100/90 dark:bg-emerald-900/60 px-3 py-1.5 text-type-helper font-semibold text-emerald-900 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700"
                                 >
                                   Ô #{ans.blankIndex || idx + 1}: {ans.answer || ans.text || 'đáp án đúng'} {ans.score ? `(${ans.score}đ)` : ''}
                                 </span>
                               ))
                             ) : (
-                              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 italic">
+                              <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 italic">
                                 Dữ liệu đáp án điền khuyết theo cú pháp {'{{blank_1}}'} trong câu hỏi.
                               </span>
                             )}
                           </div>
                         </div>
                       ) : (
-                        <p className="text-xs italic font-medium text-slate-400 pl-0.5">
+                        <p className="text-type-helper italic font-medium text-slate-400 pl-0.5">
                           (Nhấn &quot;Hiện đáp án&quot; phía trên để xem đáp án các ô điền khuyết)
                         </p>
                       )}
                     </div>
                   ) : (
                     /* Tự luận */
-                    <div className="text-[15px] pt-1 space-y-2">
+                    <div className="text-type-body pt-1 space-y-2">
                       {showAnswers ? (
                         <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/70 dark:bg-emerald-950/40 p-3.5 space-y-2 text-emerald-900 dark:text-emerald-200">
-                          <p className="font-semibold text-emerald-800 dark:text-emerald-300 text-xs flex items-center gap-1.5">
+                          <p className="font-semibold text-emerald-800 dark:text-emerald-300 text-type-helper flex items-center gap-1.5">
                             <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Gợi ý Đáp án &amp; Thang điểm Tự luận:
                           </p>
                           <p className="font-medium whitespace-pre-wrap leading-relaxed">
@@ -463,7 +463,7 @@ export function ExamPaperDetailDrawer({
                           </p>
                         </div>
                       ) : (
-                        <p className="text-xs italic font-medium text-slate-400 pl-0.5">
+                        <p className="text-type-helper italic font-medium text-slate-400 pl-0.5">
                           (Nhấn &quot;Hiện đáp án&quot; phía trên để xem đáp án gợi ý &amp; thang điểm)
                         </p>
                       )}
@@ -478,9 +478,9 @@ export function ExamPaperDetailDrawer({
         {/* ── 4. Sticky Action Footer ── */}
         <div className="border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/90 px-6 py-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Trạng thái:</span>
+            <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">Trạng thái:</span>
             <span
-              className={`px-2.5 py-0.5 rounded-xl text-xs font-semibold border ${
+              className={`px-2.5 py-0.5 rounded-xl text-type-helper font-semibold border ${
                 paper.status === 'PUBLISHED'
                   ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60'
                   : paper.status === 'ARCHIVED'

@@ -416,10 +416,10 @@ function AdminEssayReviewContent() {
     <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
       {/* ── 1. Standard Page Header ── */}
       <div className="pb-1 space-y-0.5">
-        <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+        <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
           Duyệt bài tự luận
         </h1>
-        <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
+        <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
           Khu vực ADMIN duyệt điểm, công bố kết quả, xử lý phúc khảo, gia hạn bài thi hoặc chấm phạt.
         </p>
       </div>
@@ -442,10 +442,10 @@ function AdminEssayReviewContent() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                    <h3 className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100">
+                    <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
                       Danh sách bài thi
                     </h3>
-                    <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full border border-blue-200/60 dark:border-blue-800/60 tabular-nums">
+                    <span className="text-type-helper font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full border border-blue-200/60 dark:border-blue-800/60 tabular-nums">
                       {filteredRows.length}/{rows.length}
                     </span>
                   </div>
@@ -488,7 +488,7 @@ function AdminEssayReviewContent() {
                     placeholder="Tìm mã SV, tên SV, môn... (/)"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-8 pr-7 py-1.5 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                    className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-8 pr-7 py-1.5 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                   />
                   {searchQuery && (
                     <button
@@ -521,7 +521,7 @@ function AdminEssayReviewContent() {
                       value={subjectFilter}
                       onChange={(e) => setSubjectFilter(e.target.value)}
                       containerClassName="w-full"
-                      className="w-full text-xs"
+                      className="w-full text-type-helper"
                     >
                       <option value="ALL">Tất cả môn học ({availableSubjects.length})</option>
                       {availableSubjects.map((s) => (
@@ -538,7 +538,7 @@ function AdminEssayReviewContent() {
                         value={dateFilter}
                         onChange={(e) => setDateFilter(e.target.value)}
                         containerClassName="w-full"
-                        className="w-full text-xs"
+                        className="w-full text-type-helper"
                       >
                         <option value="ALL">Tất cả ngày</option>
                         {availableDates.map((d) => (
@@ -554,7 +554,7 @@ function AdminEssayReviewContent() {
                         containerClassName="w-full"
                         value={scheduleFilter}
                         onChange={(e) => setScheduleFilter(e.target.value)}
-                        className="w-full text-xs"
+                        className="w-full text-type-helper"
                       >
                         <option value="ALL">Tất cả ca thi</option>
                         {availableSchedules.map((s) => (
@@ -573,10 +573,10 @@ function AdminEssayReviewContent() {
                 {loading ? (
                   <div className="py-12 flex flex-col items-center gap-2.5">
                     <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
-                    <p className="text-xs font-medium text-slate-400">Đang tải danh sách bài thi...</p>
+                    <p className="text-type-helper font-medium text-slate-400">Đang tải danh sách bài thi...</p>
                   </div>
                 ) : filteredRows.length === 0 ? (
-                  <div className="text-center py-12 px-4 text-xs text-slate-400">
+                  <div className="text-center py-12 px-4 text-type-helper text-slate-400">
                     Không tìm thấy bài thi nào phù hợp bộ lọc.
                   </div>
                 ) : (
@@ -597,7 +597,7 @@ function AdminEssayReviewContent() {
                         <div className="flex justify-between items-center gap-2">
                           <div className="flex items-center gap-2 min-w-0 flex-1">
                             <div
-                              className={`w-7 h-7 rounded-full flex items-center justify-center font-semibold text-xs shrink-0 select-none ${
+                              className={`w-7 h-7 rounded-full flex items-center justify-center font-semibold text-type-helper shrink-0 select-none ${
                                 isCur
                                   ? 'bg-blue-600 text-white'
                                   : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
@@ -611,7 +611,7 @@ function AdminEssayReviewContent() {
                                 e.stopPropagation();
                                 setProfileCandidate(r);
                               }}
-                              className={`font-semibold text-sm truncate transition cursor-pointer text-left ${
+                              className={`font-semibold text-type-body-sm truncate transition cursor-pointer text-left ${
                                 isCur
                                   ? 'text-blue-700 dark:text-blue-300'
                                   : 'text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400'
@@ -623,12 +623,12 @@ function AdminEssayReviewContent() {
                           </div>
 
                           <span
-                            className={`font-semibold tabular-nums text-sm shrink-0 ${
+                            className={`font-semibold tabular-nums text-type-body-sm shrink-0 ${
                               notSub
-                                ? 'text-slate-400 text-xs'
+                                ? 'text-slate-400 text-type-helper'
                                 : r.totalScore !== undefined && r.totalScore !== null
                                   ? 'text-blue-600 dark:text-blue-400'
-                                  : 'text-slate-400 text-xs'
+                                  : 'text-slate-400 text-type-helper'
                             }`}
                           >
                             {notSub ? 'Chưa nộp' : r.totalScore !== undefined && r.totalScore !== null ? `${r.totalScore}đ` : '--'}
@@ -636,7 +636,7 @@ function AdminEssayReviewContent() {
                         </div>
 
                         {/* Row 2: MSSV identifier + Subject name + Status dot */}
-                        <div className="flex items-center justify-between gap-2 mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                        <div className="flex items-center justify-between gap-2 mt-1.5 text-type-helper text-slate-500 dark:text-slate-400">
                           <div className="flex items-center gap-1.5 min-w-0">
                             <IdentifierBadge tone={isCur ? 'blue' : 'neutral'}>
                               {r.student?.studentCode || '---'}
@@ -665,7 +665,7 @@ function AdminEssayReviewContent() {
         {/* Right Panel: Detail & Admin Controls (Single Unified Container) */}
         <div className="flex-1 min-w-0 space-y-4">
           {!selected ? (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-12 text-center text-slate-400 text-xs font-medium shadow-2xs space-y-3">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-12 text-center text-slate-400 text-type-helper font-medium shadow-2xs space-y-3">
               <p>Vui lòng chọn bài thi từ danh sách bên trái để xem chi tiết và duyệt điểm.</p>
               {collapseList && (
                 <div className="pt-1">
@@ -693,7 +693,7 @@ function AdminEssayReviewContent() {
 
                   <div
                     onClick={() => setProfileCandidate(selected)}
-                    className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 flex items-center justify-center font-semibold text-sm shrink-0 cursor-pointer hover:ring-2 hover:ring-blue-400 transition"
+                    className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 flex items-center justify-center font-semibold text-type-body-sm shrink-0 cursor-pointer hover:ring-2 hover:ring-blue-400 transition"
                     title="Xem chi tiết hồ sơ thí sinh"
                   >
                     {selected.student?.fullName?.charAt(0) || 'S'}
@@ -703,14 +703,14 @@ function AdminEssayReviewContent() {
                       <button
                         type="button"
                         onClick={() => setProfileCandidate(selected)}
-                        className="text-base font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                        className="text-type-body font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
                         title="Xem chi tiết hồ sơ thí sinh"
                       >
                         {selected.student?.fullName}
                       </button>
                       <StatusBadge status={selected.gradingStatus} />
                     </div>
-                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 mt-0.5">
+                    <div className="flex flex-wrap items-center gap-1.5 text-type-helper text-slate-500 mt-0.5">
                       <span>Mã SV:</span>
                       <IdentifierBadge tone="neutral">{selected.student?.studentCode}</IdentifierBadge>
                       <span>
@@ -725,12 +725,12 @@ function AdminEssayReviewContent() {
 
                 <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
                   <div className="text-right">
-                    <span className="text-xl tabular-nums font-semibold text-slate-900 dark:text-slate-100">
+                    <span className="text-type-section tabular-nums font-semibold text-slate-900 dark:text-slate-100">
                       {selected.totalScore ?? '--'}{' '}
-                      <span className="text-xs text-slate-500 font-normal">/ {selected.maxScore || 10}đ</span>
+                      <span className="text-type-helper text-slate-500 font-normal">/ {selected.maxScore || 10}đ</span>
                     </span>
                     {selected.penaltyPoints > 0 && (
-                      <p className="text-xs font-semibold text-rose-600 mt-0.5">
+                      <p className="text-type-helper font-semibold text-rose-600 mt-0.5">
                         Điểm phạt: -{selected.penaltyPoints}đ ({selected.penaltyReason})
                       </p>
                     )}
@@ -739,7 +739,7 @@ function AdminEssayReviewContent() {
                   {/* Actions & Fast Student Navigation */}
                   <div className="flex items-center gap-2 border-l border-slate-200 dark:border-slate-800 pl-3">
                     {selected.gradingStatus === 'PUBLISHED' ? (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-xs font-semibold select-none shadow-2xs">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-type-helper font-semibold select-none shadow-2xs">
                         <Lock className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                         <span>Đã công bố (Khóa điểm)</span>
                       </div>
@@ -777,7 +777,7 @@ function AdminEssayReviewContent() {
                                 setOpenActionMenu(false);
                                 handleReturn();
                               }}
-                              className="w-full px-3.5 py-2 text-left text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-2.5 transition cursor-pointer"
+                              className="w-full px-3.5 py-2 text-left text-type-helper font-medium text-slate-700 dark:text-slate-200 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-2.5 transition cursor-pointer"
                             >
                               <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
                               <span>Trả lại chấm lại</span>
@@ -788,7 +788,7 @@ function AdminEssayReviewContent() {
                                 setOpenActionMenu(false);
                                 handleReopen();
                               }}
-                              className="w-full px-3.5 py-2 text-left text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-amber-950/40 hover:text-amber-600 dark:hover:text-amber-400 flex items-center gap-2.5 transition cursor-pointer"
+                              className="w-full px-3.5 py-2 text-left text-type-helper font-medium text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-amber-950/40 hover:text-amber-600 dark:hover:text-amber-400 flex items-center gap-2.5 transition cursor-pointer"
                             >
                               <RotateCcw className="w-4 h-4 text-amber-600 shrink-0" />
                               <span>Mở lại bài thi</span>
@@ -802,7 +802,7 @@ function AdminEssayReviewContent() {
                                 setOpenActionMenu(false);
                                 handleExtend();
                               }}
-                              className="w-full px-3.5 py-2 text-left text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2.5 transition cursor-pointer"
+                              className="w-full px-3.5 py-2 text-left text-type-helper font-medium text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2.5 transition cursor-pointer"
                             >
                               <Clock className="w-4 h-4 text-blue-600 shrink-0" />
                               <span>Gia hạn thời gian</span>
@@ -813,7 +813,7 @@ function AdminEssayReviewContent() {
                                 setOpenActionMenu(false);
                                 handlePenalty();
                               }}
-                              className="w-full px-3.5 py-2 text-left text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-2.5 transition cursor-pointer"
+                              className="w-full px-3.5 py-2 text-left text-type-helper font-medium text-slate-700 dark:text-slate-200 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-2.5 transition cursor-pointer"
                             >
                               <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
                               <span>Trừ điểm vi phạm</span>
@@ -833,7 +833,7 @@ function AdminEssayReviewContent() {
                       >
                         <ChevronLeft className="h-4 w-4" />
                       </button>
-                      <span className="text-[12px] font-semibold tabular-nums text-slate-500 px-1 select-none">
+                      <span className="text-type-helper font-semibold tabular-nums text-slate-500 px-1 select-none">
                         {currentIndex >= 0 ? `${currentIndex + 1}/${filteredRows.length}` : ''}
                       </span>
                       <button
@@ -862,10 +862,10 @@ function AdminEssayReviewContent() {
                       {/* Question Header & Rubric Trigger */}
                       <div className="flex justify-between items-start gap-4 border-b border-slate-100 dark:border-slate-800 pb-3.5">
                         <div className="flex items-start gap-2.5 flex-1">
-                          <span className="px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-xs font-semibold border border-blue-200 dark:border-blue-800/80 shrink-0 select-none">
+                          <span className="px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-type-helper font-semibold border border-blue-200 dark:border-blue-800/80 shrink-0 select-none">
                             Câu {idx + 1}
                           </span>
-                          <div className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-snug">
+                          <div className="text-type-body font-semibold text-slate-900 dark:text-slate-100 leading-snug">
                             {q.content}
                           </div>
                         </div>
@@ -874,29 +874,29 @@ function AdminEssayReviewContent() {
                           <button
                             type="button"
                             onClick={() => setViewingRubricQuestion({ ...q, id: q.questionId, code: `Câu ${idx + 1}` })}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-helper font-semibold hover:bg-slate-100 hover:text-blue-600 transition cursor-pointer shadow-2xs"
                             title="Xem đáp án mẫu và tiêu chuẩn chấm Rubric của câu này"
                           >
                             <BookOpen className="h-3.5 w-3.5 text-slate-500" />
                             <span>Xem Rubric & Đáp án</span>
                           </button>
-                          <span className="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold tabular-nums text-sm text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 shrink-0">
-                            {ans?.finalScore ?? '--'} <span className="text-xs font-normal text-slate-400">/ {q.score}đ</span>
+                          <span className="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold tabular-nums text-type-body-sm text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 shrink-0">
+                            {ans?.finalScore ?? '--'} <span className="text-type-helper font-normal text-slate-400">/ {q.score}đ</span>
                           </span>
                         </div>
                       </div>
 
                       {/* Student Answer Box */}
                       <div className="space-y-1.5">
-                        <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+                        <div className="flex items-center justify-between text-type-helper font-semibold text-slate-500">
                           <span className="tracking-wide">Bài làm của thí sinh:</span>
                           {ans?.textAnswer && (
-                            <span className="text-xs font-normal text-slate-400">
+                            <span className="text-type-helper font-normal text-slate-400">
                               {ans.textAnswer.trim().split(/\s+/).length} từ
                             </span>
                           )}
                         </div>
-                        <div className="p-4 bg-slate-50/60 dark:bg-slate-800/40 rounded-xl border border-slate-200/70 dark:border-slate-800/80 border-l-4 border-l-blue-500 text-[15px] text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed font-normal shadow-2xs">
+                        <div className="p-4 bg-slate-50/60 dark:bg-slate-800/40 rounded-xl border border-slate-200/70 dark:border-slate-800/80 border-l-4 border-l-blue-500 text-type-body text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed font-normal shadow-2xs">
                           {ans?.textAnswer || (
                             <span className="italic text-slate-400">Sinh viên không nhập nội dung văn bản</span>
                           )}
@@ -906,7 +906,7 @@ function AdminEssayReviewContent() {
                       {/* Files */}
                       {ans?.submissionFiles?.length > 0 && (
                         <div className="space-y-1.5">
-                          <div className="text-xs font-semibold text-slate-500">File đính kèm ({ans.submissionFiles.length}):</div>
+                          <div className="text-type-helper font-semibold text-slate-500">File đính kèm ({ans.submissionFiles.length}):</div>
                           <div className="flex gap-2 flex-wrap">
                             {ans.submissionFiles.map((f: any) => (
                               <a
@@ -914,11 +914,11 @@ function AdminEssayReviewContent() {
                                 href={f.url}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-blue-700 dark:text-blue-400 text-xs font-semibold hover:bg-blue-50 hover:border-blue-300 transition shadow-2xs"
+                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-blue-700 dark:text-blue-400 text-type-helper font-semibold hover:bg-blue-50 hover:border-blue-300 transition shadow-2xs"
                               >
                                 <Download className="h-4 w-4 text-blue-500" />
                                 <span>{f.fileName}</span>
-                                <span className="text-xs text-slate-400 font-normal">({(f.size / 1024 / 1024).toFixed(2)} MB)</span>
+                                <span className="text-type-helper text-slate-400 font-normal">({(f.size / 1024 / 1024).toFixed(2)} MB)</span>
                               </a>
                             ))}
                           </div>
@@ -928,7 +928,7 @@ function AdminEssayReviewContent() {
                       {/* Rubric Criteria Section */}
                       {q.rubric?.length > 0 && (
                         <div className="space-y-2.5 pt-1">
-                          <div className="text-xs font-semibold text-slate-600 dark:text-slate-400 tracking-wide flex items-center justify-between">
+                          <div className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 tracking-wide flex items-center justify-between">
                             <span>Tiêu chí chấm Rubric ({q.rubric.length}):</span>
                           </div>
                           <div className="space-y-2.5">
@@ -942,18 +942,18 @@ function AdminEssayReviewContent() {
                                 >
                                   <div className="flex justify-between items-start gap-2">
                                     <div>
-                                      <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">{r.label}</span>
+                                      <span className="font-semibold text-type-body-sm text-slate-900 dark:text-slate-100">{r.label}</span>
                                       {r.description && (
-                                        <p className="text-xs text-slate-500 mt-0.5 font-normal leading-relaxed">{r.description}</p>
+                                        <p className="text-type-helper text-slate-500 mt-0.5 font-normal leading-relaxed">{r.description}</p>
                                       )}
                                     </div>
-                                    <span className="tabular-nums text-xs font-semibold text-slate-500 shrink-0 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700">
+                                    <span className="tabular-nums text-type-helper font-semibold text-slate-500 shrink-0 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700">
                                       Tối đa {r.maxScore}đ
                                     </span>
                                   </div>
 
                                   <div className="flex gap-2 items-center flex-wrap pt-1">
-                                    <div className="w-20 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-center text-[15px] font-semibold tabular-nums text-blue-600 dark:text-blue-400 shadow-2xs select-none">
+                                    <div className="w-20 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-center text-type-body font-semibold tabular-nums text-blue-600 dark:text-blue-400 shadow-2xs select-none">
                                       {currentScore}
                                     </div>
 
@@ -962,7 +962,7 @@ function AdminEssayReviewContent() {
                                       {[0, Number((r.maxScore * 0.5).toFixed(2)), Number((r.maxScore * 0.75).toFixed(2)), r.maxScore].map((presetVal) => (
                                         <div
                                           key={presetVal}
-                                          className={`px-2.5 py-1 rounded-xl text-xs font-semibold border transition select-none ${
+                                          className={`px-2.5 py-1 rounded-xl text-type-helper font-semibold border transition select-none ${
                                             currentScore === presetVal
                                               ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
                                               : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 opacity-80'
@@ -973,13 +973,13 @@ function AdminEssayReviewContent() {
                                       ))}
                                     </div>
 
-                                    <div className="flex-1 min-w-[200px] bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-[15px] font-normal text-slate-800 dark:text-slate-200 shadow-2xs truncate">
+                                    <div className="flex-1 min-w-[200px] bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-type-body font-normal text-slate-800 dark:text-slate-200 shadow-2xs truncate">
                                       {g?.comment || <span className="italic text-slate-400">Không có nhận xét tiêu chí</span>}
                                     </div>
                                   </div>
 
                                   {ans?.aiEvidence && (
-                                    <div className="rounded-xl border border-blue-100 bg-blue-50/70 px-3 py-2 text-xs leading-relaxed text-blue-950 dark:border-blue-900 dark:bg-blue-950/30 dark:text-blue-100 mt-1">
+                                    <div className="rounded-xl border border-blue-100 bg-blue-50/70 px-3 py-2 text-type-helper leading-relaxed text-blue-950 dark:border-blue-900 dark:bg-blue-950/30 dark:text-blue-100 mt-1">
                                       <span className="font-semibold text-blue-700 dark:text-blue-300">Minh chứng AI: </span>
                                       {ans.aiEvidence}
                                     </div>
@@ -993,15 +993,15 @@ function AdminEssayReviewContent() {
 
                       {/* Overall Teacher Comment */}
                       <div className="space-y-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
-                        <label className="text-[15px] font-medium text-slate-600 dark:text-slate-400">Nhận xét tổng quát cho câu này:</label>
-                        <div className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-[15px] font-normal text-slate-800 dark:text-slate-200 shadow-2xs">
+                        <label className="text-type-body font-medium text-slate-600 dark:text-slate-400">Nhận xét tổng quát cho câu này:</label>
+                        <div className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-type-body font-normal text-slate-800 dark:text-slate-200 shadow-2xs">
                           {ans?.teacherComment || <span className="italic text-slate-400">Chưa có nhận xét tổng quát</span>}
                         </div>
                       </div>
 
                       {/* AI Suggestion */}
                       {ans?.aiSuggestedScore !== undefined && ans?.aiSuggestedScore !== null && (
-                        <div className="p-3.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50 text-xs text-blue-900 dark:text-blue-200 space-y-1 shadow-2xs">
+                        <div className="p-3.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50 text-type-helper text-blue-900 dark:text-blue-200 space-y-1 shadow-2xs">
                           <div className="flex justify-between font-semibold">
                             <span className="flex items-center gap-1.5 text-blue-700 dark:text-blue-300">
                               <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
@@ -1012,7 +1012,7 @@ function AdminEssayReviewContent() {
                             </span>
                           </div>
                           {ans.aiSuggestedComment && (
-                            <p className="text-[13px] text-blue-800 dark:text-blue-300 leading-relaxed">
+                            <p className="text-type-helper text-blue-800 dark:text-blue-300 leading-relaxed">
                               {ans.aiSuggestedComment}
                             </p>
                           )}
@@ -1021,13 +1021,13 @@ function AdminEssayReviewContent() {
 
                       {/* Score History */}
                       {ans?.gradeHistories?.length > 0 && (
-                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 text-xs space-y-1.5 shadow-2xs">
+                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 text-type-helper space-y-1.5 shadow-2xs">
                           <p className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                             <History className="w-3.5 h-3.5 text-slate-500" /> Lịch sử chỉnh điểm ({ans.gradeHistories.length})
                           </p>
                           <div className="space-y-1 pl-1">
                             {ans.gradeHistories.map((h: any) => (
-                              <div key={h.id} className="text-[12px] text-slate-600 dark:text-slate-400">
+                              <div key={h.id} className="text-type-helper text-slate-600 dark:text-slate-400">
                                 <span className="font-semibold text-slate-800 dark:text-slate-200">
                                   {new Date(h.createdAt).toLocaleString('vi-VN')}:
                                 </span>{' '}
@@ -1116,7 +1116,7 @@ function AdminEssayReviewContent() {
           {
             label: 'Tổng điểm bài thi',
             value: (
-              <span className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
+              <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
                 {profileCandidate?.totalScore !== undefined && profileCandidate?.totalScore !== null
                   ? `${profileCandidate.totalScore} / ${profileCandidate.maxScore || 10} điểm`
                   : 'Chưa có điểm'}
@@ -1127,7 +1127,7 @@ function AdminEssayReviewContent() {
             label: 'Điểm phạt vi phạm',
             value:
               profileCandidate?.penaltyPoints > 0 ? (
-                <span className="text-[15px] font-semibold text-rose-600">
+                <span className="text-type-body font-semibold text-rose-600">
                   -{profileCandidate.penaltyPoints} điểm ({profileCandidate.penaltyReason || 'Vi phạm quy chế'})
                 </span>
               ) : (
@@ -1149,7 +1149,7 @@ function AdminEssayReviewContent() {
           {
             title: 'Tóm Tắt Bài Thi Tự Luận',
             content: (
-              <div className="space-y-2 text-xs font-normal text-slate-600 dark:text-slate-400">
+              <div className="space-y-2 text-type-helper font-normal text-slate-600 dark:text-slate-400">
                 <p>
                   Bài thi được cấu hình trong hệ thống khảo thí trực tuyến. Quản trị viên có toàn quyền thẩm định điểm,
                   xử lý phúc khảo, gia hạn thời gian hoặc công bố kết quả chính thức cho sinh viên.
@@ -1184,7 +1184,7 @@ export default function AdminEssayReviewPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center min-h-[400px] text-xs font-semibold text-slate-500">
+        <div className="flex items-center justify-center min-h-[400px] text-type-helper font-semibold text-slate-500">
           Đang tải trang duyệt bài tự luận...
         </div>
       }

@@ -168,10 +168,10 @@ export const FilterSelect = React.forwardRef<HTMLSelectElement, FilterSelectProp
 
   const sizeClasses =
     size === 'sm'
-      ? `h-10 text-[15px] font-medium ${leftIcon ? 'pl-8 pr-3' : 'px-3'}`
+      ? `h-10 text-type-body font-medium ${leftIcon ? 'pl-8 pr-3' : 'px-3'}`
       : size === 'lg'
-        ? `h-11 text-[15px] font-medium ${leftIcon ? 'pl-9 pr-3.5' : 'px-3.5'}`
-        : `h-10 text-[15px] font-medium ${leftIcon ? 'pl-9 pr-3.5' : 'px-3.5'}`;
+        ? `h-11 text-type-body font-medium ${leftIcon ? 'pl-9 pr-3.5' : 'px-3.5'}`
+        : `h-10 text-type-body font-medium ${leftIcon ? 'pl-9 pr-3.5' : 'px-3.5'}`;
 
   const variantClasses =
     variant === 'ghost'
@@ -202,7 +202,7 @@ export const FilterSelect = React.forwardRef<HTMLSelectElement, FilterSelectProp
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`ui-pressable ${isFullWidth ? 'w-full' : 'w-auto max-w-full'} flex items-center justify-between gap-2 appearance-none rounded-xl outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out cursor-pointer leading-none text-left select-none ${variantClasses} ${sizeClasses} ${className} ${
+        className={`ui-pressable ${isFullWidth ? 'w-full' : 'w-auto max-w-full'} flex items-center justify-between gap-2 appearance-none rounded-xl outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out cursor-pointer text-left select-none ${variantClasses} ${sizeClasses} ${className} ${
           disabled ? 'opacity-50 cursor-not-allowed' : ''
         }`}
       >
@@ -234,7 +234,7 @@ export const FilterSelect = React.forwardRef<HTMLSelectElement, FilterSelectProp
                     role="option"
                     aria-selected={isSelected}
                     onClick={() => handleSelectOption(opt.value)}
-                    className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-[15px] leading-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-colors duration-150 cursor-pointer select-none text-left ${
+                    className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-type-body leading-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-colors duration-150 cursor-pointer select-none text-left ${
                       isSelected
                         ? 'text-slate-900 dark:text-slate-100 font-semibold bg-transparent'
                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium'

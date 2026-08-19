@@ -18,14 +18,14 @@ export function ExamPaperHeader({
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
       <div className="space-y-0.5">
-        <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
+        <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
           <span>Quản lý đề thi & ma trận đề</span>
-          <span className="inline-flex items-center gap-[6px] text-[13px] font-semibold text-blue-600 dark:text-blue-400">
+          <span className="inline-flex items-center gap-[6px] text-type-helper font-semibold text-blue-600 dark:text-blue-400">
             <Sparkles className="h-3.5 w-3.5" />
             Tự động sinh đề
           </span>
         </h1>
-        <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
+        <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
           Sinh đề thi ngẫu nhiên theo ma trận độ khó, phát hành, đảo đề thi và lưu trữ đề thi theo quy chuẩn
         </p>
       </div>

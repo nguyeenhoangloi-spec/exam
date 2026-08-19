@@ -407,7 +407,7 @@ export default function TeachersPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -423,7 +423,7 @@ export default function TeachersPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
@@ -627,7 +627,7 @@ export default function TeachersPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           {!editingTeacher && (
-            <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-700 font-medium flex items-start gap-2">
+            <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl text-type-helper text-blue-700 font-medium flex items-start gap-2">
               <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
               <span><strong>Lưu ý:</strong> Tài khoản và mật khẩu mặc định được khởi tạo là <strong>Mã giảng viên</strong> (Ví dụ: GV001).</span>
             </div>
@@ -635,22 +635,22 @@ export default function TeachersPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Mã giảng viên</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Mã giảng viên</label>
               <input
                 type="text"
                 required
                 value={formData.teacherCode}
                 onChange={(e) => setFormData({ ...formData, teacherCode: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body focus:border-blue-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Học vị / Học hàm</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Học vị / Học hàm</label>
               <FilterSelect
                 containerClassName="w-full"
                 value={formData.degree}
                 onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-type-body font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
               >
                 {DEGREE_OPTIONS.map((d) => (
                   <option key={d} value={d}>{d}</option>
@@ -660,23 +660,23 @@ export default function TeachersPage() {
           </div>
 
           <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">Họ và tên</label>
+            <label className="block text-type-body font-medium text-slate-500 mb-1">Họ và tên</label>
             <input
               type="text"
               required
               value={formData.fullName}
               onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body focus:border-blue-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">Khoa trực thuộc</label>
+            <label className="block text-type-body font-medium text-slate-500 mb-1">Khoa trực thuộc</label>
             <FilterSelect 
               required
               value={formData.departmentId}
               onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-type-body font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
             >
               <option value="">-- Chọn Khoa --</option>
               {departments.map((d) => (
@@ -687,22 +687,22 @@ export default function TeachersPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Email Công vụ</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Email Công vụ</label>
               <input
                 type="email"
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body focus:border-blue-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Số điện thoại</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Số điện thoại</label>
               <input
                 type="text"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-type-body focus:border-blue-500 focus:outline-none"
               />
             </div>
           </div>
@@ -780,12 +780,12 @@ export default function TeachersPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3.5 min-w-0 flex-1">
                     {/* Avatar thương hiệu */}
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
                       {drawerOpenTeacher.fullName.trim().split(' ').pop()?.slice(0, 2).toUpperCase() || 'GV'}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <h2 className="text-[18px] font-semibold leading-snug text-slate-900 dark:text-white break-words" title={drawerOpenTeacher.fullName}>
+                      <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words" title={drawerOpenTeacher.fullName}>
                         {drawerOpenTeacher.fullName}
                       </h2>
 
@@ -793,7 +793,7 @@ export default function TeachersPage() {
                         <IdentifierBadge tone="neutral" title={drawerOpenTeacher.teacherCode}>
                           {drawerOpenTeacher.teacherCode}
                         </IdentifierBadge>
-                        <span className="inline-flex items-center rounded-lg px-2.5 py-0.5 text-[12px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
+                        <span className="inline-flex items-center rounded-lg px-2.5 py-0.5 text-type-helper font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
                           {drawerOpenTeacher.degree || 'Giảng viên'}
                         </span>
                       </div>
@@ -825,7 +825,7 @@ export default function TeachersPage() {
                     <button
                       key={tab.id}
                       onClick={() => setDrawerTab(tab.id as any)}
-                      className={`whitespace-nowrap border-b-2 px-4 py-3 text-[15px] transition cursor-pointer flex items-center gap-2 ${
+                      className={`whitespace-nowrap border-b-2 px-4 py-3 text-type-body transition cursor-pointer flex items-center gap-2 ${
                         isActive
                           ? 'border-blue-600 text-blue-600 font-semibold'
                           : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-semibold'
@@ -846,7 +846,7 @@ export default function TeachersPage() {
                     <div>
                       <div className="flex items-center gap-2 mb-3">
                         <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                        <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                        <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                           Thông tin giảng viên
                         </h3>
                       </div>
@@ -865,7 +865,7 @@ export default function TeachersPage() {
                               key={idx}
                               className="py-3 px-3 -mx-3 rounded-xl flex items-center justify-between gap-4 transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40 group"
                             >
-                              <span className="flex items-center gap-3 text-slate-700 dark:text-slate-200 text-[15px] font-semibold shrink-0">
+                              <span className="flex items-center gap-3 text-slate-700 dark:text-slate-200 text-type-body font-semibold shrink-0">
                                 {Icon && (
                                   <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100/70 dark:border-blue-900/50 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                     <Icon className="h-4 w-4" />
@@ -874,7 +874,7 @@ export default function TeachersPage() {
                                 <span>{r.label}</span>
                               </span>
 
-                              <span className="font-semibold text-slate-900 dark:text-white text-right text-[15px] leading-snug break-words max-w-[62%]">
+                              <span className="font-semibold text-slate-900 dark:text-white text-right text-type-body leading-snug break-words max-w-[62%]">
                                 {r.value}
                               </span>
                             </div>
@@ -895,7 +895,7 @@ export default function TeachersPage() {
                     ) : drawerAssignments.length === 0 ? (
                       <div className="text-center py-12">
                         <Info className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                        <p className="text-slate-500 font-semibold text-[15px]">Không có lịch phân công coi thi.</p>
+                        <p className="text-slate-500 font-semibold text-type-body">Không có lịch phân công coi thi.</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -907,7 +907,7 @@ export default function TeachersPage() {
                             <div key={index} className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:border-blue-300 transition-colors space-y-2.5">
                               <div className="flex justify-between items-start gap-3">
                                 <div>
-                                  <h4 className="font-semibold text-slate-900 dark:text-white text-[15px]">
+                                  <h4 className="font-semibold text-slate-900 dark:text-white text-type-body">
                                     {subject?.subjectName || 'Môn thi'}
                                   </h4>
                                   {subject?.subjectCode && (
@@ -916,7 +916,7 @@ export default function TeachersPage() {
                                     </div>
                                   )}
                                 </div>
-                                <span className={`px-2.5 py-1 rounded-lg text-[12px] font-semibold shrink-0 ${
+                                <span className={`px-2.5 py-1 rounded-lg text-type-helper font-semibold shrink-0 ${
                                   assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1'
                                     ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60'
                                     : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
@@ -924,7 +924,7 @@ export default function TeachersPage() {
                                   {assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ'}
                                 </span>
                               </div>
-                              <div className="space-y-1.5 text-[13px] text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2 font-medium">
+                              <div className="space-y-1.5 text-type-helper text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2 font-medium">
                                 <div className="flex justify-between">
                                   <span className="text-slate-500">Phòng thi:</span>
                                   <span className="font-semibold text-slate-900 dark:text-white">{room?.roomName || room?.roomCode || '---'} {room?.building ? `(${room.building})` : ''}</span>
@@ -960,7 +960,7 @@ export default function TeachersPage() {
                     <div className="w-14 h-14 mx-auto bg-blue-50 dark:bg-blue-950/60 rounded-2xl border border-blue-100 dark:border-blue-900/60 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-2">
                       <Building2 className="w-7 h-7" />
                     </div>
-                    <h3 className="text-[18px] font-semibold text-slate-900 dark:text-white">{drawerOpenTeacher.department?.name || 'Chưa phân khoa'}</h3>
+                    <h3 className="text-type-card font-semibold text-slate-900 dark:text-white">{drawerOpenTeacher.department?.name || 'Chưa phân khoa'}</h3>
                     <div className="pt-1">
                       <IdentifierBadge tone="neutral">{drawerOpenTeacher.department?.code || 'N/A'}</IdentifierBadge>
                     </div>

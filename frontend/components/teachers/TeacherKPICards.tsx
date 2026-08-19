@@ -53,10 +53,10 @@ export function TeacherKPICards({ total, withDegree, withDept, filtered }: Teach
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1 min-w-0">
-                <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                   {item.title}
                 </span>
-                <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                   {item.value.toLocaleString('vi-VN')}
                 </div>
               </div>
@@ -77,7 +77,7 @@ export function TeacherKPICards({ total, withDegree, withDept, filtered }: Teach
             <div className="mt-2.5">
               <span
                 title={item.subtext}
-                className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+                className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
               >
                 {item.subtext}
               </span>

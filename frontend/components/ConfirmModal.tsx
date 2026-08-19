@@ -99,7 +99,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border shadow-2xs ${iconConfig.iconShell}`}>
               {iconConfig.icon}
             </div>
-            <h3 className="text-sm font-semibold leading-snug text-slate-900 dark:text-slate-100 truncate">
+            <h3 className="text-type-body-sm font-semibold leading-snug text-slate-900 dark:text-slate-100 truncate">
               {title}
             </h3>
           </div>
@@ -117,11 +117,11 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
         {/* Modal Body */}
         <div className="px-4 py-3.5 sm:px-5 sm:py-4 space-y-3 bg-white dark:bg-slate-900">
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">{message}</p>
+          <p className="text-type-helper sm:text-type-body-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">{message}</p>
 
           {requireReason && (
             <div className="space-y-1.5 pt-0.5">
-              <label className="block text-[15px] sm:text-[15px] font-medium text-slate-700 dark:text-slate-200">Lý do thực hiện <span className="text-rose-500">*</span></label>
+              <label className="block text-type-body sm:text-type-body font-medium text-slate-700 dark:text-slate-200">Lý do thực hiện <span className="text-rose-500">*</span></label>
               <textarea
                 rows={3}
                 value={reason}
@@ -130,9 +130,9 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                   if (reasonError) setReasonError('');
                 }}
                 placeholder={reasonPlaceholder}
-                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 p-2.5 text-[15px] sm:text-[15px] font-medium focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition placeholder:text-slate-400"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 p-2.5 text-type-body sm:text-type-body font-medium focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition placeholder:text-slate-400"
               />
-              {reasonError && <p className="text-xs leading-[18px] font-semibold text-rose-600">{reasonError}</p>}
+              {reasonError && <p className="text-type-helper leading-[18px] font-semibold text-rose-600">{reasonError}</p>}
             </div>
           )}
         </div>

@@ -87,7 +87,7 @@ export function ExamRoomTable({
                     <button
                       type="button"
                       onClick={() => onDetail(r)}
-                      className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer"
+                      className="tabular-nums text-type-helper font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer"
                     >
                       <IdentifierBadge tone="neutral">{codeText}</IdentifierBadge>
                     </button>
@@ -99,14 +99,14 @@ export function ExamRoomTable({
                 <div className="flex items-center justify-between gap-2">
                   <h4
                     onClick={() => onDetail(r)}
-                    className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition truncate"
+                    className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition truncate"
                   >
                     {nameText}
                   </h4>
                   {getTypeBadge(r.roomType)}
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs font-medium text-slate-600 dark:text-slate-400 pt-1">
+                <div className="grid grid-cols-2 gap-2 text-type-helper font-medium text-slate-600 dark:text-slate-400 pt-1">
                   <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 p-2 border border-slate-100 dark:border-slate-700/60">
                     <Users className="h-3.5 w-3.5 text-blue-500 shrink-0" />
                     <span>Sức chứa: <strong className="font-semibold text-slate-800 dark:text-slate-200">{r.capacity} chỗ</strong></span>
@@ -118,7 +118,7 @@ export function ExamRoomTable({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-xs font-semibold">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-type-helper font-semibold">
                 <button
                   type="button"
                   onClick={() => onDetail(r)}
@@ -183,14 +183,14 @@ export function ExamRoomTable({
                 <button
                   type="button"
                   onClick={() => onDetail(r)}
-                  className="text-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition truncate text-left"
+                  className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition truncate text-left"
                 >
                   {nameText}
                 </button>
                 <IdentifierBadge tone="neutral">{codeText}</IdentifierBadge>
               </div>
 
-              <div className="flex items-center gap-4 shrink-0 text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex items-center gap-4 shrink-0 text-type-helper text-slate-500 dark:text-slate-400">
                 <span>{r.capacity} chỗ</span>
                 <span className="hidden sm:inline-block">{locText}</span>
                 {getTypeBadge(r.roomType)}
@@ -237,8 +237,8 @@ export function ExamRoomTable({
   // 3. Dạng Bảng Chuẩn (List View Mode)
   return (
     <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-      <table className="ui-table w-full text-left text-[14.5px] text-slate-700 dark:text-slate-300 border-collapse">
-        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-[13px] font-medium text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800">
+      <table className="ui-table w-full text-left text-type-body-sm text-slate-700 dark:text-slate-300 border-collapse">
+        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-type-helper font-medium text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800">
           <tr>
             <th className="p-3.5 pl-4 text-center whitespace-nowrap w-10">
               <input
@@ -295,7 +295,7 @@ export function ExamRoomTable({
                     <button
                       type="button"
                       onClick={() => onDetail(r)}
-                      className="font-semibold text-slate-900 dark:text-slate-100 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition leading-[22px] text-[15px]"
+                      className="font-semibold text-slate-900 dark:text-slate-100 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition leading-[22px] text-type-body"
                     >
                       {nameText}
                     </button>
@@ -303,13 +303,13 @@ export function ExamRoomTable({
                 )}
 
                 {visibleColumns.capacity !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-center text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap text-center text-type-body">
                     <span className="font-semibold text-slate-900 dark:text-slate-100">{r.capacity} chỗ</span>
                   </td>
                 )}
 
                 {visibleColumns.building !== false && (
-                  <td className="p-3.5 min-w-[140px] text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                  <td className="p-3.5 min-w-[140px] text-type-body font-medium text-slate-700 dark:text-slate-300">
                     {locText}
                   </td>
                 )}
@@ -347,7 +347,7 @@ export function ExamRoomTable({
                               closeMenu();
                               onDetail(r);
                             }}
-                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-[15px] font-medium transition select-none"
+                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-type-body font-medium transition select-none"
                           >
                             <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                             <span>Xem chi tiết</span>
@@ -361,7 +361,7 @@ export function ExamRoomTable({
                                   closeMenu();
                                   onEdit(r);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-[15px] font-medium transition select-none"
+                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-type-body font-medium transition select-none"
                               >
                                 <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                                 <span>Chỉnh sửa</span>
@@ -375,7 +375,7 @@ export function ExamRoomTable({
                                   closeMenu();
                                   onDelete(r.id);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-[15px] font-medium transition select-none"
+                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-type-body font-medium transition select-none"
                               >
                                 <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400" />
                                 <span>Xóa</span>

@@ -55,10 +55,10 @@ export function QuickActionsBar() {
                 <Icon className="h-5 w-5 stroke-[2.2]" />
               </div>
               <div className="min-w-0 leading-tight">
-                <h4 className="text-[14px] font-semibold text-slate-900 dark:text-slate-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                <h4 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                   {act.title}
                 </h4>
-                <p className="text-[12px] font-normal text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400 truncate mt-0.5">
                   {act.subtitle}
                 </p>
               </div>

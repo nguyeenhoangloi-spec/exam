@@ -121,7 +121,7 @@ export function AutoProposalModal({
       <div className="space-y-4 pt-1">
         {/* Unassigned Warning Note if any */}
         {autoProposal?.unassigned?.length > 0 && (
-          <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40 text-xs text-amber-800 dark:text-amber-300">
+          <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40 text-type-helper text-amber-800 dark:text-amber-300">
             <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
             <span>
               Lưu ý: Có {autoProposal.unassigned.length} vị trí thiếu giảng viên rảnh trong khung giờ này. Bạn có thể chọn bổ sung thủ công bên dưới.
@@ -151,22 +151,22 @@ export function AutoProposalModal({
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5 mb-3">
                   <div className="flex items-center gap-2">
                     <DoorOpen className="h-4 w-4 text-blue-600" />
-                    <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100">
+                    <h4 className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                       {rName} {cap && <span className="text-slate-400 font-normal">({cap})</span>}
                     </h4>
                   </div>
 
                   <div className="flex items-center gap-2">
                     {isConflicted ? (
-                      <span className="flex items-center gap-1 text-[12px] font-semibold text-rose-600">
+                      <span className="flex items-center gap-1 text-type-helper font-semibold text-rose-600">
                         <ShieldAlert className="h-3.5 w-3.5" /> Trùng cán bộ gác thi
                       </span>
                     ) : isFilledBoth ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[12px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-type-helper font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
                         Đủ 2 giám thị
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[12px] font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-type-helper font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
                         Chưa đủ 2 giám thị
                       </span>
                     )}
@@ -176,7 +176,7 @@ export function AutoProposalModal({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* Giám thị 1 */}
                   <div className="space-y-1 rounded-xl border border-blue-100 dark:border-blue-900/40 bg-blue-50/30 dark:bg-blue-950/20 p-2.5">
-                    <label className="flex items-center justify-between text-[15px] font-medium text-blue-700 dark:text-blue-300">
+                    <label className="flex items-center justify-between text-type-body font-medium text-blue-700 dark:text-blue-300">
                       <span className="flex items-center gap-1.5">
                         <ShieldCheck className="h-3.5 w-3.5" />
                         Giám thị 1 (Chính)
@@ -192,7 +192,7 @@ export function AutoProposalModal({
 
                   {/* Giám thị 2 */}
                   <div className="space-y-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-2.5">
-                    <label className="flex items-center justify-between text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                    <label className="flex items-center justify-between text-type-body font-medium text-slate-700 dark:text-slate-300">
                       <span className="flex items-center gap-1.5">
                         <UserCheck className="h-3.5 w-3.5 text-slate-500" />
                         Giám thị 2 (Phụ)
@@ -213,7 +213,7 @@ export function AutoProposalModal({
 
         {/* Footer */}
         <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
-          <div className="text-xs font-semibold text-slate-500">
+          <div className="text-type-helper font-semibold text-slate-500">
             Đã xếp: <span className="font-semibold text-blue-600">{totalAssignedCount}</span> / {totalRequired} lượt giám thị
           </div>
 

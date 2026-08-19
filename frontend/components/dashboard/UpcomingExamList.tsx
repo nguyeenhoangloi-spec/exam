@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronRight, Printer } from 'lucide-react';
+import { Printer } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { StatusBadge } from '../common/StatusBadge';
 import type { DashboardOverview } from '../../types/dashboard';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
+import { CardActionLink } from '../ui/CardActionLink';
 
 export function UpcomingExamList({
   exams,
@@ -36,21 +37,16 @@ export function UpcomingExamList({
       <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
         <h3 className="edu-card-title">Kỳ thi sắp tới</h3>
 
-        <button
-          type="button"
-          onClick={() => router.push('/exam-periods')}
-          className="inline-flex items-center gap-1 text-[13.5px] leading-5 font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 transition cursor-pointer select-none"
-        >
-          <span>Xem tất cả</span>
-          <ChevronRight className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-        </button>
+        <CardActionLink href="/exam-periods">
+          Xem tất cả
+        </CardActionLink>
       </div>
 
       {/* Table Container */}
       {list.length > 0 ? (
         <div className="ui-table-wrap overflow-x-auto rounded-xl border border-slate-200/80 dark:border-slate-800">
-          <table className="ui-table w-full min-w-[580px] text-left text-[14px] text-slate-700 dark:text-slate-300 border-collapse">
-            <thead className="bg-slate-50 dark:bg-slate-800/80 text-[13px] font-medium text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+          <table className="ui-table w-full min-w-[580px] text-left text-type-body-sm text-slate-700 dark:text-slate-300 border-collapse">
+            <thead className="bg-slate-50 dark:bg-slate-800/80 text-type-helper font-medium text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
               <tr>
                 <th className="py-2.5 px-2.5 whitespace-nowrap">Mã môn</th>
                 <th className="py-2.5 px-2.5 whitespace-nowrap">Tên môn thi</th>
@@ -95,7 +91,7 @@ export function UpcomingExamList({
           </table>
         </div>
       ) : (
-        <div className="py-8 text-center text-slate-400 text-[14px]">
+        <div className="py-8 text-center text-slate-400 text-type-body-sm">
           Chưa có ca thi nào được lên lịch trong thời gian tới.
         </div>
       )}

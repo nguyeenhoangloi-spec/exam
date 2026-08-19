@@ -146,7 +146,7 @@ export function StatusBadge({
     return (
       <span
         className={[
-          'inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-0.5 text-[12px] font-semibold leading-5 whitespace-nowrap select-none',
+          'inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-0.5 text-type-badge font-semibold whitespace-nowrap select-none',
           style.pillClass,
           className,
         ].join(' ')}
@@ -161,7 +161,7 @@ export function StatusBadge({
     return (
       <span
         className={[
-          'inline-flex items-center gap-[6px] text-xs font-semibold leading-5 whitespace-nowrap select-none',
+          'inline-flex items-center gap-[6px] text-type-badge font-semibold whitespace-nowrap select-none',
           style.textClass,
           className,
         ].join(' ')}
@@ -176,7 +176,7 @@ export function StatusBadge({
   return (
     <span
       className={[
-        'inline-flex items-center gap-[6px] text-xs font-semibold leading-5 whitespace-nowrap select-none',
+        'inline-flex items-center gap-[6px] text-type-badge font-semibold whitespace-nowrap select-none',
         style.textClass,
         className,
       ].join(' ')}

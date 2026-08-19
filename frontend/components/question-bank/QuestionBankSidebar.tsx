@@ -48,9 +48,9 @@ export function QuestionBankSidebar({
       {/* Card 1: Tổng quan ngân hàng */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-3">
         <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-          <h3 className="text-[18px] font-semibold text-slate-900">Tổng quan ngân hàng</h3>
+          <h3 className="text-type-card font-semibold text-slate-900">Tổng quan ngân hàng</h3>
           <div className="relative">
-            <FilterSelect className="h-9 appearance-none rounded-xl border border-slate-200 bg-white px-3 pr-7 text-[15px] font-normal text-slate-700 outline-none hover:bg-slate-50 cursor-pointer shadow-2xs leading-none">
+            <FilterSelect className="h-9 appearance-none rounded-xl border border-slate-200 bg-white px-3 pr-7 text-type-body font-normal text-slate-700 outline-none hover:bg-slate-50 cursor-pointer shadow-2xs">
               <option>Tất cả thời gian</option>
               <option>Tháng này</option>
               <option>Học kỳ này</option>
@@ -79,15 +79,15 @@ export function QuestionBankSidebar({
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-[20px] font-semibold text-slate-900 leading-tight">
+              <span className="text-type-section font-semibold text-slate-900 leading-tight">
                 {total.toLocaleString('vi-VN')}
               </span>
-              <span className="text-[13px] font-normal text-slate-500">Tổng câu hỏi</span>
+              <span className="text-type-helper font-normal text-slate-500">Tổng câu hỏi</span>
             </div>
           </div>
 
           {/* Donut Legend */}
-          <div className="flex-1 space-y-2 text-[14px]">
+          <div className="flex-1 space-y-2 text-type-body-sm">
             {statusData.map((item) => (
               <div key={item.name} className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5">
@@ -96,7 +96,7 @@ export function QuestionBankSidebar({
                 </span>
                 <span className="font-semibold text-slate-900">
                   {item.value.toLocaleString('vi-VN')}{' '}
-                  <span className="text-[13px] text-slate-500 font-normal">({item.percent})</span>
+                  <span className="text-type-helper text-slate-500 font-normal">({item.percent})</span>
                 </span>
               </div>
             ))}
@@ -106,18 +106,18 @@ export function QuestionBankSidebar({
 
       {/* Card 2: Phân bố độ khó */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-3">
-        <h3 className="text-[18px] font-semibold text-slate-900 border-b border-slate-100 pb-2.5">
+        <h3 className="text-type-card font-semibold text-slate-900 border-b border-slate-100 pb-2.5">
           Phân bố độ khó
         </h3>
 
         <div className="space-y-3 pt-1">
           {difficultyData.map((item) => (
             <div key={item.label} className="space-y-1">
-              <div className="flex items-center justify-between text-[14px] font-medium">
+              <div className="flex items-center justify-between text-type-body-sm font-medium">
                 <span className="text-slate-700">{item.label}</span>
                 <span className="text-slate-900 font-semibold">
                   {item.value.toLocaleString('vi-VN')}{' '}
-                  <span className="text-[13px] text-slate-500 font-normal">({item.percent})</span>
+                  <span className="text-type-helper text-slate-500 font-normal">({item.percent})</span>
                 </span>
               </div>
               <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
@@ -133,7 +133,7 @@ export function QuestionBankSidebar({
 
       {/* Card 3: Phân bố loại câu hỏi */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-3">
-        <h3 className="text-[18px] font-semibold text-slate-900 border-b border-slate-100 pb-2.5">
+        <h3 className="text-type-card font-semibold text-slate-900 border-b border-slate-100 pb-2.5">
           Phân bố loại câu hỏi
         </h3>
 
@@ -158,15 +158,15 @@ export function QuestionBankSidebar({
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-[18px] font-semibold text-slate-900 leading-tight">
+              <span className="text-type-card font-semibold text-slate-900 leading-tight">
                 {total.toLocaleString('vi-VN')}
               </span>
-              <span className="text-[13px] font-normal text-slate-500">Tổng</span>
+              <span className="text-type-helper font-normal text-slate-500">Tổng</span>
             </div>
           </div>
 
           {/* Donut Legend */}
-          <div className="flex-1 space-y-2 text-[14px]">
+          <div className="flex-1 space-y-2 text-type-body-sm">
             {typeData.map((item) => (
               <div key={item.name} className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5">
@@ -175,7 +175,7 @@ export function QuestionBankSidebar({
                 </span>
                 <span className="font-semibold text-slate-900">
                   {item.value.toLocaleString('vi-VN')}{' '}
-                  <span className="text-[13px] text-slate-500 font-normal">({item.percent})</span>
+                  <span className="text-type-helper text-slate-500 font-normal">({item.percent})</span>
                 </span>
               </div>
             ))}
@@ -185,7 +185,7 @@ export function QuestionBankSidebar({
 
       {/* Card 4: Thao tác nhanh */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs space-y-2.5">
-        <h3 className="text-[18px] font-semibold text-slate-900 border-b border-slate-100 pb-2.5">
+        <h3 className="text-type-card font-semibold text-slate-900 border-b border-slate-100 pb-2.5">
           Thao tác nhanh
         </h3>
 
@@ -193,7 +193,7 @@ export function QuestionBankSidebar({
           <button
             type="button"
             onClick={onAdd}
-            className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-[15px] font-medium text-blue-700 transition hover:bg-blue-50 cursor-pointer"
+            className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body font-medium text-blue-700 transition hover:bg-blue-50 cursor-pointer"
           >
             <span className="flex items-center gap-2">
               <Plus className="h-4 w-4 text-blue-600" />
@@ -205,7 +205,7 @@ export function QuestionBankSidebar({
           <button
             type="button"
             onClick={onImport}
-            className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer"
+            className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer"
           >
             <span className="flex items-center gap-2">
               <Upload className="h-4 w-4 text-slate-500" />
@@ -217,7 +217,7 @@ export function QuestionBankSidebar({
           <button
             type="button"
             onClick={onExport}
-            className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer"
+            className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer"
           >
             <span className="flex items-center gap-2">
               <FileText className="h-4 w-4 text-slate-500" />
@@ -229,7 +229,7 @@ export function QuestionBankSidebar({
           <button
             type="button"
             onClick={onAdd}
-            className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer"
+            className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer"
           >
             <span className="flex items-center gap-2">
               <FolderPlus className="h-4 w-4 text-slate-500" />

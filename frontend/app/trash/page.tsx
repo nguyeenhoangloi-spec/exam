@@ -369,13 +369,13 @@ function TrashPageContent() {
       {/* Page Header Động Theo Đúng Mục Đang Chọn */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-1">
         <div className="space-y-0.5">
-          <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2.5">
+          <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2.5">
             <span>{currentCategoryInfo.title}</span>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-type-helper font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700">
               {items.length} mục
             </span>
           </h1>
-          <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
+          <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
             {currentCategoryInfo.subtitle} · Tự động dọn dẹp và hủy vĩnh viễn sau 30 ngày
           </p>
         </div>
@@ -453,10 +453,10 @@ function TrashPageContent() {
             >
               <div className="flex items-start justify-between gap-3 w-full">
                 <div className="space-y-1 min-w-0">
-                  <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate tracking-normal">
+                  <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate tracking-normal">
                     {item.title}
                   </span>
-                  <div className="text-[32px] font-bold leading-[38px] tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
+                  <div className="text-type-kpi font-bold leading-[38px] tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
                     {item.value}
                   </div>
                 </div>
@@ -482,7 +482,7 @@ function TrashPageContent() {
               <div className="mt-2.5 w-full">
                 <span
                   title={item.subtext}
-                  className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+                  className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
                 >
                   {item.subtext}
                 </span>
@@ -504,7 +504,7 @@ function TrashPageContent() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Tìm mục đã xóa..."
-              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
             />
             {search ? (
               <button
@@ -517,7 +517,7 @@ function TrashPageContent() {
               </button>
             ) : (
               <kbd
-                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                 onClick={() => searchInputRef.current?.focus()}
                 title="Nhấn phím / để tìm nhanh"
               >
@@ -554,7 +554,7 @@ function TrashPageContent() {
         <div className="shrink-0">
           <div className="flex flex-wrap items-center justify-between gap-3 py-1">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+              <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400">
                 Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{sortedItems.length.toLocaleString('vi-VN')}</span> kết quả
               </span>
             </div>
@@ -606,15 +606,15 @@ function TrashPageContent() {
         {loading ? (
           <div className="bg-white border border-slate-200/80 rounded-2xl p-12 text-center space-y-3 shadow-2xs">
             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto" />
-            <p className="text-xs font-semibold text-slate-500">Đang tải danh sách dữ liệu...</p>
+            <p className="text-type-helper font-semibold text-slate-500">Đang tải danh sách dữ liệu...</p>
           </div>
         ) : sortedItems.length === 0 ? (
           <div className="bg-white border border-slate-200/80 rounded-2xl p-12 text-center space-y-3 shadow-2xs">
             <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto text-slate-500">
               <Trash2 className="w-6 h-6" />
             </div>
-            <h3 className="text-[18px] font-semibold text-slate-900">Thùng rác trống</h3>
-            <p className="text-[15px] text-slate-500 font-normal">Không có dữ liệu nào bị xóa trong danh mục này.</p>
+            <h3 className="text-type-card font-semibold text-slate-900">Thùng rác trống</h3>
+            <p className="text-type-body text-slate-500 font-normal">Không có dữ liệu nào bị xóa trong danh mục này.</p>
           </div>
         ) : viewMode === 'grid' ? (
           /* CHẾ ĐỘ XEM GRID (LƯỚI THẺ CARD UI) */
@@ -639,11 +639,11 @@ function TrashPageContent() {
                           onChange={(e) => handleSelectOne(item.id, e.target.checked)}
                           className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                         />
-                        <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700 truncate">
+                        <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700 truncate">
                           {categoryLabelMap[item.type] || item.type}
                         </span>
                       </div>
-                      <span className={`inline-flex items-center gap-[6px] text-[13px] leading-5 font-semibold ${
+                      <span className={`inline-flex items-center gap-[6px] text-type-helper leading-5 font-semibold ${
                         remainingDays <= 5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
                       }`}>
                         <Clock className="w-3.5 h-3.5" />
@@ -652,13 +652,13 @@ function TrashPageContent() {
                     </div>
 
                     <div>
-                      <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-[18px] leading-[26px] line-clamp-2">{item.title}</h4>
+                      <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-type-card leading-[26px] line-clamp-2">{item.title}</h4>
                       {item.subTitle && (
-                        <p className="text-[13.5px] font-normal text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">{item.subTitle}</p>
+                        <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">{item.subTitle}</p>
                       )}
                     </div>
 
-                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-[13px] space-y-1 text-slate-600 dark:text-slate-400 font-normal">
+                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-type-helper space-y-1 text-slate-600 dark:text-slate-400 font-normal">
                       {visibleColumns.deletedAt && (
                         <p className="flex justify-between">
                           <span className="text-slate-500 dark:text-slate-400">Thời điểm xóa:</span>
@@ -678,7 +678,7 @@ function TrashPageContent() {
                     <button
                       type="button"
                       onClick={() => setDetailItem(item)}
-                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-[14px] font-medium transition cursor-pointer"
+                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-type-body-sm font-medium transition cursor-pointer"
                     >
                       <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                       <span>Xem chi tiết</span>
@@ -731,15 +731,15 @@ function TrashPageContent() {
 
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 truncate">
+                        <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
                           {item.title}
                         </span>
-                        <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700">
+                        <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700">
                           {categoryLabelMap[item.type] || item.type}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                      <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                         {item.subTitle && (
                           <span className="text-slate-600 dark:text-slate-300 truncate max-w-sm">
                             {item.subTitle}
@@ -800,8 +800,8 @@ function TrashPageContent() {
           /* CHẾ ĐỘ XEM TABLE (LIST MODE) */
           <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-2xs overflow-hidden">
              <div className="ui-table-wrap overflow-x-auto">
-               <table className="ui-table w-full text-left text-[15px] text-slate-700 dark:text-slate-300 border-collapse">
-                <thead className="bg-slate-50 dark:bg-slate-800 text-[14px] font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+               <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
+                <thead className="bg-slate-50 dark:bg-slate-800 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
                   <tr>
                     <th className="px-5 w-10 py-3.5 text-center">
                       <input
@@ -838,20 +838,20 @@ function TrashPageContent() {
                         </td>
                         <td className="px-5 py-3.5 min-w-[240px]">
                           <div>
-                            <p className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] leading-snug">{item.title}</p>
+                            <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body leading-snug">{item.title}</p>
                             {item.subTitle && (
-                              <p className="table-meta text-[13px] leading-[20px] text-slate-500 dark:text-slate-400 font-normal mt-0.5">{item.subTitle}</p>
+                              <p className="table-meta text-type-helper leading-[20px] text-slate-500 dark:text-slate-400 font-normal mt-0.5">{item.subTitle}</p>
                             )}
                           </div>
                         </td>
                         {visibleColumns.deletedAt && (
-                          <td className="table-meta px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-[14px]">
+                          <td className="table-meta px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-type-body-sm">
                             {item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '---'}
                           </td>
                         )}
                         {visibleColumns.expiresIn && (
                           <td className="px-5 whitespace-nowrap py-3.5">
-                            <span className={`table-badge inline-flex items-center gap-[6px] text-[13.5px] leading-[20px] font-medium ${
+                            <span className={`table-badge inline-flex items-center gap-[6px] text-type-helper leading-[20px] font-medium ${
                               remainingDays <= 5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
                             }`}>
                               <Clock className="w-3.5 h-3.5" />
@@ -860,7 +860,7 @@ function TrashPageContent() {
                           </td>
                         )}
                         {visibleColumns.deletedBy && (
-                          <td className="px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-[15px]">
+                          <td className="px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-type-body">
                             <span className="font-medium text-slate-700 dark:text-slate-300">
                               {item.deletedBy}
                             </span>
@@ -953,7 +953,7 @@ function TrashPageContent() {
               title: 'Thời hạn lưu trữ trong thùng rác',
               content: (
                 <div className="space-y-2.5 pt-1">
-                  <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center justify-between text-type-helper">
                     <span className="font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5 text-slate-400" /> Thời gian còn lại
                     </span>
@@ -975,7 +975,7 @@ function TrashPageContent() {
                     />
                   </div>
 
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-normal leading-relaxed">
+                  <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal leading-relaxed">
                     Sau thời gian lưu trữ 30 ngày, hệ thống sẽ tự động dọn dẹp và xóa vĩnh viễn bản ghi khỏi cơ sở dữ liệu.
                   </p>
                 </div>
@@ -1026,7 +1026,7 @@ export default function TrashPage() {
     <Suspense fallback={
       <div className="p-12 flex flex-col items-center gap-3">
         <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-        <p className="text-xs font-semibold text-slate-500">Đang tải...</p>
+        <p className="text-type-helper font-semibold text-slate-500">Đang tải...</p>
       </div>
     }>
       <TrashPageContent />

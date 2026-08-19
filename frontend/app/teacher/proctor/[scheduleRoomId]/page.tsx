@@ -438,7 +438,7 @@ export default function ProctorDashboardPage() {
     return (
       <main className="w-full px-6 py-6 min-h-screen bg-slate-50/50 flex flex-col items-center justify-center gap-3">
         <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-        <p className="text-xs font-semibold text-slate-500">Đang kết nối bảng điều khiển giám thị trực tiếp...</p>
+        <p className="text-type-helper font-semibold text-slate-500">Đang kết nối bảng điều khiển giám thị trực tiếp...</p>
       </main>
     );
   }
@@ -451,12 +451,12 @@ export default function ProctorDashboardPage() {
           <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto">
             <AlertTriangle className="w-6 h-6 text-rose-600" />
           </div>
-          <h2 className="text-lg font-semibold text-slate-900">Lỗi tải bảng điều khiển giám thị</h2>
-          <p className="text-slate-500 text-xs font-medium">{error}</p>
+          <h2 className="text-type-card font-semibold text-slate-900">Lỗi tải bảng điều khiển giám thị</h2>
+          <p className="text-slate-500 text-type-helper font-medium">{error}</p>
           <button
             type="button"
             onClick={() => router.back()}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl shadow-xs transition active:scale-95 cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-type-helper font-semibold rounded-xl shadow-xs transition active:scale-95 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Quay lại trang trước</span>
@@ -551,10 +551,10 @@ export default function ProctorDashboardPage() {
 
           <div className="min-w-0 space-y-0.5">
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-[28px] font-semibold leading-[36px] tracking-tight text-slate-900 dark:text-slate-100">
+              <h1 className="text-type-page font-semibold leading-[36px] tracking-tight text-slate-900 dark:text-slate-100">
                 Giám Thị Phòng: <span className="text-blue-600 dark:text-blue-400">{data.roomName}</span>
               </h1>
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 shrink-0">
+              <span className="inline-flex items-center gap-1.5 text-type-helper font-semibold text-emerald-600 shrink-0">
                 <span className="relative flex w-2 h-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -563,7 +563,7 @@ export default function ProctorDashboardPage() {
               </span>
             </div>
 
-            <p className="flex items-center gap-4 text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex-wrap">
+            <p className="flex items-center gap-4 text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex-wrap">
               <span>Môn: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{data.subjectName}</strong></span>
               <span>Ngày: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{new Date(data.examDate).toLocaleDateString('vi-VN')}</strong></span>
               <span>Ca thi: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{data.startTime} – {data.endTime}</strong></span>
@@ -607,14 +607,14 @@ export default function ProctorDashboardPage() {
 
       {/* ── Banner Cảnh Báo Sự Cố Ngắt Kết Nối Hàng Loạt ── */}
       {(stats.disconnected ?? 0) > 0 && (
-        <div className="rounded-2xl border border-rose-200 dark:border-rose-900 bg-rose-50/90 dark:bg-rose-950/40 p-4 text-[15px] font-medium text-rose-950 dark:text-rose-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs animate-in fade-in duration-200">
+        <div className="rounded-2xl border border-rose-200 dark:border-rose-900 bg-rose-50/90 dark:bg-rose-950/40 p-4 text-type-body font-medium text-rose-950 dark:text-rose-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs animate-in fade-in duration-200">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-rose-600 text-white shadow-2xs">
               <AlertTriangle className="w-5 h-5 shrink-0" />
             </div>
             <div>
-              <span className="text-[15px] font-semibold text-rose-950 dark:text-rose-100 block">Cảnh báo mất kết nối mạng</span>
-              <span className="text-rose-800 dark:text-rose-300 font-normal text-[14px]">
+              <span className="text-type-body font-semibold text-rose-950 dark:text-rose-100 block">Cảnh báo mất kết nối mạng</span>
+              <span className="text-rose-800 dark:text-rose-300 font-normal text-type-body-sm">
                 Hiện có <strong className="font-semibold">{stats.disconnected}</strong> sinh viên bị ngắt kết nối trong phòng thi. Vui lòng kiểm tra lại đường truyền mạng.
               </span>
             </div>
@@ -626,7 +626,7 @@ export default function ProctorDashboardPage() {
               setBulkReason('Sự cố gián đoạn kỹ thuật / mạng toàn phòng thi');
               setShowBulkModal(true);
             }}
-            className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-[14px] rounded-xl shadow-xs transition active:scale-95 cursor-pointer shrink-0"
+            className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-type-body-sm rounded-xl shadow-xs transition active:scale-95 cursor-pointer shrink-0"
           >
             Bù giờ khẩn cấp toàn phòng (+15p)
           </button>
@@ -642,10 +642,10 @@ export default function ProctorDashboardPage() {
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1 min-w-0">
-                <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                   {label}
                 </span>
-                <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                   {value}
                 </div>
               </div>
@@ -666,7 +666,7 @@ export default function ProctorDashboardPage() {
             <div className="mt-2.5">
               <span
                 title={subtext}
-                className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+                className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
               >
                 {subtext}
               </span>
@@ -690,7 +690,7 @@ export default function ProctorDashboardPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
             />
             {search ? (
               <button
@@ -706,7 +706,7 @@ export default function ProctorDashboardPage() {
               </button>
             ) : (
               <kbd
-                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                 onClick={() => searchInputRef.current?.focus()}
                 title="Nhấn phím / để tìm nhanh"
               >
@@ -741,7 +741,7 @@ export default function ProctorDashboardPage() {
         <div className="shrink-0">
           <div className="flex flex-wrap items-center justify-between gap-3 py-1">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+              <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400">
                 Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{totalItems.toLocaleString('vi-VN')}</span> / {students.length} thí sinh
               </span>
             </div>
@@ -813,8 +813,8 @@ export default function ProctorDashboardPage() {
           <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
             <Users className="w-7 h-7 text-slate-400" />
           </div>
-          <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Không tìm thấy thí sinh nào</h3>
-          <p className="text-xs font-medium text-slate-500 max-w-sm">
+          <h3 className="text-type-body font-semibold text-slate-800 dark:text-slate-200">Không tìm thấy thí sinh nào</h3>
+          <p className="text-type-helper font-medium text-slate-500 max-w-sm">
             Không có thí sinh nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
           </p>
         </div>
@@ -849,7 +849,7 @@ export default function ProctorDashboardPage() {
                         onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
                         className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                       />
-                      <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700">
+                      <span className="text-type-helper font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700">
                         Ghế {s.seatNumber}
                       </span>
                     </div>
@@ -862,7 +862,7 @@ export default function ProctorDashboardPage() {
 
                   {/* Card Body: Student Details */}
                   <div className="py-3 space-y-2.5">
-                    <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 truncate flex items-center justify-between gap-1.5" title={s.student.fullName}>
+                    <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate flex items-center justify-between gap-1.5" title={s.student.fullName}>
                       <button
                         type="button"
                         onClick={() => setInspectStudent(s)}
@@ -879,12 +879,12 @@ export default function ProctorDashboardPage() {
 
                     <div className="flex items-center gap-2 flex-wrap">
                       <IdentifierBadge tone="blue">{s.student.studentCode}</IdentifierBadge>
-                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium tabular-nums">
+                      <span className="text-type-helper text-slate-500 dark:text-slate-400 font-medium tabular-nums">
                         SBD: {s.examNumber}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-400">
+                    <div className="flex items-center justify-between text-type-helper pt-1 border-t border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-400">
                       <span>Mức cảnh báo:</span>
                       <span className={`font-semibold ${riskCls}`}>
                         {riskScore}đ ({riskLevel})
@@ -904,7 +904,7 @@ export default function ProctorDashboardPage() {
                         setActionType('EXTEND');
                       }}
                       title="Gia hạn thời gian làm bài"
-                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-blue-950/50 transition active:scale-95 cursor-pointer select-none"
+                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-blue-950/50 transition active:scale-95 cursor-pointer select-none"
                     >
                       <Clock className="w-3.5 h-3.5 text-slate-400" />
                       <span>Gia hạn</span>
@@ -920,7 +920,7 @@ export default function ProctorDashboardPage() {
                         setActionType('REOPEN');
                       }}
                       title="Mở lại phiên thi khi có sự cố"
-                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/80 dark:hover:bg-amber-950/50 transition active:scale-95 cursor-pointer select-none"
+                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/80 dark:hover:bg-amber-950/50 transition active:scale-95 cursor-pointer select-none"
                     >
                       <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
                       <span>Mở lại</span>
@@ -936,7 +936,7 @@ export default function ProctorDashboardPage() {
                         setActionType('RESOLVE');
                       }}
                       title="Xử lý biên bản vi phạm"
-                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold bg-rose-50 dark:bg-rose-950/50 border border-rose-200/80 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition active:scale-95 cursor-pointer select-none shadow-2xs"
+                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold bg-rose-50 dark:bg-rose-950/50 border border-rose-200/80 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition active:scale-95 cursor-pointer select-none shadow-2xs"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
                       <span>Xử lý</span>
@@ -950,7 +950,7 @@ export default function ProctorDashboardPage() {
                         setActionType('FLAG');
                       }}
                       title="Lập biên bản sự cố vi phạm"
-                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50/80 dark:hover:bg-rose-950/50 transition active:scale-95 cursor-pointer select-none"
+                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50/80 dark:hover:bg-rose-950/50 transition active:scale-95 cursor-pointer select-none"
                     >
                       <Flag className="w-3.5 h-3.5 text-slate-400" />
                       <span>Biên bản</span>
@@ -986,7 +986,7 @@ export default function ProctorDashboardPage() {
                     onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
                     className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                   />
-                  <span className="inline-flex items-center text-xs font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-lg border border-blue-100 dark:border-blue-900 shrink-0">
+                  <span className="inline-flex items-center text-type-helper font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-lg border border-blue-100 dark:border-blue-900 shrink-0">
                     Ghế {s.seatNumber}
                   </span>
 
@@ -995,19 +995,19 @@ export default function ProctorDashboardPage() {
                       <button
                         type="button"
                         onClick={() => setInspectStudent(s)}
-                        className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                        className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
                         title="Xem chi tiết thí sinh"
                       >
                         {s.student.fullName}
                       </button>
                       {hasFlagged && <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0" />}
                       <IdentifierBadge tone="blue">{s.student.studentCode}</IdentifierBadge>
-                      <span className="text-xs font-semibold text-slate-500 tabular-nums">
+                      <span className="text-type-helper font-semibold text-slate-500 tabular-nums">
                         SBD: {s.examNumber}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-3 text-xs text-slate-500 mt-1 flex-wrap font-normal">
+                    <div className="flex items-center gap-3 text-type-helper text-slate-500 mt-1 flex-wrap font-normal">
                       <span>Mức cảnh báo: <strong className={riskCls}>{riskScore}đ ({riskLevel})</strong></span>
                       {att?.connectedIp && (
                         <span className="text-slate-400">IP: {att.connectedIp}</span>
@@ -1045,7 +1045,7 @@ export default function ProctorDashboardPage() {
                           setActionType('EXTEND');
                         }}
                         title="Gia hạn thời gian làm bài"
-                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-blue-950/50 transition active:scale-95 cursor-pointer select-none"
+                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-blue-950/50 transition active:scale-95 cursor-pointer select-none"
                       >
                         <Clock className="w-3.5 h-3.5 text-slate-400" />
                         <span>Gia hạn</span>
@@ -1061,7 +1061,7 @@ export default function ProctorDashboardPage() {
                           setActionType('REOPEN');
                         }}
                         title="Mở lại phiên thi khi có sự cố"
-                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/80 dark:hover:bg-amber-950/50 transition active:scale-95 cursor-pointer select-none"
+                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/80 dark:hover:bg-amber-950/50 transition active:scale-95 cursor-pointer select-none"
                       >
                         <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
                         <span>Mở lại</span>
@@ -1077,7 +1077,7 @@ export default function ProctorDashboardPage() {
                           setActionType('RESOLVE');
                         }}
                         title="Xử lý biên bản vi phạm"
-                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold bg-rose-50 dark:bg-rose-950/50 border border-rose-200/80 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition active:scale-95 cursor-pointer select-none shadow-2xs"
+                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold bg-rose-50 dark:bg-rose-950/50 border border-rose-200/80 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition active:scale-95 cursor-pointer select-none shadow-2xs"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
                         <span>Xử lý</span>
@@ -1091,7 +1091,7 @@ export default function ProctorDashboardPage() {
                           setActionType('FLAG');
                         }}
                         title="Lập biên bản sự cố vi phạm"
-                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50/80 dark:hover:bg-rose-950/50 transition active:scale-95 cursor-pointer select-none"
+                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50/80 dark:hover:bg-rose-950/50 transition active:scale-95 cursor-pointer select-none"
                       >
                         <Flag className="w-3.5 h-3.5 text-slate-400" />
                         <span>Biên bản</span>
@@ -1106,8 +1106,8 @@ export default function ProctorDashboardPage() {
       ) : (
         /* ── 5.3 Standard List View Mode (Default Table) ── */
         <div className="ui-table-wrap w-full max-w-full overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-          <table className="ui-table w-full min-w-[750px] text-left text-[15px] text-slate-700 border-collapse">
-            <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
+          <table className="ui-table w-full min-w-[750px] text-left text-type-body text-slate-700 border-collapse">
+            <thead className="bg-slate-50 text-type-body-sm font-medium tracking-wider text-slate-600 border-b border-slate-200">
               <tr>
                 <th scope="col" className="p-3.5 pl-4 text-center w-10">
                   <input
@@ -1150,7 +1150,7 @@ export default function ProctorDashboardPage() {
                     {visibleColumns.seat !== false && (
                       <td className="p-3.5 whitespace-nowrap">
                         <IdentifierBadge tone="neutral">{s.examNumber}</IdentifierBadge>
-                        <span className="table-badge ml-2 inline-flex items-center text-xs font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900">
+                        <span className="table-badge ml-2 inline-flex items-center text-type-helper font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900">
                           Ghế {s.seatNumber}
                         </span>
                       </td>
@@ -1163,7 +1163,7 @@ export default function ProctorDashboardPage() {
                           <button
                             type="button"
                             onClick={() => setInspectStudent(s)}
-                            className="font-semibold text-slate-900 dark:text-slate-100 text-[15px] leading-[22px] truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                            className="font-semibold text-slate-900 dark:text-slate-100 text-type-body leading-[22px] truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
                             title="Xem chi tiết thí sinh"
                           >
                             {s.student.fullName}
@@ -1193,7 +1193,7 @@ export default function ProctorDashboardPage() {
                     {/* Risk */}
                     {visibleColumns.risk !== false && (
                       <td className="p-3.5 text-center whitespace-nowrap">
-                        <span className={`text-[15px] leading-[22px] ${riskCls}`}>
+                        <span className={`text-type-body leading-[22px] ${riskCls}`}>
                           {riskScore}đ ({riskLevel})
                         </span>
                       </td>
@@ -1223,7 +1223,7 @@ export default function ProctorDashboardPage() {
                                 setActionType('EXTEND');
                               }}
                               title="Gia hạn thời gian làm bài"
-                              className="table-action h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-[15px] font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-blue-950/50 transition active:scale-95 cursor-pointer select-none"
+                              className="table-action h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-body font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-blue-950/50 transition active:scale-95 cursor-pointer select-none"
                             >
                               <Clock className="w-3.5 h-3.5 text-slate-400" />
                               <span>Gia hạn</span>
@@ -1240,7 +1240,7 @@ export default function ProctorDashboardPage() {
                                 setActionType('REOPEN');
                               }}
                               title="Mở lại phiên thi khi có sự cố"
-                              className="table-action h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-[15px] font-medium text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/80 dark:hover:bg-amber-950/50 transition active:scale-95 cursor-pointer select-none"
+                              className="table-action h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-body font-medium text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/80 dark:hover:bg-amber-950/50 transition active:scale-95 cursor-pointer select-none"
                             >
                               <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
                               <span>Mở lại</span>
@@ -1257,7 +1257,7 @@ export default function ProctorDashboardPage() {
                                 setActionType('RESOLVE');
                               }}
                               title="Xử lý biên bản vi phạm"
-                              className="table-action h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-[15px] font-medium bg-rose-50 dark:bg-rose-950/50 border border-rose-200/80 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition active:scale-95 cursor-pointer select-none shadow-2xs"
+                              className="table-action h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-body font-medium bg-rose-50 dark:bg-rose-950/50 border border-rose-200/80 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition active:scale-95 cursor-pointer select-none shadow-2xs"
                             >
                               <CheckCircle2 className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
                               <span>Xử lý</span>
@@ -1272,7 +1272,7 @@ export default function ProctorDashboardPage() {
                                 setActionType('FLAG');
                               }}
                               title="Lập biên bản sự cố vi phạm"
-                              className="table-action h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-[15px] font-medium text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50/80 dark:hover:bg-rose-950/50 transition active:scale-95 cursor-pointer select-none"
+                              className="table-action h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-body font-medium text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50/80 dark:hover:bg-rose-950/50 transition active:scale-95 cursor-pointer select-none"
                             >
                               <Flag className="w-3.5 h-3.5 text-slate-400" />
                               <span>Biên bản</span>
@@ -1292,7 +1292,7 @@ export default function ProctorDashboardPage() {
       {/* ── 6. Standard Pagination Bar ── */}
       {totalItems > 0 && (
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-1">
-          <p className="text-xs font-semibold text-slate-500">
+          <p className="text-type-helper font-semibold text-slate-500">
             Hiển thị <span className="font-semibold text-slate-900">{startItem}</span> -{' '}
             <span className="font-semibold text-slate-900">{endItem}</span> trong{' '}
             <span className="font-semibold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> Thí sinh
@@ -1313,7 +1313,7 @@ export default function ProctorDashboardPage() {
               {paginationPages.map((p, idx) => {
                 if (p === '...') {
                   return (
-                    <span key={`dots-${idx}`} className="px-1 text-xs font-semibold text-slate-400">
+                    <span key={`dots-${idx}`} className="px-1 text-type-helper font-semibold text-slate-400">
                       ...
                     </span>
                   );
@@ -1327,7 +1327,7 @@ export default function ProctorDashboardPage() {
                     key={pNum}
                     type="button"
                     onClick={() => setPage(pNum)}
-                    className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-xs font-semibold transition cursor-pointer shadow-2xs ${isCurrent
+                    className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-type-helper font-semibold transition cursor-pointer shadow-2xs ${isCurrent
                       ? 'bg-blue-600 text-white shadow-xs'
                       : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                       }`}
@@ -1355,7 +1355,7 @@ export default function ProctorDashboardPage() {
                 setLimit(Number(e.target.value));
                 setPage(1);
               }}
-              className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 text-[15px] font-medium text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+              className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 text-type-body font-medium text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
             >
               <option value={10}>10 / trang</option>
               <option value={20}>20 / trang</option>
@@ -1398,10 +1398,10 @@ export default function ProctorDashboardPage() {
                     <MetaIcon className="h-4.5 w-4.5" />
                   </div>
                   <div>
-                    <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 tracking-tight leading-none">
+                    <h3 className="text-type-section font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
                       {meta.title}
                     </h3>
-                    <p className="mt-1.5 text-[13px] text-slate-500 dark:text-slate-400 font-normal leading-none">
+                    <p className="mt-1.5 text-type-helper text-slate-500 dark:text-slate-400 font-normal">
                       {meta.desc}
                     </p>
                   </div>
@@ -1417,12 +1417,12 @@ export default function ProctorDashboardPage() {
               </div>
 
               {/* Modal body */}
-              <div className="p-6 space-y-4 text-xs font-semibold">
+              <div className="p-6 space-y-4 text-type-helper font-semibold">
                 {/* Student info flat strip */}
                 <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-slate-400 dark:text-slate-500 font-normal">Thí sinh:</span>
-                    <strong className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+                    <span className="text-type-helper text-slate-400 dark:text-slate-500 font-normal">Thí sinh:</span>
+                    <strong className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
                       {selectedStudent.student.fullName}
                     </strong>
                   </div>
@@ -1437,7 +1437,7 @@ export default function ProctorDashboardPage() {
                 {/* EXTEND Sub-view */}
                 {actionType === 'EXTEND' && (
                   <div className="space-y-1.5">
-                    <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                    <label className="block text-slate-700 dark:text-slate-300 font-medium text-type-body">
                       Số phút cộng thêm vào bài thi:
                     </label>
                     <div className="grid grid-cols-5 gap-2">
@@ -1446,7 +1446,7 @@ export default function ProctorDashboardPage() {
                           key={m}
                           type="button"
                           onClick={() => setExtraMinutes(m)}
-                          className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${extraMinutes === m
+                          className={`py-2.5 rounded-xl border text-type-body-sm font-semibold transition cursor-pointer select-none ${extraMinutes === m
                               ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
                               : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
                             }`}
@@ -1462,13 +1462,13 @@ export default function ProctorDashboardPage() {
                 {actionType === 'RESOLVE' && (
                   <div className="space-y-3">
                     <div className="space-y-1.5">
-                      <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                      <label className="block text-slate-700 dark:text-slate-300 font-medium text-type-body">
                         Quyết định xử lý sự cố:
                       </label>
                       <FilterSelect
                         value={resolutionDecision}
                         onChange={(e) => setResolutionDecision(e.target.value as any)}
-                        className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 text-[15px] font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
+                        className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 text-type-body font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
                       >
                         <option value="REOPEN">Cho phép mở lại phiên thi để làm tiếp</option>
                         <option value="PENALTY">Giữ nguyên bài thi & Áp dụng trừ điểm</option>
@@ -1478,7 +1478,7 @@ export default function ProctorDashboardPage() {
 
                     {resolutionDecision === 'PENALTY' && (
                       <div className="space-y-1.5">
-                        <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                        <label className="block text-slate-700 dark:text-slate-300 font-medium text-type-body">
                           Số điểm trừ trực tiếp (thang 10):
                         </label>
                         <input
@@ -1488,7 +1488,7 @@ export default function ProctorDashboardPage() {
                           step="0.5"
                           value={penaltyPoints}
                           onChange={(e) => setPenaltyPoints(Number(e.target.value))}
-                          className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 text-[15px] font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500 shadow-2xs"
+                          className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500 shadow-2xs"
                         />
                       </div>
                     )}
@@ -1498,7 +1498,7 @@ export default function ProctorDashboardPage() {
                 {/* FLAG Sub-view: Lập biên bản sự cố */}
                 {actionType === 'FLAG' && (
                   <div className="space-y-1.5">
-                    <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                    <label className="block text-slate-700 dark:text-slate-300 font-medium text-type-body">
                       Phân loại sự cố ghi nhận:
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -1516,11 +1516,11 @@ export default function ProctorDashboardPage() {
                               : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-rose-300 dark:hover:border-rose-800 hover:bg-rose-50/30 dark:hover:bg-rose-950/30'
                             }`}
                         >
-                          <div className={`text-[13px] font-semibold ${incidentDecision === opt.value ? 'text-rose-700 dark:text-rose-300' : 'text-slate-900 dark:text-slate-100'
+                          <div className={`text-type-helper font-semibold ${incidentDecision === opt.value ? 'text-rose-700 dark:text-rose-300' : 'text-slate-900 dark:text-slate-100'
                             }`}>
                             {opt.label}
                           </div>
-                          <p className="text-[12px] text-slate-500 dark:text-slate-400 font-normal line-clamp-1 mt-0.5">
+                          <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal line-clamp-1 mt-0.5">
                             {opt.desc}
                           </p>
                         </button>
@@ -1532,14 +1532,14 @@ export default function ProctorDashboardPage() {
                 {/* Reason Editor with Presets */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                    <label className="block text-slate-700 dark:text-slate-300 font-medium text-type-body">
                       {actionType === 'FLAG' ? 'Lý do / Mô tả chi tiết vi phạm:' : 'Lý do thực hiện:'}
                     </label>
                     {reason && (
                       <button
                         type="button"
                         onClick={() => setReason('')}
-                        className="text-xs font-semibold text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition cursor-pointer"
+                        className="text-type-helper font-semibold text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition cursor-pointer"
                       >
                         Xóa nội dung
                       </button>
@@ -1559,7 +1559,7 @@ export default function ProctorDashboardPage() {
                           key={tpl}
                           type="button"
                           onClick={() => setReason(tpl)}
-                          className={`px-2.5 py-1 rounded-xl text-xs font-medium border transition cursor-pointer select-none ${reason === tpl
+                          className={`px-2.5 py-1 rounded-xl text-type-helper font-medium border transition cursor-pointer select-none ${reason === tpl
                               ? 'bg-rose-50 dark:bg-rose-950/60 border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300'
                               : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800'
                             }`}
@@ -1582,12 +1582,12 @@ export default function ProctorDashboardPage() {
                         handleAction();
                       }
                     }}
-                    className={`w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition resize-none shadow-2xs ${actionType === 'FLAG' ? 'focus:border-rose-500' : 'focus:border-blue-500'
+                    className={`w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition resize-none shadow-2xs ${actionType === 'FLAG' ? 'focus:border-rose-500' : 'focus:border-blue-500'
                       }`}
                   />
 
                   {/* Meta row */}
-                  <div className="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 select-none pt-0.5">
+                  <div className="flex items-center justify-between text-type-helper text-slate-400 dark:text-slate-500 select-none pt-0.5">
                     <span className="hidden sm:inline-flex items-center gap-1 font-normal">
                       Nhấn <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Enter</kbd> để xác nhận
                     </span>
@@ -1645,11 +1645,11 @@ export default function ProctorDashboardPage() {
                   <Clock className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-none">
+                  <h3 className="text-type-section font-semibold text-slate-900 dark:text-slate-100">
                     Gia hạn nhóm thí sinh
                   </h3>
                   <div className="mt-1.5 flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
+                    <span className="inline-flex items-center gap-1 text-type-helper font-semibold px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
                       <Users className="w-3 h-3" />
                       Áp dụng cho {selectedIds.length} thí sinh đã chọn
                     </span>
@@ -1667,9 +1667,9 @@ export default function ProctorDashboardPage() {
             </div>
 
             {/* Body */}
-            <div className="p-6 space-y-4 text-xs font-semibold">
+            <div className="p-6 space-y-4 text-type-helper font-semibold">
               <div className="space-y-1.5">
-                <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                <label className="block text-slate-700 dark:text-slate-300 font-medium text-type-body">
                   Chọn số phút cộng thêm:
                 </label>
                 <div className="grid grid-cols-5 gap-2">
@@ -1678,7 +1678,7 @@ export default function ProctorDashboardPage() {
                       key={m}
                       type="button"
                       onClick={() => setMultiMinutes(m)}
-                      className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${multiMinutes === m
+                      className={`py-2.5 rounded-xl border text-type-body-sm font-semibold transition cursor-pointer select-none ${multiMinutes === m
                           ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
                           : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
                         }`}
@@ -1690,7 +1690,7 @@ export default function ProctorDashboardPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                <label className="block text-slate-700 dark:text-slate-300 font-medium text-type-body">
                   Lý do gia hạn:
                 </label>
                 <textarea
@@ -1705,10 +1705,10 @@ export default function ProctorDashboardPage() {
                     }
                   }}
                   placeholder="Nhập lý do gia hạn cho nhóm thí sinh..."
-                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
+                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
                 />
 
-                <div className="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 select-none pt-0.5">
+                <div className="flex items-center justify-between text-type-helper text-slate-400 dark:text-slate-500 select-none pt-0.5">
                   <span className="hidden sm:inline-flex items-center gap-1 font-normal">
                     Nhấn <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Enter</kbd> để xác nhận
                   </span>
@@ -1757,17 +1757,17 @@ export default function ProctorDashboardPage() {
                   <Megaphone className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-none">
+                  <h3 className="text-type-section font-semibold text-slate-900 dark:text-slate-100">
                     Phát thông báo phòng thi
                   </h3>
                   <div className="mt-1.5 flex items-center gap-2">
                     {selectedIds.length > 0 ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
+                      <span className="inline-flex items-center gap-1 text-type-helper font-semibold px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
                         <Users className="w-3 h-3" />
                         Gửi đến {selectedIds.length} thí sinh đã chọn
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300">
+                      <span className="inline-flex items-center gap-1 text-type-helper font-semibold px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300">
                         <Radio className="w-3 h-3 text-emerald-500 animate-pulse" />
                         Toàn phòng • {stats.total || 0} thí sinh
                       </span>
@@ -1786,14 +1786,14 @@ export default function ProctorDashboardPage() {
             </div>
 
             {/* Body */}
-            <div className="p-6 space-y-4 text-xs font-semibold">
+            <div className="p-6 space-y-4 text-type-helper font-semibold">
               {/* Quick Presets Grid */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                  <label className="block text-slate-700 dark:text-slate-300 font-medium text-type-body">
                     Mẫu thông báo nhanh:
                   </label>
-                  <span className="text-xs text-slate-400 dark:text-slate-500 font-normal">
+                  <span className="text-type-helper text-slate-400 dark:text-slate-500 font-normal">
                     Chọn 1 chạm để áp dụng
                   </span>
                 </div>
@@ -1846,10 +1846,10 @@ export default function ProctorDashboardPage() {
                           <PresetIcon className="h-3.5 w-3.5" />
                         </span>
                         <div className="min-w-0 flex-1">
-                          <div className="text-[13px] font-semibold text-slate-900 dark:text-slate-100 leading-tight">
+                          <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100 leading-tight">
                             {preset.label}
                           </div>
-                          <p className="text-[12px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5 leading-snug font-normal">
+                          <p className="text-type-helper text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5 leading-snug font-normal">
                             {preset.text}
                           </p>
                         </div>
@@ -1862,14 +1862,14 @@ export default function ProctorDashboardPage() {
               {/* Textarea Editor */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                  <label className="block text-slate-700 dark:text-slate-300 font-medium text-type-body">
                     Nội dung thông báo:
                   </label>
                   {broadcastMessage && (
                     <button
                       type="button"
                       onClick={() => setBroadcastMessage('')}
-                      className="text-xs font-semibold text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition cursor-pointer"
+                      className="text-type-helper font-semibold text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition cursor-pointer"
                     >
                       Xóa nội dung
                     </button>
@@ -1888,11 +1888,11 @@ export default function ProctorDashboardPage() {
                     }
                   }}
                   placeholder="Nhập nội dung cần phát đến thí sinh..."
-                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
+                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
                 />
 
                 {/* Helper & Counter */}
-                <div className="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 select-none pt-0.5">
+                <div className="flex items-center justify-between text-type-helper text-slate-400 dark:text-slate-500 select-none pt-0.5">
                   <span className="hidden sm:inline-flex items-center gap-1 font-normal">
                     Nhấn <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Enter</kbd> để gửi nhanh
                   </span>
@@ -1944,17 +1944,17 @@ export default function ProctorDashboardPage() {
                   <Clock className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-none">
+                  <h3 className="text-type-section font-semibold text-slate-900 dark:text-slate-100">
                     Bù giờ toàn phòng thi
                   </h3>
                   <div className="mt-1.5 flex items-center gap-2">
                     {selectedIds.length > 0 ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
+                      <span className="inline-flex items-center gap-1 text-type-helper font-semibold px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
                         <Users className="w-3 h-3" />
                         Cộng bù cho {selectedIds.length} thí sinh đã chọn
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300">
+                      <span className="inline-flex items-center gap-1 text-type-helper font-semibold px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300">
                         <Radio className="w-3 h-3 text-emerald-500 animate-pulse" />
                         Toàn phòng • {stats.total || 0} thí sinh
                       </span>
@@ -1973,10 +1973,10 @@ export default function ProctorDashboardPage() {
             </div>
 
             {/* Body */}
-            <div className="p-6 space-y-4 text-xs font-semibold">
+            <div className="p-6 space-y-4 text-type-helper font-semibold">
               {/* Select Minutes */}
               <div className="space-y-1.5">
-                <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                <label className="block text-slate-700 dark:text-slate-300 font-medium text-type-body">
                   Chọn số phút cộng bù:
                 </label>
                 <div className="grid grid-cols-5 gap-2">
@@ -1985,7 +1985,7 @@ export default function ProctorDashboardPage() {
                       key={m}
                       type="button"
                       onClick={() => setBulkMinutes(m)}
-                      className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${bulkMinutes === m
+                      className={`py-2.5 rounded-xl border text-type-body-sm font-semibold transition cursor-pointer select-none ${bulkMinutes === m
                           ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
                           : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
                         }`}
@@ -1998,7 +1998,7 @@ export default function ProctorDashboardPage() {
 
               {/* Reason Presets & Textarea */}
               <div className="space-y-1.5">
-                <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                <label className="block text-slate-700 dark:text-slate-300 font-medium text-type-body">
                   Lý do bù giờ (Ghi rõ để lưu biên bản thanh tra):
                 </label>
 
@@ -2014,7 +2014,7 @@ export default function ProctorDashboardPage() {
                       key={r}
                       type="button"
                       onClick={() => setBulkReason(r)}
-                      className={`px-2.5 py-1 rounded-xl text-xs font-medium border transition cursor-pointer select-none ${bulkReason === r
+                      className={`px-2.5 py-1 rounded-xl text-type-helper font-medium border transition cursor-pointer select-none ${bulkReason === r
                           ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300'
                           : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800'
                         }`}
@@ -2036,11 +2036,11 @@ export default function ProctorDashboardPage() {
                     }
                   }}
                   placeholder="Nhập chi tiết lý do bù giờ..."
-                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
+                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
                 />
 
                 {/* Helper & Counter */}
-                <div className="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 select-none pt-0.5">
+                <div className="flex items-center justify-between text-type-helper text-slate-400 dark:text-slate-500 select-none pt-0.5">
                   <span className="hidden sm:inline-flex items-center gap-1 font-normal">
                     Nhấn <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium text-slate-500 dark:text-slate-400">Enter</kbd> để xác nhận
                   </span>
@@ -2089,10 +2089,10 @@ export default function ProctorDashboardPage() {
                   <PlusCircle className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <h3 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 leading-none">
+                  <h3 className="text-type-section font-semibold text-slate-900 dark:text-slate-100">
                     Mở giờ cho vào thi muộn
                   </h3>
-                  <p className="mt-1.5 text-[13px] text-slate-500 dark:text-slate-400 font-normal leading-none">
+                  <p className="mt-1.5 text-type-helper text-slate-500 dark:text-slate-400 font-normal">
                     Gia hạn thời gian cho phép sinh viên bắt đầu làm bài
                   </p>
                 </div>
@@ -2108,9 +2108,9 @@ export default function ProctorDashboardPage() {
             </div>
 
             {/* Body */}
-            <div className="p-6 space-y-4 text-xs font-semibold">
+            <div className="p-6 space-y-4 text-type-helper font-semibold">
               <div className="space-y-1.5">
-                <label className="block text-slate-700 dark:text-slate-300 font-medium text-[15px]">
+                <label className="block text-slate-700 dark:text-slate-300 font-medium text-type-body">
                   Số phút cho phép vào thi kể từ bây giờ:
                 </label>
                 <div className="grid grid-cols-4 gap-2">
@@ -2119,7 +2119,7 @@ export default function ProctorDashboardPage() {
                       key={m}
                       type="button"
                       onClick={() => setLateWindowMinutes(m)}
-                      className={`py-2.5 rounded-xl border text-[14px] font-semibold transition cursor-pointer select-none ${lateWindowMinutes === m
+                      className={`py-2.5 rounded-xl border text-type-body-sm font-semibold transition cursor-pointer select-none ${lateWindowMinutes === m
                           ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
                           : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
                         }`}

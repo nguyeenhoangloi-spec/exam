@@ -26,7 +26,7 @@ export function SegmentControl({ items, activeKey, onChange, className = '' }: S
             key={item.key}
             type="button"
             onClick={() => onChange(item.key)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-[15px] font-medium rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-colors duration-150 cursor-pointer select-none ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-type-body font-medium rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-colors duration-150 cursor-pointer select-none ${
               isActive
                 ? 'bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-300 shadow-2xs font-semibold'
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-700'
@@ -36,7 +36,7 @@ export function SegmentControl({ items, activeKey, onChange, className = '' }: S
             <span>{item.label}</span>
             {typeof item.count === 'number' && (
               <span
-                className={`ml-0.5 rounded-md px-1.5 py-0.5 text-[13px] font-semibold ${
+                className={`ml-0.5 rounded-md px-1.5 py-0.5 text-type-badge font-semibold ${
                   isActive ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300'
                 }`}
               >
@@ -67,7 +67,7 @@ export function Tabs({ items, activeKey, onChange, className = '' }: TabsProps) 
             key={item.key}
             type="button"
             onClick={() => onChange(item.key)}
-            className={`relative pb-3 text-base font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-colors duration-150 cursor-pointer select-none flex items-center gap-2 ${
+            className={`relative pb-3 text-type-body font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-colors duration-150 cursor-pointer select-none flex items-center gap-2 ${
               isActive ? 'text-blue-600 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >
@@ -75,7 +75,7 @@ export function Tabs({ items, activeKey, onChange, className = '' }: TabsProps) 
             <span>{item.label}</span>
             {typeof item.count === 'number' && (
               <span
-                className={`rounded-md px-1.5 py-0.5 text-xs font-semibold ${
+                className={`rounded-md px-1.5 py-0.5 text-type-badge font-semibold ${
                   isActive ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
                 }`}
               >

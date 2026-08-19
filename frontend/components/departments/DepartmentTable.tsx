@@ -71,7 +71,7 @@ export function DepartmentTable({
                     <button
                       type="button"
                       onClick={() => onDetail(d)}
-                      className="tabular-nums text-[15px] leading-[22px] font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer"
+                      className="tabular-nums text-type-body leading-[22px] font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer"
                     >
                       <IdentifierBadge>{d.code}</IdentifierBadge>
                     </button>
@@ -80,7 +80,7 @@ export function DepartmentTable({
                   <button
                     type="button"
                     onClick={() => onOpenCurriculum(d)}
-                    className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-2 py-1 text-[13px] font-medium text-slate-700 shadow-2xs hover:bg-slate-50 hover:text-slate-900 transition cursor-pointer"
+                    className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-2 py-1 text-type-helper font-medium text-slate-700 shadow-2xs hover:bg-slate-50 hover:text-slate-900 transition cursor-pointer"
                   >
                     <Sparkles className="h-3.5 w-3.5 text-slate-500" />
                     <span>Khung CTDT</span>
@@ -90,29 +90,29 @@ export function DepartmentTable({
                 <div>
                   <h4
                     onClick={() => onDetail(d)}
-                    className="text-[18px] font-semibold text-slate-900 leading-snug cursor-pointer hover:text-primary-600 transition"
+                    className="text-type-card font-semibold text-slate-900 leading-snug cursor-pointer hover:text-primary-600 transition"
                   >
                     {d.name}
                   </h4>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 text-[14px] font-normal text-slate-600 pt-1 [&>div>span:first-child]:!font-normal">
+                <div className="grid grid-cols-3 gap-2 text-type-body-sm font-normal text-slate-600 pt-1 [&>div>span:first-child]:!font-normal">
                   <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
-                    <span className="text-[12px] text-slate-500 font-semibold">Môn học</span>
-                    <span className="text-[18px] leading-[26px] font-semibold text-slate-900">{subjectsCount}</span>
+                    <span className="text-type-helper text-slate-500 font-semibold">Môn học</span>
+                    <span className="text-type-card leading-[26px] font-semibold text-slate-900">{subjectsCount}</span>
                   </div>
                   <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
-                    <span className="text-[12px] text-slate-500 font-semibold">Lớp học</span>
-                    <span className="text-[18px] leading-[26px] font-semibold text-slate-900">{classesCount}</span>
+                    <span className="text-type-helper text-slate-500 font-semibold">Lớp học</span>
+                    <span className="text-type-card leading-[26px] font-semibold text-slate-900">{classesCount}</span>
                   </div>
                   <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 p-2 border border-slate-100 text-center">
-                    <span className="text-[12px] text-slate-500 font-semibold">Giảng viên</span>
-                    <span className="text-[18px] leading-[26px] font-semibold text-slate-900">{teachersCount}</span>
+                    <span className="text-type-helper text-slate-500 font-semibold">Giảng viên</span>
+                    <span className="text-type-card leading-[26px] font-semibold text-slate-900">{teachersCount}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-[14px] font-medium">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-type-body-sm font-medium">
                 <button
                   type="button"
                   onClick={() => onDetail(d)}
@@ -178,7 +178,7 @@ export function DepartmentTable({
                 <button
                   type="button"
                   onClick={() => onDetail(d)}
-                  className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
+                  className="tabular-nums text-type-helper font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
                 >
                   <IdentifierBadge tone="blue">{d.code}</IdentifierBadge>
                 </button>
@@ -187,12 +187,12 @@ export function DepartmentTable({
                 <div className="min-w-0">
                   <h4
                     onClick={() => onDetail(d)}
-                    className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                    className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
                   >
                     {d.name}
                   </h4>
 
-                  <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                  <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                     <span className="flex items-center gap-1">
                       <BookOpen className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       <span><strong className="font-semibold text-slate-800 dark:text-slate-200">{subjectsCount}</strong> môn học</span>
@@ -214,7 +214,7 @@ export function DepartmentTable({
                 <button
                   type="button"
                   onClick={() => onOpenCurriculum(d)}
-                  className="hidden sm:flex items-center gap-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 shadow-2xs hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 transition cursor-pointer"
+                  className="hidden sm:flex items-center gap-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-type-helper font-medium text-slate-700 dark:text-slate-300 shadow-2xs hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 transition cursor-pointer"
                 >
                   <Sparkles className="h-3.5 w-3.5 text-blue-600" />
                   <span>Khung CTĐT</span>
@@ -260,8 +260,8 @@ export function DepartmentTable({
   // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
   return (
     <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
-      <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
-        <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
+      <table className="ui-table w-full text-left text-type-body text-slate-700 border-collapse">
+        <thead className="bg-slate-50 text-type-body-sm font-medium tracking-wider text-slate-600 border-b border-slate-200">
           <tr>
             <th scope="col" className="p-3.5 pl-4 text-center w-10">
               <input
@@ -305,7 +305,7 @@ export function DepartmentTable({
                     <button
                       type="button"
                       onClick={() => onDetail(d)}
-                      className="tabular-nums text-[15px] leading-[22px] font-semibold text-primary-600 hover:text-primary-700 transition cursor-pointer"
+                      className="tabular-nums text-type-body leading-[22px] font-semibold text-primary-600 hover:text-primary-700 transition cursor-pointer"
                     >
                       <IdentifierBadge>{d.code}</IdentifierBadge>
                     </button>
@@ -317,7 +317,7 @@ export function DepartmentTable({
                     <button
                       type="button"
                       onClick={() => onDetail(d)}
-                      className="font-medium text-slate-900 cursor-pointer hover:text-primary-600 transition text-[15px]"
+                      className="font-medium text-slate-900 cursor-pointer hover:text-primary-600 transition text-type-body"
                     >
                       {d.name}
                     </button>
@@ -325,19 +325,19 @@ export function DepartmentTable({
                 )}
 
                 {visibleColumns.subjectsCount !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap text-type-body">
                     <span className="font-medium text-slate-900">{subjectsCount} môn</span>
                   </td>
                 )}
 
                 {visibleColumns.classesCount !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap text-type-body">
                     <span className="font-medium text-slate-900">{classesCount} lớp</span>
                   </td>
                 )}
 
                 {visibleColumns.teachersCount !== false && (
-                  <td className="p-3.5 whitespace-nowrap text-[15px]">
+                  <td className="p-3.5 whitespace-nowrap text-type-body">
                     <span className="font-medium text-slate-900">{teachersCount} giảng viên</span>
                   </td>
                 )}
@@ -347,7 +347,7 @@ export function DepartmentTable({
                     <button
                       type="button"
                       onClick={() => onOpenCurriculum(d)}
-                      className="flex items-center gap-1 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-2.5 py-1 text-[15px] leading-[22px] font-medium transition cursor-pointer shadow-2xs"
+                      className="flex items-center gap-1 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-2.5 py-1 text-type-body leading-[22px] font-medium transition cursor-pointer shadow-2xs"
                       title="Quản lý khung chương trình đào tạo"
                     >
                       <Sparkles className="h-3.5 w-3.5 text-slate-500" />
@@ -373,7 +373,7 @@ export function DepartmentTable({
                                 closeMenu();
                                 onOpenCurriculum(d);
                               }}
-                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[15px] font-medium transition cursor-pointer select-none"
+                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
                             >
                               <Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                               <span>Khung CTĐT</span>
@@ -385,7 +385,7 @@ export function DepartmentTable({
                             closeMenu();
                             onDetail(d);
                           }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[15px] font-medium transition cursor-pointer select-none"
+                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
                         >
                           <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                           <span>Xem chi tiết</span>
@@ -397,7 +397,7 @@ export function DepartmentTable({
                             closeMenu();
                             onEdit(d);
                           }}
-                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[15px] font-medium transition cursor-pointer select-none"
+                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
                         >
                           <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                           <span>Chỉnh sửa</span>
@@ -411,7 +411,7 @@ export function DepartmentTable({
                               closeMenu();
                               onDelete(d.id);
                             }}
-                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-[15px] font-medium transition cursor-pointer select-none"
+                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-type-body font-medium transition cursor-pointer select-none"
                           >
                             <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400" />
                             <span>Xóa</span>

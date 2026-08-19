@@ -186,7 +186,7 @@ function EntityTarget({ entityType, entityId }: { entityType: string; entityId?:
     return (
         <div className="group relative inline-flex items-center gap-1.5 whitespace-nowrap">
             <Icon className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
-            <span className="text-[14px] font-semibold text-slate-900 dark:text-slate-100">{info.label}</span>
+            <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">{info.label}</span>
             {entityId && (
                 <IdentifierBadge tone="neutral" title={entityId}>
                     #{formattedId}
@@ -194,7 +194,7 @@ function EntityTarget({ entityType, entityId }: { entityType: string; entityId?:
             )}
 
             {isLongId && (
-                <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-xs text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50">
+                <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-type-helper text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50">
                     <span>#{entityId}</span>
                     <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />
                 </div>
@@ -207,7 +207,7 @@ function ActionCode({ action }: { action: string }) {
     const { label, Icon, className } = getActionMeta(action);
 
     return (
-        <span className={`table-action inline-flex items-center gap-1.5 font-sans text-[15px] leading-[22px] font-medium ${className}`}>
+        <span className={`table-action inline-flex items-center gap-1.5 font-sans text-type-body leading-[22px] font-medium ${className}`}>
             <Icon className="h-3.5 w-3.5 shrink-0" />
             {label}
         </span>
@@ -494,10 +494,10 @@ export default function ActivityLogsPage() {
             {/* ── 1. Page Header ── */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
                 <div className="space-y-0.5">
-                    <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+                    <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
                         Nhật ký hệ thống
                     </h1>
-                    <p className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400">
+                    <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
                         Theo dõi, rà soát và ghi vết chi tiết mọi lịch sử thao tác của Quản trị viên, Giảng viên và Thí sinh
                     </p>
                 </div>
@@ -521,10 +521,10 @@ export default function ActivityLogsPage() {
                         >
                             <div className="flex items-start justify-between gap-3">
                                 <div className="space-y-1 min-w-0">
-                                    <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                                    <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                         {item.title}
                                     </span>
-                                    <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                                    <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                                         {item.value.toLocaleString('vi-VN')}
                                     </div>
                                 </div>
@@ -545,7 +545,7 @@ export default function ActivityLogsPage() {
                             <div className="mt-2.5">
                                 <span
                                     title={item.subtext}
-                                    className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+                                    className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
                                 >
                                     {item.subtext}
                                 </span>
@@ -570,7 +570,7 @@ export default function ActivityLogsPage() {
                                 setSearch(e.target.value);
                                 setPage(1);
                             }}
-                            className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+                            className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
                         />
                         {search ? (
                             <button
@@ -583,7 +583,7 @@ export default function ActivityLogsPage() {
                             </button>
                         ) : (
                             <kbd
-                                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                                className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                                 onClick={() => searchInputRef.current?.focus()}
                                 title="Nhấn phím / để tìm nhanh"
                             >
@@ -619,7 +619,7 @@ export default function ActivityLogsPage() {
                 <div className="shrink-0">
                     <div className="flex flex-wrap items-center justify-between gap-3 py-1">
                         <div className="flex items-center gap-2">
-                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                            <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400">
                                 Hiển thị <span className="font-bold text-slate-900 dark:text-slate-100">{totalCount.toLocaleString('vi-VN')}</span> nhật ký
                             </span>
                         </div>
@@ -689,7 +689,7 @@ export default function ActivityLogsPage() {
                                             onChange={() => toggleSelect(item.id)}
                                             className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                                         />
-                                        <span className="text-[13px] font-medium text-slate-600 dark:text-slate-400">
+                                        <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400">
                                             {new Date(item.createdAt).toLocaleString('vi-VN')}
                                         </span>
                                     </div>
@@ -698,21 +698,21 @@ export default function ActivityLogsPage() {
 
                                 {/* Actor info */}
                                 <div className="flex items-center gap-2.5">
-                                     <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-[12px] font-semibold text-slate-700 dark:text-slate-300">
+                                     <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-type-helper font-semibold text-slate-700 dark:text-slate-300">
                                         {(item.actor?.username || 'A').slice(0, 1).toUpperCase()}
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 truncate">
+                                        <p className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
                                             {item.actor?.username || 'Hệ thống'}
                                         </p>
-                                        <p className="text-[13px] leading-tight font-normal text-slate-500 dark:text-slate-400 truncate">
+                                        <p className="text-type-helper leading-tight font-normal text-slate-500 dark:text-slate-400 truncate">
                                             {item.actor?.email || 'N/A'}
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Description */}
-                                <p className="text-[14px] leading-relaxed font-normal text-slate-700 dark:text-slate-300 line-clamp-2">
+                                <p className="text-type-body-sm leading-relaxed font-normal text-slate-700 dark:text-slate-300 line-clamp-2">
                                     {item.description}
                                 </p>
 
@@ -721,7 +721,7 @@ export default function ActivityLogsPage() {
                                     <button
                                         type="button"
                                         onClick={() => setSelectedLog(item)}
-                                        className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-[14px] font-medium transition cursor-pointer"
+                                        className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-type-body-sm font-medium transition cursor-pointer"
                                     >
                                         <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                                         <span>Xem chi tiết</span>
@@ -736,7 +736,7 @@ export default function ActivityLogsPage() {
                     {loading ? (
                         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 text-center text-slate-500 shadow-2xs">
                             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2" />
-                            <p className="text-[15px] font-semibold text-slate-500">Đang tải nhật ký hoạt động...</p>
+                            <p className="text-type-body font-semibold text-slate-500">Đang tải nhật ký hoạt động...</p>
                         </div>
                     ) : paginatedLogs.length === 0 ? (
                         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 text-center text-slate-500 shadow-2xs">
@@ -765,19 +765,19 @@ export default function ActivityLogsPage() {
                                             <div className="flex items-center gap-2 flex-wrap">
                                                 <h4
                                                     onClick={() => setSelectedLog(item)}
-                                                    className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left max-w-xl"
+                                                    className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left max-w-xl"
                                                 >
                                                     {item.description}
                                                 </h4>
                                                 <ActionCode action={item.action} />
                                             </div>
 
-                                            <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                                            <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                                                 <span className="flex items-center gap-1">
                                                     <UserIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                                                     <span className="text-slate-700 dark:text-slate-300 font-medium">{item.actor?.username || 'Hệ thống'}</span>
                                                     {item.actor?.role && (
-                                                        <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded text-[12px] font-medium border border-slate-200 dark:border-slate-700">
+                                                        <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded text-type-helper font-medium border border-slate-200 dark:border-slate-700">
                                                             {item.actor.role}
                                                         </span>
                                                     )}
@@ -820,7 +820,7 @@ export default function ActivityLogsPage() {
                     <div className="overflow-x-auto">
                         <table className="ui-table w-full text-left border-collapse">
                             <thead>
-                                <tr className="border-b border-slate-200/80 bg-slate-50/80 font-semibold leading-5 text-slate-600 text-[14px]">
+                                <tr className="border-b border-slate-200/80 bg-slate-50/80 font-semibold leading-5 text-slate-600 text-type-body-sm">
                                     <th className="w-10 text-center py-3.5 px-4">
                                         <input
                                             type="checkbox"
@@ -837,12 +837,12 @@ export default function ActivityLogsPage() {
                                     <th className="text-right whitespace-nowrap py-3.5 px-4">Thao tác</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100 font-normal text-slate-900 text-[15px]">
+                            <tbody className="divide-y divide-slate-100 font-normal text-slate-900 text-type-body">
                                 {loading ? (
                                     <tr>
                                         <td colSpan={7} className="py-12 px-4 text-center text-slate-500">
                                             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2" />
-                                            <p className="text-[15px] font-semibold text-slate-500">Đang tải nhật ký hoạt động hệ thống...</p>
+                                            <p className="text-type-body font-semibold text-slate-500">Đang tải nhật ký hoạt động hệ thống...</p>
                                         </td>
                                     </tr>
                                 ) : paginatedLogs.length === 0 ? (
@@ -870,7 +870,7 @@ export default function ActivityLogsPage() {
 
                                             {/* Thời gian */}
                                             {visibleColumns.createdAt && (
-                                                <td className="whitespace-nowrap font-medium text-slate-800 py-3.5 px-4 text-[15px]">
+                                                <td className="whitespace-nowrap font-medium text-slate-800 py-3.5 px-4 text-type-body">
                                                     {new Date(item.createdAt).toLocaleString('vi-VN')}
                                                 </td>
                                             )}
@@ -885,12 +885,12 @@ export default function ActivityLogsPage() {
                                                         <div className="table-avatar flex shrink-0 items-center justify-center rounded-full border border-slate-200/90 bg-slate-100 dark:border-slate-700 dark:bg-slate-800 font-medium text-slate-700 dark:text-slate-300 h-7 w-7">
                                                             {(item.actor?.username || "A").slice(0, 1).toUpperCase()}
                                                         </div>
-                                                        <span className="font-medium text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-[15px] leading-[22px]">
+                                                        <span className="font-medium text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-type-body leading-[22px]">
                                                             {item.actor?.username || "Hệ thống"}
                                                         </span>
 
                                                         {/* Floating Tooltip khi Hover */}
-                                                        <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex items-center gap-1.5 rounded-lg bg-slate-900 px-2.5 py-1 text-[15px] font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
+                                                        <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex items-center gap-1.5 rounded-lg bg-slate-900 px-2.5 py-1 text-type-body font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
                                                             <Mail className="h-3 w-3 text-slate-300" />
                                                             <span>{item.actor?.email || "system@exam.edu.vn"}</span>
                                                             <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />
@@ -955,7 +955,7 @@ export default function ActivityLogsPage() {
             {/* ── 6. Pagination Bar (Standalone Custom Inline - Fully Isolated) ── */}
             {totalCount > 0 && (
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-3">
-                    <p className="text-[14px] font-normal text-slate-500">
+                    <p className="text-type-body-sm font-normal text-slate-500">
                         Hiển thị <span className="font-semibold text-slate-900">{(page - 1) * limit + 1}</span> -{' '}
                         <span className="font-semibold text-slate-900">{Math.min(page * limit, totalCount)}</span> trong{' '}
                         <span className="font-semibold text-slate-900">{totalCount.toLocaleString('vi-VN')}</span> Nhật ký
@@ -976,7 +976,7 @@ export default function ActivityLogsPage() {
                             <button
                                 type="button"
                                 onClick={() => setPage(1)}
-                                className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-[14px] transition cursor-pointer shadow-2xs ${page === 1
+                                className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-type-body-sm transition cursor-pointer shadow-2xs ${page === 1
                                     ? 'bg-primary-600 text-white shadow-xs font-semibold'
                                     : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
                                     }`}
@@ -988,7 +988,7 @@ export default function ActivityLogsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setPage(2)}
-                                    className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-[14px] transition cursor-pointer shadow-2xs ${page === 2
+                                    className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-type-body-sm transition cursor-pointer shadow-2xs ${page === 2
                                         ? 'bg-primary-600 text-white shadow-xs font-semibold'
                                         : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
                                         }`}
@@ -997,13 +997,13 @@ export default function ActivityLogsPage() {
                                 </button>
                             )}
 
-                            {totalPages > 3 && <span className="px-1 text-[14px] font-medium text-slate-500">...</span>}
+                            {totalPages > 3 && <span className="px-1 text-type-body-sm font-medium text-slate-500">...</span>}
 
                             {totalPages > 2 && (
                                 <button
                                     type="button"
                                     onClick={() => setPage(totalPages)}
-                                    className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-[14px] transition cursor-pointer shadow-2xs ${page === totalPages
+                                    className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-type-body-sm transition cursor-pointer shadow-2xs ${page === totalPages
                                         ? 'bg-primary-600 text-white shadow-xs font-semibold'
                                         : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
                                         }`}
@@ -1131,20 +1131,20 @@ export default function ActivityLogsPage() {
                             <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
                                             <Activity className="h-5 w-5 text-white" />
                                         </div>
 
                                         <div className="min-w-0 flex-1">
                                             <div className="flex items-center gap-2 flex-wrap">
-                                                <h2 className="text-[17px] font-semibold leading-snug text-slate-900 dark:text-white break-words">
+                                                <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words">
                                                     Chi tiết Nhật ký
                                                 </h2>
                                                 <IdentifierBadge tone="neutral" className="max-w-[200px] truncate" title={`#${drawerOpenLog.id}`}>
                                                     #{drawerOpenLog.id}
                                                 </IdentifierBadge>
                                             </div>
-                                            <p className="mt-1 text-[13px] font-medium text-slate-500 dark:text-slate-400 tabular-nums truncate">
+                                            <p className="mt-1 text-type-helper font-medium text-slate-500 dark:text-slate-400 tabular-nums truncate">
                                                 Thời gian: {new Date(drawerOpenLog.createdAt).toLocaleString('vi-VN')}
                                             </p>
                                         </div>
@@ -1163,25 +1163,25 @@ export default function ActivityLogsPage() {
                             </div>
 
                             {/* Content Body */}
-                            <div className="flex-1 space-y-6 overflow-y-auto bg-white dark:bg-slate-900 p-6 text-[15px] custom-scrollbar">
+                            <div className="flex-1 space-y-6 overflow-y-auto bg-white dark:bg-slate-900 p-6 text-type-body custom-scrollbar">
                                 {/* Section 1: Thông tin định danh */}
                                 <div className="space-y-3">
                                     <div className="flex items-center gap-2">
                                         <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                                        <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                                        <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                                             Thông tin định danh thao tác
                                         </h3>
                                     </div>
 
                                     <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">Hành động:</span>
                                             <span className="font-semibold text-blue-600 dark:text-blue-400">
                                                 {getActionMeta(drawerOpenLog.action).label} ({drawerOpenLog.action})
                                             </span>
                                         </div>
 
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">Tài khoản thực hiện:</span>
                                             <span className="font-semibold text-slate-900 dark:text-white text-right">
                                                 {drawerOpenLog.actor?.username || 'Hệ thống'}
@@ -1189,14 +1189,14 @@ export default function ActivityLogsPage() {
                                             </span>
                                         </div>
 
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">Thực thể tác động:</span>
                                             <span className="font-semibold text-slate-900 dark:text-white">
                                                 {getEntityInfo(drawerOpenLog.entityType).label} ({drawerOpenLog.entityType})
                                             </span>
                                         </div>
 
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-[14px]">
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">ID Thực thể:</span>
                                             <span className="font-semibold tabular-nums text-slate-900 dark:text-white">
                                                 #{drawerOpenLog.entityId || 'N/A'}
@@ -1209,11 +1209,11 @@ export default function ActivityLogsPage() {
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
                                         <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                                        <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                                        <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                                             Nội dung thao tác chi tiết
                                         </h3>
                                     </div>
-                                    <p className="text-[14px] font-normal leading-relaxed text-slate-700 dark:text-slate-300 py-1">
+                                    <p className="text-type-body-sm font-normal leading-relaxed text-slate-700 dark:text-slate-300 py-1">
                                         {drawerOpenLog.description}
                                     </p>
                                 </div>
@@ -1223,7 +1223,7 @@ export default function ActivityLogsPage() {
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                                            <h3 className="flex items-center gap-1.5 text-[15px] font-semibold text-slate-900 dark:text-white">
+                                            <h3 className="flex items-center gap-1.5 text-type-body font-semibold text-slate-900 dark:text-white">
                                                 <Code className="h-4 w-4 text-blue-600" />
                                                 <span>Dữ liệu Metadata JSON</span>
                                             </h3>
@@ -1238,14 +1238,14 @@ export default function ActivityLogsPage() {
                                                     setTimeout(() => setCopied(false), 2000);
                                                 });
                                             }}
-                                            className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-[13px] font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-750"
+                                            className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-type-helper font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-750"
                                         >
                                             {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-slate-500" />}
                                             <span>{copied ? 'Đã sao chép!' : 'Sao chép JSON'}</span>
                                         </button>
                                     </div>
 
-                                    <pre className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950 p-4 text-[13px] leading-relaxed text-emerald-400 shadow-inner custom-scrollbar">
+                                    <pre className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950 p-4 text-type-helper leading-relaxed text-emerald-400 shadow-inner custom-scrollbar">
                                         {JSON.stringify(drawerOpenLog.metadata || { note: 'Không có dữ liệu bổ sung' }, null, 2)}
                                     </pre>
                                 </div>

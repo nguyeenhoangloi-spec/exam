@@ -30,6 +30,14 @@ html {
   --lh-badge: 18px;
   --fs-kpi: 32px;
   --lh-kpi: 38px;
+  --fs-reading: 16px;
+  --lh-reading: 26px;
+  --fs-display: 44px;
+  --lh-display: 52px;
+  --fs-display-sm: 36px;
+  --lh-display-sm: 44px;
+  --fs-otp: 24px;
+  --lh-otp: 30px;
   --lh-table-content: 22px;
   --ui-page: #f8fafc;
   --ui-surface: #ffffff;
@@ -330,61 +338,6 @@ html.dark {
     line-height: var(--lh-body);
   }
 
-  /* Legacy text-xs utilities are helper text in the application shell. Keep
-   * them readable at 13px; explicit text-[12px] remains reserved for compact
-   * badges and metadata. */
-  .typography-scale .text-xs {
-    font-size: var(--fs-helper);
-    line-height: var(--lh-helper);
-  }
-
-  .typography-scale .text-sm {
-    font-size: var(--fs-body-sm);
-    line-height: var(--lh-body-sm);
-  }
-
-  .typography-scale .text-base {
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-  }
-
-  .typography-scale .text-lg {
-    font-size: var(--fs-card-title);
-    line-height: var(--lh-card-title);
-  }
-
-  .typography-scale .text-xl {
-    font-size: var(--fs-section-title);
-    line-height: var(--lh-section-title);
-  }
-
-  /* Responsive Tailwind variants must resolve to the same semantic scale as
-   * their unprefixed counterparts. */
-  .typography-scale [class*=':text-xs'] {
-    font-size: var(--fs-helper);
-    line-height: var(--lh-helper);
-  }
-
-  .typography-scale [class*=':text-sm'] {
-    font-size: var(--fs-body-sm);
-    line-height: var(--lh-body-sm);
-  }
-
-  .typography-scale [class*=':text-base'] {
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-  }
-
-  .typography-scale [class*=':text-lg'] {
-    font-size: var(--fs-card-title);
-    line-height: var(--lh-card-title);
-  }
-
-  .typography-scale [class*=':text-xl'] {
-    font-size: var(--fs-section-title);
-    line-height: var(--lh-section-title);
-  }
-
   .typography-scale label {
     font-size: var(--fs-label);
     line-height: var(--lh-label);
@@ -393,26 +346,6 @@ html.dark {
   .typography-scale input:not([type='checkbox']):not([type='radio']),
   .typography-scale select,
   .typography-scale textarea {
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-  }
-
-  .typography-scale label.text-xs,
-  .typography-scale label.text-sm,
-  .typography-scale label.text-base,
-  .typography-scale input.text-xs,
-  .typography-scale input.text-sm,
-  .typography-scale input.text-base,
-  .typography-scale select.text-xs,
-  .typography-scale select.text-sm,
-  .typography-scale select.text-base,
-  .typography-scale textarea.text-xs,
-  .typography-scale textarea.text-sm,
-  .typography-scale textarea.text-base,
-  .typography-scale label[class*=':text-'],
-  .typography-scale input[class*=':text-'],
-  .typography-scale select[class*=':text-'],
-  .typography-scale textarea[class*=':text-'] {
     font-size: var(--fs-body);
     line-height: var(--lh-body);
   }
@@ -442,8 +375,8 @@ html.dark {
   }
 
   .typography-scale .table-avatar {
-    font-size: 12px;
-    line-height: 18px;
+    font-size: var(--fs-badge);
+    line-height: var(--lh-badge);
   }
 
   .typography-scale .table-action {
@@ -459,18 +392,6 @@ html.dark {
   .typography-scale .table-meta {
     font-size: var(--fs-body-sm);
     line-height: var(--lh-body-sm);
-  }
-
-  .typography-scale p.text-xs {
-    font-size: var(--fs-helper);
-    line-height: var(--lh-helper);
-  }
-
-  /* Button text is a control-level semantic token, not helper text. Legacy
-   * text-xs utilities must not reduce it below the 15px interaction scale. */
-  .typography-scale button.text-xs {
-    font-size: var(--fs-body) !important;
-    line-height: var(--lh-body) !important;
   }
 
   .ui-page {
@@ -622,8 +543,8 @@ html.dark {
   }
 
   .edu-reading {
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
+    font-size: var(--fs-reading);
+    line-height: var(--lh-reading);
     @apply font-normal;
     color: var(--ui-text-body);
   }
@@ -652,19 +573,6 @@ html.dark {
 
 .typography-scale :where(button, [role='button']) {
   font-weight: 600;
-}
-
-/* Filter option labels are secondary control content. The option container
- * communicates selection through color and surface; only the control action
- * itself remains at 600. */
-.typography-scale :where(button, [role='button']) [class~='text-xs'][class~='font-semibold'] {
-  font-weight: 500;
-}
-
-/* Descriptions inside filter preset buttons are supporting text, not actions.
- * Keep them at body weight instead of inheriting the button's 600 weight. */
-.typography-scale :where(button, [role='button']) [class*='text-[12px]']:not([class*='font-semibold']):not([class*='font-medium']) {
-  font-weight: 400;
 }
 
 .typography-scale :where(nav a, nav button) {
@@ -1004,7 +912,7 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
  * Final web typography contract.
  *
  * These rules intentionally live outside Tailwind's base/components/utilities
- * layers. A page-level utility such as text-[14px] must not silently reduce
+ * layers. A page-level compact token must not silently reduce
  * the readable size of a native control or data table. The semantic
  * exceptions below (helper text, badges and technical pre blocks) remain
  * explicit and use the shared tokens instead of raw pixel values.
@@ -1094,90 +1002,9 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
   line-height: var(--lh-table-body) !important;
 }
 
-/* Normalize arbitrary Tailwind pixel utilities to the same semantic scale.
- * The selector also catches responsive forms such as sm:text-[14px]. */
-.typography-scale :where(
-  [class*='text-[12px]'],
-  [class*='text-[12.5px]'],
-  [class*='text-[13px]'],
-  [class*='text-[13.5px]']
-) {
-  font-size: var(--fs-helper) !important;
-  line-height: var(--lh-helper) !important;
-}
-
-.typography-scale :where(
-  [class*='text-[14px]'],
-  [class*='text-[14.5px]']
-) {
-  font-size: var(--fs-body-sm) !important;
-  line-height: var(--lh-body-sm) !important;
-}
-
-.typography-scale :where(
-  [class*='text-[15px]'],
-  [class*='text-[15.5px]'],
-  [class*='text-[16.5px]']
-) {
-  font-size: var(--fs-body) !important;
-  line-height: var(--lh-body) !important;
-}
-
-.typography-scale :where([class*='text-[17px]']) {
-  font-size: var(--fs-card-title) !important;
-  line-height: var(--lh-card-title) !important;
-}
-
-.typography-scale :where([class*='text-[18px]']) {
-  font-size: var(--fs-card-title) !important;
-  line-height: var(--lh-card-title) !important;
-}
-
-.typography-scale :where([class*='text-[20px]']) {
-  font-size: var(--fs-section-title) !important;
-  line-height: var(--lh-section-title) !important;
-}
-
-.typography-scale :where([class*='text-[28px]']) {
-  font-size: var(--fs-page-title) !important;
-  line-height: var(--lh-page-title) !important;
-}
-
-.typography-scale :where([class*='text-[32px]']) {
-  font-size: var(--fs-kpi) !important;
-  line-height: var(--lh-kpi) !important;
-}
-
-/* Native semantic elements win over every page-local text utility. */
-.typography-scale :where(
-  input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']),
-  select,
-  textarea
-) {
-  font-size: var(--fs-body) !important;
-  line-height: var(--lh-body) !important;
-}
-
-.typography-scale :where(label) {
-  font-size: var(--fs-label) !important;
-  line-height: var(--lh-label) !important;
-}
-
-.typography-scale :where(table) {
-  font-size: var(--fs-table-body) !important;
-  line-height: var(--lh-table-body) !important;
-}
-
-.typography-scale :where(thead, thead tr, th) {
-  font-size: var(--fs-table-header) !important;
-  line-height: var(--lh-table-header) !important;
-}
-
-.typography-scale :where(tbody, tbody tr, td) {
-  font-size: var(--fs-table-body) !important;
-  line-height: var(--lh-table-body) !important;
-}
-
+/* Native actions are the final fallback for legacy raw buttons. Components
+ * use text-type-* utilities directly; this guard only prevents an untyped
+ * action from silently inheriting helper or badge typography. */
 .typography-scale :where(button, [role='button']) {
   font-size: var(--fs-body) !important;
   line-height: var(--lh-body) !important;
@@ -1188,7 +1015,6 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
 .typography-scale :where(
   .table-badge,
   .table-avatar,
-  .table-tooltip,
   .edu-badge,
   pre,
   code

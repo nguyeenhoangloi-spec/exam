@@ -449,7 +449,7 @@ export default function StudentsPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -465,7 +465,7 @@ export default function StudentsPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
@@ -666,47 +666,47 @@ export default function StudentsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">Mã sinh viên</label>
+            <label className="block text-type-body font-medium text-slate-500 mb-1">Mã sinh viên</label>
             <input
               type="text"
               required
               value={formData.studentCode}
               onChange={(e) => setFormData({ ...formData, studentCode: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body focus:border-blue-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">Họ và tên</label>
+            <label className="block text-type-body font-medium text-slate-500 mb-1">Họ và tên</label>
             <input
               type="text"
               required
               value={formData.fullName}
               onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body focus:border-blue-500 focus:outline-none"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Giới tính</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Giới tính</label>
               <FilterSelect
                 containerClassName="w-full"
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-type-body font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
               >
                 <option value="Nam">Nam</option>
                 <option value="Nữ">Nữ</option>
               </FilterSelect>
             </div>
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Lớp học</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Lớp học</label>
               <FilterSelect
                 required
                 value={formData.classId}
                 onChange={(e) => setFormData({ ...formData, classId: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-type-body font-normal focus:border-blue-500 focus:outline-none cursor-pointer"
               >
                 <option value="">-- Chọn lớp học --</option>
                 {classes.map((cls) => (
@@ -718,22 +718,22 @@ export default function StudentsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Email Sinh viên</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Email Sinh viên</label>
               <input
                 type="email"
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-type-body focus:border-blue-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Số điện thoại</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Số điện thoại</label>
               <input
                 type="text"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-type-body focus:border-blue-500 focus:outline-none"
               />
             </div>
           </div>
@@ -811,12 +811,12 @@ export default function StudentsPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3.5 min-w-0 flex-1">
                     {/* Avatar thương hiệu */}
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-base shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
                       {drawerOpenStudent.fullName.trim().split(' ').pop()?.slice(0, 2).toUpperCase() || 'SV'}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <h2 className="text-[18px] font-semibold leading-snug text-slate-900 dark:text-white break-words" title={drawerOpenStudent.fullName}>
+                      <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words" title={drawerOpenStudent.fullName}>
                         {drawerOpenStudent.fullName}
                       </h2>
 
@@ -824,7 +824,7 @@ export default function StudentsPage() {
                         <IdentifierBadge tone="neutral" title={drawerOpenStudent.studentCode}>
                           {drawerOpenStudent.studentCode}
                         </IdentifierBadge>
-                        <span className="inline-flex items-center rounded-lg px-2.5 py-0.5 text-[12px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
+                        <span className="inline-flex items-center rounded-lg px-2.5 py-0.5 text-type-helper font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
                           {drawerOpenStudent.class?.name || 'Chưa xếp lớp'}
                         </span>
                       </div>
@@ -856,7 +856,7 @@ export default function StudentsPage() {
                     <button
                       key={t.id}
                       onClick={() => handleTabChange(t.id as any)}
-                      className={`whitespace-nowrap border-b-2 px-4 py-3 text-[15px] transition cursor-pointer flex items-center gap-2 ${
+                      className={`whitespace-nowrap border-b-2 px-4 py-3 text-type-body transition cursor-pointer flex items-center gap-2 ${
                         isActive
                           ? 'border-blue-600 text-blue-600 font-semibold'
                           : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-semibold'
@@ -879,9 +879,9 @@ export default function StudentsPage() {
                       <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 text-center">
                         <div className="flex items-center justify-center gap-1.5 text-blue-600 dark:text-blue-400 mb-1">
                           <BookOpen className="h-4 w-4" />
-                          <span className="text-[12px] font-semibold text-slate-600 dark:text-slate-400">Môn đăng ký</span>
+                          <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400">Môn đăng ký</span>
                         </div>
-                        <p className="text-[20px] font-semibold text-blue-600 dark:text-blue-400">
+                        <p className="text-type-section font-semibold text-blue-600 dark:text-blue-400">
                           {drawerSubjects ? `${drawerSubjects.length} môn` : '--'}
                         </p>
                       </div>
@@ -889,9 +889,9 @@ export default function StudentsPage() {
                       <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 text-center">
                         <div className="flex items-center justify-center gap-1.5 text-blue-600 dark:text-blue-400 mb-1">
                           <Clock className="h-4 w-4" />
-                          <span className="text-[12px] font-semibold text-slate-600 dark:text-slate-400">Lịch thi</span>
+                          <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400">Lịch thi</span>
                         </div>
-                        <p className="text-[20px] font-semibold text-blue-600 dark:text-blue-400">
+                        <p className="text-type-section font-semibold text-blue-600 dark:text-blue-400">
                           {drawerSchedule ? `${drawerSchedule.length} ca` : '--'}
                         </p>
                       </div>
@@ -901,7 +901,7 @@ export default function StudentsPage() {
                     <div>
                       <div className="flex items-center gap-2 mb-3">
                         <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                        <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                        <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                           Hồ sơ sinh viên
                         </h3>
                       </div>
@@ -926,7 +926,7 @@ export default function StudentsPage() {
                               key={idx}
                               className="py-3 px-3 -mx-3 rounded-xl flex items-center justify-between gap-4 transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40 group"
                             >
-                              <span className="flex items-center gap-3 text-slate-700 dark:text-slate-200 text-[15px] font-semibold shrink-0">
+                              <span className="flex items-center gap-3 text-slate-700 dark:text-slate-200 text-type-body font-semibold shrink-0">
                                 {Icon && (
                                   <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100/70 dark:border-blue-900/50 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                     <Icon className="h-4 w-4" />
@@ -935,7 +935,7 @@ export default function StudentsPage() {
                                 <span>{r.label}</span>
                               </span>
 
-                              <span className="font-semibold text-slate-900 dark:text-white text-right text-[15px] leading-snug break-words max-w-[62%]">
+                              <span className="font-semibold text-slate-900 dark:text-white text-right text-type-body leading-snug break-words max-w-[62%]">
                                 {r.value}
                               </span>
                             </div>
@@ -956,11 +956,11 @@ export default function StudentsPage() {
                     ) : !drawerSubjects || drawerSubjects.length === 0 ? (
                       <div className="text-center py-12">
                         <BookOpen className="h-8 w-8 text-slate-400 mx-auto mb-2" />
-                        <p className="text-[14px] font-semibold text-slate-500">Sinh viên chưa đăng ký môn học nào.</p>
+                        <p className="text-type-body-sm font-semibold text-slate-500">Sinh viên chưa đăng ký môn học nào.</p>
                       </div>
                     ) : (
                       <>
-                        <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-950/60 rounded-xl px-4 py-3 border border-blue-200/80 dark:border-blue-800/60 text-[14px]">
+                        <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-950/60 rounded-xl px-4 py-3 border border-blue-200/80 dark:border-blue-800/60 text-type-body-sm">
                           <span className="font-semibold text-blue-900 dark:text-blue-200">Tổng cộng:</span>
                           <span className="font-semibold text-blue-700 dark:text-blue-300">
                             {drawerSubjects.length} môn • {drawerSubjects.reduce((acc: number, item: any) => acc + (item.subject?.credits || item.credits || 0), 0)} tín chỉ
@@ -973,14 +973,14 @@ export default function StudentsPage() {
                             return (
                               <div key={idx} className="py-3 px-3 -mx-3 rounded-xl flex items-center justify-between gap-3 hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
                                 <div className="min-w-0 flex-1">
-                                  <h4 className="text-[15px] font-semibold text-slate-900 dark:text-white break-words">{sub.subjectName || sub.name}</h4>
+                                  <h4 className="text-type-body font-semibold text-slate-900 dark:text-white break-words">{sub.subjectName || sub.name}</h4>
                                   <div className="mt-1 flex items-center gap-2 flex-wrap">
                                     <IdentifierBadge tone="neutral">{sub.subjectCode || sub.code}</IdentifierBadge>
-                                    <span className="text-[12px] font-semibold text-slate-500">{item.semester} • {item.schoolYear || item.year || ''}</span>
+                                    <span className="text-type-helper font-semibold text-slate-500">{item.semester} • {item.schoolYear || item.year || ''}</span>
                                   </div>
                                 </div>
                                 <div className="text-right shrink-0">
-                                  <span className="inline-block px-2.5 py-1 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60 rounded-lg text-[12px] font-semibold">
+                                  <span className="inline-block px-2.5 py-1 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60 rounded-lg text-type-helper font-semibold">
                                     {sub.credits} TC
                                   </span>
                                 </div>
@@ -1003,7 +1003,7 @@ export default function StudentsPage() {
                     ) : !drawerSchedule || drawerSchedule.length === 0 ? (
                       <div className="text-center py-12">
                         <Clock className="h-8 w-8 text-slate-400 mx-auto mb-2" />
-                        <p className="text-[14px] font-semibold text-slate-500">Chưa có lịch thi nào cho sinh viên này.</p>
+                        <p className="text-type-body-sm font-semibold text-slate-500">Chưa có lịch thi nào cho sinh viên này.</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -1012,22 +1012,22 @@ export default function StudentsPage() {
                             <div className="bg-slate-50/90 dark:bg-slate-800/80 px-4 py-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
                               <div className="flex items-center gap-2">
                                 <Calendar className="h-4 w-4 text-blue-600" />
-                                <span className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">
+                                <span className="text-type-helper font-semibold text-slate-800 dark:text-slate-200">
                                   {sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'} • {sched.startTime || ''} - {sched.endTime || ''}
                                 </span>
                               </div>
-                              <span className="px-2.5 py-0.5 rounded-lg text-[12px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
+                              <span className="px-2.5 py-0.5 rounded-lg text-type-helper font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
                                 {formatExamType(sched.examType)}
                               </span>
                             </div>
                             <div className="p-4 space-y-3">
                               <div>
-                                <h4 className="text-[15px] font-semibold text-slate-900 dark:text-white">{sched.subjectName || 'Môn thi'}</h4>
+                                <h4 className="text-type-body font-semibold text-slate-900 dark:text-white">{sched.subjectName || 'Môn thi'}</h4>
                                 <div className="mt-1">
                                   <IdentifierBadge tone="neutral">{sched.subjectCode}</IdentifierBadge>
                                 </div>
                               </div>
-                              <div className="grid grid-cols-2 gap-2 text-[13px] pt-2 border-t border-slate-100 dark:border-slate-800">
+                              <div className="grid grid-cols-2 gap-2 text-type-helper pt-2 border-t border-slate-100 dark:border-slate-800">
                                 <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-medium">
                                   <School className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                                   <span>Phòng: <strong className="font-semibold text-slate-900 dark:text-white">{sched.roomName || sched.roomCode}</strong></span>

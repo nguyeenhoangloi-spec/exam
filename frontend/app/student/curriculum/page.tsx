@@ -387,10 +387,10 @@ export default function StudentCurriculumPage() {
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">
-            <h1 className="text-[28px] font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+            <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
               Chương trình đào tạo
             </h1>
-            <div className="text-[14.5px] font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-1">
+            <div className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-1">
               <span>
                 Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '---'}</IdentifierBadge>
               </span>
@@ -424,10 +424,10 @@ export default function StudentCurriculumPage() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1 min-w-0">
-                    <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                    <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                       {item.title}
                     </span>
-                    <div className="text-[32px] font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                    <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
                       {item.value.toLocaleString('vi-VN')}
                       {item.unit || ''}
                     </div>
@@ -449,7 +449,7 @@ export default function StudentCurriculumPage() {
                 <div className="mt-2.5">
                   <span
                     title={item.subtext}
-                    className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+                    className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
                   >
                     {item.subtext}
                   </span>
@@ -474,7 +474,7 @@ export default function StudentCurriculumPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -490,7 +490,7 @@ export default function StudentCurriculumPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
@@ -587,15 +587,15 @@ export default function StudentCurriculumPage() {
         {loading ? (
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Đang tải Khung chương trình đào tạo...</p>
+            <p className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">Đang tải Khung chương trình đào tạo...</p>
           </div>
         ) : totalItems === 0 ? (
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
             <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center">
               <BookOpen className="w-7 h-7 text-blue-600 dark:text-blue-400" />
             </div>
-            <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">Không tìm thấy môn học nào</h3>
-            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 max-w-sm">
+            <h3 className="text-type-body font-semibold text-slate-800 dark:text-slate-200">Không tìm thấy môn học nào</h3>
+            <p className="text-type-helper font-medium text-slate-500 dark:text-slate-400 max-w-sm">
               Không có môn học nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
             </p>
           </div>
@@ -622,13 +622,13 @@ export default function StudentCurriculumPage() {
                         <button
                           type="button"
                           onClick={() => setDetailItem(item)}
-                          className="tabular-nums font-medium text-xs text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer shrink-0"
+                          className="tabular-nums font-medium text-type-helper text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer shrink-0"
                         >
                           <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
                         </button>
                       </div>
 
-                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700">
+                      <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700">
                         HK {item.recommendedSemester}
                       </span>
                     </div>
@@ -636,31 +636,31 @@ export default function StudentCurriculumPage() {
                     <div>
                       <h4
                         onClick={() => setDetailItem(item)}
-                        className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition line-clamp-1"
+                        className="text-type-body font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition line-clamp-1"
                       >
                         {item.subjectName}
                       </h4>
-                      {item.note && <p className="text-xs text-slate-400 font-normal mt-0.5 italic truncate">{item.note}</p>}
+                      {item.note && <p className="text-type-helper text-slate-400 font-normal mt-0.5 italic truncate">{item.note}</p>}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-400 font-normal pt-1 border-t border-slate-100/70 dark:border-slate-800/70">
+                    <div className="grid grid-cols-2 gap-2 text-type-helper text-slate-600 dark:text-slate-400 font-normal pt-1 border-t border-slate-100/70 dark:border-slate-800/70">
                       <div>
-                        <span className="text-slate-400 text-[12px] block">Số tín chỉ</span>
-                        <strong className="font-semibold text-slate-900 dark:text-slate-100 text-xs block">{item.credits} TC</strong>
+                        <span className="text-slate-400 text-type-helper block">Số tín chỉ</span>
+                        <strong className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper block">{item.credits} TC</strong>
                       </div>
                       <div>
-                        <span className="text-slate-400 text-[12px] block">Học kỳ</span>
-                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs block">Học kỳ {item.recommendedSemester}</span>
+                        <span className="text-slate-400 text-type-helper block">Học kỳ</span>
+                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper block">Học kỳ {item.recommendedSemester}</span>
                       </div>
                       <div>
-                        <span className="text-slate-400 text-[12px] block">Loại môn</span>
-                        <span className="font-semibold text-blue-600 dark:text-blue-400 text-xs block">
+                        <span className="text-slate-400 text-type-helper block">Loại môn</span>
+                        <span className="font-semibold text-blue-600 dark:text-blue-400 text-type-helper block">
                           {item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}
                         </span>
                       </div>
                       <div>
-                        <span className="text-slate-400 text-[12px] block">Trạng thái</span>
-                        <span className="font-semibold text-xs block">
+                        <span className="text-slate-400 text-type-helper block">Trạng thái</span>
+                        <span className="font-semibold text-type-helper block">
                           {item.isCompleted ? (
                             <span className="text-emerald-700 dark:text-emerald-400">Đã học</span>
                           ) : (
@@ -671,11 +671,11 @@ export default function StudentCurriculumPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+                  <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-type-helper">
                     <button
                       type="button"
                       onClick={() => setDetailItem(item)}
-                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-[14px] font-medium transition cursor-pointer"
+                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-type-body-sm font-medium transition cursor-pointer"
                     >
                       <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                       <span>Xem chi tiết</span>
@@ -725,16 +725,16 @@ export default function StudentCurriculumPage() {
                         <button
                           type="button"
                           onClick={() => setDetailItem(item)}
-                          className="text-[14.5px] font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                          className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
                         >
                           {item.subjectName}
                         </button>
-                        <span className="text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md">
+                        <span className="text-type-helper font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md">
                           {item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                      <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                         <span className="text-slate-800 dark:text-slate-200 font-medium">Học kỳ {item.recommendedSemester}</span>
                         <span className="text-slate-600 dark:text-slate-400 font-medium">{item.credits} tín chỉ</span>
                         {item.note && <span className="text-slate-400 italic truncate max-w-xs">{item.note}</span>}
@@ -769,9 +769,9 @@ export default function StudentCurriculumPage() {
           /* ── 5.3 Standard List View Mode (Default Table) ── */
           <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="ui-table w-full text-left text-[15px] text-slate-700 dark:text-slate-300 border-collapse">
+              <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 text-[14px] font-medium text-slate-600 dark:text-slate-400 select-none">
+                  <tr className="border-b border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 text-type-body-sm font-medium text-slate-600 dark:text-slate-400 select-none">
                     <th className="py-3 px-4 w-12 text-center">
                       <input
                         type="checkbox"
@@ -811,7 +811,7 @@ export default function StudentCurriculumPage() {
                             <button
                               type="button"
                               onClick={() => setDetailItem(item)}
-                              className="tabular-nums font-medium text-[15px] leading-[22px] text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer"
+                              className="tabular-nums font-medium text-type-body leading-[22px] text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer"
                             >
                               <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
                             </button>
@@ -819,30 +819,30 @@ export default function StudentCurriculumPage() {
                         )}
                         {visibleColumns.name && (
                           <td className="py-3.5 px-4 min-w-[240px]">
-                            <div className="font-medium text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-[15px]" onClick={() => setDetailItem(item)}>
+                            <div className="font-medium text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-type-body" onClick={() => setDetailItem(item)}>
                               {item.subjectName}
                             </div>
-                            {item.note && <p className="table-meta text-[13px] text-slate-400 italic truncate max-w-md mt-0.5">{item.note}</p>}
+                            {item.note && <p className="table-meta text-type-helper text-slate-400 italic truncate max-w-md mt-0.5">{item.note}</p>}
                           </td>
                         )}
                         {visibleColumns.semester && (
-                          <td className="py-3.5 px-4 text-center font-normal text-slate-600 dark:text-slate-400 text-[15px] tabular-nums">
+                          <td className="py-3.5 px-4 text-center font-normal text-slate-600 dark:text-slate-400 text-type-body tabular-nums">
                             HK {item.recommendedSemester}
                           </td>
                         )}
                         {visibleColumns.credits && (
-                          <td className="py-3.5 px-4 text-center font-normal text-slate-700 dark:text-slate-300 text-[15px] tabular-nums">
+                          <td className="py-3.5 px-4 text-center font-normal text-slate-700 dark:text-slate-300 text-type-body tabular-nums">
                             {item.credits}
                           </td>
                         )}
                         {visibleColumns.type && (
                           <td className="py-3.5 px-4 whitespace-nowrap">
                             {item.type === 'MANDATORY' ? (
-                              <span className="table-badge inline-flex items-center gap-1.5 text-[13.5px] font-medium text-blue-600 dark:text-blue-400">
+                              <span className="table-badge inline-flex items-center gap-1.5 text-type-helper font-medium text-blue-600 dark:text-blue-400">
                                 <Award className="h-3.5 w-3.5" /> Bắt buộc
                               </span>
                             ) : (
-                              <span className="table-badge inline-flex items-center gap-1.5 text-[13.5px] font-medium text-blue-600 dark:text-blue-400">
+                              <span className="table-badge inline-flex items-center gap-1.5 text-type-helper font-medium text-blue-600 dark:text-blue-400">
                                 <GraduationCap className="h-3.5 w-3.5" /> Tự chọn
                               </span>
                             )}
@@ -851,11 +851,11 @@ export default function StudentCurriculumPage() {
                         {visibleColumns.status && (
                           <td className="py-3.5 px-4 text-center whitespace-nowrap">
                             {item.isCompleted ? (
-                              <span className="table-badge inline-flex items-center gap-1.5 text-[13.5px] font-medium text-blue-600 dark:text-blue-400">
+                              <span className="table-badge inline-flex items-center gap-1.5 text-type-helper font-medium text-blue-600 dark:text-blue-400">
                                 <CheckCircle2 className="h-4 w-4 text-blue-600" /> Đã học
                               </span>
                             ) : (
-                              <span className="table-badge inline-flex items-center gap-1.5 text-[13.5px] font-medium text-slate-500 dark:text-slate-400">
+                              <span className="table-badge inline-flex items-center gap-1.5 text-type-helper font-medium text-slate-500 dark:text-slate-400">
                                 <Clock className="h-3.5 w-3.5 text-slate-400" /> Chưa học
                               </span>
                             )}
@@ -990,16 +990,16 @@ export default function StudentCurriculumPage() {
                     <div className="flex items-center gap-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-100 dark:border-emerald-800 p-3.5">
                       <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                       <div>
-                        <p className="text-[13px] font-semibold text-emerald-900 dark:text-emerald-100">Đã tích lũy thành công</p>
-                        <p className="text-[12px] text-emerald-700 dark:text-emerald-400 font-medium mt-0.5">Sinh viên đã hoàn thành và tích lũy đủ tín chỉ môn học này.</p>
+                        <p className="text-type-helper font-semibold text-emerald-900 dark:text-emerald-100">Đã tích lũy thành công</p>
+                        <p className="text-type-helper text-emerald-700 dark:text-emerald-400 font-medium mt-0.5">Sinh viên đã hoàn thành và tích lũy đủ tín chỉ môn học này.</p>
                       </div>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3.5">
                       <Clock className="h-5 w-5 text-slate-400 shrink-0" />
                       <div>
-                        <p className="text-[13px] font-semibold text-slate-700 dark:text-slate-300">Chưa tích lũy</p>
-                        <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Cần đăng ký học theo đúng kế hoạch đào tạo của khoa.</p>
+                        <p className="text-type-helper font-semibold text-slate-700 dark:text-slate-300">Chưa tích lũy</p>
+                        <p className="text-type-helper text-slate-500 dark:text-slate-400 font-medium mt-0.5">Cần đăng ký học theo đúng kế hoạch đào tạo của khoa.</p>
                       </div>
                     </div>
                   )}

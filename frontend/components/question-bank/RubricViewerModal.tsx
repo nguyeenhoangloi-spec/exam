@@ -96,11 +96,11 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-            <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
               Đề bài câu hỏi
             </h4>
           </div>
-          <p className="text-[15px] leading-relaxed text-slate-800 dark:text-slate-200 font-normal">
+          <p className="text-type-body leading-relaxed text-slate-800 dark:text-slate-200 font-normal">
             {question.content}
           </p>
         </div>
@@ -109,16 +109,16 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
         <div className="space-y-2 pt-3.5 border-t border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2">
             <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-            <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
               Đáp án mẫu & Hướng dẫn giải
             </h4>
           </div>
           {sampleAns ? (
-            <p className="text-[15px] leading-relaxed text-slate-800 dark:text-slate-200 font-normal whitespace-pre-wrap">
+            <p className="text-type-body leading-relaxed text-slate-800 dark:text-slate-200 font-normal whitespace-pre-wrap">
               {sampleAns}
             </p>
           ) : (
-            <p className="text-sm text-slate-400 italic">
+            <p className="text-type-body-sm text-slate-400 italic">
               Chưa có văn bản đáp án mẫu trong ngân hàng câu hỏi.
             </p>
           )}
@@ -129,11 +129,11 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-              <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+              <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
                 Tiêu chí chấm điểm chi tiết ({criteria.length > 0 ? criteria.length : 1})
               </h4>
             </div>
-            <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
+            <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
               Tổng: {question.score || totalRubricScore || 0}đ
             </span>
           </div>
@@ -151,22 +151,22 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
                 >
                   <div className="space-y-1 min-w-0 flex-1">
                     <div className="flex items-center gap-2.5">
-                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold text-xs">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold text-type-helper">
                         {idx + 1}
                       </span>
-                      <span className="font-semibold text-[15px] text-slate-900 dark:text-slate-100">
+                      <span className="font-semibold text-type-body text-slate-900 dark:text-slate-100">
                         {c.label}
                       </span>
                     </div>
 
                     {c.description && (
-                      <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed pl-7.5">
+                      <p className="text-type-body-sm text-slate-500 dark:text-slate-400 leading-relaxed pl-7.5">
                         {c.description}
                       </p>
                     )}
 
                     {(c.fullCreditGuide || c.partialCreditGuide || c.zeroCreditGuide) && (
-                      <div className="text-xs space-y-0.5 pt-1 text-slate-500 pl-7.5 font-normal">
+                      <div className="text-type-helper space-y-0.5 pt-1 text-slate-500 pl-7.5 font-normal">
                         {c.fullCreditGuide && (
                           <div>• <span className="font-medium text-emerald-600 dark:text-emerald-400">Đạt tối đa:</span> {c.fullCreditGuide}</div>
                         )}
@@ -181,7 +181,7 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
                   </div>
 
                   <div className="shrink-0 pt-0.5 text-right">
-                    <span className="font-semibold text-sm text-blue-600 dark:text-blue-400 tabular-nums">
+                    <span className="font-semibold text-type-body-sm text-blue-600 dark:text-blue-400 tabular-nums">
                       {c.maxScore}đ
                     </span>
                   </div>
@@ -189,7 +189,7 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
               ))}
             </div>
           ) : (
-            <div className="py-2.5 text-sm text-slate-500 italic">
+            <div className="py-2.5 text-type-body-sm text-slate-500 italic">
               Chưa bóc tách tiêu chí chi tiết (Hệ thống áp dụng 1 tiêu chí mặc định toàn vẹn {question.score || 0}đ).
             </div>
           )}

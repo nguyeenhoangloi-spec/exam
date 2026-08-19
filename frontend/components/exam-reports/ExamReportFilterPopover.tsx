@@ -182,7 +182,7 @@ export function ExamReportFilterPopover({
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         onClick={() => setIsOpen(!isOpen)}
-        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-medium transition-all duration-150 cursor-pointer shadow-2xs select-none ${activeFilterCount > 0
+        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-type-helper font-medium transition-all duration-150 cursor-pointer shadow-2xs select-none ${activeFilterCount > 0
             ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-semibold'
             : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-slate-300/90 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
           }`}
@@ -207,7 +207,7 @@ export function ExamReportFilterPopover({
                 onResetAll();
               }}
               title="Nhấn để xóa nhanh toàn bộ lọc (1-Click Reset)"
-              className="group/badge relative flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 hover:bg-rose-500 text-[12px] font-semibold text-white shadow-2xs transition-colors cursor-pointer"
+              className="group/badge relative flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 hover:bg-rose-500 text-type-helper font-semibold text-white shadow-2xs transition-colors cursor-pointer"
             >
               <span className="group-hover/badge:hidden">{activeFilterCount}</span>
               <X className="hidden h-3 w-3 group-hover/badge:block stroke-[3]" />
@@ -238,10 +238,10 @@ export function ExamReportFilterPopover({
                   <Filter className="h-3.5 w-3.5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 leading-none">
+                  <h4 className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                     Bộ lọc báo cáo
                   </h4>
-                  <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
                     Lọc dữ liệu tổng hợp &amp; danh sách điểm thi
                   </p>
                 </div>
@@ -252,7 +252,7 @@ export function ExamReportFilterPopover({
                   <button
                     type="button"
                     onClick={onResetAll}
-                    className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-100/80 dark:hover:bg-slate-800 px-2.5 py-1 rounded-xl transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 text-type-helper font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-100/80 dark:hover:bg-slate-800 px-2.5 py-1 rounded-xl transition-colors cursor-pointer"
                     title="Xóa tất cả bộ lọc đang áp dụng"
                   >
                     <RotateCcw className="h-3 w-3" />
@@ -282,7 +282,7 @@ export function ExamReportFilterPopover({
                       key={cat.id}
                       type="button"
                       onClick={() => setActiveCategory(cat.id)}
-                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${isActive
+                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-type-helper font-medium transition-all duration-150 cursor-pointer border ${isActive
                           ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold shadow-2xs'
                           : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
                         }`}
@@ -293,11 +293,11 @@ export function ExamReportFilterPopover({
                       </div>
 
                       {cat.badge ? (
-                        <span className="h-4 min-w-[16px] rounded-full bg-blue-600 px-1 text-[12px] font-semibold text-white flex items-center justify-center">
+                        <span className="h-4 min-w-[16px] rounded-full bg-blue-600 px-1 text-type-helper font-semibold text-white flex items-center justify-center">
                           {cat.badge}
                         </span>
                       ) : (
-                        <span className={`text-[12px] font-normal ${isActive ? 'text-blue-400 dark:text-blue-500' : 'text-slate-300 dark:text-slate-600'}`}>
+                        <span className={`text-type-helper font-normal ${isActive ? 'text-blue-400 dark:text-blue-500' : 'text-slate-300 dark:text-slate-600'}`}>
                           {cat.shortcut}
                         </span>
                       )}
@@ -306,9 +306,9 @@ export function ExamReportFilterPopover({
                 })}
 
                 <div className="pt-3 px-2">
-                  <div className="text-[12px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                  <div className="text-type-helper text-slate-400 dark:text-slate-500 flex items-center gap-1">
                     <span>Phím:</span>
-                    <kbd className="px-1 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 font-normal text-[12px] text-slate-600 dark:text-slate-400">1-5</kbd>
+                    <kbd className="px-1 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 font-normal text-type-helper text-slate-600 dark:text-slate-400">1-5</kbd>
                   </div>
                 </div>
               </div>
@@ -318,7 +318,7 @@ export function ExamReportFilterPopover({
                 {/* ── TAB 1: LỌC NHANH (PRESETS) ── */}
                 {activeCategory === 'presets' && (
                   <div className="space-y-1.5">
-                    <p className="text-[12px] font-medium tracking-wider text-slate-400 dark:text-slate-500 mb-2 px-1">
+                    <p className="text-type-helper font-medium tracking-wider text-slate-400 dark:text-slate-500 mb-2 px-1">
                       Gợi ý bộ lọc phổ biến:
                     </p>
 
@@ -334,10 +334,10 @@ export function ExamReportFilterPopover({
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-xs font-semibold ${summaryFilters.examPeriodId === String(summaryOptions.periods[0].id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className={`text-type-helper font-semibold ${summaryFilters.examPeriodId === String(summaryOptions.periods[0].id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                             Kỳ thi {summaryOptions.periods[0].name}
                           </div>
-                          <div className={`text-[12px] truncate ${summaryFilters.examPeriodId === String(summaryOptions.periods[0].id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          <div className={`text-type-helper truncate ${summaryFilters.examPeriodId === String(summaryOptions.periods[0].id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                             Đợt thi gần nhất trong hệ thống
                           </div>
                         </div>
@@ -360,10 +360,10 @@ export function ExamReportFilterPopover({
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-xs font-semibold ${summaryFilters.departmentId === String(summaryOptions.departments[0].id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className={`text-type-helper font-semibold ${summaryFilters.departmentId === String(summaryOptions.departments[0].id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                             Khoa {summaryOptions.departments[0].name}
                           </div>
-                          <div className={`text-[12px] truncate ${summaryFilters.departmentId === String(summaryOptions.departments[0].id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          <div className={`text-type-helper truncate ${summaryFilters.departmentId === String(summaryOptions.departments[0].id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                             Thống kê toàn khoa chuyên môn
                           </div>
                         </div>
@@ -388,10 +388,10 @@ export function ExamReportFilterPopover({
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-semibold ${summaryFilters.examPeriodId === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-type-helper font-semibold ${summaryFilters.examPeriodId === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                           Tất cả các kỳ thi
                         </div>
-                        <div className={`text-[12px] truncate ${summaryFilters.examPeriodId === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className={`text-type-helper truncate ${summaryFilters.examPeriodId === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                           Toàn bộ các đợt thi trong hệ thống
                         </div>
                       </div>
@@ -409,10 +409,10 @@ export function ExamReportFilterPopover({
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-xs font-semibold ${summaryFilters.examPeriodId === String(item.id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className={`text-type-helper font-semibold ${summaryFilters.examPeriodId === String(item.id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                             {item.name}
                           </div>
-                          <div className={`text-[12px] truncate ${summaryFilters.examPeriodId === String(item.id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          <div className={`text-type-helper truncate ${summaryFilters.examPeriodId === String(item.id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                             Đợt thi #{item.id}
                           </div>
                         </div>
@@ -434,10 +434,10 @@ export function ExamReportFilterPopover({
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-semibold ${summaryFilters.subjectId === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-type-helper font-semibold ${summaryFilters.subjectId === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                           Tất cả các môn
                         </div>
-                        <div className={`text-[12px] truncate ${summaryFilters.subjectId === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className={`text-type-helper truncate ${summaryFilters.subjectId === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                           Toàn bộ danh mục môn thi
                         </div>
                       </div>
@@ -455,10 +455,10 @@ export function ExamReportFilterPopover({
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-xs font-semibold ${summaryFilters.subjectId === String(item.id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className={`text-type-helper font-semibold ${summaryFilters.subjectId === String(item.id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                             {item.name}
                           </div>
-                          <div className={`text-[12px] truncate ${summaryFilters.subjectId === String(item.id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          <div className={`text-type-helper truncate ${summaryFilters.subjectId === String(item.id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                             Mã môn: {item.code}
                           </div>
                         </div>
@@ -480,10 +480,10 @@ export function ExamReportFilterPopover({
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-semibold ${summaryFilters.departmentId === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-type-helper font-semibold ${summaryFilters.departmentId === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                           Tất cả các khoa
                         </div>
-                        <div className={`text-[12px] truncate ${summaryFilters.departmentId === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className={`text-type-helper truncate ${summaryFilters.departmentId === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                           Toàn bộ đơn vị chuyên môn
                         </div>
                       </div>
@@ -501,10 +501,10 @@ export function ExamReportFilterPopover({
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-xs font-semibold ${summaryFilters.departmentId === String(item.id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className={`text-type-helper font-semibold ${summaryFilters.departmentId === String(item.id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                             {item.name}
                           </div>
-                          <div className={`text-[12px] truncate ${summaryFilters.departmentId === String(item.id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          <div className={`text-type-helper truncate ${summaryFilters.departmentId === String(item.id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                             Khoa quản lý chuyên ngành #{item.id}
                           </div>
                         </div>
@@ -526,10 +526,10 @@ export function ExamReportFilterPopover({
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-semibold ${summaryFilters.classId === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-type-helper font-semibold ${summaryFilters.classId === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                           Tất cả các lớp
                         </div>
-                        <div className={`text-[12px] truncate ${summaryFilters.classId === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className={`text-type-helper truncate ${summaryFilters.classId === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                           Toàn bộ sinh viên các lớp
                         </div>
                       </div>
@@ -547,10 +547,10 @@ export function ExamReportFilterPopover({
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-xs font-semibold ${summaryFilters.classId === String(item.id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className={`text-type-helper font-semibold ${summaryFilters.classId === String(item.id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                             {item.name}
                           </div>
-                          <div className={`text-[12px] truncate ${summaryFilters.classId === String(item.id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          <div className={`text-type-helper truncate ${summaryFilters.classId === String(item.id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                             Lớp sinh viên khóa đào tạo #{item.id}
                           </div>
                         </div>
@@ -564,7 +564,7 @@ export function ExamReportFilterPopover({
 
             {/* 3. Footer */}
             <div className="shrink-0 flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
-              <div className="text-[12px] font-medium text-slate-600 dark:text-slate-300">
+              <div className="text-type-helper font-medium text-slate-600 dark:text-slate-300">
                 {activeFilterCount > 0 ? (
                   <>Đang áp dụng <strong className="font-semibold text-blue-600 dark:text-blue-400">{activeFilterCount}</strong> tiêu chí lọc</>
                 ) : (
@@ -575,7 +575,7 @@ export function ExamReportFilterPopover({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
+                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-type-helper font-semibold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
               >
                 <CheckCheck className="h-3.5 w-3.5" />
                 <span>Xem kết quả</span>

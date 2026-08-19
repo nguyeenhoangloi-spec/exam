@@ -48,7 +48,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
         <h3 className="edu-card-title">Công việc cần xử lý</h3>
-        <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full">
+        <span className="inline-flex items-center gap-1 text-type-helper font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full">
           <span>Ưu tiên khảo thí</span>
         </span>
       </div>
@@ -70,10 +70,10 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
                   <Icon className="h-4.5 w-4.5" />
                 </div>
                 <div className="min-w-0 leading-tight">
-                  <h4 className="text-[14px] font-semibold text-slate-900 dark:text-slate-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h4 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {task.title}
                   </h4>
-                  <p className="text-[12.5px] font-normal text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                  <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400 truncate mt-0.5">
                     {task.subtitle}
                   </p>
                 </div>
@@ -81,7 +81,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
 
               {/* Right count and arrow */}
               <div className="flex items-center gap-2 shrink-0">
-                <span className="inline-flex items-center justify-center min-w-[24px] px-2 py-0.5 rounded-lg text-[13px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 group-hover:bg-blue-50 group-hover:text-blue-600 transition">
+                <span className="inline-flex items-center justify-center min-w-[24px] px-2 py-0.5 rounded-lg text-type-helper font-semibold bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 group-hover:bg-blue-50 group-hover:text-blue-600 transition">
                   {task.count}
                 </span>
                 <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
@@ -92,7 +92,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
       </div>
 
       {/* Footer hint */}
-      <div className="border-t border-slate-100 dark:border-slate-800 pt-2 flex items-center justify-between text-[12.5px]">
+      <div className="border-t border-slate-100 dark:border-slate-800 pt-2 flex items-center justify-between text-type-helper">
         <span className="text-slate-400">Trạng thái công việc</span>
         <span className="font-semibold text-blue-600 dark:text-blue-400">
           Tự động đồng bộ

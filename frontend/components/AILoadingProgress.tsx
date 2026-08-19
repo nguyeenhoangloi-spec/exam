@@ -33,10 +33,10 @@ export function AILoadingProgress({
  <span className="absolute -bottom-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500 ring-2 ring-white" />
  </div>
  <div>
- <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+ <h4 className="text-type-body-sm font-semibold text-slate-900 flex items-center gap-2">
  {title}
  </h4>
- <p className="text-xs text-slate-500 font-medium">{message}</p>
+ <p className="text-type-helper text-slate-500 font-medium">{message}</p>
  </div>
  </div>
  <div className="text-right">
@@ -65,7 +65,7 @@ export function AILoadingProgress({
  return (
  <div
  key={s.id}
- className={`inline-flex items-center gap-[6px] text-[14px] leading-5 font-semibold transition ${
+ className={`inline-flex items-center gap-[6px] text-type-body-sm leading-5 font-semibold transition ${
  isDone
  ? 'text-success-600'
  : isCurrent
@@ -80,7 +80,7 @@ export function AILoadingProgress({
  ) : (
  <Icon className="h-4 w-4 shrink-0 text-slate-400" />
  )}
- <span className="truncate text-[13px] font-semibold">{s.label}</span>
+ <span className="truncate text-type-helper font-semibold">{s.label}</span>
  </div>
  );
  })}

@@ -104,32 +104,32 @@ export function ExamReportTable({
  <div>
  <h4
  onClick={() => onDetail(c)}
- className="text-sm font-semibold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
+ className="text-type-body-sm font-semibold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition"
  >
  {c.fullName}
  </h4>
- <span className="text-xs font-semibold text-slate-500 flex items-center gap-1 mt-0.5">
+ <span className="text-type-helper font-semibold text-slate-500 flex items-center gap-1 mt-0.5">
  <GraduationCap className="h-3.5 w-3.5 text-slate-400" /> {c.className}
  </span>
  </div>
 
  <div className="flex items-center justify-between pt-1">
  <div className="flex flex-col">
- <span className="text-[12px] text-slate-400 font-semibold ">Điểm số thi</span>
- <span className={`text-lg font-semibold ${c.status === 'ABSENT' ? 'text-rose-600' : isPassed ? 'text-emerald-600' : 'text-rose-600'}`}>
+ <span className="text-type-helper text-slate-400 font-semibold ">Điểm số thi</span>
+ <span className={`text-type-card font-semibold ${c.status === 'ABSENT' ? 'text-rose-600' : isPassed ? 'text-emerald-600' : 'text-rose-600'}`}>
  {c.status === 'ABSENT' ? 'Vắng thi' : `${c.totalScore} / 10`}
  </span>
  </div>
 
  {c.violationCount > 0 && (
- <span className="inline-flex items-center gap-1 rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700">
+ <span className="inline-flex items-center gap-1 rounded-lg bg-rose-50 px-2.5 py-1 text-type-helper font-semibold text-rose-700">
  <AlertTriangle className="h-3.5 w-3.5 text-rose-600" /> {c.violationCount} vi phạm
  </span>
  )}
  </div>
  </div>
 
- <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-xs font-semibold">
+ <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-type-helper font-semibold">
                 <button
                   type="button"
                   onClick={() => onDetail(c)}
@@ -191,7 +191,7 @@ export function ExamReportTable({
                   <button
                     type="button"
                     onClick={() => onDetail(c)}
-                    className="tabular-nums text-xs font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
+                    className="tabular-nums text-type-helper font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
                   >
                     <IdentifierBadge tone="blue">{c.studentCode}</IdentifierBadge>
                   </button>
@@ -201,18 +201,18 @@ export function ExamReportTable({
                     <div className="flex items-center gap-2 flex-wrap">
                       <h4
                         onClick={() => onDetail(c)}
-                        className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
+                        className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
                       >
                         {c.fullName}
                       </h4>
                       {c.className && (
-                        <span className="text-xs text-slate-500 dark:text-slate-400 font-normal">
+                        <span className="text-type-helper text-slate-500 dark:text-slate-400 font-normal">
                           ({c.className})
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-3.5 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                    <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
                       <span className="flex items-center gap-1">
                         <Award className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>
@@ -250,7 +250,7 @@ export function ExamReportTable({
                     <button
                       type="button"
                       onClick={() => setReviewAttemptId(c.attemptId!)}
-                      className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-400 dark:hover:bg-blue-900/60 text-xs font-semibold transition cursor-pointer"
+                      className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-400 dark:hover:bg-blue-900/60 text-type-helper font-semibold transition cursor-pointer"
                       title="Xem bài làm"
                     >
                       <FileText className="h-3.5 w-3.5" />
@@ -285,8 +285,8 @@ export function ExamReportTable({
  return (
  <>
  <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
- <table className="ui-table w-full text-left text-[15px] text-slate-700 border-collapse">
- <thead className="bg-slate-50 text-[14px] font-medium tracking-wider text-slate-600 border-b border-slate-200">
+ <table className="ui-table w-full text-left text-type-body text-slate-700 border-collapse">
+ <thead className="bg-slate-50 text-type-body-sm font-medium tracking-wider text-slate-600 border-b border-slate-200">
  <tr>
  <th scope="col" className="p-3.5 pl-4 text-center w-10">
  <input
@@ -362,7 +362,7 @@ export function ExamReportTable({
  <StatusBadge status="ABSENT" customLabel="Vắng thi" />
  ) : (
  <span
- className={`text-[15px] ${c.totalScore >= 5 ? 'text-emerald-600 font-medium' : 'text-rose-600 font-medium'
+ className={`text-type-body ${c.totalScore >= 5 ? 'text-emerald-600 font-medium' : 'text-rose-600 font-medium'
  }`}
  >
  {c.totalScore}
@@ -387,7 +387,7 @@ export function ExamReportTable({
  {visibleColumns.violationCount !== false && (
  <td className="p-3.5 whitespace-nowrap text-center">
  {c.violationCount > 0 ? (
- <span className="table-badge inline-flex items-center gap-1 rounded-lg bg-rose-50 px-2 py-0.5 text-[15px] leading-[18px] font-medium text-rose-700 border border-rose-200">
+ <span className="table-badge inline-flex items-center gap-1 rounded-lg bg-rose-50 px-2 py-0.5 text-type-body leading-[18px] font-medium text-rose-700 border border-rose-200">
  <AlertTriangle className="h-3 w-3 text-rose-600" /> {c.violationCount}
  </span>
  ) : (
@@ -422,7 +422,7 @@ export function ExamReportTable({
                                 closeMenu();
                                 setReviewAttemptId(c.attemptId!);
                               }}
-                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[15px] font-medium transition cursor-pointer select-none"
+                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
                             >
                               <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                               <span>Xem bài làm</span>
@@ -434,7 +434,7 @@ export function ExamReportTable({
                               closeMenu();
                               onDetail(c);
                             }}
-                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[15px] font-medium transition cursor-pointer select-none"
+                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
                           >
                             <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                             <span>Xem chi tiết</span>

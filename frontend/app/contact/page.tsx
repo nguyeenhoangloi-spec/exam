@@ -319,10 +319,10 @@ export default function ContactSupportPage() {
               <GraduationCap className="h-6 w-6" />
             </div>
             <div>
-              <span className="text-[20px] font-semibold tracking-tight text-slate-900 dark:text-white leading-none block">
+              <span className="text-type-section font-semibold tracking-tight text-slate-900 dark:text-white block">
                 EXAMSYS
               </span>
-              <span className="text-[12px] font-semibold tracking-wider text-blue-600 dark:text-blue-400  mt-0.5 block">
+              <span className="text-type-helper font-semibold tracking-wider text-blue-600 dark:text-blue-400  mt-0.5 block">
                 TRUNG TÂM HỖ TRỢ KHẢO THÍ
               </span>
             </div>
@@ -333,7 +333,7 @@ export default function ContactSupportPage() {
             <button
               type="button"
               onClick={() => setShowSupportDrawer(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[13.5px] font-semibold transition active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-type-body-sm font-semibold transition active:scale-95 cursor-pointer"
               title="Xem thông tin chi tiết Trung tâm Khảo thí & Hotline"
             >
               <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
@@ -344,7 +344,7 @@ export default function ContactSupportPage() {
             <button
               type="button"
               onClick={() => router.push('/login')}
-              className="group relative inline-flex items-center gap-2.5 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-[13.5px] font-semibold shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0"
+              className="group relative inline-flex items-center gap-2.5 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-type-body-sm font-semibold shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0"
             >
               <span>Đăng nhập</span>
               <div className="flex h-5 w-5 items-center justify-center rounded-lg bg-white/20 text-white transition-transform duration-200 group-hover:translate-x-0.5">
@@ -369,13 +369,13 @@ export default function ContactSupportPage() {
       <main className="relative z-10 max-w-[1240px] mx-auto px-6 sm:px-10 py-10 space-y-12 w-full">
         {/* Search Hero Section */}
         <section className="text-center space-y-5 max-w-3xl mx-auto pt-2">
-          <h1 className="text-xl sm:text-xl lg:text-[44px] font-semibold tracking-tight leading-[1.15] text-slate-900 dark:text-white">
+          <h1 className="text-type-page lg:text-type-display font-semibold tracking-tight text-slate-900 dark:text-white">
             Chúng tôi có thể giúp gì <br />
             <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-sky-300">
               cho kỳ thi của bạn?
             </span>
           </h1>
-          <p className="text-[15px] sm:text-[15px] text-slate-600 dark:text-slate-300 font-normal leading-relaxed">
+          <p className="text-type-body sm:text-type-body text-slate-600 dark:text-slate-300 font-normal leading-relaxed">
             Tra cứu hướng dẫn xử lý sự cố trực tuyến, quy chế thi học kỳ hoặc gửi phiếu hỗ trợ kỹ thuật đến Quản trị viên.
           </p>
 
@@ -392,7 +392,7 @@ export default function ContactSupportPage() {
                 onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Tìm kiếm quy chế thi, xử lý rớt mạng, phúc khảo..."
-                className="w-full h-14 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 py-3 pl-12 pr-12 text-[15px] font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/15 transition shadow-sm backdrop-blur-sm"
+                className="w-full h-14 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 py-3 pl-12 pr-12 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/15 transition shadow-sm backdrop-blur-sm"
               />
               {searchQuery && (
                 <button
@@ -408,7 +408,7 @@ export default function ContactSupportPage() {
             {/* Autocomplete Search Suggestions Dropdown */}
             {(isSearchFocused || searchQuery.trim().length > 0) && (
               <div className="absolute left-0 right-0 top-full z-30 mt-2 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 shadow-2xl space-y-2 text-left animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl">
-                <div className="flex items-center justify-between px-2 text-[12px] font-semibold text-slate-400 dark:text-slate-500 tracking-wider">
+                <div className="flex items-center justify-between px-2 text-type-helper font-semibold text-slate-400 dark:text-slate-500 tracking-wider">
                   <span>{searchQuery.trim() ? 'Gợi ý bài viết phù hợp' : 'Tìm kiếm phổ biến nhất'}</span>
                   <span>{searchSuggestions.length} kết quả</span>
                 </div>
@@ -423,20 +423,20 @@ export default function ContactSupportPage() {
                       >
                         <div className="space-y-0.5 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="shrink-0 text-[12px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md">
+                            <span className="shrink-0 text-type-helper font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md">
                               {art.categoryLabel}
                             </span>
-                            <h4 className="text-[14px] font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition truncate">
+                            <h4 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition truncate">
                               {art.title}
                             </h4>
                           </div>
-                          <p className="text-[12.5px] text-slate-500 dark:text-slate-400 line-clamp-1 font-medium">{art.summary}</p>
+                          <p className="text-type-helper text-slate-500 dark:text-slate-400 line-clamp-1 font-medium">{art.summary}</p>
                         </div>
                         <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition shrink-0 mt-1" />
                       </div>
                     ))
                   ) : (
-                    <div className="p-4 text-center text-xs font-semibold text-slate-400 dark:text-slate-500">
+                    <div className="p-4 text-center text-type-helper font-semibold text-slate-400 dark:text-slate-500">
                       Không tìm thấy bài viết phù hợp với &quot;{searchQuery}&quot;
                     </div>
                   )}
@@ -444,13 +444,13 @@ export default function ContactSupportPage() {
 
                 {/* Hot Tags */}
                 <div className="border-t border-slate-100 dark:border-slate-800 pt-2.5 flex items-center gap-1.5 flex-wrap px-1">
-                  <span className="text-[12px] font-semibold text-slate-400 dark:text-slate-500 shrink-0">Từ khóa hot:</span>
+                  <span className="text-type-helper font-semibold text-slate-400 dark:text-slate-500 shrink-0">Từ khóa hot:</span>
                   {popularSearchTags.map((tag) => (
                     <button
                       key={tag}
                       type="button"
                       onMouseDown={() => setSearchQuery(tag)}
-                      className="rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950 text-slate-700 dark:text-slate-300 hover:text-blue-600 text-[12px] font-semibold px-2.5 py-1 transition cursor-pointer"
+                      className="rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950 text-slate-700 dark:text-slate-300 hover:text-blue-600 text-type-helper font-semibold px-2.5 py-1 transition cursor-pointer"
                     >
                       #{tag}
                     </button>
@@ -468,9 +468,9 @@ export default function ContactSupportPage() {
               <Phone className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">Tổng đài hỗ trợ 24/7</h3>
-              <p className="text-[14px] text-blue-600 dark:text-blue-400 font-semibold mt-1">1800-EXAM-HELP</p>
-              <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5">Miễn phí cước gọi từ mọi mạng viễn thông</p>
+              <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">Tổng đài hỗ trợ 24/7</h3>
+              <p className="text-type-body-sm text-blue-600 dark:text-blue-400 font-semibold mt-1">1800-EXAM-HELP</p>
+              <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">Miễn phí cước gọi từ mọi mạng viễn thông</p>
             </div>
           </div>
 
@@ -479,9 +479,9 @@ export default function ContactSupportPage() {
               <Mail className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">Email Tiếp nhận Sự cố</h3>
-              <p className="text-[14px] text-blue-600 dark:text-blue-400 font-semibold mt-1">support@exam.edu.vn</p>
-              <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5">Thời gian phản hồi trung bình: dưới 15 phút</p>
+              <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">Email Tiếp nhận Sự cố</h3>
+              <p className="text-type-body-sm text-blue-600 dark:text-blue-400 font-semibold mt-1">support@exam.edu.vn</p>
+              <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">Thời gian phản hồi trung bình: dưới 15 phút</p>
             </div>
           </div>
 
@@ -490,9 +490,9 @@ export default function ContactSupportPage() {
               <Building2 className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">Văn phòng Khảo thí</h3>
-              <p className="text-[14px] text-slate-800 dark:text-slate-200 font-semibold mt-1">Tòa nhà A1 - Trung tâm Khảo thí</p>
-              <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5">07:30 - 17:00 (Thứ 2 đến Thứ 6)</p>
+              <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">Văn phòng Khảo thí</h3>
+              <p className="text-type-body-sm text-slate-800 dark:text-slate-200 font-semibold mt-1">Tòa nhà A1 - Trung tâm Khảo thí</p>
+              <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">07:30 - 17:00 (Thứ 2 đến Thứ 6)</p>
             </div>
           </div>
         </section>
@@ -500,7 +500,7 @@ export default function ContactSupportPage() {
         {/* FAQs List Section */}
         <section className="space-y-5">
           <div className="flex items-center justify-between flex-wrap gap-4">
-            <h2 className="text-xl sm:text-xl font-semibold text-slate-900 dark:text-white tracking-tight">
+            <h2 className="text-type-section sm:text-type-section font-semibold text-slate-900 dark:text-white tracking-tight">
               Câu hỏi & Hướng dẫn thường gặp (FAQs)
             </h2>
 
@@ -517,7 +517,7 @@ export default function ContactSupportPage() {
                   key={pill.id}
                   type="button"
                   onClick={() => setActiveCategory(pill.id)}
-                  className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold transition cursor-pointer ${
+                  className={`rounded-xl px-3.5 py-1.5 text-type-helper font-semibold transition cursor-pointer ${
                     activeCategory === pill.id
                       ? 'bg-blue-600 text-white shadow-sm'
                       : 'bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50'
@@ -551,7 +551,7 @@ export default function ContactSupportPage() {
                           }`}
                         />
                         <span
-                          className={`text-[14.5px] font-semibold transition-colors duration-200 ${
+                          className={`text-type-body-sm font-semibold transition-colors duration-200 ${
                             isExpanded
                               ? 'text-blue-700 dark:text-blue-300'
                               : 'text-slate-900 dark:text-slate-100'
@@ -561,7 +561,7 @@ export default function ContactSupportPage() {
                         </span>
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
-                        <span className="hidden sm:inline-block text-[12px] font-semibold text-slate-500 dark:text-slate-400">
+                        <span className="hidden sm:inline-block text-type-helper font-semibold text-slate-500 dark:text-slate-400">
                           {faq.categoryLabel}
                         </span>
                         <ChevronRight
@@ -581,25 +581,25 @@ export default function ContactSupportPage() {
                       }`}
                     >
                       <div className="overflow-hidden">
-                        <div className="px-6 pb-6 pt-3 text-[13.5px] text-slate-600 dark:text-slate-300 font-medium leading-relaxed bg-slate-50/40 dark:bg-slate-950/40 border-t border-slate-100 dark:border-slate-800 space-y-4">
-                          <p className="font-semibold text-slate-900 dark:text-slate-100 text-[14px]">
+                        <div className="px-6 pb-6 pt-3 text-type-body-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed bg-slate-50/40 dark:bg-slate-950/40 border-t border-slate-100 dark:border-slate-800 space-y-4">
+                          <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body-sm">
                             {faq.summary}
                           </p>
 
                           <div className="space-y-2.5 pt-1">
                             {faq.content.map((paragraph, i) => (
                               <div key={i} className="flex items-start gap-3">
-                                <span className="flex h-5 w-5 min-w-[20px] min-h-[20px] shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold text-[12px] shadow-2xs mt-0.5">
+                                <span className="flex h-5 w-5 min-w-[20px] min-h-[20px] shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold text-type-helper shadow-2xs mt-0.5">
                                   {i + 1}
                                 </span>
-                                <p className="text-[13.5px] text-slate-700 dark:text-slate-300 font-normal leading-relaxed">
+                                <p className="text-type-body-sm text-slate-700 dark:text-slate-300 font-normal leading-relaxed">
                                   {paragraph.replace(/^[0-9]+\.\s*/, '')}
                                 </p>
                               </div>
                             ))}
                           </div>
 
-                          <div className="pt-2 flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800/80">
+                          <div className="pt-2 flex items-center justify-between text-type-helper text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800/80">
                             <span className="flex items-center gap-1.5">
                               <Clock className="h-3.5 w-3.5 text-blue-500" /> {faq.readTime}
                             </span>
@@ -619,7 +619,7 @@ export default function ContactSupportPage() {
                 );
               })
             ) : (
-              <div className="p-8 text-center text-xs font-semibold text-slate-400">
+              <div className="p-8 text-center text-type-helper font-semibold text-slate-400">
                 Không tìm thấy bài viết phù hợp với &quot;{searchQuery}&quot;.
               </div>
             )}
@@ -629,11 +629,11 @@ export default function ContactSupportPage() {
         {/* Submit Support Ticket Form Section */}
         <section className="rounded-[32px] border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 sm:p-10 shadow-lg shadow-blue-500/5 space-y-6">
           <div className="space-y-2">
-            <h2 className="text-xl sm:text-xl font-semibold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <h2 className="text-type-section sm:text-type-section font-semibold text-slate-900 dark:text-white flex items-center gap-2.5">
               <Headphones className="h-6 w-6 text-blue-600" />
               <span>Gửi yêu cầu hỗ trợ trực tiếp đến Quản trị viên</span>
             </h2>
-            <p className="text-[13.5px] text-slate-500 dark:text-slate-400 font-normal">
+            <p className="text-type-body-sm text-slate-500 dark:text-slate-400 font-normal">
               Điền thông tin sự cố hoặc câu hỏi của bạn. Đội ngũ Kỹ thuật Trung tâm Khảo thí sẽ phản hồi qua email trong thời gian sớm nhất.
             </p>
           </div>
@@ -641,7 +641,7 @@ export default function ContactSupportPage() {
           <form onSubmit={handleSendSupportForm} className="space-y-4 pt-2">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1">
-                <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">
                   Họ và tên người gửi
                 </label>
                 <input
@@ -650,7 +650,7 @@ export default function ContactSupportPage() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Ví dụ: Nguyễn Văn A"
-                  className={`w-full h-11 rounded-xl border px-4 text-[15px] outline-none transition ${
+                  className={`w-full h-11 rounded-xl border px-4 text-type-body outline-none transition ${
                     isDark
                       ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                       : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -659,7 +659,7 @@ export default function ContactSupportPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">
                   Email liên hệ
                 </label>
                 <input
@@ -668,7 +668,7 @@ export default function ContactSupportPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nguyenvana@exam.edu.vn"
-                  className={`w-full h-11 rounded-xl border px-4 text-[15px] outline-none transition ${
+                  className={`w-full h-11 rounded-xl border px-4 text-type-body outline-none transition ${
                     isDark
                       ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                       : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -677,7 +677,7 @@ export default function ContactSupportPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
+                <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">
                   Vai trò hệ thống
                 </label>
                 <FilterSelect
@@ -685,7 +685,7 @@ export default function ContactSupportPage() {
                   containerClassName="w-full"
                   value={role}
                   onChange={(e: any) => setRole(e.target.value)}
-                  className={`w-full h-11 rounded-xl border px-4 text-[15px] outline-none transition cursor-pointer ${
+                  className={`w-full h-11 rounded-xl border px-4 text-type-body outline-none transition cursor-pointer ${
                     isDark
                       ? 'border-slate-700 bg-slate-800 text-slate-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                       : 'border-slate-200/90 bg-white text-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -699,7 +699,7 @@ export default function ContactSupportPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="block text-[15px] font-medium text-slate-700 dark:text-slate-300">
+              <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">
                 Nội dung cần hỗ trợ chi tiết
               </label>
               <textarea
@@ -708,7 +708,7 @@ export default function ContactSupportPage() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Mô tả cụ thể sự cố bạn gặp phải (ví dụ: Không đăng nhập được, thiếu môn thi trong lịch thi, lỗi nộp bài...)"
-                className={`w-full rounded-xl border p-4 text-[15px] outline-none transition ${
+                className={`w-full rounded-xl border p-4 text-type-body outline-none transition ${
                   isDark
                     ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
                     : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
@@ -720,7 +720,7 @@ export default function ContactSupportPage() {
               <button
                 type="submit"
                 disabled={sending}
-                className="h-11 px-7 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-[15px] shadow-md shadow-blue-600/25 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60"
+                className="h-11 px-7 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-type-body shadow-md shadow-blue-600/25 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60"
               >
                 {sending ? (
                   <>
@@ -748,7 +748,7 @@ export default function ContactSupportPage() {
         {selectedArticle && (
           <div className="space-y-6 pt-1">
             {/* Article Meta Header */}
-            <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800 text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800 text-type-helper font-semibold text-slate-500 dark:text-slate-400">
               <span className="text-blue-600 dark:text-blue-400 font-semibold bg-blue-50 dark:bg-blue-950/60 px-3 py-1 rounded-full border border-blue-100 dark:border-blue-900/50">
                 {selectedArticle.categoryLabel}
               </span>
@@ -762,24 +762,24 @@ export default function ContactSupportPage() {
             </div>
 
             {/* Summary Lede */}
-            <p className="text-[14.5px] leading-relaxed text-slate-700 dark:text-slate-200 font-medium">
+            <p className="text-type-body leading-relaxed text-slate-700 dark:text-slate-200 font-medium">
               {selectedArticle.summary}
             </p>
 
             {/* Step-by-Step Modern List */}
             <div className="space-y-3.5 pt-1">
-              <h5 className="text-[13.5px] font-semibold text-slate-900 dark:text-white">
+              <h5 className="text-type-body-sm font-semibold text-slate-900 dark:text-white">
                 Các bước thực hiện:
               </h5>
               <div className="space-y-3">
                 {selectedArticle.content.map((paragraph, idx) => (
                   <div key={idx} className="flex items-start gap-3.5">
                     {/* Perfect Circle Number */}
-                    <span className="flex h-6 w-6 min-w-[24px] min-h-[24px] shrink-0 items-center justify-center rounded-full bg-blue-600 text-white text-[12px] font-semibold shadow-xs mt-0.5">
+                    <span className="flex h-6 w-6 min-w-[24px] min-h-[24px] shrink-0 items-center justify-center rounded-full bg-blue-600 text-white text-type-helper font-semibold shadow-xs mt-0.5">
                       {idx + 1}
                     </span>
                     {/* Paragraph Content */}
-                    <p className="text-[14px] text-slate-700 dark:text-slate-200 font-normal leading-relaxed">
+                    <p className="text-type-body-sm text-slate-700 dark:text-slate-200 font-normal leading-relaxed">
                       {paragraph.replace(/^[0-9]+\.\s*/, '')}
                     </p>
                   </div>
@@ -793,7 +793,7 @@ export default function ContactSupportPage() {
                 {selectedArticle.tags.map((t) => (
                   <span
                     key={t}
-                    className="text-[12px] font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-2.5 py-1 rounded-lg"
+                    className="text-type-helper font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-2.5 py-1 rounded-lg"
                   >
                     #{t}
                   </span>
@@ -803,7 +803,7 @@ export default function ContactSupportPage() {
               <button
                 type="button"
                 onClick={() => setSelectedArticle(null)}
-                className="px-5 py-2 rounded-xl text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold transition cursor-pointer"
+                className="px-5 py-2 rounded-xl text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-type-helper font-semibold transition cursor-pointer"
               >
                 Đóng bài viết
               </button>
@@ -829,12 +829,12 @@ export default function ContactSupportPage() {
             {/* Widget Header */}
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 text-white flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/20 text-white font-semibold text-xs">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/20 text-white font-semibold text-type-helper">
                   AI
                 </div>
                 <div>
-                  <h4 className="text-[14px] font-semibold leading-tight">Hỗ trợ Khảo thí Nhanh</h4>
-                  <p className="text-[12px] text-blue-200 font-medium flex items-center gap-1 mt-0.5">
+                  <h4 className="text-type-body-sm font-semibold leading-tight">Hỗ trợ Khảo thí Nhanh</h4>
+                  <p className="text-type-helper text-blue-200 font-medium flex items-center gap-1 mt-0.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     Trực tuyến 24/7
                   </p>
@@ -850,11 +850,11 @@ export default function ContactSupportPage() {
             </div>
 
             {/* Chat Body */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 text-xs bg-slate-50/50 dark:bg-slate-950/50">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 text-type-helper bg-slate-50/50 dark:bg-slate-950/50">
               {chatMessages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div
-                    className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-[13px] font-medium leading-relaxed ${
+                    className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-type-helper font-medium leading-relaxed ${
                       msg.sender === 'user'
                         ? 'bg-blue-600 text-white rounded-br-none'
                         : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-bl-none shadow-2xs'
@@ -876,7 +876,7 @@ export default function ContactSupportPage() {
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 placeholder="Nhập câu hỏi cần hỗ trợ..."
-                className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-[15px] outline-none focus:border-blue-600 focus:bg-white dark:focus:bg-slate-800"
+                className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-type-body outline-none focus:border-blue-600 focus:bg-white dark:focus:bg-slate-800"
               />
               <button
                 type="submit"
@@ -913,7 +913,7 @@ export default function ContactSupportPage() {
           {
             title: 'Quy trình xử lý sự cố khẩn cấp',
             content: (
-              <div className="space-y-3 text-xs text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
+              <div className="space-y-3 text-type-helper text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
                 <p>
                   • Trường hợp mất kết nối mạng hoặc lỗi phần mềm trong phòng thi, thí sinh báo ngay cho Giám thị phòng thi để lập biên bản xử lý kịp thời.
                 </p>
@@ -927,12 +927,12 @@ export default function ContactSupportPage() {
       />
 
       {/* ── Page Bottom Footer ── */}
-      <footer className="mt-auto relative z-10 w-full py-6 shrink-0 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1 border-t border-slate-200/60 dark:border-slate-800/60">
-        <p className="flex items-center justify-center gap-2 font-medium text-slate-700 dark:text-slate-300 text-[12.5px]">
+      <footer className="mt-auto relative z-10 w-full py-6 shrink-0 text-center text-type-helper text-slate-500 dark:text-slate-400 space-y-1 border-t border-slate-200/60 dark:border-slate-800/60">
+        <p className="flex items-center justify-center gap-2 font-medium text-slate-700 dark:text-slate-300 text-type-helper">
           <ShieldCheck className="h-4 w-4 text-blue-600" />
           <span>Hệ thống khảo thí an toàn – Minh bạch – Hiệu quả</span>
         </p>
-        <p className="text-[12px] text-slate-400 dark:text-slate-500">© 2026 EXAMSYS. All rights reserved.</p>
+        <p className="text-type-helper text-slate-400 dark:text-slate-500">© 2026 EXAMSYS. All rights reserved.</p>
       </footer>
     </div>
   );

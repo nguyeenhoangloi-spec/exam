@@ -489,7 +489,7 @@ export default function ExamSchedulesPage() {
                   setFilterValues({ ...filterValues, search: e.target.value });
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {filterValues.search ? (
                 <button
@@ -505,7 +505,7 @@ export default function ExamSchedulesPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
@@ -719,14 +719,14 @@ export default function ExamSchedulesPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">
+              <label className="block text-type-body font-medium text-slate-500 mb-1">
                 Kỳ thi <span className="text-red-500">*</span>
               </label>
               <FilterSelect containerClassName="w-full"
                 required
                 value={formData.examPeriodId}
                 onChange={(e) => setFormData({ ...formData, examPeriodId: e.target.value })}
-                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none bg-white font-medium"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-type-body focus:border-blue-500 focus:outline-none bg-white font-medium"
               >
                 {periods.length === 0 ? (
                   <option value="">-- Chưa có kỳ thi nào --</option>
@@ -749,14 +749,14 @@ export default function ExamSchedulesPage() {
             </div>
 
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">
+              <label className="block text-type-body font-medium text-slate-500 mb-1">
                 Môn học / Môn thi <span className="text-red-500">*</span>
               </label>
               <FilterSelect 
                 required
                 value={formData.subjectId}
                 onChange={(e) => setFormData({ ...formData, subjectId: e.target.value })}
-                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none bg-white font-medium"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-type-body focus:border-blue-500 focus:outline-none bg-white font-medium"
               >
                 {subjects.length === 0 ? (
                   <option value="">-- Chưa có môn học nào --</option>
@@ -773,14 +773,14 @@ export default function ExamSchedulesPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">
+              <label className="block text-type-body font-medium text-slate-500 mb-1">
                 Loại ca thi (Chế độ dự thi) <span className="text-red-500">*</span>
               </label>
               <FilterSelect containerClassName="w-full"
                 required
                 value={formData.mode}
                 onChange={(e) => setFormData({ ...formData, mode: e.target.value as 'OFFICIAL' | 'MOCK' })}
-                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none bg-white font-semibold text-blue-700 shadow-2xs"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-type-body focus:border-blue-500 focus:outline-none bg-white font-semibold text-blue-700 shadow-2xs"
               >
                 <option value="OFFICIAL">Thi chính thức (Xếp SBD & Phòng thi)</option>
                 <option value="MOCK">Thi thử (Dự thi tự do online)</option>
@@ -788,14 +788,14 @@ export default function ExamSchedulesPage() {
             </div>
 
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">
+              <label className="block text-type-body font-medium text-slate-500 mb-1">
                 Hình thức thi <span className="text-red-500">*</span>
               </label>
               <FilterSelect 
                 required
                 value={formData.examType}
                 onChange={(e) => setFormData({ ...formData, examType: e.target.value })}
-                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none bg-white font-semibold text-slate-900"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-type-body focus:border-blue-500 focus:outline-none bg-white font-semibold text-slate-900"
               >
                 <option value="TRAC_NGHIEM">Trắc nghiệm</option>
                 <option value="DIEN_LO">Điền khuyết (Điền vào chỗ trống)</option>
@@ -807,8 +807,8 @@ export default function ExamSchedulesPage() {
           {/* Quick Duration Selection */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-[15px] font-medium text-slate-500">Thời lượng thi (Tự động tính Giờ kết thúc)</label>
-              <span className="text-xs font-semibold text-slate-500">
+              <label className="text-type-body font-medium text-slate-500">Thời lượng thi (Tự động tính Giờ kết thúc)</label>
+              <span className="text-type-helper font-semibold text-slate-500">
                 Đang chọn: <span className="font-semibold text-blue-600">{selectedDuration} phút</span>
               </span>
             </div>
@@ -824,7 +824,7 @@ export default function ExamSchedulesPage() {
                       endTime: calculateEndTime(prev.startTime, d),
                     }));
                   }}
-                  className={`py-2 rounded-xl text-xs font-semibold transition cursor-pointer border ${
+                  className={`py-2 rounded-xl text-type-helper font-semibold transition cursor-pointer border ${
                     selectedDuration === d
                       ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-[1.02]'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300'
@@ -838,17 +838,17 @@ export default function ExamSchedulesPage() {
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Ngày thi</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Ngày thi</label>
               <input
                 type="date"
                 required
                 value={formData.examDate}
                 onChange={(e) => setFormData({ ...formData, examDate: e.target.value })}
-                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-type-body focus:border-blue-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Giờ bắt đầu</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Giờ bắt đầu</label>
               <input
                 type="time"
                 required
@@ -864,17 +864,17 @@ export default function ExamSchedulesPage() {
                     endTime: newEnd,
                   });
                 }}
-                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none font-semibold text-blue-700"
+                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-type-body focus:border-blue-500 focus:outline-none font-semibold text-blue-700"
               />
             </div>
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Giờ kết thúc (Tự động)</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Giờ kết thúc (Tự động)</label>
               <input
                 type="time"
                 required
                 value={formData.endTime}
                 onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                className="w-full h-10 rounded-xl border border-blue-200 bg-blue-50/40 px-3.5 text-[15px] focus:border-blue-500 focus:outline-none font-semibold text-blue-900"
+                className="w-full h-10 rounded-xl border border-blue-200 bg-blue-50/40 px-3.5 text-type-body focus:border-blue-500 focus:outline-none font-semibold text-blue-900"
               />
             </div>
           </div>

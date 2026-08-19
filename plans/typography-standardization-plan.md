@@ -63,12 +63,12 @@ Font chính giữ nguyên `Inter`, có fallback system font. Quy ước ghi theo
 | `body` | 15/24 | Nội dung quản trị chính, ô nhập |
 | `body-sm` | 14/20–22 | Bảng, thông tin phụ, control |
 | `caption` | 13/18 | Helper, metadata, nhãn phụ |
-| `badge` | 12/16–18 | Badge, trạng thái, mã ngắn |
-| `micro` | 11/16 | Chỉ dành cho trục biểu đồ hoặc dữ liệu cực phụ; không dùng cho nội dung cần đọc |
+| `badge` | 12/18 | Badge, trạng thái, mã ngắn và nhãn biểu đồ |
 
 Nguyên tắc:
 
 - Không dùng dưới 12px cho label, nút, bảng, thông báo hoặc dữ liệu nghiệp vụ.
+- Không duy trì cấp `micro` 11px trong Web UI; nhãn biểu đồ tối thiểu dùng token `badge` 12/18.
 - Không dùng `font-black` tràn lan; mặc định dùng `400/500/600`, chỉ dùng `700` cho tiêu đề hoặc số KPI.
 - Mỗi cỡ chữ phải có line-height tương ứng, không đặt `leading-none` cho đoạn văn hoặc thông tin nhiều dòng.
 - Không dùng chữ in hoa toàn bộ cho đoạn dài; chỉ dùng cho table header hoặc nhãn ngắn.
@@ -213,4 +213,16 @@ Không đổi font thương hiệu, màu sắc, khoảng cách tổng thể ho�
 - Làm rõ Sidebar riêng: menu chính dùng màu `#334155`, icon `#475569`, nhóm điều hướng dùng `#64748B`/bold và thông tin phụ tối thiểu 12px.
 - Rà các item trạng thái trong danh sách ca thi; bỏ `opacity-60` trên container nội dung để tránh làm mờ cả chữ, dùng màu phụ để thể hiện trạng thái thay thế.
 - Chuẩn hóa các utility màu chữ có alpha thấp trên nền sáng để không tạo thêm cấp chữ mờ ngoài quy định.
-- Frontend production build đã chạy thành công; các cảnh báo còn lại là cảnh báo sẵn có về `<img>`, font page-level và dependency hook.
+- Frontend production build, type-check, lint và audit UI đã chạy thành công sau đợt chuẩn hóa.
+
+### Token semantic đang áp dụng
+
+- `text-type-display`: 44/52; `text-type-display-sm`: 36/44.
+- `text-type-page`: 28/36, giảm còn 24/32 trên mobile.
+- `text-type-section`: 20/28; `text-type-card`: 18/26.
+- `text-type-reading`: 16/26 cho câu hỏi, đáp án và nội dung đọc dài.
+- `text-type-body`: 15/24; `text-type-body-sm`: 14/20.
+- `text-type-label`: 15/24; `text-type-helper`: 13/18.
+- `text-type-badge`: 12/18; `text-type-kpi`: 32/38; `text-type-otp`: 24/30.
+
+Toàn bộ `app/` và `components/` phải dùng các token trên. Audit tự động chặn cỡ Tailwind mặc định (`text-xs`, `text-sm`, ...), cỡ px tùy ý, `fontSize` inline dạng số và `leading-none`. Font xuất Word/PDF giữ Times New Roman; Excel giữ Arial theo quy chuẩn file xuất, không áp dụng cho Web UI.

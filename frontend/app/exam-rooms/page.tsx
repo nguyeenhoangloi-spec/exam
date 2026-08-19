@@ -359,7 +359,7 @@ export default function ExamRoomsPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-[15px] font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
               />
               {search ? (
                 <button
@@ -375,7 +375,7 @@ export default function ExamRoomsPage() {
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-[12px] text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
@@ -575,71 +575,71 @@ export default function ExamRoomsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">Mã phòng thi</label>
+            <label className="block text-type-body font-medium text-slate-500 mb-1">Mã phòng thi</label>
             <input
               type="text"
               required
               placeholder="VD: LAB-A101"
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body focus:border-blue-500 focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-[15px] font-medium text-slate-500 mb-1">Tên phòng thi</label>
+            <label className="block text-type-body font-medium text-slate-500 mb-1">Tên phòng thi</label>
             <input
               type="text"
               required
               placeholder="VD: Phòng máy tính A101"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body focus:border-blue-500 focus:outline-none"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Sức chứa (Chỗ ngồi)</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Sức chứa (Chỗ ngồi)</label>
               <input
                 type="number"
                 required
                 value={formData.capacity}
                 onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body focus:border-blue-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Tòa nhà / Vị trí</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Tòa nhà / Vị trí</label>
               <input
                 type="text"
                 required
                 placeholder="VD: Tòa A"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body focus:border-blue-500 focus:outline-none"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Loại phòng</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Loại phòng</label>
               <FilterSelect containerClassName="w-full"
                 value={formData.roomType}
                 onChange={(e) => setFormData({ ...formData, roomType: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-type-body focus:border-blue-500 focus:outline-none"
               >
                 <option value="COMPUTER_LAB">Phòng máy tính</option>
                 <option value="THEORY">Phòng lý thuyết</option>
               </FilterSelect>
             </div>
             <div>
-              <label className="block text-[15px] font-medium text-slate-500 mb-1">Trạng thái</label>
+              <label className="block text-type-body font-medium text-slate-500 mb-1">Trạng thái</label>
               <FilterSelect 
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-[15px] focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-type-body focus:border-blue-500 focus:outline-none"
               >
                 <option value="AVAILABLE">Sẵn sàng</option>
                 <option value="MAINTENANCE">Bảo trì</option>

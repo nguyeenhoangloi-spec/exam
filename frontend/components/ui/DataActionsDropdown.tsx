@@ -143,7 +143,7 @@ export function DataActionsDropdown({
         aria-label="Tùy chọn xuất nhập dữ liệu"
         title="Tùy chọn xuất nhập dữ liệu"
         onClick={() => setIsOpen(!isOpen)}
-        className={`ui-pressable h-10 w-10 flex items-center justify-center rounded-xl text-[15px] font-medium outline-none focus:outline-none ring-0 focus:ring-0 focus-visible:outline-none focus-visible:ring-0 transition-all duration-150 cursor-pointer select-none ${isOpen
+        className={`ui-pressable h-10 w-10 flex items-center justify-center rounded-xl text-type-body font-medium outline-none focus:outline-none ring-0 focus:ring-0 focus-visible:outline-none focus-visible:ring-0 transition-all duration-150 cursor-pointer select-none ${isOpen
             ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
             : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/80'
           }`}
@@ -169,7 +169,7 @@ export function DataActionsDropdown({
                     handleExport();
                     setIsOpen(false);
                   }}
-                  className="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-[14.5px] font-normal text-slate-700 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 cursor-pointer select-none text-left"
+                  className="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-type-body-sm font-normal text-slate-700 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 cursor-pointer select-none text-left"
                 >
                   <FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0" strokeWidth={1.5} />
                   <span>{exportLabel}</span>
@@ -184,7 +184,7 @@ export function DataActionsDropdown({
                     onImport();
                     setIsOpen(false);
                   }}
-                  className="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-[14.5px] font-normal text-slate-700 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 cursor-pointer select-none text-left"
+                  className="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-type-body-sm font-normal text-slate-700 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 cursor-pointer select-none text-left"
                 >
                   <FileUp className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0" strokeWidth={1.5} />
                   <span>{importLabel}</span>
@@ -199,7 +199,7 @@ export function DataActionsDropdown({
                     onDownloadTemplate();
                     setIsOpen(false);
                   }}
-                  className="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-[14.5px] font-normal text-slate-700 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 cursor-pointer select-none text-left"
+                  className="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-type-body-sm font-normal text-slate-700 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 cursor-pointer select-none text-left"
                 >
                   <Download className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0" strokeWidth={1.5} />
                   <span>Tải file mẫu</span>
@@ -214,7 +214,7 @@ export function DataActionsDropdown({
                     handlePrint();
                     setIsOpen(false);
                   }}
-                  className="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-[14.5px] font-normal text-slate-700 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 cursor-pointer select-none text-left"
+                  className="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-type-body-sm font-normal text-slate-700 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 cursor-pointer select-none text-left"
                 >
                   <Printer className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0" strokeWidth={1.5} />
                   <span>{printLabel}</span>
@@ -230,7 +230,7 @@ export function DataActionsDropdown({
                     item.onClick();
                     setIsOpen(false);
                   }}
-                  className="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-[14.5px] font-normal text-slate-700 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 cursor-pointer select-none text-left"
+                  className="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-type-body-sm font-normal text-slate-700 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 cursor-pointer select-none text-left"
                 >
                   {item.icon || <Printer className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0" strokeWidth={1.5} />}
                   <span>{item.label}</span>

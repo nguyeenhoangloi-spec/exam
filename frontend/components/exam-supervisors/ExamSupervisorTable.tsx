@@ -77,12 +77,12 @@ export function ExamSupervisorTable({
                       <User className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                      <h4 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
                         {s.teacher?.fullName || '—'}
                       </h4>
                       <div className="flex items-center gap-2 mt-0.5">
                         <IdentifierBadge tone="blue">{s.teacher?.teacherCode || 'GV'}</IdentifierBadge>
-                        <span className="text-xs text-slate-500">{s.teacher?.degree || 'TS'}</span>
+                        <span className="text-type-helper text-slate-500">{s.teacher?.degree || 'TS'}</span>
                       </div>
                     </div>
                   </div>
@@ -90,7 +90,7 @@ export function ExamSupervisorTable({
                   <div>{renderStatusBadge(s.status)}</div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2 text-xs text-slate-600 dark:text-slate-300">
+                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2 text-type-helper text-slate-600 dark:text-slate-300">
                   <div className="flex items-center justify-between">
                     <span className="text-slate-400 flex items-center gap-1.5">
                       <DoorOpen className="h-3.5 w-3.5" /> Phòng thi:
@@ -103,7 +103,7 @@ export function ExamSupervisorTable({
                       <ShieldCheck className="h-3.5 w-3.5" /> Vai trò:
                     </span>
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded-md text-[12px] font-semibold ${
+                      className={`inline-flex items-center px-2 py-0.5 rounded-md text-type-helper font-semibold ${
                         s.role === 'SUPERVISOR_1'
                           ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
                           : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
@@ -115,7 +115,7 @@ export function ExamSupervisorTable({
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-xs font-semibold">
+              <div className="mt-4 flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-type-helper font-semibold">
                 <button
                   type="button"
                   onClick={() => onView(s)}
@@ -179,12 +179,12 @@ export function ExamSupervisorTable({
                   />
                 )}
                 <IdentifierBadge tone="blue">{s.teacher?.teacherCode || 'GV'}</IdentifierBadge>
-                <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
+                <span className="text-type-helper font-semibold text-slate-900 dark:text-slate-100 truncate">
                   {s.teacher?.fullName || '—'}
                 </span>
-                <span className="text-[12px] text-slate-400 truncate">({s.teacher?.degree || 'TS'})</span>
-                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">· {rName}</span>
-                <span className="text-[12px] font-semibold text-blue-600">
+                <span className="text-type-helper text-slate-400 truncate">({s.teacher?.degree || 'TS'})</span>
+                <span className="text-type-helper font-medium text-slate-600 dark:text-slate-300">· {rName}</span>
+                <span className="text-type-helper font-semibold text-blue-600">
                   · {s.role === 'SUPERVISOR_1' ? 'GT1' : 'GT2'}
                 </span>
               </div>
@@ -233,7 +233,7 @@ export function ExamSupervisorTable({
   return (
     <div className="ui-table-wrap overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
       <div className="overflow-x-auto">
-        <table className="ui-table w-full text-left text-[15px] text-slate-600 dark:text-slate-300">
+        <table className="ui-table w-full text-left text-type-body text-slate-600 dark:text-slate-300">
           <thead className="border-b border-slate-200/90 dark:border-slate-800 bg-slate-50/75 dark:bg-slate-800/75 font-medium text-slate-700 dark:text-slate-200">
             <tr>
               {isAdmin && (
@@ -293,7 +293,7 @@ export function ExamSupervisorTable({
                       <div className="font-semibold text-slate-900 dark:text-slate-100">
                         {s.teacher?.fullName || '—'}
                       </div>
-                      <div className="text-[15px] text-slate-400 font-normal">
+                      <div className="text-type-body text-slate-400 font-normal">
                         Học vị: {s.teacher?.degree || 'TS'}
                       </div>
                     </td>
@@ -311,7 +311,7 @@ export function ExamSupervisorTable({
                   {visibleColumns.role && (
                     <td className="px-4 py-3.5 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-md text-[15px] font-semibold ${
+                        className={`inline-flex items-center px-2 py-0.5 rounded-md text-type-body font-semibold ${
                           s.role === 'SUPERVISOR_1'
                             ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
                             : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'

@@ -214,7 +214,7 @@ export function ExamPaperFilterPopover({
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         onClick={() => setIsOpen(!isOpen)}
-        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-xs font-medium transition-all duration-150 cursor-pointer shadow-2xs select-none ${activeFilterCount > 0
+        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-type-helper font-medium transition-all duration-150 cursor-pointer shadow-2xs select-none ${activeFilterCount > 0
             ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-semibold'
             : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-slate-300/90 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
           }`}
@@ -239,7 +239,7 @@ export function ExamPaperFilterPopover({
                 onResetAll();
               }}
               title="Nhấn để xóa nhanh toàn bộ lọc (1-Click Reset)"
-              className="group/badge relative flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 hover:bg-rose-500 text-[12px] font-semibold text-white shadow-2xs transition-colors cursor-pointer"
+              className="group/badge relative flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 hover:bg-rose-500 text-type-helper font-semibold text-white shadow-2xs transition-colors cursor-pointer"
             >
               <span className="group-hover/badge:hidden">{activeFilterCount}</span>
               <X className="hidden h-3 w-3 group-hover/badge:block stroke-[3]" />
@@ -270,10 +270,10 @@ export function ExamPaperFilterPopover({
                   <Filter className="h-3.5 w-3.5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 leading-none">
+                  <h4 className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                     Bộ lọc đề thi
                   </h4>
-                  <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
                     Tùy chỉnh tiêu chí tra cứu đề thi ngẫu nhiên
                   </p>
                 </div>
@@ -284,7 +284,7 @@ export function ExamPaperFilterPopover({
                   <button
                     type="button"
                     onClick={onResetAll}
-                    className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-100/80 dark:hover:bg-slate-800 px-2.5 py-1 rounded-xl transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 text-type-helper font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-100/80 dark:hover:bg-slate-800 px-2.5 py-1 rounded-xl transition-colors cursor-pointer"
                     title="Xóa tất cả bộ lọc đang áp dụng"
                   >
                     <RotateCcw className="h-3 w-3" />
@@ -314,7 +314,7 @@ export function ExamPaperFilterPopover({
                       key={cat.id}
                       type="button"
                       onClick={() => setActiveCategory(cat.id)}
-                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-150 cursor-pointer border ${isActive
+                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-type-helper font-medium transition-all duration-150 cursor-pointer border ${isActive
                           ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold shadow-2xs'
                           : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
                         }`}
@@ -325,11 +325,11 @@ export function ExamPaperFilterPopover({
                       </div>
 
                       {cat.badge ? (
-                        <span className="h-4 min-w-[16px] rounded-full bg-blue-600 px-1 text-[12px] font-semibold text-white flex items-center justify-center">
+                        <span className="h-4 min-w-[16px] rounded-full bg-blue-600 px-1 text-type-helper font-semibold text-white flex items-center justify-center">
                           {cat.badge}
                         </span>
                       ) : (
-                        <span className={`text-[12px] font-normal ${isActive ? 'text-blue-400 dark:text-blue-500' : 'text-slate-300 dark:text-slate-600'}`}>
+                        <span className={`text-type-helper font-normal ${isActive ? 'text-blue-400 dark:text-blue-500' : 'text-slate-300 dark:text-slate-600'}`}>
                           {cat.shortcut}
                         </span>
                       )}
@@ -338,9 +338,9 @@ export function ExamPaperFilterPopover({
                 })}
 
                 <div className="pt-3 px-2">
-                  <div className="text-[12px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                  <div className="text-type-helper text-slate-400 dark:text-slate-500 flex items-center gap-1">
                     <span>Phím:</span>
-                    <kbd className="px-1 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 font-normal text-[12px] text-slate-600 dark:text-slate-400">1-4</kbd>
+                    <kbd className="px-1 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 font-normal text-type-helper text-slate-600 dark:text-slate-400">1-4</kbd>
                   </div>
                 </div>
               </div>
@@ -350,7 +350,7 @@ export function ExamPaperFilterPopover({
                 {/* ── TAB 1: LỌC NHANH (PRESETS) ── */}
                 {activeCategory === 'presets' && (
                   <div className="space-y-1.5">
-                    <p className="text-[12px] font-medium tracking-wider text-slate-400 dark:text-slate-500 mb-2 px-1">
+                    <p className="text-type-helper font-medium tracking-wider text-slate-400 dark:text-slate-500 mb-2 px-1">
                       Gợi ý bộ lọc phổ biến:
                     </p>
 
@@ -363,16 +363,16 @@ export function ExamPaperFilterPopover({
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-semibold ${statusFilter === 'PUBLISHED' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-type-helper font-semibold ${statusFilter === 'PUBLISHED' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
                           Đề đã phát hành
                         </div>
-                        <div className={`text-[12px] truncate ${statusFilter === 'PUBLISHED' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className={`text-type-helper truncate ${statusFilter === 'PUBLISHED' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
                           Đề thi chính thức đã niêm phong bảo mật
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${statusFilter === 'PUBLISHED'
+                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${statusFilter === 'PUBLISHED'
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
                           }`}>
@@ -391,16 +391,16 @@ export function ExamPaperFilterPopover({
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-semibold ${statusFilter === 'DRAFT' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-type-helper font-semibold ${statusFilter === 'DRAFT' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
                           Đề thi bản nháp
                         </div>
-                        <div className={`text-[12px] truncate ${statusFilter === 'DRAFT' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className={`text-type-helper truncate ${statusFilter === 'DRAFT' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
                           Đang trong giai đoạn tạo ma trận đề
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${statusFilter === 'DRAFT'
+                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${statusFilter === 'DRAFT'
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
                           }`}>
@@ -419,16 +419,16 @@ export function ExamPaperFilterPopover({
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-semibold ${selectedExamType === 'TRAC_NGHIEM' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-type-helper font-semibold ${selectedExamType === 'TRAC_NGHIEM' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
                           Đề Trắc nghiệm
                         </div>
-                        <div className={`text-[12px] truncate ${selectedExamType === 'TRAC_NGHIEM' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className={`text-type-helper truncate ${selectedExamType === 'TRAC_NGHIEM' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
                           Đề thi trắc nghiệm khách quan
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${selectedExamType === 'TRAC_NGHIEM'
+                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${selectedExamType === 'TRAC_NGHIEM'
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
                           }`}>
@@ -452,16 +452,16 @@ export function ExamPaperFilterPopover({
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-xs font-semibold ${selectedScheduleId === '' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className={`text-type-helper font-semibold ${selectedScheduleId === '' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                           Tất cả các ca thi
                         </div>
-                        <div className={`text-[12px] truncate ${selectedScheduleId === '' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className={`text-type-helper truncate ${selectedScheduleId === '' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                           Toàn bộ lịch thi các môn
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${selectedScheduleId === ''
+                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${selectedScheduleId === ''
                             ? 'bg-blue-600 text-white'
                             : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
                           }`}>
@@ -487,16 +487,16 @@ export function ExamPaperFilterPopover({
                             }`}
                         >
                           <div className="min-w-0 pr-2">
-                            <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                            <div className={`text-type-helper font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                               {subName}
                             </div>
-                            <div className={`text-[12px] truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <div className={`text-type-helper truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                               {s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : ''} • {s.startTime} - {s.endTime}
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${isSelected
+                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected
                                 ? 'bg-blue-600 text-white'
                                 : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
                               }`}>
@@ -526,16 +526,16 @@ export function ExamPaperFilterPopover({
                             }`}
                         >
                           <div className="min-w-0 pr-2">
-                            <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                            <div className={`text-type-helper font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                               {item.label}
                             </div>
-                            <div className={`text-[12px] truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <div className={`text-type-helper truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                               {item.desc}
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${isSelected
+                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected
                                 ? 'bg-blue-600 text-white'
                                 : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
                               }`}>
@@ -565,16 +565,16 @@ export function ExamPaperFilterPopover({
                             }`}
                         >
                           <div className="min-w-0 pr-2">
-                            <div className={`text-xs font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                            <div className={`text-type-helper font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
                               {item.label}
                             </div>
-                            <div className={`text-[12px] truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <div className={`text-type-helper truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
                               {item.desc}
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-[12px] font-semibold ${isSelected
+                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected
                                 ? 'bg-blue-600 text-white'
                                 : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
                               }`}>
@@ -593,7 +593,7 @@ export function ExamPaperFilterPopover({
             {/* 3. Footer tinh gọn & thanh lịch theo sắc xanh hệ thống */}
             <div className="shrink-0 flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
               <div className="space-y-1">
-                <div className="text-[12px] font-medium text-slate-600 dark:text-slate-300">
+                <div className="text-type-helper font-medium text-slate-600 dark:text-slate-300">
                   {totalFilteredCount !== undefined ? (
                     <>
                       Khớp <strong className="font-semibold text-blue-600 dark:text-blue-400">{totalFilteredCount}</strong>
@@ -618,7 +618,7 @@ export function ExamPaperFilterPopover({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-semibold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
+                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-type-helper font-semibold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
               >
                 <CheckCheck className="h-3.5 w-3.5" />
                 <span>Xem kết quả</span>

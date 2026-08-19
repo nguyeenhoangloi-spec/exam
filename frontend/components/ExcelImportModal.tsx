@@ -135,14 +135,14 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
             <div className="flex items-center gap-2.5">
               <FileSpreadsheet className="h-5 w-5 text-blue-600 shrink-0" />
               <div>
-                <h4 className="text-sm font-semibold text-slate-900">Tải tệp mẫu (.csv / .xlsx)</h4>
-                <p className="text-xs font-semibold text-slate-500">Dùng đúng tên cột tiêu chuẩn để hệ thống tự động nhận diện.</p>
+                <h4 className="text-type-body-sm font-semibold text-slate-900">Tải tệp mẫu (.csv / .xlsx)</h4>
+                <p className="text-type-helper font-semibold text-slate-500">Dùng đúng tên cột tiêu chuẩn để hệ thống tự động nhận diện.</p>
               </div>
             </div>
             <button
               type="button"
               onClick={downloadTemplate}
-              className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 transition cursor-pointer"
+              className="flex items-center gap-1.5 text-type-helper font-semibold text-blue-600 hover:text-blue-800 transition cursor-pointer"
             >
               <Download className="h-4 w-4" />
               <span>Tải mẫu</span>
@@ -153,20 +153,20 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
           <div className="relative rounded-2xl border-2 border-dashed border-slate-200 hover:border-blue-500 bg-slate-50/50 p-6 text-center transition">
             <input type="file" accept=".csv,text/csv" onChange={handleFileChange} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
             <Upload className="mx-auto h-8 w-8 text-blue-600" />
-            <p className="mt-2 text-sm font-semibold text-slate-800">{file ? file.name : 'Kéo thả hoặc bấm để chọn tệp (.csv / .xlsx)'}</p>
-            <p className="text-xs font-semibold text-slate-400 mt-1">Dung lượng tối đa 5 MB. Dữ liệu chỉ được lưu sau khi bấm Xác nhận nhập.</p>
+            <p className="mt-2 text-type-body-sm font-semibold text-slate-800">{file ? file.name : 'Kéo thả hoặc bấm để chọn tệp (.csv / .xlsx)'}</p>
+            <p className="text-type-helper font-semibold text-slate-400 mt-1">Dung lượng tối đa 5 MB. Dữ liệu chỉ được lưu sau khi bấm Xác nhận nhập.</p>
           </div>
 
           {/* Frameless Alerts */}
           {previewData.length > 0 && (
-            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700">
+            <div className="flex items-center gap-2 text-type-helper font-semibold text-emerald-700">
               <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
               <span>Đã đọc thành công {previewData.length} dòng dữ liệu từ tệp.</span>
             </div>
           )}
 
           {errorMsg && (
-            <div className="flex items-center gap-2 text-xs font-semibold text-rose-700">
+            <div className="flex items-center gap-2 text-type-helper font-semibold text-rose-700">
               <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
               <span>{errorMsg}</span>
             </div>
@@ -175,8 +175,8 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
           {/* Preview Table */}
           {previewData.length > 0 && (
             <div className="ui-table-wrap max-h-52 overflow-auto rounded-xl border border-slate-200">
-              <table className="ui-table w-full text-left text-sm text-slate-900">
-                <thead className="sticky top-0 bg-slate-50 text-[14px] font-medium text-slate-500 border-b border-slate-200">
+              <table className="ui-table w-full text-left text-type-body-sm text-slate-900">
+                <thead className="sticky top-0 bg-slate-50 text-type-body-sm font-medium text-slate-500 border-b border-slate-200">
                   <tr>
                     {Object.keys(previewData[0]).map((key) => (
                       <th key={key} className="px-3 py-2 font-medium">
@@ -185,7 +185,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
                     ))}
                   </tr>
                 </thead>
-                <tbody className="font-normal text-[15px] divide-y divide-slate-100">
+                <tbody className="font-normal text-type-body divide-y divide-slate-100">
                   {previewData.slice(0, 20).map((row, index) => (
                     <tr key={index} className="hover:bg-slate-50/60">
                       {Object.keys(previewData[0]).map((key) => (

@@ -43,15 +43,15 @@ export function QuestionStatistics({
           >
             <div className="flex items-start justify-between gap-3 w-full">
               <div className="space-y-1 min-w-0">
-                <span className="text-[13px] font-semibold text-slate-500 block truncate tracking-normal">{item.label}</span>
-                <div className="text-[32px] font-semibold text-slate-900 leading-[38px] tracking-tight tabular-nums">{item.count}</div>
+                <span className="text-type-helper font-semibold text-slate-500 block truncate tracking-normal">{item.label}</span>
+                <div className="text-type-kpi font-semibold text-slate-900 leading-[38px] tracking-tight tabular-nums">{item.count}</div>
               </div>
               <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.color} transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600`}>
                 <Icon className="h-5 w-5 stroke-[2]" />
               </div>
             </div>
             <div className="mt-2.5 pt-2 border-t border-slate-100/80 w-full">
-              <span className="text-[13px] font-normal text-slate-500 block truncate">{item.subtext}</span>
+              <span className="text-type-helper font-normal text-slate-500 block truncate">{item.subtext}</span>
             </div>
           </div>
         );

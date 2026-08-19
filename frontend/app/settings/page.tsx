@@ -125,8 +125,8 @@ export default function SettingsPage() {
             <Settings className="h-7 w-7 text-white" />
           </div>
           <div>
-            <h1 className="text-[28px] font-semibold leading-[36px] text-white tracking-tight">Cài đặt tài khoản</h1>
-            <p className="text-[15px] font-normal leading-[22px] text-blue-100/80">Tùy chỉnh thông báo, giao diện theme và bảo mật cá nhân</p>
+            <h1 className="text-type-page font-semibold leading-[36px] text-white tracking-tight">Cài đặt tài khoản</h1>
+            <p className="text-type-body font-normal leading-[22px] text-blue-100/80">Tùy chỉnh thông báo, giao diện theme và bảo mật cá nhân</p>
           </div>
         </div>
       </div>
@@ -134,29 +134,29 @@ export default function SettingsPage() {
       {/* 4 KPI Statistic Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 tracking-wider">Giao diện (Theme)</span>
-          <div className="text-[20px] font-semibold text-slate-900 dark:text-slate-100">{isDarkMode ? 'Tối (Dark Mode)' : 'Sáng (Light Mode)'}</div>
-          <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400">Tự động đồng bộ</span>
+          <span className="text-type-helper font-semibold text-slate-400 dark:text-slate-500 tracking-wider">Giao diện (Theme)</span>
+          <div className="text-type-section font-semibold text-slate-900 dark:text-slate-100">{isDarkMode ? 'Tối (Dark Mode)' : 'Sáng (Light Mode)'}</div>
+          <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400">Tự động đồng bộ</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 tracking-wider">Kênh thông báo</span>
-          <div className="text-[20px] font-semibold text-slate-900 dark:text-blue-400">Email & Hệ thống</div>
-          <span className="text-[13px] font-semibold text-emerald-600 flex items-center gap-1">
+          <span className="text-type-helper font-semibold text-slate-400 dark:text-slate-500 tracking-wider">Kênh thông báo</span>
+          <div className="text-type-section font-semibold text-slate-900 dark:text-blue-400">Email & Hệ thống</div>
+          <span className="text-type-helper font-semibold text-emerald-600 flex items-center gap-1">
             <CheckCircle2 className="h-3.5 w-3.5" /> Đã bật nhắc lịch thi
           </span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 tracking-wider">Ngôn ngữ hiển thị</span>
-          <div className="text-[20px] font-semibold text-slate-900 dark:text-slate-100">Tiếng Việt (VN)</div>
-          <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400">Mặc định hệ thống</span>
+          <span className="text-type-helper font-semibold text-slate-400 dark:text-slate-500 tracking-wider">Ngôn ngữ hiển thị</span>
+          <div className="text-type-section font-semibold text-slate-900 dark:text-slate-100">Tiếng Việt (VN)</div>
+          <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400">Mặc định hệ thống</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-1">
-          <span className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 tracking-wider">Trạng thái bảo mật</span>
-          <div className="text-[20px] font-semibold text-emerald-700 dark:text-emerald-400">Đã mã hóa</div>
-          <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400">Phiên làm việc an toàn</span>
+          <span className="text-type-helper font-semibold text-slate-400 dark:text-slate-500 tracking-wider">Trạng thái bảo mật</span>
+          <div className="text-type-section font-semibold text-emerald-700 dark:text-emerald-400">Đã mã hóa</div>
+          <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400">Phiên làm việc an toàn</span>
         </div>
       </div>
 
@@ -176,7 +176,7 @@ export default function SettingsPage() {
         {/* Tab 1: Notifications */}
         {activeTab === 'notifications' && (
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-2xs space-y-6">
-            <h2 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 border-b border-slate-100 dark:border-slate-700 pb-3 flex items-center gap-2">
+            <h2 className="text-type-section font-semibold text-slate-900 dark:text-slate-100 border-b border-slate-100 dark:border-slate-700 pb-3 flex items-center gap-2">
               <Bell className="h-5 w-5 text-blue-600" />
               <span>Thiết lập thông báo tự động</span>
             </h2>
@@ -184,8 +184,8 @@ export default function SettingsPage() {
             <div className="space-y-3">
               <label className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 cursor-pointer hover:bg-slate-100/60 dark:hover:bg-slate-800 transition">
                 <div className="space-y-0.5">
-                  <span className="text-[15px] font-medium text-slate-900 dark:text-slate-100 block">Thông báo qua Email</span>
-                  <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block">Gửi email thông báo khi có phân công coi thi hoặc lịch thi mới</span>
+                  <span className="text-type-body font-medium text-slate-900 dark:text-slate-100 block">Thông báo qua Email</span>
+                  <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block">Gửi email thông báo khi có phân công coi thi hoặc lịch thi mới</span>
                 </div>
                 <input
                   type="checkbox"
@@ -197,8 +197,8 @@ export default function SettingsPage() {
 
               <label className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 cursor-pointer hover:bg-slate-100/60 dark:hover:bg-slate-800 transition">
                 <div className="space-y-0.5">
-                  <span className="text-[15px] font-medium text-slate-900 dark:text-slate-100 block">Nhắc nhở lịch thi trước 24 giờ</span>
-                  <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block">Tự động gửi thông báo nhắc ca thi trên giao diện web</span>
+                  <span className="text-type-body font-medium text-slate-900 dark:text-slate-100 block">Nhắc nhở lịch thi trước 24 giờ</span>
+                  <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block">Tự động gửi thông báo nhắc ca thi trên giao diện web</span>
                 </div>
                 <input
                   type="checkbox"
@@ -210,8 +210,8 @@ export default function SettingsPage() {
 
               <label className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 cursor-pointer hover:bg-slate-100/60 dark:hover:bg-slate-800 transition">
                 <div className="space-y-0.5">
-                  <span className="text-[15px] font-medium text-slate-900 dark:text-slate-100 block">Âm thanh thông báo</span>
-                  <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block">Phát âm thanh nhẹ khi có thông báo hệ thống mới</span>
+                  <span className="text-type-body font-medium text-slate-900 dark:text-slate-100 block">Âm thanh thông báo</span>
+                  <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block">Phát âm thanh nhẹ khi có thông báo hệ thống mới</span>
                 </div>
                 <input
                   type="checkbox"
@@ -227,7 +227,7 @@ export default function SettingsPage() {
         {/* Tab 2: Appearance & Theme */}
         {activeTab === 'appearance' && (
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-2xs space-y-6">
-            <h2 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 border-b border-slate-100 dark:border-slate-700 pb-3 flex items-center gap-2">
+            <h2 className="text-type-section font-semibold text-slate-900 dark:text-slate-100 border-b border-slate-100 dark:border-slate-700 pb-3 flex items-center gap-2">
               <Sliders className="h-5 w-5 text-blue-600" />
               <span>Tùy chỉnh chế độ hiển thị & Theme</span>
             </h2>
@@ -235,11 +235,11 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700">
                 <div className="space-y-0.5">
-                  <span className="text-[15px] font-medium text-slate-900 dark:text-slate-100 block flex items-center gap-1.5">
+                  <span className="text-type-body font-medium text-slate-900 dark:text-slate-100 block flex items-center gap-1.5">
                     {isDarkMode ? <Moon className="h-4 w-4 text-blue-600" /> : <Sun className="h-4 w-4 text-amber-500" />}
                     Chế độ Dark Mode (Giao diện tối)
                   </span>
-                  <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block">Chuyển đổi giao diện sáng / tối cho toàn bộ màn hình</span>
+                  <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block">Chuyển đổi giao diện sáng / tối cho toàn bộ màn hình</span>
                 </div>
 
                 <button
@@ -259,11 +259,11 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-[15px] font-medium text-slate-800 dark:text-slate-200">Ngôn ngữ giao diện</label>
+                <label className="block text-type-body font-medium text-slate-800 dark:text-slate-200">Ngôn ngữ giao diện</label>
                 <FilterSelect containerClassName="w-full"
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-3 text-[15px] font-normal focus:border-blue-600 focus:outline-none"
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-3 text-type-body font-normal focus:border-blue-600 focus:outline-none"
                 >
                   <option value="vi">Tiếng Việt (Mặc định)</option>
                   <option value="en">English (US)</option>
@@ -276,19 +276,19 @@ export default function SettingsPage() {
         {/* Tab 3: Security & Privacy */}
         {activeTab === 'security' && (
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-2xs space-y-6">
-            <h2 className="text-[20px] font-semibold text-slate-900 dark:text-slate-100 border-b border-slate-100 dark:border-slate-700 pb-3 flex items-center gap-2">
+            <h2 className="text-type-section font-semibold text-slate-900 dark:text-slate-100 border-b border-slate-100 dark:border-slate-700 pb-3 flex items-center gap-2">
               <Shield className="h-5 w-5 text-blue-600" />
               <span>Thiết lập bảo mật phiên đăng nhập</span>
             </h2>
 
             <div className="space-y-4">
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 space-y-1">
-                <span className="text-[15px] font-medium text-slate-900 dark:text-slate-100 block">Thời gian tự động đăng xuất (Timeout)</span>
-                <span className="text-[13px] font-normal text-slate-500 dark:text-slate-400 block mb-2">Tự động hủy phiên đăng nhập nếu không có thao tác</span>
+                <span className="text-type-body font-medium text-slate-900 dark:text-slate-100 block">Thời gian tự động đăng xuất (Timeout)</span>
+                <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block mb-2">Tự động hủy phiên đăng nhập nếu không có thao tác</span>
                 <FilterSelect
                   value={sessionTimeout}
                   onChange={(e) => setSessionTimeout(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-2.5 text-[15px] font-normal focus:border-blue-600 focus:outline-none"
+                  className="w-full rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 p-2.5 text-type-body font-normal focus:border-blue-600 focus:outline-none"
                 >
                   <option value="30">30 phút không hoạt động</option>
                   <option value="60">60 phút không hoạt động (Mặc định)</option>
@@ -298,8 +298,8 @@ export default function SettingsPage() {
 
               <div className="p-4 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <span className="text-[15px] font-medium text-emerald-900 dark:text-emerald-100 block">Mã hóa mật khẩu & Session</span>
-                  <span className="text-[13px] font-normal text-emerald-700 dark:text-emerald-400 block">Mật khẩu được mã hóa Bcrypt 10-rounds an toàn tuyệt đối</span>
+                  <span className="text-type-body font-medium text-emerald-900 dark:text-emerald-100 block">Mã hóa mật khẩu & Session</span>
+                  <span className="text-type-helper font-normal text-emerald-700 dark:text-emerald-400 block">Mật khẩu được mã hóa Bcrypt 10-rounds an toàn tuyệt đối</span>
                 </div>
                 <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
               </div>
