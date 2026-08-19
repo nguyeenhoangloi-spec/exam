@@ -256,16 +256,24 @@ html.dark {
     transform: scale(0.98) !important;
   }
 
-  /* Fallback for the animate-in vocabulary used by existing dialogs/menus.
-   * The project does not install tailwindcss-animate, so these definitions
-   * keep the existing class names functional without adding a dependency. */
+  /* ── Motion System 2026: Keyframes & Hardware-Accelerated Animations ── */
+  @keyframes ui-motion-slide-from-top {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes ui-motion-slide-from-bottom-2 {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   @keyframes ui-motion-fade-in {
     from { opacity: 0; }
     to { opacity: 1; }
   }
 
   @keyframes ui-motion-scale-fade-in {
-    from { opacity: 0; transform: scale(0.98); }
+    from { opacity: 0; transform: scale(0.96); }
     to { opacity: 1; transform: scale(1); }
   }
 
@@ -289,15 +297,14 @@ html.dark {
   }
 
   .animate-in.fade-in,
+  .animate-in.fade-in-0,
   .animate-in.fade-in-50 {
     animation: ui-motion-fade-in var(--ui-motion-fast) ease-out both;
   }
 
   .animate-in.fade-in.zoom-in-95,
-  .animate-in.fade-in-50.zoom-in-95 {
-    animation: ui-motion-scale-fade-in var(--ui-motion-fast) var(--ui-motion-ease) both;
-  }
-
+  .animate-in.fade-in-0.zoom-in-95,
+  .animate-in.fade-in-50.zoom-in-95,
   .animate-in.zoom-in-95 {
     animation: ui-motion-scale-fade-in var(--ui-motion-fast) var(--ui-motion-ease) both;
   }
@@ -306,7 +313,13 @@ html.dark {
     animation: ui-motion-slide-in-right var(--ui-motion-medium) var(--ui-motion-ease) both;
   }
 
+  .animate-in.slide-in-from-top,
+  .animate-in.slide-in-from-top-2 {
+    animation: ui-motion-slide-from-top var(--ui-motion-fast) var(--ui-motion-ease) both;
+  }
+
   .animate-in.slide-in-from-bottom,
+  .animate-in.slide-in-from-bottom-2,
   .animate-in.slide-in-from-bottom-5 {
     animation: ui-motion-slide-up var(--ui-motion-medium) var(--ui-motion-ease) both;
   }

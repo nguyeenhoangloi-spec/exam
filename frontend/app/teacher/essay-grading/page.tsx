@@ -643,10 +643,10 @@ function TeacherEssayGradingContent() {
           className={`transition-all duration-300 ease-in-out shrink-0 lg:sticky lg:top-4 overflow-hidden ${
             collapseList
               ? 'max-h-0 lg:max-h-none lg:w-0 lg:opacity-0 lg:pointer-events-none lg:-mr-5 hidden lg:block'
-              : 'w-full lg:w-[320px] lg:opacity-100'
+              : 'w-full lg:w-[340px] lg:opacity-100'
           }`}
         >
-          <div className="w-full lg:w-[320px]">
+          <div className="w-full lg:w-[340px]">
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs overflow-hidden flex flex-col">
               {/* Header & Controls Section */}
               <div className="p-3.5 space-y-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40">
