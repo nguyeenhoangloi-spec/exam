@@ -77,19 +77,25 @@ export const Modal: React.FC<ModalProps> = ({
                       {title}
                     </h3>
                     {defaultBadge && (
-                      <span className="inline-flex items-center text-type-helper leading-[18px] font-semibold bg-white/20 text-white px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/30 tracking-wide">
+                      <span className="ui-pill ui-pill-solid inline-flex items-center text-type-helper leading-[18px] font-medium bg-white/20 text-white px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/30 tracking-wide">
                         {defaultBadge}
                       </span>
                     )}
                   </div>
                   {defaultSubtitle && (
-                    isIdentifierSubtitle ? (
-                      <div><IdentifierBadge tone="inverse" title={defaultSubtitle}>{defaultSubtitle}</IdentifierBadge></div>
-                    ) : (
-                      <p className="text-type-helper leading-[18px] font-medium text-blue-100/90 line-clamp-1">
-                        {defaultSubtitle}
-                      </p>
-                    )
+                    (() => {
+                      const match = typeof defaultSubtitle === 'string' ? defaultSubtitle.match(/^(?:mã(?:\s+[a-zà-ỹ]+)*|id|code|snapshot)\s*:\s*(.+)$/i) : null;
+                      const codeValue = match ? match[1].trim() : defaultSubtitle;
+                      const isCode = isIdentifierSubtitle || Boolean(match);
+
+                      return isCode ? (
+                        <div><IdentifierBadge tone="inverse" title={typeof defaultSubtitle === 'string' ? defaultSubtitle : undefined}>{codeValue}</IdentifierBadge></div>
+                      ) : (
+                        <p className="text-type-helper leading-[18px] font-medium text-blue-100/90 line-clamp-1">
+                          {defaultSubtitle}
+                        </p>
+                      );
+                    })()
                   )}
                 </div>
               </div>

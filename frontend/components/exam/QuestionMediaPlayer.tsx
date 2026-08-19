@@ -108,10 +108,10 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
         {/* Play Counter Badge */}
         {!isUnlimited ? (
           <span
-            className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-type-helper font-semibold ${
+            className={`ui-pill inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-type-helper font-medium border ${
               isLimitReached
-                ? 'bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800'
-                : 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800'
+                ? 'text-rose-700 border-rose-300 dark:text-rose-300 dark:border-rose-700'
+                : 'text-blue-700 border-blue-300 dark:text-blue-300 dark:border-blue-700'
             }`}
           >
             {isLimitReached ? (
@@ -125,7 +125,7 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
             )}
           </span>
         ) : (
-          <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-type-helper font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+          <span className="ui-pill rounded-full px-2 py-0.5 text-type-helper font-medium text-slate-600 dark:text-slate-300">
             Không giới hạn
           </span>
         )}

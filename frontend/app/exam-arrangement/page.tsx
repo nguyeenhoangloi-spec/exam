@@ -743,7 +743,7 @@ export default function ExamArrangementPage() {
 
               <div className="space-y-0.5 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-type-helper font-semibold bg-blue-600 text-white tracking-wide">
+                  <span className="inline-flex items-center px-2 py-0.5 ui-pill rounded-full text-type-helper font-medium ui-pill-solid bg-blue-600 text-white tracking-wide">
                     {(currentSchedule as any)?.mode === 'MOCK' ? 'THI THỬ' : 'CHÍNH THỨC'}
                   </span>
                   <h3 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate">
@@ -955,11 +955,11 @@ export default function ExamArrangementPage() {
                           {result.preview ? 'Phương án phân bổ chỗ ngồi' : 'Dữ liệu phân bổ chỗ ngồi'}
                         </h3>
                         {result.preview ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-type-helper font-semibold bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">
+                          <span className="ui-pill inline-flex items-center px-2 py-0.5 rounded-full text-type-helper font-medium text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">
                             Xem trước
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-type-helper font-semibold bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">
+                          <span className="ui-pill inline-flex items-center px-2 py-0.5 rounded-full text-type-helper font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">
                             Chính thức
                           </span>
                         )}
@@ -1101,7 +1101,7 @@ export default function ExamArrangementPage() {
                         )}
                       </div>
                       {studentSearchQuery.trim() && (
-                        <span className="text-type-helper font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/80 px-2.5 py-1 rounded-lg shrink-0 border border-blue-100 dark:border-blue-900/50 animate-fadeIn">
+                        <span className="text-type-helper font-medium text-blue-700 dark:text-blue-300 px-2.5 py-1 ui-pill rounded-full shrink-0 border border-blue-100 dark:border-blue-900/50 animate-fadeIn">
                           Khớp {filteredDetails.length} SV
                         </span>
                       )}
@@ -1136,7 +1136,7 @@ export default function ExamArrangementPage() {
                                         PHÒNG {room.roomName || room.roomCode}
                                       </h4>
                                       {room.building && (
-                                        <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                                        <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full">
                                           {room.building}
                                         </span>
                                       )}
@@ -1156,7 +1156,7 @@ export default function ExamArrangementPage() {
                                       />
                                     </div>
                                   </div>
-                                  <span className="text-type-helper font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/80 border border-blue-100 dark:border-blue-900/50 px-2.5 py-1 rounded-lg">
+                                  <span className="text-type-helper font-medium text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-900/50 px-2.5 py-1 ui-pill rounded-full">
                                     {studentsInRoom.length} Ghế
                                   </span>
                                 </div>
@@ -1191,7 +1191,7 @@ export default function ExamArrangementPage() {
                                     >
                                       {/* Top: Ghế & Lớp */}
                                       <div className="flex items-center justify-between text-type-helper gap-1">
-                                        <span className="font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/80 px-1.5 py-0.5 rounded-md text-type-helper shrink-0">
+                                        <span className="font-medium text-blue-700 dark:text-blue-300 px-1.5 py-0.5 ui-pill rounded-full text-type-helper shrink-0">
                                           #{st.seatNumber}
                                         </span>
                                         <span className="font-semibold text-slate-500 dark:text-slate-400 text-type-helper truncate" title={st.className}>
@@ -1447,12 +1447,8 @@ export default function ExamArrangementPage() {
         isOpen={Boolean(drawerStudentDetail)}
         onClose={() => setDrawerStudentDetail(null)}
         title={drawerStudentDetail?.fullName || 'Chi tiết vị trí thi'}
-        subtitle={`MSSV: ${drawerStudentDetail?.studentCode || ''}`}
+        subtitle={drawerStudentDetail?.studentCode ? `MSSV: ${drawerStudentDetail.studentCode}` : ''}
         avatarText={drawerStudentDetail?.fullName?.trim().split(' ').pop()?.slice(0, 2).toUpperCase() || 'SV'}
-        badge={{
-          label: `SBD: ${drawerStudentDetail?.examNumber || '---'}`,
-          className: 'bg-blue-50 text-blue-700 border-blue-200',
-        }}
         details={[
           { label: 'Họ và tên thí sinh', value: drawerStudentDetail?.fullName, icon: User },
           { label: 'Mã số sinh viên', value: drawerStudentDetail?.studentCode, icon: User },

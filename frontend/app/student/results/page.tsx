@@ -754,7 +754,7 @@ export default function StudentResultsPage() {
                         </button>
                       </div>
 
-                      <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700">
+                      <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full tabular-nums border border-slate-200 dark:border-slate-700">
                         {item.schoolYear}
                       </span>
                     </div>
@@ -845,7 +845,7 @@ export default function StudentResultsPage() {
                         >
                           {item.subjectName}
                         </button>
-                        <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                        <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full">
                           {formatExamType(item.examType)}
                         </span>
                       </div>
@@ -871,9 +871,9 @@ export default function StudentResultsPage() {
                   {/* Right: Score, Status & Action */}
                   <div className="flex items-center gap-3 shrink-0">
                     {item.score !== null && (
-                      <span className={`text-type-helper font-semibold px-2.5 py-1 rounded-lg border tabular-nums ${item.score >= 4.0
-                          ? 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700'
-                          : 'bg-rose-50 text-rose-700 border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-300'
+                      <span className={`text-type-helper font-medium px-2.5 py-1 ui-pill rounded-full border tabular-nums ${item.score >= 4.0
+                          ? 'bg-slate-100 text-slate-800 border-slate-200 dark:text-slate-200 dark:border-slate-700'
+                          : 'bg-rose-50 text-rose-700 border-rose-200/80 dark:text-rose-300'
                         }`}>
                         {item.score.toFixed(1)} điểm
                       </span>
@@ -1118,10 +1118,10 @@ export default function StudentResultsPage() {
           title={detailItem?.subjectName || ''}
           subtitle={`Mã môn: ${detailItem?.subjectCode}`}
           avatarText={detailItem?.subjectCode?.slice(0, 2)?.toUpperCase() || 'KQ'}
-          badge={{
-            label: detailItem?.periodName || '',
-            className: 'bg-blue-50 text-blue-700 border border-blue-200',
-          }}
+          badge={detailItem ? {
+            status: detailItem.status,
+            label: detailItem.status === 'PASSED' ? 'Đạt (Qua môn)' : detailItem.status === 'FAILED' ? 'Chưa đạt' : detailItem.status === 'GRADING' ? 'Đang chấm điểm' : 'Chưa công bố',
+          } : undefined}
           details={[
             { label: 'Môn thi', value: detailItem?.subjectName, icon: BookOpen },
             { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{detailItem?.subjectCode || '---'}</IdentifierBadge> },

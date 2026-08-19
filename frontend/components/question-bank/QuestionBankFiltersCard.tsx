@@ -152,7 +152,7 @@ export function QuestionBankFiltersCard({
           {activeChips.map(({ key, label, getVal }) => (
             <span
               key={key}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800 px-2.5 py-1 text-type-helper font-semibold text-blue-700 dark:text-blue-300 shadow-2xs"
+              className="ui-pill inline-flex items-center gap-1.5 rounded-full border border-blue-300 dark:border-blue-700 px-2.5 py-1 text-type-helper font-medium text-blue-700 dark:text-blue-300 shadow-2xs"
             >
               <span className="text-blue-500 font-medium">{label}:</span>
               <span>{getVal(filters[key])}</span>

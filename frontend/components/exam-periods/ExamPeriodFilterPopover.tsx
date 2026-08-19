@@ -420,9 +420,9 @@ export function ExamPeriodFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${selectedStatus === 'ONGOING'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${selectedStatus === 'ONGOING'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {optionCounts.ongoing}
                         </span>
@@ -448,9 +448,9 @@ export function ExamPeriodFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${selectedStatus === 'UPCOMING'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${selectedStatus === 'UPCOMING'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {optionCounts.upcoming}
                         </span>
@@ -476,9 +476,9 @@ export function ExamPeriodFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${selectedSchoolYear === (schoolYearsList[0] || '2025-2026')
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${selectedSchoolYear === (schoolYearsList[0] || '2025-2026')
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {optionCounts.yearCounts[schoolYearsList[0] || '2025-2026'] || optionCounts.total}
                         </span>
@@ -513,9 +513,9 @@ export function ExamPeriodFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
+                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {item.count}
                             </span>
@@ -552,9 +552,9 @@ export function ExamPeriodFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
+                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {item.count}
                             </span>
@@ -587,9 +587,9 @@ export function ExamPeriodFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${selectedSchoolYear === ''
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${selectedSchoolYear === ''
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {optionCounts.total}
                         </span>
@@ -621,9 +621,9 @@ export function ExamPeriodFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
+                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {count}
                             </span>

@@ -346,9 +346,9 @@ export function ProctorFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${statusFilter === 'ALL' && riskFilter === 'ALL'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${statusFilter === 'ALL' && riskFilter === 'ALL'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {counts.all}
                         </span>
@@ -374,9 +374,9 @@ export function ProctorFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${statusFilter === 'FLAGGED'
-                            ? 'bg-rose-600 text-white'
-                            : 'bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${statusFilter === 'FLAGGED'
+                            ? 'ui-pill-solid bg-rose-600 text-white'
+                            : 'bg-rose-100 text-rose-600 dark:text-rose-300'
                           }`}>
                           {counts.flagged}
                         </span>
@@ -402,9 +402,9 @@ export function ProctorFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${statusFilter === 'DISCONNECTED'
-                            ? 'bg-amber-600 text-white'
-                            : 'bg-amber-100 text-amber-600 dark:bg-amber-950 dark:text-amber-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${statusFilter === 'DISCONNECTED'
+                            ? 'ui-pill-solid bg-amber-600 text-white'
+                            : 'bg-amber-100 text-amber-600 dark:text-amber-300'
                           }`}>
                           {counts.disconnected}
                         </span>
@@ -430,9 +430,9 @@ export function ProctorFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${riskFilter === 'HIGH'
-                            ? 'bg-rose-600 text-white'
-                            : 'bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${riskFilter === 'HIGH'
+                            ? 'ui-pill-solid bg-rose-600 text-white'
+                            : 'bg-rose-100 text-rose-600 dark:text-rose-300'
                           }`}>
                           {counts.highRisk}
                         </span>
@@ -476,9 +476,9 @@ export function ProctorFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSel
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSel
+                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                               }`}>
                               {st.count}
                             </span>
@@ -523,9 +523,9 @@ export function ProctorFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSel
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSel
+                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                               }`}>
                               {r.count}
                             </span>

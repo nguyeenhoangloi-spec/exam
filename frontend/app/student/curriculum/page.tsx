@@ -628,7 +628,7 @@ export default function StudentCurriculumPage() {
                         </button>
                       </div>
 
-                      <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700">
+                      <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full tabular-nums border border-slate-200 dark:border-slate-700">
                         HK {item.recommendedSemester}
                       </span>
                     </div>
@@ -729,7 +729,7 @@ export default function StudentCurriculumPage() {
                         >
                           {item.subjectName}
                         </button>
-                        <span className="text-type-helper font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md">
+                        <span className="text-type-helper font-medium text-blue-600 dark:text-blue-400 px-2 py-0.5 ui-pill rounded-full">
                           {item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}
                         </span>
                       </div>
@@ -970,7 +970,7 @@ export default function StudentCurriculumPage() {
           subtitle={`Mã môn: ${detailItem?.subjectCode}`}
           avatarText={detailItem?.subjectCode?.slice(0, 2)?.toUpperCase() || 'CT'}
           badge={{
-            label: detailItem?.type === 'MANDATORY' ? 'Môn bắt buộc' : 'Môn tự chọn',
+            label: detailItem?.isCompleted ? 'Đã hoàn thành' : 'Chưa hoàn thành',
             status: detailItem?.isCompleted ? 'COMPLETED' : 'PENDING',
           }}
           details={[

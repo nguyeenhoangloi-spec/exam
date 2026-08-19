@@ -362,9 +362,9 @@ export function StudentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${selectedGender === 'Nam'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${selectedGender === 'Nam'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {optionCounts.maleCount}
                         </span>
@@ -390,9 +390,9 @@ export function StudentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${selectedGender === 'Nữ'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${selectedGender === 'Nữ'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {optionCounts.femaleCount}
                         </span>
@@ -419,9 +419,9 @@ export function StudentFilterPopover({
                         </div>
 
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${selectedClassId === String(classes[0].id)
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                          <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${selectedClassId === String(classes[0].id)
+                              ? 'ui-pill-solid bg-blue-600 text-white'
+                              : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                             }`}>
                             {optionCounts.classCounts[String(classes[0].id)] || 0}
                           </span>
@@ -453,9 +453,9 @@ export function StudentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${selectedClassId === ''
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${selectedClassId === ''
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {optionCounts.total}
                         </span>
@@ -487,9 +487,9 @@ export function StudentFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
+                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {count}
                             </span>
@@ -526,9 +526,9 @@ export function StudentFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
+                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {item.count}
                             </span>
@@ -565,9 +565,9 @@ export function StudentFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
+                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {item.count}
                             </span>

@@ -36,8 +36,8 @@ export function SegmentControl({ items, activeKey, onChange, className = '' }: S
             <span>{item.label}</span>
             {typeof item.count === 'number' && (
               <span
-                className={`ml-0.5 rounded-md px-1.5 py-0.5 text-type-badge font-semibold ${
-                  isActive ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300'
+                className={`ui-pill ml-0.5 rounded-full border px-1.5 py-0.5 text-type-helper font-medium ${
+                  isActive ? 'ui-pill-solid bg-blue-600 text-white border-blue-600' : 'text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600'
                 }`}
               >
                 {item.count}
@@ -75,8 +75,8 @@ export function Tabs({ items, activeKey, onChange, className = '' }: TabsProps) 
             <span>{item.label}</span>
             {typeof item.count === 'number' && (
               <span
-                className={`rounded-md px-1.5 py-0.5 text-type-badge font-semibold ${
-                  isActive ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                className={`ui-pill rounded-full border px-1.5 py-0.5 text-type-helper font-medium ${
+                  isActive ? 'ui-pill-solid bg-blue-600 text-white border-blue-600' : 'text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600'
                 }`}
               >
                 {item.count}

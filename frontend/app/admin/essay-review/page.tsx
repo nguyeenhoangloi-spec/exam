@@ -445,7 +445,7 @@ function AdminEssayReviewContent() {
                     <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
                       Danh sách bài thi
                     </h3>
-                    <span className="text-type-helper font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full border border-blue-200/60 dark:border-blue-800/60 tabular-nums">
+                    <span className="ui-pill inline-flex items-center text-type-helper font-medium text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full border border-blue-200/60 dark:border-blue-800/60 tabular-nums">
                       {filteredRows.length}/{rows.length}
                     </span>
                   </div>
@@ -862,7 +862,7 @@ function AdminEssayReviewContent() {
                       {/* Question Header & Rubric Trigger */}
                       <div className="flex justify-between items-start gap-4 border-b border-slate-100 dark:border-slate-800 pb-3.5">
                         <div className="flex items-start gap-2.5 flex-1">
-                          <span className="px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-type-helper font-semibold border border-blue-200 dark:border-blue-800/80 shrink-0 select-none">
+                          <span className="ui-pill inline-flex items-center px-2.5 py-1 rounded-full text-blue-700 dark:text-blue-300 text-type-helper font-medium border border-blue-200 dark:border-blue-800/80 shrink-0 select-none">
                             Câu {idx + 1}
                           </span>
                           <div className="text-type-body font-semibold text-slate-900 dark:text-slate-100 leading-snug">
@@ -947,7 +947,7 @@ function AdminEssayReviewContent() {
                                         <p className="text-type-helper text-slate-500 mt-0.5 font-normal leading-relaxed">{r.description}</p>
                                       )}
                                     </div>
-                                    <span className="tabular-nums text-type-helper font-semibold text-slate-500 shrink-0 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700">
+                                    <span className="tabular-nums text-type-helper font-medium text-slate-500 shrink-0 px-2 py-0.5 ui-pill rounded-full border border-slate-200/60 dark:border-slate-700">
                                       Tối đa {r.maxScore}đ
                                     </span>
                                   </div>
@@ -965,7 +965,7 @@ function AdminEssayReviewContent() {
                                           className={`px-2.5 py-1 rounded-xl text-type-helper font-semibold border transition select-none ${
                                             currentScore === presetVal
                                               ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                                              : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 opacity-80'
+                                              : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                                           }`}
                                         >
                                           {presetVal === r.maxScore ? `Max (${presetVal}đ)` : `${presetVal}đ`}
@@ -1071,9 +1071,9 @@ function AdminEssayReviewContent() {
       <ProfileDrawer
         isOpen={!!profileCandidate}
         onClose={() => setProfileCandidate(null)}
-        title="Hồ Sơ & Bài Thi Sinh Viên"
-        subtitle={profileCandidate?.student?.fullName}
-        avatarText={profileCandidate?.student?.fullName?.slice(0, 2)?.toUpperCase()}
+        title={profileCandidate?.student?.fullName || 'Hồ Sơ & Bài Thi Sinh Viên'}
+        subtitle={profileCandidate?.student?.studentCode ? `Mã sinh viên: ${profileCandidate.student.studentCode}` : ''}
+        avatarText={profileCandidate?.student?.fullName?.trim().split(' ').pop()?.slice(0, 2)?.toUpperCase() || 'SV'}
         badge={{
           label:
             profileCandidate?.gradingStatus === 'PUBLISHED'

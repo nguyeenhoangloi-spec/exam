@@ -106,10 +106,10 @@ function inspectJsxControlClasses(content) {
   return elements;
 }
 
-function inspectJsxClassLists(content) {
+function inspectJsxElements(content) {
   const sourceFile = ts.createSourceFile('audit.tsx', content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
   const variables = new Map();
-  const classLists = [];
+  const elements = [];
 
   function visit(node) {
     if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name)) {
@@ -117,18 +117,22 @@ function inspectJsxClassLists(content) {
       if (value) variables.set(node.name.text, value);
     }
     if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
+      const tagName = node.tagName.getText(sourceFile).toLowerCase();
       const classAttribute = node.attributes.properties.find(
         (attribute) => ts.isJsxAttribute(attribute) && attribute.name.text === 'className',
       );
       if (classAttribute) {
-        classLists.push(getStaticClassText(classAttribute.initializer, sourceFile, variables));
+        elements.push({
+          tagName,
+          classes: getStaticClassText(classAttribute.initializer, sourceFile, variables),
+        });
       }
     }
     ts.forEachChild(node, visit);
   }
 
   visit(sourceFile);
-  return classLists;
+  return elements;
 }
 
 for (const folder of sourceRoots) {
@@ -138,10 +142,48 @@ for (const folder of sourceRoots) {
     if (skippedFiles.has(relativeFile)) continue;
     const content = await readFile(file, 'utf8');
 
-    if (file.endsWith('.tsx') && !popupBoldFiles.has(relativeFile)) {
-      for (const classes of inspectJsxClassLists(content)) {
-        if (/\bfont-bold\b/i.test(classes) && !/\btext-type-kpi\b/i.test(classes)) {
+    if (file.endsWith('.tsx')) {
+      for (const element of inspectJsxElements(content)) {
+        const { classes, tagName } = element;
+
+        if (!popupBoldFiles.has(relativeFile)
+          && /\bfont-bold\b/i.test(classes)
+          && !/\btext-type-kpi\b/i.test(classes)) {
           report(file, 'font-bold (700) chỉ được dùng trực tiếp cho KPI/tổng số quan trọng');
+          break;
+        }
+
+        if (/\bui-pill\b/i.test(classes)) {
+          if (!/\brounded-full\b/i.test(classes)
+            || !/\btext-type-helper\b/i.test(classes)
+            || !/\bfont-medium\b/i.test(classes)) {
+            report(file, 'ui-pill phải dùng rounded-full, text-type-helper (13px) và font-medium (500)');
+            break;
+          }
+
+          const hasSolidBackground = /(?:^|\s)(?:dark:)?bg-(?:blue|emerald|amber|rose|green|red|yellow|orange|indigo|violet|slate|gray)-(?:500|600|700)(?:\/\d+)?\b/i.test(classes)
+            || /(?:^|\s)(?:dark:)?bg-white\/\d+\b/i.test(classes);
+          if (hasSolidBackground && !/\bui-pill-solid\b/i.test(classes)) {
+            report(file, 'pill có nền đặc phải khai báo ui-pill-solid rõ ràng');
+            break;
+          }
+        }
+
+        const resemblesUnmarkedPill = tagName === 'span'
+          && /\btext-type-(?:helper|badge)\b/i.test(classes)
+          && /\brounded-full\b/i.test(classes)
+          && /\bpx-[^\s]+/i.test(classes)
+          && /\bpy-[^\s]+/i.test(classes)
+          && !/\bui-pill\b/i.test(classes);
+        if (resemblesUnmarkedPill) {
+          report(file, 'nhãn dạng pill phải dùng contract ui-pill dùng chung');
+          break;
+        }
+
+        const hasBareContentOpacity = /(?:^|\s)opacity-(?:40|50|60|70|80)\b/i.test(classes);
+        const isDecorativeOrMedia = /^(?:img|video|svg)$/i.test(tagName) || /\bpointer-events-none\b/i.test(classes);
+        if (hasBareContentOpacity && !isDecorativeOrMedia) {
+          report(file, 'không dùng opacity trên container/nội dung để làm chữ nhạt; dùng semantic text color trực tiếp');
           break;
         }
       }
@@ -200,6 +242,9 @@ for (const folder of sourceRoots) {
     }
 
     if (file.endsWith('.tsx')) {
+      if (/\btext-\[#[0-9a-f]{3,8}\]/i.test(content)) {
+        report(file, 'Web UI không được tự khai báo màu chữ hex/inline; phải dùng token semantic');
+      }
       if (/\btext-(?:xs|sm|base|lg|xl|[2-9]xl)\b/i.test(content)) {
         report(file, 'Web UI phải dùng token text-type-*; không dùng thang cỡ mặc định của Tailwind');
       }
@@ -313,6 +358,10 @@ for (const folder of sourceRoots) {
 const layout = await readFile(join(root, 'app', 'layout.tsx'), 'utf8');
 const globalCss = await readFile(join(root, 'app', 'globals.css'), 'utf8');
 const tailwindConfig = await readFile(join(root, 'tailwind.config.js'), 'utf8');
+const packageJson = await readFile(join(root, 'package.json'), 'utf8');
+const artifactAudit = await readFile(join(root, 'scripts', 'audit-ui-artifact.mjs'), 'utf8');
+const designSystemGuide = await readFile(join(root, '..', 'ui-design-system-rules.md'), 'utf8');
+const agentGuide = await readFile(join(root, '..', 'GEMINI.md'), 'utf8');
 const middleware = await readFile(join(root, 'middleware.ts'), 'utf8');
 const accessRules = await readFile(join(root, 'lib', 'access.ts'), 'utf8');
 const publicCsvFiles = [
@@ -368,6 +417,7 @@ const button = await readFile(join(root, 'components', 'ui', 'Button.tsx'), 'utf
 const input = await readFile(join(root, 'components', 'ui', 'Input.tsx'), 'utf8');
 const identifierBadge = await readFile(join(root, 'components', 'ui', 'IdentifierBadge.tsx'), 'utf8');
 const statusBadge = await readFile(join(root, 'components', 'common', 'StatusBadge.tsx'), 'utf8');
+const sidebar = await readFile(join(root, 'components', 'Sidebar.tsx'), 'utf8');
 const sharedUiPrimitiveFiles = [
   'components/ui/Button.tsx',
   'components/ui/Card.tsx',
@@ -378,8 +428,10 @@ const sharedUiPrimitiveFiles = [
   'components/ui/Tabs.tsx',
 ];
 
-if (!/import\s+\{\s*Inter\s*\}\s+from\s+['"]next\/font\/google['"]/.test(layout) || !/variable:\s*['"]--font-inter['"]/.test(layout)) {
-  violations.push('app/layout.tsx: phải nạp Inter qua next/font/google với biến --font-inter');
+if (!/import\s+\{\s*Inter\s*\}\s+from\s+['"]next\/font\/google['"]/.test(layout)
+  || !/variable:\s*['"]--font-inter['"]/.test(layout)
+  || !/<body className="typography-scale\b/.test(layout)) {
+  violations.push('app/layout.tsx: phải nạp Inter qua next/font/google và gắn typography-scale tại body');
 }
 
 if (!/font-family:\s*var\(--font-ui\)/.test(globalCss)) {
@@ -412,13 +464,43 @@ if (!/transition-property:\s*background-color,\s*border-color,\s*box-shadow,\s*c
   violations.push('app/globals.css: interactive controls must use the shared transition-property contract');
 }
 
-if (!/--ui-text-primary:\s*#0f172a/i.test(globalCss)
-  || !/--ui-text-body:\s*#111827/i.test(globalCss)
-  || !/--ui-text-secondary:\s*#1f2937/i.test(globalCss)
-  || !/--ui-text-muted-soft:\s*#374151/i.test(globalCss)
-  || !/--ui-text-disabled:\s*#64748b/i.test(globalCss)
-  || !/\.text-slate-500[^\{]*\{\s*color:\s*var\(--ui-text-secondary\)/i.test(globalCss)) {
-  violations.push('app/globals.css: neutral text phải theo black-forward palette');
+if (!/--ui-text-primary:\s*#020617/i.test(globalCss)
+  || !/--ui-text-body:\s*#020617/i.test(globalCss)
+  || !/--ui-text-secondary:\s*#111827/i.test(globalCss)
+  || !/--ui-text-muted-soft:\s*#1f2937/i.test(globalCss)
+  || !/--ui-text-disabled:\s*#475569/i.test(globalCss)
+  || !/\.text-slate-500[^\{]*\{\s*color:\s*var\(--ui-text-muted-soft\)/i.test(globalCss)
+  || !/\.text-slate-600[^\{]*\.text-slate-700[^\{]*\{\s*color:\s*var\(--ui-text-secondary\)/i.test(globalCss)
+  || !/\.text-slate-800[^\{]*\.text-slate-900[^\{]*\{\s*color:\s*var\(--ui-text-primary\)/i.test(globalCss)
+  || !/input, textarea\)::placeholder[\s\S]*?color:\s*var\(--ui-text-disabled\) !important/.test(globalCss)
+  || !/html\.dark \.typography-scale[\s\S]*?dark\\:text-slate-300[\s\S]*?color:\s*var\(--ui-text-muted-soft\) !important/.test(globalCss)) {
+  violations.push('app/globals.css: màu chữ phải theo Deep Ink palette và remap đầy đủ light/dark/placeholder');
+}
+
+if (!/Deep Ink 4-Tier Typography System/.test(designSystemGuide)
+  || !/\| \*\*Tầng 1\*\*[\s\S]*?`#020617`/.test(designSystemGuide)
+  || !/`--ui-text-secondary` \| `#111827`/.test(designSystemGuide)
+  || !/`--ui-text-muted-soft` \| `#1F2937`/.test(designSystemGuide)
+  || !/`--ui-text-disabled` \| `#475569`/.test(designSystemGuide)
+  || !/`#020617` \| `#FFFFFF` \| `20\.17:1`/.test(designSystemGuide)
+  || !/rgb\(2, 6, 23\).*#020617/.test(designSystemGuide)
+  || !/npm run audit:ui:artifact/.test(designSystemGuide)
+  || !/Không kết luận hoàn thành nếu source đạt nhưng CSS artifact thiếu/.test(designSystemGuide)
+  || /Cool Slate 5-Tier Typography System/.test(designSystemGuide)) {
+  violations.push('../ui-design-system-rules.md: tài liệu phải dùng đúng Deep Ink palette và không còn quy chuẩn màu chữ cũ');
+}
+
+if (!/"audit:ui:artifact":\s*"node scripts\/audit-ui-artifact\.mjs"/.test(packageJson)
+  || !/--ui-text-primary:\\s\*#020617/.test(artifactAudit)
+  || !/JS\/server artifact không gắn typography-scale/.test(artifactAudit)
+  || !/UI artifact audit passed/.test(artifactAudit)) {
+  violations.push('package/scripts: phải có cổng audit:ui:artifact kiểm tra CSS và application shell sau biên dịch');
+}
+
+if (!/Quy tắc Màu chữ Deep Ink \(ghi đè quy tắc màu chữ cũ\)/.test(agentGuide)
+  || !/Chữ mặc định\/chính: `#020617`/.test(agentGuide)
+  || !/Placeholder\/disabled: `#475569`/.test(agentGuide)) {
+  violations.push('../GEMINI.md: quy tắc agent phải trỏ về Deep Ink palette hiện hành');
 }
 
 if (!/--fs-page-title:\s*28px/.test(globalCss)
@@ -529,8 +611,32 @@ if (!/variant === 'pill'/.test(statusBadge)
   || !/dark:/.test(statusBadge)
   || !/text-amber-700/.test(statusBadge)
   || !/text-emerald-700/.test(statusBadge)
-  || !/text-type-badge/.test(statusBadge)) {
-  violations.push('components/common/StatusBadge.tsx: status badge phải có 5 nhóm màu semantic chuẩn và hỗ trợ 2 variants dot/pill');
+  || !/emphasis\?: 'outline' \| 'solid'/.test(statusBadge)
+  || !/ui-pill inline-flex/.test(statusBadge)
+  || !/rounded-full/.test(statusBadge)
+  || !/text-type-helper/.test(statusBadge)
+  || !/font-medium/.test(statusBadge)
+  || !/ui-pill-solid/.test(statusBadge)
+  || !/bg-transparent/.test(statusBadge)) {
+  violations.push('components/common/StatusBadge.tsx: status pill phải outline mặc định, rounded-full, 13px/500 và chỉ dùng nền đặc qua emphasis="solid"');
+}
+
+if (!/\.typography-scale \.ui-pill\s*\{[\s\S]*?border-radius:\s*9999px !important[\s\S]*?font-size:\s*var\(--fs-helper\) !important[\s\S]*?font-weight:\s*500 !important/.test(globalCss)
+  || !/\.ui-pill:not\(\.ui-pill-solid\)\s*\{[\s\S]*?background-color:\s*transparent !important/.test(globalCss)
+  || !/\.ui-pill-solid\s*\{[\s\S]*?border-color:\s*transparent !important/.test(globalCss)) {
+  violations.push('app/globals.css: ui-pill phải cưỡng chế rounded-full, 13px/500, outline mặc định và solid có chủ đích');
+}
+
+if (!/--sidebar-text:\s*#020617/i.test(globalCss)
+  || !/--sidebar-icon:\s*#111827/i.test(globalCss)
+  || !/--sidebar-active:\s*#2563eb/i.test(globalCss)
+  || !/\.sidebar-text\s*\{[\s\S]*?color:\s*var\(--sidebar-text\)/.test(globalCss)
+  || !/\.sidebar-icon\s*\{[\s\S]*?color:\s*var\(--sidebar-icon\)/.test(globalCss)
+  || !/\.sidebar-active-text\s*\{[\s\S]*?color:\s*var\(--sidebar-active\)/.test(globalCss)
+  || !/sidebar-aside sidebar-text/.test(sidebar)
+  || !/sidebar-icon/.test(sidebar)
+  || !/sidebar-active-text/.test(sidebar)) {
+  violations.push('Sidebar: màu chữ/icon/active phải lấy từ token semantic dùng chung, không cấu hình rời rạc');
 }
 
 if (!/aria-busy=\{isLoading \|\| undefined\}/.test(button)) {
@@ -541,6 +647,12 @@ if (!/aria-expanded=\{isOpen\}/.test(filterSelect)
   || !/aria-haspopup="listbox"/.test(filterSelect)
   || !/role="option"/.test(filterSelect)) {
   violations.push('components/ui/FilterSelect.tsx: dropdown state must expose listbox semantics');
+}
+
+if (/\b(?:disabled:)?opacity-(?:40|50|60|70|80)\b/.test(input)
+  || /\b(?:disabled:)?opacity-(?:40|50|60|70|80)\b/.test(filterSelect)
+  || !/:where\(button, \[role='button'\]\):disabled[\s\S]*?color:\s*var\(--ui-text-disabled\) !important[\s\S]*?opacity:\s*1 !important/.test(globalCss)) {
+  violations.push('Shared input/filter/button disabled: dùng màu --ui-text-disabled, không làm mờ toàn control bằng opacity');
 }
 
 for (const relativePrimitive of sharedUiPrimitiveFiles) {
@@ -555,4 +667,4 @@ if (violations.length) {
   process.exit(1);
 }
 
-console.log('UI audit passed: Inter, cỡ chữ, độ đậm, màu nhấn và DynamicImage đều đúng chuẩn.');
+console.log('UI audit passed: Inter, cỡ chữ, độ đậm, Deep Ink text palette, pill và DynamicImage đều đúng chuẩn.');

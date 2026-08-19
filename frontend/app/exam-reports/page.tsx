@@ -1093,12 +1093,12 @@ export default function ExamReportsPage() {
         isOpen={Boolean(drawerCandidate)}
         onClose={() => setDrawerCandidate(null)}
         title={drawerCandidate?.fullName || 'Hồ sơ thí sinh thi'}
-        subtitle={`MSSV: ${drawerCandidate?.studentCode || ''}`}
+        subtitle={drawerCandidate?.studentCode ? `MSSV: ${drawerCandidate.studentCode}` : ''}
         avatarText={drawerCandidate?.fullName?.trim().split(' ').pop()?.slice(0, 2).toUpperCase() || 'SV'}
-        badge={{
-          label: drawerCandidate?.status === 'ABSENT' ? 'Vắng thi' : `Điểm số: ${drawerCandidate?.totalScore ?? '--'} / 10`,
-          className: drawerCandidate?.status === 'ABSENT' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-blue-50 text-blue-700 border-blue-200',
-        }}
+        badge={drawerCandidate?.status ? {
+          status: drawerCandidate.status,
+          label: drawerCandidate.status === 'ABSENT' ? 'Vắng thi' : drawerCandidate.status === 'GRADED' ? 'Đã chấm điểm' : drawerCandidate.status === 'SUBMITTED' ? 'Đã nộp bài' : 'Chưa nộp',
+        } : undefined}
         details={[
           { label: 'Họ và tên thí sinh', value: drawerCandidate?.fullName, icon: GraduationCap },
           { label: 'Mã số sinh viên', value: drawerCandidate?.studentCode, icon: GraduationCap },

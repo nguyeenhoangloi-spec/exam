@@ -1057,7 +1057,7 @@ export default function SubjectsPage() {
  <p className="text-type-helper font-semibold text-slate-500">{e.student?.studentCode} · {e.student?.class?.name || 'Chưa có lớp'}</p>
  </div>
  <div className="text-right">
- <span className="text-type-helper font-semibold text-blue-700 bg-blue-50 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60 rounded-lg px-2 py-0.5">{e.semester}</span>
+ <span className="text-type-helper font-medium text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60 ui-pill rounded-full px-2 py-0.5">{e.semester}</span>
  </div>
  </div>
  ))}

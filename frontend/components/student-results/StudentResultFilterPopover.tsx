@@ -363,7 +363,7 @@ export function StudentResultFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterStatus === 'PASSED' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'PASSED' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.passed}
                         </span>
@@ -389,7 +389,7 @@ export function StudentResultFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterStatus === 'FAILED' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'FAILED' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.failed}
                         </span>
@@ -416,7 +416,7 @@ export function StudentResultFilterPopover({
                         </div>
 
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterYear === academicYears[0] ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                          <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterYear === academicYears[0] ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                             }`}>
                             {counts.yearCounts[academicYears[0]] || 0}
                           </span>
@@ -447,7 +447,7 @@ export function StudentResultFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterYear === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterYear === 'ALL' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.all}
                         </span>
@@ -477,7 +477,7 @@ export function StudentResultFilterPopover({
                             </div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {c}
                             </span>
@@ -509,7 +509,7 @@ export function StudentResultFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterSemester === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterSemester === 'ALL' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.all}
                         </span>
@@ -539,7 +539,7 @@ export function StudentResultFilterPopover({
                             </div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {c}
                             </span>
@@ -571,7 +571,7 @@ export function StudentResultFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterStatus === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'ALL' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.all}
                         </span>
@@ -596,7 +596,7 @@ export function StudentResultFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterStatus === 'PASSED' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'PASSED' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.passed}
                         </span>
@@ -621,7 +621,7 @@ export function StudentResultFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterStatus === 'FAILED' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'FAILED' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.failed}
                         </span>
@@ -646,7 +646,7 @@ export function StudentResultFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterStatus === 'GRADING' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'GRADING' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.grading}
                         </span>

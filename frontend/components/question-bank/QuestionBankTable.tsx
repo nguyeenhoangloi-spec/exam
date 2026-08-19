@@ -108,7 +108,7 @@ export function QuestionBankTable({
                     >
                       <IdentifierBadge>{codeText}</IdentifierBadge>
                     </button>
-                    <span className="truncate rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-type-helper font-semibold text-slate-700 dark:text-slate-300 max-w-[160px]">
+                    <span className="truncate ui-pill rounded-full px-2 py-0.5 text-type-helper font-medium text-slate-700 dark:text-slate-300 max-w-[160px]">
                       {subjectName}
                     </span>
                   </div>
@@ -506,7 +506,7 @@ export function QuestionBankTable({
                               );
 
                               return (
-                                <span key={m.id || idx} className="table-badge inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-type-helper font-medium text-slate-500 shrink-0">
+                                <span key={m.id || idx} className="table-badge ui-pill inline-flex items-center gap-1 rounded-full border border-slate-200 px-2 py-0.5 text-type-helper font-medium text-slate-500 shrink-0">
                                   <FileText className="h-3.5 w-3.5 text-slate-400" />
                                   {cleanMediaFileName(m.fileName, 'Tập tin')}
                                 </span>

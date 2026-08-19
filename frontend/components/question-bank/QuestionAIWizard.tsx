@@ -217,7 +217,7 @@ export function QuestionAIWizard({
             <div className="space-y-1 sm:col-span-2">
               <div className="flex items-center justify-between">
                 <label className="block text-type-body font-medium text-slate-900">Số lượng câu hỏi tạo tự động</label>
-                <span className="text-type-helper font-semibold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-lg border border-blue-200">
+                <span className="text-type-helper font-medium text-blue-700 px-2.5 py-0.5 ui-pill rounded-full border border-blue-200">
                   {form.count} câu
                 </span>
               </div>
@@ -382,7 +382,7 @@ export function QuestionAIWizard({
                             </span>
                             <span className="flex-1 text-type-body font-medium">{opt.content}</span>
                             {opt.isCorrect && (
-                              <span className="text-type-helper text-emerald-700 font-semibold bg-emerald-100 px-1.5 py-0.5 rounded-lg">
+                              <span className="text-type-helper text-emerald-700 font-medium px-1.5 py-0.5 ui-pill rounded-full">
                                 Đáp án đúng
                               </span>
                             )}

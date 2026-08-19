@@ -12,13 +12,13 @@ export const QuestionDifficultyBadge = ({ difficulty }: { difficulty: string }) 
   const label = DIFFICULTY_LABELS[difficulty] || (isEasy ? 'Dễ' : isHard ? 'Khó' : 'Trung bình');
 
   const badgeCls = isEasy
-    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60'
+    ? 'bg-transparent text-emerald-700 dark:text-emerald-400 border border-emerald-400 dark:border-emerald-700'
     : isHard
-      ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-200/60 dark:border-rose-800/60'
-      : 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/60';
+      ? 'bg-transparent text-rose-700 dark:text-rose-400 border border-rose-400 dark:border-rose-700'
+      : 'bg-transparent text-amber-700 dark:text-amber-400 border border-amber-400 dark:border-amber-700';
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-type-helper font-semibold select-none whitespace-nowrap ${badgeCls}`}>
+    <span className={`ui-pill inline-flex items-center px-2.5 py-1 rounded-full text-type-helper font-medium select-none whitespace-nowrap ${badgeCls}`}>
       {label}
     </span>
   );

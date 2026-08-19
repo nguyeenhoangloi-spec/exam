@@ -504,10 +504,10 @@ export default function StudentExamSchedulePage() {
         title={drawerSchedule?.subjectName || ''}
         subtitle={`Mã môn: ${drawerSchedule?.subjectCode}`}
         avatarText={drawerSchedule?.subjectCode?.slice(0, 2)?.toUpperCase() || 'LT'}
-        badge={{
-          label: drawerSchedule?.periodName || 'Kỳ thi',
-          className: 'bg-blue-50 text-blue-700 border-blue-200',
-        }}
+        badge={drawerSchedule ? {
+          status: (drawerSchedule as any).status || 'UPCOMING',
+          label: (drawerSchedule as any).status === 'COMPLETED' ? 'Đã hoàn thành' : (drawerSchedule as any).status === 'ONGOING' ? 'Đang diễn ra' : 'Sắp diễn ra',
+        } : undefined}
         details={[
           { label: 'Môn thi', value: drawerSchedule?.subjectName, icon: BookOpen },
           { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{drawerSchedule?.subjectCode || '---'}</IdentifierBadge> },

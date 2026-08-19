@@ -423,7 +423,7 @@ export default function ContactSupportPage() {
                       >
                         <div className="space-y-0.5 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="shrink-0 text-type-helper font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md">
+                            <span className="shrink-0 text-type-helper font-medium text-blue-600 dark:text-blue-400 px-2 py-0.5 ui-pill rounded-full">
                               {art.categoryLabel}
                             </span>
                             <h4 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition truncate">
@@ -793,7 +793,7 @@ export default function ContactSupportPage() {
                 {selectedArticle.tags.map((t) => (
                   <span
                     key={t}
-                    className="text-type-helper font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-2.5 py-1 rounded-lg"
+                    className="ui-pill text-type-helper font-medium text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-600 px-2.5 py-1 rounded-full"
                   >
                     #{t}
                   </span>
@@ -903,7 +903,7 @@ export default function ContactSupportPage() {
         }}
         details={[
           { label: 'Đơn vị phụ trách', value: 'Trung tâm Khảo thí & Đảm bảo Chất lượng', icon: Building2 },
-          { label: 'Hotline khẩn cấp 24/7', value: <IdentifierBadge tone="blue">1800-EXAM-HELP (Miễn phí)</IdentifierBadge>, icon: Phone },
+          { label: 'Hotline khẩn cấp 24/7', value: <span className="inline-flex items-center gap-1.5"><IdentifierBadge tone="blue">1800-EXAM-HELP</IdentifierBadge><span className="text-type-helper text-slate-500 font-normal">(Miễn phí)</span></span>, icon: Phone },
           { label: 'Email tiếp nhận hỗ trợ', value: 'support@exam.edu.vn', icon: Mail },
           { label: 'Địa chỉ phòng trực tiếp', value: 'Phòng A1-102, Tòa nhà Khảo thí Trung tâm', icon: MapPin },
           { label: 'Khung giờ trực hỗ trợ', value: '07:00 – 21:00 (Thứ 2 đến Chủ nhật)', icon: Clock },

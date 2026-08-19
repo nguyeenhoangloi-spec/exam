@@ -1062,7 +1062,7 @@ export default function ExamPapersPage() {
             <div className="pb-3 border-b border-slate-100 dark:border-slate-800 space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">Câu hỏi đang thay thế:</span>
-                <span className="px-2 py-0.5 rounded-lg text-type-helper font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                <span className="px-2 py-0.5 ui-pill rounded-full text-type-helper font-medium text-slate-700 dark:text-slate-300">
                   {swapModal.targetQuestion?.type === 'ESSAY' ? 'Tự luận' : swapModal.targetQuestion?.type === 'FILL_BLANK' ? 'Điền khuyết' : 'Trắc nghiệm'} • {swapModal.targetQuestion?.difficulty || 'Trung bình'}
                 </span>
               </div>

@@ -338,9 +338,9 @@ export function BackupFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterStatus === 'SUCCEEDED' && !filterType
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'SUCCEEDED' && !filterType
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {counts.succeeded}
                         </span>
@@ -368,9 +368,9 @@ export function BackupFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterType === 'FULL'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterType === 'FULL'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {counts.full}
                         </span>
@@ -398,9 +398,9 @@ export function BackupFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterType === 'SAFETY'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterType === 'SAFETY'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {counts.safety}
                         </span>
@@ -438,9 +438,9 @@ export function BackupFilterPopover({
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterType === item.key
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                          <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterType === item.key
+                              ? 'ui-pill-solid bg-blue-600 text-white'
+                              : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                             }`}>
                             {item.count}
                           </span>
@@ -478,9 +478,9 @@ export function BackupFilterPopover({
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterStatus === item.key
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                          <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === item.key
+                              ? 'ui-pill-solid bg-blue-600 text-white'
+                              : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                             }`}>
                             {item.count}
                           </span>

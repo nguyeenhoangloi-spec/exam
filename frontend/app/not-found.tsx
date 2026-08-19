@@ -17,7 +17,7 @@ export default function NotFound() {
         </div>
 
         <div className="space-y-2">
-          <span className="text-type-helper font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 inline-block">
+          <span className="text-type-helper font-medium px-2.5 py-1 ui-pill rounded-full text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 inline-block">
             Mã lỗi: 404 Not Found
           </span>
           <h1 className="text-type-section font-semibold text-slate-900 dark:text-slate-100 tracking-tight">

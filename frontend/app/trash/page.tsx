@@ -371,7 +371,7 @@ function TrashPageContent() {
         <div className="space-y-0.5">
           <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2.5">
             <span>{currentCategoryInfo.title}</span>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-type-helper font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700">
+            <span className="ui-pill inline-flex items-center px-2.5 py-0.5 rounded-full text-type-helper font-medium text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700">
               {items.length} mục
             </span>
           </h1>
@@ -639,7 +639,7 @@ function TrashPageContent() {
                           onChange={(e) => handleSelectOne(item.id, e.target.checked)}
                           className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                         />
-                        <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700 truncate">
+                        <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full tabular-nums border border-slate-200 dark:border-slate-700 truncate">
                           {categoryLabelMap[item.type] || item.type}
                         </span>
                       </div>
@@ -734,7 +734,7 @@ function TrashPageContent() {
                         <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
                           {item.title}
                         </span>
-                        <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md tabular-nums border border-slate-200 dark:border-slate-700">
+                        <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full tabular-nums border border-slate-200 dark:border-slate-700">
                           {categoryLabelMap[item.type] || item.type}
                         </span>
                       </div>
@@ -936,11 +936,11 @@ function TrashPageContent() {
           isOpen={Boolean(detailItem)}
           onClose={() => setDetailItem(null)}
           title={detailItem?.title || 'Chi tiết bản ghi'}
-          subtitle={`Mã #${detailItem?.id || ''}`}
+          subtitle={detailItem?.id ? `Mã #${detailItem.id}` : ''}
           avatarText={detailItem?.title?.slice(0, 2)?.toUpperCase() || 'TR'}
           badge={{
-            label: categoryLabelMap[detailItem?.type || ''] || detailItem?.type || 'Thùng rác',
-            className: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200/80 dark:border-rose-800/60',
+            status: 'DELETED',
+            label: 'Đã xóa tạm thời',
           }}
           details={[
             { label: 'Danh mục dữ liệu', value: categoryLabelMap[detailItem?.type || ''] || detailItem?.type || '---' },

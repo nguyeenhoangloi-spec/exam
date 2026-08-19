@@ -111,7 +111,7 @@ export function FillBlankQuestionRenderer({
               const val = answers.find((a) => a.blankIndex === bIndex)?.value || '';
               return (
                 <div key={bIndex} className="flex items-center gap-2 bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 dark:focus-within:ring-blue-900/30 transition">
-                  <span className="text-type-helper font-semibold text-blue-600 dark:text-blue-400 px-2 py-1 bg-blue-50 dark:bg-blue-950/60 rounded-lg shrink-0">
+                  <span className="text-type-helper font-medium text-blue-600 dark:text-blue-400 px-2 py-1 ui-pill rounded-full shrink-0">
                     Ô #{bIndex}
                   </span>
                   <input

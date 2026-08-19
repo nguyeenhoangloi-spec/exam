@@ -381,9 +381,9 @@ export function ExamSupervisorFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${roleFilter === 'SUPERVISOR_1'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${roleFilter === 'SUPERVISOR_1'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {optionCounts.sup1Count}
                         </span>
@@ -409,9 +409,9 @@ export function ExamSupervisorFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${statusFilter === 'CONFIRMED'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${statusFilter === 'CONFIRMED'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {optionCounts.statusCounts['CONFIRMED'] || 0}
                         </span>
@@ -437,9 +437,9 @@ export function ExamSupervisorFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${statusFilter === 'CHANGE_REQUESTED'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${statusFilter === 'CHANGE_REQUESTED'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {optionCounts.statusCounts['CHANGE_REQUESTED'] || 0}
                         </span>
@@ -474,9 +474,9 @@ export function ExamSupervisorFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
+                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {item.count}
                             </span>
@@ -513,9 +513,9 @@ export function ExamSupervisorFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
+                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {item.count}
                             </span>

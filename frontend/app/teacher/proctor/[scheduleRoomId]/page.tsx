@@ -849,7 +849,7 @@ export default function ProctorDashboardPage() {
                         onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
                         className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                       />
-                      <span className="text-type-helper font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700">
+                      <span className="text-type-helper font-medium text-slate-800 dark:text-slate-200 px-2 py-0.5 ui-pill rounded-full border border-slate-200/80 dark:border-slate-700">
                         Ghế {s.seatNumber}
                       </span>
                     </div>
@@ -986,7 +986,7 @@ export default function ProctorDashboardPage() {
                     onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
                     className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
                   />
-                  <span className="inline-flex items-center text-type-helper font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-lg border border-blue-100 dark:border-blue-900 shrink-0">
+                  <span className="ui-pill inline-flex items-center text-type-helper font-medium text-blue-700 dark:text-blue-400 px-2.5 py-1 rounded-full border border-blue-100 dark:border-blue-900 shrink-0">
                     Ghế {s.seatNumber}
                   </span>
 
@@ -1150,7 +1150,7 @@ export default function ProctorDashboardPage() {
                     {visibleColumns.seat !== false && (
                       <td className="p-3.5 whitespace-nowrap">
                         <IdentifierBadge tone="neutral">{s.examNumber}</IdentifierBadge>
-                        <span className="table-badge ml-2 inline-flex items-center text-type-helper font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900">
+                        <span className="table-badge ml-2 ui-pill inline-flex items-center text-type-helper font-medium text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded-full border border-blue-100 dark:border-blue-900">
                           Ghế {s.seatNumber}
                         </span>
                       </td>
@@ -1429,7 +1429,7 @@ export default function ProctorDashboardPage() {
                   <div className="flex items-center gap-1.5">
                     <IdentifierBadge tone="blue">{selectedStudent.student.studentCode}</IdentifierBadge>
                     {selectedStudent.examNumber && (
-                      <IdentifierBadge tone="neutral">SBD: {selectedStudent.examNumber}</IdentifierBadge>
+                      <IdentifierBadge tone="neutral">{selectedStudent.examNumber}</IdentifierBadge>
                     )}
                   </div>
                 </div>
@@ -1649,7 +1649,7 @@ export default function ProctorDashboardPage() {
                     Gia hạn nhóm thí sinh
                   </h3>
                   <div className="mt-1.5 flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 text-type-helper font-semibold px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
+                    <span className="ui-pill inline-flex items-center gap-1 text-type-helper font-medium px-2 py-0.5 rounded-full border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
                       <Users className="w-3 h-3" />
                       Áp dụng cho {selectedIds.length} thí sinh đã chọn
                     </span>
@@ -1762,12 +1762,12 @@ export default function ProctorDashboardPage() {
                   </h3>
                   <div className="mt-1.5 flex items-center gap-2">
                     {selectedIds.length > 0 ? (
-                      <span className="inline-flex items-center gap-1 text-type-helper font-semibold px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
+                      <span className="ui-pill inline-flex items-center gap-1 text-type-helper font-medium px-2 py-0.5 rounded-full border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
                         <Users className="w-3 h-3" />
                         Gửi đến {selectedIds.length} thí sinh đã chọn
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-type-helper font-semibold px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300">
+                      <span className="ui-pill inline-flex items-center gap-1 text-type-helper font-medium px-2 py-0.5 rounded-full border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300">
                         <Radio className="w-3 h-3 text-emerald-500 animate-pulse" />
                         Toàn phòng • {stats.total || 0} thí sinh
                       </span>
@@ -1949,12 +1949,12 @@ export default function ProctorDashboardPage() {
                   </h3>
                   <div className="mt-1.5 flex items-center gap-2">
                     {selectedIds.length > 0 ? (
-                      <span className="inline-flex items-center gap-1 text-type-helper font-semibold px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
+                      <span className="ui-pill inline-flex items-center gap-1 text-type-helper font-medium px-2 py-0.5 rounded-full border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300">
                         <Users className="w-3 h-3" />
                         Cộng bù cho {selectedIds.length} thí sinh đã chọn
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-type-helper font-semibold px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300">
+                      <span className="ui-pill inline-flex items-center gap-1 text-type-helper font-medium px-2 py-0.5 rounded-full border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300">
                         <Radio className="w-3 h-3 text-emerald-500 animate-pulse" />
                         Toàn phòng • {stats.total || 0} thí sinh
                       </span>
@@ -2162,9 +2162,9 @@ export default function ProctorDashboardPage() {
       <ProfileDrawer
         isOpen={!!inspectStudent}
         onClose={() => setInspectStudent(null)}
-        title="Hồ Sơ Thí Sinh & Phiên Thi"
-        subtitle={inspectStudent?.student?.fullName}
-        avatarText={inspectStudent?.student?.fullName?.slice(0, 2)?.toUpperCase()}
+        title={inspectStudent?.student?.fullName || 'Hồ Sơ Thí Sinh & Phiên Thi'}
+        subtitle={inspectStudent?.student?.studentCode ? `Mã sinh viên: ${inspectStudent.student.studentCode}` : ''}
+        avatarText={inspectStudent?.student?.fullName?.trim().split(' ').pop()?.slice(0, 2)?.toUpperCase() || 'SV'}
         badge={{
           label: statusMeta(inspectStudent?.attempt).label,
           status: inspectStudent?.attempt?.status || 'NOT_STARTED',

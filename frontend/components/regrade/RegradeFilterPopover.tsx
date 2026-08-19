@@ -321,9 +321,9 @@ export function RegradeFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${statusTab === 'PENDING'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${statusTab === 'PENDING'
+                          ? 'ui-pill-solid bg-blue-600 text-white'
+                          : 'bg-amber-100 text-amber-800 dark:text-amber-300'
                           }`}>
                           {counts.pending}
                         </span>
@@ -352,9 +352,9 @@ export function RegradeFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${statusTab === 'APPROVED_REGRADE'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${statusTab === 'APPROVED_REGRADE'
+                          ? 'ui-pill-solid bg-blue-600 text-white'
+                          : 'bg-emerald-100 text-emerald-800 dark:text-emerald-300'
                           }`}>
                           {counts.approved}
                         </span>
@@ -383,9 +383,9 @@ export function RegradeFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${statusTab === 'REJECTED'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${statusTab === 'REJECTED'
+                          ? 'ui-pill-solid bg-blue-600 text-white'
+                          : 'bg-rose-100 text-rose-800 dark:text-rose-300'
                           }`}>
                           {counts.rejected}
                         </span>
@@ -415,8 +415,8 @@ export function RegradeFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
-                          statusTab === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
+                          statusTab === 'ALL' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {counts.all}
                         </span>
@@ -441,8 +441,8 @@ export function RegradeFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
-                          statusTab === 'PENDING' ? 'bg-blue-600 text-white' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
+                          statusTab === 'PENDING' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-amber-100 text-amber-800 dark:text-amber-300'
                         }`}>
                           {counts.pending}
                         </span>
@@ -467,8 +467,8 @@ export function RegradeFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
-                          statusTab === 'APPROVED_REGRADE' ? 'bg-blue-600 text-white' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
+                          statusTab === 'APPROVED_REGRADE' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-emerald-100 text-emerald-800 dark:text-emerald-300'
                         }`}>
                           {counts.approved}
                         </span>
@@ -493,8 +493,8 @@ export function RegradeFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
-                          statusTab === 'REJECTED' ? 'bg-blue-600 text-white' : 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
+                          statusTab === 'REJECTED' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-rose-100 text-rose-800 dark:text-rose-300'
                         }`}>
                           {counts.rejected}
                         </span>

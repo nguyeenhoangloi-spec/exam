@@ -268,7 +268,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`sidebar-aside fixed top-0 left-0 z-40 flex flex-col h-screen bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 transition-[width,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] select-none overflow-hidden will-change-[width,transform] ${
+      className={`sidebar-aside sidebar-text fixed top-0 left-0 z-40 flex flex-col h-screen bg-white dark:bg-slate-900 transition-[width,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] select-none overflow-hidden will-change-[width,transform] ${
         collapsed ? 'w-[72px]' : 'w-[252px]'
       } ${mobileOpen ? 'translate-x-0 w-[252px]' : '-translate-x-full md:translate-x-0'}`}
     >
@@ -288,7 +288,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         >
           {/* Logo Box: 40px với Icon 24px sắc nét, cố định vị trí tuyệt đối */}
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-xs transition-transform duration-200 group-hover:scale-105">
-            <GraduationCap className="h-6 w-6" />
+            <GraduationCap className="h-6 w-6" strokeWidth={1.5} />
           </div>
 
           {/* Text: Co giãn và mờ dần êm ái, không giật DOM */}
@@ -297,10 +297,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
               collapsed ? 'opacity-0 pointer-events-none -translate-x-2' : 'opacity-100 translate-x-0'
             }`}
           >
-            <h1 className="text-type-card font-semibold text-slate-900 dark:text-slate-100 leading-tight tracking-tight">
+            <h1 className="sidebar-text text-type-card font-semibold leading-tight tracking-tight">
               Exam System
             </h1>
-            <p className="text-type-badge font-medium text-slate-500 dark:text-slate-400">
+            <p className="sidebar-text text-type-badge font-medium">
               Hệ thống khảo thí
             </p>
           </div>
@@ -310,7 +310,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <button
           type="button"
           onClick={onToggle}
-          className={`absolute right-3.5 top-1/2 -translate-y-1/2 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 outline-none focus:outline-none ring-0 focus:ring-0 focus-visible:outline-none focus-visible:ring-0 transition-[opacity,transform] duration-200 active:scale-95 cursor-pointer ${
+          className={`sidebar-icon absolute right-3.5 top-1/2 -translate-y-1/2 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 outline-none focus:outline-none ring-0 focus:ring-0 focus-visible:outline-none focus-visible:ring-0 transition-[opacity,transform] duration-200 active:scale-95 cursor-pointer ${
             collapsed
               ? 'opacity-0 scale-75 pointer-events-none duration-100 delay-0'
               : 'opacity-100 scale-100 duration-200 delay-100'
@@ -319,7 +319,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           title="Thu gọn thanh bên"
           tabIndex={collapsed ? -1 : 0}
         >
-          <PanelLeft className="h-5.5 w-5.5" />
+          <PanelLeft className="h-4.5 w-4.5" strokeWidth={1.5} />
         </button>
       </div>
 
@@ -347,13 +347,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <button
                     type="button"
                     onClick={() => toggleAccordionGroup(groupName)}
-                    className="w-full flex items-center justify-between px-2.5 py-1.5 text-type-helper font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors duration-150 cursor-pointer select-none whitespace-nowrap"
+                    className="sidebar-text w-full flex items-center justify-between px-2.5 py-1.5 text-type-helper font-semibold hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150 cursor-pointer select-none whitespace-nowrap"
                   >
                     <span className="truncate">{group.group}</span>
                     <ChevronRight
-                      className={`h-3.5 w-3.5 text-slate-400 shrink-0 transition-transform duration-200 ease-out ${
+                      className={`sidebar-icon h-3.5 w-3.5 shrink-0 transition-transform duration-200 ease-out ${
                         isExpanded ? 'rotate-90' : 'rotate-0'
                       }`}
+                      strokeWidth={1.5}
                     />
                   </button>
                 </div>
@@ -394,7 +395,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             className={`group relative w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-type-body-sm transition-colors duration-150 cursor-pointer overflow-hidden ${
                               isActive
                                 ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold shadow-md shadow-blue-600/25'
-                                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white font-medium'
+                                : 'sidebar-text hover:bg-slate-100/90 dark:hover:bg-slate-800/80 hover:text-blue-600 dark:hover:text-blue-400 font-medium'
                             }`}
                           >
                             {/* Magnetic Pill Indicator */}
@@ -411,10 +412,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                 className={`flex h-8 w-8 shrink-0 items-center justify-center transition-colors duration-150 ${
                                   isActive
                                     ? 'text-white'
-                                    : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400'
+                                    : 'sidebar-icon group-hover:text-blue-600 dark:group-hover:text-blue-400'
                                 }`}
                               >
-                                <Icon className="h-4.5 w-4.5" />
+                                <Icon className="h-4.5 w-4.5" strokeWidth={1.5} />
                               </div>
                               <span
                                 className={`whitespace-nowrap overflow-hidden transition-[opacity,transform] duration-200 ease-out ${
@@ -447,8 +448,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             >
                               <ChevronRight
                                 className={`h-4 w-4 transition-transform duration-200 ease-out ${
-                                  isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200'
+                                  isActive ? 'text-white' : 'sidebar-icon group-hover:text-blue-600 dark:group-hover:text-blue-400'
                                 } ${isSubOpen ? 'rotate-90' : 'rotate-0'}`}
+                                strokeWidth={1.5}
                               />
                             </div>
                           </button>
@@ -471,8 +473,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     prefetch={true}
                                     className={`group/sub flex items-center justify-between px-3 py-1.5 rounded-lg text-type-helper font-medium transition-colors duration-150 ${
                                       isSubActive
-                                        ? 'text-blue-600 dark:text-blue-400 font-semibold bg-blue-50/80 dark:bg-blue-950/50 border-l-2 border-blue-600 dark:border-blue-500 pl-2.5 shadow-2xs'
-                                        : 'text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/50'
+                                        ? 'sidebar-active-text font-semibold bg-blue-50/80 dark:bg-blue-950/50 border-l-2 border-blue-600 dark:border-blue-500 pl-2.5 shadow-2xs'
+                                        : 'sidebar-text hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/50'
                                     }`}
                                   >
                                     <span className="truncate">{sub.name}</span>
@@ -496,7 +498,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         className={`group relative flex items-center justify-between px-2.5 py-2 rounded-xl text-type-body-sm transition-colors duration-150 overflow-hidden ${
                           isActive
                             ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold shadow-md shadow-blue-600/25'
-                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white font-medium'
+                            : 'sidebar-text hover:bg-slate-100/90 dark:hover:bg-slate-800/80 hover:text-blue-600 dark:hover:text-blue-400 font-medium'
                         }`}
                       >
                         {/* Magnetic Pill Indicator */}
@@ -513,10 +515,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             className={`flex h-8 w-8 shrink-0 items-center justify-center transition-colors duration-150 ${
                               isActive
                                 ? 'text-white'
-                                : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400'
+                                : 'sidebar-icon group-hover:text-blue-600 dark:group-hover:text-blue-400'
                             }`}
                           >
-                            <Icon className="h-4.5 w-4.5" />
+                            <Icon className="h-4.5 w-4.5" strokeWidth={1.5} />
                           </div>
                           <span
                             className={`whitespace-nowrap overflow-hidden transition-[opacity,transform] duration-200 ease-out ${
@@ -542,7 +544,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="pointer-events-none absolute -top-3 left-0 right-0 h-3 bg-gradient-to-t from-white dark:from-slate-900 to-transparent" />
 
         <span
-          className={`block text-type-helper font-normal text-slate-400/80 dark:text-slate-500/70 tracking-tight px-2 whitespace-nowrap transition-opacity duration-300 ${
+          className={`sidebar-text block text-type-helper font-normal tracking-tight px-2 whitespace-nowrap transition-opacity duration-300 ${
             collapsed ? 'opacity-0' : 'opacity-100'
           }`}
         >
@@ -572,14 +574,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               className="flex items-center gap-2 px-2 py-1.5 mb-1.5 border-b border-slate-100 dark:border-slate-800 rounded-xl hover:bg-slate-100/90 dark:hover:bg-slate-800/80 transition-colors cursor-pointer group/header"
             >
               <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 group-hover/header:scale-105 transition-transform">
-                <hoveredNav.item.icon className="h-3.5 w-3.5" />
+                <hoveredNav.item.icon className="h-3.5 w-3.5" strokeWidth={1.5} />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100 truncate group-hover/header:text-blue-600 dark:group-hover/header:text-blue-400 transition-colors">
+                <div className="sidebar-text text-type-helper font-semibold truncate group-hover/header:text-blue-600 dark:group-hover/header:text-blue-400 transition-colors">
                   {hoveredNav.item.name}
                 </div>
                 {hoveredNav.groupName && (
-                  <div className="text-type-badge font-medium text-slate-400 dark:text-slate-500 truncate">
+                  <div className="sidebar-text text-type-badge font-medium truncate">
                     {hoveredNav.groupName}
                   </div>
                 )}
@@ -599,7 +601,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-type-helper font-medium transition-colors ${
                       isSubActive
                         ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold'
-                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+                        : 'sidebar-text hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400'
                     }`}
                   >
                     <span className="truncate">{sub.name}</span>

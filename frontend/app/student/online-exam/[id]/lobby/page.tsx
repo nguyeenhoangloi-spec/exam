@@ -325,7 +325,7 @@ export default function StudentExamLobbyPage() {
         {/* ── Section 1: Hero Môn Thi & Kỳ Thi ── */}
         <div className="p-6 sm:p-8 space-y-4">
           <div className="flex items-center justify-between gap-3 flex-wrap">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-type-helper font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60">
+            <span className="ui-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-type-helper font-medium text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60">
               <BookOpen className="w-3.5 h-3.5" />
               {examTypeBadgeText}
             </span>
@@ -436,7 +436,7 @@ export default function StudentExamLobbyPage() {
                     </div>
                     <div className="text-right">
                       <span className="text-type-helper font-medium text-slate-400 dark:text-slate-500 block">Vị trí ngồi</span>
-                      <span className="inline-block mt-0.5 px-2.5 py-0.5 rounded-lg font-semibold text-type-helper bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800/80">
+                      <span className="inline-block mt-0.5 px-2.5 py-0.5 ui-pill rounded-full font-medium text-type-helper text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/80">
                         GHẾ {seatNumber}
                       </span>
                     </div>
@@ -726,7 +726,7 @@ export default function StudentExamLobbyPage() {
         isOpen={showProfileDrawer}
         onClose={() => setShowProfileDrawer(false)}
         title={fullName}
-        subtitle={`MSSV: ${studentCode} • Lớp ${studentClass}`}
+        subtitle={studentCode ? `MSSV: ${studentCode}` : ''}
         avatarText={fullName?.slice(0, 2)?.toUpperCase() || 'SV'}
         badge={{
           label: schedule?.examPeriod?.name || examInfo?.examPeriodName || 'Kỳ thi chính thức',

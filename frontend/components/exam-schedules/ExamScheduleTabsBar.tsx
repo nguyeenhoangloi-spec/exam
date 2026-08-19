@@ -48,10 +48,10 @@ export function ExamScheduleTabsBar({
           >
             <span>{tab.label}</span>
             <span
-              className={`rounded-xl px-2 py-0.5 text-type-helper font-semibold transition ${
+              className={`ui-pill rounded-full border px-2 py-0.5 text-type-helper font-medium transition ${
                 isActive
-                  ? 'bg-blue-50 text-blue-600'
-                  : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200'
+                  ? 'ui-pill-solid bg-blue-600 text-white border-blue-600'
+                  : 'text-slate-600 border-slate-300'
               }`}
             >
               ({tab.count.toLocaleString('vi-VN')})

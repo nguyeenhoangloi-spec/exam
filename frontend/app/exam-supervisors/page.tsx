@@ -481,12 +481,12 @@ export default function ExamSupervisorsPage() {
         isOpen={Boolean(drawerSupervisor)}
         onClose={() => setDrawerSupervisor(null)}
         title={drawerSupervisor?.teacher?.fullName || ''}
-        subtitle={`Mã cán bộ coi thi: ${drawerSupervisor?.teacher?.teacherCode}`}
+        subtitle={drawerSupervisor?.teacher?.teacherCode ? `Mã cán bộ: ${drawerSupervisor.teacher.teacherCode}` : ''}
         avatarText={drawerSupervisor?.teacher?.fullName ? drawerSupervisor.teacher.fullName.slice(-1) : 'GT'}
-        badge={{
-          label: drawerSupervisor?.role === 'SUPERVISOR_1' ? 'Giám thị 1 (Chính)' : 'Giám thị 2 (Phụ)',
-          className: 'bg-blue-50 text-blue-700 border-blue-200',
-        }}
+        badge={drawerSupervisor?.status ? {
+          status: drawerSupervisor.status,
+          label: drawerSupervisor.status === 'CONFIRMED' ? 'Đã xác nhận' : drawerSupervisor.status === 'CHANGE_REQUESTED' ? 'Đề nghị thay đổi' : 'Đã phân công',
+        } : undefined}
         details={[
           { label: 'Họ và tên cán bộ', value: drawerSupervisor?.teacher?.fullName },
           { label: 'Mã số cán bộ', value: drawerSupervisor?.teacher?.teacherCode },
@@ -539,7 +539,7 @@ export default function ExamSupervisorsPage() {
 
               <div className="space-y-0.5 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-type-helper font-semibold bg-blue-600 text-white tracking-wide">
+                  <span className="inline-flex items-center px-2 py-0.5 ui-pill rounded-full text-type-helper font-medium ui-pill-solid bg-blue-600 text-white tracking-wide">
                     {selectedSchedule?.type || 'CHÍNH THỨC'}
                   </span>
                   <h3 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate">
@@ -874,12 +874,12 @@ export default function ExamSupervisorsPage() {
         isOpen={Boolean(drawerSupervisor)}
         onClose={() => setDrawerSupervisor(null)}
         title={drawerSupervisor?.teacher?.fullName || 'Chi tiết phân công giám thị'}
-        subtitle={`Mã cán bộ: ${drawerSupervisor?.teacher?.teacherCode || ''}`}
+        subtitle={drawerSupervisor?.teacher?.teacherCode ? `Mã cán bộ: ${drawerSupervisor.teacher.teacherCode}` : ''}
         avatarText={drawerSupervisor?.teacher?.fullName?.trim().split(' ').pop()?.slice(0, 2).toUpperCase() || 'GT'}
-        badge={{
-          label: drawerSupervisor?.role === 'CHINH' || drawerSupervisor?.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ',
-          className: 'bg-blue-50 text-blue-700 border-blue-200',
-        }}
+        badge={drawerSupervisor?.status ? {
+          status: drawerSupervisor.status,
+          label: drawerSupervisor.status === 'CONFIRMED' ? 'Đã xác nhận' : drawerSupervisor.status === 'CHANGE_REQUESTED' ? 'Đề nghị thay đổi' : 'Đã phân công',
+        } : undefined}
         details={[
           { label: 'Họ và tên cán bộ', value: drawerSupervisor?.teacher?.fullName, icon: GraduationCap },
           { label: 'Mã số cán bộ', value: drawerSupervisor?.teacher?.teacherCode, icon: GraduationCap },

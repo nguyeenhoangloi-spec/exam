@@ -157,14 +157,14 @@ export function ExamPaperDetailDrawer({
                 <h2 className="text-type-card font-semibold text-slate-900 dark:text-white leading-tight truncate">
                   {subjectName}
                 </h2>
-                <IdentifierBadge tone="blue">Mã đề: {paper.paperCode}</IdentifierBadge>
+                <IdentifierBadge tone="blue">{paper.paperCode}</IdentifierBadge>
                 <span
-                  className={`px-2.5 py-0.5 rounded-xl text-type-helper font-semibold border ${
+                  className={`ui-pill px-2.5 py-0.5 rounded-full text-type-helper font-medium border ${
                     paper.status === 'PUBLISHED'
-                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60'
+                      ? 'text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700'
                       : paper.status === 'ARCHIVED'
-                        ? 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700'
-                        : 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200/80 dark:border-amber-800/60'
+                        ? 'text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600'
+                        : 'text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700'
                   }`}
                 >
                   {paper.status === 'PUBLISHED' ? 'Đã phát hành' : paper.status === 'ARCHIVED' ? 'Đã lưu trữ' : 'Bản nháp'}
@@ -335,13 +335,13 @@ export function ExamPaperDetailDrawer({
                       <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">
                         {typeLabel}
                       </span>
-                      <span className={`px-2.5 py-0.5 rounded-xl text-type-helper font-semibold border ${diffBadge.color}`}>
+                      <span className={`px-2.5 py-0.5 ui-pill rounded-full text-type-helper font-medium border ${diffBadge.color}`}>
                         {diffBadge.text}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2.5 shrink-0">
-                      <span className="px-2.5 py-1 rounded-xl text-type-helper font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      <span className="px-2.5 py-1 ui-pill rounded-full text-type-helper font-medium text-slate-800 dark:text-slate-200">
                         {score}đ
                       </span>
 

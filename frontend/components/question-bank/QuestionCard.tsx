@@ -48,12 +48,12 @@ export function QuestionCard({
           />
           <IdentifierBadge>{q.code}</IdentifierBadge>
           {q.subject?.subjectName && (
-            <span className="rounded-lg bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 px-2.5 py-0.5 text-type-helper font-medium text-primary-600 dark:text-primary-400 h-6 inline-flex items-center">
+            <span className="rounded-full border border-blue-200 dark:border-blue-800 px-2.5 py-0.5 text-type-helper font-medium text-primary-600 dark:text-primary-400 h-6 ui-pill inline-flex items-center">
               {q.subject.subjectName}
             </span>
           )}
           {q.chapter?.name && (
-            <span className="rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-0.5 text-type-helper font-medium text-slate-700 dark:text-slate-300 h-6 inline-flex items-center">
+            <span className="rounded-full border border-slate-200 dark:border-slate-700 px-2.5 py-0.5 text-type-helper font-medium text-slate-700 dark:text-slate-300 h-6 ui-pill inline-flex items-center">
               {q.chapter.name}
             </span>
           )}
@@ -219,7 +219,7 @@ export function QuestionCard({
                       }}
                     />
                     <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
-                      <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-2.5 py-1 text-type-helper font-medium text-white shadow-lg backdrop-blur-xs">
+                      <span className="flex items-center gap-1.5 ui-pill rounded-full bg-slate-900/80 px-2.5 py-1 text-type-helper font-medium text-white shadow-lg backdrop-blur-xs">
                         <Maximize2 className="h-3.5 w-3.5 text-blue-400" /> Xem rõ ảnh
                       </span>
                     </div>

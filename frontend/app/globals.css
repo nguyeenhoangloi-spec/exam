@@ -42,20 +42,24 @@ html {
   --ui-page: #f8fafc;
   --ui-surface: #ffffff;
   --ui-surface-muted: #f1f5f9;
-  /* Black-forward neutral hierarchy for the web UI. Keep the steps close
+  /* Deep Ink neutral hierarchy for the web UI. Keep the steps close
    * enough for a calm interface while preventing body/table content from
    * looking washed out. */
-  --ui-text: #0f172a;
-  --ui-text-muted: #1f2937;
-  --ui-text-primary: #0f172a;
-  --ui-text-body: #111827;
-  --ui-text-secondary: #1f2937;
-  --ui-text-muted-soft: #374151;
-  --ui-text-disabled: #64748b;
+  --ui-text: #020617;
+  --ui-text-muted: #111827;
+  --ui-text-primary: #020617;
+  --ui-text-body: #020617;
+  --ui-text-secondary: #111827;
+  --ui-text-muted-soft: #1f2937;
+  --ui-text-disabled: #475569;
   --ui-border: #e2e8f0;
   --ui-primary: #2563eb;
   --ui-primary-hover: #1d4ed8;
   --ui-primary-rgb: 37 99 235;
+  --sidebar-text: #020617;
+  --sidebar-icon: #111827;
+  --sidebar-active: #2563eb;
+  --sidebar-text-inverse: #ffffff;
   --ui-motion-fast: 150ms;
   --ui-motion-medium: 200ms;
   --ui-motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -79,17 +83,21 @@ html.dark {
   --ui-page: #020617;
   --ui-surface: #0f172a;
   --ui-surface-muted: #1e293b;
-  --ui-text: #e2e8f0;
-  --ui-text-muted: #94a3b8;
-  --ui-text-primary: #f1f5f9;
-  --ui-text-body: #e2e8f0;
-  --ui-text-secondary: #cbd5e1;
-  --ui-text-muted-soft: #94a3b8;
-  --ui-text-disabled: #64748b;
+  --ui-text: #f8fafc;
+  --ui-text-muted: #e2e8f0;
+  --ui-text-primary: #f8fafc;
+  --ui-text-body: #f8fafc;
+  --ui-text-secondary: #e2e8f0;
+  --ui-text-muted-soft: #cbd5e1;
+  --ui-text-disabled: #94a3b8;
   --ui-border: #334155;
   --ui-primary: #4e95f5;
   --ui-primary-hover: #86bbff;
   --ui-primary-rgb: 78 149 245;
+  --sidebar-text: #f8fafc;
+  --sidebar-icon: #cbd5e1;
+  --sidebar-active: #60a5fa;
+  --sidebar-text-inverse: #ffffff;
 }
 
 @layer base {
@@ -100,6 +108,7 @@ html.dark {
 
   body {
     @apply bg-slate-50 text-slate-900 subpixel-antialiased;
+    color: var(--ui-text-body);
     overflow-x: clip;
     font-family: var(--font-ui);
     font-kerning: normal;
@@ -126,6 +135,7 @@ html.dark {
 
   html.dark body {
     @apply bg-slate-950 text-slate-100;
+    color: var(--ui-text-body);
   }
 
   button,
@@ -178,6 +188,12 @@ html.dark {
   :where(button, a, [role='button']):not(.no-focus-ring):focus-visible {
     outline: 1.5px solid rgb(var(--ui-primary-rgb) / 0.7) !important;
     outline-offset: 1px !important;
+  }
+
+  /* Modern Ultra-Refined Icon Stroke (Linear / Apple 2026 Style) */
+  svg.lucide,
+  .lucide {
+    stroke-width: 1.5px;
   }
 }
 
@@ -396,6 +412,7 @@ html.dark {
 
   .ui-page {
     @apply min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+    color: var(--ui-text-body);
   }
 
   .ui-card {
@@ -420,7 +437,7 @@ html.dark {
     font-size: var(--fs-body-sm);
     line-height: var(--lh-body-sm);
     @apply bg-slate-50 font-medium tracking-wide dark:bg-slate-800 dark:text-slate-400;
-    color: var(--ui-text-body);
+    color: var(--ui-text-secondary);
   }
 
   .ui-table th {
@@ -587,6 +604,25 @@ html.dark {
   font-weight: 400;
 }
 
+/* Pills are semantic labels, not buttons: one readable size, medium weight and
+ * fully rounded ends. Outline is the default; solid fill is explicit. */
+.typography-scale .ui-pill {
+  border-radius: 9999px !important;
+  border-style: solid !important;
+  border-width: 1px !important;
+  font-size: var(--fs-helper) !important;
+  line-height: var(--lh-helper) !important;
+  font-weight: 500 !important;
+}
+
+.typography-scale .ui-pill:not(.ui-pill-solid) {
+  background-color: transparent !important;
+}
+
+.typography-scale .ui-pill-solid {
+  border-color: transparent !important;
+}
+
 /* Muted neutral text must not become louder merely because a legacy
  * component attached a stronger utility. Status/action colors are excluded. */
 .typography-scale :where(.text-slate-400, .text-slate-500, .text-gray-400, .text-gray-500).font-semibold:not(:where(button, a, [role='button'])),
@@ -594,7 +630,7 @@ html.dark {
   font-weight: 400;
 }
 
-/* Black-forward neutral palette for the light theme. Existing neutral
+/* Deep Ink neutral palette for the light theme. Existing neutral
  * utilities are intentionally remapped by semantic depth so every screen
  * becomes clearer without changing component markup or layout. Semantic
  * status/action colors (blue, emerald, amber, rose) are not affected. */
@@ -604,25 +640,52 @@ html:not(.dark) .typography-scale :where(.text-slate-400, .text-gray-400) {
 
 /* Very light neutral text is still readable in dark overlays, but is too
  * faint for normal light-theme surfaces. Promote it to the same readable
- * muted tier used by the rest of the black-forward palette. */
+ * muted tier used by the rest of the Deep Ink palette. */
 html:not(.dark) .typography-scale :where(.text-slate-300, .text-gray-300) {
   color: var(--ui-text-muted-soft) !important;
 }
 
 html:not(.dark) .typography-scale :where(.text-slate-500, .text-gray-500) {
+  color: var(--ui-text-muted-soft) !important;
+}
+
+html:not(.dark) .typography-scale :where(.text-slate-600, .text-gray-600, .text-slate-700, .text-gray-700) {
   color: var(--ui-text-secondary) !important;
 }
 
-html:not(.dark) .typography-scale :where(.text-slate-600, .text-gray-600, .text-slate-700, .text-gray-700, .text-slate-800, .text-gray-800) {
-  color: var(--ui-text-body) !important;
-}
-
-html:not(.dark) .typography-scale :where(.text-slate-900, .text-gray-900) {
+html:not(.dark) .typography-scale :where(.text-slate-800, .text-gray-800, .text-slate-900, .text-gray-900) {
   color: var(--ui-text-primary) !important;
 }
 
+.typography-scale :where(input, textarea)::placeholder,
 html:not(.dark) .typography-scale :where(.placeholder\:text-slate-400, .placeholder\:text-gray-400)::placeholder {
   color: var(--ui-text-disabled) !important;
+  opacity: 1 !important;
+}
+
+.typography-scale :where(input, select, textarea):disabled {
+  color: var(--ui-text-disabled) !important;
+  opacity: 1 !important;
+}
+
+.typography-scale :where(button, [role='button']):disabled,
+.typography-scale :where(button, [role='button'])[aria-disabled='true'] {
+  color: var(--ui-text-disabled) !important;
+  opacity: 1 !important;
+}
+
+/* Dark-mode utilities are remapped explicitly because Tailwind dark: classes
+ * otherwise reintroduce multiple pale gray tiers at component level. */
+html.dark .typography-scale :where(.dark\:text-slate-50, .dark\:text-slate-100, .dark\:text-gray-50, .dark\:text-gray-100) {
+  color: var(--ui-text-primary) !important;
+}
+
+html.dark .typography-scale :where(.dark\:text-slate-200, .dark\:text-gray-200) {
+  color: var(--ui-text-secondary) !important;
+}
+
+html.dark .typography-scale :where(.dark\:text-slate-300, .dark\:text-slate-400, .dark\:text-slate-500, .dark\:text-gray-300, .dark\:text-gray-400, .dark\:text-gray-500) {
+  color: var(--ui-text-muted-soft) !important;
 }
 
 /* Media lightboxes intentionally use a dark surface while the application
@@ -720,7 +783,7 @@ input.no-focus-outline:active {
 /* Legacy shell screens also use light-only utilities. Keep them readable in
    the persisted dark theme while leaving full-screen exam/login views alone. */
 html.dark .app-shell-main {
-  color: rgb(226 232 240);
+  color: var(--ui-text-body);
 }
 
 html.dark .app-shell-main .bg-white,
@@ -748,24 +811,26 @@ html.dark .app-shell-main .bg-gray-100 {
 }
 
 html.dark .app-shell-main .text-slate-900,
-html.dark .app-shell-main .text-slate-800,
-html.dark .app-shell-main .text-slate-700 {
-  color: rgb(226 232 240) !important;
+html.dark .app-shell-main .text-slate-800 {
+  color: var(--ui-text-primary) !important;
 }
 
-html.dark .app-shell-main .text-slate-600 {
-  color: rgb(203 213 225) !important;
-}
-
-html.dark .app-shell-main .text-slate-500 {
-  color: rgb(148 163 184) !important;
-}
-
+html.dark .app-shell-main .text-slate-700,
+html.dark .app-shell-main .text-slate-600,
 html.dark .app-shell-main .text-gray-900,
 html.dark .app-shell-main .text-gray-800,
 html.dark .app-shell-main .text-gray-700,
 html.dark .app-shell-main .text-gray-600 {
-  color: rgb(203 213 225) !important;
+  color: var(--ui-text-secondary) !important;
+}
+
+html.dark .app-shell-main .text-slate-500,
+html.dark .app-shell-main .text-slate-400,
+html.dark .app-shell-main .text-slate-300,
+html.dark .app-shell-main .text-gray-500,
+html.dark .app-shell-main .text-gray-400,
+html.dark .app-shell-main .text-gray-300 {
+  color: var(--ui-text-muted-soft) !important;
 }
 
 html.dark .app-shell-main .border-slate-100,
@@ -782,14 +847,14 @@ html.dark .app-shell-main input:not([type='checkbox']):not([type='radio']),
 html.dark .app-shell-main select,
 html.dark .app-shell-main textarea {
   background-color: rgb(15 23 42) !important;
-  color: rgb(226 232 240) !important;
+  color: var(--ui-text-body) !important;
   border-color: rgb(71 85 105) !important;
   color-scheme: dark;
 }
 
 html.dark .app-shell-main input::placeholder,
 html.dark .app-shell-main textarea::placeholder {
-  color: rgb(148 163 184) !important;
+  color: var(--ui-text-disabled) !important;
 }
 
 html.dark .app-shell-main .shadow-sm,
@@ -823,14 +888,14 @@ html.dark .app-shell-main .border-slate-300 {
 /* Tables were the main source of a washed-out grey row when hovering in dark
    mode. Keep every data row on the navy surface and use a visible blue focus. */
 html.dark .app-shell-main table {
-  color: rgb(226 232 240);
+  color: var(--ui-text-body);
 }
 
 html.dark .app-shell-main thead,
 html.dark .app-shell-main thead tr,
 html.dark .app-shell-main th {
   background-color: rgb(30 41 59) !important;
-  color: rgb(148 163 184) !important;
+  color: var(--ui-text-secondary) !important;
   border-color: rgb(51 65 85) !important;
 }
 
@@ -877,7 +942,7 @@ html.dark .app-shell-main :where(button, a, [role='button']):not(.no-focus-ring)
 html.dark .app-shell-main input:-webkit-autofill,
 html.dark .app-shell-main input:-webkit-autofill:hover,
 html.dark .app-shell-main input:-webkit-autofill:focus {
-  -webkit-text-fill-color: rgb(226 232 240);
+  -webkit-text-fill-color: var(--ui-text-body);
   -webkit-box-shadow: 0 0 0 1000px rgb(15 23 42) inset;
   transition: background-color 9999s ease-out 0s;
 }
@@ -1023,7 +1088,7 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
   line-height: var(--lh-badge) !important;
 }
 
-/* 5-Tier Cool Slate Semantic Typography Utility Shortcuts */
+/* Deep Ink semantic typography utility shortcuts */
 .text-main {
   color: var(--ui-text-primary);
 }
@@ -1040,17 +1105,31 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
   color: #ffffff;
 }
 
+/* Sidebar color contract. New navigation items must use these semantic
+ * utilities instead of choosing text-slate-* independently. */
+.sidebar-text {
+  color: var(--sidebar-text);
+}
+
+.sidebar-icon {
+  color: var(--sidebar-icon);
+}
+
+.sidebar-active-text {
+  color: var(--sidebar-active);
+}
+
 .dark .text-main {
-  color: #f8fafc;
+  color: var(--ui-text-primary);
 }
 .dark .text-sub {
-  color: #e2e8f0;
+  color: var(--ui-text-secondary);
 }
 .dark .text-helper {
-  color: #94a3b8;
+  color: var(--ui-text-muted-soft);
 }
 .dark .text-placeholder {
-  color: #64748b;
+  color: var(--ui-text-disabled);
 }
 .dark .text-inverse {
   color: #ffffff;

@@ -103,10 +103,10 @@ export function ExamSupervisorTable({
                       <ShieldCheck className="h-3.5 w-3.5" /> Vai trò:
                     </span>
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded-md text-type-helper font-semibold ${
+                      className={`text-type-body-sm font-medium ${
                         s.role === 'SUPERVISOR_1'
-                          ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
-                          : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                          ? 'text-slate-900 dark:text-slate-100 font-semibold'
+                          : 'text-slate-600 dark:text-slate-400'
                       }`}
                     >
                       {s.role === 'SUPERVISOR_1' ? 'Giám thị 1 (Chính)' : 'Giám thị 2 (Phụ)'}
@@ -311,10 +311,10 @@ export function ExamSupervisorTable({
                   {visibleColumns.role && (
                     <td className="px-4 py-3.5 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-md text-type-body font-semibold ${
+                        className={`text-type-body font-medium ${
                           s.role === 'SUPERVISOR_1'
-                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
-                            : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                            ? 'text-slate-900 dark:text-slate-100 font-semibold'
+                            : 'text-slate-600 dark:text-slate-400'
                         }`}
                       >
                         {s.role === 'SUPERVISOR_1' ? 'Giám thị 1 (Chính)' : 'Giám thị 2 (Phụ)'}

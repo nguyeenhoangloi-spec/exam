@@ -77,7 +77,7 @@ export function ChangeExamPasswordModal({
           {/* Info card */}
           <div className="rounded-xl border border-slate-200/90 bg-slate-50/80 p-3.5 space-y-1.5 dark:border-slate-700 dark:bg-slate-800/50">
             <div className="flex items-center justify-between">
-              <IdentifierBadge tone="neutral">Mã đề: {paper.paperCode}</IdentifierBadge>
+              <IdentifierBadge tone="neutral">{paper.paperCode}</IdentifierBadge>
               <span
                 className={`inline-flex items-center gap-[6px] text-type-body-sm leading-5 font-semibold ${
                   hasPassword

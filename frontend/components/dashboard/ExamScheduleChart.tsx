@@ -31,8 +31,8 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
   return (
     <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-2 h-full flex flex-col justify-between">
       {/* Header & Dropdown Filter */}
-      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
-        <h3 className="edu-card-title">Lịch thi trong 7 ngày tới</h3>
+      <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5 min-w-0">
+        <h3 className="edu-card-title truncate whitespace-nowrap min-w-0">Lịch thi trong 7 ngày tới</h3>
 
         <FilterSelect
           size="sm"
@@ -57,7 +57,7 @@ export function ExamScheduleChart({ data }: { data?: DashboardOverview['examChar
           </span>
         </div>
 
-        <span className="inline-flex items-center gap-1 text-type-helper font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full">
+        <span className="inline-flex items-center gap-1 text-type-helper font-medium text-blue-600 dark:text-blue-400 px-2 py-0.5 ui-pill rounded-full">
           <TrendingUp className="w-3 h-3" />
           <span>Theo tiến độ</span>
         </span>

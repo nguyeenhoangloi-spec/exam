@@ -281,11 +281,11 @@ export default function ProfilePage() {
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-center sm:justify-start gap-2">
-                <span className={`inline-flex items-center gap-1 rounded-lg px-3 py-0.5 text-type-helper font-semibold border ${roleBadgeBg}`}>
+                <span className={`ui-pill ui-pill-solid inline-flex items-center gap-1 rounded-full px-3 py-0.5 text-type-helper font-medium border ${roleBadgeBg}`}>
                   <BadgeCheck className="h-4 w-4" />
                   <span>{roleName}</span>
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2.5 py-0.5 text-type-helper font-semibold text-blue-100 border border-white/20">
+                <span className="ui-pill ui-pill-solid inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-0.5 text-type-helper font-medium text-blue-100 border border-white/20">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
                   <span>Đã xác thực</span>
                 </span>

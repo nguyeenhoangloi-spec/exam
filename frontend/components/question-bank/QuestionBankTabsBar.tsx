@@ -47,9 +47,9 @@ export function QuestionBankTabsBar({
           >
             <span>{tab.label}</span>
             <span
-              className={`rounded-full px-2.5 py-0.5 text-type-helper font-semibold transition ${isActive
-                  ? 'bg-blue-50 dark:bg-blue-950/60 text-primary-600'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-slate-200 dark:group-hover:bg-slate-700'
+              className={`ui-pill rounded-full border px-2.5 py-0.5 text-type-helper font-medium transition ${isActive
+                  ? 'ui-pill-solid bg-blue-600 text-white border-blue-600'
+                  : 'text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600'
                 }`}
             >
               ({tab.count.toLocaleString('vi-VN')})

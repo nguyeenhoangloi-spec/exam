@@ -346,9 +346,9 @@ export function ActivityLogFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${actionFilter === 'LOGIN' && !entityFilter
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${actionFilter === 'LOGIN' && !entityFilter
+                          ? 'ui-pill-solid bg-blue-600 text-white'
+                          : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {counts.loginCount}
                         </span>
@@ -376,9 +376,9 @@ export function ActivityLogFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${entityFilter === 'GradeAppeal'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${entityFilter === 'GradeAppeal'
+                          ? 'ui-pill-solid bg-blue-600 text-white'
+                          : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {counts.gradeAppealCount}
                         </span>
@@ -406,9 +406,9 @@ export function ActivityLogFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${entityFilter === 'BackupJob'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${entityFilter === 'BackupJob'
+                          ? 'ui-pill-solid bg-blue-600 text-white'
+                          : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {counts.backupCount}
                         </span>
@@ -438,9 +438,9 @@ export function ActivityLogFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${entityFilter === ''
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${entityFilter === ''
+                          ? 'ui-pill-solid bg-blue-600 text-white'
+                          : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {counts.total}
                         </span>
@@ -467,9 +467,9 @@ export function ActivityLogFilterPopover({
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${entityFilter === et
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                          <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${entityFilter === et
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                             }`}>
                             {counts.entityCounts[et] || 0}
                           </span>
@@ -509,9 +509,9 @@ export function ActivityLogFilterPopover({
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${actionFilter === item.key
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                          <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${actionFilter === item.key
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                             }`}>
                             {item.count}
                           </span>

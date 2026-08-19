@@ -17,7 +17,6 @@ import {
   Headphones,
   Sun,
   Moon,
-  Home,
 } from 'lucide-react';
 import { removeAuth } from '../lib/auth';
 import { User } from '../types';
@@ -284,8 +283,8 @@ export const Header: React.FC<HeaderProps> = ({
         className="app-header-fixed fixed top-0 right-0 z-30 flex h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md transition-[left] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[left]"
       >
         <div ref={containerRef} className="mx-auto flex h-full w-full items-center justify-between px-4 md:px-6">
-          {/* Left Side: Navigation / Breadcrumb Pro / Command Search Bar */}
-          <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
+          {/* Left Side: Mobile Menu Button & Minimalist Search Icon Button */}
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
             {/* Mobile Menu Button */}
             <button
               type="button"
@@ -293,39 +292,34 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={onMenuClick}
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-700 md:hidden cursor-pointer shadow-2xs"
             >
-              <Menu className="h-4.5 w-4.5" />
+              <Menu className="h-4.5 w-4.5" strokeWidth={1.5} />
             </button>
 
-            {/* 1. Nút Tìm kiếm nhanh (Chỉ dùng Icon, đứng đầu) */}
+            {/* Quick Spotlight Search Icon Button (Ultra-minimalist) */}
             <button
               type="button"
-              aria-label="Tìm kiếm nhanh (Ctrl+K)"
+              aria-label="Tìm kiếm nhanh hệ thống (Ctrl+K)"
               onClick={() => setIsSearchOpen(true)}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-95 cursor-pointer"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition cursor-pointer"
               title="Tìm kiếm nhanh (Ctrl + K)"
             >
-              <Search className="h-5 w-5" />
+              <Search className="h-4.5 w-4.5" strokeWidth={1.5} />
             </button>
-
-            {/* 2. Breadcrumb Navigation (Đứng sau nút tìm kiếm) */}
-            <nav className="flex items-center gap-1.5 text-type-helper font-medium text-slate-400 dark:text-slate-500 min-w-0 truncate" aria-label="Breadcrumb">
-              <button
-                type="button"
-                className="flex items-center gap-1.5 cursor-pointer text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors shrink-0 py-1"
-                onClick={() => {
-                  if (user?.role === 'TEACHER') router.push('/teacher/assignments');
-                  else if (user?.role === 'STUDENT') router.push('/student/exam-schedule');
-                  else router.push('/dashboard');
-                }}
-              >
-                <Home className="h-4 w-4 text-slate-400 dark:text-slate-500" />
-                <span>Trang chủ</span>
-              </button>
-            </nav>
           </div>
 
-          {/* Right Side: Notification bell & User Profile trigger */}
-          <div className="flex items-center gap-3.5">
+          {/* Right Side: Quick Theme Switcher, Notification Bell & User Profile */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
+            {/* Quick Dark/Light Theme Switcher */}
+            <button
+              type="button"
+              aria-label="Chuyển chế độ sáng tối"
+              onClick={toggleTheme}
+              className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition cursor-pointer"
+              title={isDark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'}
+            >
+              {isDark ? <Sun className="h-4.5 w-4.5" strokeWidth={1.5} /> : <Moon className="h-4.5 w-4.5" strokeWidth={1.5} />}
+            </button>
+
             {/* Notification Bell */}
             <div className="relative">
               <button
@@ -335,7 +329,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => togglePanel('notifications')}
                 className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
-                <Bell className="h-5 w-5" />
+                <Bell className="h-4.5 w-4.5" strokeWidth={1.5} />
                 {effectiveUnreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 flex min-w-[18px] h-[18px] px-1 items-center justify-center rounded-full bg-rose-600 text-type-badge font-semibold text-white shadow-xs">
                     {effectiveUnreadCount > 99 ? '99+' : effectiveUnreadCount}
@@ -348,7 +342,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <div className="absolute right-0 top-[calc(100%+10px)] w-80 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl shadow-slate-200/60 dark:shadow-slate-950/60 text-type-body z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="mb-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-2.5">
                     <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body flex items-center gap-1.5">
-                      <Bell className="w-4 h-4 text-blue-600" />
+                      <Bell className="w-4 h-4 text-blue-600" strokeWidth={1.5} />
                       <span>Thông báo hệ thống</span>
                     </p>
                     {effectiveUnreadCount > 0 && (
@@ -357,7 +351,7 @@ export const Header: React.FC<HeaderProps> = ({
                         onClick={handleMarkAllAsRead}
                         className="inline-flex items-center gap-1 text-type-helper font-semibold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition cursor-pointer"
                       >
-                        <CheckCheck className="w-3.5 h-3.5" />
+                        <CheckCheck className="w-3.5 h-3.5" strokeWidth={1.5} />
                         <span>Đọc tất cả</span>
                       </button>
                     )}
@@ -393,7 +387,7 @@ export const Header: React.FC<HeaderProps> = ({
                                   )}
                                   <span>{item.title}</span>
                                 </p>
-                                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition shrink-0" />
+                                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition shrink-0" strokeWidth={1.5} />
                               </div>
                               <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal leading-relaxed pl-4">
                                 {item.desc}
@@ -405,7 +399,7 @@ export const Header: React.FC<HeaderProps> = ({
                     </div>
                   ) : (
                     <div className="py-6 text-center space-y-2 text-slate-400 dark:text-slate-500">
-                      <Inbox className="w-8 h-8 mx-auto text-slate-700 dark:bg-slate-600" />
+                      <Inbox className="w-8 h-8 mx-auto text-slate-700 dark:bg-slate-600" strokeWidth={1.5} />
                       <p className="text-type-helper font-semibold text-slate-600 dark:text-slate-300">Không có thông báo mới</p>
                       <p className="text-type-helper text-slate-400 dark:text-slate-500">Bạn đã xem toàn bộ thông báo hệ thống.</p>
                     </div>
@@ -460,6 +454,7 @@ export const Header: React.FC<HeaderProps> = ({
                   className={`h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-transform duration-200 ${
                     openPanel === 'account' ? 'rotate-180 text-blue-600' : ''
                   }`}
+                  strokeWidth={1.5}
                 />
               </button>
 
@@ -506,7 +501,7 @@ export const Header: React.FC<HeaderProps> = ({
 
                     {/* Role Badge & Live Online Status */}
                     <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-type-badge font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
+                      <span className="ui-pill inline-flex items-center px-2 py-0.5 rounded-full text-type-helper font-medium text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
                         {displayRoleLabel}
                       </span>
                       <span className="inline-flex items-center gap-1.5 text-type-badge font-medium text-emerald-600 dark:text-emerald-400">
@@ -525,11 +520,11 @@ export const Header: React.FC<HeaderProps> = ({
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-150">
-                          <UserIcon className="h-4 w-4" />
+                          <UserIcon className="h-4 w-4" strokeWidth={1.5} />
                         </div>
                         <span>Hồ sơ cá nhân</span>
                       </div>
-                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-slate-400 dark:text-slate-500" />
+                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-slate-400 dark:text-slate-500" strokeWidth={1.5} />
                     </Link>
 
                     <Link
@@ -539,11 +534,11 @@ export const Header: React.FC<HeaderProps> = ({
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 group-hover:bg-slate-700 group-hover:text-white transition-colors duration-150">
-                          <Settings className="h-4 w-4" />
+                          <Settings className="h-4 w-4" strokeWidth={1.5} />
                         </div>
                         <span>Cài đặt hệ thống</span>
                       </div>
-                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-slate-400 dark:text-slate-500" />
+                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-slate-400 dark:text-slate-500" strokeWidth={1.5} />
                     </Link>
 
                     <Link
@@ -553,11 +548,11 @@ export const Header: React.FC<HeaderProps> = ({
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-150">
-                          <Headphones className="h-4 w-4" />
+                          <Headphones className="h-4 w-4" strokeWidth={1.5} />
                         </div>
                         <span>Trung tâm hỗ trợ</span>
                       </div>
-                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-slate-400 dark:text-slate-500" />
+                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-slate-400 dark:text-slate-500" strokeWidth={1.5} />
                     </Link>
                   </div>
 
@@ -575,9 +570,9 @@ export const Header: React.FC<HeaderProps> = ({
                       <div className="flex items-center gap-3">
                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-150">
                           {isDark ? (
-                            <Moon className="h-4 w-4" />
+                            <Moon className="h-4 w-4" strokeWidth={1.5} />
                           ) : (
-                            <Sun className="h-4 w-4" />
+                            <Sun className="h-4 w-4" strokeWidth={1.5} />
                           )}
                         </div>
                         <span>Chế độ tối</span>
@@ -613,7 +608,7 @@ export const Header: React.FC<HeaderProps> = ({
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400 group-hover:bg-rose-600 group-hover:text-white transition-colors duration-150">
-                          <LogOut className="h-4 w-4" />
+                          <LogOut className="h-4 w-4" strokeWidth={1.5} />
                         </div>
                         <span>Đăng xuất</span>
                       </div>

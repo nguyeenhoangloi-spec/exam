@@ -83,7 +83,7 @@ export function RegradeTable({
                     />
                     <IdentifierBadge tone="blue">{item.student.studentCode}</IdentifierBadge>
                     {item.student.class && (
-                      <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700 truncate">
+                      <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full border border-slate-200/80 dark:border-slate-700 truncate">
                         {item.student.class.code || item.student.class.name}
                       </span>
                     )}
@@ -178,7 +178,7 @@ export function RegradeTable({
                       {item.student.fullName}
                     </span>
                     {item.student.class && (
-                      <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700">
+                      <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full border border-slate-200/80 dark:border-slate-700">
                         {item.student.class.code || item.student.class.name}
                       </span>
                     )}
@@ -279,7 +279,7 @@ export function RegradeTable({
                       <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
                         <IdentifierBadge tone="blue">{item.student.studentCode}</IdentifierBadge>
                         {item.student.class && (
-                          <span className="table-badge text-type-helper font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/80 dark:border-slate-700">
+                          <span className="table-badge text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full border border-slate-200/80 dark:border-slate-700">
                             {item.student.class.code || item.student.class.name}
                           </span>
                         )}

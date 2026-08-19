@@ -789,12 +789,13 @@ export default function TeachersPage() {
                         {drawerOpenTeacher.fullName}
                       </h2>
 
-                      <div className="mt-2 flex items-center gap-2 flex-wrap">
+                      <div className="mt-1.5 flex items-center gap-2 flex-wrap">
                         <IdentifierBadge tone="neutral" title={drawerOpenTeacher.teacherCode}>
                           {drawerOpenTeacher.teacherCode}
                         </IdentifierBadge>
-                        <span className="inline-flex items-center rounded-lg px-2.5 py-0.5 text-type-helper font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
-                          {drawerOpenTeacher.degree || 'Giảng viên'}
+                        <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400">
+                          • {drawerOpenTeacher.degree || 'Giảng viên'}
+                          {drawerOpenTeacher.department?.name ? ` • ${drawerOpenTeacher.department.name}` : ''}
                         </span>
                       </div>
                     </div>
@@ -916,10 +917,10 @@ export default function TeachersPage() {
                                     </div>
                                   )}
                                 </div>
-                                <span className={`px-2.5 py-1 rounded-lg text-type-helper font-semibold shrink-0 ${
+                                <span className={`px-2.5 py-1 ui-pill rounded-full text-type-helper font-medium shrink-0 ${
                                   assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1'
-                                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                                    ? 'bg-blue-50 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60'
+                                    : 'bg-slate-100 text-slate-700 dark:text-slate-300'
                                 }`}>
                                   {assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ'}
                                 </span>

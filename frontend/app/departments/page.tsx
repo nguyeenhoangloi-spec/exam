@@ -781,12 +781,8 @@ export default function DepartmentsPage() {
         isOpen={Boolean(drawerDepartment)}
         onClose={() => setDrawerDepartment(null)}
         title={drawerDepartment?.name || 'Chi tiết Khoa đào tạo'}
-        subtitle={`Mã khoa: ${drawerDepartment?.code || ''}`}
+        subtitle={drawerDepartment?.code ? `Mã khoa: ${drawerDepartment.code}` : ''}
         avatarText={drawerDepartment?.code || 'KH'}
-        badge={{
-          label: `${(drawerDepartment as any)?.subjectsCount ?? drawerDepartment?._count?.subjects ?? 0} Môn học`,
-          className: 'bg-blue-50 text-blue-700 border-blue-200',
-        }}
         details={[
           { label: 'Mã khoa', value: drawerDepartment?.code, icon: Building2 },
           { label: 'Tên khoa đào tạo', value: drawerDepartment?.name, icon: Building2 },

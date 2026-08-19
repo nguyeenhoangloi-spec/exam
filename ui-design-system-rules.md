@@ -17,7 +17,7 @@ Không thay đổi API, database, route, permission, RBAC hoặc logic nghiệp 
 
 ```text
 Font Web UI       = Inter
-Màu chữ chính     = Đen xanh đậm (Cool Slate), không dùng xám lợt
+Màu chữ chính     = Đen xanh đậm (Deep Ink), không dùng xám lợt
 Cỡ chữ chuẩn      = 15px (cỡ mặc định cho nội dung và control chính)
 Weight tối thiểu  = 400
 Bố cục            = Phẳng, hạn chế khung hộp, dùng đường kẻ ngang (divide-y / border-t)
@@ -116,35 +116,64 @@ Ví dụ trong bảng:
 - Trạng thái: 500–600 kèm màu/icon semantic.
 - Điểm quan trọng: 600.
 
-## 6. Màu chữ (Cool Slate 5-Tier Typography System)
+## 6. Màu chữ (Deep Ink 4-Tier Typography System)
 
-Áp dụng chuẩn hóa 5 tầng màu chữ dựa trên dải **Cool Slate** (pha sắc xanh đen sâu), vừa đảm bảo độ tương phản sắc nét thực tế theo chuẩn WCAG AA/AAA, vừa tự động thích ứng mượt mà giữa Light Mode và Dark Mode.
+Toàn bộ Web UI dùng bảng màu xanh đen đậm để chữ rõ trên màn hình Windows và nền xanh–trắng. Không tạo nhiều cấp xám lợt; phân cấp thị giác chủ yếu dựa vào cỡ chữ, weight, vị trí và spacing.
 
-### 6.1 Bảng phân cấp 5 tầng màu chuẩn
+### 6.1 Bảng phân cấp 4 tầng màu chuẩn
 
-| Cấp bậc | Vai trò | Light Mode (Hex & Tailwind) | Dark Mode (Hex & Tailwind) | Utility Shortcut | Mục đích sử dụng |
+| Cấp bậc | Vai trò | Light mode | Dark mode | Utility | Mục đích sử dụng |
 |---|---|---|---|---|---|
-| **Tầng 1** | **Tiêu đề & Nội dung chính** | `#0F172A` (`slate-900`) | `#F8FAFC` (`slate-50`) | `.text-main` | Tên trang, KPI, tiêu đề card, họ tên sinh viên/giảng viên, mã đề |
-| **Tầng 2** | **Chữ phụ, Label, Cột bảng** | `#334155` (`slate-700`) | `#E2E8F0` (`slate-200`) | `.text-sub` | Nhãn form, header cột bảng, tên khoa/lớp, điều hướng |
-| **Tầng 3** | **Mô tả, Helper, Ghi chú** | `#64748B` (`slate-500`) | `#94A3B8` (`slate-400`) | `.text-helper` | Ghi chú ca thi, hướng dẫn tải file, thời gian diễn ra, metadata |
-| **Tầng 4** | **Placeholder, Vô hiệu hóa** | `#94A3B8` (`slate-400`) | `#64748B` (`slate-500`) | `.text-placeholder` | Chữ mờ trong ô input (`Tìm kiếm...`), nút bị khóa, icon mờ |
-| **Tầng 5** | **Chữ trên nền đậm/xanh** | `#FFFFFF` (`white`) | `#FFFFFF` (`white`) | `.text-inverse` | Chữ trên nút Primary xanh, badge trạng thái đặc biệt |
+| **Tầng 1** | **Mặc định / chính** | `#020617` | `#F8FAFC` | `.text-main` | Nội dung, tiêu đề, dữ liệu bảng, menu, label, tên và mã quan trọng |
+| **Tầng 2** | **Phụ** | `#111827` | `#E2E8F0` | `.text-sub` | Metadata, mô tả phụ, vai trò, thông tin bổ sung |
+| **Tầng 3** | **Hỗ trợ** | `#1F2937` | `#CBD5E1` | `.text-helper` | Helper text, ghi chú, thông tin ít ưu tiên nhưng vẫn phải đọc rõ |
+| **Tầng 4** | **Placeholder / disabled** | `#475569` | `#94A3B8` | `.text-placeholder` | Chỉ placeholder, trường khóa và nội dung thật sự không khả dụng |
+| **Nghịch đảo** | **Chữ trên nền đậm** | `#FFFFFF` | `#FFFFFF` | `.text-inverse` | Nút Primary, pill solid và header nền màu |
 
-### 6.2 Tokens CSS tương thích hệ thống
-| Token CSS | Giá trị Light | Giá trị Dark | Vai trò |
+### 6.2 Token CSS bắt buộc
+
+| Token CSS | Light | Dark | Vai trò |
 |---|---|---|---|
-| `ui-text-primary` | `#0F172A` (`slate-900`) | `#F8FAFC` (`slate-50`) | Tiêu đề, KPI, nội dung chính |
-| `ui-text-body` | `#0F172A` (`slate-900`) | `#F8FAFC` (`slate-50`) | Nội dung văn bản thường |
-| `ui-text-secondary` | `#334155` (`slate-700`) | `#E2E8F0` (`slate-200`) | Label form, header bảng, điều hướng |
-| `ui-text-muted-soft` | `#64748B` (`slate-500`) | `#94A3B8` (`slate-400`) | Metadata, mô tả, thông tin phụ |
-| `ui-text-disabled` | `#94A3B8` (`slate-400`) | `#64748B` (`slate-500`) | Placeholder, disabled, copyright |
+| `--ui-text-primary` | `#020617` | `#F8FAFC` | Tiêu đề, KPI, tên và nội dung chính |
+| `--ui-text-body` | `#020617` | `#F8FAFC` | Nội dung và dữ liệu thông thường |
+| `--ui-text-secondary` | `#111827` | `#E2E8F0` | Metadata và mô tả phụ |
+| `--ui-text-muted-soft` | `#1F2937` | `#CBD5E1` | Helper và ghi chú vẫn cần đọc |
+| `--ui-text-disabled` | `#475569` | `#94A3B8` | Chỉ placeholder/disabled |
 
-### 6.3 Nguyên tắc sử dụng & Quy chuẩn WCAG thực tế
-- **Quy chuẩn tương phản WCAG:** Các cặp màu chữ quan trọng phải được kiểm tra tương phản theo chuẩn **WCAG AA** (tỷ lệ $\ge 4.5:1$ cho văn bản thường, $\ge 3:1$ cho văn bản lớn/đậm); nội dung nhỏ ưu tiên đạt **AAA** ($\ge 7:1$) khi có thể.
-- **Giới hạn màu xám nhạt (`text-slate-400` / `text-slate-400/80`):** Chỉ dùng cho Placeholder, Disabled state, Copyright footer và Metadata phụ; tuyệt đối không dùng cho nội dung cần đọc.
-- **Không dùng màu đen tuyệt đối `#000000`** và không dùng xám lợt làm màu chữ chính.
-- Ưu tiên dùng các class semantic shortcut (`text-main`, `text-sub`, `text-helper`, `text-placeholder`, `text-inverse`) để code ngắn gọn và tự động đảo màu khi chuyển Dark Mode.
-- Không tạo phân cấp chỉ bằng màu; kết hợp linh hoạt cỡ chữ, weight, vị trí và spacing.
+### 6.3 Ánh xạ utility cũ
+
+Trong giai đoạn chuyển đổi, global CSS phải ánh xạ utility cũ vào token semantic để không có trang nhỏ hoặc component gián tiếp bị bỏ sót:
+
+- `text-slate-900/800` và `text-gray-900/800` → `--ui-text-primary`.
+- `text-slate-700/600` và `text-gray-700/600` → `--ui-text-secondary`.
+- `text-slate-500/400/300` và nhóm Gray tương ứng → `--ui-text-muted-soft`.
+- Placeholder và form control disabled → `--ui-text-disabled`, không phụ thuộc utility màu cũ.
+- Màu semantic blue/emerald/amber/rose, chữ trắng trên nền đậm và dark surface chuyên biệt không bị remap.
+
+### 6.4 Nguyên tắc sử dụng và WCAG
+
+- Nội dung cần đọc không được nhạt hơn `#1F2937` trên nền sáng.
+- `#475569` chỉ được dùng cho placeholder hoặc disabled; không dùng cho body, bảng, menu, label hay metadata thông thường.
+- Không dùng opacity trên container để làm mờ cả chữ; phải gán semantic color trực tiếp cho phần tử cần giảm nhấn mạnh.
+- Không dùng `#000000` tuyệt đối; `#020617` là màu xanh đen mặc định của hệ thống.
+- Dùng utility semantic (`text-main`, `text-sub`, `text-helper`, `text-placeholder`, `text-inverse`) thay vì tự chọn mã màu.
+- Chữ thường phải đạt WCAG AA tối thiểu; nội dung nhỏ ưu tiên tỷ lệ tương phản AAA khi có thể.
+- File xuất Word/PDF và Excel giữ quy chuẩn màu/font riêng, không áp dụng remap Web UI.
+
+### 6.5 Tỷ lệ tương phản đã xác minh
+
+| Token | Nền kiểm tra | Tỷ lệ tương phản |
+|---|---|---:|
+| `#020617` | `#FFFFFF` | `20.17:1` |
+| `#111827` | `#FFFFFF` | `17.74:1` |
+| `#1F2937` | `#FFFFFF` | `14.68:1` |
+| `#475569` | `#FFFFFF` | `7.58:1` |
+| `#F8FAFC` | `#020617` | `19.28:1` |
+| `#E2E8F0` | `#020617` | `16.36:1` |
+| `#CBD5E1` | `#020617` | `13.59:1` |
+| `#94A3B8` | `#020617` | `7.87:1` |
+
+Tất cả các cặp trung tính chuẩn đều vượt WCAG AAA cho văn bản thường. Màu semantic phải được kiểm tra riêng trên đúng nền sử dụng.
 
 ## 7. Quy chuẩn nút bấm
 
@@ -179,7 +208,7 @@ Mobile áp dụng vùng chạm tối thiểu 44px (touch target), kể cả khi 
 ### Hình dạng và typography
 
 - Nút/control thông thường dùng `rounded-xl` — 12px.
-- **Ngoại lệ bo góc:** Submenu items trong Sidebar, Badge nhỏ, Tooltip và Chip trạng thái vi mô được phép dùng `rounded-lg` (8px).
+- **Ngoại lệ bo góc:** Identifier badge (mã sinh viên, mã môn, mã đề), submenu và tooltip được phép dùng `rounded-lg` (8px). Status pill bắt buộc dùng `rounded-full`; không dùng `rounded-lg` cho status pill.
 - Chữ button: 15px, weight 600, line-height khoảng 22–24px.
 - Khoảng cách icon và chữ: 8px.
 - Padding ngang: khoảng 12–18px tùy kích thước.
@@ -194,7 +223,7 @@ Mobile áp dụng vùng chạm tối thiểu 44px (touch target), kể cả khi 
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Bậc 1** | **Primary CTA** *(Nút chính)* | • **Nền**: Xanh dương đậm `#2563EB` (`bg-primary-600 hover:bg-primary-700`)<br>• **Chữ**: Trắng `#FFFFFF` (`text-white font-semibold`)<br>• **Viền**: Không viền (`border-transparent`)<br>• **Đổ bóng**: `shadow-2xs` | • Có thể có icon dấu `+` hoặc icon xác nhận.<br>• **Chỉ có 1 nút Primary** trong 1 nhóm thao tác. | Hành động chủ đạo, quan trọng nhất của trang, form hoặc modal. | `[ + Phân công ]`<br>`[ + Thêm câu hỏi ]`<br>`[ Lưu thay đổi ]` |
 | **Bậc 2** | **Soft Accent** *(Phụ thông minh)* | • **Nền**: Xanh nhạt vừa vặn (`bg-blue-100 dark:bg-blue-900/40`, hover/active `bg-blue-200/90`)<br>• **Chữ**: Xanh đậm (`text-blue-700`, hover/active `text-blue-800 font-semibold`)<br>• **Viền**: **Không viền** (`border-transparent`) | • **KHÔNG DÙNG ICON** (thuần chữ thanh thoát).<br>• Đứng cạnh nút Primary mà không tranh chấp độ nổi bật. | Các tính năng bổ trợ đặc biệt, thuật toán, tự động hóa, sinh đề, xem trước. | `[ Tự động ]`<br>`[ Sinh ma trận ]`<br>`[ Xem trước ]` |
-| **Bậc 3** | **Secondary** *(Thao tác chuẩn)* | • **Nền**: Trắng / Xám rất nhạt (`bg-white hover:bg-slate-50 dark:bg-slate-900`)<br>• **Chữ**: Xám đen Cool Slate (`text-slate-800 dark:text-slate-100 font-semibold`)<br>• **Viền**: Viền mảnh (`border border-slate-200/90 dark:border-slate-700`) | • Thường đi kèm icon chức năng phía trước (Lọc, Cột, Excel, In). | Bộ lọc, Sắp xếp cột, Xuất Excel, In ấn, Tải mẫu biểu. | `[ Bộ lọc ]`<br>`[ Xuất Excel ]`<br>`[ Chọn cột ]` |
+| **Bậc 3** | **Secondary** *(Thao tác chuẩn)* | • **Nền**: Trắng / Xám rất nhạt (`bg-white hover:bg-slate-50 dark:bg-slate-900`)<br>• **Chữ**: Deep Ink (`text-slate-800 dark:text-slate-100 font-semibold`, được remap qua token)<br>• **Viền**: Viền mảnh (`border border-slate-200/90 dark:border-slate-700`) | • Thường đi kèm icon chức năng phía trước (Lọc, Cột, Excel, In). | Bộ lọc, Sắp xếp cột, Xuất Excel, In ấn, Tải mẫu biểu. | `[ Bộ lọc ]`<br>`[ Xuất Excel ]`<br>`[ Chọn cột ]` |
 | **Bậc 4** | **Ghost / Text** *(Phụ tối giản)* | • **Nền**: Trong suốt (`bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800`)<br>• **Chữ**: Xám trung tính (`text-slate-600 dark:text-slate-400 font-medium`)<br>• **Viền**: **Không viền** | • Không icon hoặc chỉ có icon đóng `✕`. | Đóng modal, Hủy thao tác, Quay lại, Đặt lại bộ lọc. | `[ Đóng ]`<br>`[ Hủy ]`<br>`[ Bỏ qua ]` |
 | **Bậc 5** | **Danger** *(Nguy hiểm)* | • **Nền**: Đỏ tươi `#EF4444` hoặc Nền trắng viền đỏ (`bg-white text-danger-600 border-rose-200`)<br>• **Chữ**: Trắng hoặc Đỏ đậm | • Icon thùng rác `Trash2` hoặc cảnh báo.<br>• Luôn đặt tách biệt để tránh bấm nhầm. | Xóa vĩnh viễn, Hủy phân công, Từ chối phúc khảo. | `[ Xóa ca thi ]`<br>`[ Hủy phân công ]` |
 
@@ -375,6 +404,10 @@ Tạo bản Backup ngay         → Tạo bản sao lưu
 
 2. **Sidebar (Thanh bên trái):**
    - Chức năng cốt lõi thuần túy là **Điều hướng danh mục hệ thống (Navigation Bar)**.
+   - **Màu chữ dùng chung:** Mọi chữ điều hướng không active bắt buộc dùng utility `sidebar-text`, lấy từ token `--sidebar-text`: `#020617` ở light mode và `#F8FAFC` ở dark mode. Không tự chọn `text-slate-*` cho từng mục.
+   - **Màu icon dùng chung:** Icon không active dùng `sidebar-icon`, lấy từ token `--sidebar-icon`: `#111827` ở light mode và `#CBD5E1` ở dark mode.
+   - **Trạng thái active/hover:** Dùng `--sidebar-active`: `#2563EB` ở light mode và `#60A5FA` ở dark mode; mục active có nền xanh được phép dùng chữ trắng `--sidebar-text-inverse`.
+   - Phân cấp giữa thương hiệu, nhóm menu, menu chính, submenu và metadata phải dựa chủ yếu vào cỡ chữ, weight, vị trí và spacing; không tạo thêm nhiều cấp màu xám.
    - **Chân Sidebar (Footer):** Thiết kế tối giản (Minimal Footer):
      - Chỉ hiển thị trạng thái hệ thống (`● Hệ thống trực tuyến`) và liên kết hỗ trợ nhanh khi mở rộng.
      - Thu gọn thành chấm xanh hiển thị trạng thái khi Sidebar ở chế độ `collapsed`.
@@ -454,14 +487,14 @@ Nhằm đảm bảo giao diện luôn thanh thoát, hiện đại, thoáng đãn
 
 - [ ] Không lồng nhiều khung hộp (card boxes) con bên trong modal/drawer.
 - [ ] Danh sách nhiều mục dùng đường kẻ ngang (`divide-y`) thay vì bọc từng card riêng.
-- [ ] Tiêu đề Section viết Sentence case, có thanh pill xanh (`h-4 w-1 bg-blue-600`).
+- [ ] Tiêu đề Section viết Sentence case, có thể dùng thanh nhấn xanh (`h-4 w-1 bg-blue-600`); thanh trang trí này không được gọi hoặc xử lý như status pill.
 - [ ] Thanh trạng thái/khớp điểm inline phẳng, không dùng nền hộp thô.
 
 ### Màu sắc & Trạng thái (Color & Status)
 
 - [ ] Nền trang, card, control giữ trắng và trắng xanh (`bg-white`, `bg-slate-50/50`).
 - [ ] Không dùng màu trạng thái (xanh lá, đỏ, cam) làm nền lớn toàn trang.
-- [ ] Không dùng xanh lá, đỏ, cam cho nội dung thông thường (chỉ dùng Cool Slate).
+- [ ] Không dùng xanh lá, đỏ, cam cho nội dung thông thường (chỉ dùng Deep Ink).
 - [ ] Màu trạng thái chỉ dùng cho icon, chữ chỉ báo trạng thái, viền hoặc nền nhạt.
 - [ ] Nút trạng thái nền đậm bắt buộc dùng chữ màu trắng (`text-white`).
 - [ ] Chữ màu vàng/cam trên nền trắng đạt tương phản WCAG AA ($\ge 4.5:1$, dùng `text-amber-700` hoặc `text-amber-800`).
@@ -496,16 +529,31 @@ npm run audit:ui
 npx tsc --noEmit --incremental false --pretty false
 npm run lint -- --no-cache
 npm run build
+npm run audit:ui:artifact
 ```
 
 Khi kiểm tra thủ công, dùng DevTools → Computed Styles và xác nhận:
 
 - `font-family` bắt đầu bằng Inter hoặc font Inter do `next/font` sinh ra.
+- Light mode: body/nội dung chính có `color: rgb(2, 6, 23)` (`#020617`).
+- Light mode: chữ phụ có `color: rgb(17, 24, 39)` (`#111827`); helper có `rgb(31, 41, 55)` (`#1F2937`).
+- Light mode: chỉ placeholder/disabled được dùng `rgb(71, 85, 105)` (`#475569`) và vẫn phải có `opacity: 1`.
+- Dark mode: chữ chính/phụ/helper lần lượt là `#F8FAFC`, `#E2E8F0`, `#CBD5E1`; placeholder/disabled là `#94A3B8`.
+- Không có nội dung bình thường nào bị giảm độ rõ bằng `opacity < 1` trên phần tử cha.
 - Button/control có `font-size: 15px`.
 - Button có `font-weight: 600`.
 - Border radius là 12px tương ứng `rounded-xl`.
 - Chiều cao đúng variant.
 - Focus-visible hiển thị rõ.
+
+Sau khi chạy dev hoặc build, CSS artifact phải chứa đủ:
+
+- `--ui-text-primary`, `--ui-text-secondary`, `--ui-text-muted-soft`, `--ui-text-disabled` với đúng giá trị light/dark.
+- Selector gốc `.typography-scale` và remap utility trung tính cho light/dark.
+- Placeholder và control disabled dùng `--ui-text-disabled` kèm `opacity: 1 !important`.
+- Contract `.ui-pill`, `.ui-pill:not(.ui-pill-solid)` và `.ui-pill-solid`.
+
+Không kết luận hoàn thành nếu source đạt nhưng CSS artifact thiếu một trong các contract trên, hoặc chưa xác minh được Computed Styles của màn hình đại diện cho Admin, Giảng viên và Sinh viên.
 
 ## 17. Nguyên tắc ưu tiên
 
@@ -526,19 +574,49 @@ Không chỉnh từng page riêng nếu có thể chuẩn hóa ở shared compon
 
 Nhằm đảm bảo giao diện luôn trang nhã, chuyên nghiệp, dịu mắt và đạt chuẩn tiếp cận WCAG AA:
 
-### 18.1 Bảng màu chốt 5 Nhóm Trạng Thái (Nền Siêu Nhạt & Chữ Đậm Tương Phản Cao)
+### 18.1 Bảng màu chốt 5 nhóm trạng thái (Outline-first)
 
-| Nhóm Ý Nghĩa | Ví Dụ Nghiệp Vụ | Màu Sắc | Nền Nhạt (Hex & Tailwind) | Chữ Đậm (Hex & Tailwind) | Viền Nhạt |
-|---|---|---|---|---|---|
-| **Trung tính** | Bản nháp, Chưa bắt đầu, Lưu trữ, Đã khóa, Chưa công bố | **Xám xanh** | `#F1F5F9`<br>`bg-slate-100 dark:bg-slate-800` | `#334155`<br>`text-slate-700 dark:text-slate-300` | `border-slate-200 dark:border-slate-700` |
-| **Thông tin / Đang xử lý** | Đang diễn ra, Đang tải, Đã lên lịch, Đang chấm thi, Đang chạy, Cần chỉnh sửa | **Xanh dương** | `#EFF6FF`<br>`bg-blue-50 dark:bg-blue-950/40` | `#1D4ED8`<br>`text-blue-700 dark:text-blue-400` | `border-blue-200 dark:border-blue-800/60` |
-| **Chờ xử lý** | Chờ duyệt, Chờ xác nhận, Cần bổ sung, Đang xem xét, Chờ xác minh | **Vàng cam** | `#FFFBEB`<br>`bg-amber-50 dark:bg-amber-950/40` | `#B45309`<br>`text-amber-700 dark:text-amber-400` | `border-amber-200 dark:border-amber-800/60` |
-| **Thành công** | Đã duyệt, Đã hoàn thành, Đã nộp, Đã công bố, Đạt, Thành công, Đang hoạt động | **Xanh lá** | `#F0FDF4`<br>`bg-emerald-50 dark:bg-emerald-950/40` | `#15803D`<br>`text-emerald-700 dark:text-emerald-400` | `border-emerald-200 dark:border-emerald-800/60` |
-| **Lỗi / Nguy hiểm** | Bị từ chối, Thất bại, Đã hủy, Bị khóa, Không đạt, Vắng thi | **Đỏ** | `#FEF2F2`<br>`bg-rose-50 dark:bg-rose-950/40` | `#B91C1C`<br>`text-rose-700 dark:text-rose-400` | `border-rose-200 dark:border-rose-800/60` |
+Status pill mặc định không dùng nền màu. Màu semantic được thể hiện bằng chữ, viền và icon/chấm trạng thái để giao diện xanh–trắng luôn gọn, không xuất hiện quá nhiều mảng màu cạnh tranh nhau.
+
+| Nhóm ý nghĩa | Ví dụ nghiệp vụ | Chữ sáng/tối | Viền sáng/tối | Nền đặc khi được phép nhấn mạnh |
+|---|---|---|---|---|
+| **Trung tính** | Bản nháp, Chưa bắt đầu, Lưu trữ, Đã khóa, Chưa công bố | `text-slate-700 dark:text-slate-300` | `border-slate-300 dark:border-slate-600` | `bg-slate-700 text-white` |
+| **Thông tin / Đang xử lý** | Đang diễn ra, Đang tải, Đã lên lịch, Đang chấm thi, Đang chạy, Cần chỉnh sửa | `text-blue-700 dark:text-blue-400` | `border-blue-300 dark:border-blue-700` | `bg-blue-600 text-white` |
+| **Chờ xử lý** | Chờ duyệt, Chờ xác nhận, Cần bổ sung, Đang xem xét, Chờ xác minh | `text-amber-700 dark:text-amber-400` | `border-amber-400 dark:border-amber-700` | `bg-amber-600 text-white` |
+| **Thành công** | Đã duyệt, Đã hoàn thành, Đã nộp, Đã công bố, Đạt, Thành công, Đang hoạt động | `text-emerald-700 dark:text-emerald-400` | `border-emerald-400 dark:border-emerald-700` | `bg-emerald-600 text-white` |
+| **Lỗi / Nguy hiểm** | Bị từ chối, Thất bại, Đã hủy, Bị khóa, Không đạt, Vắng thi | `text-rose-700 dark:text-rose-400` | `border-rose-400 dark:border-rose-700` | `bg-rose-600 text-white` |
 
 ### 18.2 Hai Hình Thức Hiển Thị của `StatusBadge`
-1. **`variant="dot"` (Mặc định trong bảng/danh sách):** `[Chấm tròn màu] [Chữ đậm]` — Bố cục phẳng phân tách bằng đường kẻ ngang (`divide-y`), không bọc card box dày.
-2. **`variant="pill"` (Trong Drawer, Card chi tiết, Summary Chip):** `[Nền siêu nhạt + Chữ đậm + Viền mờ]` — Bo góc `rounded-lg` (8px), padding `px-2.5 py-0.5`.
+
+1. **`variant="dot"` (mặc định trong bảng/danh sách):** `[Chấm tròn màu] [Chữ]`. Dùng `text-type-badge`, `font-medium`; hiển thị phẳng, không bọc thêm nền hoặc card.
+2. **`variant="pill"` (drawer, card chi tiết, bộ lọc, bộ đếm tab và summary chip):** dùng contract `ui-pill`, `rounded-full`, viền 1px, `text-type-helper` (13px/18px), `font-medium` (500), padding tham chiếu `px-2.5 py-1` hoặc `px-2 py-0.5` khi cần gọn trong bảng.
+
+#### Outline và solid
+
+- `emphasis="outline"` là mặc định: nền trong suốt, chữ và viền theo màu semantic.
+- `emphasis="solid"` phải khai báo rõ bằng `ui-pill-solid`; nền màu đậm và chữ trắng.
+- Chỉ dùng solid cho trạng thái đang được chọn, trạng thái chính cần nhấn mạnh hoặc cảnh báo khẩn cấp.
+- Trong cùng một nhóm thị giác chỉ có tối đa **một** pill solid. Các pill còn lại phải dùng outline.
+- Không dùng nền pastel (`bg-*-50`, `bg-*-100`) làm mặc định cho status pill.
+- Không dùng `font-semibold` hoặc `font-bold` cho pill; pill luôn dùng weight 500.
+
+```tsx
+<StatusBadge status="APPROVED" variant="pill" />
+
+<StatusBadge
+  status="IN_PROGRESS"
+  variant="pill"
+  emphasis="solid"
+/>
+```
+
+Với nhãn viết trực tiếp chưa thể dùng `StatusBadge`, phải khai báo đủ contract:
+
+```tsx
+<span className="ui-pill rounded-full border border-blue-300 px-2.5 py-1 text-type-helper font-medium text-blue-700">
+  Đang xử lý
+</span>
+```
 
 ### 18.3 Các Nơi NÊN DÙNG Badge Trạng Thái
 - **Kỳ thi:** Nháp (`DRAFT`), Sắp diễn ra (`UPCOMING`), Đang diễn ra (`ONGOING`), Đã kết thúc (`COMPLETED`), Đã hủy (`CANCELLED`).
@@ -551,7 +629,7 @@ Nhằm đảm bảo giao diện luôn trang nhã, chuyên nghiệp, dịu mắt 
 - **Kết quả:** Đã công bố (`PUBLISHED`), Chưa công bố (`UNPUBLISHED`), Đạt (`PASSED`), Không đạt (`NOT_PASSED`/`FAILED`).
 
 ### 18.4 Tuyệt Đối KHÔNG DÙNG Badge Cho
-- **Mã kỹ thuật:** Mã `KT-1`, mã sinh viên `SV...`, mã câu hỏi `Q...` ➔ Dùng `IdentifierBadge` dạng nhãn xám kỹ thuật (`bg-slate-100 text-slate-700 font-medium tabular-nums`) hoặc chữ thường.
+- **Mã kỹ thuật:** Mã `KT-1`, mã sinh viên `SV...`, mã câu hỏi `Q...` ➔ Dùng `IdentifierBadge` với `rounded-lg`, Inter, `font-medium`, `tabular-nums`; không gắn class `ui-pill`.
 - **Tên khoa, tên môn học:** Dùng typography thường (`text-slate-900` / `text-slate-700`).
 - **Số lượng, điểm số, ngày tháng:** Dùng text thường kèm `tabular-nums`.
 - **Nút hành động:** Bắt buộc dùng component `Button`.
@@ -559,7 +637,28 @@ Nhằm đảm bảo giao diện luôn trang nhã, chuyên nghiệp, dịu mắt 
 
 ### 18.5 Nền trang & Nút trạng thái
 - **Nền trang, card, control:** Vẫn giữ nguyên nền trắng (`bg-white`) và trắng xanh (`bg-slate-50`, `bg-slate-50/50`). Tuyệt đối KHÔNG dùng màu trạng thái làm nền lớn toàn trang.
-- **Nút trạng thái nền đậm:** Nút có nền màu đậm (`bg-blue-600`, `bg-emerald-600`, `bg-rose-600`, `bg-amber-600`) bắt buộc dùng chữ màu trắng (`text-white`).
+- **Nút thao tác semantic:** Nếu là hành động có thể bấm, phải dùng `Button`, bo góc `rounded-xl`; không dùng status pill để giả làm button.
+- **Pill nền đặc:** Chỉ dùng theo điều kiện `emphasis="solid"` tại mục 18.2 và bắt buộc có chữ trắng.
+
+### 18.6 Phân biệt hình dạng bắt buộc
+
+| Thành phần | Bo góc | Ghi chú |
+|---|---|---|
+| Status pill, filter chip, tab count | `rounded-full` | Dùng `ui-pill`, 13px/500 |
+| Identifier badge, mã kỹ thuật | `rounded-lg` | Không dùng `ui-pill`; dùng `tabular-nums` |
+| Button, input, select, search, dropdown trigger | `rounded-xl` | Control tương tác, chữ 15px |
+| Card, modal, drawer panel | `rounded-2xl` | Container nội dung |
+
+### 18.7 Checklist kiểm tra pill
+
+- [ ] Có class `ui-pill` và `rounded-full`.
+- [ ] Chữ dùng `text-type-helper`, `font-medium`, Inter.
+- [ ] Outline là mặc định và không còn nền pastel không cần thiết.
+- [ ] Pill có nền đặc phải có `ui-pill-solid` hoặc `emphasis="solid"`.
+- [ ] Không có hơn một pill solid trong cùng nhóm thị giác.
+- [ ] Mã kỹ thuật dùng `IdentifierBadge`, không bị chuyển thành status pill.
+- [ ] Button/control không bị chuyển thành `rounded-full`.
+- [ ] Chạy `npm run audit:ui` sau khi chỉnh sửa.
 
 ## 19. Quy tắc Chuẩn Hóa Nhãn Hành Động (Action Dropdown & Confirm Modals)
 
@@ -588,3 +687,15 @@ Vì người dùng đã ở trong ngữ cảnh trang quản lý của đối tư
 Ngược lại với Dropdown menu, tiêu đề của `ConfirmModal` khi xóa **bắt buộc nêu rõ tên đối tượng cụ thể** để người dùng không bấm nhầm:
 - `Xóa ca thi?`, `Xóa phòng thi?`, `Xóa lớp học?`, `Xóa môn học?`, `Xóa sinh viên?`, `Xóa giảng viên?`, `Xóa kỳ thi?`, `Xóa câu hỏi?`, `Xóa đề thi?`.
 
+## 20. Quy Chuẩn Phân Định 4 Nhóm Dữ Liệu Cốt Lõi (Data Entities System 2026)
+
+Nhằm đảm bảo giao diện luôn mạch lạc, phẳng, thoáng đãng và không bị nhầm lẫn giữa Mã định danh, Trạng thái quy trình và Vai trò:
+
+### 20.1 Bảng Phân Định 4 Nhóm
+
+| Nhóm | Bản chất | Quy cách hiển thị chuẩn | Điều CẤM kỵ |
+|---|---|---|---|
+| **1. Mã định danh (Identifier)** | Mã kỹ thuật duy nhất: `GV017`, `SV2024001`, `KT-101`, `P201`, `Q-99` | Dùng `<IdentifierBadge tone="neutral">GV017</IdentifierBadge>`<br>• Bo góc **`rounded-lg` (8px)**<br>• Nền xám nhạt trung tính (`bg-slate-100 dark:bg-slate-800`), font số `tabular-nums` | ❌ **CẤM** nhét cả cụm `"Mã cán bộ:"`, `"Mã SV:"` vào trong badge.<br>❌ **CẤM** dùng `rounded-full` hoặc gắn chấm tròn `●`. |
+| **2. Trạng thái (Lifecycle Status)** | Tiến trình vòng đời: *Đã xác nhận, Chờ duyệt, Từ chối, Đang diễn ra, Đã khóa* | Dùng `<StatusBadge />`<br>• **Trong Bảng dữ liệu**: Bắt buộc dùng `variant="dot"` (`● Đã xác nhận`)<br>• **Trong Drawer / Card**: dùng `variant="pill"` (`rounded-full`, `ui-pill`) | ❌ **CẤM** dùng cho danh từ, vai trò hay chức danh cố định. |
+| **3. Vai trò / Chức danh (Role & Position)** | Phân công vai trò: *Giám thị 1 (Chính), Giám thị 2 (Phụ), Trưởng điểm* | **Typography phân cấp phẳng** (Typography-First):<br>• `Giám thị 1 (Chính)`: chữ `text-slate-900 dark:text-slate-100 font-semibold`<br>• `Giám thị 2 (Phụ)`: chữ `text-slate-600 dark:text-slate-400 font-normal` | ❌ **CẤM** gắn chấm `●` giả làm trạng thái.<br>❌ **CẤM** đóng khung hộp badge màu mè tranh chấp với cột Trạng thái. |
+| **4. Họ tên & Học hàm/Học vị** | Danh xưng & Tên: *ThS. Nguyễn Đức Thắng* | • Danh xưng gắn liền trước họ tên: `ThS. Nguyễn Đức Thắng`<br>• Thông tin phụ: dùng text `text-type-helper text-slate-500` (`Học vị: ThS`) | ❌ **CẤM** đóng khung badge cho tên hoặc học vị. |

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { FileText, Layers, UserCheck, Send, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { FileText, Layers, UserCheck, Send, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { DashboardAttention } from '../../types/dashboard';
 
@@ -46,10 +46,10 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
   return (
     <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-2 h-full flex flex-col justify-between">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
-        <h3 className="edu-card-title">Công việc cần xử lý</h3>
-        <span className="inline-flex items-center gap-1 text-type-helper font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full">
-          <span>Ưu tiên khảo thí</span>
+      <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5 min-w-0">
+        <h3 className="edu-card-title truncate whitespace-nowrap min-w-0">Công việc cần xử lý</h3>
+        <span className="inline-flex items-center gap-1 text-type-helper font-medium text-blue-600 dark:text-blue-400 px-2 py-0.5 ui-pill rounded-full whitespace-nowrap shrink-0">
+          <span>Ưu tiên</span>
         </span>
       </div>
 
@@ -81,7 +81,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
 
               {/* Right count and arrow */}
               <div className="flex items-center gap-2 shrink-0">
-                <span className="inline-flex items-center justify-center min-w-[24px] px-2 py-0.5 rounded-lg text-type-helper font-semibold bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 group-hover:bg-blue-50 group-hover:text-blue-600 transition">
+                <span className="ui-pill inline-flex items-center justify-center min-w-[24px] px-2 py-0.5 rounded-full text-type-helper font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-600 transition">
                   {task.count}
                 </span>
                 <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />

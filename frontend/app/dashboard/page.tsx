@@ -221,13 +221,13 @@ export default function DashboardPage() {
 
             {/* Section 4: Row 3 - Kỳ thi sắp tới (6 cols) + Tác vụ cần xử lý (3 cols) + Hoạt động gần đây (3 cols) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-              <div className="lg:col-span-6 flex flex-col min-w-0">
+              <div className="lg:col-span-12 xl:col-span-6 flex flex-col min-w-0">
                 <UpcomingExamList exams={overview.upcomingExams || []} />
               </div>
-              <div className="lg:col-span-3 flex flex-col min-w-0">
+              <div className="lg:col-span-6 xl:col-span-3 flex flex-col min-w-0">
                 <TaskAttention attention={overview.attention} />
               </div>
-              <div className="lg:col-span-3 flex flex-col min-w-0">
+              <div className="lg:col-span-6 xl:col-span-3 flex flex-col min-w-0">
                 <RecentActivityList activities={overview.recentActivities || []} />
               </div>
             </div>

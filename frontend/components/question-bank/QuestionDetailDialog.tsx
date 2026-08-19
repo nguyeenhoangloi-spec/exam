@@ -240,7 +240,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                           className="max-h-48 max-w-full rounded-lg object-contain bg-white transition duration-200 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
-                          <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-3 py-1.5 text-type-helper font-medium text-white shadow-lg backdrop-blur-xs">
+                          <span className="flex items-center gap-1.5 ui-pill rounded-full bg-slate-900/80 px-3 py-1.5 text-type-helper font-medium text-white shadow-lg backdrop-blur-xs">
                             <Maximize2 className="h-4 w-4 text-blue-400" /> Phóng to
                           </span>
                         </div>
@@ -280,7 +280,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                                 key={idx}
                                 className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 flex items-center justify-between gap-3"
                               >
-                                <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold text-type-helper border border-blue-200/80 dark:border-blue-800">
+                                <span className="ui-pill inline-flex items-center px-2.5 py-1 rounded-full text-blue-700 dark:text-blue-300 font-medium text-type-helper border border-blue-200/80 dark:border-blue-800">
                                   Ô trống #{m[1] || idx + 1}
                                 </span>
                                 <span className="text-type-helper text-slate-500 italic">Chưa thiết lập đáp án</span>
@@ -315,14 +315,14 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                               key={ans.id || idx}
                               className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 transition flex items-start gap-3"
                             >
-                              <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold text-type-helper border border-blue-200/80 dark:border-blue-800 shrink-0">
+                              <span className="ui-pill inline-flex items-center px-2.5 py-1 rounded-full text-blue-700 dark:text-blue-300 font-medium text-type-helper border border-blue-200/80 dark:border-blue-800 shrink-0">
                                 Ô trống #{bIdx}
                               </span>
 
                               <div className="flex-1 min-w-0 pt-0.5 space-y-1.5">
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">Đáp án chính xác:</span>
-                                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 text-type-helper font-semibold text-emerald-800 dark:text-emerald-300">
+                                  <span className="ui-pill inline-flex items-center gap-1.5 rounded-full border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 text-type-helper font-medium text-emerald-800 dark:text-emerald-300">
                                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                                     {mainAns}
                                   </span>

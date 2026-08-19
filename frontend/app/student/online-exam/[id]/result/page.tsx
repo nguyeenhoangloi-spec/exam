@@ -141,7 +141,7 @@ export default function StudentExamResultPage() {
                   <h1 className="edu-page-title text-white tracking-tight leading-snug">
                     {isUnderReview ? 'Bài thi cần được xem xét' : 'Hoàn thành bài thi trực tuyến'}
                   </h1>
-                  <span className="inline-flex items-center gap-1 text-type-helper font-semibold bg-white/20 text-white px-3 py-1 rounded-full backdrop-blur-md border border-white/30">
+                  <span className="ui-pill ui-pill-solid inline-flex items-center gap-1 text-type-helper font-medium bg-white/20 text-white px-3 py-1 rounded-full backdrop-blur-md border border-white/30">
                     <Sparkles className="w-3 h-3 text-blue-200" />
                     {isUnderReview ? 'Chờ duyệt' : 'Đã nộp'}
                   </span>

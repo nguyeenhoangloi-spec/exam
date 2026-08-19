@@ -360,10 +360,10 @@ export function DepartmentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           hasClassFilter === 'YES'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                         }`}>
                           {optionCounts.withClasses}
                         </span>
@@ -390,10 +390,10 @@ export function DepartmentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           hasTeacherFilter === 'YES'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                         }`}>
                           {optionCounts.withTeachers}
                         </span>
@@ -420,10 +420,10 @@ export function DepartmentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           hasSubjectFilter === 'YES'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                         }`}>
                           {optionCounts.withSubjects}
                         </span>
@@ -455,10 +455,10 @@ export function DepartmentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           hasClassFilter === ''
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {optionCounts.total}
                         </span>
@@ -485,10 +485,10 @@ export function DepartmentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           hasClassFilter === 'YES'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {optionCounts.withClasses}
                         </span>
@@ -515,10 +515,10 @@ export function DepartmentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           hasClassFilter === 'NO'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {optionCounts.withoutClasses}
                         </span>
@@ -550,10 +550,10 @@ export function DepartmentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           hasTeacherFilter === ''
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {optionCounts.total}
                         </span>
@@ -580,10 +580,10 @@ export function DepartmentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           hasTeacherFilter === 'YES'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {optionCounts.withTeachers}
                         </span>
@@ -610,10 +610,10 @@ export function DepartmentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           hasTeacherFilter === 'NO'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {optionCounts.withoutTeachers}
                         </span>
@@ -645,10 +645,10 @@ export function DepartmentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           hasSubjectFilter === ''
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {optionCounts.total}
                         </span>
@@ -675,10 +675,10 @@ export function DepartmentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           hasSubjectFilter === 'YES'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {optionCounts.withSubjects}
                         </span>
@@ -705,10 +705,10 @@ export function DepartmentFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           hasSubjectFilter === 'NO'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {optionCounts.withoutSubjects}
                         </span>

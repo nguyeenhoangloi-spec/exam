@@ -573,16 +573,16 @@ export default function BackupsPage() {
                                 Công cụ Database CLI
                             </span>
                             <div className="h-[38px] flex items-center gap-2 text-type-helper font-semibold flex-wrap">
-                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-type-helper font-semibold border ${overview?.tools?.pgDumpAvailable
-                                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200/80 dark:border-blue-800/60'
-                                    : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                                <span className={`ui-pill inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-type-helper font-medium border ${overview?.tools?.pgDumpAvailable
+                                    ? 'text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700'
+                                    : 'text-slate-500 dark:text-slate-400 border-slate-300 dark:border-slate-600'
                                     }`}>
                                     {overview?.tools?.pgDumpAvailable ? <CheckCircle2 className="h-3 w-3 text-blue-600 dark:text-blue-400" /> : <XCircle className="h-3 w-3" />}
                                     pg_dump
                                 </span>
-                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-type-helper font-semibold border ${overview?.tools?.pgRestoreAvailable
-                                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200/80 dark:border-blue-800/60'
-                                    : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                                <span className={`ui-pill inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-type-helper font-medium border ${overview?.tools?.pgRestoreAvailable
+                                    ? 'text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700'
+                                    : 'text-slate-500 dark:text-slate-400 border-slate-300 dark:border-slate-600'
                                     }`}>
                                     {overview?.tools?.pgRestoreAvailable ? <CheckCircle2 className="h-3 w-3 text-blue-600 dark:text-blue-400" /> : <XCircle className="h-3 w-3" />}
                                     pg_restore
@@ -874,14 +874,14 @@ export default function BackupsPage() {
                                         <div className="min-w-0">
                                             <div className="flex items-center gap-2 flex-wrap">
                                                 <span
-                                                    className={`text-type-helper font-semibold px-2 py-0.5 rounded-md tabular-nums border ${
+                                                    className={`ui-pill text-type-helper font-medium px-2 py-0.5 rounded-full tabular-nums border ${
                                                         job.type === 'FULL'
-                                                            ? 'bg-blue-600 text-white border-blue-600'
+                                                            ? 'ui-pill-solid bg-blue-600 text-white border-blue-600'
                                                             : job.type === 'DATABASE'
-                                                                ? 'bg-blue-50 text-blue-700 border-blue-200/80'
+                                                                ? 'text-blue-700 border-blue-300'
                                                                 : job.type === 'UPLOADS'
-                                                                    ? 'bg-sky-50 text-sky-700 border-sky-200/80'
-                                                                    : 'bg-amber-50 text-amber-700 border-amber-200/80'
+                                                                    ? 'text-sky-700 border-sky-300'
+                                                                    : 'text-amber-700 border-amber-300'
                                                     }`}
                                                 >
                                                     {job.type}
@@ -999,13 +999,13 @@ export default function BackupsPage() {
 
                                         <td className="p-3.5 whitespace-nowrap">
                                             <span
-                                                className={`table-badge font-medium text-type-helper leading-[18px] px-2.5 py-1 rounded-lg ${job.type === 'FULL'
-                                                    ? 'bg-blue-600 text-white shadow-2xs'
+                                                className={`table-badge ui-pill font-medium text-type-helper leading-[18px] px-2.5 py-1 rounded-full border ${job.type === 'FULL'
+                                                    ? 'ui-pill-solid bg-blue-600 text-white shadow-2xs'
                                                     : job.type === 'DATABASE'
-                                                        ? 'bg-blue-50 text-blue-700 border border-blue-200/80 dark:bg-blue-950/60 dark:text-blue-400'
+                                                        ? 'text-blue-700 border-blue-300 dark:text-blue-400 dark:border-blue-700'
                                                         : job.type === 'UPLOADS'
-                                                            ? 'bg-sky-50 text-sky-700 border border-sky-200/80 dark:bg-sky-950/60 dark:text-sky-400'
-                                                            : 'bg-amber-50 text-amber-700 border border-amber-200/80 dark:bg-amber-950/60 dark:text-amber-400'
+                                                            ? 'text-sky-700 border-sky-300 dark:text-sky-400 dark:border-sky-700'
+                                                            : 'text-amber-700 border-amber-300 dark:text-amber-400 dark:border-amber-700'
                                                     }`}
                                             >
                                                 {job.type}
@@ -1104,7 +1104,7 @@ export default function BackupsPage() {
                             <h2 className="text-type-card font-semibold text-slate-900 dark:text-slate-100">
                                 Yêu cầu khôi phục đang chờ xử lý
                             </h2>
-                            <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-type-helper font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60 tabular-nums">
+                            <span className="ui-pill inline-flex items-center justify-center px-2 py-0.5 rounded-full text-type-helper font-medium text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60 tabular-nums">
                                 {restoreRequests.length}
                             </span>
                         </div>

@@ -122,7 +122,7 @@ export function ExamReportTable({
  </div>
 
  {c.violationCount > 0 && (
- <span className="inline-flex items-center gap-1 rounded-lg bg-rose-50 px-2.5 py-1 text-type-helper font-semibold text-rose-700">
+ <span className="inline-flex items-center gap-1 ui-pill rounded-full px-2.5 py-1 text-type-helper font-medium text-rose-700">
  <AlertTriangle className="h-3.5 w-3.5 text-rose-600" /> {c.violationCount} vi phạm
  </span>
  )}

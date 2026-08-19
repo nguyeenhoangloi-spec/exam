@@ -647,12 +647,8 @@ export default function ClassesPage() {
         isOpen={Boolean(drawerClass)}
         onClose={() => setDrawerClass(null)}
         title={drawerClass?.name || 'Chi tiết Lớp sinh hoạt'}
-        subtitle={`Mã lớp: ${drawerClass?.code || ''}`}
+        subtitle={drawerClass?.code ? `Mã lớp: ${drawerClass.code}` : ''}
         avatarText={drawerClass?.code || 'LH'}
-        badge={{
-          label: `${(drawerClass as any)?.studentCount ?? drawerClass?._count?.students ?? 0} Sinh viên`,
-          className: 'bg-blue-50 text-blue-700 border-blue-200',
-        }}
         details={[
           { label: 'Mã lớp sinh hoạt', value: drawerClass?.code, icon: School },
           { label: 'Tên lớp học', value: drawerClass?.name, icon: GraduationCap },

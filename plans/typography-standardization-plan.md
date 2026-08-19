@@ -211,9 +211,9 @@ Không đổi font thương hiệu, màu sắc, khoảng cách tổng thể ho�
 - Audit kiểm tra từng phần tử: `font-bold` chỉ hợp lệ khi nằm trực tiếp cùng `text-type-kpi`; không còn ngoại lệ cho phép toàn bộ file dùng 700.
 - Nâng metadata dưới 12px trong `.app-shell-main` lên badge scale 12/18.
 - Bổ sung token đọc dài và số liệu căn cột (`edu-reading`, `edu-numeric`).
-- Tăng độ tương phản chữ phụ trên nền sáng: `slate-400` → `slate-500`, `slate-500`/`#64748B` → `#475569`.
+- Chốt Deep Ink palette: chữ mặc định `#020617`, chữ phụ `#111827`, helper `#1F2937`, placeholder/disabled `#475569`; dark mode dùng `#F8FAFC/#E2E8F0/#CBD5E1/#94A3B8`.
 - Đổi body sang subpixel antialiasing để nét chữ không bị mảnh trên màn hình hiện tại; dark theme giữ palette riêng.
-- Làm rõ Sidebar riêng: menu chính dùng màu `#334155`, icon `#475569`, nhóm điều hướng dùng `#64748B`/bold và thông tin phụ tối thiểu 12px.
+- Làm rõ Sidebar bằng token semantic: chữ `#020617`, icon `#111827`, active `#2563EB`; không tự tạo thêm cấp xám hoặc opacity.
 - Rà các item trạng thái trong danh sách ca thi; bỏ `opacity-60` trên container nội dung để tránh làm mờ cả chữ, dùng màu phụ để thể hiện trạng thái thay thế.
 - Chuẩn hóa các utility màu chữ có alpha thấp trên nền sáng để không tạo thêm cấp chữ mờ ngoài quy định.
 - Frontend production build, type-check, lint và audit UI đã chạy thành công sau đợt chuẩn hóa.
@@ -229,3 +229,15 @@ Không đổi font thương hiệu, màu sắc, khoảng cách tổng thể ho�
 - `text-type-badge`: 12/18; `text-type-kpi`: 32/38; `text-type-otp`: 24/30.
 
 Toàn bộ `app/` và `components/` phải dùng các token trên. Audit tự động chặn cỡ Tailwind mặc định (`text-xs`, `text-sm`, ...), cỡ px tùy ý, `fontSize` inline dạng số và `leading-none`. Font xuất Word/PDF giữ Times New Roman; Excel giữ Arial theo quy chuẩn file xuất, không áp dụng cho Web UI.
+
+### Quy chuẩn pill và nhãn trạng thái
+
+- Pill là nhãn thông tin, không phải nút thao tác; mọi pill dùng class contract `ui-pill`.
+- Hình dạng bắt buộc: `rounded-full`, viền 1px, cỡ chữ `text-type-helper` (13/18) và `font-medium` (500).
+- Mặc định dùng dạng outline: nền trong suốt hoặc trắng, viền và chữ theo màu semantic.
+- Chỉ trạng thái đang được chọn, trạng thái chính cần nhấn mạnh hoặc cảnh báo khẩn cấp mới dùng nền đặc qua `ui-pill-solid`/`emphasis="solid"`.
+- Trong một nhóm thị giác chỉ có tối đa một pill nền đặc; các nhãn còn lại dùng outline để tránh cạnh tranh thị giác.
+- Màu semantic: thông tin xanh dương, thành công xanh lá, chờ/cảnh báo amber, lỗi/nguy hiểm đỏ rose, trung tính slate.
+- Mã sinh viên, mã môn, mã đề và mã kỹ thuật là identifier badge, không phải status pill: tiếp tục dùng `rounded-lg`, Inter, `tabular-nums` theo `IdentifierBadge`.
+- Button, ô tìm kiếm, select và control tiếp tục dùng `rounded-xl`; card/modal dùng `rounded-2xl`. Không đổi các phần này thành pill.
+- Audit UI phải chặn pill thiếu `rounded-full`, sai cỡ/weight hoặc dùng nền đặc mà không khai báo `ui-pill-solid`.

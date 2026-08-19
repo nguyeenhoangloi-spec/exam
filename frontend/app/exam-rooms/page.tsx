@@ -703,12 +703,8 @@ export default function ExamRoomsPage() {
         isOpen={Boolean(drawerRoom)}
         onClose={() => setDrawerRoom(null)}
         title={drawerRoom?.roomName || drawerRoom?.name || 'Chi tiết phòng thi'}
-        subtitle={`Mã phòng: ${drawerRoom?.roomCode || drawerRoom?.code || ''}`}
+        subtitle={drawerRoom?.roomCode || drawerRoom?.code ? `Mã phòng: ${drawerRoom?.roomCode || drawerRoom?.code}` : ''}
         avatarText={drawerRoom?.roomCode?.slice(0, 3) || 'PT'}
-        badge={{
-          label: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng máy tính' : 'Phòng lý thuyết',
-          className: 'bg-blue-50 text-blue-700 border-blue-200',
-        }}
         details={[
           { label: 'Tên phòng thi', value: drawerRoom?.roomName || drawerRoom?.name, icon: DoorOpen },
           { label: 'Mã phòng thi', value: drawerRoom?.roomCode || drawerRoom?.code, icon: Building },

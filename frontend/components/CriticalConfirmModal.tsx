@@ -247,7 +247,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                   Nhập cụm từ xác nhận <span className="text-rose-500">*</span>
                 </label>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-type-helper font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 border border-rose-200/60 dark:border-rose-800/60 px-2 py-0.5 rounded-lg">
+                  <span className="text-type-helper font-medium text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-800/60 px-2 py-0.5 ui-pill rounded-full">
                     {targetPhrase}
                   </span>
                   <button
@@ -314,7 +314,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                     <Lock className="w-3.5 h-3.5 text-slate-400" />
                     <span>Mật khẩu thi chính thức <span className="text-rose-500">*</span></span>
                   </label>
-                  <span className="text-type-helper font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-0.5 rounded-lg border border-blue-200/60 dark:border-blue-800/60">
+                  <span className="text-type-helper font-medium text-blue-700 dark:text-blue-300 px-2.5 py-0.5 ui-pill rounded-full border border-blue-200/60 dark:border-blue-800/60">
                     Thí sinh dùng khi mở đề
                   </span>
                 </div>

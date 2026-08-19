@@ -162,11 +162,11 @@ export function AutoProposalModal({
                         <ShieldAlert className="h-3.5 w-3.5" /> Trùng cán bộ gác thi
                       </span>
                     ) : isFilledBoth ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-type-helper font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 ui-pill rounded-full text-type-helper font-medium text-emerald-700 dark:text-emerald-300">
                         Đủ 2 giám thị
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-type-helper font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 ui-pill rounded-full text-type-helper font-medium text-amber-700 dark:text-amber-300">
                         Chưa đủ 2 giám thị
                       </span>
                     )}

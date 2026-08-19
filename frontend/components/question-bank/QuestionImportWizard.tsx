@@ -698,7 +698,7 @@ export function QuestionImportWizard({
                 return (
                   <div
                     key={r.row}
-                    className={`rounded-2xl border p-4 text-type-helper space-y-3 transition ${isChecked ? 'border-blue-300 bg-blue-50/40' : 'border-slate-200 bg-white opacity-70'
+                    className={`rounded-2xl border p-4 text-type-helper space-y-3 transition ${isChecked ? 'border-blue-300 bg-blue-50/40' : 'border-slate-200 bg-slate-50/50'
                       }`}
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -720,13 +720,13 @@ export function QuestionImportWizard({
                       </label>
 
                       <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="rounded-full bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-type-helper font-semibold text-slate-600">
+                        <span className="ui-pill rounded-full border border-slate-200 px-2.5 py-0.5 text-type-helper font-medium text-slate-600">
                           {q.type === 'ESSAY' ? 'Tự luận' : q.type === 'FILL_BLANK' ? 'Điền vào chỗ trống' : q.type === 'TRUE_FALSE' ? 'Đúng / Sai' : 'Trắc nghiệm'}
                         </span>
-                        <span className="rounded-full bg-blue-100 border border-blue-200 px-2.5 py-0.5 text-type-helper font-semibold text-blue-800">
+                        <span className="ui-pill rounded-full border border-blue-200 px-2.5 py-0.5 text-type-helper font-medium text-blue-800">
                           {q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'HARD' ? 'Khó' : 'Trung bình'}
                         </span>
-                        <span className="rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-type-helper font-semibold text-blue-800">
+                        <span className="ui-pill rounded-full border border-blue-200 px-2.5 py-0.5 text-type-helper font-medium text-blue-800">
                           {q.score || meta.defaultScore} điểm
                         </span>
                       </div>

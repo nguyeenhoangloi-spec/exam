@@ -82,7 +82,7 @@ export function ExamPaperTable({
                       onClick={() => onDetail(p.id)}
                       className="tabular-nums text-type-helper font-semibold text-slate-900 hover:text-blue-600 transition cursor-pointer"
                     >
-                      <IdentifierBadge>Mã đề: {p.paperCode}</IdentifierBadge>
+                      <IdentifierBadge>{p.paperCode}</IdentifierBadge>
                     </button>
                   </div>
 

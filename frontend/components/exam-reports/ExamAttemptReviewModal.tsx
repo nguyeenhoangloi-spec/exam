@@ -185,10 +185,10 @@ function QuestionCard({ q, idx, showAnswer }: { q: any; idx: number; showAnswer:
       {expanded && (
         <div className="border-t border-slate-100 dark:border-slate-800 p-4 sm:p-5 pt-3.5 space-y-3.5 bg-slate-50/40 dark:bg-slate-850/40 text-type-helper">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2.5 py-0.5 text-type-helper font-semibold border border-slate-200/80 dark:border-slate-700">
+            <span className="ui-pill rounded-full text-slate-700 dark:text-slate-300 px-2.5 py-0.5 text-type-helper font-medium border border-slate-200/80 dark:border-slate-700">
               {typeLabel}
             </span>
-            <span className="rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2.5 py-0.5 text-type-helper font-semibold border border-slate-200/80 dark:border-slate-700">
+            <span className="ui-pill rounded-full text-slate-700 dark:text-slate-300 px-2.5 py-0.5 text-type-helper font-medium border border-slate-200/80 dark:border-slate-700">
               {diffLabel}
             </span>
           </div>
@@ -339,7 +339,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
                     Xem lại chi tiết bài thi
                   </h2>
                   {data?.paper?.paperCode && (
-                    <IdentifierBadge tone="blue">Mã đề: {data.paper.paperCode}</IdentifierBadge>
+                    <IdentifierBadge tone="blue">{data.paper.paperCode}</IdentifierBadge>
                   )}
                 </div>
                 {data && (

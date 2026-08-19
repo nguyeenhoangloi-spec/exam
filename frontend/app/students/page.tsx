@@ -820,12 +820,12 @@ export default function StudentsPage() {
                         {drawerOpenStudent.fullName}
                       </h2>
 
-                      <div className="mt-2 flex items-center gap-2 flex-wrap">
+                      <div className="mt-1.5 flex items-center gap-2 flex-wrap">
                         <IdentifierBadge tone="neutral" title={drawerOpenStudent.studentCode}>
                           {drawerOpenStudent.studentCode}
                         </IdentifierBadge>
-                        <span className="inline-flex items-center rounded-lg px-2.5 py-0.5 text-type-helper font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
-                          {drawerOpenStudent.class?.name || 'Chưa xếp lớp'}
+                        <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400">
+                          • {drawerOpenStudent.class?.name || 'Chưa xếp lớp'}
                         </span>
                       </div>
                     </div>
@@ -980,7 +980,7 @@ export default function StudentsPage() {
                                   </div>
                                 </div>
                                 <div className="text-right shrink-0">
-                                  <span className="inline-block px-2.5 py-1 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60 rounded-lg text-type-helper font-semibold">
+                                  <span className="inline-block px-2.5 py-1 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60 ui-pill rounded-full text-type-helper font-medium">
                                     {sub.credits} TC
                                   </span>
                                 </div>
@@ -1016,7 +1016,7 @@ export default function StudentsPage() {
                                   {sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'} • {sched.startTime || ''} - {sched.endTime || ''}
                                 </span>
                               </div>
-                              <span className="px-2.5 py-0.5 rounded-lg text-type-helper font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
+                              <span className="px-2.5 py-0.5 ui-pill rounded-full text-type-helper font-medium text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
                                 {formatExamType(sched.examType)}
                               </span>
                             </div>

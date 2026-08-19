@@ -203,7 +203,7 @@ export const FilterSelect = React.forwardRef<HTMLSelectElement, FilterSelectProp
         aria-haspopup="listbox"
         onClick={() => setIsOpen((prev) => !prev)}
         className={`ui-pressable ${isFullWidth ? 'w-full' : 'w-auto max-w-full'} flex items-center justify-between gap-2 appearance-none rounded-xl outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out cursor-pointer text-left select-none ${variantClasses} ${sizeClasses} ${className} ${
-          disabled ? 'opacity-50 cursor-not-allowed' : ''
+          disabled ? 'text-placeholder cursor-not-allowed' : ''
         }`}
       >
         <span className="truncate pr-1">{selectedOption?.label || placeholder || 'Chọn...'}</span>
@@ -238,7 +238,7 @@ export const FilterSelect = React.forwardRef<HTMLSelectElement, FilterSelectProp
                       isSelected
                         ? 'text-slate-900 dark:text-slate-100 font-semibold bg-transparent'
                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium'
-                    } ${opt.disabled ? 'opacity-40 cursor-not-allowed' : ''}`}
+                    } ${opt.disabled ? 'text-placeholder cursor-not-allowed' : ''}`}
                   >
                     <span className="truncate pr-2">{opt.label}</span>
                     {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0 ml-1.5" />}

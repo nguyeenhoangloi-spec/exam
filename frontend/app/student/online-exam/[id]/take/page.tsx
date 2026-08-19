@@ -536,7 +536,7 @@ export default function StudentExamTakePage() {
               {attemptData.paperTitle}
             </span>
             <div className="flex items-center gap-2 mt-0.5">
-              <span className="inline-flex items-center px-2.5 py-0.5 bg-white/15 border border-white/20 text-blue-100 text-type-helper font-semibold rounded-md">
+              <span className="ui-pill ui-pill-solid inline-flex items-center px-2.5 py-0.5 bg-white/15 border border-white/20 text-blue-100 text-type-helper font-medium rounded-full">
                 <Shield className="w-3.5 h-3.5 mr-1 text-emerald-300" /> Giám sát trực tuyến kích hoạt
               </span>
             </div>
@@ -695,7 +695,7 @@ export default function StudentExamTakePage() {
                               className="max-h-52 rounded-lg object-contain bg-white transition duration-200 group-hover:scale-105"
                             />
                             <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
-                              <span className="flex items-center gap-1.5 rounded-lg bg-slate-900/80 px-3 py-1.5 text-type-helper font-semibold text-white shadow-lg backdrop-blur-xs">
+                              <span className="flex items-center gap-1.5 ui-pill rounded-full bg-slate-900/80 px-3 py-1.5 text-type-helper font-medium text-white shadow-lg backdrop-blur-xs">
                                 <Maximize2 className="h-4 w-4 text-blue-400" /> Phóng to xem rõ ảnh
                               </span>
                             </div>

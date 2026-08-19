@@ -668,7 +668,7 @@ export default function TeacherAssignmentsPage() {
                         >
                           {item.subjectName}
                         </button>
-                        <span className="text-type-helper font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900/50">
+                        <span className="text-type-helper font-medium text-blue-700 dark:text-blue-300 px-2 py-0.5 ui-pill rounded-full border border-blue-100 dark:border-blue-900/50">
                           {item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
                         </span>
                       </div>
@@ -765,7 +765,7 @@ export default function TeacherAssignmentsPage() {
                       </div>
 
                       <div className="flex items-center gap-1.5 shrink-0">
-                        <span className="text-type-helper font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900/50">
+                        <span className="text-type-helper font-medium text-blue-700 dark:text-blue-300 px-2 py-0.5 ui-pill rounded-full border border-blue-100 dark:border-blue-900/50">
                           {item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
                         </span>
                         <StatusBadge
@@ -925,11 +925,11 @@ export default function TeacherAssignmentsPage() {
                         {visibleColumns.role !== false && (
                           <td className="py-3.5 px-4 whitespace-nowrap">
                             {item.role === 'SUPERVISOR_1' ? (
-                              <span className="table-badge inline-flex items-center text-type-helper font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900/50">
+                              <span className="table-badge ui-pill inline-flex items-center text-type-helper font-medium text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full border border-blue-100 dark:border-blue-900/50">
                                 Giám thị 1
                               </span>
                             ) : (
-                              <span className="table-badge inline-flex items-center text-type-helper font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                              <span className="table-badge inline-flex items-center text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full">
                                 Giám thị 2
                               </span>
                             )}
@@ -1090,6 +1090,10 @@ export default function TeacherAssignmentsPage() {
         title={drawerDuty?.subjectName || ''}
         subtitle={`Mã môn: ${drawerDuty?.subjectCode}`}
         avatarText="GT"
+        badge={drawerDuty ? {
+          status: drawerIsExpired ? 'CANCELLED' : drawerDuty.status,
+          label: drawerIsExpired ? 'Quá hạn' : drawerDuty.status === 'CONFIRMED' ? 'Đã xác nhận' : drawerDuty.status === 'CHANGE_REQUESTED' ? 'Đề nghị đổi' : 'Chờ xác nhận',
+        } : undefined}
         details={[
           { label: 'Môn thi', value: drawerDuty?.subjectName, icon: BookOpen },
           { label: 'Mã môn', value: drawerDuty?.subjectCode },

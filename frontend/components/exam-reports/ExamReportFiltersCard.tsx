@@ -42,7 +42,7 @@ export function ExamReportFiltersCard({
 
           <div className="space-y-0.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2 py-0.5 rounded-md bg-blue-600 text-white text-type-helper font-semibold tracking-wider shrink-0  shadow-2xs">
+              <span className="px-2 py-0.5 ui-pill rounded-full ui-pill-solid bg-blue-600 text-white text-type-helper font-medium tracking-wider shrink-0  shadow-2xs">
                 {activeTypeBadge?.label || 'Chính thức'}
               </span>
 

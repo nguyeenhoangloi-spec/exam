@@ -364,10 +364,10 @@ export function ClassFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           selectedSizeRange === 'over40'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                         }`}>
                           {optionCounts.over40}
                         </span>
@@ -394,10 +394,10 @@ export function ClassFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           selectedSizeRange === '20to40'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                         }`}>
                           {optionCounts.from20to40}
                         </span>
@@ -425,10 +425,10 @@ export function ClassFilterPopover({
                         </div>
 
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                          <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                             selectedDeptId === String(departments[0].id)
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                              ? 'ui-pill-solid bg-blue-600 text-white'
+                              : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                             {optionCounts.deptCounts[String(departments[0].id)] || 0}
                           </span>
@@ -461,10 +461,10 @@ export function ClassFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           selectedDeptId === ''
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {optionCounts.total}
                         </span>
@@ -497,10 +497,10 @@ export function ClassFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                               isSelected
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                             }`}>
                               {count}
                             </span>
@@ -538,10 +538,10 @@ export function ClassFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                               isSelected
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                             }`}>
                               {item.count}
                             </span>

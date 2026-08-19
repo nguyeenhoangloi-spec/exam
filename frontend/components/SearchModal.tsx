@@ -525,12 +525,12 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
 
                   {/* Category Tag & Action Indicator */}
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="hidden sm:inline-block px-2 py-0.5 rounded-md text-type-helper font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                    <span className="ui-pill hidden sm:inline-flex px-2 py-0.5 rounded-full text-type-helper font-medium text-slate-600 dark:text-slate-400">
                       {item.category}
                     </span>
 
                     {isSelected ? (
-                      <span className="flex items-center gap-1 text-type-helper font-semibold text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded bg-blue-100/80 dark:bg-blue-900/50">
+                      <span className="ui-pill ui-pill-solid flex items-center gap-1 text-type-helper font-medium text-white px-2 py-0.5 rounded-full bg-blue-600 dark:bg-blue-500">
                         <span>Mở</span>
                         <CornerDownLeft className="w-3 h-3" />
                       </span>

@@ -250,6 +250,19 @@ Các quy tắc nghiệp vụ bắt buộc:
 
 ---
 
+## 🖋️ Quy tắc Màu chữ Deep Ink (ghi đè quy tắc màu chữ cũ)
+
+Đây là quy tắc hiện hành cho toàn bộ Web UI và có ưu tiên cao hơn mọi mô tả Cool Slate cũ trong file này:
+
+* Chữ mặc định/chính: `#020617` (light), `#F8FAFC` (dark).
+* Chữ phụ: `#111827` (light), `#E2E8F0` (dark).
+* Helper/ghi chú vẫn cần đọc: `#1F2937` (light), `#CBD5E1` (dark).
+* Placeholder/disabled: `#475569` (light), `#94A3B8` (dark); không dùng cấp này cho nội dung thông thường.
+* Không dùng opacity trên container để làm mờ chữ. Không dùng màu xám nhạt cho body, bảng, menu hoặc label.
+* Status pill mặc định dùng outline, nền trong suốt, chữ/viền semantic; chỉ selected/primary/critical mới dùng `ui-pill-solid`.
+* Chữ trên nền đậm luôn dùng trắng. File xuất/in giữ quy chuẩn riêng.
+* Nguồn tra cứu đầy đủ: `ui-design-system-rules.md`.
+
 ## 🧱 Cấu trúc Ưu tiên Dự án
 
 Khi phát triển, ưu tiên theo thứ tự:

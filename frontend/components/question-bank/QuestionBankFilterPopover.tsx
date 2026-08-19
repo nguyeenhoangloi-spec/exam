@@ -387,9 +387,9 @@ export function QuestionBankFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filters.type === 'SINGLE_CHOICE'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filters.type === 'SINGLE_CHOICE'
+                          ? 'ui-pill-solid bg-blue-600 text-white'
+                          : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {optionCounts.typeCounts['SINGLE_CHOICE'] || 0}
                         </span>
@@ -415,9 +415,9 @@ export function QuestionBankFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filters.difficulty === 'EASY'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filters.difficulty === 'EASY'
+                          ? 'ui-pill-solid bg-blue-600 text-white'
+                          : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {optionCounts.diffCounts['EASY'] || 0}
                         </span>
@@ -444,9 +444,9 @@ export function QuestionBankFilterPopover({
                         </div>
 
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filters.subjectId === String(subjects[0].id)
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                          <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filters.subjectId === String(subjects[0].id)
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                             }`}>
                             {optionCounts.subjectCounts[String(subjects[0].id)] || 0}
                           </span>
@@ -478,9 +478,9 @@ export function QuestionBankFilterPopover({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filters.subjectId === ''
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filters.subjectId === ''
+                          ? 'ui-pill-solid bg-blue-600 text-white'
+                          : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {optionCounts.total}
                         </span>
@@ -512,9 +512,9 @@ export function QuestionBankFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
+                              ? 'ui-pill-solid bg-blue-600 text-white'
+                              : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {count}
                             </span>
@@ -551,9 +551,9 @@ export function QuestionBankFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
+                              ? 'ui-pill-solid bg-blue-600 text-white'
+                              : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {item.count}
                             </span>
@@ -590,9 +590,9 @@ export function QuestionBankFilterPopover({
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
+                              ? 'ui-pill-solid bg-blue-600 text-white'
+                              : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {item.count}
                             </span>

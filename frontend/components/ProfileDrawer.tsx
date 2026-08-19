@@ -112,15 +112,21 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 
                       {subtitle && (
                         <div className="min-w-0 flex-1 shrink truncate flex items-center">
-                          {isIdentifierSubtitle ? (
-                            <IdentifierBadge tone="neutral" title={subtitle} className="max-w-full">
-                              {subtitle}
-                            </IdentifierBadge>
-                          ) : (
-                            <p className="text-type-body-sm font-semibold text-slate-600 dark:text-slate-300 tabular-nums truncate">
-                              {subtitle}
-                            </p>
-                          )}
+                          {(() => {
+                            const match = typeof subtitle === 'string' ? subtitle.match(/^(?:mã(?:\s+[a-zà-ỹ]+)*|id|code|snapshot)\s*:\s*(.+)$/i) : null;
+                            const codeValue = match ? match[1].trim() : subtitle;
+                            const isCode = isIdentifierSubtitle || Boolean(match);
+
+                            return isCode ? (
+                              <IdentifierBadge tone="neutral" title={subtitle} className="max-w-full">
+                                {codeValue}
+                              </IdentifierBadge>
+                            ) : (
+                              <p className="text-type-body-sm font-medium text-slate-600 dark:text-slate-300 tabular-nums truncate">
+                                {subtitle}
+                              </p>
+                            );
+                          })()}
                         </div>
                       )}
                     </div>

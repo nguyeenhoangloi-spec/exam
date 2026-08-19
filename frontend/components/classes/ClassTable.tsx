@@ -73,7 +73,7 @@ export function ClassTable({
                     </button>
                   </div>
 
-                  <span className="inline-flex items-center gap-1 rounded-lg bg-slate-50 px-2.5 py-0.5 text-type-helper font-medium text-slate-600 border border-slate-200">
+                  <span className="ui-pill inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-type-helper font-medium text-slate-600 border border-slate-200">
                     <Users className="h-3.5 w-3.5 text-slate-500" /> {studentCount} SV
                   </span>
                 </div>

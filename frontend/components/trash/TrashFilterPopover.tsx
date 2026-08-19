@@ -324,9 +324,9 @@ export function TrashFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${activeCategory === 'schedules' && !expiryFilter
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${activeCategory === 'schedules' && !expiryFilter
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {stats.schedules}
                         </span>
@@ -354,9 +354,9 @@ export function TrashFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${activeCategory === 'questions' && !expiryFilter
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${activeCategory === 'questions' && !expiryFilter
+                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {stats.questions}
                         </span>
@@ -418,9 +418,9 @@ export function TrashFilterPopover({
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${activeCategory === item.key
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                          <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${activeCategory === item.key
+                              ? 'ui-pill-solid bg-blue-600 text-white'
+                              : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                             }`}>
                             {item.count}
                           </span>

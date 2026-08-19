@@ -122,7 +122,7 @@ export function CreateAssignmentModal({
                 <span className="font-semibold text-blue-600">{selectedRoomName}</span>
                 {selectedRoomCap && <span className="text-slate-400 font-normal">{selectedRoomCap}</span>}
               </span>
-              <span className="text-type-helper font-semibold text-slate-500 bg-white dark:bg-slate-700 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-600">
+              <span className="text-type-helper font-medium text-slate-500 px-2 py-0.5 ui-pill rounded-full border border-slate-200 dark:border-slate-600">
                 Hiện có: {currentSupCount}/2 giám thị
               </span>
             </div>

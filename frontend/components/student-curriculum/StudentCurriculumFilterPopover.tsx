@@ -342,7 +342,7 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterStatus === 'COMPLETED' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'COMPLETED' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.completed}
                         </span>
@@ -367,7 +367,7 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterStatus === 'INCOMPLETE' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'INCOMPLETE' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.incomplete}
                         </span>
@@ -392,7 +392,7 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterType === 'MANDATORY' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterType === 'MANDATORY' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.mandatory}
                         </span>
@@ -422,7 +422,7 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterSemester === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterSemester === 'ALL' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.all}
                         </span>
@@ -453,7 +453,7 @@ export function StudentCurriculumFilterPopover({
                             </div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {c}
                             </span>
@@ -485,7 +485,7 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterType === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterType === 'ALL' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.all}
                         </span>
@@ -510,7 +510,7 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterType === 'MANDATORY' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterType === 'MANDATORY' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.mandatory}
                         </span>
@@ -535,7 +535,7 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterType === 'ELECTIVE' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterType === 'ELECTIVE' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.elective}
                         </span>
@@ -565,7 +565,7 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterStatus === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'ALL' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.all}
                         </span>
@@ -590,7 +590,7 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterStatus === 'COMPLETED' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'COMPLETED' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.completed}
                         </span>
@@ -615,7 +615,7 @@ export function StudentCurriculumFilterPopover({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`rounded-md px-1.5 py-0.5 text-type-helper font-semibold ${filterStatus === 'INCOMPLETE' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'INCOMPLETE' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.incomplete}
                         </span>

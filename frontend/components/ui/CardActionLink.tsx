@@ -25,7 +25,7 @@ export function CardActionLink({
   return (
     <Link
       href={href}
-      className={`inline-flex items-center gap-1 text-type-helper font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors select-none cursor-pointer group ${className}`}
+      className={`inline-flex items-center gap-1 text-type-helper font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors select-none cursor-pointer group whitespace-nowrap shrink-0 ${className}`}
     >
       <span>{children}</span>
       {iconType === 'chevron' ? (
