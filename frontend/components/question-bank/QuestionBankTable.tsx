@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, HelpCircle, FileText, ImageIcon, BookOpen, Sliders, ChevronDown, ChevronUp } from 'lucide-react';
+import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, HelpCircle, FileText, ImageIcon, BookOpen, Sliders } from 'lucide-react';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { RubricDialog } from './RubricDialog';
@@ -56,8 +56,8 @@ export function QuestionBankTable({
   const [audioLightbox, setAudioLightbox] = useState<{ url: string; fileName?: string } | null>(null);
   const [expandedQuestionIds, setExpandedQuestionIds] = useState<Record<string, boolean>>({});
 
-  const toggleExpand = (qId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const toggleExpand = (qId: string, e?: React.MouseEvent | React.KeyboardEvent) => {
+    if (e) e.stopPropagation();
     setExpandedQuestionIds((prev) => ({ ...prev, [qId]: !prev[qId] }));
   };
 
@@ -125,39 +125,67 @@ export function QuestionBankTable({
                   </div>
                 </div>
 
-                {/* Content: Expandable or Clamped 2 Lines */}
+                {/* Content: Câu hỏi 2 dòng mượt mà & Chữ Xem thêm nằm ngay cuối dòng 2 */}
                 {(() => {
                   const isExpanded = !!expandedQuestionIds[q.id];
-                  const isLong = (q.content || '').length > 90 || (q.content || '').includes('\n');
+                  const isLong = (q.content || '').length > 70 || (q.content || '').includes('\n');
 
                   return (
-                    <div className="space-y-1">
+                    <div className="relative">
                       <div
-                        className={`text-type-body font-normal text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition break-words ${isExpanded ? '' : 'line-clamp-2'
-                          }`}
-                        onClick={() => onDetail(q)}
-                        title={isExpanded ? undefined : q.content}
+                        className={`overflow-hidden transition-[max-height] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                          isExpanded ? 'max-h-[800px]' : 'max-h-[46px]'
+                        }`}
                       >
-                        {q.content}
-                      </div>
-                      {isLong && (
-                        <button
-                          type="button"
-                          onClick={(e) => toggleExpand(q.id, e)}
-                          className="inline-flex items-center gap-1 text-type-helper font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition cursor-pointer"
-                        >
-                          {isExpanded ? (
-                            <>
-                              <span>Thu gọn</span>
-                              <ChevronUp className="w-3.5 h-3.5" />
-                            </>
-                          ) : (
-                            <>
-                              <span>Xem thêm</span>
-                              <ChevronDown className="w-3.5 h-3.5" />
-                            </>
+                        <div className="text-type-body font-normal text-slate-900 dark:text-slate-100 leading-snug break-words">
+                          <span
+                            className="cursor-pointer"
+                            onClick={() => onDetail(q)}
+                          >
+                            {q.content}
+                          </span>
+                          {isLong && isExpanded && (
+                            <span
+                              role="button"
+                              tabIndex={0}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleExpand(q.id, e);
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  toggleExpand(q.id, e as any);
+                                }
+                              }}
+                              className="text-type-body font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline cursor-pointer select-none outline-none inline ml-1"
+                            >
+                              (Thu gọn)
+                            </span>
                           )}
-                        </button>
+                        </div>
+                      </div>
+                      {isLong && !isExpanded && (
+                        <div className="absolute right-0 bottom-0 bg-white dark:bg-slate-900 pl-2 text-type-body font-normal leading-snug">
+                          <span className="text-slate-900 dark:text-slate-100 select-none">... </span>
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleExpand(q.id, e);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                toggleExpand(q.id, e as any);
+                              }
+                            }}
+                            className="text-type-body font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline cursor-pointer select-none outline-none inline"
+                          >
+                            Xem thêm
+                          </span>
+                        </div>
                       )}
                     </div>
                   );
@@ -407,39 +435,67 @@ export function QuestionBankTable({
                   {visibleColumns.content !== false && (
                     <td className="px-3 py-3.5 min-w-[240px] align-top">
                       <div className="space-y-2">
-                        {/* Tầng 1: Nội dung câu hỏi & Toggle thu gọn/sổ rộng */}
+                        {/* Tầng 1: Nội dung câu hỏi 2 dòng mượt mà & Chữ Xem thêm nằm ngay cuối dòng 2 */}
                         {(() => {
                           const isExpanded = !!expandedQuestionIds[q.id];
-                          const isLong = (q.content || '').length > 90 || (q.content || '').includes('\n');
+                          const isLong = (q.content || '').length > 70 || (q.content || '').includes('\n');
 
                           return (
-                            <div className="space-y-1">
+                            <div className="relative">
                               <div
-                                className={`text-type-body font-medium text-slate-900 dark:text-slate-100 leading-relaxed cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition break-words ${isExpanded ? '' : 'line-clamp-2'
-                                  }`}
-                                onClick={() => onDetail(q)}
-                                title={isExpanded ? undefined : q.content}
+                                className={`overflow-hidden transition-[max-height] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                                  isExpanded ? 'max-h-[800px]' : 'max-h-[48px]'
+                                }`}
                               >
-                                {q.content}
-                              </div>
-                              {isLong && (
-                                <button
-                                  type="button"
-                                  onClick={(e) => toggleExpand(q.id, e)}
-                                  className="table-action inline-flex items-center gap-1 text-type-helper font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition cursor-pointer pt-0.5"
-                                >
-                                  {isExpanded ? (
-                                    <>
-                                      <span>Thu gọn</span>
-                                      <ChevronUp className="w-3.5 h-3.5" />
-                                    </>
-                                  ) : (
-                                    <>
-                                      <span>Xem thêm</span>
-                                      <ChevronDown className="w-3.5 h-3.5" />
-                                    </>
+                                <div className="text-type-body font-medium text-slate-900 dark:text-slate-100 leading-[24px] break-words">
+                                  <span
+                                    className="cursor-pointer"
+                                    onClick={() => onDetail(q)}
+                                  >
+                                    {q.content}
+                                  </span>
+                                  {isLong && isExpanded && (
+                                    <span
+                                      role="button"
+                                      tabIndex={0}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleExpand(q.id, e);
+                                      }}
+                                      onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                          e.preventDefault();
+                                          toggleExpand(q.id, e as any);
+                                        }
+                                      }}
+                                      className="table-action text-type-body font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline cursor-pointer select-none outline-none inline ml-1"
+                                    >
+                                      (Thu gọn)
+                                    </span>
                                   )}
-                                </button>
+                                </div>
+                              </div>
+                              {isLong && !isExpanded && (
+                                <div className="absolute right-0 bottom-0 bg-white dark:bg-slate-900 group-hover:bg-slate-50 dark:group-hover:bg-slate-800 transition-colors pl-2 text-type-body font-medium leading-[24px]">
+                                  <span className="text-slate-900 dark:text-slate-100 select-none">... </span>
+                                  <span
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleExpand(q.id, e);
+                                    }}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        toggleExpand(q.id, e as any);
+                                      }
+                                    }}
+                                    className="table-action text-type-body font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline cursor-pointer select-none outline-none inline"
+                                  >
+                                    Xem thêm
+                                  </span>
+                                </div>
                               )}
                             </div>
                           );
