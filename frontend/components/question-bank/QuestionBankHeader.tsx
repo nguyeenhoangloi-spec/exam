@@ -23,7 +23,7 @@ export function QuestionBankHeader({
         <h1 className="text-type-page font-semibold leading-[36px] tracking-tight text-slate-900 dark:text-slate-100">
           Ngân hàng câu hỏi
         </h1>
-        <p className="text-type-body font-normal leading-[24px] text-slate-500 dark:text-slate-400">
+        <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
           Quản lý, tạo mới và tổ chức hệ thống câu hỏi cho kỳ thi
         </p>
       </div>

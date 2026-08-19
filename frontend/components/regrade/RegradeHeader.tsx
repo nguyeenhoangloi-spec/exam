@@ -20,7 +20,7 @@ export function RegradeHeader({
         <h1 className="text-type-page font-semibold leading-[36px] tracking-tight text-slate-900 dark:text-slate-100">
           Thẩm định phúc khảo
         </h1>
-        <p className="text-type-body font-normal leading-[24px] text-slate-500 dark:text-slate-400">
+        <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
           Tiếp nhận đơn khiếu nại từ sinh viên, thẩm định bài thi và công bố kết quả
         </p>
       </div>
