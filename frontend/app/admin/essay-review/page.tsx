@@ -35,6 +35,8 @@ import {
   ChevronRight,
   ChevronDown,
   Lock,
+  Pencil,
+  Save,
 } from 'lucide-react';
 
 function AdminEssayReviewContent() {
@@ -52,6 +54,14 @@ function AdminEssayReviewContent() {
   const [viewingRubricQuestion, setViewingRubricQuestion] = useState<any>(null);
   const [profileCandidate, setProfileCandidate] = useState<any | null>(null);
   const [openActionMenu, setOpenActionMenu] = useState<boolean>(false);
+
+  // Admin direct grading state
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [scores, setScores] = useState<Record<string, number>>({});
+  const [comments, setComments] = useState<Record<string, string>>({});
+  const [teacherComments, setTeacherComments] = useState<Record<string, string>>({});
+  const [savingGrades, setSavingGrades] = useState<boolean>(false);
+  const [aiLoading, setAiLoading] = useState<string | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const actionMenuRef = useRef<HTMLDivElement>(null);
@@ -108,11 +118,149 @@ function AdminEssayReviewContent() {
   const openAttempt = useCallback(async (id: string) => {
     try {
       const res = await api.get(`/essay/grading/attempts/${id}`, { params: { noCache: true } });
-      setSelected(res.data);
+      const attemptData = res.data;
+      setSelected(attemptData);
+
+      const initScores: Record<string, number> = {};
+      const initComments: Record<string, string> = {};
+      const initTeacherComments: Record<string, string> = {};
+
+      (attemptData.attemptAnswers || []).forEach((ans: any) => {
+        if (ans.teacherComment) initTeacherComments[ans.questionId] = ans.teacherComment;
+        (ans.essayGrades || []).forEach((grade: any) => {
+          initScores[grade.criterionId] = grade.score;
+          if (grade.comment) initComments[grade.criterionId] = grade.comment;
+        });
+      });
+
+      const essayQuestions = (attemptData.questions || []).filter((item: any) => item.type === 'ESSAY');
+      essayQuestions.forEach((q: any) => {
+        (q.rubric || []).forEach((r: any) => {
+          if (initScores[r.id] === undefined) {
+            initScores[r.id] = 0;
+          }
+        });
+      });
+
+      setScores(initScores);
+      setComments(initComments);
+      setTeacherComments(initTeacherComments);
+      setIsEditMode(false);
     } catch (e: any) {
       setToast({ message: e?.response?.data?.message || 'Không thể tải bài làm.', type: 'error' });
     }
   }, []);
+
+  const handleScoreChange = (criterionId: string, value: string, maxScore: number = 10) => {
+    if (value === '') {
+      setScores((prev) => ({ ...prev, [criterionId]: 0 }));
+      return;
+    }
+    const num = parseFloat(value);
+    if (isNaN(num)) return;
+    if (num < 0 || num > maxScore) {
+      setToast({ message: `Điểm tiêu chí phải nằm trong khoảng từ 0 đến ${maxScore} điểm!`, type: 'error' });
+      return;
+    }
+    setScores((prev) => ({ ...prev, [criterionId]: num }));
+  };
+
+  const requestAiSuggestion = async (answerId: string, questionId: string) => {
+    if (!answerId) return;
+    setAiLoading(answerId);
+    try {
+      const response = await api.post(`/essay-grading/answers/${answerId}/ai-suggest`);
+      const data = response.data;
+      if (!Array.isArray(data?.criteria)) throw new Error('AI không trả đủ tiêu chí chấm.');
+      setScores((prev) => ({
+        ...prev,
+        ...Object.fromEntries(data.criteria.map((item: any) => [item.criterionId, item.score])),
+      }));
+      setComments((prev) => ({
+        ...prev,
+        ...Object.fromEntries(data.criteria.map((item: any) => [item.criterionId, item.comment || ''])),
+      }));
+      if (data.overallComment) {
+        setTeacherComments((prev) => ({ ...prev, [questionId]: data.overallComment }));
+      }
+      setToast({ message: 'AI đã phân tích và đề xuất điểm thành công!', type: 'success' });
+    } catch (error: any) {
+      setToast({ message: error?.response?.data?.message || error?.message || 'Không thể tạo đề xuất AI. Bạn có thể tự chấm thủ công.', type: 'error' });
+    } finally {
+      setAiLoading(null);
+    }
+  };
+
+  const handleSaveAdminGrades = async () => {
+    if (!selected || !selected.id) return;
+    const essayQuestions = (selected.questions || []).filter((q: any) => q.type === 'ESSAY');
+    if (!essayQuestions.length) return;
+
+    setSavingGrades(true);
+    try {
+      let savedCount = 0;
+      for (const q of essayQuestions) {
+        const ans = (selected.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
+        if (!ans) continue;
+
+        let rubric = q.rubric || [];
+        if (!rubric.length) {
+          const rubRes = await api.get(`/essay/questions/${q.questionId}/rubric`).catch(() => null);
+          rubric = rubRes?.data || [];
+        }
+        if (!rubric.length) continue;
+
+        const criteria = rubric.map((r: any) => {
+          const rawScore = Number(scores[r.id]);
+          const validScore = isNaN(rawScore) ? 0 : Math.min(Math.max(rawScore, 0), Number(r.maxScore || 10));
+          return {
+            criterionId: r.id,
+            score: validScore,
+            comment: comments[r.id] || '',
+          };
+        });
+
+        if (selected.gradingStatus === 'PUBLISHED') {
+          await api.post(`/essay-grading/attempts/${selected.id}/answers/${ans.id}/adjust`, {
+            criteria,
+            teacherComment: teacherComments[q.questionId] || '',
+            reason: 'ADMIN điều chỉnh điểm bài thi trực tiếp',
+          });
+        } else {
+          await api.patch(`/essay/grading/answers/${ans.id}`, {
+            criteria,
+            teacherComment: teacherComments[q.questionId] || '',
+          });
+        }
+        savedCount++;
+      }
+
+      setIsEditMode(false);
+      setToast({ message: 'ADMIN đã lưu và cập nhật điểm bài thi thành công!', type: 'success' });
+      await loadAssignments();
+      await openAttempt(selected.id);
+    } catch (e: any) {
+      setToast({ message: e?.response?.data?.message || 'Không thể lưu điểm bài thi.', type: 'error' });
+    } finally {
+      setSavingGrades(false);
+    }
+  };
+
+  const currentTotalCalculatedScore = useMemo(() => {
+    if (!selected) return 0;
+    let total = 0;
+    (selected.questions || []).forEach((q: any) => {
+      if (q.type === 'ESSAY') {
+        (q.rubric || []).forEach((r: any) => {
+          total += Number(scores[r.id] || 0);
+        });
+      } else {
+        const ans = (selected.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
+        total += Number(ans?.finalScore || ans?.score || 0);
+      }
+    });
+    return Math.max(0, Number(total.toFixed(2)));
+  }, [selected, scores]);
 
   const loadAssignments = useCallback(async () => {
     setLoading(true);
@@ -726,7 +874,7 @@ function AdminEssayReviewContent() {
                 <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
                   <div className="text-right">
                     <span className="text-type-section tabular-nums font-semibold text-slate-900 dark:text-slate-100">
-                      {selected.totalScore ?? '--'}{' '}
+                      {isEditMode ? currentTotalCalculatedScore : (selected.totalScore ?? '--')}{' '}
                       <span className="text-type-helper text-slate-500 font-normal">/ {selected.maxScore || 10}đ</span>
                     </span>
                     {selected.penaltyPoints > 0 && (
@@ -738,21 +886,60 @@ function AdminEssayReviewContent() {
 
                   {/* Actions & Fast Student Navigation */}
                   <div className="flex items-center gap-2 border-l border-slate-200 dark:border-slate-800 pl-3">
-                    {selected.gradingStatus === 'PUBLISHED' ? (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-type-helper font-semibold select-none shadow-2xs">
-                        <Lock className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-                        <span>Đã công bố (Khóa điểm)</span>
-                      </div>
+                    {isEditMode ? (
+                      <>
+                        <Button
+                          type="button"
+                          variant="primary"
+                          size="sm"
+                          onClick={handleSaveAdminGrades}
+                          isLoading={savingGrades}
+                          leftIcon={<Save className="w-3.5 h-3.5" />}
+                        >
+                          Lưu điểm
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setIsEditMode(false);
+                            if (selected?.id) openAttempt(selected.id);
+                          }}
+                        >
+                          Hủy
+                        </Button>
+                      </>
                     ) : (
-                      <Button
-                        type="button"
-                        variant="primary"
-                        size="sm"
-                        onClick={() => handleApprove(true)}
-                        leftIcon={<Send className="w-3.5 h-3.5" />}
-                      >
-                        Duyệt & Công bố
-                      </Button>
+                      <>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => setIsEditMode(true)}
+                          leftIcon={<Pencil className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />}
+                          title="Chấm điểm hoặc điều chỉnh điểm bài thi trực tiếp với quyền Quản trị viên"
+                        >
+                          Sửa / Chấm điểm
+                        </Button>
+
+                        {selected.gradingStatus === 'PUBLISHED' ? (
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-type-helper font-semibold select-none shadow-2xs">
+                            <Lock className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                            <span>Đã công bố (Khóa điểm)</span>
+                          </div>
+                        ) : (
+                          <Button
+                            type="button"
+                            variant="primary"
+                            size="sm"
+                            onClick={() => handleApprove(true)}
+                            leftIcon={<Send className="w-3.5 h-3.5" />}
+                          >
+                            Duyệt & Công bố
+                          </Button>
+                        )}
+                      </>
                     )}
 
                     {/* Action Dropdown Menu for Admin Interventions */}
@@ -854,6 +1041,8 @@ function AdminEssayReviewContent() {
               <div className="space-y-4">
                 {(selected.questions || []).filter((q: any) => q.type === 'ESSAY').map((q: any, idx: number) => {
                   const ans = (selected.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
+                  const currentQuestionCalculatedScore = (q.rubric || []).reduce((sum: number, r: any) => sum + Number(scores[r.id] || 0), 0);
+
                   return (
                     <div
                       key={q.questionId || idx}
@@ -871,6 +1060,20 @@ function AdminEssayReviewContent() {
                         </div>
 
                         <div className="flex items-center gap-2.5 shrink-0">
+                          {isEditMode && ans?.id && (
+                            <Button
+                              type="button"
+                              variant="soft"
+                              size="sm"
+                              onClick={() => requestAiSuggestion(ans.id, q.questionId)}
+                              isLoading={aiLoading === ans.id}
+                              leftIcon={<Sparkles className="w-3.5 h-3.5 text-blue-600" />}
+                              title="Tự động phân tích câu trả lời và đề xuất điểm theo Rubric"
+                            >
+                              AI Chấm gợi ý
+                            </Button>
+                          )}
+
                           <button
                             type="button"
                             onClick={() => setViewingRubricQuestion({ ...q, id: q.questionId, code: `Câu ${idx + 1}` })}
@@ -881,7 +1084,8 @@ function AdminEssayReviewContent() {
                             <span>Xem Rubric & Đáp án</span>
                           </button>
                           <span className="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold tabular-nums text-type-body-sm text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 shrink-0">
-                            {ans?.finalScore ?? '--'} <span className="text-type-helper font-normal text-slate-400">/ {q.score}đ</span>
+                            {isEditMode ? currentQuestionCalculatedScore : (ans?.finalScore ?? '--')}{' '}
+                            <span className="text-type-helper font-normal text-slate-400">/ {q.score}đ</span>
                           </span>
                         </div>
                       </div>
@@ -930,15 +1134,24 @@ function AdminEssayReviewContent() {
                         <div className="space-y-2.5 pt-1">
                           <div className="text-type-helper font-semibold text-slate-600 dark:text-slate-400 tracking-wide flex items-center justify-between">
                             <span>Tiêu chí chấm Rubric ({q.rubric.length}):</span>
+                            {isEditMode && (
+                              <span className="text-type-helper font-normal text-blue-600 dark:text-blue-400">
+                                Đang ở chế độ chỉnh sửa điểm trực tiếp
+                              </span>
+                            )}
                           </div>
                           <div className="space-y-2.5">
                             {q.rubric.map((r: any) => {
                               const g = (ans?.essayGrades || []).find((item: any) => item.criterionId === r.id);
-                              const currentScore = g?.score ?? 0;
+                              const currentScore = isEditMode ? (scores[r.id] ?? 0) : (g?.score ?? 0);
                               return (
                                 <div
                                   key={r.id}
-                                  className="bg-slate-50/40 dark:bg-slate-800/30 p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 space-y-2.5 shadow-2xs"
+                                  className={`p-3.5 rounded-xl border space-y-2.5 shadow-2xs transition-colors ${
+                                    isEditMode
+                                      ? 'bg-blue-50/20 dark:bg-blue-950/20 border-blue-200/80 dark:border-blue-900/60'
+                                      : 'bg-slate-50/40 dark:bg-slate-800/30 border-slate-200/80 dark:border-slate-800'
+                                  }`}
                                 >
                                   <div className="flex justify-between items-start gap-2">
                                     <div>
@@ -953,29 +1166,67 @@ function AdminEssayReviewContent() {
                                   </div>
 
                                   <div className="flex gap-2 items-center flex-wrap pt-1">
-                                    <div className="w-20 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-center text-type-body font-semibold tabular-nums text-blue-600 dark:text-blue-400 shadow-2xs select-none">
-                                      {currentScore}
-                                    </div>
+                                    {isEditMode ? (
+                                      <input
+                                        type="number"
+                                        min={0}
+                                        max={r.maxScore}
+                                        step={0.25}
+                                        value={scores[r.id] ?? 0}
+                                        onChange={(e) => handleScoreChange(r.id, e.target.value, r.maxScore)}
+                                        className="w-20 bg-white dark:bg-slate-900 border border-blue-500 dark:border-blue-400 rounded-xl px-2.5 py-1.5 text-center text-type-body font-semibold tabular-nums text-blue-600 dark:text-blue-400 shadow-2xs focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                      />
+                                    ) : (
+                                      <div className="w-20 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-center text-type-body font-semibold tabular-nums text-blue-600 dark:text-blue-400 shadow-2xs select-none">
+                                        {currentScore}
+                                      </div>
+                                    )}
 
-                                    {/* Quick Score Chips Indicator */}
+                                    {/* Quick Score Chips Indicator / Clickable in Edit Mode */}
                                     <div className="flex gap-1 items-center flex-wrap">
-                                      {[0, Number((r.maxScore * 0.5).toFixed(2)), Number((r.maxScore * 0.75).toFixed(2)), r.maxScore].map((presetVal) => (
-                                        <div
-                                          key={presetVal}
-                                          className={`px-2.5 py-1 rounded-xl text-type-helper font-semibold border transition select-none ${
-                                            currentScore === presetVal
-                                              ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                                              : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
-                                          }`}
-                                        >
-                                          {presetVal === r.maxScore ? `Max (${presetVal}đ)` : `${presetVal}đ`}
-                                        </div>
-                                      ))}
+                                      {[0, Number((r.maxScore * 0.5).toFixed(2)), Number((r.maxScore * 0.75).toFixed(2)), r.maxScore].map((presetVal) => {
+                                        const isSelected = currentScore === presetVal;
+                                        return isEditMode ? (
+                                          <button
+                                            key={presetVal}
+                                            type="button"
+                                            onClick={() => setScores((prev) => ({ ...prev, [r.id]: presetVal }))}
+                                            className={`px-2.5 py-1 rounded-xl text-type-helper font-semibold border transition cursor-pointer select-none ${
+                                              isSelected
+                                                ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                                                : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-300 hover:text-blue-600'
+                                            }`}
+                                          >
+                                            {presetVal === r.maxScore ? `Max (${presetVal}đ)` : `${presetVal}đ`}
+                                          </button>
+                                        ) : (
+                                          <div
+                                            key={presetVal}
+                                            className={`px-2.5 py-1 rounded-xl text-type-helper font-semibold border transition select-none ${
+                                              isSelected
+                                                ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                                                : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                                            }`}
+                                          >
+                                            {presetVal === r.maxScore ? `Max (${presetVal}đ)` : `${presetVal}đ`}
+                                          </div>
+                                        );
+                                      })}
                                     </div>
 
-                                    <div className="flex-1 min-w-[200px] bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-type-body font-normal text-slate-800 dark:text-slate-200 shadow-2xs truncate">
-                                      {g?.comment || <span className="italic text-slate-400">Không có nhận xét tiêu chí</span>}
-                                    </div>
+                                    {isEditMode ? (
+                                      <input
+                                        type="text"
+                                        placeholder="Nhập nhận xét tiêu chí (tùy chọn)..."
+                                        value={comments[r.id] || ''}
+                                        onChange={(e) => setComments((prev) => ({ ...prev, [r.id]: e.target.value }))}
+                                        className="flex-1 min-w-[200px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-type-body font-normal text-slate-800 dark:text-slate-200 shadow-2xs focus:border-blue-500 focus:outline-none"
+                                      />
+                                    ) : (
+                                      <div className="flex-1 min-w-[200px] bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-type-body font-normal text-slate-800 dark:text-slate-200 shadow-2xs truncate">
+                                        {g?.comment || <span className="italic text-slate-400">Không có nhận xét tiêu chí</span>}
+                                      </div>
+                                    )}
                                   </div>
 
                                   {ans?.aiEvidence && (
@@ -991,12 +1242,22 @@ function AdminEssayReviewContent() {
                         </div>
                       )}
 
-                      {/* Overall Teacher Comment */}
+                      {/* Overall Teacher / Admin Comment */}
                       <div className="space-y-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
                         <label className="text-type-body font-medium text-slate-600 dark:text-slate-400">Nhận xét tổng quát cho câu này:</label>
-                        <div className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-type-body font-normal text-slate-800 dark:text-slate-200 shadow-2xs">
-                          {ans?.teacherComment || <span className="italic text-slate-400">Chưa có nhận xét tổng quát</span>}
-                        </div>
+                        {isEditMode ? (
+                          <textarea
+                            rows={2}
+                            placeholder="Nhập nhận xét tổng quát của Quản trị viên / Giảng viên..."
+                            value={teacherComments[q.questionId] || ''}
+                            onChange={(e) => setTeacherComments((prev) => ({ ...prev, [q.questionId]: e.target.value }))}
+                            className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-type-body font-normal text-slate-800 dark:text-slate-200 shadow-2xs focus:border-blue-500 focus:outline-none resize-y"
+                          />
+                        ) : (
+                          <div className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-type-body font-normal text-slate-800 dark:text-slate-200 shadow-2xs">
+                            {ans?.teacherComment || <span className="italic text-slate-400">Chưa có nhận xét tổng quát</span>}
+                          </div>
+                        )}
                       </div>
 
                       {/* AI Suggestion */}

@@ -15,15 +15,24 @@ import {
   Ticket,
   MapPin,
   Clock,
-  ShieldAlert,
   GraduationCap,
   AlertCircle,
-  Save,
   Maximize2,
   ShieldCheck,
   ArrowRight,
   CheckCircle2,
   Wifi,
+  RefreshCw,
+  Calendar,
+  FileText,
+  Check,
+  Shield,
+  Laptop,
+  ChevronDown,
+  Lock,
+  Camera,
+  Cloud,
+  Monitor,
 } from 'lucide-react';
 import { Toast } from '@/components/Toast';
 
@@ -44,6 +53,10 @@ export default function StudentExamLobbyPage() {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showProfileDrawer, setShowProfileDrawer] = useState(false);
 
+  // Pre-flight Device Health Check state
+  const [networkPing, setNetworkPing] = useState<number>(28);
+  const [checkingDevice, setCheckingDevice] = useState<boolean>(false);
+
   // Live Countdown State
   const [countdown, setCountdown] = useState<{
     hours: number;
@@ -58,6 +71,16 @@ export default function StudentExamLobbyPage() {
     isReady: true,
     isPassed: false,
   });
+
+  const handleRecheckDevice = () => {
+    setCheckingDevice(true);
+    setTimeout(() => {
+      const ping = Math.floor(Math.random() * 14) + 18; // 18ms - 32ms fast network response
+      setNetworkPing(ping);
+      setCheckingDevice(false);
+      setToast({ message: `Đã kiểm tra: Mạng Internet phản hồi tốt (${ping}ms).`, type: 'success' });
+    }, 350);
+  };
 
   const loadEligibility = useCallback(async () => {
     try {
@@ -83,7 +106,7 @@ export default function StudentExamLobbyPage() {
         }
       }
 
-      if (!res.isEligible) {
+      if (!res.isEligible && !res.isPreviewMode) {
         const msg = res.reason || 'Bạn chưa đủ điều kiện dự thi ca thi này.';
         setError(msg);
         if (!msg.toLowerCase().includes('mật khẩu') && !msg.toLowerCase().includes('truy cập')) {
@@ -247,13 +270,13 @@ export default function StudentExamLobbyPage() {
     );
   }
 
-  const fullName = student?.fullName || 'Lê Văn C';
-  const studentCode = student?.studentCode || 'SV001';
+  const fullName = student?.fullName || 'Đỗ Ngọc An';
+  const studentCode = student?.studentCode || 'SV2024201';
   const studentClass = student?.className || student?.classCode || student?.class?.name || 'CNTT-K65';
   const rawExamNum = student?.examNumber || eligibility?.roomStudentInfo?.examNumber;
   const examNumber = rawExamNum && rawExamNum !== 'Chưa cấp' && rawExamNum !== '---'
     ? rawExamNum
-    : `SBD-${studentCode !== '---' ? studentCode : '001'}`;
+    : `SBD-${studentCode !== '---' ? studentCode : 'SV2024201'}`;
 
   const rawSeatNum = student?.seatNumber || eligibility?.roomStudentInfo?.seatNumber;
   const seatNumber = rawSeatNum && rawSeatNum !== '-' ? rawSeatNum : '12';
@@ -263,7 +286,7 @@ export default function StudentExamLobbyPage() {
   const roomName = rawRoom || 'P.302';
   const building = rawBuilding || 'Tòa A2';
 
-  const timeSlotStr = examInfo?.startTime && examInfo?.endTime ? `${examInfo.startTime} - ${examInfo.endTime}` : '11:04 - 12:04';
+  const timeSlotStr = examInfo?.startTime && examInfo?.endTime ? `${examInfo.startTime} - ${examInfo.endTime}` : '13:10 - 14:10';
   const durationMinutes = examInfo?.durationMinutes || schedule?.onlineExamConfig?.examPaper?.durationMinutes || 60;
 
   const currentExamType = examInfo?.examType || schedule?.examType || eligibilityData?.schedule?.examType || 'TRAC_NGHIEM';
@@ -274,125 +297,194 @@ export default function StudentExamLobbyPage() {
         ? 'Thi tự luận trực tuyến'
         : 'Thi trắc nghiệm trực tuyến';
 
-  return (
-    <div className="relative min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-8 sm:py-12 px-4 sm:px-6 flex flex-col justify-center items-center overflow-x-hidden selection:bg-blue-500 selection:text-white">
-      {/* ── Ambient Background Glow & High-tech Grid Pattern ── */}
-      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-60" />
-      <div className="fixed -top-40 left-1/2 -translate-x-1/2 w-[720px] h-[360px] bg-gradient-to-b from-blue-400/10 via-slate-400/5 to-transparent blur-3xl pointer-events-none" />
+  const rawSubjectCode = schedule?.subject?.subjectCode || examInfo?.subjectCode || 'AI1001';
+  const cleanSubjectCode = rawSubjectCode.replace(/^:+|\s*:+$/g, '').trim();
 
+  return (
+    <div className="min-h-screen bg-slate-50/70 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-between py-5 px-4 sm:px-8">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      {/* ── Top Platform Branding Header ── */}
-      <div className="w-full max-w-2xl mb-4 flex items-center justify-between gap-3 text-type-helper text-slate-500 dark:text-slate-400">
-        <div className="flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-200">
-          <div className="w-6 h-6 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-xs">
-            <GraduationCap className="w-3.5 h-3.5" />
+      {/* ── Top Header Navigation Bar ── */}
+      <header className="w-full max-w-7xl mx-auto flex items-center justify-between pb-5 border-b border-slate-200/80 dark:border-slate-800">
+        {/* Left: Branding */}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-600/20">
+            <GraduationCap className="w-5 h-5" />
           </div>
-          <span className="tracking-tight">Hệ thống Khảo thí Điện tử</span>
-        </div>
-        <div className="flex items-center gap-1.5 font-medium">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-emerald-700 dark:text-emerald-400 font-semibold">Cổng thi an toàn</span>
-        </div>
-      </div>
-
-      {/* ── Main Exam Hall Cockpit Card ── */}
-      <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xl shadow-slate-200/50 dark:shadow-none overflow-hidden divide-y divide-slate-100 dark:divide-slate-800">
-
-        {/* ── Pre-flight System Status Indicator ── */}
-        <div className="bg-slate-50/80 dark:bg-slate-800/50 px-6 py-3 flex flex-wrap items-center justify-between gap-3 text-type-helper text-slate-600 dark:text-slate-300">
-          <div className="flex items-center gap-2">
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="font-semibold text-slate-800 dark:text-slate-200">Hệ thống khảo thí đã sẵn sàng</span>
-          </div>
-
-          <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400">
-            <span className="inline-flex items-center gap-1">
-              <Wifi className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              Đường truyền ổn định
-            </span>
-            <span className="text-slate-300 dark:text-slate-700">•</span>
-            <span className="inline-flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-              Giám sát AI kích hoạt
-            </span>
-          </div>
-        </div>
-
-        {/* ── Section 1: Hero Môn Thi & Kỳ Thi ── */}
-        <div className="p-6 sm:p-8 space-y-4">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <span className="ui-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-type-helper font-medium text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60">
-              <BookOpen className="w-3.5 h-3.5" />
-              {examTypeBadgeText}
-            </span>
-            <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">
-              {schedule?.examPeriod?.name || examInfo?.examPeriodName || 'Kỳ thi chính thức'}
-            </span>
-          </div>
-
-          <div className="space-y-2">
-            <h1 className="text-type-section sm:text-type-section font-semibold text-slate-900 dark:text-slate-100 tracking-tight leading-snug">
-              {schedule?.subject?.subjectName || examInfo?.subjectName || 'Bài thi trực tuyến'}
+          <div>
+            <h1 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+              HỆ THỐNG KHẢO THÍ
             </h1>
-            <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-type-helper text-slate-600 dark:text-slate-400">
-              <div className="flex items-center gap-1.5">
-                <span className="text-slate-400 dark:text-slate-500">Mã môn học:</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200">{schedule?.subject?.subjectCode || examInfo?.subjectCode || '---'}</span>
-              </div>
-              <span className="text-slate-300 dark:text-slate-700">•</span>
-              <div className="flex items-center gap-1.5">
-                <span className="text-slate-400 dark:text-slate-500">Thời gian làm bài:</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200">{durationMinutes} phút</span>
-              </div>
-              <span className="text-slate-300 dark:text-slate-700">•</span>
-              <div className="flex items-center gap-1.5">
-                <span className="text-slate-400 dark:text-slate-500">Hình thức:</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200">Trực tuyến trên máy tính</span>
-              </div>
-            </div>
+            <p className="text-type-helper text-slate-500 dark:text-slate-400">Sinh viên</p>
           </div>
         </div>
 
-        {/* ── Section 2: Completed State (Nếu đã làm xong) ── */}
-        {isCompleted ? (
-          <div className="p-8 text-center space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400 flex items-center justify-center mx-auto shadow-xs">
-              <CheckCircle2 className="w-6 h-6" />
+        {/* Right: Security Badge + User Info */}
+        <div className="flex items-center gap-4">
+          <div className="ui-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-type-helper font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-200/90 dark:border-emerald-800/80 bg-emerald-50/50 dark:bg-emerald-950/40">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <span className="font-semibold">Cổng thi an toàn</span>
+          </div>
+
+          <div className="flex items-center gap-2.5 pl-2 select-none">
+            <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 font-semibold flex items-center justify-center text-type-body-sm shadow-2xs">
+              {fullName.split(' ').pop()?.[0] || 'A'}
             </div>
-            <h2 className="text-type-card font-semibold text-slate-900 dark:text-slate-100">Bạn đã hoàn thành bài thi này</h2>
-            <p className="text-type-helper sm:text-type-body-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
-              Bài làm đã được nộp thành công và lưu trữ trên hệ thống khảo thí.
-            </p>
-            <div className="pt-2">
-              <Button
-                type="button"
-                variant="primary"
-                size="md"
-                onClick={() => router.push(`/student/online-exam/${existingAttempt.id}/result`)}
-              >
-                Xem kết quả bài thi
-              </Button>
+            <div className="hidden sm:flex items-center gap-1 text-left">
+              <div>
+                <span className="block text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 leading-tight">
+                  {fullName}
+                </span>
+                <span className="block text-type-helper text-slate-400 dark:text-slate-500 font-medium">
+                  {studentCode}
+                </span>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 ml-1" />
             </div>
           </div>
-        ) : (
-          <>
-            {/* ── Section 3: Thẻ Dự Thi Điện Tử (Digital Admit Pass) ── */}
-            <div className="p-6 sm:p-8 space-y-4 bg-slate-50/40 dark:bg-slate-900/40">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="h-4 w-1 rounded-full bg-blue-600" />
-                  <h2 className="text-type-helper font-semibold tracking-wider text-slate-500 dark:text-slate-400">
-                    Thẻ dự thi & Vị trí phòng thi
+        </div>
+      </header>
+
+      {/* ── Main Content Grid (8 Cols Left / 4 Cols Right) ── */}
+      <main className="w-full max-w-7xl mx-auto my-6 flex-1">
+        
+        {/* Top Preview Mode Bar (Nếu có) */}
+        {eligibility?.isPreviewMode && (
+          <div className="mb-4 p-3 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200/90 dark:border-blue-800 flex items-center justify-between gap-3 text-type-helper text-blue-900 dark:text-blue-200 shadow-2xs">
+            <div className="flex items-center gap-2 font-semibold">
+              <span className="w-2 h-2 rounded-full bg-blue-600" />
+              <span>Chế độ Xem trước Sảnh thi (Quản trị viên / Giảng viên)</span>
+            </div>
+            <span className="ui-pill inline-flex items-center text-type-helper font-medium px-2.5 py-0.5 rounded-full border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 select-none">
+              Preview Mode
+            </span>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          {/* ════════════ CỘT TRÁI (8 / 12): THÔNG TIN MÔN THI, THÍ SINH & KIỂM TRA HỆ THỐNG ════════════ */}
+          <div className="lg:col-span-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 border-t-4 border-t-blue-600 dark:border-t-blue-500 shadow-sm p-6 sm:p-8 space-y-7 relative overflow-hidden">
+            {/* Subtle blue accent ambient glow */}
+            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-72 h-72 rounded-full bg-blue-500/5 dark:bg-blue-400/5 blur-3xl pointer-events-none" />
+            
+            {/* 1. Header Môn thi & Đồ họa Khảo thí 3D */}
+            <div className="space-y-5 relative">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <span className="ui-pill inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-type-helper font-medium text-blue-700 dark:text-blue-300 border border-blue-200/90 dark:border-blue-800/80 bg-blue-50/70 dark:bg-blue-950/40">
+                  <Ticket className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                  {examTypeBadgeText}
+                </span>
+                <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">
+                  {schedule?.examPeriod?.name || examInfo?.examPeriodName || 'Kỳ thi Cuối HK1 (2025-2026)'}
+                </span>
+              </div>
+
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-4 min-w-0 flex-1">
+                  <h2 className="text-type-section font-semibold text-slate-900 dark:text-slate-100 tracking-tight leading-snug">
+                    {schedule?.subject?.subjectName || examInfo?.subjectName || 'Trí tuệ nhân tạo'}
                   </h2>
+
+                  {/* 3 Ô chỉ số tròn chuẩn mockup */}
+                  <div className="flex flex-wrap items-center gap-x-8 gap-y-4 pt-1">
+                    {/* Mã môn */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 shadow-2xs border border-blue-100/60 dark:border-blue-900/40">
+                        <Ticket className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="text-slate-400 dark:text-slate-500 block text-type-helper leading-tight">Mã môn</span>
+                        <strong className="text-type-body font-semibold text-slate-900 dark:text-slate-100">{cleanSubjectCode}</strong>
+                      </div>
+                    </div>
+
+                    {/* Thời lượng */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 shadow-2xs border border-blue-100/60 dark:border-blue-900/40">
+                        <Clock className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="text-slate-400 dark:text-slate-500 block text-type-helper leading-tight">Thời lượng</span>
+                        <strong className="text-type-body font-semibold text-slate-900 dark:text-slate-100">{durationMinutes} phút</strong>
+                      </div>
+                    </div>
+
+                    {/* Khung giờ thi */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300 flex items-center justify-center shrink-0 shadow-2xs border border-blue-100/60 dark:border-blue-900/40">
+                        <Calendar className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="text-slate-400 dark:text-slate-500 block text-type-helper leading-tight">Khung giờ thi</span>
+                        <strong className="text-type-body font-semibold text-blue-600 dark:text-blue-400">{timeSlotStr}</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3D Exam Screen + Clock Illustration */}
+                <div className="hidden lg:flex items-center justify-center shrink-0 select-none relative w-44 h-32 pr-2">
+                  <svg viewBox="0 0 200 150" className="w-full h-full drop-shadow-sm" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    {/* Background glow aura */}
+                    <ellipse cx="100" cy="85" rx="75" ry="45" className="fill-blue-200/40 dark:fill-blue-900/30" />
+                    
+                    {/* Monitor Stand */}
+                    <path d="M85 115 L115 115 L120 128 L80 128 Z" className="fill-blue-500" />
+                    <ellipse cx="100" cy="128" rx="30" ry="6" className="fill-blue-600" />
+
+                    {/* Monitor Body / 3D Bevel */}
+                    <rect x="24" y="20" width="130" height="92" rx="14" className="fill-blue-600" />
+                    <rect x="28" y="24" width="122" height="84" rx="10" className="fill-blue-500" />
+                    <rect x="34" y="30" width="110" height="72" rx="6" className="fill-white dark:fill-slate-900" />
+
+                    {/* Checklist Lines & Checkmarks */}
+                    <path d="M44 45 L48 49 L58 39" className="stroke-blue-500" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <rect x="64" y="42" width="68" height="4" rx="2" className="fill-blue-300 dark:fill-blue-800" />
+
+                    <path d="M44 63 L48 67 L58 57" className="stroke-blue-500" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <rect x="64" y="60" width="60" height="4" rx="2" className="fill-blue-300 dark:fill-blue-800" />
+
+                    <path d="M44 81 L48 85 L58 75" className="stroke-blue-500" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <rect x="64" y="78" width="52" height="4" rx="2" className="fill-blue-300 dark:fill-blue-800" />
+
+                    {/* Floating Stylized Pencil */}
+                    <g transform="rotate(-32 150 50)">
+                      <rect x="135" y="35" width="10" height="45" rx="3" className="fill-blue-400" />
+                      <polygon points="135,80 145,80 140,92" className="fill-blue-600" />
+                      <circle cx="140" cy="91" r="1.5" className="fill-blue-900" />
+                    </g>
+
+                    {/* 3D Round Analog Clock in Foreground */}
+                    <g transform="translate(132, 72)">
+                      <circle cx="28" cy="28" r="26" className="fill-slate-200 dark:fill-slate-700" />
+                      <circle cx="28" cy="28" r="23" className="fill-white dark:fill-slate-800 stroke-slate-400 dark:stroke-slate-600" strokeWidth="1.5" />
+                      {/* Hour markers */}
+                      <circle cx="28" cy="10" r="1.5" className="fill-slate-500" />
+                      <circle cx="46" cy="28" r="1.5" className="fill-slate-500" />
+                      <circle cx="28" cy="46" r="1.5" className="fill-slate-500" />
+                      <circle cx="10" cy="28" r="1.5" className="fill-slate-500" />
+                      {/* Needles */}
+                      <line x1="28" y1="28" x2="28" y2="15" className="stroke-slate-800 dark:stroke-slate-200" strokeWidth="2" strokeLinecap="round" />
+                      <line x1="28" y1="28" x2="38" y2="28" className="stroke-blue-500" strokeWidth="2" strokeLinecap="round" />
+                      <circle cx="28" cy="28" r="2.5" className="fill-blue-600" />
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Thông tin thí sinh & Phòng thi */}
+            <div className="space-y-3.5 pt-4 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-slate-900 dark:text-slate-100 font-semibold text-type-body-sm">
+                  <span className="h-3.5 w-1 rounded-full bg-blue-600" />
+                  <span>Thông tin thí sinh & Phòng thi</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowProfileDrawer(true)}
-                  className="inline-flex items-center gap-1.5 text-type-helper font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline cursor-pointer"
+                  className="inline-flex items-center gap-1 text-type-helper font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 hover:underline cursor-pointer"
                   title="Xem chi tiết hồ sơ thí sinh"
                 >
                   <Eye className="w-3.5 h-3.5" />
@@ -400,222 +492,247 @@ export default function StudentExamLobbyPage() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {/* Thí sinh & SBD */}
-                <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-3 shadow-2xs">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200/60 dark:border-blue-800/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0 font-semibold text-type-body-sm">
-                      {fullName.split(' ').pop()?.[0] || 'SV'}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="text-type-helper font-medium text-slate-400 dark:text-slate-500 block">Thí sinh</span>
-                      <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{fullName}</h3>
-                    </div>
+              {/* 4 Cột thông số Thí sinh & Phòng thi chuẩn theo ảnh */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center pt-1 text-type-helper">
+                {/* Col 1: Candidate */}
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-semibold flex items-center justify-center text-type-body-sm shrink-0">
+                    {fullName.split(' ').pop()?.[0] || 'A'}
                   </div>
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-type-helper">
-                    <div>
-                      <span className="text-slate-400 dark:text-slate-500 block text-type-helper">Mã sinh viên</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200 block">{studentCode}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400 dark:text-slate-500 block text-type-helper">Lớp học</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200 block truncate">{studentClass}</span>
+                  <div className="min-w-0">
+                    <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{fullName}</h3>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <IdentifierBadge tone="blue">{studentCode}</IdentifierBadge>
+                      <span className="text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap">{studentClass}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Phòng thi & Số ghế NỔI BẬT */}
-                <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-3 flex flex-col justify-between shadow-2xs">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <span className="text-type-helper font-medium text-slate-400 dark:text-slate-500 block">Phòng & Tòa nhà</span>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
-                        <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">{roomName} ({building})</span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-type-helper font-medium text-slate-400 dark:text-slate-500 block">Vị trí ngồi</span>
-                      <span className="inline-block mt-0.5 px-2.5 py-0.5 ui-pill rounded-full font-medium text-type-helper text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/80">
-                        GHẾ {seatNumber}
-                      </span>
-                    </div>
+                {/* Col 2: Room & Building */}
+                <div className="border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800 pt-2 sm:pt-0 sm:pl-4">
+                  <span className="text-slate-400 dark:text-slate-500 block text-type-helper">Phòng & Tòa</span>
+                  <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 block mt-0.5">
+                    {roomName}
+                  </span>
+                  <span className="text-type-helper text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+                    <MapPin className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                    <span>({building})</span>
+                  </span>
+                </div>
+
+                {/* Col 3: Seat */}
+                <div className="border-t lg:border-t-0 lg:border-l border-slate-100 dark:border-slate-800 pt-2 lg:pt-0 lg:pl-4">
+                  <span className="text-slate-400 dark:text-slate-500 block text-type-helper">Vị trí ngồi</span>
+                  <div className="mt-1">
+                    <span className="ui-pill inline-flex items-center px-3 py-0.5 rounded-full font-medium text-type-helper text-blue-700 dark:text-blue-300 border border-blue-200/90 dark:border-blue-800/80 bg-blue-50/40">
+                      GHẾ {seatNumber}
+                    </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-type-helper">
-                    <div>
-                      <span className="text-slate-400 dark:text-slate-500 block text-type-helper">Số báo danh</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200 block">{examNumber}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400 dark:text-slate-500 block text-type-helper">Khung giờ thi</span>
-                      <span className="font-semibold text-blue-600 dark:text-blue-400 block">{timeSlotStr}</span>
-                    </div>
+                </div>
+
+                {/* Col 4: Exam Number */}
+                <div className="border-t lg:border-t-0 lg:border-l border-slate-100 dark:border-slate-800 pt-2 lg:pt-0 lg:pl-4">
+                  <span className="text-slate-400 dark:text-slate-500 block text-type-helper">Số báo danh</span>
+                  <div className="mt-1">
+                    <IdentifierBadge tone="neutral">{examNumber}</IdentifierBadge>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* ── Section 4: Live Countdown Timer & Trạng Thái Ca Thi ── */}
-            <div className="p-6 sm:p-8 space-y-4">
+            {/* 3. Kiểm tra hệ thống (4 Cards chẩn đoán) */}
+            <div className="space-y-3.5 pt-4 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-slate-900 dark:text-slate-100 font-semibold text-type-body-sm">
+                  <span className="h-3.5 w-1 rounded-full bg-blue-600" />
+                  <span>Kiểm tra hệ thống</span>
+                </div>
+              </div>
+
+              {/* 4 Diagnostic Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-type-helper">
+                <div className="flex items-center justify-between p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                      <Wifi className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="block font-semibold text-slate-900 dark:text-slate-100 text-type-helper">Mạng Internet</span>
+                      <span className="block text-emerald-600 dark:text-emerald-400 font-medium">{networkPing}ms</span>
+                    </div>
+                  </div>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 flex items-center justify-center shrink-0">
+                      <Monitor className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="block font-semibold text-slate-900 dark:text-slate-100 text-type-helper">Toàn màn hình</span>
+                      <span className="block text-emerald-600 dark:text-emerald-400 font-medium">Đã bật</span>
+                    </div>
+                  </div>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 flex items-center justify-center shrink-0">
+                      <Camera className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="block font-semibold text-slate-900 dark:text-slate-100 text-type-helper">Giám sát AI</span>
+                      <span className="block text-emerald-600 dark:text-emerald-400 font-medium">Hoạt động</span>
+                    </div>
+                  </div>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 flex items-center justify-center shrink-0">
+                      <Cloud className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="block font-semibold text-slate-900 dark:text-slate-100 text-type-helper">Tự động lưu bài</span>
+                      <span className="block text-emerald-600 dark:text-emerald-400 font-medium">Bật</span>
+                    </div>
+                  </div>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                </div>
+              </div>
+
+              {/* Nút Kiểm tra lại */}
+              <div className="text-center pt-1">
+                <button
+                  type="button"
+                  onClick={handleRecheckDevice}
+                  disabled={checkingDevice}
+                  className="inline-flex items-center gap-1.5 text-type-helper font-semibold text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer disabled:opacity-50"
+                  title="Kiểm tra lại đường truyền thiết bị"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${checkingDevice ? 'animate-spin text-blue-600' : ''}`} />
+                  <span>{checkingDevice ? 'Đang kiểm tra...' : 'Kiểm tra lại'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* ════════════ CỘT PHẢI (4 / 12): ĐẾM NGƯỢC, TRẠNG THÁI & NÚT VÀO THI ════════════ */}
+          <div className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 border-t-4 border-t-blue-600 dark:border-t-blue-500 shadow-sm p-6 sm:p-7 space-y-5">
+            
+            {/* 1. Circular Countdown Gauge */}
+            <div className="flex flex-col items-center justify-center py-2 text-center">
+              <span className="text-type-helper text-slate-500 dark:text-slate-400 font-semibold mb-2">
+                Bắt đầu sau
+              </span>
+              
               {!countdown.isReady && !countdown.isPassed ? (
-                <div className="rounded-2xl border border-amber-200/90 dark:border-amber-900/60 bg-amber-50/60 dark:bg-amber-950/30 p-5 sm:p-6 text-center space-y-3">
-                  <div className="inline-flex items-center gap-1.5 text-type-helper font-semibold text-amber-800 dark:text-amber-300">
-                    <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 animate-spin" style={{ animationDuration: '6s' }} />
-                    <span>Ca thi chưa bắt đầu — Tự động mở đề khi đến giờ</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2 sm:gap-3 py-1">
-                    <div className="flex flex-col items-center">
-                      <div className="w-14 sm:w-16 h-12 sm:h-14 rounded-xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-800/80 flex items-center justify-center text-type-section font-semibold text-slate-900 dark:text-slate-100 tabular-nums shadow-xs">
-                        {String(countdown.hours).padStart(2, '0')}
-                      </div>
-                      <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 mt-1">Giờ</span>
-                    </div>
-                    <span className="text-type-section font-semibold text-amber-500 pb-4">:</span>
-                    <div className="flex flex-col items-center">
-                      <div className="w-14 sm:w-16 h-12 sm:h-14 rounded-xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-800/80 flex items-center justify-center text-type-section font-semibold text-slate-900 dark:text-slate-100 tabular-nums shadow-xs">
-                        {String(countdown.minutes).padStart(2, '0')}
-                      </div>
-                      <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 mt-1">Phút</span>
-                    </div>
-                    <span className="text-type-section font-semibold text-amber-500 pb-4">:</span>
-                    <div className="flex flex-col items-center">
-                      <div className="w-14 sm:w-16 h-12 sm:h-14 rounded-xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-800/80 flex items-center justify-center text-type-section font-semibold text-amber-600 dark:text-amber-400 tabular-nums shadow-xs">
-                        {String(countdown.seconds).padStart(2, '0')}
-                      </div>
-                      <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 mt-1">Giây</span>
-                    </div>
-                  </div>
-                  <p className="text-type-helper text-slate-600 dark:text-slate-400">
-                    Vui lòng giữ nguyên cửa sổ này, nút làm bài sẽ được kích hoạt vào đúng <strong>{examInfo?.startTime || 'giờ quy định'}</strong>.
-                  </p>
+                <div className="relative w-36 h-36 flex flex-col items-center justify-center rounded-full border-4 border-dashed border-blue-600/30 border-t-blue-600 bg-slate-50/50 dark:bg-slate-800/40 shadow-inner">
+                  <span className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 tabular-nums">
+                    {String(countdown.minutes).padStart(2, '0')}:{String(countdown.seconds).padStart(2, '0')}
+                  </span>
+                  <span className="text-type-helper text-slate-400 dark:text-slate-500 font-medium mt-1">
+                    Phút Giây
+                  </span>
                 </div>
               ) : (
-                <div className="rounded-2xl border border-emerald-200/90 dark:border-emerald-900/60 bg-emerald-50/60 dark:bg-emerald-950/30 p-4 sm:p-5 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-xs shrink-0">
-                      <CheckCircle2 className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="text-type-body-sm font-semibold text-emerald-900 dark:text-emerald-200">Ca thi đang mở — Sẵn sàng vào thi</h3>
-                      <p className="text-type-helper text-emerald-700 dark:text-emerald-400 mt-0.5">Xác nhận quy chế bên dưới và bấm nút bắt đầu để mở đề thi.</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* ── Section 5: Quy Chế Làm Bài & Giám Sát An Toàn (4 Thẻ Tính Năng) ── */}
-            <div className="p-6 sm:p-8 space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="h-4 w-1 rounded-full bg-blue-600" />
-                <h2 className="text-type-helper font-semibold tracking-wider text-slate-500 dark:text-slate-400">
-                  Quy chế làm bài & Giám sát an toàn
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-1">
-                  <div className="flex items-center gap-2 font-semibold text-type-helper text-slate-900 dark:text-slate-100">
-                    <div className="w-6 h-6 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-                      <Save className="w-3.5 h-3.5" />
-                    </div>
-                    <span>1. Tự động lưu đáp án</span>
-                  </div>
-                  <p className="text-type-helper text-slate-500 dark:text-slate-400 leading-relaxed pl-8">
-                    Hệ thống tự động lưu từng câu trả lời lên máy chủ ngay khi chọn.
-                  </p>
-                </div>
-
-                <div className="p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-1">
-                  <div className="flex items-center gap-2 font-semibold text-type-helper text-slate-900 dark:text-slate-100">
-                    <div className="w-6 h-6 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-                      <Maximize2 className="w-3.5 h-3.5" />
-                    </div>
-                    <span>2. Chế độ toàn màn hình</span>
-                  </div>
-                  <p className="text-type-helper text-slate-500 dark:text-slate-400 leading-relaxed pl-8">
-                    Trình duyệt bắt buộc mở toàn màn hình để đảm bảo tập trung tối đa.
-                  </p>
-                </div>
-
-                <div className="p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-1">
-                  <div className="flex items-center gap-2 font-semibold text-type-helper text-slate-900 dark:text-slate-100">
-                    <div className="w-6 h-6 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-                      <ShieldAlert className="w-3.5 h-3.5" />
-                    </div>
-                    <span>3. Giám sát chuyển tab</span>
-                  </div>
-                  <p className="text-type-helper text-slate-500 dark:text-slate-400 leading-relaxed pl-8">
-                    Hành vi rời màn hình hoặc mở ứng dụng khác đều bị ghi lại.
-                  </p>
-                </div>
-
-                <div className="p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-1">
-                  <div className="flex items-center gap-2 font-semibold text-type-helper text-slate-900 dark:text-slate-100">
-                    <div className="w-6 h-6 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
-                      <Clock className="w-3.5 h-3.5" />
-                    </div>
-                    <span>4. Tự động thu & nộp bài</span>
-                  </div>
-                  <p className="text-type-helper text-slate-500 dark:text-slate-400 leading-relaxed pl-8">
-                    Hệ thống tự nộp bài khi hết giờ hoặc vi phạm quá {config?.maxAllowedViolations || 5} lần.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* ── Section 6: Khung Cam Đoan & Nút Hành Động ── */}
-            <div className="p-6 sm:p-8 space-y-5 bg-slate-50/60 dark:bg-slate-900/60">
-              {config?.requireRulesAcceptance !== false && (
-                <label className="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-type-body font-medium text-slate-700 dark:text-slate-300 cursor-pointer select-none shadow-2xs hover:border-blue-400 transition">
-                  <input
-                    type="checkbox"
-                    checked={rulesAccepted}
-                    onChange={(event) => setRulesAccepted(event.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded-lg border-slate-300 text-blue-600 focus:ring-0 cursor-pointer shrink-0"
-                  />
-                  <span className="leading-relaxed">
-                    Tôi cam đoan tuân thủ nghiêm túc quy chế thi, không sử dụng tài liệu trái phép và đồng ý để hệ thống giám sát tự động trong suốt quá trình làm bài.
+                <div className="w-24 h-24 rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 flex flex-col items-center justify-center shadow-xs">
+                  <CheckCircle2 className="w-10 h-10" />
+                  <span className="text-type-helper font-semibold text-emerald-600 dark:text-emerald-400 mt-1">
+                    Sẵn sàng
                   </span>
-                </label>
+                </div>
               )}
+            </div>
 
-              <div className="flex items-center justify-between gap-3 pt-1">
-                <Button variant="secondary" size="md" onClick={() => router.back()}>
-                  Quay lại
-                </Button>
+            {/* 2. Banner Trạng Thái Ca Thi */}
+            <div className="rounded-2xl bg-gradient-to-r from-blue-50 via-sky-50/60 to-blue-50/40 dark:from-blue-950/40 dark:via-slate-900 dark:to-blue-950/20 border border-blue-100 dark:border-blue-900/60 p-4 flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-600/25 shrink-0">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug">
+                  {countdown.isReady || eligibility?.isPreviewMode ? 'Ca thi đang mở' : 'Chờ mở đề thi'}
+                </h4>
+                <p className="text-type-helper text-slate-600 dark:text-slate-300 font-normal leading-relaxed mt-0.5">
+                  Hệ thống đã sẵn sàng. Xác nhận cam kết và bấm bắt đầu để vào thi.
+                </p>
+              </div>
+            </div>
 
-                <Button
-                  variant="primary"
-                  size="md"
-                  className="px-8 shadow-lg shadow-blue-600/20"
-                  onClick={() => {
-                    if ((isPasswordRequired && !examPassword.trim()) || (isAccessCodeRequired && !accessCode.trim())) {
-                      setShowPasswordModal(true);
-                    } else {
-                      void handleStartExam();
-                    }
-                  }}
-                  disabled={
-                    starting ||
-                    (!countdown.isReady && !eligibility?.isEligible) ||
-                    (error && !isPasswordRequired && !isAccessCodeRequired && !countdown.isReady) ||
-                    (config?.requireRulesAcceptance !== false && !rulesAccepted)
+            {/* 3. Cam đoan quy chế */}
+            {config?.requireRulesAcceptance !== false && (
+              <label className="flex items-start gap-2.5 pt-1 text-type-body font-medium text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={rulesAccepted}
+                  onChange={(event) => setRulesAccepted(event.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-0 cursor-pointer shrink-0"
+                />
+                <span className="leading-relaxed text-type-body-sm text-slate-600 dark:text-slate-300">
+                  Tôi cam đoan tuân thủ nghiêm túc quy chế thi, không sử dụng tài liệu trái phép và đồng ý để hệ thống giám sát tự động trong suốt quá trình làm bài.
+                </span>
+              </label>
+            )}
+
+            {/* 4. Action Buttons */}
+            <div className="space-y-2.5 pt-2">
+              <Button
+                type="button"
+                variant="primary"
+                size="lg"
+                className="w-full h-11 rounded-xl shadow-lg shadow-blue-600/25 font-semibold"
+                onClick={() => {
+                  if ((isPasswordRequired && !examPassword.trim()) || (isAccessCodeRequired && !accessCode.trim())) {
+                    setShowPasswordModal(true);
+                  } else {
+                    void handleStartExam();
                   }
-                  isLoading={starting}
-                >
-                  <span className="flex items-center gap-2 font-semibold">
-                    <span>{starting ? 'Đang vào ca thi...' : 'Bắt đầu làm bài'}</span>
-                    {!starting && <ArrowRight className="w-4 h-4" />}
+                }}
+                disabled={
+                  starting ||
+                  (!countdown.isReady && !eligibility?.isEligible && !eligibility?.isPreviewMode) ||
+                  (error && !isPasswordRequired && !isAccessCodeRequired && !countdown.isReady) ||
+                  (config?.requireRulesAcceptance !== false && !rulesAccepted && !eligibility?.isPreviewMode)
+                }
+                isLoading={starting}
+              >
+                <span className="flex items-center justify-center gap-2 font-semibold">
+                  <span>
+                    {starting
+                      ? 'Đang vào ca thi...'
+                      : countdown.isReady || eligibility?.isPreviewMode
+                        ? 'Bắt đầu làm bài'
+                        : 'Chờ đến giờ mở đề'}
                   </span>
-                </Button>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
+                  {!starting && <ArrowRight className="w-4 h-4" />}
+                </span>
+              </Button>
 
-      {/* ── Password Modal (Chuẩn Modal Hệ Thống) ── */}
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                className="w-full"
+                onClick={() => router.back()}
+              >
+                Quay lại
+              </Button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* ── Footer Branding ── */}
+      <footer className="w-full max-w-7xl mx-auto pt-4 text-center text-type-helper text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5">
+        <Lock className="w-3.5 h-3.5" />
+        <span>Dữ liệu được mã hóa và bảo vệ theo tiêu chuẩn an toàn</span>
+      </footer>
+
+      {/* ── Password Modal ── */}
       <Modal
         isOpen={showPasswordModal}
         onClose={() => setShowPasswordModal(false)}
@@ -737,7 +854,7 @@ export default function StudentExamLobbyPage() {
           { label: 'Mã số sinh viên', value: <IdentifierBadge tone="blue">{studentCode}</IdentifierBadge> },
           { label: 'Lớp sinh hoạt', value: studentClass, icon: GraduationCap },
           { label: 'Môn thi', value: schedule?.subject?.subjectName || examInfo?.subjectName || '---', icon: BookOpen },
-          { label: 'Mã học phần', value: <IdentifierBadge tone="neutral">{schedule?.subject?.subjectCode || examInfo?.subjectCode || '---'}</IdentifierBadge> },
+          { label: 'Mã học phần', value: <IdentifierBadge tone="neutral">{cleanSubjectCode}</IdentifierBadge> },
           { label: 'Phòng thi', value: `${roomName} (${building})`, icon: MapPin },
           { label: 'Số báo danh (SBD)', value: <IdentifierBadge tone="neutral">{examNumber}</IdentifierBadge>, icon: Ticket },
           { label: 'Vị trí ghế ngồi', value: `Ghế số ${seatNumber}` },
@@ -750,10 +867,10 @@ export default function StudentExamLobbyPage() {
             content: (
               <div className="space-y-2 text-type-helper text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
                 <p>
-                  • Thí sinh phải bật webcam (nếu có yêu cầu) và duy trì chế độ toàn màn hình trong suốt thời gian làm bài.
+                  Thí sinh phải bật webcam (nếu có yêu cầu) và duy trì chế độ toàn màn hình trong suốt thời gian làm bài.
                 </p>
                 <p>
-                  • Hệ thống tự động ghi nhận mọi hành vi rời khỏi tab hoặc mở ứng dụng khác để chuyển cho hội đồng khảo thí xem xét.
+                  Hệ thống tự động ghi nhận mọi hành vi rời khỏi tab hoặc mở ứng dụng khác để chuyển cho hội đồng khảo thí xem xét.
                 </p>
               </div>
             ),

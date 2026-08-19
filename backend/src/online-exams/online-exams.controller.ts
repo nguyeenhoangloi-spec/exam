@@ -39,6 +39,7 @@ export class OnlineExamsController {
    * Query params: accessCode, deviceFingerprint, webcamAvailable
    */
   @Get('schedule/:scheduleId/check-eligibility')
+  @Roles('STUDENT', 'ADMIN', 'TEACHER')
   checkEligibility(
     @Request() req: any,
     @Param('scheduleId', ParseIntPipe) scheduleId: number,
@@ -50,7 +51,7 @@ export class OnlineExamsController {
     const webcamAvailable =
       webcamAvailableStr === 'true' ? true : webcamAvailableStr === 'false' ? false : undefined;
 
-    return this.onlineExamsService.checkEligibility(req.user.id, scheduleId, {
+    return this.onlineExamsService.checkEligibility(req.user, scheduleId, {
       clientIp: ip || '127.0.0.1',
       deviceFingerprint,
       providedAccessCode: accessCode,

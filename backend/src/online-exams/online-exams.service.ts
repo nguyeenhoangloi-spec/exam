@@ -137,10 +137,85 @@ export class OnlineExamsService {
    * Kiểm tra điều kiện dự thi của sinh viên (endpoint GET – chưa bắt đầu phiên)
    */
   async checkEligibility(
-    studentUserId: number,
+    actor: any,
     scheduleId: number,
     input?: Partial<EligibilityInput>,
   ) {
+    const isStaff = typeof actor === 'object' && (actor.role === 'ADMIN' || actor.role === 'TEACHER');
+    if (isStaff) {
+      const schedule: any = await this.prisma.examSchedule.findUnique({
+        where: { id: scheduleId },
+        include: {
+          subject: true,
+          examPeriod: true,
+          onlineExamConfig: { include: { examPaper: true } },
+          examScheduleRooms: {
+            include: {
+              room: true,
+              examRoomStudents: {
+                include: {
+                  student: {
+                    include: {
+                      class: true,
+                    },
+                  },
+                },
+                take: 1,
+              },
+            },
+            take: 1,
+          },
+        },
+      });
+
+      if (schedule) {
+        const roomSchedule = schedule.examScheduleRooms?.[0];
+        const sampleStudent = roomSchedule?.examRoomStudents?.[0];
+        const studentObj = sampleStudent?.student;
+        return {
+          isEligible: true,
+          isPreviewMode: true,
+          reason: 'Chế độ xem trước của Quản trị viên / Giảng viên',
+          examInfo: {
+            subjectName: schedule.subject?.subjectName,
+            subjectCode: schedule.subject?.subjectCode,
+            examPeriodName: schedule.examPeriod?.name,
+            examDate: schedule.examDate,
+            startTime: schedule.startTime,
+            endTime: schedule.endTime,
+            durationMinutes: schedule.onlineExamConfig?.examPaper?.durationMinutes || 60,
+            examPasswordRequired: !!schedule.onlineExamConfig?.examPasswordHash,
+            accessCodeRequired: !!schedule.onlineExamConfig?.accessCode,
+          },
+          student: studentObj
+            ? {
+              id: studentObj.id,
+              studentCode: studentObj.studentCode,
+              fullName: studentObj.fullName,
+              className: studentObj.class?.name || 'CNTT-K65',
+              examNumber: sampleStudent?.examNumber || `SBD-${studentObj.studentCode}`,
+              seatNumber: sampleStudent?.seatNumber || 1,
+              roomCode: roomSchedule?.room?.roomCode || 'P.302',
+              roomName: roomSchedule?.room?.roomName || 'Phòng 302',
+              building: roomSchedule?.room?.building || 'Tòa A2',
+            }
+            : {
+              id: 1,
+              studentCode: 'SV2024201',
+              fullName: 'Đỗ Ngọc An (Thí sinh mẫu)',
+              className: 'CNTT-K65',
+              examNumber: 'SBD-SV2024201',
+              seatNumber: 12,
+              roomCode: roomSchedule?.room?.roomCode || 'P.302',
+              roomName: roomSchedule?.room?.roomName || 'Phòng 302',
+              building: roomSchedule?.room?.building || 'Tòa A2',
+            },
+          config: schedule.onlineExamConfig,
+        };
+      }
+    }
+
+    const studentUserId = typeof actor === 'number' ? actor : actor?.id;
     const result = await this.eligibilityChecker.check({
       studentUserId,
       scheduleId,
