@@ -11,18 +11,13 @@ import {
   Menu,
   User as UserIcon,
   Settings,
-  Lock,
   Inbox,
-  ArrowRight,
   Search,
-  PanelLeft,
-  PanelLeftOpen,
   CheckCheck,
   Headphones,
   Sun,
   Moon,
   Home,
-  Shield,
 } from 'lucide-react';
 import { removeAuth } from '../lib/auth';
 import { User } from '../types';
@@ -50,9 +45,7 @@ interface NotificationItem {
 
 export const Header: React.FC<HeaderProps> = ({
   user,
-  title = 'Hệ thống quản lý khảo thí',
   collapsed,
-  onToggleSidebar,
   onMenuClick,
 }) => {
   const router = useRouter();
@@ -170,7 +163,7 @@ export const Header: React.FC<HeaderProps> = ({
         } else if (user.role === 'TEACHER') {
           const res = await api.get('/teachers/my-assignments');
           const assignments: any[] = res.data || [];
-          const unconfirmed = assignments.filter((a) => a.status !== 'CONFIRMED');
+          const unconfirmed = assignments.filter((a: { status: string }) => a.status !== 'CONFIRMED');
           if (isMounted) {
             if (unconfirmed.length > 0) {
               setNotifications([
@@ -215,7 +208,7 @@ export const Header: React.FC<HeaderProps> = ({
             }
           }
         }
-      } catch (e) {
+      } catch {
         if (isMounted) {
           setNotifications([]);
         }
@@ -288,7 +281,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       <header
         style={{ left: collapsed ? '72px' : '252px' }}
-        className="app-header-fixed fixed top-0 right-0 z-30 flex h-16 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md transition-[left] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-[left] border-b border-slate-200/40 dark:border-slate-800/60 shadow-xs"
+        className="app-header-fixed fixed top-0 right-0 z-30 flex h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md transition-[left] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[left]"
       >
         <div ref={containerRef} className="mx-auto flex h-full w-full items-center justify-between px-4 md:px-6">
           {/* Left Side: Navigation / Breadcrumb Pro / Command Search Bar */}
@@ -340,7 +333,7 @@ export const Header: React.FC<HeaderProps> = ({
                 aria-label="Xem thông báo"
                 aria-expanded={openPanel === 'notifications'}
                 onClick={() => togglePanel('notifications')}
-                className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 <Bell className="h-5 w-5" />
                 {effectiveUnreadCount > 0 && (
@@ -387,8 +380,9 @@ export const Header: React.FC<HeaderProps> = ({
                                   handleNotificationClick(item);
                                 }
                               }}
-                              className={`py-3 px-2 transition cursor-pointer space-y-1 group rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 ${isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
-                                }`}
+                              className={`py-3 px-2 transition cursor-pointer space-y-1 group rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 ${
+                                isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
+                              }`}
                             >
                               <div className="flex items-center justify-between gap-1.5">
                                 <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body-sm group-hover:text-blue-600 transition flex items-center gap-2">
@@ -469,70 +463,101 @@ export const Header: React.FC<HeaderProps> = ({
                 />
               </button>
 
-              {/* Minimalist Blue & White Account Dropdown with Ultra-smooth Motion & Refined Depth */}
+              {/* Creative Modern User Account Dropdown */}
               {openPanel === 'account' && (
                 <div
                   id="user-account-dropdown"
                   role="menu"
                   aria-orientation="vertical"
-                  className="absolute right-0 top-[calc(100%+8px)] w-64 origin-top-right rounded-2xl border border-slate-100/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 p-1.5 shadow-2xl shadow-blue-900/10 dark:shadow-slate-950/70 ring-1 ring-slate-900/5 dark:ring-white/10 text-type-helper z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200 ease-out backdrop-blur-2xl"
+                  className="absolute right-0 top-[calc(100%+8px)] w-72 origin-top-right rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 p-2 shadow-2xl shadow-slate-950/15 dark:shadow-slate-950/70 text-type-helper z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-150 ease-out backdrop-blur-2xl"
                 >
                   {/* Isometric Top Pointer Tip */}
-                  <div className="absolute -top-1.5 right-6 h-3 w-3 rotate-45 border-l border-t border-slate-100/90 dark:border-slate-800 bg-white dark:bg-slate-900 z-10" />
+                  <div className="absolute -top-1.5 right-6 h-3 w-3 rotate-45 border-l border-t border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 z-10" />
 
-                  {/* Header: Live Account Session Info */}
-                  <div className="relative z-20 overflow-hidden rounded-xl px-3 py-2.5 bg-gradient-to-r from-blue-50/50 via-slate-50/30 to-transparent dark:from-blue-950/30 dark:via-slate-800/30 dark:to-transparent border border-blue-100/40 dark:border-slate-800 mb-1">
-                    {/* Subtle ambient light */}
-                    <div className="absolute -right-4 -top-4 h-12 w-12 rounded-full bg-blue-500/10 dark:bg-blue-400/10 blur-lg pointer-events-none" />
+                  {/* Header: User Profile Card (Flat, Modern & Spacious) */}
+                  <div className="relative z-20 p-3 rounded-xl bg-slate-50/70 dark:bg-slate-800/50 mb-1.5 space-y-2.5">
+                    <div className="flex items-center gap-3">
+                      {/* Avatar */}
+                      <div className="relative shrink-0">
+                        {avatarUrl ? (
+                          <DynamicImage
+                            src={avatarUrl}
+                            alt={displayName}
+                            className="h-10 w-10 rounded-full object-cover ring-2 ring-blue-500/30"
+                          />
+                        ) : (
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 font-semibold text-white text-type-body shadow-xs">
+                            {displayName?.charAt(0) || 'U'}
+                          </div>
+                        )}
+                        <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
+                      </div>
 
-                    <div className="flex items-center justify-between gap-1.5">
-                      <p className="text-type-helper font-medium text-slate-500 dark:text-slate-400">Tài khoản</p>
-                      <span className="inline-flex items-center gap-1 text-type-helper font-semibold text-emerald-600 dark:text-emerald-400">
+                      {/* Name & Email */}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate leading-tight">
+                          {displayName}
+                        </p>
+                        <p className="text-type-helper text-slate-500 dark:text-slate-400 truncate mt-0.5" title={user?.email || ''}>
+                          {user?.email || (user?.username ? `@${user.username}` : 'Chưa cập nhật email')}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Role Badge & Live Online Status */}
+                    <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-type-badge font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
+                        {displayRoleLabel}
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 text-type-badge font-medium text-emerald-600 dark:text-emerald-400">
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                         Trực tuyến
                       </span>
                     </div>
-                    <p className="truncate text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 mt-0.5">
-                      {user?.email || (user?.username ? `@${user.username}` : displayName)}
-                    </p>
                   </div>
 
-                  {/* Navigation Links */}
+                  {/* Navigation Links with Modern Icon Shells */}
                   <div className="relative z-20 space-y-0.5">
                     <Link
                       href="/profile"
                       onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-slate-800 dark:text-slate-200 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors duration-150 cursor-pointer group"
                     >
-                      <div className="flex items-center gap-2.5">
-                        <UserIcon className="h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:scale-110 transition-transform duration-150" />
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-150">
+                          <UserIcon className="h-4 w-4" />
+                        </div>
                         <span>Hồ sơ cá nhân</span>
                       </div>
-                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-blue-500" />
+                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-slate-400 dark:text-slate-500" />
                     </Link>
 
                     <Link
                       href="/settings"
                       onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-slate-800 dark:text-slate-200 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors duration-150 cursor-pointer group"
                     >
-                      <div className="flex items-center gap-2.5">
-                        <Settings className="h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:scale-110 transition-transform duration-150" />
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 group-hover:bg-slate-700 group-hover:text-white transition-colors duration-150">
+                          <Settings className="h-4 w-4" />
+                        </div>
                         <span>Cài đặt hệ thống</span>
                       </div>
-                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-blue-500" />
+                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-slate-400 dark:text-slate-500" />
                     </Link>
 
                     <Link
                       href="/contact"
                       onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-slate-800 dark:text-slate-200 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors duration-150 cursor-pointer group"
                     >
-                      <div className="flex items-center gap-2.5">
-                        <Headphones className="h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:scale-110 transition-transform duration-150" />
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-150">
+                          <Headphones className="h-4 w-4" />
+                        </div>
                         <span>Trung tâm hỗ trợ</span>
                       </div>
-                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-blue-500" />
+                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 text-slate-400 dark:text-slate-500" />
                     </Link>
                   </div>
 
@@ -545,14 +570,16 @@ export const Header: React.FC<HeaderProps> = ({
                       type="button"
                       role="menuitem"
                       onClick={toggleTheme}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-slate-800 dark:text-slate-200 font-medium hover:bg-blue-50/80 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400 transition-all duration-150 cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-slate-800 dark:text-slate-200 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors duration-150 cursor-pointer group"
                     >
-                      <div className="flex items-center gap-2.5">
-                        {isDark ? (
-                          <Moon className="h-4 w-4 text-blue-500 group-hover:scale-110 transition-transform duration-150" />
-                        ) : (
-                          <Sun className="h-4 w-4 text-amber-500 group-hover:scale-110 transition-transform duration-150" />
-                        )}
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-150">
+                          {isDark ? (
+                            <Moon className="h-4 w-4" />
+                          ) : (
+                            <Sun className="h-4 w-4" />
+                          )}
+                        </div>
                         <span>Chế độ tối</span>
                       </div>
                       {/* Toggle Switch */}
@@ -573,7 +600,7 @@ export const Header: React.FC<HeaderProps> = ({
                   {/* Divider */}
                   <div className="relative z-20 my-1 border-t border-slate-100 dark:border-slate-800/80" />
 
-                  {/* Logout Action */}
+                  {/* Logout Action (Soft Danger) */}
                   <div className="relative z-20">
                     <button
                       type="button"
@@ -582,10 +609,12 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         setShowLogoutConfirm(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-rose-600 dark:text-rose-400 font-semibold hover:bg-rose-50/90 dark:hover:bg-rose-950/40 transition-all duration-150 cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-type-body-sm text-rose-600 dark:text-rose-400 font-semibold hover:bg-rose-50/80 dark:hover:bg-rose-950/40 transition-colors duration-150 cursor-pointer group"
                     >
-                      <div className="flex items-center gap-2.5">
-                        <LogOut className="h-4 w-4 text-rose-600 dark:text-rose-400 group-hover:translate-x-0.5 transition-transform duration-150" />
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400 group-hover:bg-rose-600 group-hover:text-white transition-colors duration-150">
+                          <LogOut className="h-4 w-4" />
+                        </div>
                         <span>Đăng xuất</span>
                       </div>
                     </button>
