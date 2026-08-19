@@ -252,27 +252,6 @@ export default function StudentExamTakePage() {
     triggerAutoSave(questionId, current.selectedOptionIds || [], current.textAnswer || '', current.isFlagged, current.version || 0, undefined, fillBlankAnswers);
   };
 
-  const handleEssayFile = async (questionId: string, file?: File) => {
-    if (!file) return;
-    const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
-    if (!token) return;
-    try {
-      setSyncState('SAVING');
-      const uploaded = await onlineExamService.uploadEssayFile(token, questionId, file);
-      setAnswers((prev) => ({
-        ...prev,
-        [questionId]: { ...(prev[questionId] || { selectedOptionIds: [], textAnswer: '', isFlagged: false, version: 0 }), files: [...(prev[questionId]?.files || []), uploaded] },
-      }));
-      setSyncState('SAVED');
-    } catch (e: any) {
-      setSyncState('OFFLINE');
-      setToast({
-        type: 'error',
-        message: e?.response?.data?.message || e?.message || 'Không thể tải tệp bài làm',
-      });
-    }
-  };
-
   const reportViolation = useCallback(async (eventType: string, reasonText: string, severity: 'LOW' | 'MEDIUM' | 'HIGH' = 'MEDIUM') => {
     const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
     if (!token || !attemptData?.config) return;
@@ -706,32 +685,31 @@ export default function StudentExamTakePage() {
                   )}
                 </div>
 
- {/* Answer area */}
- {currentQ.type === 'ESSAY' ? (
- <div className="space-y-3 pt-2">
- <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">Bài làm tự luận</label>
- <textarea
- value={currentAns.textAnswer || ''}
- onChange={(e) => handleEssayChange(currentQ.questionId, e.target.value)}
- className="min-h-[260px] w-full resize-y rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4 text-type-reading text-slate-800 dark:text-slate-200 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
- placeholder="Nhập bài làm của bạn..."
- />
- <div className="flex flex-wrap items-center justify-between gap-3 text-type-helper text-slate-500 dark:text-slate-400">
- <span>{(currentAns.textAnswer || '').length} ký tự · Tự động lưu khi nhập</span>
- <label className="cursor-pointer rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">
- Đính kèm PDF/DOCX/JPG/PNG
- <input type="file" accept=".pdf,.docx,.jpg,.jpeg,.png" className="hidden" onChange={(e) => handleEssayFile(currentQ.questionId, e.target.files?.[0])} />
- </label>
- </div>
- {(currentAns as any).files && (currentAns as any).files.length > 0 && (
- <div className="space-y-1 rounded-lg bg-blue-50 p-3 text-type-helper text-blue-800">
- {(currentAns as any).files.map((file: any) => (
- <div key={file.id || file.url}>📎 {file.fileName || 'Tệp bài làm'}</div>
- ))}
- </div>
- )}
- </div>
- ) : currentQ.type === 'FILL_BLANK' ? (
+                {/* Answer area */}
+                {currentQ.type === 'ESSAY' ? (
+                  <div className="space-y-3 pt-2">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">
+                        Nội dung bài làm tự luận
+                      </label>
+                      <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">
+                        {(currentAns.textAnswer || '').length} ký tự
+                      </span>
+                    </div>
+                    <textarea
+                      value={currentAns.textAnswer || ''}
+                      onChange={(e) => handleEssayChange(currentQ.questionId, e.target.value)}
+                      className="min-h-[280px] w-full resize-y rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4 text-type-reading font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-950/40"
+                      placeholder="Nhập trực tiếp câu trả lời tự luận của bạn vào đây..."
+                    />
+                    <div className="flex items-center justify-between text-type-helper text-slate-500 dark:text-slate-400">
+                      <span className="flex items-center gap-1.5">
+                        <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
+                        Tự động lưu bài làm theo thời gian thực khi bạn nhập
+                      </span>
+                    </div>
+                  </div>
+                ) : currentQ.type === 'FILL_BLANK' ? (
  <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/60 p-4 text-type-helper font-normal text-slate-600 dark:text-slate-300 space-y-1">
  <p>💡 <strong>Hướng dẫn:</strong> Nhập trực tiếp đáp án vào từng ô trống trong câu hỏi phía trên. Hệ thống tự động ghi nhận và lưu bài làm của bạn khi bạn nhập.</p>
  </div>
