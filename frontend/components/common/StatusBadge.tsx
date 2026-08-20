@@ -4,7 +4,7 @@ import React from 'react';
 import {
   AlertCircle, AlertTriangle, Archive, BookOpen, CheckCircle2, CheckSquare,
   Clock, Eye, FileEdit, HelpCircle, Lock, Monitor, PlayCircle, ShieldCheck,
-  UserCheck, XCircle, RefreshCw, Zap,
+  UserCheck, XCircle, RefreshCw, Zap, FileText,
 } from 'lucide-react';
 
 export type StatusType =
@@ -12,7 +12,7 @@ export type StatusType =
   | 'CHANGE_REQUESTED' | 'WAITING_APPROVAL' | 'PENDING' | 'GRADING'
   | 'IN_PROGRESS' | 'SCHEDULED' | 'UPCOMING' | 'ONGOING' | 'CANCELLED'
   | 'REJECTED' | 'ABSENT' | 'ARCHIVED' | 'LOCKED' | 'SUBMITTED' | 'GRADED'
-  | 'UNDER_REVIEW' | 'AUTO_SUBMITTED' | 'NOT_STARTED' | 'MAINTENANCE' | 'BUSY'
+  | 'UNDER_REVIEW' | 'UNDER_GRADING' | 'AUTO_SUBMITTED' | 'NOT_SUBMITTED' | 'NOT_STARTED' | 'MAINTENANCE' | 'BUSY'
   | 'IN_USE' | 'ROOM_COMPUTER' | 'ROOM_THEORY' | 'DISCONNECTED' | 'DEVICE_CHECK'
   | 'RUNNING' | 'PROCESSING' | 'SUCCEEDED' | 'FAILED' | 'ACTIVE' | 'PENDING_VERIFY'
   | 'INACTIVE' | 'NEW' | 'ACCEPTED' | 'PASSED' | 'NOT_PASSED' | 'UNPUBLISHED';
@@ -87,6 +87,8 @@ const statusConfigs: Record<string, StatusConfig> = {
   IN_USE: { label: 'Đang sử dụng', category: 'info', icon: UserCheck },
   DEVICE_CHECK: { label: 'Đang kiểm tra thiết bị', category: 'info', icon: Monitor },
   GRADING: { label: 'Đang chấm thi', category: 'info', icon: Clock },
+  UNDER_GRADING: { label: 'Đang chấm bài', category: 'info', icon: Clock },
+  NOT_SUBMITTED: { label: 'Chưa nộp bài', category: 'neutral', icon: FileText },
   CHANGE_REQUESTED: { label: 'Cần chỉnh sửa', category: 'info', icon: AlertCircle },
   RUNNING: { label: 'Đang chạy', category: 'info', icon: RefreshCw },
   PROCESSING: { label: 'Đang xử lý', category: 'info', icon: RefreshCw },

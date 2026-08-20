@@ -784,7 +784,7 @@ function AdminEssayReviewContent() {
                                   : 'text-slate-400 text-type-helper'
                             }`}
                           >
-                            {notSub ? 'Chưa nộp' : r.totalScore !== undefined && r.totalScore !== null ? `${r.totalScore}đ` : '--'}
+                            {notSub ? 'Chưa nộp' : r.totalScore !== undefined && r.totalScore !== null ? `${r.totalScore}đ` : 'Chưa có điểm'}
                           </span>
                         </div>
 
@@ -879,7 +879,7 @@ function AdminEssayReviewContent() {
                 <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
                   <div className="text-right">
                     <span className="text-type-section tabular-nums font-semibold text-slate-900 dark:text-slate-100">
-                      {isEditMode ? currentTotalCalculatedScore : (selected.totalScore ?? '--')}{' '}
+                      {isEditMode ? currentTotalCalculatedScore : (selected.totalScore ?? 'Chưa có điểm')}{' '}
                       <span className="text-type-helper text-slate-500 font-normal">/ {selected.maxScore || 10}đ</span>
                     </span>
                     {selected.penaltyPoints > 0 && (
@@ -1089,7 +1089,7 @@ function AdminEssayReviewContent() {
                             <span>Xem Rubric & Đáp án</span>
                           </button>
                           <span className="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold tabular-nums text-type-body-sm text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 shrink-0">
-                            {isEditMode ? currentQuestionCalculatedScore : (ans?.finalScore ?? '--')}{' '}
+                                {isEditMode ? currentQuestionCalculatedScore : (ans?.finalScore ?? 'Chưa có điểm')}{' '}
                             <span className="text-type-helper font-normal text-slate-400">/ {q.score}đ</span>
                           </span>
                         </div>
@@ -1301,7 +1301,7 @@ function AdminEssayReviewContent() {
                                 <span className="font-semibold text-slate-800 dark:text-slate-200">
                                   {new Date(h.createdAt).toLocaleString('vi-VN')}:
                                 </span>{' '}
-                                Điểm cũ {h.oldScore ?? '--'} → Điểm mới{' '}
+                                Điểm cũ {h.oldScore ?? 'Chưa có điểm'} → Điểm mới{' '}
                                 <strong className="text-blue-600 dark:text-blue-400">{h.newScore}đ</strong> ({h.reason || 'Sửa điểm'}) bởi{' '}
                                 <span className="font-medium text-slate-700 dark:text-slate-300">{h.actor?.username || 'Admin'}</span>
                               </div>
