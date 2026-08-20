@@ -4,6 +4,7 @@ import {
   BadRequestException,
   NotFoundException,
   ConflictException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
@@ -296,6 +297,26 @@ export class AuthService {
     return { clientId, clientSecret, redirectUri };
   }
 
+  private async fetchGoogle(url: string, options: RequestInit, operation: string) {
+    const configuredTimeout = Number(process.env.GOOGLE_OAUTH_TIMEOUT_MS || 10_000);
+    const timeoutMs = Number.isFinite(configuredTimeout)
+      ? Math.min(Math.max(configuredTimeout, 1_000), 30_000)
+      : 10_000;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } catch (error: any) {
+      if (error?.name === 'AbortError') {
+        throw new ServiceUnavailableException(`Google phản hồi quá chậm khi ${operation}. Vui lòng thử lại.`);
+      }
+      throw error;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
   /**
    * Generates Google OAuth redirect URL
    */
@@ -373,7 +394,7 @@ export class AuthService {
     }
 
     try {
-      const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+      const tokenRes = await this.fetchGoogle('https://oauth2.googleapis.com/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
@@ -383,7 +404,7 @@ export class AuthService {
           redirect_uri: redirectUri,
           grant_type: 'authorization_code',
         }),
-      });
+      }, 'xác thực tài khoản');
 
       if (!tokenRes.ok) {
         const errorData = (await tokenRes.json().catch(() => ({}))) as any;
@@ -393,9 +414,9 @@ export class AuthService {
       const tokenData = (await tokenRes.json()) as any;
       const accessToken = tokenData.access_token;
 
-      const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+      const userRes = await this.fetchGoogle('https://www.googleapis.com/oauth2/v2/userinfo', {
         headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      }, 'lấy thông tin tài khoản');
 
       if (!userRes.ok) {
         throw new BadRequestException('Không lấy được thông tin tài khoản Google.');
@@ -404,7 +425,7 @@ export class AuthService {
       const googleUser = (await userRes.json()) as any;
       return this.validateGoogleEmail(googleUser.email);
     } catch (err: any) {
-      if (err instanceof UnauthorizedException || err instanceof BadRequestException) {
+      if (err instanceof UnauthorizedException || err instanceof BadRequestException || err instanceof ServiceUnavailableException) {
         throw err;
       }
       throw new BadRequestException(`Lỗi đăng nhập Google: ${err.message || 'Không xác định'}`);
@@ -420,7 +441,7 @@ export class AuthService {
     }
 
     try {
-      const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
+      const res = await this.fetchGoogle(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`, {}, 'xác thực phiên Google');
       if (!res.ok) {
         throw new BadRequestException('Google ID Token không hợp lệ hoặc đã hết hạn.');
       }
@@ -434,7 +455,7 @@ export class AuthService {
       }
       return this.validateGoogleEmail(data.email);
     } catch (err: any) {
-      if (err instanceof UnauthorizedException || err instanceof BadRequestException) {
+      if (err instanceof UnauthorizedException || err instanceof BadRequestException || err instanceof ServiceUnavailableException) {
         throw err;
       }
       throw new BadRequestException(`Lỗi xác thực Google ID Token: ${err.message || 'Không xác định'}`);

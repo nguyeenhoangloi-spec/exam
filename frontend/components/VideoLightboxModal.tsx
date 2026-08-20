@@ -59,18 +59,18 @@ export const VideoLightboxModal: React.FC<VideoLightboxModalProps> = ({ videoUrl
       className="ui-dark-surface fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/95 backdrop-blur-md p-4 animate-fade-in"
       onClick={onClose}
     >
-      {/* Top bar controls - Bỏ chữ, chỉ gồm nút chức năng */}
+      {/* Top bar controls - Thuần icon tinh tế, không khung viền hộp */}
       <div
-        className="absolute top-4 right-4 z-10 flex items-center gap-2 rounded-2xl bg-slate-900/80 p-2 text-white shadow-xl backdrop-blur-md"
+        className="absolute top-4 right-4 z-10 flex items-center gap-1 text-white"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           onClick={toggleFullscreen}
           title={isFullscreen ? 'Thoát toàn màn hình' : 'Toàn màn hình'}
-          className="rounded-xl p-2 text-slate-300 hover:bg-slate-800 hover:text-white transition cursor-pointer"
+          className="p-2 text-white/80 hover:text-white drop-shadow-md hover:scale-110 active:scale-95 transition cursor-pointer rounded-xl"
         >
-          {isFullscreen ? <Minimize2 className="h-5 w-5 text-blue-400" /> : <Maximize2 className="h-5 w-5 text-blue-400" />}
+          {isFullscreen ? <Minimize2 className="h-5 w-5 text-blue-400" /> : <Maximize2 className="h-5 w-5" />}
         </button>
 
         <a
@@ -79,18 +79,16 @@ export const VideoLightboxModal: React.FC<VideoLightboxModalProps> = ({ videoUrl
           rel="noopener noreferrer"
           download
           title="Tải video"
-          className="rounded-xl p-2 text-slate-300 hover:bg-slate-800 hover:text-white transition"
+          className="p-2 text-white/80 hover:text-white drop-shadow-md hover:scale-110 active:scale-95 transition rounded-xl"
         >
           <Download className="h-5 w-5" />
         </a>
-
-        <div className="h-5 w-px bg-slate-700/60 mx-1" />
 
         <button
           type="button"
           onClick={onClose}
           title="Đóng (Esc)"
-          className="rounded-xl bg-rose-600/80 p-2 text-white hover:bg-rose-600 transition cursor-pointer"
+          className="p-2 text-white/80 hover:text-rose-400 drop-shadow-md hover:scale-110 active:scale-95 transition cursor-pointer rounded-xl"
         >
           <X className="h-5 w-5" />
         </button>

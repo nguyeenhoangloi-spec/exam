@@ -819,17 +819,24 @@ export function QuestionImportWizard({
                       );
                     })()}
 
-                    {/* Explanation */}
-                    <div className="space-y-1 bg-slate-50 border border-slate-200 p-2.5 rounded-xl">
-                      <div className="text-type-helper font-semibold text-slate-800">
-                        <span>Hướng dẫn đáp án / Gợi ý chấm:</span>
+                    {/* Explanation / Sample Answer */}
+                    <div className={`space-y-1.5 p-3 rounded-xl border ${q.type === 'ESSAY' ? 'bg-emerald-50/40 border-emerald-200' : 'bg-slate-50 border-slate-200'}`}>
+                      <div className="flex items-center justify-between text-type-helper font-semibold">
+                        <span className={q.type === 'ESSAY' ? 'text-emerald-950 font-semibold' : 'text-slate-800'}>
+                          {q.type === 'ESSAY' ? 'Đáp án mẫu chuẩn / Hướng dẫn giải chi tiết (Tự luận):' : 'Hướng dẫn đáp án / Giải thích:'}
+                        </span>
+                        {q.type === 'ESSAY' && (
+                          <span className="text-type-helper text-emerald-700 font-normal">
+                            Căn cứ dùng để chấm điểm
+                          </span>
+                        )}
                       </div>
                       <textarea
                         value={q.explanation || ''}
                         onChange={(e) => editRow(r, 'explanation', e.target.value)}
-                        rows={2}
-                        className="w-full rounded-xl border border-slate-200 bg-white p-2 text-type-body font-normal text-slate-800 focus:border-blue-500 focus:outline-none"
-                        placeholder={q.type === 'ESSAY' ? 'Đáp án mẫu hoặc hướng dẫn chấm tự luận...' : 'Giải thích đáp án...'}
+                        rows={q.type === 'ESSAY' ? 3 : 2}
+                        className="w-full rounded-xl border border-slate-200 bg-white p-2.5 text-type-body font-normal text-slate-800 focus:border-blue-500 focus:outline-none"
+                        placeholder={q.type === 'ESSAY' ? 'Nhập hoặc chỉnh sửa đáp án mẫu chi tiết của câu tự luận...' : 'Giải thích đáp án...'}
                       />
                     </div>
 

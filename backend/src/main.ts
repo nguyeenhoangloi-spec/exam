@@ -11,26 +11,51 @@ import { verifyUploadSignature } from './common/security/file-signing';
 const rateBuckets = new Map<string, { count: number; resetAt: number }>();
 
 function rateLimit(req: express.Request, res: express.Response, next: express.NextFunction) {
-  // In development, do not rate-limit requests so testing and fast page reloads never get blocked
-  if (process.env.NODE_ENV !== 'production') {
+  // Production is protected by default. Local load testing can explicitly enable
+  // the same guard with RATE_LIMIT_ENABLED=true without slowing normal development.
+  if (process.env.NODE_ENV !== 'production' && process.env.RATE_LIMIT_ENABLED !== 'true') {
     return next();
   }
 
   const now = Date.now();
   const ip = String(req.ip || req.headers['x-forwarded-for'] || 'unknown').split(',')[0].trim();
   const isCredentialAction = /^\/auth\/(login|forgot-password|verify-otp|reset-password)$/.test(req.path);
-  const isSessionAction = /^\/auth\/(google|refresh)/.test(req.path);
+  const isGoogleStart = req.path === '/auth/google';
+  const isGoogleCallback = req.path === '/auth/google/callback';
+  const isRefresh = req.path === '/auth/refresh';
+  const isSessionAction = isGoogleStart || isGoogleCallback || isRefresh;
   const isContactAction = req.path === '/contact/send';
   const isSensitive = isCredentialAction || isSessionAction || isContactAction;
   const windowMs = isSensitive ? 15 * 60 * 1000 : 60 * 1000;
-  const max = isCredentialAction ? 10 : isContactAction ? 20 : isSessionAction ? 120 : 600;
+  const max = isCredentialAction
+    ? 10
+    : isGoogleStart
+      ? 10
+      : isGoogleCallback
+        ? 30
+        : isRefresh
+          ? 60
+          : isContactAction
+            ? 20
+            : 600;
   const identity = String(
     req.body?.username
       || req.body?.identifier
       || req.body?.resetSessionId
       || 'anonymous',
   ).trim().toLowerCase().slice(0, 160);
-  const key = `${isCredentialAction ? `credential:${identity}` : isContactAction ? 'contact' : isSessionAction ? 'session' : 'api'}:${ip}`;
+  const scope = isCredentialAction
+    ? `credential:${identity}`
+    : isGoogleStart
+      ? 'oauth-start'
+      : isGoogleCallback
+        ? 'oauth-callback'
+        : isRefresh
+          ? 'session-refresh'
+          : isContactAction
+            ? 'contact'
+            : 'api';
+  const key = `${scope}:${ip}`;
   const current = rateBuckets.get(key);
   const bucket = !current || current.resetAt <= now
     ? { count: 0, resetAt: now + windowMs }

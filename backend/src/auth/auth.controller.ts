@@ -103,13 +103,25 @@ export class AuthController {
 
   @Public()
   @Get('google/callback')
-  async googleAuthCallback(@Request() req: any, @Query('code') code: string, @Query('state') state: string, @Res() res: Response) {
+  async googleAuthCallback(
+    @Request() req: any,
+    @Query('code') code: string,
+    @Query('state') state: string,
+    @Query('error') oauthError: string,
+    @Res() res: Response,
+  ) {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     try {
       const expectedState = this.readCookie(req, this.oauthStateCookieName);
       res.clearCookie(this.oauthStateCookieName, { path: '/auth/google/callback' });
       if (!this.validOAuthState(state, expectedState)) {
         throw new BadRequestException('Phiên đăng nhập Google không hợp lệ hoặc đã hết hạn.');
+      }
+      if (oauthError === 'access_denied') {
+        return res.redirect(`${frontendUrl}/login?google_error=${encodeURIComponent('Bạn đã hủy đăng nhập Google.')}`);
+      }
+      if (oauthError || !code) {
+        throw new BadRequestException('Google không thể hoàn tất đăng nhập. Vui lòng thử lại.');
       }
       const result = await this.authService.handleGoogleCallback(code);
       this.sendSession(result, res);

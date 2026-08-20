@@ -120,7 +120,7 @@ function parseStructuredQuestionText(rawText: string, defaultType = 'SINGLE_CHOI
         answerLabel = answer[1].toUpperCase();
         continue;
       }
-      const explanationMatch = line.match(/^(?:giải\s*thích|hướng\s*dẫn(?:\s*đáp\s*án)?|gợi\s*ý\s*chấm|explanation|lời\s*giải)\s*[:.)-]?\s*(.*)$/iu);
+      const explanationMatch = line.match(/^(?:đáp\s*án(?:\s*mẫu)?|hướng\s*dẫn\s*chấm|bài\s*giải|lời\s*giải(?:\s*chi\s*tiết)?|giải\s*thích|hướng\s*dẫn(?:\s*đáp\s*án)?|gợi\s*ý\s*chấm|explanation)\s*[:.)-]?\s*(.*)$/iu);
       if (explanationMatch) {
         explanation = explanationMatch[1].trim();
         continue;
@@ -140,6 +140,10 @@ function parseStructuredQuestionText(rawText: string, defaultType = 'SINGLE_CHOI
       } else {
         content += `\n${line}`;
       }
+    }
+
+    if (defaultType === 'ESSAY' && !explanation && keyAnswer) {
+      explanation = keyAnswer;
     }
 
     if (!answerLabel && keyAnswer && /^[A-Z]$/i.test(keyAnswer)) {
@@ -407,7 +411,9 @@ export class AiQuestionsService {
              - BẮT BUỘC trả về danh sách đáp án tương ứng trong "fillBlankAnswers": [{"blankIndex": 1, "answer": "đáp_án_chính_xác", "acceptedAnswers": [], "score": 0.25}].
              - NẾU TRONG TÀI LIỆU KHÔNG CÓ SẴN ĐÁP ÁN HOẶC BỊ THIẾU: Bạn BẮT BUỘC phải dựa vào kiến thức môn học ${subject.subjectName} để TỰ ĐỘNG ĐIỀN ĐÁP ÁN ĐÚNG NGHĨA VÀ CHÍNH XÁC NHẤT vào trường "answer" của "fillBlankAnswers" (Tuyệt đối KHÔNG ĐƯỢC để trường "answer" bị rỗng hoặc để trống).`
           : input.type === 'ESSAY'
-            ? `3. Dạng TỰ LUẬN. Đặt options: []. Trích xuất hoặc tự biên soạn hướng dẫn đáp án mẫu chuẩn xác vào "explanation".`
+            ? `3. Dạng TỰ LUẬN (ESSAY):
+             - Đặt options: [].
+             - Trường "explanation" BẮT BUỘC phải là: ĐÁP ÁN MẪU HOÀN CHỈNH, CHÍNH XÁC VÀ CHI TIẾT (Sample/Model Answer), giải quyết trọn vẹn toàn bộ yêu cầu của câu hỏi với đầy đủ các ý chính, bước lập luận, định nghĩa, công thức hoặc giải pháp cụ thể (TUYỆT ĐỐI KHÔNG CHỈ VIẾT GỢI Ý CHUNG CHUNG).`
             : `3. Dạng TRẮC NGHIỆM: Trích xuất danh sách các lựa chọn A, B, C, D... Đánh dấu isCorrect: true cho đáp án đúng (dựa vào phần đáp án ở cuối tài liệu hoặc tự giải).`,
         `4. Nếu câu hỏi gắn với hình, thêm imageIndexes là mảng chỉ số ảnh (bắt đầu từ 0); nếu không thì [].`,
         `5. CHỈ TRẢ VỀ DẠNG JSON duy nhất: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","imageIndexes":[],"options":[],"fillBlankAnswers":[{"blankIndex":1,"answer":"đáp án","acceptedAnswers":[]}]}]}.`,
@@ -421,6 +427,7 @@ export class AiQuestionsService {
         'Chỉ trả JSON: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","options":[{"label":"A","content":"","isCorrect":true,"order":0}],"fillBlankAnswers":[{"blankIndex":1,"answer":"","acceptedAnswers":[]}]}]}.',
         'SINGLE_CHOICE đúng 1 đáp án; MULTIPLE_CHOICE ít nhất 1; TRUE_FALSE đúng 2 lựa chọn; FILL_BLANK và ESSAY dùng options rỗng.',
         input.type === 'FILL_BLANK' ? 'For FILL_BLANK, content must contain {{blank_1}}, {{blank_2}} and output fillBlankAnswers:[{blankIndex:1,answer:"answer",acceptedAnswers:[],score:0.25}]. options must be [] and blank scores must equal question score.' : '',
+        input.type === 'ESSAY' ? 'For ESSAY (Tự luận): options must be []. In "explanation", you MUST provide a COMPREHENSIVE, COMPLETE AND PRECISE MODEL/SAMPLE ANSWER (ĐÁP ÁN MẪU CHI TIẾT ĐẦY ĐỦ) that thoroughly solves the question with clear points/steps. DO NOT write vague hints or generic suggestions.' : '',
       ].filter(Boolean).join('\n');
     let rawQuestions: any[] = [];
     try {

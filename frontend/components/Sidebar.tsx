@@ -337,8 +337,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Accordion Group Header */}
               {group.group && (
                 <div
-                  className={`transition-[max-height,opacity] duration-200 ease-out overflow-hidden ${collapsed ? 'max-h-0 opacity-0 my-0 py-0 pointer-events-none' : 'max-h-10 opacity-100 pt-1.5 pb-0.5'
-                    }`}
+                  className={`transition-[max-height,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${
+                    collapsed ? 'max-h-0 opacity-0 my-0 py-0 pointer-events-none' : 'max-h-10 opacity-100 pt-1.5 pb-0.5'
+                  }`}
                 >
                   <button
                     type="button"
@@ -347,22 +348,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   >
                     <span className="truncate">{group.group}</span>
                     <ChevronRight
-                      className={`sidebar-icon h-3.5 w-3.5 shrink-0 transition-transform duration-200 ease-out ${isExpanded ? 'rotate-90' : 'rotate-0'
-                        }`}
+                      className={`sidebar-icon h-3.5 w-3.5 shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                        isExpanded ? 'rotate-90' : 'rotate-0'
+                      }`}
                       strokeWidth={1.5}
                     />
                   </button>
                 </div>
               )}
 
-              {/* Group Items — Co giãn trượt mở 60FPS bằng CSS Grid */}
+              {/* Group Items — Co giãn trượt mở 60FPS mượt mà bằng CSS Grid & Cascade */}
               <div
-                className={`grid transition-[grid-template-rows,opacity] duration-250 ease-out ${isExpanded || collapsed || !group.group
+                className={`grid transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                  isExpanded || collapsed || !group.group
                     ? 'grid-rows-[1fr] opacity-100'
                     : 'grid-rows-[0fr] opacity-0 pointer-events-none'
-                  }`}
+                }`}
               >
-                <div className="overflow-hidden space-y-1 w-full">
+                <div
+                  className={`overflow-hidden space-y-1 w-full transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    isExpanded || collapsed || !group.group
+                      ? 'opacity-100 translate-y-0'
+                      : 'opacity-0 -translate-y-1'
+                  }`}
+                >
                   {group.items.map((item) => {
                     const Icon = item.icon;
                     const isActive = isItemActive(item.href);
@@ -386,31 +395,35 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             }}
                             onMouseEnter={(e) => handleItemMouseEnter(item, group.group, e.currentTarget)}
                             onMouseLeave={handleItemMouseLeave}
-                            className={`group relative w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-type-body-sm transition-colors duration-150 cursor-pointer overflow-hidden ${isActive
-                                ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold shadow-md shadow-blue-600/25'
+                            className={`group relative w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-type-body-sm transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] cursor-pointer overflow-hidden active:scale-[0.98] active:translate-x-0.5 ${
+                              isActive
+                                ? 'bg-gradient-to-r from-blue-600 via-blue-600 to-blue-700 text-white font-semibold shadow-md shadow-blue-600/25'
                                 : 'sidebar-text hover:bg-slate-100/90 dark:hover:bg-slate-800/80 hover:text-blue-600 dark:hover:text-blue-400 font-medium'
-                              }`}
+                            }`}
                           >
                             {/* Magnetic Pill Indicator */}
                             <span
-                              className={`absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full transition-[opacity,height] duration-200 ease-out ${isActive
-                                  ? 'w-1.5 h-5 bg-white/95 shadow-xs opacity-100'
-                                  : 'w-1 h-3.5 bg-blue-500/50 opacity-0 group-hover:opacity-100'
-                                }`}
+                              className={`absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                                isActive
+                                  ? 'w-1.5 h-5 bg-white/95 shadow-[0_0_8px_rgba(255,255,255,0.7)] opacity-100'
+                                  : 'w-1 h-3 bg-blue-500/60 opacity-0 group-hover:opacity-100 group-hover:h-4.5'
+                              }`}
                             />
 
                             <div className="flex items-center gap-2.5 min-w-0">
                               <div
-                                className={`flex h-8 w-8 shrink-0 items-center justify-center transition-colors duration-150 ${isActive
-                                    ? 'text-white'
+                                className={`flex h-8 w-8 shrink-0 items-center justify-center transition-all duration-200 ease-out group-hover:scale-105 group-hover:translate-x-0.5 group-active:scale-95 ${
+                                  isActive
+                                    ? 'text-white drop-shadow-xs'
                                     : 'sidebar-icon group-hover:text-blue-600 dark:group-hover:text-blue-400'
-                                  }`}
+                                }`}
                               >
                                 <Icon className="h-4.5 w-4.5" strokeWidth={1.5} />
                               </div>
                               <span
-                                className={`whitespace-nowrap overflow-hidden transition-[opacity,transform] duration-200 ease-out ${collapsed ? 'opacity-0 pointer-events-none -translate-x-1.5' : 'opacity-100 translate-x-0'
-                                  }`}
+                                className={`whitespace-nowrap overflow-hidden transition-[opacity,transform] duration-200 ease-out ${
+                                  collapsed ? 'opacity-0 pointer-events-none -translate-x-1.5' : 'opacity-100 translate-x-0'
+                                }`}
                               >
                                 {item.name}
                               </span>
@@ -432,25 +445,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                   }
                                 }
                               }}
-                              className={`flex h-7 w-7 items-center justify-center rounded-xl shrink-0 transition-[opacity,transform,background-color] duration-150 ${isActive ? 'hover:bg-white/20' : 'hover:bg-black/10 dark:hover:bg-white/10'
-                                } ${collapsed ? 'opacity-0 pointer-events-none scale-75' : 'opacity-100 scale-100'}`}
+                              className={`flex h-7 w-7 items-center justify-center rounded-xl shrink-0 transition-all duration-150 active:scale-90 ${
+                                isActive ? 'hover:bg-white/20' : 'hover:bg-black/10 dark:hover:bg-white/10'
+                              } ${collapsed ? 'opacity-0 pointer-events-none scale-75' : 'opacity-100 scale-100'}`}
                             >
                               <ChevronRight
-                                className={`h-4 w-4 transition-transform duration-200 ease-out ${isActive ? 'text-white' : 'sidebar-icon group-hover:text-blue-600 dark:group-hover:text-blue-400'
-                                  } ${isSubOpen ? 'rotate-90' : 'rotate-0'}`}
+                                className={`h-4 w-4 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                                  isActive ? 'text-white' : 'sidebar-icon group-hover:text-blue-600 dark:group-hover:text-blue-400'
+                                } ${isSubOpen ? 'rotate-90' : 'rotate-0'}`}
                                 strokeWidth={1.5}
                               />
                             </div>
                           </button>
 
-                          {/* Submenu Children Links — Co giãn trượt êm 60 FPS */}
+                          {/* Submenu Children Links — Co giãn trượt êm ái 60 FPS kèm tree line guide */}
                           <div
-                            className={`grid transition-[grid-template-rows,opacity] duration-250 ease-out ${!collapsed && isSubOpen
+                            className={`grid transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                              !collapsed && isSubOpen
                                 ? 'grid-rows-[1fr] opacity-100'
                                 : 'grid-rows-[0fr] opacity-0 pointer-events-none'
-                              }`}
+                            }`}
                           >
-                            <div className="overflow-hidden pl-9 space-y-1 pt-1">
+                            <div
+                              className={`overflow-hidden pl-4 ml-4.5 border-l border-slate-200/80 dark:border-slate-800/80 space-y-1 pt-1 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                                !collapsed && isSubOpen
+                                  ? 'opacity-100 translate-y-0'
+                                  : 'opacity-0 -translate-y-1'
+                              }`}
+                            >
                               {item.children?.map((sub) => {
                                 const isSubActive = isSubItemActive(sub.href);
                                 return (
@@ -458,12 +480,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     key={sub.href}
                                     href={sub.href}
                                     prefetch={true}
-                                    className={`group/sub flex items-center justify-between px-3 py-1.5 rounded-lg text-type-helper font-medium transition-colors duration-150 ${isSubActive
-                                        ? 'sidebar-active-text font-semibold bg-blue-50/80 dark:bg-blue-950/50 border-l-2 border-blue-600 dark:border-blue-500 pl-2.5 shadow-2xs'
+                                    className={`group/sub flex items-center justify-between px-3 py-1.5 rounded-lg text-type-helper font-medium transition-all duration-150 ease-out active:scale-[0.97] active:translate-x-1 ${
+                                      isSubActive
+                                        ? 'sidebar-active-text font-semibold bg-blue-50/90 dark:bg-blue-950/60 border-l-[3px] border-blue-600 dark:border-blue-500 pl-2.5 shadow-2xs'
                                         : 'sidebar-text hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/50'
-                                      }`}
+                                    }`}
                                   >
-                                    <span className="truncate">{sub.name}</span>
+                                    <span className="truncate flex-1">{sub.name}</span>
+                                    {isSubActive && (
+                                      <span className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 shrink-0 shadow-[0_0_6px_rgba(37,99,235,0.6)]" />
+                                    )}
                                   </Link>
                                 );
                               })}
@@ -481,23 +507,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         prefetch={true}
                         onMouseEnter={(e) => handleItemMouseEnter(item, group.group, e.currentTarget)}
                         onMouseLeave={handleItemMouseLeave}
-                        className={`group relative flex items-center justify-between px-2.5 py-2 rounded-xl text-type-body-sm transition-colors duration-150 overflow-hidden ${isActive
-                            ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold shadow-md shadow-blue-600/25'
+                        className={`group relative flex items-center justify-between px-2.5 py-2 rounded-xl text-type-body-sm transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden active:scale-[0.98] active:translate-x-0.5 ${isActive
+                            ? 'bg-gradient-to-r from-blue-600 via-blue-600 to-blue-700 text-white font-semibold shadow-md shadow-blue-600/25'
                             : 'sidebar-text hover:bg-slate-100/90 dark:hover:bg-slate-800/80 hover:text-blue-600 dark:hover:text-blue-400 font-medium'
                           }`}
                       >
                         {/* Magnetic Pill Indicator */}
                         <span
-                          className={`absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full transition-[opacity,height] duration-200 ease-out ${isActive
-                              ? 'w-1.5 h-5 bg-white/95 shadow-xs opacity-100'
-                              : 'w-1 h-3.5 bg-blue-500/50 opacity-0 group-hover:opacity-100'
+                          className={`absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isActive
+                              ? 'w-1.5 h-5 bg-white/95 shadow-[0_0_8px_rgba(255,255,255,0.7)] opacity-100'
+                              : 'w-1 h-3 bg-blue-500/60 opacity-0 group-hover:opacity-100 group-hover:h-4.5'
                             }`}
                         />
 
                         <div className="flex items-center gap-2.5 min-w-0">
                           <div
-                            className={`flex h-8 w-8 shrink-0 items-center justify-center transition-colors duration-150 ${isActive
-                                ? 'text-white'
+                            className={`flex h-8 w-8 shrink-0 items-center justify-center transition-all duration-200 ease-out group-hover:scale-105 group-hover:translate-x-0.5 group-active:scale-95 ${isActive
+                                ? 'text-white drop-shadow-xs'
                                 : 'sidebar-icon group-hover:text-blue-600 dark:group-hover:text-blue-400'
                               }`}
                           >
@@ -579,12 +605,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     href={sub.href}
                     prefetch={true}
                     onClick={() => setHoveredNav(null)}
-                    className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-type-helper font-medium transition-colors ${isSubActive
-                        ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold'
+                    className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-type-helper font-medium transition-all duration-150 active:scale-[0.97] ${isSubActive
+                        ? 'bg-blue-50/90 dark:bg-blue-950/70 text-blue-600 dark:text-blue-400 font-semibold border-l-2 border-blue-600 dark:border-blue-500 pl-2'
                         : 'sidebar-text hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400'
                       }`}
                   >
-                    <span className="truncate">{sub.name}</span>
+                    <span className="truncate flex-1">{sub.name}</span>
+                    {isSubActive && (
+                      <span className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 shrink-0 shadow-[0_0_6px_rgba(37,99,235,0.6)]" />
+                    )}
                   </Link>
                 );
               })}

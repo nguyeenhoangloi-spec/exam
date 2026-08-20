@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import api from '../../lib/api';
@@ -38,6 +38,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showManualLogin, setShowManualLogin] = useState(false);
   const [loading, setLoading] = useState(false);
+  const googleLoginInFlight = useRef(false);
   const [isDark, setIsDark] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
@@ -52,7 +53,14 @@ export default function LoginPage() {
     const googleError = params.get('google_error');
 
     if (googleError) {
-      const message = decodeURIComponent(googleError);
+      let message = 'Đăng nhập Google đã bị hủy hoặc không thể hoàn tất.';
+      try {
+        message = decodeURIComponent(googleError);
+      } catch {
+        // Keep a safe fallback when the callback contains malformed encoding.
+      }
+      googleLoginInFlight.current = false;
+      setLoading(false);
       setToast({ message, type: 'error' });
       window.history.replaceState({}, document.title, window.location.pathname);
       return;
@@ -66,6 +74,8 @@ export default function LoginPage() {
           const { accessToken, user } = res.data || {};
           if (!accessToken || !user) throw new Error('Invalid Google session');
           setAuthToken(accessToken, user);
+          googleLoginInFlight.current = false;
+          setLoading(false);
           setToast({ message: 'Đăng nhập bằng Google thành công!', type: 'success' });
           const destination =
             user.role === 'ADMIN'
@@ -75,7 +85,11 @@ export default function LoginPage() {
               : '/student/exam-schedule';
           router.replace(destination);
         })
-        .catch(() => setToast({ message: 'Không thể hoàn tất phiên đăng nhập Google.', type: 'error' }));
+        .catch(() => {
+          googleLoginInFlight.current = false;
+          setLoading(false);
+          setToast({ message: 'Không thể hoàn tất phiên đăng nhập Google.', type: 'error' });
+        });
       return;
     }
 
@@ -92,6 +106,18 @@ export default function LoginPage() {
     }
   }, [router]);
 
+  useEffect(() => {
+    const resetGoogleLoginState = () => {
+      googleLoginInFlight.current = false;
+      setLoading(false);
+    };
+
+    // Browsers may restore /login from the back-forward cache after the user
+    // cancels or backs out of the Google account chooser.
+    window.addEventListener('pageshow', resetGoogleLoginState);
+    return () => window.removeEventListener('pageshow', resetGoogleLoginState);
+  }, []);
+
   const toggleDark = useCallback(() => {
     setIsDark((previous) => {
       const next = !previous;
@@ -102,6 +128,8 @@ export default function LoginPage() {
   }, []);
 
   const handleGoogleLogin = useCallback(() => {
+    if (googleLoginInFlight.current) return;
+    googleLoginInFlight.current = true;
     setLoading(true);
     const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
     window.location.href = `${apiBase}/auth/google`;
@@ -520,9 +548,9 @@ export default function LoginPage() {
               disabled={loading}
               className={`group relative flex h-[50px] w-full items-center justify-center gap-3 rounded-2xl px-5 text-type-body font-semibold transition-all duration-200 cursor-pointer overflow-hidden ${
                 isDark
-                  ? 'border border-slate-700/80 bg-gradient-to-b from-slate-800 to-slate-850 text-slate-100 shadow-[0_4px_16px_rgba(0,0,0,0.45),0_1px_2px_rgba(0,0,0,0.3)] hover:border-blue-500/70 hover:from-slate-750 hover:to-slate-800 hover:shadow-[0_12px_28px_-4px_rgba(66,133,244,0.3)]'
-                  : 'border border-slate-200/90 bg-gradient-to-b from-white via-white to-slate-50/90 text-slate-800 shadow-[0_4px_14px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.03)] hover:border-blue-300 hover:from-blue-50/30 hover:via-white hover:to-white hover:text-blue-700 hover:shadow-[0_14px_30px_-4px_rgba(66,133,244,0.22),0_4px_10px_-2px_rgba(0,0,0,0.04)]'
-              } hover:-translate-y-0.5 active:translate-y-0.5 active:scale-[0.985] active:shadow-xs focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/25 disabled:cursor-not-allowed disabled:opacity-60 disabled:transform-none disabled:shadow-none`}
+                  ? 'border border-slate-700/80 bg-slate-850 text-slate-100 shadow-[0_4px_16px_rgba(0,0,0,0.45),0_1px_2px_rgba(0,0,0,0.3)] hover:border-blue-500/70 hover:bg-slate-800 hover:shadow-[0_12px_28px_-4px_rgba(66,133,244,0.3)]'
+                  : 'border border-slate-200/90 bg-white text-slate-900 shadow-[0_4px_14px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.03)] hover:border-blue-300 hover:bg-slate-50/80 hover:text-blue-700 hover:shadow-[0_14px_30px_-4px_rgba(66,133,244,0.22),0_4px_10px_-2px_rgba(0,0,0,0.04)]'
+              } hover:-translate-y-0.5 active:translate-y-0.5 active:scale-[0.985] active:shadow-xs focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/25 disabled:cursor-not-allowed disabled:opacity-80 disabled:transform-none disabled:shadow-none`}
             >
               {/* Subtle Ambient Light Sheen on Hover */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -560,7 +588,7 @@ export default function LoginPage() {
                 )}
               </div>
 
-              <span className="tracking-tight text-type-body">
+              <span className={`tracking-tight text-type-body font-semibold ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
                 {loading ? 'Đang kết nối tài khoản Google...' : 'Đăng nhập với Google'}
               </span>
             </button>
@@ -588,7 +616,6 @@ export default function LoginPage() {
                   }`}
                 />
               </button>
-
               {/* Smooth Animated Collapsible Form Container */}
               <div
                 className={`grid transition-all duration-300 ease-in-out ${

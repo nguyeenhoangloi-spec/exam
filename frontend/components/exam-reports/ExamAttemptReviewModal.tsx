@@ -249,7 +249,7 @@ function QuestionCard({
                   <div
                     key={mediaItem.id || mIdx}
                     onClick={() => onOpenLightbox(mediaItem.url)}
-                    className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 p-1 transition hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md"
+                    className="group relative inline-block cursor-pointer overflow-hidden rounded-xl bg-transparent transition hover:opacity-95"
                     title="Bấm để xem ảnh phóng to"
                   >
                     <DynamicImage
@@ -257,8 +257,8 @@ function QuestionCard({
                       alt={mediaItem.altText || mediaItem.fileName || 'Hình minh họa'}
                       className="max-h-48 rounded-xl object-contain bg-white transition duration-200 group-hover:scale-105"
                     />
-                    <div className="absolute top-2.5 right-2.5 flex items-center justify-center rounded-xl bg-slate-900/75 p-2 text-white shadow-md backdrop-blur-sm opacity-0 transition-all duration-150 group-hover:opacity-100 hover:bg-slate-900 hover:scale-110 active:scale-95" title="Bấm để xem ảnh phóng to">
-                      <Maximize2 className="h-4 w-4 text-white" />
+                    <div className="absolute top-2 right-2 flex items-center justify-center p-1.5 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] opacity-0 transition-all duration-150 group-hover:opacity-100 hover:scale-125 active:scale-95 pointer-events-none" title="Bấm để xem ảnh phóng to">
+                      <Maximize2 className="h-4.5 w-4.5 text-white" />
                     </div>
                   </div>
                 );
