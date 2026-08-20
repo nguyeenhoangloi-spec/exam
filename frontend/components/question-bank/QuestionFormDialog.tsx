@@ -21,34 +21,64 @@ import { DynamicImage } from '../ui/DynamicImage';
 
 const option = z.object({
   label: z.string().min(1),
-  content: z.string().min(1),
+  content: z.string(),
   isCorrect: z.boolean(),
   order: z.number(),
 });
 
 const fillBlankAnswer = z.object({
   blankIndex: z.number().int().min(1),
-  answer: z.string().min(1),
+  answer: z.string().min(1, 'Vui lòng nhập đáp án cho ô trống'),
   acceptedAnswersText: z.string().optional(),
-  score: z.number().min(0),
+  score: z.number().min(0, 'Điểm số phải >= 0'),
   caseSensitive: z.boolean().optional(),
   ignoreWhitespace: z.boolean().optional(),
   ignoreVietnameseTone: z.boolean().optional(),
 });
 
-const schema = z.object({
-  subjectId: z.number({ message: 'Vui lòng chọn môn học' }).min(1, 'Vui lòng chọn môn học'),
-  content: z.string().min(1, 'Nội dung câu hỏi không được để trống'),
-  contentRich: z.object({ html: z.string() }).optional(),
-  type: z.enum(['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'TRUE_FALSE', 'FILL_BLANK', 'ESSAY']),
-  difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']),
-  bloomLevel: z.enum(['REMEMBER', 'UNDERSTAND', 'APPLY', 'ANALYZE']),
-  score: z.number().positive('Điểm số phải lớn hơn 0'),
-  explanation: z.string().optional(),
-  keywords: z.string().optional(),
-  options: z.array(option),
-  fillBlankAnswers: z.array(fillBlankAnswer).optional(),
-});
+const schema = z
+  .object({
+    subjectId: z.number({ message: 'Vui lòng chọn môn học' }).min(1, 'Vui lòng chọn môn học'),
+    content: z.string().min(1, 'Nội dung câu hỏi không được để trống'),
+    contentRich: z.object({ html: z.string() }).optional(),
+    type: z.enum(['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'TRUE_FALSE', 'FILL_BLANK', 'ESSAY']),
+    difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']),
+    bloomLevel: z.enum(['REMEMBER', 'UNDERSTAND', 'APPLY', 'ANALYZE']),
+    score: z.number({ message: 'Điểm số phải là số' }).positive('Điểm số phải lớn hơn 0'),
+    explanation: z.string().optional(),
+    keywords: z.string().optional(),
+    options: z.array(option).optional(),
+    fillBlankAnswers: z.array(fillBlankAnswer).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.type === 'SINGLE_CHOICE' || data.type === 'MULTIPLE_CHOICE' || data.type === 'TRUE_FALSE') {
+      if (!data.options || data.options.length < 2) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['options'],
+          message: 'Cần ít nhất 2 phương án lựa chọn',
+        });
+        return;
+      }
+      const emptyOption = data.options.find((o) => !o.content?.trim());
+      if (emptyOption) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['options'],
+          message: `Vui lòng nhập nội dung cho đáp án lựa chọn ${emptyOption.label}`,
+        });
+        return;
+      }
+      const hasCorrect = data.options.some((o) => o.isCorrect);
+      if (!hasCorrect) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['options'],
+          message: 'Vui lòng chọn ít nhất 1 đáp án đúng (bấm vào ô chữ A, B, C...)',
+        });
+      }
+    }
+  });
 
 type Form = z.infer<typeof schema>;
 
@@ -169,6 +199,15 @@ export function QuestionFormDialog({
     if (!question && watchType) {
       setValue('score', watchType === 'ESSAY' ? 1.0 : 0.25);
     }
+    if (watchType === 'FILL_BLANK' && fillBlankFields.fields.length === 0) {
+      fillBlankFields.append({ blankIndex: 1, answer: '', score: 0.25, acceptedAnswersText: '' });
+      const currentHtml = watch('contentRich')?.html || '';
+      if (!currentHtml.includes('{{blank_1}}')) {
+        const appended = currentHtml ? `${currentHtml} {{blank_1}}` : '{{blank_1}}';
+        setValue('contentRich', { html: appended });
+        setValue('content', appended);
+      }
+    }
   }, [watchType, question, setValue]);
 
   const submit = async (data: Form) => {
@@ -206,8 +245,22 @@ export function QuestionFormDialog({
     }
   };
 
-  const onInvalid = () => {
-    setToastError('Vui lòng kiểm tra các trường thông tin còn thiếu hoặc chưa hợp lệ trước khi lưu.');
+  const onInvalid = (fieldErrors: any) => {
+    let msg = 'Vui lòng kiểm tra lại các trường thông tin còn thiếu.';
+    if (fieldErrors.subjectId?.message) {
+      msg = fieldErrors.subjectId.message;
+    } else if (fieldErrors.content?.message) {
+      msg = fieldErrors.content.message;
+    } else if (fieldErrors.options?.message) {
+      msg = fieldErrors.options.message;
+    } else if (fieldErrors.options?.root?.message) {
+      msg = fieldErrors.options.root.message;
+    } else if (fieldErrors.score?.message) {
+      msg = fieldErrors.score.message;
+    } else if (fieldErrors.fillBlankAnswers) {
+      msg = 'Vui lòng cấu hình đầy đủ đáp án cho các ô điền khuyết.';
+    }
+    setToastError(msg);
   };
 
   return (
@@ -446,6 +499,11 @@ export function QuestionFormDialog({
                   </div>
                 ))}
               </div>
+              {errors.options?.message && (
+                <p className="text-type-helper font-semibold text-rose-600 dark:text-rose-400 pt-1">
+                  * {errors.options.message}
+                </p>
+              )}
             </div>
           )}
 

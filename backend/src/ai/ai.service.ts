@@ -110,6 +110,97 @@ Vui lòng chấm điểm và trả về kết quả theo cấu trúc JSON như s
     }
   }
 
+  async generateRubric(dto: {
+    questionText: string;
+    sampleAnswer?: string;
+    totalScore: number;
+  }) {
+    const systemPrompt = `Bạn là chuyên gia xây dựng Rubric chấm bài tự luận đại học.
+Hãy chia câu hỏi thành các tiêu chí chấm rõ ràng, không chồng chéo, có thể dùng để chấm công bằng.
+Tổng điểm các tiêu chí phải bằng đúng tổng điểm câu hỏi.
+Ưu tiên 1 đến 6 tiêu chí, mô tả rõ mức đầy đủ, một phần và không đạt.
+Chỉ trả về JSON thuần túy, không Markdown, không giải thích bên ngoài JSON.`;
+
+    const userPrompt = `CÂU HỎI:
+${dto.questionText}
+
+ĐÁP ÁN GỢI Ý / GIẢI THÍCH:
+${dto.sampleAnswer || 'Chưa có đáp án gợi ý; hãy suy luận tiêu chí từ nội dung câu hỏi và nêu rõ các ý cần đạt.'}
+
+TỔNG ĐIỂM CÂU HỎI: ${dto.totalScore}
+
+Trả về đúng cấu trúc:
+{
+  "referenceAnswer": "Đáp án hoặc các ý chính cần đạt",
+  "gradingGuidance": "Hướng dẫn chung khi chấm",
+  "criteria": [
+    {
+      "label": "Tên tiêu chí",
+      "description": "Mô tả ngắn tiêu chí",
+      "fullCreditGuide": "Điều kiện đạt tối đa",
+      "partialCreditGuide": "Điều kiện đạt một phần",
+      "zeroCreditGuide": "Điều kiện không đạt",
+      "acceptedConcepts": "Các ý/khái niệm tương đương được chấp nhận",
+      "commonMistakes": "Các lỗi thường gặp",
+      "scoreStep": 0.25,
+      "maxScore": 1,
+      "sortOrder": 1
+    }
+  ]
+}`;
+
+    const result = await this.generateWithFallback(userPrompt, systemPrompt);
+    const cleaned = this.cleanJsonResponse(result.text);
+    let parsed: any;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch {
+      this.logger.error(`Failed to parse AI rubric output: ${cleaned}`);
+      throw new ServiceUnavailableException('AI trả về dữ liệu Rubric không hợp lệ. Vui lòng thử lại.');
+    }
+
+    if (!Array.isArray(parsed?.criteria) || parsed.criteria.length === 0) {
+      throw new ServiceUnavailableException('AI chưa tạo được tiêu chí Rubric hợp lệ. Vui lòng thử lại.');
+    }
+
+    const criteria = parsed.criteria.slice(0, 6).map((item: any, index: number) => ({
+      label: String(item?.label || `Tiêu chí ${index + 1}`).trim(),
+      description: String(item?.description || '').trim(),
+      fullCreditGuide: String(item?.fullCreditGuide || '').trim(),
+      partialCreditGuide: String(item?.partialCreditGuide || '').trim(),
+      zeroCreditGuide: String(item?.zeroCreditGuide || '').trim(),
+      acceptedConcepts: String(item?.acceptedConcepts || '').trim(),
+      commonMistakes: String(item?.commonMistakes || '').trim(),
+      scoreStep: Number(item?.scoreStep) > 0 ? Number(item.scoreStep) : 0.25,
+      maxScore: Number(item?.maxScore) > 0 ? Number(item.maxScore) : 0,
+      sortOrder: index + 1,
+    }));
+
+    const totalScore = Number(dto.totalScore.toFixed(2));
+    const currentTotal = Number(criteria.reduce((sum: number, item: any) => sum + item.maxScore, 0).toFixed(2));
+    if (currentTotal <= 0) {
+      criteria[0].maxScore = totalScore;
+    } else if (Math.abs(currentTotal - totalScore) > 0.001) {
+      const ratio = totalScore / currentTotal;
+      let assigned = 0;
+      criteria.forEach((item: any, index: number) => {
+        if (index === criteria.length - 1) {
+          item.maxScore = Number((totalScore - assigned).toFixed(2));
+        } else {
+          item.maxScore = Number((item.maxScore * ratio).toFixed(2));
+          assigned += item.maxScore;
+        }
+      });
+    }
+
+    return {
+      referenceAnswer: String(parsed.referenceAnswer || dto.sampleAnswer || '').trim(),
+      gradingGuidance: String(parsed.gradingGuidance || '').trim(),
+      criteria,
+      providerUsed: result.providerUsed,
+    };
+  }
+
   async generateQuestions(dto: GenerateQuestionDto) {
     const systemPrompt = `Bạn là một chuyên gia ra đề thi trắc nghiệm và tự luận chuẩn hóa cho các môn học đại học.
 Nhiệm vụ của bạn là tạo các câu hỏi chất lượng cao bằng Tiếng Việt dựa theo yêu cầu đầu vào.

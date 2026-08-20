@@ -44,12 +44,15 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
   const [criteria, setCriteria] = useState<RubricCriterion[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [aiGenerating, setAiGenerating] = useState(false);
   const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState<'success' | 'error'>('error');
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   const loadRubric = useCallback(async () => {
     setLoading(true);
     setMessage('');
+    setMessageType('error');
     const qScore = Number(question?.score || 0);
     try {
       const res = await api.get(`/essay/questions/${question.id}/rubric`);
@@ -139,6 +142,27 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
         maxScore: i === prev.length - 1 ? lastItemScore : splitScore,
       }))
     );
+  };
+
+  const handleAiSuggest = async () => {
+    setAiGenerating(true);
+    setMessage('');
+    try {
+      const res = await api.post(`/essay/questions/${question.id}/rubric/ai-suggest`);
+      if (!Array.isArray(res.data?.criteria) || res.data.criteria.length === 0) {
+        throw new Error('AI chưa tạo được tiêu chí Rubric hợp lệ.');
+      }
+      setCriteria(res.data.criteria);
+      setExpandedIndex(null);
+      setMessageType('success');
+      setMessage('AI đã tạo bản nháp Rubric. Bạn hãy kiểm tra, chỉnh sửa nếu cần rồi bấm “Lưu ba-rem Rubric”.');
+    } catch (e: any) {
+      const apiMsg = e?.response?.data?.message;
+      setMessageType('error');
+      setMessage(Array.isArray(apiMsg) ? apiMsg.join(', ') : (apiMsg || e?.message || 'Không thể tạo Rubric bằng AI.'));
+    } finally {
+      setAiGenerating(false);
+    }
   };
 
   const handleSave = async () => {
@@ -270,15 +294,28 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
                 <span className="text-type-body-sm font-semibold text-slate-700 dark:text-slate-300">
                   Các ý chấm điểm ({criteria.length})
                 </span>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  leftIcon={<Plus className="w-3.5 h-3.5 text-blue-600" />}
-                  onClick={handleAddCriterion}
-                >
-                  Thêm ý chấm
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    leftIcon={aiGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 text-blue-600" />}
+                    onClick={handleAiSuggest}
+                    disabled={aiGenerating || loading || saving}
+                  >
+                    {aiGenerating ? 'Đang tạo Rubric...' : 'AI gợi ý Rubric'}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    leftIcon={<Plus className="w-3.5 h-3.5 text-blue-600" />}
+                    onClick={handleAddCriterion}
+                    disabled={aiGenerating || saving}
+                  >
+                    Thêm ý chấm
+                  </Button>
+                </div>
               </div>
 
               {/* Flat Criteria Rows */}
@@ -365,7 +402,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
           </div>
         </div>
       </Modal>
-      {message && <Toast message={message} type="error" onClose={() => setMessage('')} />}
+      {message && <Toast message={message} type={messageType} onClose={() => setMessage('')} />}
     </>
   );
 }

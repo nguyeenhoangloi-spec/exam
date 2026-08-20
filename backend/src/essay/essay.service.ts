@@ -197,6 +197,23 @@ export class EssayService {
     return result.sort((a, b) => a.sortOrder - b.sortOrder);
   }
 
+  async suggestRubric(actor: any, questionId: string) {
+    await this.assertRubricAccess(actor, questionId);
+    const question = await this.prisma.question.findUnique({
+      where: { id: questionId },
+      select: { type: true, score: true, content: true, explanation: true },
+    });
+    if (!question) throw new NotFoundException('Không tìm thấy câu hỏi.');
+    if (question.type !== 'ESSAY') throw new BadRequestException('Chỉ câu hỏi tự luận (ESSAY) mới được AI tạo Rubric.');
+    if (!question.content?.trim()) throw new BadRequestException('Câu hỏi chưa có nội dung để AI phân tích.');
+
+    return this.aiService.generateRubric({
+      questionText: question.content,
+      sampleAnswer: question.explanation || '',
+      totalScore: Number(question.score || 0),
+    });
+  }
+
   async autoMarkZeroForExpiredExams(): Promise<{ success: boolean; updatedCount: number }> {
     const now = new Date();
     const onlineConfigs = await this.prisma.onlineExamConfig.findMany({

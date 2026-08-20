@@ -30,6 +30,12 @@ export class EssayController {
     return this.essay.getRubricVersions(req.user, questionId);
   }
 
+  @Post('questions/:questionId/rubric/ai-suggest')
+  @Roles('ADMIN', 'TEACHER')
+  suggestRubric(@Request() req: any, @Param('questionId', ParseUUIDPipe) questionId: string) {
+    return this.essay.suggestRubric(req.user, questionId);
+  }
+
   @Post('questions/:questionId/rubric')
   @Patch('questions/:questionId/rubric')
   @Roles('ADMIN', 'TEACHER')
