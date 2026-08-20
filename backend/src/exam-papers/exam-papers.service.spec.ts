@@ -105,4 +105,68 @@ describe('ExamPapersService permissions', () => {
       hardCount: 0,
     })).rejects.toBeInstanceOf(BadRequestException);
   });
+
+  it('không phát hành đề khi lịch thi chưa được xếp phòng', async () => {
+    prisma.examPaper.findFirst.mockResolvedValue({
+      id: 10,
+      paperCode: 'P-10',
+      status: 'DRAFT',
+      examScheduleId: 20,
+      examSchedule: { mode: 'PRACTICE' },
+      questions: [],
+    });
+    (prisma as any).examSchedule = {
+      findFirst: jest.fn().mockResolvedValue({ id: 20, examScheduleRooms: [] }),
+    };
+
+    await expect(service.publish({ id: 1, role: 'ADMIN' }, 10)).rejects.toThrow('chưa được xếp phòng');
+  });
+
+  it('không phát hành đề khi bất kỳ phòng nào chưa đủ hai giám thị', async () => {
+    prisma.examPaper.findFirst.mockResolvedValue({
+      id: 11,
+      paperCode: 'P-11',
+      status: 'DRAFT',
+      examScheduleId: 21,
+      examSchedule: { mode: 'PRACTICE' },
+      questions: [],
+    });
+    (prisma as any).examSchedule = {
+      findFirst: jest.fn().mockResolvedValue({
+        id: 21,
+        examScheduleRooms: [{ room: { roomCode: 'P.101' }, supervisors: [{ id: 1 }] }],
+      }),
+    };
+
+    await expect(service.publish({ id: 1, role: 'ADMIN' }, 11)).rejects.toThrow('P.101 chưa đủ 2 giám thị');
+  });
+
+  it('cho phép phát hành thi thử không cần phòng và giám thị', async () => {
+    const mockSchedule = { id: 30, mode: 'MOCK', examScheduleRooms: [] };
+    const tx: any = {
+      examSchedule: { findFirst: jest.fn().mockResolvedValue(mockSchedule) },
+      examPaper: { update: jest.fn().mockResolvedValue({ id: 12, status: 'PUBLISHED' }) },
+      onlineExamConfig: { upsert: jest.fn().mockResolvedValue({ id: 1 }) },
+    };
+    const mockPrisma = {
+      examPaper: {
+        findFirst: jest.fn().mockResolvedValue({
+          id: 12,
+          paperCode: 'P-MOCK',
+          status: 'DRAFT',
+          examScheduleId: 30,
+          examSchedule: { mode: 'MOCK' },
+          questions: [],
+        }),
+      },
+      examSchedule: { findFirst: jest.fn().mockResolvedValue(mockSchedule) },
+      $transaction: jest.fn((callback) => callback(tx)),
+    };
+    const mockAudit = { write: jest.fn().mockResolvedValue(undefined) };
+    const mockService = new ExamPapersService(mockPrisma as any, mockAudit as any, actionVerifier as any);
+
+    await expect(mockService.publish({ id: 1, role: 'ADMIN' }, 12)).resolves.toEqual({ id: 12, status: 'PUBLISHED' });
+    expect(mockPrisma.examSchedule.findFirst).toHaveBeenCalled();
+    expect(tx.examSchedule.findFirst).toHaveBeenCalled();
+  });
 });

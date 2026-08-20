@@ -184,8 +184,8 @@ export class OnlineExamsService {
             startTime: schedule.startTime,
             endTime: schedule.endTime,
             durationMinutes: schedule.onlineExamConfig?.examPaper?.durationMinutes || 60,
-            examPasswordRequired: !!schedule.onlineExamConfig?.examPasswordHash,
-            accessCodeRequired: !!schedule.onlineExamConfig?.accessCode,
+            examPasswordRequired: schedule.mode === 'OFFICIAL' && !!schedule.onlineExamConfig?.examPasswordHash,
+            accessCodeRequired: schedule.mode === 'OFFICIAL' && !!schedule.onlineExamConfig?.accessCode,
           },
           student: studentObj
             ? {
@@ -237,8 +237,8 @@ export class OnlineExamsService {
             startTime: result.data.schedule.startTime,
             endTime: result.data.schedule.endTime,
             durationMinutes: (result.data as any)?.config?.examPaper?.durationMinutes || 60,
-            examPasswordRequired: result.errorCode === 'EXAM_PASSWORD_REQUIRED' || !!(result.data as any)?.config?.examPasswordHash,
-            accessCodeRequired: result.errorCode === 'ACCESS_CODE_REQUIRED' || !!(result.data as any)?.config?.accessCode,
+            examPasswordRequired: result.data?.schedule?.mode === 'OFFICIAL' && (result.errorCode === 'EXAM_PASSWORD_REQUIRED' || !!(result.data as any)?.config?.examPasswordHash),
+            accessCodeRequired: result.data?.schedule?.mode === 'OFFICIAL' && (result.errorCode === 'ACCESS_CODE_REQUIRED' || !!(result.data as any)?.config?.accessCode),
           }
           : undefined,
         student: result.data?.student
@@ -271,8 +271,8 @@ export class OnlineExamsService {
         requireWebcam: d.config?.requireWebcam,
         requireFullscreen: d.config?.requireFullscreen,
         requireRulesAcceptance: d.config?.requireRulesAcceptance,
-        accessCodeRequired: !!d.config?.accessCode,
-        examPasswordRequired: !!d.config?.examPasswordHash,
+        accessCodeRequired: d.schedule?.mode === 'OFFICIAL' && !!d.config?.accessCode,
+        examPasswordRequired: d.schedule?.mode === 'OFFICIAL' && !!d.config?.examPasswordHash,
         serverTime: d.serverTime,
         remainingEntrySeconds: d.remainingEntrySeconds,
       },

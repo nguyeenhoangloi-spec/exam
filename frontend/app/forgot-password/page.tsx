@@ -408,7 +408,7 @@ export default function ForgotPasswordPage() {
           <div className="space-y-3.5">
             <h1 className="text-type-page lg:text-type-display font-semibold tracking-tight text-slate-900 dark:text-white">
               KHÔI PHỤC <br />
-              <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-sky-300">
+              <span className="inline-block py-1 pb-1.5 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-sky-300">
                 MẬT KHẨU TÀI KHOẢN
               </span>
             </h1>

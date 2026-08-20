@@ -257,7 +257,7 @@ export default function LoginPage() {
           <div className="space-y-3.5">
             <h1 className="text-type-page sm:text-type-display-sm lg:text-type-display font-semibold tracking-tight text-slate-900 dark:text-white">
               HỆ THỐNG <br />
-              <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-sky-600 bg-clip-text text-transparent dark:from-blue-400 dark:via-sky-300 dark:to-blue-300">
+              <span className="inline-block py-1 pb-1.5 bg-gradient-to-r from-blue-600 via-blue-700 to-sky-600 bg-clip-text text-transparent dark:from-blue-400 dark:via-sky-300 dark:to-blue-300">
                 KHẢO THÍ TRỰC TUYẾN
               </span>
             </h1>

@@ -408,8 +408,12 @@ export class EligibilityCheckerService {
       );
     }
 
-    // 7c. Kiểm tra mã truy cập phòng thi
-    if (config.accessCode) {
+    // Thi thử là luồng luyện tập tự do: không áp dụng mật khẩu/mã truy cập
+    // dù dữ liệu cấu hình cũ vẫn còn các giá trị này.
+    const requiresOfficialCredentials = schedule.mode === 'OFFICIAL';
+
+    // 7c. Kiểm tra mã truy cập phòng thi của kỳ thi chính thức
+    if (requiresOfficialCredentials && config.accessCode) {
       if (!providedAccessCode) {
         return this.fail(
           EligibilityErrorCode.ACCESS_CODE_REQUIRED,
@@ -426,8 +430,8 @@ export class EligibilityCheckerService {
       }
     }
 
-    // 7d. Kiểm tra mật khẩu thi chính thức (bắt buộc với kỳ thi OFFICIAL có thiết lập)
-    if (config.examPasswordHash) {
+    // 7d. Kiểm tra mật khẩu thi chính thức
+    if (requiresOfficialCredentials && config.examPasswordHash) {
       if (!providedExamPassword) {
         return this.fail(
           EligibilityErrorCode.EXAM_PASSWORD_REQUIRED,

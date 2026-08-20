@@ -12,6 +12,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateRandomExamPaperDto, UpdateExamPasswordDto } from './dto/exam-paper.dto';
 
 type Actor = { id: number; role: string };
+type DbClient = PrismaService | Prisma.TransactionClient;
 
 const paperDetailInclude = {
   examSchedule: { include: { subject: true, examPeriod: true } },
@@ -72,6 +73,46 @@ export class ExamPapersService {
     });
     if (!paper) throw new NotFoundException('Không tìm thấy đề thi.');
     return paper;
+  }
+
+  /**
+   * A published paper makes the related exam schedule operational. Therefore,
+   * room allocation and invigilator assignment must be complete before this
+   * transition is allowed. This is intentionally checked server-side.
+   */
+  private async assertScheduleReadyForPublication(client: DbClient, examScheduleId: number) {
+    const schedule = await client.examSchedule.findFirst({
+      where: { id: examScheduleId, deletedAt: null },
+      select: {
+        id: true,
+        mode: true,
+        examScheduleRooms: {
+          select: {
+            room: { select: { roomCode: true } },
+            supervisors: { select: { id: true } },
+          },
+        },
+      },
+    });
+
+    if (!schedule) throw new NotFoundException('Không tìm thấy lịch thi của đề thi.');
+    // Thi thử là ca luyện tập online mở tự do: không yêu cầu xếp phòng, SBD
+    // hoặc giám thị. Các ràng buộc bên dưới chỉ dành cho lịch thi chính thức.
+    if (schedule.mode === 'MOCK') return;
+    if (schedule.examScheduleRooms.length === 0) {
+      throw new BadRequestException(
+        'Không thể phát hành đề thi vì lịch thi chưa được xếp phòng. Hãy xếp phòng và phân công giám thị trước khi công bố.',
+      );
+    }
+
+    const roomsMissingSupervisors = schedule.examScheduleRooms
+      .filter((scheduleRoom) => scheduleRoom.supervisors.length < 2)
+      .map((scheduleRoom) => scheduleRoom.room.roomCode);
+    if (roomsMissingSupervisors.length > 0) {
+      throw new BadRequestException(
+        `Không thể phát hành đề thi vì phòng ${roomsMissingSupervisors.join(', ')} chưa đủ 2 giám thị. Hãy hoàn tất phân công trước khi công bố.`,
+      );
+    }
   }
 
   async createRandom(actor: Actor, data: CreateRandomExamPaperDto, persist = true) {
@@ -273,10 +314,32 @@ export class ExamPapersService {
         selectedQuestions = scored.questions;
         totalScore = scored.totalScore;
       } else {
-        // CHẾ ĐỘ 2: Theo Số câu (BY_COUNT) -> Chuẩn hóa phân bổ điểm sao cho Tổng điểm bộ đề LUÔN BẰNG ĐÚNG 10.0 ĐIỂM
+        // CHẾ ĐỘ 2: Theo Số câu (BY_COUNT) -> Lấy điểm thực tế từ Ngân hàng đề
         const scored = this.generationCore.assignScores(rawSelected, { targetType, isEssay, isByScore: false });
         selectedQuestions = scored.questions;
         totalScore = scored.totalScore;
+
+        // BẮT BUỘC: Nếu tổng điểm thực tế các câu hỏi được chọn không đạt đúng 10.0 điểm thì PHẢI BÁO LỖI, không tạo đề sai chuẩn
+        if (Math.abs(totalScore - 10.0) > 0.01) {
+          const typeName = targetType === 'TU_LUAN' ? 'Tự luận' : targetType === 'FILL_BLANK' ? 'Điền khuyết' : 'Trắc nghiệm';
+          if (!persist) {
+            return {
+              preview: true,
+              isValid: false,
+              message: `Tổng điểm các câu hỏi theo ma trận chỉ đạt ${totalScore}đ, không đủ chuẩn 10.0 điểm.`,
+              errors: [
+                `Tổ hợp câu hỏi loại ${typeName} theo ma trận (${data.easyCount} Dễ, ${data.mediumCount} Trung bình, ${data.hardCount} Khó) có tổng điểm thực tế là ${totalScore}đ (thiếu ${Math.round((10 - totalScore) * 100) / 100}đ để đủ chuẩn 10.0đ).`,
+                `Vui lòng vào Ngân hàng câu hỏi cập nhật/bổ sung điểm các câu hỏi hoặc chọn lại ma trận số câu để đạt đúng 10.0 điểm.`,
+              ],
+              warnings: [],
+              alternatives: [{ rationale: 'Vào Ngân hàng câu hỏi cập nhật điểm các câu hỏi để đạt tổng 10.0 điểm.' }],
+              paper: { paperCode: data.paperCode.trim(), questionCount: selectedQuestions.length, totalScore },
+            };
+          }
+          throw new BadRequestException(
+            `Không thể tạo đề thi: Tổng điểm thực tế của các câu hỏi theo ma trận (${data.easyCount} Dễ, ${data.mediumCount} Trung bình, ${data.hardCount} Khó) là ${totalScore}đ, không đạt đúng chuẩn 10.0 điểm khảo thí. Vui lòng vào Ngân hàng câu hỏi cập nhật điểm câu hỏi để đạt đúng 10.0 điểm.`,
+          );
+        }
       }
       const paperCode = data.paperCode.trim();
       const title = data.title?.trim() || `Đề thi môn ${schedule.subject.subjectName} - Mã đề ${paperCode}`;
@@ -420,6 +483,7 @@ export class ExamPapersService {
     if (paper.status !== ExamPaperStatus.DRAFT) {
       throw new BadRequestException('Chỉ đề thi ở trạng thái bản nháp mới được phát hành.');
     }
+    await this.assertScheduleReadyForPublication(this.prisma, paper.examScheduleId);
 
     // Mật khẩu thi: bắt buộc với kỳ thi chính thức (OFFICIAL), hash bcrypt trước khi lưu
     const isOfficial = paper.examSchedule?.mode === 'OFFICIAL';
@@ -484,11 +548,13 @@ export class ExamPapersService {
         );
       }
       examPasswordHash = await bcrypt.hash(dto.examPassword.trim(), 10);
-    } else if (dto?.examPassword) {
-      examPasswordHash = await bcrypt.hash(dto.examPassword.trim(), 10);
     }
 
     return this.prisma.$transaction(async (tx) => {
+      // Re-check inside the write transaction so an arrangement cannot be
+      // removed between the pre-check above and the publication update.
+      await this.assertScheduleReadyForPublication(tx, paper.examScheduleId);
+
       const updated = await tx.examPaper.update({
         where: { id },
         data: { status: ExamPaperStatus.PUBLISHED, publishedAt: new Date(), archivedAt: null },
@@ -497,7 +563,13 @@ export class ExamPapersService {
 
       await tx.onlineExamConfig.upsert({
         where: { examScheduleId: paper.examScheduleId },
-        update: { examPaperId: id, essayEnabled: hasEssayQuestions, ...(examPasswordHash ? { examPasswordHash } : {}) },
+        update: {
+          examPaperId: id,
+          essayEnabled: hasEssayQuestions,
+          // Thi thử không giữ mật khẩu từ cấu hình cũ; đổi sang OFFICIAL
+          // sau này sẽ buộc thiết lập mật khẩu mới tại lúc phát hành.
+          examPasswordHash,
+        },
         create: {
           examScheduleId: paper.examScheduleId,
           examPaperId: id,
@@ -507,7 +579,7 @@ export class ExamPapersService {
           shuffleQuestions: true,
           shuffleOptions: true,
           essayEnabled: hasEssayQuestions,
-          ...(examPasswordHash ? { examPasswordHash } : {}),
+          examPasswordHash,
         },
       });
 
