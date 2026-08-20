@@ -84,7 +84,19 @@ export const FilterSelect = React.forwardRef<HTMLSelectElement, FilterSelectProp
     return extracted;
   }, [children, customOptions]);
 
-  const currentValueStr = value !== undefined && value !== null ? String(value) : '';
+  const [internalValue, setInternalValue] = useState<string>(() => {
+    if (value !== undefined && value !== null) return String(value);
+    if (props.defaultValue !== undefined && props.defaultValue !== null) return String(props.defaultValue);
+    return '';
+  });
+
+  useEffect(() => {
+    if (value !== undefined && value !== null) {
+      setInternalValue(String(value));
+    }
+  }, [value]);
+
+  const currentValueStr = value !== undefined && value !== null ? String(value) : internalValue;
   const selectedOption = parsedOptions.find((opt) => String(opt.value).trim() === currentValueStr.trim()) || parsedOptions[0];
   const activeValueStr = selectedOption ? String(selectedOption.value) : currentValueStr;
 
@@ -157,6 +169,7 @@ export const FilterSelect = React.forwardRef<HTMLSelectElement, FilterSelectProp
   const handleSelectOption = (optVal: string) => {
     if (disabled) return;
     setIsOpen(false);
+    setInternalValue(optVal);
     if (onChange) {
       const syntheticEvent = {
         target: { value: optVal, name: props.name },

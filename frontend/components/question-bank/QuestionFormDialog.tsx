@@ -208,6 +208,7 @@ export function QuestionFormDialog({
         setValue('content', appended);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchType, question, setValue]);
 
   const submit = async (data: Form) => {
@@ -221,6 +222,7 @@ export function QuestionFormDialog({
         ...data,
         content: plain,
         contentRich: html ? { html } : undefined,
+        options: (data.type === 'ESSAY' || data.type === 'FILL_BLANK') ? [] : (data.options || []),
         fillBlankAnswers: data.type === 'FILL_BLANK'
           ? (data.fillBlankAnswers?.length ? data.fillBlankAnswers : [{ blankIndex: 1, answer: 'đáp_án_đúng', score: data.score || 0.25 }]).map(({ acceptedAnswersText, ...item }) => ({ ...item, acceptedAnswers: acceptedAnswersText?.split(',').map(value => value.trim()).filter(Boolean) || [] }))
           : [],
@@ -241,7 +243,12 @@ export function QuestionFormDialog({
       onSaved(question ? 'Đã cập nhật thông tin câu hỏi thành công!' : 'Đã tạo thành công câu hỏi mới vào ngân hàng!');
       onClose();
     } catch (err: any) {
-      setToastError(err?.response?.data?.message || err?.message || 'Có lỗi xảy ra khi lưu câu hỏi.');
+      let rawMsg = err?.response?.data?.message || err?.message || 'Có lỗi xảy ra khi lưu câu hỏi.';
+      if (Array.isArray(rawMsg)) rawMsg = rawMsg.join(', ');
+      if (typeof rawMsg === 'string' && rawMsg.includes('options.')) {
+        rawMsg = 'Vui lòng nhập đầy đủ nội dung cho các đáp án lựa chọn (A, B, C, D) bên dưới.';
+      }
+      setToastError(rawMsg);
     }
   };
 
@@ -274,7 +281,12 @@ export function QuestionFormDialog({
               <label className="block text-type-body font-medium text-slate-500 mb-1">
                 Môn học / Học phần <span className="text-rose-500">*</span>
               </label>
-              <FilterSelect fullWidth {...register('subjectId', { valueAsNumber: true })} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-type-body font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+              <FilterSelect
+                fullWidth
+                value={String(watch('subjectId') || subjects[0]?.id || '')}
+                onChange={(e) => setValue('subjectId', Number(e.target.value), { shouldValidate: true })}
+                className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-type-body font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+              >
                 {subjects.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.subjectName}
@@ -288,7 +300,12 @@ export function QuestionFormDialog({
               <label className="block text-type-body font-medium text-slate-500 mb-1">
                 Loại câu hỏi <span className="text-rose-500">*</span>
               </label>
-              <FilterSelect fullWidth {...register('type')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-type-body font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+              <FilterSelect
+                fullWidth
+                value={watch('type')}
+                onChange={(e) => setValue('type', e.target.value as any, { shouldValidate: true })}
+                className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-type-body font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+              >
                 {Object.entries(QUESTION_TYPE_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>
                     {v}
@@ -302,7 +319,12 @@ export function QuestionFormDialog({
               <label className="block text-type-body font-medium text-slate-500 mb-1">
                 Mức độ khó <span className="text-rose-500">*</span>
               </label>
-              <FilterSelect fullWidth {...register('difficulty')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-type-body font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+              <FilterSelect
+                fullWidth
+                value={watch('difficulty')}
+                onChange={(e) => setValue('difficulty', e.target.value as any, { shouldValidate: true })}
+                className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-type-body font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+              >
                 {Object.entries(DIFFICULTY_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>
                     {v}
@@ -316,7 +338,12 @@ export function QuestionFormDialog({
               <label className="block text-type-body font-medium text-slate-500 mb-1">
                 Mức độ tư duy (Bloom) <span className="text-rose-500">*</span>
               </label>
-              <FilterSelect fullWidth {...register('bloomLevel')} className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-type-body font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white">
+              <FilterSelect
+                fullWidth
+                value={watch('bloomLevel')}
+                onChange={(e) => setValue('bloomLevel', e.target.value as any, { shouldValidate: true })}
+                className="h-9 w-full rounded-xl border border-slate-200 px-3.5 text-type-body font-medium text-slate-800 focus:border-blue-500 focus:outline-none bg-white"
+              >
                 {Object.entries(BLOOM_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>
                     {v}
@@ -533,7 +560,7 @@ export function QuestionFormDialog({
                         <label className="block text-type-body font-medium text-slate-500 mb-0.5">Đáp án chính xác *</label>
                         <input
                           {...register(`fillBlankAnswers.${i}.answer`)}
-                          placeholder="Ví dụ: photosynthesis"
+                          placeholder="Ví dụ: Hà Nội"
                           className="w-full rounded-xl border border-slate-200 px-3 py-1.5 text-type-body font-normal text-slate-800 bg-white"
                         />
                       </div>
@@ -547,6 +574,14 @@ export function QuestionFormDialog({
                           className="w-full rounded-xl border border-slate-200 px-3 py-1.5 text-type-body font-normal text-blue-700 bg-white"
                         />
                       </div>
+                    </div>
+                    <div>
+                      <label className="block text-type-body font-medium text-slate-500 mb-0.5">Đáp án chấp nhận tương đương (tùy chọn, cách nhau bằng dấu phẩy)</label>
+                      <input
+                        {...register(`fillBlankAnswers.${i}.acceptedAnswersText`)}
+                        placeholder="Ví dụ: Ha Noi, TP Hà Nội..."
+                        className="w-full rounded-xl border border-slate-200 px-3 py-1.5 text-type-body font-normal text-slate-700 bg-white"
+                      />
                     </div>
                   </div>
                 ))}
