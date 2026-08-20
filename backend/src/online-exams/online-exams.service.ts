@@ -862,14 +862,8 @@ export class OnlineExamsService {
         },
       });
     });
-    // 🤖 Tự động kích hoạt AI chấm bài ngay lập tức khi sinh viên nộp bài thi tự luận
-    if (hasEssay) {
-      try {
-        await this.essayService.autoGradeAttempt(updated.id);
-      } catch (err: any) {
-        this.logger.error(`[AutoGrade] AI chấm bài thi ${updated.id} gặp lỗi: ${err?.message || err}`);
-      }
-    }
+    // Bài tự luận chỉ được AI đề xuất khi Giảng viên chủ động bấm
+    // "Chấm mẫu AI", sau khi đáp án đã được lưu đầy đủ.
 
     const scheduleEnded = this.visibilityCore.isScheduleEnded(attempt.onlineExamConfig?.examSchedule);
     const visibility = this.visibilityCore.evaluate(updated, attempt.onlineExamConfig, scheduleEnded);

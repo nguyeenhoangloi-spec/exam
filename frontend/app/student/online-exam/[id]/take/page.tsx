@@ -32,6 +32,7 @@ export default function StudentExamTakePage() {
   const [syncState, setSyncState] = useState<'SAVED' | 'SAVING' | 'OFFLINE'>('SAVED');
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const flushPendingAnswersRef = useRef<(() => Promise<boolean>) | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -101,6 +102,10 @@ export default function StudentExamTakePage() {
 
     try {
       setIsSubmitted(true);
+      const synced = await flushPendingAnswersRef.current?.();
+      if (!synced || Object.keys(pendingAnswersToSave.current).length > 0) {
+        throw new Error('Chưa đồng bộ được câu trả lời trước khi tự động nộp bài.');
+      }
       await onlineExamService.submitAttempt(token);
       router.push(`/student/online-exam/${attemptData.attemptId}/result`);
     } catch (err) {
@@ -190,7 +195,8 @@ export default function StudentExamTakePage() {
   const flushPendingAnswers = useCallback(async () => {
     const token = tokenFromUrl || sessionStorage.getItem('attemptToken');
     const payloadBatch = Object.values(pendingAnswersToSave.current);
-    if (!token || payloadBatch.length === 0) return false;
+    if (!token) return false;
+    if (payloadBatch.length === 0) return true;
     try {
       await onlineExamService.saveAnswers(token, payloadBatch);
       pendingAnswersToSave.current = {};
@@ -202,6 +208,10 @@ export default function StudentExamTakePage() {
       return false;
     }
   }, [tokenFromUrl]);
+
+  useEffect(() => {
+    flushPendingAnswersRef.current = flushPendingAnswers;
+  }, [flushPendingAnswers]);
 
   useEffect(() => {
     const handleOnline = () => { void flushPendingAnswers(); };
@@ -413,12 +423,9 @@ export default function StudentExamTakePage() {
 
     try {
       setSubmitting(true);
-      await flushPendingAnswers();
-      if (Object.keys(pendingAnswersToSave.current).length > 0) {
-        setToast({
-          type: 'error',
-          message: 'Chưa đồng bộ được câu trả lời. Vui lòng kiểm tra kết nối mạng rồi thử lại.',
-        });
+      const synced = await flushPendingAnswers();
+      if (!synced || Object.keys(pendingAnswersToSave.current).length > 0) {
+        throw new Error('Chưa đồng bộ được câu trả lời. Vui lòng kiểm tra kết nối mạng rồi thử lại.');
       }
       await onlineExamService.submitAttempt(token);
       setIsSubmitted(true);
@@ -643,7 +650,7 @@ export default function StudentExamTakePage() {
                               src={fullUrl}
                               type="video"
                               fileName={mediaItem.fileName}
-                              maxPlays={mediaItem.maxPlays || 2}
+                              maxPlays={mediaItem.maxPlays !== undefined ? mediaItem.maxPlays : 2}
                             />
                           );
                         }
@@ -656,7 +663,7 @@ export default function StudentExamTakePage() {
                               src={fullUrl}
                               type="audio"
                               fileName={mediaItem.fileName}
-                              maxPlays={mediaItem.maxPlays || 2}
+                              maxPlays={mediaItem.maxPlays !== undefined ? mediaItem.maxPlays : 2}
                             />
                           );
                         }

@@ -11,6 +11,7 @@ import { QuestionDifficultyBadge, QuestionStatusBadge, QuestionTypeBadge } from 
 import { Button } from '../ui/Button';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { DynamicImage } from '../ui/DynamicImage';
+import { QuestionMediaPlayer } from '../exam/QuestionMediaPlayer';
 
 export function QuestionDetailDialog({ question, onClose }: { question: Question | null; onClose: () => void }) {
   const [mounted, setMounted] = useState(false);
@@ -194,28 +195,16 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
                     const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(media.url);
                     const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(media.url);
 
-                    if (isVid) {
+                    if (isVid || isAud) {
                       return (
-                        <button
-                          key={media.id || media.url}
-                          type="button"
-                          onClick={() => setVideoLightbox({ url: media.url, fileName: media.fileName })}
-                          className="group relative h-20 w-32 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-black shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md transition cursor-pointer"
-                        >
-                          <video src={fullUrl} className="h-full w-full object-cover opacity-60 group-hover:opacity-80 transition" />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-lg group-hover:scale-110 transition">
-                              <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 text-blue-600 ml-0.5"><polygon points="5,3 19,12 5,21" /></svg>
-                            </span>
-                          </div>
-                        </button>
-                      );
-                    }
-                    if (isAud) {
-                      return (
-                        <div key={media.id || media.url} className="flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-                          <span className="text-type-helper font-medium text-slate-600 max-w-[180px] truncate">{(media as any).fileName || 'Audio'}</span>
-                          <audio src={fullUrl} controls className="h-8 w-44" />
+                        <div key={media.id || media.url} className="w-full max-w-lg">
+                          <QuestionMediaPlayer
+                            src={fullUrl}
+                            type={isVid ? 'video' : 'audio'}
+                            fileName={media.fileName}
+                            maxPlays={0}
+                            mode="REFERENCE"
+                          />
                         </div>
                       );
                     }

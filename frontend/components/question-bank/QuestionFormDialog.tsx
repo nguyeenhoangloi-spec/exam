@@ -382,6 +382,80 @@ export function QuestionFormDialog({
                 </div>
               </div>
             )}
+
+            {/* Cấu hình 2 Chế độ hiển thị & phát Media */}
+            {(existingMedia.length > 0 || mediaFiles.length > 0) && (
+              <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 p-3 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-type-body font-medium text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                    ⚙️ Chế độ khảo thí & kiểm soát Media:
+                  </span>
+                  <span className="text-type-helper font-medium text-slate-500">
+                    {maxPlays > 0 ? '🏆 Khảo thí chuẩn hóa' : '📖 Tham khảo tự do'}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setMaxPlays(2)}
+                    className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-left transition cursor-pointer ${
+                      maxPlays > 0
+                        ? 'border-blue-500 bg-blue-50/60 dark:bg-blue-950/40 text-blue-900 dark:text-blue-100 shadow-xs'
+                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className={`mt-0.5 flex h-4 w-4 rounded-full border items-center justify-center ${maxPlays > 0 ? 'border-blue-600 bg-blue-600' : 'border-slate-400'}`}>
+                      {maxPlays > 0 && <div className="h-1.5 w-1.5 rounded-full bg-white" />}
+                    </div>
+                    <div>
+                      <p className="text-type-body font-medium leading-tight">Khảo thí chuẩn hóa</p>
+                      <p className="text-type-helper font-medium text-slate-500 dark:text-slate-400 mt-0.5">Khóa thanh tua, giới hạn số lần phát cho bài thi trắc nghiệm nghe/nhìn.</p>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setMaxPlays(0)}
+                    className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-left transition cursor-pointer ${
+                      maxPlays <= 0
+                        ? 'border-blue-500 bg-blue-50/60 dark:bg-blue-950/40 text-blue-900 dark:text-blue-100 shadow-xs'
+                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className={`mt-0.5 flex h-4 w-4 rounded-full border items-center justify-center ${maxPlays <= 0 ? 'border-blue-600 bg-blue-600' : 'border-slate-400'}`}>
+                      {maxPlays <= 0 && <div className="h-1.5 w-1.5 rounded-full bg-white" />}
+                    </div>
+                    <div>
+                      <p className="text-type-body font-medium leading-tight">Tham khảo tự do</p>
+                      <p className="text-type-helper font-medium text-slate-500 dark:text-slate-400 mt-0.5">Cho phép tua và nghe/xem lại không giới hạn lần.</p>
+                    </div>
+                  </button>
+                </div>
+
+                {maxPlays > 0 && (
+                  <div className="flex items-center gap-3 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
+                    <span className="text-type-body font-medium text-slate-700 dark:text-slate-300">Số lần phát tối đa:</span>
+                    <div className="flex items-center gap-1.5">
+                      {[1, 2, 3].map((num) => (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => setMaxPlays(num)}
+                          className={`px-3 py-1 rounded-xl text-type-helper font-semibold transition cursor-pointer ${
+                            maxPlays === num
+                              ? 'bg-blue-600 text-white shadow-xs'
+                              : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100'
+                          }`}
+                        >
+                          {num} lần
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Đáp án trắc nghiệm */}

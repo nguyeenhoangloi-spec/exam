@@ -34,12 +34,27 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
     const [authLoaded, setAuthLoaded] = useState(false);
 
     // Sidebar state persists across navigation (kept in state, not remounted)
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState<boolean>(() => {
+        if (typeof window !== 'undefined') {
+            try {
+                return window.localStorage.getItem('sidebar-collapsed') === 'true';
+            } catch {
+                return false;
+            }
+        }
+        return false;
+    });
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isToggling, setIsToggling] = useState(false);
 
     useEffect(() => {
-        setCollapsed(window.localStorage.getItem('sidebar-collapsed') === 'true');
+        try {
+            const isCollapsed = window.localStorage.getItem('sidebar-collapsed') === 'true';
+            setCollapsed(isCollapsed);
+            document.documentElement.classList.toggle('sidebar-collapsed', isCollapsed);
+        } catch {
+            /* ignore */
+        }
     }, []);
 
     // Apply saved theme (dark mode) on first load so it persists across pages
@@ -91,14 +106,18 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
         }
     }, [pathname]);
 
-    useEffect(() => {
-        window.localStorage.setItem('sidebar-collapsed', String(collapsed));
-        document.documentElement.classList.toggle('sidebar-collapsed', collapsed);
-    }, [collapsed]);
-
     const handleToggle = () => {
         setIsToggling(true);
-        setCollapsed((prev) => !prev);
+        setCollapsed((prev) => {
+            const next = !prev;
+            try {
+                window.localStorage.setItem('sidebar-collapsed', String(next));
+                document.documentElement.classList.toggle('sidebar-collapsed', next);
+            } catch {
+                /* ignore */
+            }
+            return next;
+        });
         setTimeout(() => setIsToggling(false), 350);
     };
 

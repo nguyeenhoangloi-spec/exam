@@ -183,7 +183,12 @@ function AdminEssayReviewContent() {
       if (data.overallComment) {
         setTeacherComments((prev) => ({ ...prev, [questionId]: data.overallComment }));
       }
-      setToast({ message: 'AI đã phân tích và đề xuất điểm thành công!', type: 'success' });
+      setToast({
+        message: data.isBlank === true || data.source === 'RULE'
+          ? 'Câu hỏi bị bỏ trống — hệ thống áp dụng 0đ theo quy định, không cần AI phân tích.'
+          : 'AI đã phân tích bài làm theo Rubric và tạo điểm đề xuất. Chưa phải điểm chính thức.',
+        type: 'success',
+      });
     } catch (error: any) {
       setToast({ message: error?.response?.data?.message || error?.message || 'Không thể tạo đề xuất AI. Bạn có thể tự chấm thủ công.', type: 'error' });
     } finally {
@@ -1094,15 +1099,19 @@ function AdminEssayReviewContent() {
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between text-type-helper font-semibold text-slate-500">
                           <span className="tracking-wide">Bài làm của thí sinh:</span>
-                          {ans?.textAnswer && (
+                          {ans?.textAnswer && !ans.textAnswer.includes('không nhập') ? (
                             <span className="text-type-helper font-normal text-slate-400">
                               {ans.textAnswer.trim().split(/\s+/).length} từ
                             </span>
+                          ) : (
+                            <span className="text-type-helper font-normal text-slate-400">0 từ (chưa nhập)</span>
                           )}
                         </div>
                         <div className="p-4 bg-slate-50/60 dark:bg-slate-800/40 rounded-xl border border-slate-200/70 dark:border-slate-800/80 border-l-4 border-l-blue-500 text-type-body text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed font-normal shadow-2xs">
-                          {ans?.textAnswer || (
-                            <span className="italic text-slate-400">Sinh viên không nhập nội dung văn bản</span>
+                          {ans?.textAnswer && !ans.textAnswer.includes('không nhập') ? (
+                            ans.textAnswer
+                          ) : (
+                            <span className="italic text-slate-400">Thí sinh chưa nhập nội dung bài làm cho câu hỏi này</span>
                           )}
                         </div>
                       </div>

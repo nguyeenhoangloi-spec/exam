@@ -273,15 +273,9 @@ export class EssayService {
             attempt.gradingStatus !== EssayAttemptGradingStatus.PUBLISHED &&
             attempt.gradingStatus !== EssayAttemptGradingStatus.WAITING_APPROVAL
           ) {
-            // Trường hợp 2: Thí sinh đã tham gia thi nhưng hết giờ ca thi
-            // 1. Tự động chạy AI gợi ý điểm mẫu cho các câu tự luận nếu chưa có
-            try {
-              await this.autoGradeAttempt(attempt.id);
-            } catch (e) {
-              // Background AI fallback
-            }
-
-            // 2. Tự động thu bài AUTO_SUBMITTED nếu đang dở dang và chuyển sang hàng đợi GRADING (Đang chấm) cho Giảng viên
+            // Trường hợp 2: Thí sinh đã tham gia thi nhưng hết giờ ca thi.
+            // Không tự động ghi điểm AI ở đây; Giảng viên phải chủ động bấm
+            // "Chấm mẫu AI" để xem đề xuất theo Rubric và xác nhận điểm.
             const isAlreadySubmitted = attempt.status === AttemptStatus.SUBMITTED || attempt.status === AttemptStatus.AUTO_SUBMITTED;
             await this.prisma.examAttempt.update({
               where: { id: attempt.id },
@@ -477,17 +471,6 @@ export class EssayService {
     let attempt = await this.getAttempt(actor, attemptId);
     const snapshot = (attempt.snapshot?.snapshotData as any[]) || [];
     const essayQuestions = snapshot.filter((q) => q.type === 'ESSAY');
-
-    // Nếu có câu tự luận chưa được chấm điểm/AI gợi ý -> Tự động kích hoạt AI chấm ngay lập tức
-    const hasUngradedEssay = essayQuestions.some((q) => {
-      const ans = attempt.attemptAnswers.find((a) => a.questionId === q.questionId);
-      return !ans || !ans.essayGrades || ans.essayGrades.length === 0;
-    });
-
-    if (hasUngradedEssay) {
-      await this.autoGradeAttempt(attemptId);
-      attempt = await this.getAttempt(actor, attemptId);
-    }
 
     const questionIds = essayQuestions.map((q) => q.questionId);
     const dbQuestions = questionIds.length
@@ -713,7 +696,9 @@ export class EssayService {
     if (!answer) throw new NotFoundException('Không tìm thấy câu trả lời.');
     await this.getAttempt(actor, answer.attemptId);
 
-    const snapshot = ((answer.attempt.snapshot?.snapshotData as any[]) || []).find((q) => q.questionId === answer.questionId);
+    const snapshot = ((answer.attempt.snapshot?.snapshotData as any[]) || []).find(
+      (q) => q.questionId === answer.questionId || q.id === answer.questionId,
+    );
     if (!snapshot || snapshot.type !== 'ESSAY') {
       throw new BadRequestException('Chỉ hỗ trợ AI đề xuất cho câu hỏi tự luận (ESSAY).');
     }
@@ -724,18 +709,23 @@ export class EssayService {
     });
 
     if (!rubric.length) {
-      rubric = [
-        {
-          id: 'default_rubric',
-          questionId: answer.questionId,
-          label: 'Đánh giá nội dung tự luận',
-          description: snapshot.explanation || 'Đánh giá câu trả lời tự luận của sinh viên',
-          maxScore: snapshot.score || 1.0,
-          sortOrder: 1,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        } as any,
-      ];
+      try {
+        const defaultCriterion = await this.prisma.essayRubricCriterion.create({
+          data: {
+            questionId: answer.questionId,
+            label: 'Nội dung câu trả lời tự luận hoàn chỉnh',
+            description: snapshot.explanation || 'Đánh giá độ chính xác, đầy đủ và lập luận logic của câu trả lời',
+            maxScore: Number(snapshot.score || 1.0),
+            sortOrder: 1,
+          },
+        });
+        rubric = [defaultCriterion];
+      } catch (e) {
+        rubric = await this.prisma.essayRubricCriterion.findMany({
+          where: { questionId: answer.questionId },
+          orderBy: { sortOrder: 'asc' },
+        });
+      }
     }
     const rawText = ((answer.textAnswer as string) || '').trim();
     if (!rawText || rawText === '(Sinh viên không nhập nội dung văn bản)') {
@@ -743,12 +733,16 @@ export class EssayService {
         criterionId: r.id,
         score: 0,
         comment: 'Sinh viên bỏ trống / chưa làm câu hỏi này (0đ).',
+        evidenceQuote: '',
+        achievementLevel: 'NOT_MET',
       }));
       return {
         criteria: emptyCriteria,
         overallComment: 'Sinh viên bỏ trống / chưa làm câu hỏi này (0đ).',
         confidence: 1.0,
         warning: 'Thí sinh không nhập nội dung trả lời.',
+        isBlank: true,
+        source: 'RULE',
         requiresTeacherConfirmation: true,
       };
     }
@@ -757,7 +751,7 @@ export class EssayService {
       data: {
         attemptAnswerId: answer.id,
         rubricVersionId: answer.rubricVersionId || null,
-        requestedById: actor.id,
+        requestedById: Number(actor?.id) || 1,
         status: 'RUNNING',
         startedAt: new Date(),
       },
@@ -819,15 +813,18 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
         if (aiRes && Array.isArray(aiRes.criteriaGrades)) {
           const byId = new Map(rubric.map((r) => [r.id, r]));
           const parsedCriteria = aiRes.criteriaGrades
-            .map((item: any) => {
-              const r = byId.get(String(item.criterionId));
+            .map((item: any, idx: number) => {
+              const r =
+                byId.get(String(item.criterionId)) ||
+                rubric.find((rub) => rub.id === String(item.criterionId) || rub.label === String(item.criterionId)) ||
+                rubric[idx];
               if (!r) return null;
               const score = Math.min(Math.max(Number(item.score) || 0, 0), r.maxScore);
               return {
                 criterionId: r.id,
                 score: Number(score.toFixed(2)),
-                comment: String(item.comment || '').trim(),
-                evidenceQuote: String(item.evidenceQuote || '').trim().slice(0, 500),
+                comment: String(item.comment || '').trim() || 'AI: Đã phân tích bài làm theo tiêu chí Rubric.',
+                evidenceQuote: String(item.evidenceQuote || '').trim().slice(0, 500) || (answer.textAnswer || '').slice(0, 150),
                 achievementLevel: ['FULL', 'PARTIAL', 'NOT_MET', 'NEEDS_REVIEW'].includes(String(item.achievementLevel))
                   ? String(item.achievementLevel)
                   : 'NEEDS_REVIEW',
@@ -835,9 +832,10 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
             })
             .filter(Boolean);
 
-          if (parsedCriteria.length === rubric.length) {
+          const uniqueCriterionIds = new Set(parsedCriteria.map((item: any) => item.criterionId));
+          if (parsedCriteria.length === rubric.length && uniqueCriterionIds.size === rubric.length) {
             criteria = parsedCriteria;
-            overallComment = String(aiRes.generalFeedback || '').trim();
+            overallComment = String(aiRes.generalFeedback || '').trim() || 'AI: Đã hoàn tất phân tích bài làm của thí sinh.';
             confidence = 0.9;
             this.logger.log(`AI Service (${aiRes.providerUsed}) graded essay successfully.`);
           }
@@ -846,42 +844,10 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
         this.logger.warn(`AiService gradeEssay failed: ${aiErr?.message || aiErr}.`);
       }
 
-      // Fallback: Nếu không có kết quả từ AI, đánh giá thông minh dựa trên độ phủ nội dung & từ khóa
+      // Không tự chấm bằng heuristic khi AI lỗi hoặc trả thiếu Rubric.
+      // Nếu không có đủ kết quả cho toàn bộ tiêu chí, yêu cầu giáo viên chấm thủ công.
       if (!criteria.length) {
-        const studentRaw = (answer.textAnswer || '').trim().toLowerCase();
-        const studentWords = studentRaw.split(/\s+/).filter(Boolean);
-        const sampleText = ((snapshot.explanation || '') + ' ' + snapshot.content).toLowerCase();
-        const sampleWords = sampleText.split(/\s+/).filter((w) => w.length > 2);
-        
-        let matchCount = 0;
-        for (const w of sampleWords) {
-          if (studentWords.includes(w)) matchCount++;
-        }
-        
-        const rawRatio = sampleWords.length > 0 ? matchCount / Math.max(sampleWords.length * 0.35, 1) : 0.7;
-        const matchRatio = Math.min(Math.max(rawRatio, studentWords.length > 15 ? 0.6 : 0.3), 1.0);
-
-        criteria = rubric.map((r) => {
-          const rawSc = Number((r.maxScore * matchRatio).toFixed(2));
-          const validSc = Math.min(Math.max(rawSc, 0), r.maxScore);
-          return {
-            criterionId: r.id,
-            score: validSc,
-            comment: matchRatio >= 0.75
-              ? 'Bài làm đầy đủ, bám sát các ý chính theo yêu cầu đề bài.'
-              : matchRatio >= 0.5
-              ? 'Bài làm đạt yêu cầu cơ bản nhưng cần giải thích chi tiết hơn.'
-              : 'Bài làm chưa đủ ý hoặc chưa bám sát nội dung trọng tâm.',
-            evidenceQuote: (answer.textAnswer || '').slice(0, 150),
-            achievementLevel: matchRatio >= 0.75 ? 'FULL' : matchRatio >= 0.5 ? 'PARTIAL' : 'NOT_MET',
-          };
-        });
-        overallComment = matchRatio >= 0.75
-          ? 'Bài làm tốt, nắm vững kiến thức trọng tâm.'
-          : matchRatio >= 0.5
-          ? 'Bài làm đạt yêu cầu, cần bổ sung thêm dẫn chứng.'
-          : 'Bài làm chưa đạt yêu cầu, cần hoàn thiện thêm.';
-        confidence = 0.8;
+        throw new BadRequestException('AI không trả đủ kết quả theo Rubric. Vui lòng thử lại hoặc chấm thủ công.');
       }
 
       const aiSuggestedTotal = Number(criteria.reduce((sum: number, c: any) => sum + c.score, 0).toFixed(2));
@@ -936,6 +902,8 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
         overallComment,
         confidence,
         warning: warningMsg,
+        isBlank: false,
+        source: 'AI',
         requiresTeacherConfirmation: true,
       };
     } catch (error: any) {
@@ -964,9 +932,6 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
 
     const snapshot = (attempt.snapshot?.snapshotData as any[]) || [];
     const essayQuestions = snapshot.filter((q) => q.type === 'ESSAY');
-
-    // Đảm bảo tất cả các câu hỏi tự luận (kể cả câu sinh viên không làm) đều tự động được chấm điểm
-    await this.autoGradeAttempt(attemptId);
 
     const answers = await this.prisma.attemptAnswer.findMany({
       where: { attemptId },

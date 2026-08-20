@@ -225,7 +225,12 @@ function TeacherEssayGradingContent() {
       setAiEvidence((previous) => ({ ...previous, ...Object.fromEntries(data.criteria.map((item: any) => [item.criterionId, item.evidenceQuote || 'Không có minh chứng rõ ràng'])) }));
       if (data.overallComment) setTeacherComments((previous) => ({ ...previous, [questionId]: data.overallComment }));
       setHasUnsavedChanges(true);
-      setToast({ message: 'AI đã phân tích và đề xuất điểm thành công!', type: 'success' });
+      setToast({
+        message: data.isBlank === true || data.source === 'RULE'
+          ? 'Câu hỏi bị bỏ trống — hệ thống áp dụng 0đ theo quy định, không cần AI phân tích.'
+          : 'AI đã phân tích bài làm theo Rubric và tạo điểm đề xuất. Chưa phải điểm chính thức.',
+        type: 'success',
+      });
     } catch (error: any) {
       setToast({ message: error?.response?.data?.message || error?.message || 'Không thể tạo đề xuất AI. Bạn vẫn có thể chấm thủ công.', type: 'error' });
     } finally {
@@ -234,7 +239,7 @@ function TeacherEssayGradingContent() {
   };
 
   const [batchAiLoading, setBatchAiLoading] = useState(false);
-  const [aiProgress, setAiProgress] = useState<{ current: number; total: number; percent: number } | null>(null);
+  const [aiProgress, setAiProgress] = useState<{ current: number; total: number; percent: number; phase: string } | null>(null);
 
   const saveAllQuestionGrades = async (options: { showPopup?: boolean } = { showPopup: true }) => {
     if (!selected || !selected.id || String(selected.id).startsWith('virtual-')) {
@@ -316,20 +321,28 @@ function TeacherEssayGradingContent() {
     }
 
     setBatchAiLoading(true);
-    setAiProgress({ current: 0, total: essayQuestions.length, percent: 0 });
+    setAiProgress({ current: 0, total: essayQuestions.length, percent: 0, phase: 'Chuẩn bị đọc Rubric...' });
     let actualAiGradedCount = 0;
     let emptyAnswerCount = 0;
+    let failedCount = 0;
+    const failedMessages: string[] = [];
 
     try {
       for (let i = 0; i < essayQuestions.length; i++) {
         const q = essayQuestions[i];
-        const ans = (selected.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
+        const qId = q.questionId || q.id;
+        const ans = (selected.attemptAnswers || []).find((a: any) => a.questionId === qId || a.questionId === q.questionId || a.questionId === q.id);
         if (!ans?.id) {
-          setAiProgress({ current: i + 1, total: essayQuestions.length, percent: Math.round(((i + 1) / essayQuestions.length) * 100) });
+          // Không có bản ghi đáp án nghĩa là sinh viên bỏ trống câu này.
+          // Đây không phải lỗi AI và không cần gọi endpoint AI.
+          emptyAnswerCount++;
+          setAiProgress({ current: i + 1, total: essayQuestions.length, percent: Math.round(((i + 1) / essayQuestions.length) * 100), phase: `Câu ${i + 1} bỏ trống — áp dụng 0đ theo quy định` });
           continue;
         }
 
         try {
+          setAiProgress({ current: i, total: essayQuestions.length, percent: Math.round((i / essayQuestions.length) * 100), phase: `Đang đọc Rubric và phân tích câu ${i + 1}...` });
+
           const res = await api.post(`/essay-grading/answers/${ans.id}/ai-suggest`);
           const data = res.data;
           if (Array.isArray(data?.criteria) && data.criteria.length > 0) {
@@ -337,7 +350,7 @@ function TeacherEssayGradingContent() {
             setScores((prev) => ({
               ...prev,
               ...Object.fromEntries(data.criteria.map((item: any) => [item.criterionId, item.score])),
-              [`q_${q.questionId}`]: totalAiScore,
+              [`q_${qId}`]: totalAiScore,
             }));
             setComments((prev) => ({
               ...prev,
@@ -348,40 +361,63 @@ function TeacherEssayGradingContent() {
               ...Object.fromEntries(data.criteria.map((item: any) => [item.criterionId, item.evidenceQuote || ''])),
             }));
             if (data?.overallComment) {
-              setTeacherComments((prev) => ({ ...prev, [q.questionId]: data.overallComment }));
+              setTeacherComments((prev) => ({ ...prev, [qId]: data.overallComment }));
             }
             setHasUnsavedChanges(true);
 
-            const rawAnsText = ((ans.textAnswer as string) || '').trim();
-            const isBlank = !rawAnsText || rawAnsText === '(Sinh viên không nhập nội dung)' || rawAnsText === '(Sinh viên không nhập nội dung văn bản)' || rawAnsText === '(Sinh viên không nhập văn bản)';
-            if (isBlank) {
+            if (data.isBlank === true || data.source === 'RULE') {
               emptyAnswerCount++;
             } else {
               actualAiGradedCount++;
             }
+          } else {
+            failedCount++;
           }
         } catch (err) {
-          // Bỏ qua lỗi câu đơn lẻ để tiếp tục câu tiếp theo
+          console.error(`AI suggest error for answer ${ans.id}:`, err);
+          failedCount++;
+          const message = (err as any)?.response?.data?.message || (err as any)?.message;
+          if (message && !failedMessages.includes(String(message))) failedMessages.push(String(message));
         } finally {
-          setAiProgress({ current: i + 1, total: essayQuestions.length, percent: Math.round(((i + 1) / essayQuestions.length) * 100) });
+          setAiProgress({ current: i + 1, total: essayQuestions.length, percent: Math.round(((i + 1) / essayQuestions.length) * 100), phase: `Đã xử lý câu ${i + 1}/${essayQuestions.length}` });
         }
       }
 
-      // Thông báo Toast chuẩn Enterprise súc tích, tự nhiên:
       const totalProcessed = actualAiGradedCount + emptyAnswerCount;
       if (totalProcessed === 0) {
         setToast({
-          message: 'Không thể tạo đề xuất điểm AI cho các câu tự luận trong bài thi này.',
+          message: 'AI chưa tạo được đề xuất theo Rubric. Vui lòng thử lại hoặc chấm thủ công.',
           type: 'error',
+        });
+      } else if (failedCount > 0) {
+        const resultParts = [
+          actualAiGradedCount > 0 ? `${actualAiGradedCount} câu AI đã phân tích` : '',
+          emptyAnswerCount > 0 ? `${emptyAnswerCount} câu bỏ trống được áp dụng 0đ` : '',
+          `${failedCount} câu AI chưa trả kết quả`,
+        ].filter(Boolean);
+        setToast({
+          message: `${resultParts.join('; ')}. Vui lòng thử lại các câu lỗi hoặc chấm thủ công.`,
+          type: 'error',
+        });
+        if (failedMessages.length > 0) {
+          setToast({
+            message: `${resultParts.join('; ')}. Chi tiết: ${failedMessages[0]}`,
+            type: 'error',
+          });
+        }
+      } else if (actualAiGradedCount > 0 && emptyAnswerCount > 0) {
+        setToast({
+          message: `AI đã phân tích ${actualAiGradedCount} câu theo Rubric; ${emptyAnswerCount} câu bỏ trống được áp dụng 0đ theo quy định.`,
+          type: 'success',
         });
       } else if (actualAiGradedCount > 0) {
         setToast({
-          message: 'Đã dùng AI phân tích bài làm và điền điểm mẫu theo Rubric thành công!',
+          message: `AI đã phân tích ${actualAiGradedCount} câu theo Rubric. Đây là điểm đề xuất, chưa phải điểm chính thức.`,
           type: 'success',
         });
       } else {
         setToast({
-          message: 'Thí sinh bỏ trống câu hỏi — AI đã tự động gán 0đ theo quy chế.',
+          message: `${emptyAnswerCount} câu bỏ trống được áp dụng 0đ theo quy định; AI không cần phân tích các câu này.`,
           type: 'success',
         });
       }
@@ -1027,7 +1063,7 @@ function TeacherEssayGradingContent() {
                               {batchAiLoading && aiProgress ? (
                                 <>
                                   <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-600 dark:text-blue-300" />
-                                  <span>AI đang chấm {aiProgress.current}/{aiProgress.total} ({aiProgress.percent}%)</span>
+                                  <span>{aiProgress.phase} {aiProgress.current > 0 ? `(${aiProgress.current}/${aiProgress.total} · ${aiProgress.percent}%)` : ''}</span>
                                 </>
                               ) : (
                                 <span>Chấm mẫu AI</span>
@@ -1174,15 +1210,19 @@ function TeacherEssayGradingContent() {
                         <div className="space-y-1.5">
                           <div className="flex items-center justify-between text-type-helper font-semibold text-slate-500">
                             <span className="tracking-wide">Bài làm của thí sinh:</span>
-                            {ans?.textAnswer && (
+                            {ans?.textAnswer && !ans.textAnswer.includes('không nhập') ? (
                               <span className="text-type-helper font-normal text-slate-400">
                                 {ans.textAnswer.trim().split(/\s+/).length} từ
                               </span>
+                            ) : (
+                              <span className="text-type-helper font-normal text-slate-400">0 từ (chưa nhập)</span>
                             )}
                           </div>
                           <div className="p-4 bg-slate-50/60 dark:bg-slate-800/40 rounded-xl border border-slate-200/70 dark:border-slate-800/80 border-l-4 border-l-blue-500 text-type-body text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed font-normal shadow-2xs">
-                            {ans?.textAnswer || (
-                              <span className="italic text-slate-400">Sinh viên không nhập nội dung văn bản</span>
+                            {ans?.textAnswer && !ans.textAnswer.includes('không nhập') ? (
+                              ans.textAnswer
+                            ) : (
+                              <span className="italic text-slate-400">Thí sinh chưa nhập nội dung bài làm cho câu hỏi này</span>
                             )}
                           </div>
                         </div>
