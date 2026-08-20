@@ -23,9 +23,14 @@ const paperDetailInclude = {
           id: true,
           code: true,
           content: true,
+          contentRich: true,
           type: true,
           difficulty: true,
           explanation: true,
+          media: {
+            orderBy: { sortOrder: 'asc' as const },
+            select: { id: true, url: true, mimeType: true, fileName: true, altText: true, sortOrder: true },
+          },
           options: {
             orderBy: { order: 'asc' as const },
             select: { id: true, label: true, content: true, isCorrect: true, order: true },
@@ -169,7 +174,12 @@ export class ExamPapersService {
           isActive: true,
           deletedAt: null,
         },
-        include: { options: { orderBy: { order: 'asc' } }, essayRubrics: { orderBy: { sortOrder: 'asc' } }, fillBlankAnswers: { orderBy: { blankIndex: 'asc' } } },
+        include: {
+          media: { orderBy: { sortOrder: 'asc' } },
+          options: { orderBy: { order: 'asc' } },
+          essayRubrics: { orderBy: { sortOrder: 'asc' } },
+          fillBlankAnswers: { orderBy: { blankIndex: 'asc' } },
+        },
       });
 
       const isCompatibleType = (question: { type: string }) => {

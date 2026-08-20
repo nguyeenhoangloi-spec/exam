@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { onlineExamService, AnswerItem, ProctoringEventItem } from '@/lib/services/online-exam.service';
-import { Clock, Shield, Flag, CheckCircle, AlertTriangle, Wifi, WifiOff, Send, Maximize2, ChevronLeft, ChevronRight, HelpCircle, X } from 'lucide-react';
+import { Clock, Shield, Flag, CheckCircle, CheckCircle2, AlertTriangle, Wifi, WifiOff, Send, Maximize2, ChevronLeft, ChevronRight, HelpCircle, X } from 'lucide-react';
 import { fixHtmlImageUrls, getImageUrl } from '@/lib/media-utils';
 import { ImageLightboxModal } from '@/components/ImageLightboxModal';
 import { Toast } from '@/components/Toast';
@@ -711,7 +711,7 @@ export default function StudentExamTakePage() {
                     <textarea
                       value={currentAns.textAnswer || ''}
                       onChange={(e) => handleEssayChange(currentQ.questionId, e.target.value)}
-                      className="min-h-[280px] w-full resize-y rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4 text-type-reading font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-950/40"
+                      className="min-h-[220px] h-[260px] w-full resize-y rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4 text-type-reading font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-950/40"
                       placeholder="Nhập trực tiếp câu trả lời tự luận của bạn vào đây..."
                     />
                     <div className="flex items-center justify-between text-type-helper text-slate-500 dark:text-slate-400">
@@ -722,123 +722,134 @@ export default function StudentExamTakePage() {
                     </div>
                   </div>
                 ) : currentQ.type === 'FILL_BLANK' ? (
- <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/60 p-4 text-type-helper font-normal text-slate-600 dark:text-slate-300 space-y-1">
- <p>💡 <strong>Hướng dẫn:</strong> Nhập trực tiếp đáp án vào từng ô trống trong câu hỏi phía trên. Hệ thống tự động ghi nhận và lưu bài làm của bạn khi bạn nhập.</p>
- </div>
- ) : (
- <div className="space-y-3 pt-2">
- {currentQ.options?.map((opt: any) => {
- const isSelected = currentAns.selectedOptionIds?.includes(opt.id);
- const isMulti = currentQ.type === 'MULTIPLE_CHOICE';
+                  <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/60 p-4 text-type-helper font-normal text-slate-600 dark:text-slate-300 space-y-1">
+                    <p>💡 <strong>Hướng dẫn:</strong> Nhập trực tiếp đáp án vào từng ô trống trong câu hỏi phía trên. Hệ thống tự động ghi nhận và lưu bài làm của bạn khi bạn nhập.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3 pt-2">
+                    {currentQ.options?.map((opt: any) => {
+                      const isSelected = currentAns.selectedOptionIds?.includes(opt.id);
+                      const isMulti = currentQ.type === 'MULTIPLE_CHOICE';
 
- return (
- <div
- key={opt.id}
- onClick={() => handleSelectOption(currentQ.questionId, opt.id, isMulti)}
- className={`p-4 rounded-xl border cursor-pointer transition flex items-start space-x-3.5 ${isSelected
- ? 'bg-blue-50/80 border-blue-600 text-blue-700 shadow-2xs font-medium ring-2 ring-blue-500/20'
- : 'bg-slate-50/60 dark:bg-slate-800/60 border-slate-200/90 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
- }`}
- >
- <div
- className={`w-7 h-7 rounded-${isMulti ? 'lg' : 'full'} border flex items-center justify-center shrink-0 mt-0.5 transition ${isSelected
- ? 'bg-blue-600 border-blue-600 text-white font-medium shadow-2xs'
- : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-medium'
- }`}
- >
- <span className="text-type-helper">{opt.label}</span>
- </div>
- <div className="text-type-reading pt-0.5 font-normal text-slate-800 dark:text-slate-200">{opt.content}</div>
- </div>
- );
- })}
- </div>
- )}
+                      return (
+                        <div
+                          key={opt.id}
+                          onClick={() => handleSelectOption(currentQ.questionId, opt.id, isMulti)}
+                          className={`p-4 rounded-xl border cursor-pointer transition flex items-start space-x-3.5 ${isSelected
+                            ? 'bg-blue-50/80 border-blue-600 text-blue-700 shadow-2xs font-medium ring-2 ring-blue-500/20'
+                            : 'bg-slate-50/60 dark:bg-slate-800/60 border-slate-200/90 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                          }`}
+                        >
+                          <div
+                            className={`w-7 h-7 rounded-${isMulti ? 'lg' : 'full'} border flex items-center justify-center shrink-0 mt-0.5 transition ${isSelected
+                              ? 'bg-blue-600 border-blue-600 text-white font-medium shadow-2xs'
+                              : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-medium'
+                            }`}
+                          >
+                            <span className="text-type-helper">{opt.label}</span>
+                          </div>
+                          <div className="text-type-reading pt-0.5 font-normal text-slate-800 dark:text-slate-200">{opt.content}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
 
- {/* Pagination Controls */}
- <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-6">
- <button
- type="button"
- disabled={currentIdx === 0}
- onClick={() => setCurrentIdx((prev) => prev - 1)}
- className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100 text-type-body font-medium disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-2xs"
- >
- <ChevronLeft className="h-4 w-4" /> Câu trước
- </button>
- <span className="text-type-body font-medium text-slate-500 dark:text-slate-400">
- Câu <strong className="font-semibold text-slate-900 dark:text-slate-100">{currentIdx + 1}</strong> / {totalCount}
- </span>
- <button
- type="button"
- disabled={currentIdx === totalCount - 1}
- onClick={() => setCurrentIdx((prev) => prev + 1)}
- className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-type-body font-medium disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-xs"
- >
- Câu tiếp <ChevronRight className="h-4 w-4" />
- </button>
- </div>
- </div>
- )}
- </main>
+                {/* Pagination Controls */}
+                <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-6">
+                  <button
+                    type="button"
+                    disabled={currentIdx === 0}
+                    onClick={() => setCurrentIdx((prev) => prev - 1)}
+                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100 text-type-body font-medium disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-2xs"
+                  >
+                    <ChevronLeft className="h-4 w-4" /> Câu trước
+                  </button>
+                  <span className="text-type-body font-medium text-slate-500 dark:text-slate-400">
+                    Câu <strong className="font-semibold text-slate-900 dark:text-slate-100">{currentIdx + 1}</strong> / {totalCount}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={currentIdx === totalCount - 1}
+                    onClick={() => setCurrentIdx((prev) => prev + 1)}
+                    className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-type-body font-medium disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-xs"
+                  >
+                    Câu tiếp <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </main>
 
- {/* Sidebar Question Navigator */}
- <aside className="w-full lg:w-80 bg-white dark:bg-slate-900 border-l border-slate-200/90 dark:border-slate-700 p-6 flex flex-col shrink-0 space-y-4">
- <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
- <h3 className="text-type-section font-semibold text-slate-900 dark:text-slate-100">Danh sách câu hỏi</h3>
- <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">{answeredCount}/{totalCount} đã hoàn thành</span>
- </div>
+          {/* Sidebar Question Navigator */}
+          <aside className="w-full lg:w-80 bg-white dark:bg-slate-900 border-l border-slate-200/90 dark:border-slate-700 p-6 flex flex-col shrink-0 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="text-type-section font-semibold text-slate-900 dark:text-slate-100">Danh sách câu hỏi</h3>
+              <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">{answeredCount}/{totalCount} đã hoàn thành</span>
+            </div>
 
- {/* Legend Indicators */}
- <div className="flex items-center justify-between text-type-helper font-medium text-slate-500 dark:text-slate-400 gap-1 pb-1">
- <span className="flex items-center gap-1.5">
- <span className="w-2 h-2 rounded-full bg-blue-600"></span> Đã làm ({answeredCount})
- </span>
- <span className="flex items-center gap-1.5">
- <span className="w-2 h-2 rounded-full bg-amber-500"></span> Xem lại ({flaggedCount})
- </span>
- <span className="flex items-center gap-1.5">
- <span className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></span> Chưa làm
- </span>
- </div>
+            {/* Legend Indicators */}
+            <div className="flex items-center justify-between text-type-helper font-medium text-slate-500 dark:text-slate-400 gap-1 pb-1">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-blue-600"></span> Đã làm ({answeredCount})
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500"></span> Xem lại ({flaggedCount})
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></span> Chưa làm
+              </span>
+            </div>
 
- {/* 5-Column Question Grid */}
- <div className="grid grid-cols-5 gap-2.5 p-2 overflow-y-auto flex-1 max-h-[50vh] lg:max-h-none border border-slate-100 dark:border-slate-800 rounded-2xl bg-slate-50/50 dark:bg-slate-800/50">
- {questions.map((q: any, idx: number) => {
- const ans = answers[q.questionId];
- const isAnswered = Boolean(
- (ans?.selectedOptionIds && ans.selectedOptionIds.length > 0) ||
- (ans?.textAnswer && ans.textAnswer.trim().length > 0) ||
- Boolean(ans?.fillBlankAnswers?.some((item: any) => item.value?.trim()))
- );
- const isFlagged = Boolean(ans?.isFlagged);
- const isCurrent = idx === currentIdx;
+            {/* 5-Column Question Grid */}
+            <div className="grid grid-cols-5 gap-2.5 p-2.5 content-start auto-rows-max overflow-y-auto max-h-[55vh] border border-slate-100 dark:border-slate-800 rounded-2xl bg-slate-50/50 dark:bg-slate-800/50">
+              {questions.map((q: any, idx: number) => {
+                const ans = answers[q.questionId];
+                const isAnswered = Boolean(
+                  (ans?.selectedOptionIds && ans.selectedOptionIds.length > 0) ||
+                  (ans?.textAnswer && ans.textAnswer.trim().length > 0) ||
+                  Boolean(ans?.fillBlankAnswers?.some((item: any) => item.value?.trim()))
+                );
+                const isFlagged = Boolean(ans?.isFlagged);
+                const isCurrent = idx === currentIdx;
 
- let btnStyle = 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600';
- if (isFlagged) {
- btnStyle = 'bg-amber-500 text-white font-semibold border-amber-500 shadow-2xs hover:bg-amber-600';
- } else if (isAnswered) {
- btnStyle = 'bg-blue-600 text-white font-semibold border-blue-600 shadow-2xs hover:bg-blue-700';
- }
+                let btnStyle = 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600';
+                if (isFlagged) {
+                  btnStyle = 'bg-amber-500 text-white font-semibold border-amber-500 shadow-2xs hover:bg-amber-600';
+                } else if (isAnswered) {
+                  btnStyle = 'bg-blue-600 text-white font-semibold border-blue-600 shadow-2xs hover:bg-blue-700';
+                }
 
- if (isCurrent) {
- btnStyle += ' ring-2 ring-blue-600 ring-offset-1 z-10 font-semibold shadow-sm scale-105';
- }
+                if (isCurrent) {
+                  btnStyle += ' ring-2 ring-blue-600 ring-offset-1 z-10 font-semibold shadow-sm scale-105';
+                }
 
- return (
- <button
- key={q.questionId}
- type="button"
- onClick={() => setCurrentIdx(idx)}
- className={`h-9.5 rounded-xl border text-type-helper flex items-center justify-center relative transition duration-150 cursor-pointer ${btnStyle}`}
- >
- {idx + 1}
- {isFlagged && <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-amber-200 rounded-full"></span>}
- </button>
- );
- })}
- </div>
- </aside>
- </div>
+                return (
+                  <button
+                    key={q.questionId}
+                    type="button"
+                    onClick={() => setCurrentIdx(idx)}
+                    className={`h-9.5 w-full rounded-xl border text-type-helper flex items-center justify-center relative transition duration-150 cursor-pointer ${btnStyle}`}
+                  >
+                    {idx + 1}
+                    {isFlagged && <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-amber-200 rounded-full"></span>}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Quick Exam Tips & Guidance note */}
+            <div className="rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 p-3.5 space-y-1.5 text-type-helper text-slate-600 dark:text-slate-300">
+              <div className="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-100">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                <span>Lưu ý khi làm bài</span>
+              </div>
+              <p className="text-type-helper font-normal leading-relaxed text-slate-500 dark:text-slate-400">
+                Hệ thống tự động lưu bài làm liên tục. Bạn có thể bấm chọn trực tiếp số câu ở bảng trên để chuyển nhanh qua lại giữa các câu.
+              </p>
+            </div>
+          </aside>
+        </div>
 
  {/* Submit Confirmation Modal */}
  <Modal

@@ -678,7 +678,11 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={loading || !username || !password}
-                      className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 via-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:-translate-y-0.5 active:translate-y-0.5 active:scale-[0.985] active:shadow-xs text-white font-semibold text-type-body shadow-md shadow-blue-600/25 hover:shadow-lg hover:shadow-blue-600/35 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 disabled:transform-none disabled:shadow-none cursor-pointer mt-2"
+                      className={`w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 via-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:-translate-y-0.5 active:translate-y-0.5 active:scale-[0.985] active:shadow-xs text-white font-semibold text-type-body shadow-md shadow-blue-600/25 hover:shadow-lg hover:shadow-blue-600/35 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none cursor-pointer mt-2 ${
+                        loading
+                          ? 'disabled:opacity-100 disabled:text-white'
+                          : 'disabled:from-slate-200 disabled:via-slate-200 disabled:to-slate-200 disabled:text-slate-500 disabled:opacity-100 dark:disabled:from-slate-700 dark:disabled:via-slate-700 dark:disabled:to-slate-700 dark:disabled:text-slate-300'
+                      }`}
                     >
                       {loading ? (
                         <div className="flex items-center gap-2">

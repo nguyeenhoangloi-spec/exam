@@ -13,6 +13,7 @@ import {
   Clock,
   HelpCircle,
   FileText,
+  Volume2,
 } from 'lucide-react';
 import { ExamPaper } from '../../types';
 import { Button } from '../ui/Button';
@@ -191,34 +192,35 @@ export function ExamPaperDetailDrawer({
         </div>
 
         {/* ── 2. Quick Metrics & Interactive Toolbar ── */}
-        <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-850/70 border-b border-slate-100 dark:border-slate-800 space-y-3.5 shrink-0">
-          {/* Hàng 1: Quick Metric Chips */}
-          <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="px-6 py-3.5 bg-slate-50/80 dark:bg-slate-850/70 border-b border-slate-100 dark:border-slate-800 space-y-3 shrink-0">
+          {/* Hàng 1: Single-Row Streamlined Info & Actions */}
+          <div className="flex flex-wrap items-center justify-between gap-2.5">
+            {/* Thông số kỹ thuật đề thi (Gọn gàng 1 dải) */}
             <div className="flex items-center gap-2 text-type-helper text-slate-600 dark:text-slate-300 font-medium flex-wrap">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs">
-                <HelpCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                <strong className="font-semibold">{questionCount}</strong> câu hỏi
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs">
+                <HelpCircle className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                <span><strong className="font-semibold text-slate-800 dark:text-slate-100">{questionCount}</strong> câu hỏi</span>
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs">
-                <Award className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                <strong className="font-semibold">{paper.totalScore}</strong> điểm
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs">
+                <Award className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span><strong className="font-semibold text-slate-800 dark:text-slate-100">{paper.totalScore}</strong> điểm</span>
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs">
-                <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                <strong className="font-semibold">{paper.durationMinutes}</strong> phút
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs">
+                <Clock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                <span><strong className="font-semibold text-slate-800 dark:text-slate-100">{paper.durationMinutes}</strong> phút</span>
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs text-type-helper">
-                <span>{(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0 ? '📖' : '🏆'}</span>
-                <strong className="font-semibold text-slate-700 dark:text-slate-200">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs">
+                <Volume2 className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                <span className="text-slate-700 dark:text-slate-200 font-medium">
                   {(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0
-                    ? 'Media tham khảo tự do'
-                    : `Khảo thí: ${(paper as any).mediaMaxPlays || 2} lượt nghe`}
-                </strong>
+                    ? 'Media tự do'
+                    : `Khảo thí: ${(paper as any).mediaMaxPlays || 2} lượt`}
+                </span>
               </span>
             </div>
 
-            {/* Hàng 1 (phải): Actions (Hiện đáp án / Xuất Word) */}
-            <div className="flex items-center gap-2 shrink-0">
+            {/* Nhóm nút thao tác (Hiện đáp án / Xuất Word) */}
+            <div className="flex items-center gap-2 shrink-0 ml-auto">
               <Button
                 type="button"
                 variant={showAnswers ? 'primary' : 'secondary'}
@@ -394,42 +396,50 @@ export function ExamPaperDetailDrawer({
                   </div>
 
                   {/* Media đính kèm (Ảnh / Video / Audio) */}
-                  {Array.isArray(q.media) && q.media.length > 0 && (
-                    <div className="flex flex-wrap gap-3 pt-1">
-                      {q.media.map((media: any) => {
-                        const fullUrl = getImageUrl(media.url);
-                        const mime: string = media.mimeType || '';
-                        const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(media.url);
-                        const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(media.url);
+                  {(() => {
+                    const questionMedia = Array.isArray(q.media) && q.media.length > 0
+                      ? q.media
+                      : Array.isArray((detail as any)?.media) && (detail as any)?.media.length > 0
+                        ? (detail as any)?.media
+                        : [];
+                    if (questionMedia.length === 0) return null;
+                    return (
+                      <div className="flex flex-wrap gap-3 pt-1">
+                        {questionMedia.map((media: any) => {
+                          const fullUrl = getImageUrl(media.url);
+                          const mime: string = media.mimeType || '';
+                          const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(media.url);
+                          const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(media.url);
 
-                        if (isVid || isAud) {
+                          if (isVid || isAud) {
+                            return (
+                              <div key={media.id || media.url} className="w-full max-w-lg">
+                                <QuestionMediaPlayer
+                                  src={fullUrl}
+                                  type={isVid ? 'video' : 'audio'}
+                                  fileName={media.fileName}
+                                  maxPlays={(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0 ? 0 : ((paper as any).mediaMaxPlays || 2)}
+                                  mode={(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0 ? 'REFERENCE' : 'STRICT_EXAM'}
+                                />
+                              </div>
+                            );
+                          }
                           return (
-                            <div key={media.id || media.url} className="w-full max-w-lg">
-                              <QuestionMediaPlayer
+                            <div
+                              key={media.id || media.url}
+                              className="group relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 p-1"
+                            >
+                              <DynamicImage
                                 src={fullUrl}
-                                type={isVid ? 'video' : 'audio'}
-                                fileName={media.fileName}
-                                maxPlays={(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0 ? 0 : ((paper as any).mediaMaxPlays || 2)}
-                                mode={(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0 ? 'REFERENCE' : 'STRICT_EXAM'}
+                                alt={media.altText || media.fileName}
+                                className="max-h-48 max-w-full rounded-xl object-contain bg-white"
                               />
                             </div>
                           );
-                        }
-                        return (
-                          <div
-                            key={media.id || media.url}
-                            className="group relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 p-1"
-                          >
-                            <DynamicImage
-                              src={fullUrl}
-                              alt={media.altText || media.fileName}
-                              className="max-h-48 max-w-full rounded-xl object-contain bg-white"
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                        })}
+                      </div>
+                    );
+                  })()}
 
                   {/* Multiple Choice Options (A, B, C, D) */}
                   {choices.length > 0 ? (

@@ -706,7 +706,11 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading || !identifier.trim()}
-                  className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-type-body shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-2"
+                  className={`w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-type-body shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none cursor-pointer mt-2 ${
+                    loading
+                      ? 'disabled:opacity-100 disabled:text-white'
+                      : 'disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-500 disabled:opacity-100 dark:disabled:from-slate-700 dark:disabled:to-slate-700 dark:disabled:text-slate-300'
+                  }`}
                 >
                   {loading ? (
                     <div className="flex items-center gap-2">
@@ -868,7 +872,11 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading || otpDigits.join('').length < 6}
-                  className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-type-body shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-2"
+                  className={`w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-type-body shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none cursor-pointer mt-2 ${
+                    loading
+                      ? 'disabled:opacity-100 disabled:text-white'
+                      : 'disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-500 disabled:opacity-100 dark:disabled:from-slate-700 dark:disabled:to-slate-700 dark:disabled:text-slate-300'
+                  }`}
                 >
                   {loading ? (
                     <div className="flex items-center gap-2">
@@ -951,7 +959,11 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading || !newPassword || !confirmPassword}
-                  className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-type-body shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer mt-3"
+                  className={`w-full h-11 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold text-type-body shadow-md shadow-blue-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none cursor-pointer mt-3 ${
+                    loading
+                      ? 'disabled:opacity-100 disabled:text-white'
+                      : 'disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-500 disabled:opacity-100 dark:disabled:from-slate-700 dark:disabled:to-slate-700 dark:disabled:text-slate-300'
+                  }`}
                 >
                   {loading ? (
                     <div className="flex items-center gap-2">

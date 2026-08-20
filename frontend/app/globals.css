@@ -229,6 +229,11 @@ html.dark {
     transition-timing-function: ease-out !important;
   }
 
+  :where(button, [role='button']):disabled {
+    color: var(--ui-text-disabled) !important;
+    opacity: 1 !important;
+  }
+
   /* Keep hover motion subtle and disable hover-only movement on touch
    * devices. Existing page classes are normalized here at the shared layer. */
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
@@ -779,12 +784,6 @@ html:not(.dark) .typography-scale :where(.placeholder\:text-slate-400, .placehol
 }
 
 .typography-scale :where(input, select, textarea):disabled {
-  color: var(--ui-text-disabled) !important;
-  opacity: 1 !important;
-}
-
-.typography-scale :where(button, [role='button']):disabled,
-.typography-scale :where(button, [role='button'])[aria-disabled='true'] {
   color: var(--ui-text-disabled) !important;
   opacity: 1 !important;
 }
