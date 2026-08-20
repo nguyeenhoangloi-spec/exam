@@ -27,6 +27,7 @@ interface QuestionBankTableProps {
   onDetail: (q: Question) => void;
   onAction: (q: Question, name: string) => void;
   isAdmin: boolean;
+  onRubricSaved?: () => void;
 }
 
 export function QuestionBankTable({
@@ -48,6 +49,7 @@ export function QuestionBankTable({
   onDetail,
   onAction,
   isAdmin,
+  onRubricSaved,
 }: QuestionBankTableProps) {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [rubricQuestion, setRubricQuestion] = useState<Question | null>(null);
@@ -794,6 +796,7 @@ export function QuestionBankTable({
         isOpen={Boolean(rubricQuestion)}
         question={rubricQuestion}
         onClose={() => setRubricQuestion(null)}
+        onSuccess={onRubricSaved}
       />
       {lightboxUrl && (
         <ImageLightboxModal

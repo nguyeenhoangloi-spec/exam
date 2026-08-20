@@ -143,9 +143,9 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
           </span>
         </div>
 
-        {/* Chế độ & Bộ đếm */}
-        <div className="flex items-center gap-1.5">
-          {isStrictExam ? (
+        {/* Chế độ & Bộ đếm (Chỉ hiển thị khi ở chế độ Khảo thí) */}
+        {isStrictExam && (
+          <div className="flex items-center gap-1.5">
             <span
               className={`ui-pill inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-type-helper font-medium border ${
                 isLimitReached
@@ -159,18 +159,13 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
                 </>
               ) : (
                 <>
-                  <span>🏆 Khảo thí:</span>
+                  <span>Khảo thí:</span>
                   <span className="font-semibold text-blue-900 dark:text-blue-100">{playsCount}/{maxPlays} lượt</span>
                 </>
               )}
             </span>
-          ) : (
-            <span className="ui-pill inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 px-2 py-0.5 text-type-helper font-medium text-slate-600 dark:text-slate-300 bg-slate-50/60">
-              <Sparkles className="h-3 w-3 text-amber-500" />
-              <span>📖 Tham khảo tự do</span>
-            </span>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Media Playback Viewport */}
@@ -283,10 +278,10 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
         <span>
           {isStrictExam ? (
             !isLimitReached
-              ? `⚠️ Khảo thí chuẩn hóa: Khóa tua, còn ${maxPlays - playsCount} lần nghe.`
-              : '🔒 Đã khóa nút phát theo quy định.'
+              ? `Khảo thí chuẩn hóa: Khóa tua, còn ${maxPlays - playsCount} lần nghe.`
+              : 'Đã khóa nút phát theo quy định.'
           ) : (
-            '▶️ Tham khảo tự do: Được tua và nghe lại không giới hạn.'
+            'Tham khảo tự do: Được tua và nghe lại không giới hạn.'
           )}
         </span>
 

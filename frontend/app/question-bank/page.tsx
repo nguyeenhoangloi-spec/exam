@@ -615,6 +615,10 @@ export default function QuestionBankPage() {
             onDetail={showDetail}
             onAction={action}
             isAdmin={user?.role === 'ADMIN'}
+            onRubricSaved={() => {
+              setToast({ message: 'Đã lưu Rubric chấm điểm cho câu hỏi thành công!', type: 'success' });
+              void load();
+            }}
           />
         )}
 
@@ -649,7 +653,14 @@ export default function QuestionBankPage() {
       />
 
       {/* Right Drawer Quick View */}
-      <QuestionDetailDialog question={detail} onClose={() => setDetail(null)} />
+      <QuestionDetailDialog
+        question={detail}
+        onClose={() => setDetail(null)}
+        onRubricSaved={() => {
+          setToast({ message: 'Đã lưu Rubric chấm điểm cho câu hỏi thành công!', type: 'success' });
+          void load();
+        }}
+      />
 
       <QuestionImportWizard
         open={importOpen}

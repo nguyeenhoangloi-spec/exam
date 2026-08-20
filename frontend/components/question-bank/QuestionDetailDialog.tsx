@@ -13,7 +13,15 @@ import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { DynamicImage } from '../ui/DynamicImage';
 import { QuestionMediaPlayer } from '../exam/QuestionMediaPlayer';
 
-export function QuestionDetailDialog({ question, onClose }: { question: Question | null; onClose: () => void }) {
+export function QuestionDetailDialog({
+  question,
+  onClose,
+  onRubricSaved,
+}: {
+  question: Question | null;
+  onClose: () => void;
+  onRubricSaved?: () => void;
+}) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
@@ -510,6 +518,7 @@ export function QuestionDetailDialog({ question, onClose }: { question: Question
           onClose={() => setRubricOpen(false)}
           onSuccess={() => {
             void fetchRubrics(question.id);
+            onRubricSaved?.();
           }}
         />
       )}

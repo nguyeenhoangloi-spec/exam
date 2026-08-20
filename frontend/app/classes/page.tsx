@@ -641,7 +641,10 @@ export default function ClassesPage() {
         onClose={() => setIsImportModalOpen(false)}
         title="Nhập danh sách lớp học từ Excel"
         templateFileName="mau_danh_sach_lop.csv"
-        onImportSuccess={() => { void fetchData(); }}
+        onImportSuccess={(data: any[]) => {
+          void fetchData();
+          setToast({ message: `Đã nhập thành công ${data.length} lớp học từ file Excel!`, type: 'success' });
+        }}
       />
 
       {/* Class Detail Profile Drawer */}

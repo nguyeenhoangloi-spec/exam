@@ -27,6 +27,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
   const [previewData, setPreviewData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [failureDetails, setFailureDetails] = useState<string[]>([]);
   const [showConfirm, setShowConfirm] = useState(false);
 
   const parseCsv = (text: string) => {
@@ -47,6 +48,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
     if (!selected) return;
     setFile(selected);
     setErrorMsg('');
+    setFailureDetails([]);
     if (selected.size > 5 * 1024 * 1024) {
       setPreviewData([]);
       setErrorMsg('Tệp vượt quá giới hạn 5 MB.');
@@ -81,6 +83,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
     }
     setLoading(true);
     setErrorMsg('');
+    setFailureDetails([]);
     try {
       const isStudentImport = templateFileName.includes('sinh_vien');
       const isTeacherImport = templateFileName.includes('giang_vien');
@@ -114,7 +117,8 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
           }
         }
         if (failures.length) {
-          throw new Error(`Đã lưu ${previewData.length - failures.length}/${previewData.length} dòng. ${failures.join('; ')}`);
+          setFailureDetails(failures);
+          throw new Error(`Đã lưu ${previewData.length - failures.length}/${previewData.length} dòng. Có ${failures.length} dòng chưa được lưu.`);
         }
       }
       await onImportSuccess(previewData);
@@ -166,9 +170,16 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
           )}
 
           {errorMsg && (
-            <div className="flex items-center gap-2 text-type-helper font-semibold text-rose-700">
-              <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
-              <span>{errorMsg}</span>
+            <div className="space-y-2 text-type-helper font-semibold text-rose-700">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="h-4 w-4 shrink-0 text-rose-600 mt-0.5" />
+                <span>{errorMsg}</span>
+              </div>
+              {failureDetails.length > 0 && (
+                <div className="ml-6 max-h-28 overflow-y-auto rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-type-helper font-medium text-rose-800">
+                  {failureDetails.map((detail) => <div key={detail}>{detail}</div>)}
+                </div>
+              )}
             </div>
           )}
 
