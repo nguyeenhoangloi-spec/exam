@@ -7,7 +7,7 @@ import { Subject } from '../../types';
 import { Modal } from '../Modal';
 import { ConfirmModal } from '../ConfirmModal';
 import { Toast } from '../Toast';
-import { FileSpreadsheet, FileText, Download, X, Sparkles, UploadCloud } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { DynamicImage } from '../ui/DynamicImage';
 
@@ -49,7 +49,7 @@ export function QuestionImportWizard({
   const [selected, setSelected] = useState<number[]>([]);
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [error, setError] = useState(''); // kept for compatibility, error display moved to toast
+  const [error, setError] = useState('');
   const [toast, setToast] = useState('');
   const [toastTimer, setToastTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
@@ -78,7 +78,6 @@ export function QuestionImportWizard({
     applyDefaultsToMissingOnly: true,
   });
 
-  // Chương là tùy chọn; mặc định nhập câu hỏi không phân chương.
   useEffect(() => {
     if (open && subjects.length > 0 && !meta.subjectId) {
       const firstSub = subjects[0];
@@ -98,7 +97,6 @@ export function QuestionImportWizard({
 
   const updateMeta = (key: string, value: string | boolean) => {
     if (key === 'subjectId') {
-      const selectedSub = subjects.find((s) => String(s.id) === String(value));
       setMeta((prev) => ({
         ...prev,
         subjectId: String(value),
@@ -150,14 +148,12 @@ export function QuestionImportWizard({
         const f = new FormData();
         f.append('file', file);
 
-        // Upload file and extract text
         const extracted = await api.post('/questions/ai-extract-text', f, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         setDocumentImages(extracted.data?.images || []);
         setDocumentImageCount((extracted.data?.images?.length || 0) + (extracted.data?.documentData ? 1 : 0));
 
-        // Request AI Document Question Extraction using extracted text
         const instruction = documentIntent === 'preserve'
           ? 'Giữ nguyên các câu hỏi có sẵn trong tài liệu, không tự tạo thêm câu mới. Câu thiếu đáp án hoặc loại câu phải đánh dấu lỗi để người dùng sửa.'
           : 'Đây là đề cương/tài liệu học tập. Hãy tạo các câu hỏi nháp bám sát nội dung tài liệu.';
@@ -174,7 +170,6 @@ export function QuestionImportWizard({
           documentData: extracted.data?.documentData,
         });
 
-        setAiItems(r.data);
         const cleanedRows = (r.data || []).map((q: any, i: number) => {
           let cleanContent = String(q.content || '').trim();
           if (cleanContent.includes('","score"') || cleanContent.includes('","explanation"') || cleanContent.includes('","options"')) {
@@ -183,15 +178,22 @@ export function QuestionImportWizard({
           cleanContent = cleanContent.replace(/^["']?\s*content["']?\s*:\s*["']?/i, '').replace(/^[{["]+/g, '').replace(/["]+$/g, '').trim();
           cleanContent = cleanContent.replace(/(\{\{blank_\d+)(?!\}\})/gi, '$1}}');
 
+          let cleanExplanation = String(q.explanation || '')
+            .replace(/\{\{blank_\d+\}\}/gi, '')
+            .replace(/^(?:đáp\s*án\s*mẫu|gợi\s*ý\s*đáp\s*án|hướng\s*dẫn\s*giải|đáp\s*án|model\s*answer|sample\s*answer)\s*[:.-]*\s*/i, '')
+            .trim();
+
+          const cleanedQ = { ...q, content: cleanContent, explanation: cleanExplanation };
           return {
             row: i + 1,
-            data: { ...q, content: cleanContent },
+            data: cleanedQ,
             errors: [],
             duplicates: q.duplicate ? [q.duplicate] : [],
           };
         });
+        setAiItems(cleanedRows.map((r: any) => r.data));
         setPreview({ rows: cleanedRows });
-        setSelected(r.data.map((_: any, i: number) => i + 1));
+        setSelected(cleanedRows.map((_: any, i: number) => i + 1));
       } else {
         const f = new FormData();
         f.append('file', file);
@@ -218,12 +220,12 @@ export function QuestionImportWizard({
 
   const generateAiQuestions = async () => {
     if (!meta.subjectId) {
-      showToast('Vui lòng chọn Môn học trước khi dùng AI sinh câu hỏi.');
+      showToast('Vui lòng chọn Môn học trước khi dùng AI trích xuất câu hỏi.');
       return;
     }
     let fullPrompt = aiPrompt.trim();
     if (!file && !fullPrompt) {
-      showToast('Vui lòng nhập nội dung Đề cương hoặc tải tệp Đề cương/Bài giảng (PDF, Word, TXT) trước khi sinh câu hỏi.');
+      showToast('Vui lòng nhập nội dung Đề cương hoặc tải tệp Đề cương/Bài giảng (PDF, Word, TXT) trước khi trích xuất.');
       return;
     }
 
@@ -248,7 +250,7 @@ export function QuestionImportWizard({
         const syllabusText = extracted.data?.text || '';
         extraImages = extracted.data?.images || [];
         extraDocData = extracted.data?.documentData;
-        fullPrompt = `NỘI DUNG ĐỀ CƯƠNG / TÀI LIỆU HỌC TẬP THAM KHẢO:\n${syllabusText}\n\nYÊU CẦU BỔ SUNG KHỞI TẠO CÂU HỎI: ${fullPrompt || 'Hãy sinh các câu hỏi bám sát 100% nội dung đề cương tham khảo trên.'}`;
+        fullPrompt = `NỘI DUNG ĐỀ CƯƠNG / TÀI LIỆU HỌC TẬP THAM KHẢO:\n${syllabusText}\n\nYÊU CẦU BỔ SUNG KHỞI TẠO CÂU HỎI: ${fullPrompt || 'Hãy trích xuất các câu hỏi bám sát 100% nội dung đề cương tham khảo trên.'}`;
       }
 
       const r = await api.post('/questions/ai-generate', {
@@ -264,7 +266,21 @@ export function QuestionImportWizard({
         documentData: extraDocData,
       });
 
-      const generated = r.data || [];
+      const generated = (r.data || []).map((q: any) => {
+        let cleanContent = String(q.content || '').trim();
+        if (cleanContent.includes('","score"') || cleanContent.includes('","explanation"') || cleanContent.includes('","options"')) {
+          cleanContent = cleanContent.replace(/","(score|explanation|keywords|options|fillBlankAnswers|imageIndexes)":[\s\S]*/gi, '');
+        }
+        cleanContent = cleanContent.replace(/^["']?\s*content["']?\s*:\s*["']?/i, '').replace(/^[{["]+/g, '').replace(/["]+$/g, '').trim();
+        cleanContent = cleanContent.replace(/(\{\{blank_\d+)(?!\}\})/gi, '$1}}');
+
+        let cleanExplanation = String(q.explanation || '')
+          .replace(/\{\{blank_\d+\}\}/gi, '')
+          .replace(/^(?:đáp\s*án\s*mẫu|gợi\s*ý\s*đáp\s*án|hướng\s*dẫn\s*giải|đáp\s*án|model\s*answer|sample\s*answer)\s*[:.-]*\s*/i, '')
+          .trim();
+
+        return { ...q, content: cleanContent, explanation: cleanExplanation };
+      });
       setAiItems(generated);
       setPreview({
         rows: generated.map((q: any, i: number) => ({
@@ -276,7 +292,7 @@ export function QuestionImportWizard({
       });
       setSelected(generated.map((_: any, i: number) => i + 1));
     } catch (e: any) {
-      showToast(e.response?.data?.message || e.message || 'Không thể sinh câu hỏi tự động bằng AI.');
+      showToast(e.response?.data?.message || e.message || 'Không thể trích xuất câu hỏi tự động bằng AI.');
     } finally {
       if (progressTimer) clearInterval(progressTimer);
       setProgress(100);
@@ -404,7 +420,7 @@ export function QuestionImportWizard({
               setError('');
             }}
           >
-            Sinh câu hỏi bằng AI
+            Trích xuất AI từ Đề cương
           </button>
         </div>
 
@@ -500,12 +516,12 @@ export function QuestionImportWizard({
           </div>
         </div>
 
-        {mode === 'ai_generate' && (
+        {mode === 'ai_generate' && !preview && (
           <div className="rounded-2xl bg-slate-50 p-4 border border-slate-200 space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-type-card leading-[26px] font-semibold text-slate-900">Trình tạo câu hỏi tự động bằng AI từ Đề cương</h4>
-                <p className="text-type-body-sm font-normal text-slate-500">Tải lên hoặc nhập nội dung Đề cương / Bài giảng, AI sẽ tự động sinh danh sách câu hỏi bám sát kiến thức.</p>
+                <h4 className="text-type-card leading-[26px] font-semibold text-slate-900">Trích xuất câu hỏi AI từ Đề cương</h4>
+                <p className="text-type-body-sm font-normal text-slate-500">Tải lên hoặc nhập nội dung Đề cương / Bài giảng, AI sẽ tự động trích xuất danh sách câu hỏi bám sát kiến thức.</p>
               </div>
               <div className="flex items-center gap-2">
                 <label className="text-type-body font-medium text-slate-900 whitespace-nowrap">Số lượng:</label>
@@ -528,9 +544,9 @@ export function QuestionImportWizard({
                 1. Tải lên tệp Đề cương / Bài giảng làm căn cứ (PDF, Word, TXT):
               </label>
               <label className="inline-flex items-center gap-3 cursor-pointer">
-                <span className="rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white font-medium text-type-body transition shadow-xs">Choose File</span>
-                <span className="text-type-body font-medium text-slate-900 truncate max-w-[320px]">
-                  {file ? file.name : 'Chưa đính kèm tệp...'}
+                <span className="rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white font-semibold text-type-helper transition shadow-xs">Choose File</span>
+                <span className="text-type-helper font-semibold text-slate-700 truncate max-w-[320px]">
+                  {file ? file.name : 'Chưa đính kèm tệp (.docx, .pdf, .txt)...'}
                 </span>
                 <input
                   type="file"
@@ -558,94 +574,103 @@ export function QuestionImportWizard({
             </div>
 
             <div className="flex justify-end pt-1">
-              <button
+              <Button
                 type="button"
+                variant="primary"
+                size="md"
                 disabled={busy || !meta.subjectId}
+                isLoading={busy}
                 onClick={generateAiQuestions}
-                className="rounded-xl px-4 py-2.5 text-type-helper font-semibold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 shadow-xs transition disabled:opacity-60 cursor-pointer flex items-center gap-2"
               >
-                {busy ? (
-                  <>
-                    <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    <span>Đang sinh câu hỏi...</span>
-                  </>
-                ) : (
-                  <span>Bắt đầu Sinh câu hỏi từ Đề cương</span>
-                )}
-              </button>
+                {busy ? 'Đang trích xuất...' : 'Trích xuất'}
+              </Button>
             </div>
           </div>
         )}
 
-        {/* File Picker & Action Bar (cho mode table va document) */}
-        {mode !== 'ai_generate' && (
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-            <div className="flex items-center gap-3 flex-1 min-w-[280px]">
-              <label className="inline-flex items-center gap-3 cursor-pointer">
-                <span className="rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white font-semibold text-type-helper transition shadow-xs">Choose File</span>
-                <span className="text-type-helper font-semibold text-slate-700 truncate max-w-[320px]">
-                  {file ? file.name : mode === 'table' ? 'Chưa chọn tệp (.csv, .xlsx)...' : 'Chưa chọn tệp (.docx, .pdf)...'}
-                </span>
-                <input
-                  type="file"
-                  accept={mode === 'table' ? '.csv,.xlsx' : '.docx,.pdf,.txt,.md'}
-                  onChange={(e) => {
-                    setFile(e.target.files?.[0] || null);
-                    setPreview(null);
-                    setAiItems([]);
-                    setDocumentImageCount(0);
-                    setDocumentImages([]);
-                    setError('');
-                  }}
-                  className="hidden"
-                />
-              </label>
+        {/* File Picker & Action Bar */}
+        {preview ? (
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 pb-1 border-t border-slate-200">
+            <div className="flex items-center gap-2">
+              <span className="text-type-body font-medium text-slate-700">
+                Đã chọn <strong className="font-semibold text-blue-600">{selected.length}</strong> / {preview.rows.length} câu
+              </span>
             </div>
-
             <div className="flex items-center gap-2.5">
-              {preview ? (
-                <>
-                  <Button type="button" variant="secondary" size="md" onClick={onClose}>
-                    Hủy bỏ
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="primary"
-                    size="md"
-                    disabled={!selected.length || busy || saving}
-                    isLoading={saving}
-                    onClick={() => setShowSaveConfirm(true)}
-                  >
-                    {saving ? 'Đang lưu...' : 'Lưu câu hỏi'}
-                  </Button>
-                </>
-              ) : (
-                <>
-                  {mode === 'table' && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="md"
-                      onClick={template}
-                      leftIcon={<Download className="w-4 h-4 text-slate-500 dark:text-slate-400" />}
-                    >
-                      Tải mẫu CSV
-                    </Button>
-                  )}
-                  <Button
-                    type="button"
-                    variant="primary"
-                    size="md"
-                    disabled={!file || busy}
-                    isLoading={busy}
-                    onClick={load}
-                  >
-                    Trích xuất
-                  </Button>
-                </>
-              )}
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => {
+                  setPreview(null);
+                  setAiItems([]);
+                  setSelected([]);
+                }}
+              >
+                Hủy bỏ
+              </Button>
+              <Button
+                type="button"
+                variant="primary"
+                size="md"
+                disabled={!selected.length || busy || saving}
+                isLoading={saving}
+                onClick={() => setShowSaveConfirm(true)}
+              >
+                {saving ? 'Đang lưu...' : 'Lưu câu hỏi'}
+              </Button>
             </div>
           </div>
+        ) : (
+          mode !== 'ai_generate' && (
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+              <div className="flex items-center gap-3 flex-1 min-w-[280px]">
+                <label className="inline-flex items-center gap-3 cursor-pointer">
+                  <span className="rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white font-semibold text-type-helper transition shadow-xs">Choose File</span>
+                  <span className="text-type-helper font-semibold text-slate-700 truncate max-w-[320px]">
+                    {file ? file.name : mode === 'table' ? 'Chưa chọn tệp (.csv, .xlsx)...' : 'Chưa chọn tệp (.docx, .pdf)...'}
+                  </span>
+                  <input
+                    type="file"
+                    accept={mode === 'table' ? '.csv,.xlsx' : '.docx,.pdf,.txt,.md'}
+                    onChange={(e) => {
+                      setFile(e.target.files?.[0] || null);
+                      setPreview(null);
+                      setAiItems([]);
+                      setDocumentImageCount(0);
+                      setDocumentImages([]);
+                      setError('');
+                    }}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                {mode === 'table' && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="md"
+                    onClick={template}
+                    leftIcon={<Download className="w-4 h-4 text-slate-500 dark:text-slate-400" />}
+                  >
+                    Tải mẫu CSV
+                  </Button>
+                )}
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  disabled={!file || busy}
+                  isLoading={busy}
+                  onClick={load}
+                >
+                  Trích xuất
+                </Button>
+              </div>
+            </div>
+          )
         )}
 
         {busy && (
@@ -655,10 +680,10 @@ export function QuestionImportWizard({
                 {mode === 'document'
                   ? 'Hệ thống AI đang đọc và phân tích tài liệu...'
                   : mode === 'ai_generate'
-                    ? 'Hệ thống AI đang phân tích đề cương và sinh câu hỏi tự động...'
+                    ? 'Hệ thống AI đang phân tích đề cương và trích xuất câu hỏi...'
                     : 'Đang kiểm tra & phân tích dữ liệu...'}
               </span>
-        <span className="font-semibold text-type-helper text-primary-600">
+              <span className="font-semibold text-type-helper text-blue-600">
                 {progress}%
               </span>
             </div>
@@ -698,8 +723,9 @@ export function QuestionImportWizard({
                 return (
                   <div
                     key={r.row}
-                    className={`rounded-2xl border p-4 text-type-helper space-y-3 transition ${isChecked ? 'border-blue-300 bg-blue-50/40' : 'border-slate-200 bg-slate-50/50'
-                      }`}
+                    className={`rounded-2xl border p-4 text-type-helper space-y-3 transition ${
+                      isChecked ? 'border-blue-300 bg-blue-50/40' : 'border-slate-200 bg-slate-50/50'
+                    }`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <label className="flex items-center gap-2 font-medium text-slate-800 cursor-pointer">
@@ -801,14 +827,16 @@ export function QuestionImportWizard({
                           {optionsList.map((opt: any, optIdx: number) => (
                             <div
                               key={optIdx}
-                              className={`flex items-center gap-2 p-2 rounded-lg border text-type-helper font-medium transition ${opt.isCorrect
+                              className={`flex items-center gap-2 p-2 rounded-lg border text-type-helper font-medium transition ${
+                                opt.isCorrect
                                   ? 'bg-emerald-50 border-emerald-300 text-emerald-950 font-semibold'
                                   : 'bg-white border-slate-200 text-slate-700'
-                                }`}
+                              }`}
                             >
                               <span
-                                className={`h-5 w-5 rounded-full flex items-center justify-center text-type-helper font-semibold shrink-0 ${opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
-                                  }`}
+                                className={`h-5 w-5 rounded-full flex items-center justify-center text-type-helper font-semibold shrink-0 ${
+                                  opt.isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
+                                }`}
                               >
                                 {opt.label || String.fromCharCode(65 + optIdx)}
                               </span>
@@ -823,7 +851,7 @@ export function QuestionImportWizard({
                     <div className={`space-y-1.5 p-3 rounded-xl border ${q.type === 'ESSAY' ? 'bg-emerald-50/40 border-emerald-200' : 'bg-slate-50 border-slate-200'}`}>
                       <div className="flex items-center justify-between text-type-helper font-semibold">
                         <span className={q.type === 'ESSAY' ? 'text-emerald-950 font-semibold' : 'text-slate-800'}>
-                          {q.type === 'ESSAY' ? 'Đáp án mẫu chuẩn / Hướng dẫn giải chi tiết (Tự luận):' : 'Hướng dẫn đáp án / Giải thích:'}
+                          {q.type === 'ESSAY' ? 'Hướng dẫn giải chi tiết / Đáp án (Tự luận):' : 'Hướng dẫn đáp án / Giải thích:'}
                         </span>
                         {q.type === 'ESSAY' && (
                           <span className="text-type-helper text-emerald-700 font-normal">
@@ -836,7 +864,7 @@ export function QuestionImportWizard({
                         onChange={(e) => editRow(r, 'explanation', e.target.value)}
                         rows={q.type === 'ESSAY' ? 3 : 2}
                         className="w-full rounded-xl border border-slate-200 bg-white p-2.5 text-type-body font-normal text-slate-800 focus:border-blue-500 focus:outline-none"
-                        placeholder={q.type === 'ESSAY' ? 'Nhập hoặc chỉnh sửa đáp án mẫu chi tiết của câu tự luận...' : 'Giải thích đáp án...'}
+                        placeholder={q.type === 'ESSAY' ? 'Nhập hoặc chỉnh sửa hướng dẫn giải chi tiết của câu tự luận...' : 'Giải thích đáp án...'}
                       />
                     </div>
 
@@ -848,6 +876,32 @@ export function QuestionImportWizard({
                   </div>
                 );
               })}
+            </div>
+
+            {/* Bottom Action Bar for Easy Access */}
+            <div className="flex justify-end gap-2.5 pt-3 border-t border-slate-200">
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => {
+                  setPreview(null);
+                  setAiItems([]);
+                  setSelected([]);
+                }}
+              >
+                Hủy bỏ
+              </Button>
+              <Button
+                type="button"
+                variant="primary"
+                size="md"
+                disabled={!selected.length || busy || saving}
+                isLoading={saving}
+                onClick={() => setShowSaveConfirm(true)}
+              >
+                {saving ? 'Đang lưu...' : `Lưu ${selected.length} câu hỏi`}
+              </Button>
             </div>
           </div>
         )}

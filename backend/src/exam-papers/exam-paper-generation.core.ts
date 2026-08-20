@@ -23,14 +23,109 @@ export class ExamPaperGenerationCore {
     return result;
   }
 
+  getRealScore(question: ExamPaperQuestion, isEssay: boolean = false): number {
+    if (question.score && Number(question.score) > 0) {
+      return Number(question.score);
+    }
+    if (question.fillBlankAnswers && Array.isArray(question.fillBlankAnswers) && question.fillBlankAnswers.length > 0) {
+      const bSum = question.fillBlankAnswers.reduce((sum: number, b: any) => sum + Number(b.score || 0), 0);
+      if (bSum > 0) return bSum;
+    }
+    if (question.essayRubrics && Array.isArray(question.essayRubrics) && question.essayRubrics.length > 0) {
+      const rSum = question.essayRubrics.reduce((sum: number, r: any) => sum + Number(r.maxScore || 0), 0);
+      if (rSum > 0) return rSum;
+    }
+    if (isEssay) {
+      return ({ EASY: 1.0, MEDIUM: 1.5, HARD: 2.0 } as Record<string, number>)[question.difficulty] || 1.5;
+    }
+    return 0.25;
+  }
+
   selectByCount(
     pools: { easy: ExamPaperQuestion[]; medium: ExamPaperQuestion[]; hard: ExamPaperQuestion[] },
     counts: { easy: number; medium: number; hard: number },
+    options?: { targetScore?: number; isEssay?: boolean },
   ): ExamPaperQuestion[] {
+    const targetScore = options?.targetScore ?? 10.0;
+    const isEssay = options?.isEssay ?? false;
+    const targetCents = Math.round(targetScore * 100);
+
+    const easyPool = this.shuffle(pools.easy || []);
+    const medPool = this.shuffle(pools.medium || []);
+    const hardPool = this.shuffle(pools.hard || []);
+
+    const easyReq = counts.easy || 0;
+    const medReq = counts.medium || 0;
+    const hardReq = counts.hard || 0;
+
+    // Fallback if requested count exceeds available pool
+    if (easyReq > easyPool.length || medReq > medPool.length || hardReq > hardPool.length) {
+      return this.shuffle([
+        ...easyPool.slice(0, easyReq),
+        ...medPool.slice(0, medReq),
+        ...hardPool.slice(0, hardReq),
+      ]);
+    }
+
+    const easyWithScore = easyPool.map((q) => ({ q, cents: Math.round(this.getRealScore(q, isEssay) * 100) }));
+    const medWithScore = medPool.map((q) => ({ q, cents: Math.round(this.getRealScore(q, isEssay) * 100) }));
+    const hardWithScore = hardPool.map((q) => ({ q, cents: Math.round(this.getRealScore(q, isEssay) * 100) }));
+
+    let bestSelection: ExamPaperQuestion[] | null = null;
+    let minDiff = Infinity;
+    let iterations = 0;
+    const maxIterations = 5000;
+
+    const findCombinations = (
+      pool: { q: ExamPaperQuestion; cents: number }[],
+      needed: number,
+      startIndex: number,
+      current: { q: ExamPaperQuestion; cents: number }[],
+      onFound: (chosen: { q: ExamPaperQuestion; cents: number }[]) => boolean,
+    ): boolean => {
+      if (current.length === needed) {
+        return onFound(current);
+      }
+      for (let i = startIndex; i < pool.length; i++) {
+        iterations++;
+        if (iterations > maxIterations) return true;
+        current.push(pool[i]);
+        const stop = findCombinations(pool, needed, i + 1, current, onFound);
+        current.pop();
+        if (stop) return true;
+      }
+      return false;
+    };
+
+    findCombinations(easyWithScore, easyReq, 0, [], (easyChosen) => {
+      const easySum = easyChosen.reduce((s, x) => s + x.cents, 0);
+
+      return findCombinations(medWithScore, medReq, 0, [], (medChosen) => {
+        const medSum = medChosen.reduce((s, x) => s + x.cents, 0);
+
+        return findCombinations(hardWithScore, hardReq, 0, [], (hardChosen) => {
+          const hardSum = hardChosen.reduce((s, x) => s + x.cents, 0);
+          const totalCents = easySum + medSum + hardSum;
+          const diff = Math.abs(totalCents - targetCents);
+
+          if (diff < minDiff) {
+            minDiff = diff;
+            bestSelection = [...easyChosen.map((x) => x.q), ...medChosen.map((x) => x.q), ...hardChosen.map((x) => x.q)];
+          }
+
+          return diff === 0;
+        });
+      });
+    });
+
+    if (bestSelection) {
+      return this.shuffle(bestSelection);
+    }
+
     return this.shuffle([
-      ...this.shuffle(pools.easy).slice(0, counts.easy),
-      ...this.shuffle(pools.medium).slice(0, counts.medium),
-      ...this.shuffle(pools.hard).slice(0, counts.hard),
+      ...easyPool.slice(0, easyReq),
+      ...medPool.slice(0, medReq),
+      ...hardPool.slice(0, hardReq),
     ]);
   }
 
@@ -39,7 +134,7 @@ export class ExamPaperGenerationCore {
 
     const targetCents = Math.round(targetScore * 100);
     const questions = this.shuffle([...pool]).map((question) => {
-      const score = question.score && Number(question.score) > 0 ? Number(question.score) : defaultScore;
+      const score = this.getRealScore(question, false) || defaultScore;
       return { ...question, effectiveScore: score, cents: Math.round(score * 100) };
     });
 
@@ -80,14 +175,32 @@ export class ExamPaperGenerationCore {
     questions: ExamPaperQuestion[],
     options: { targetType: string; isEssay: boolean; isByScore: boolean },
   ): { questions: ScoredExamPaperQuestion[]; totalScore: number } {
-    if (options.isByScore) {
+    const isFillBlank = options.targetType === 'FILL_BLANK' || options.targetType === 'DIEN_LO';
+    const isEssay = options.isEssay || options.targetType === 'TU_LUAN';
+
+    // 1. Chế độ Theo thang điểm (BY_SCORE) HOẶC Đề Tự luận (TU_LUAN) HOẶC Đề Điền khuyết (FILL_BLANK):
+    // GIỮ NGUYÊN 100% ĐIỂM THẬT CỦA CÂU HỎI lúc tạo trong Ngân hàng đề (hoặc Rubric)
+    if (options.isByScore || isEssay || isFillBlank) {
+      const scored = questions.map((question) => {
+        const actualScore = this.getRealScore(question, isEssay);
+        return {
+          ...question,
+          assignedScore: actualScore,
+        };
+      });
+      return {
+        questions: scored,
+        totalScore: Math.round(scored.reduce((sum, item) => sum + item.assignedScore, 0) * 100) / 100,
+      };
+    }
+
+    // 2. Chế độ Theo số câu (BY_COUNT) đối với Đề Trắc nghiệm:
+    // Nếu câu hỏi trắc nghiệm có điểm thật riêng > 0 thì giữ nguyên điểm thật
+    const hasCustomScores = questions.some((q) => q.score && Number(q.score) > 0);
+    if (hasCustomScores) {
       const scored = questions.map((question) => ({
         ...question,
-        assignedScore: question.score && Number(question.score) > 0
-          ? Number(question.score)
-          : options.isEssay
-            ? ({ EASY: 1.0, MEDIUM: 1.5, HARD: 2.0 } as Record<string, number>)[question.difficulty] || 1.5
-            : 0.25,
+        assignedScore: this.getRealScore(question, false),
       }));
       return {
         questions: scored,
@@ -95,23 +208,16 @@ export class ExamPaperGenerationCore {
       };
     }
 
+    // Trắc nghiệm mặc định không điểm riêng: chia đều thang điểm 10.0 (ví dụ 40 câu = 0.25đ/câu)
     const targetTotalScore = 10.0;
-    const rawWeights = questions.map((question) => question.score && Number(question.score) > 0
-      ? Number(question.score)
-      : ({ EASY: 1.0, MEDIUM: 1.5, HARD: 2.0 } as Record<string, number>)[question.difficulty] || 1.5);
-    const totalRawWeight = rawWeights.reduce((sum, weight) => sum + weight, 0) || 1.0;
+    const count = questions.length || 1;
     let currentSum = 0;
     const scored = questions.map((question, index) => {
       let assignedScore: number;
       if (index === questions.length - 1) {
         assignedScore = Math.round((targetTotalScore - currentSum) * 100) / 100;
       } else {
-        if (options.isEssay) {
-          // Với Tự luận, làm tròn theo bước điểm 0.25đ đẹp
-          assignedScore = Math.max(0.25, Math.round(((rawWeights[index] / totalRawWeight) * targetTotalScore) * 4) / 4);
-        } else {
-          assignedScore = Math.max(0.05, Math.round(((rawWeights[index] / totalRawWeight) * targetTotalScore) * 100) / 100);
-        }
+        assignedScore = Math.round((targetTotalScore / count) * 100) / 100;
         currentSum += assignedScore;
       }
       return { ...question, assignedScore };

@@ -413,7 +413,7 @@ export class AiQuestionsService {
           : input.type === 'ESSAY'
             ? `3. Dạng TỰ LUẬN (ESSAY):
              - Đặt options: [].
-             - Trường "explanation" BẮT BUỘC phải là: ĐÁP ÁN MẪU HOÀN CHỈNH, CHÍNH XÁC VÀ CHI TIẾT (Sample/Model Answer), giải quyết trọn vẹn toàn bộ yêu cầu của câu hỏi với đầy đủ các ý chính, bước lập luận, định nghĩa, công thức hoặc giải pháp cụ thể (TUYỆT ĐỐI KHÔNG CHỈ VIẾT GỢI Ý CHUNG CHUNG).`
+             - Trường "explanation" BẮT BUỘC phải là: NỘI DUNG ĐÁP ÁN HOÀN CHỈNH, CHÍNH XÁC VÀ CHI TIẾT (Sample/Model Answer), giải quyết trọn vẹn toàn bộ yêu cầu của câu hỏi với đầy đủ các ý chính, bước lập luận, định nghĩa, công thức hoặc giải pháp cụ thể (VIẾT TRỰC TIẾP NỘI DUNG, TUYỆT ĐỐI KHÔNG VIẾT CHỮ "Đáp án mẫu:" Ở ĐẦU, TUYỆT ĐỐI KHÔNG CHỈ VIẾT GỢI Ý CHUNG CHUNG).`
             : `3. Dạng TRẮC NGHIỆM: Trích xuất danh sách các lựa chọn A, B, C, D... Đánh dấu isCorrect: true cho đáp án đúng (dựa vào phần đáp án ở cuối tài liệu hoặc tự giải).`,
         `4. Nếu câu hỏi gắn với hình, thêm imageIndexes là mảng chỉ số ảnh (bắt đầu từ 0); nếu không thì [].`,
         `5. CHỈ TRẢ VỀ DẠNG JSON duy nhất: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","imageIndexes":[],"options":[],"fillBlankAnswers":[{"blankIndex":1,"answer":"đáp án","acceptedAnswers":[]}]}]}.`,
@@ -427,7 +427,7 @@ export class AiQuestionsService {
         'Chỉ trả JSON: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","options":[{"label":"A","content":"","isCorrect":true,"order":0}],"fillBlankAnswers":[{"blankIndex":1,"answer":"","acceptedAnswers":[]}]}]}.',
         'SINGLE_CHOICE đúng 1 đáp án; MULTIPLE_CHOICE ít nhất 1; TRUE_FALSE đúng 2 lựa chọn; FILL_BLANK và ESSAY dùng options rỗng.',
         input.type === 'FILL_BLANK' ? 'For FILL_BLANK, content must contain {{blank_1}}, {{blank_2}} and output fillBlankAnswers:[{blankIndex:1,answer:"answer",acceptedAnswers:[],score:0.25}]. options must be [] and blank scores must equal question score.' : '',
-        input.type === 'ESSAY' ? 'For ESSAY (Tự luận): options must be []. In "explanation", you MUST provide a COMPREHENSIVE, COMPLETE AND PRECISE MODEL/SAMPLE ANSWER (ĐÁP ÁN MẪU CHI TIẾT ĐẦY ĐỦ) that thoroughly solves the question with clear points/steps. DO NOT write vague hints or generic suggestions.' : '',
+        input.type === 'ESSAY' ? 'For ESSAY (Tự luận): options must be []. In "explanation", you MUST provide a COMPREHENSIVE, COMPLETE AND PRECISE MODEL/SAMPLE ANSWER that thoroughly solves the question with clear points/steps. DO NOT write "Đáp án mẫu:" prefix and DO NOT write vague hints or generic suggestions.' : '',
       ].filter(Boolean).join('\n');
     let rawQuestions: any[] = [];
     try {
@@ -820,7 +820,10 @@ function pairQuestionsAndAnswers(rawItems: any[], defaultType: string): any[] {
         }
 
         const imageIndexes = Array.isArray(item.imageIndexes) ? item.imageIndexes.filter((index: any) => Number.isInteger(index) && index >= 0 && index < (input.images || []).length) : [];
-        const cleanExplanation = String(item.explanation || '').replace(/\{\{blank_\d+\}\}/gi, '').trim();
+        let cleanExplanation = String(item.explanation || '').replace(/\{\{blank_\d+\}\}/gi, '').trim();
+        cleanExplanation = cleanExplanation
+          .replace(/^(?:đáp\s*án\s*mẫu|gợi\s*ý\s*đáp\s*án|hướng\s*dẫn\s*giải|đáp\s*án|model\s*answer|sample\s*answer)\s*[:.-]*\s*/iu, '')
+          .trim();
         questions.push({
           subjectId: input.subjectId,
           chapterId: input.chapterId,

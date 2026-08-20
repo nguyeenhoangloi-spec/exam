@@ -23,9 +23,10 @@ function rateLimit(req: express.Request, res: express.Response, next: express.Ne
   const isGoogleStart = req.path === '/auth/google';
   const isGoogleCallback = req.path === '/auth/google/callback';
   const isRefresh = req.path === '/auth/refresh';
+  const isSupportChat = req.path === '/support-chat/message';
   const isSessionAction = isGoogleStart || isGoogleCallback || isRefresh;
   const isContactAction = req.path === '/contact/send';
-  const isSensitive = isCredentialAction || isSessionAction || isContactAction;
+  const isSensitive = isCredentialAction || isSessionAction || isContactAction || isSupportChat;
   const windowMs = isSensitive ? 15 * 60 * 1000 : 60 * 1000;
   const max = isCredentialAction
     ? 10
@@ -37,6 +38,8 @@ function rateLimit(req: express.Request, res: express.Response, next: express.Ne
           ? 60
           : isContactAction
             ? 20
+            : isSupportChat
+              ? 20
             : 600;
   const identity = String(
     req.body?.username
@@ -54,6 +57,8 @@ function rateLimit(req: express.Request, res: express.Response, next: express.Ne
           ? 'session-refresh'
           : isContactAction
             ? 'contact'
+            : isSupportChat
+              ? 'support-chat'
             : 'api';
   const key = `${scope}:${ip}`;
   const current = rateBuckets.get(key);

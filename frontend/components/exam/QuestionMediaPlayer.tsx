@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Volume2, VolumeX, Lock, Sliders, Maximize2, Minimize2, X } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Lock, Sliders, Maximize2, Minimize2, X, ZoomIn, ZoomOut, RotateCcw, Download } from 'lucide-react';
 
 interface QuestionMediaPlayerProps {
   attemptId?: string;
@@ -32,6 +32,7 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
   const [playsCount, setPlaysCount] = useState<number>(0);
   const [hasStartedCurrentPlay, setHasStartedCurrentPlay] = useState(false);
   const [isTheaterFullscreen, setIsTheaterFullscreen] = useState(false);
+  const [zoom, setZoom] = useState(1);
 
   // Xác định chế độ: nếu mode được truyền hoặc nếu maxPlays > 0 thì là STRICT_EXAM, ngược lại REFERENCE
   const isStrictExam = mode === 'STRICT_EXAM' || (mode === undefined && maxPlays > 0);
@@ -47,6 +48,21 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
+
+  const handleZoomIn = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setZoom((prev) => Math.min(prev + 0.3, 3));
+  };
+
+  const handleZoomOut = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setZoom((prev) => Math.max(prev - 0.3, 0.5));
+  };
+
+  const handleResetZoom = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setZoom(1);
+  };
 
   // Giữ trạng thái phát và thời gian liền mạch khi bật/tắt phóng to
   useEffect(() => {
@@ -362,10 +378,49 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
                 >
                   {isFullscreen ? <Minimize2 className="h-5 w-5 text-blue-400" /> : <Maximize2 className="h-5 w-5 text-blue-400" />}
                 </button>
-                <div className="h-5 w-px bg-slate-700/60 mx-0.5" />
                 <button
                   type="button"
-                  onClick={() => setIsTheaterFullscreen(false)}
+                  onClick={handleZoomIn}
+                  title="Phóng to (+)"
+                  className="rounded-xl p-2 text-slate-300 hover:bg-slate-800 hover:text-white transition cursor-pointer"
+                >
+                  <ZoomIn className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleZoomOut}
+                  title="Thu nhỏ (-)"
+                  className="rounded-xl p-2 text-slate-300 hover:bg-slate-800 hover:text-white transition cursor-pointer"
+                >
+                  <ZoomOut className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResetZoom}
+                  title="Đặt lại kích thước gốc (100%)"
+                  className="rounded-xl p-2 text-slate-300 hover:bg-slate-800 hover:text-white transition cursor-pointer"
+                >
+                  <RotateCcw className="h-5 w-5" />
+                </button>
+                {!isStrictExam && (
+                  <a
+                    href={src}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download={fileName || 'video'}
+                    title="Tải video về máy"
+                    className="rounded-xl p-2 text-slate-300 hover:bg-slate-800 hover:text-white transition cursor-pointer"
+                  >
+                    <Download className="h-5 w-5" />
+                  </a>
+                )}
+                <div className="h-5 w-px bg-slate-700/60 mx-1" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsTheaterFullscreen(false);
+                    setZoom(1);
+                  }}
                   title="Đóng (Esc)"
                   className="rounded-xl bg-rose-600/80 p-2 text-white hover:bg-rose-600 transition cursor-pointer"
                 >
@@ -375,91 +430,96 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
 
               {/* Main Video Box Trung tâm */}
               <div
-                className="relative max-h-[85vh] max-w-[90vw] flex flex-col items-center justify-center rounded-2xl overflow-hidden shadow-2xl bg-black"
+                className="relative max-h-[85vh] max-w-[90vw] overflow-auto flex items-center justify-center p-2 rounded-2xl"
                 onClick={(e) => e.stopPropagation()}
               >
-                <video
-                  ref={mediaRef}
-                  src={src}
-                  playsInline
-                  autoPlay
-                  preload="metadata"
-                  onClick={handlePlayPause}
-                  onEnded={handleEnded}
-                  onTimeUpdate={handleTimeUpdate}
-                  onLoadedMetadata={handleLoadedMetadata}
-                  onContextMenu={(e) => e.preventDefault()}
-                  className="max-h-[75vh] max-w-[85vw] object-contain rounded-2xl cursor-pointer bg-black"
-                />
-
-                {/* Nút Play trung tâm khi tạm dừng (Lightbox) */}
-                {!isPlaying && !isLimitReached && (
-                  <button
-                    type="button"
+                <div
+                  style={{ transform: `scale(${zoom})`, transition: 'transform 0.15s ease-out' }}
+                  className="relative flex flex-col items-center justify-center rounded-2xl overflow-hidden shadow-2xl bg-black"
+                >
+                  <video
+                    ref={mediaRef}
+                    src={src}
+                    playsInline
+                    autoPlay
+                    preload="metadata"
                     onClick={handlePlayPause}
-                    className="absolute inset-0 flex items-center justify-center bg-black/25 hover:bg-black/40 transition cursor-pointer"
-                    title="Phát video"
-                  >
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-transform duration-150 hover:scale-110 active:scale-95">
-                      <Play className="h-7 w-7 ml-0.5 fill-white text-white" />
-                    </div>
-                  </button>
-                )}
+                    onEnded={handleEnded}
+                    onTimeUpdate={handleTimeUpdate}
+                    onLoadedMetadata={handleLoadedMetadata}
+                    onContextMenu={(e) => e.preventDefault()}
+                    className="max-h-[75vh] max-w-[85vw] object-contain rounded-2xl cursor-pointer bg-black"
+                  />
 
-                {/* Màn hình khóa khi hết lượt nghe (Khảo thí) */}
-                {isLimitReached && (
-                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/80 p-4 text-center backdrop-blur-xs">
-                    <div className="mb-1.5 flex h-10 w-10 items-center justify-center rounded-full bg-rose-500/20 text-rose-400">
-                      <Lock className="h-5 w-5" />
-                    </div>
-                    <p className="text-type-helper font-semibold text-white">Đã hết số lần phát ({maxPlays} lần)</p>
-                    <p className="text-type-helper text-slate-400 mt-0.5">Đã khóa nút phát theo quy định của đề thi.</p>
-                  </div>
-                )}
-
-                {/* Thanh điều khiển dưới (Ghost Controls) */}
-                <div className="w-full flex items-center justify-between gap-3 px-4 py-2.5 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white absolute bottom-0 left-0 right-0 z-10">
-                  <button
-                    type="button"
-                    onClick={handlePlayPause}
-                    disabled={isLimitReached}
-                    className="p-1.5 text-white/90 hover:text-white hover:bg-white/15 rounded-xl transition cursor-pointer disabled:opacity-40"
-                    title={isPlaying ? 'Tạm dừng' : 'Phát video'}
-                  >
-                    {isPlaying ? <Pause className="h-4.5 w-4.5" /> : <Play className="h-4.5 w-4.5 fill-current" />}
-                  </button>
-
-                  <div className="flex-1 flex items-center gap-2 min-w-0">
-                    <span className="text-type-helper text-slate-200 tabular-nums shrink-0 font-medium">
-                      {formatTime(currentTime)}
-                    </span>
-                    <input
-                      type="range"
-                      min="0"
-                      max={duration || 100}
-                      value={currentTime}
-                      onChange={handleSeek}
-                      disabled={isStrictExam || isLimitReached}
-                      className={`flex-1 h-1.5 rounded-full appearance-none cursor-pointer ${
-                        isStrictExam
-                          ? 'bg-white/20 accent-white/50 cursor-not-allowed'
-                          : 'bg-white/20 hover:bg-white/30 accent-blue-500'
-                      }`}
-                    />
-                    <span className="text-type-helper text-slate-300 tabular-nums shrink-0 font-medium">
-                      {formatTime(duration)}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-1 shrink-0">
+                  {/* Nút Play trung tâm khi tạm dừng (Lightbox) */}
+                  {!isPlaying && !isLimitReached && (
                     <button
                       type="button"
-                      onClick={toggleMute}
-                      className="p-1.5 text-white/90 hover:text-white hover:bg-white/15 rounded-xl transition cursor-pointer"
-                      title={isMuted ? 'Bật tiếng' : 'Tắt tiếng'}
+                      onClick={handlePlayPause}
+                      className="absolute inset-0 flex items-center justify-center bg-black/25 hover:bg-black/40 transition cursor-pointer"
+                      title="Phát video"
                     >
-                      {isMuted ? <VolumeX className="h-4.5 w-4.5 text-rose-400" /> : <Volume2 className="h-4.5 w-4.5" />}
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-transform duration-150 hover:scale-110 active:scale-95">
+                        <Play className="h-7 w-7 ml-0.5 fill-white text-white" />
+                      </div>
                     </button>
+                  )}
+
+                  {/* Màn hình khóa khi hết lượt nghe (Khảo thí) */}
+                  {isLimitReached && (
+                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/80 p-4 text-center backdrop-blur-xs">
+                      <div className="mb-1.5 flex h-10 w-10 items-center justify-center rounded-full bg-rose-500/20 text-rose-400">
+                        <Lock className="h-5 w-5" />
+                      </div>
+                      <p className="text-type-helper font-semibold text-white">Đã hết số lần phát ({maxPlays} lần)</p>
+                      <p className="text-type-helper text-slate-400 mt-0.5">Đã khóa nút phát theo quy định của đề thi.</p>
+                    </div>
+                  )}
+
+                  {/* Thanh điều khiển dưới (Ghost Controls) */}
+                  <div className="w-full flex items-center justify-between gap-3 px-4 py-2.5 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white absolute bottom-0 left-0 right-0 z-10">
+                    <button
+                      type="button"
+                      onClick={handlePlayPause}
+                      disabled={isLimitReached}
+                      className="p-1.5 text-white/90 hover:text-white hover:bg-white/15 rounded-xl transition cursor-pointer disabled:opacity-40"
+                      title={isPlaying ? 'Tạm dừng' : 'Phát video'}
+                    >
+                      {isPlaying ? <Pause className="h-4.5 w-4.5" /> : <Play className="h-4.5 w-4.5 fill-current" />}
+                    </button>
+
+                    <div className="flex-1 flex items-center gap-2 min-w-0">
+                      <span className="text-type-helper text-slate-200 tabular-nums shrink-0 font-medium">
+                        {formatTime(currentTime)}
+                      </span>
+                      <input
+                        type="range"
+                        min="0"
+                        max={duration || 100}
+                        value={currentTime}
+                        onChange={handleSeek}
+                        disabled={isStrictExam || isLimitReached}
+                        className={`flex-1 h-1.5 rounded-full appearance-none cursor-pointer ${
+                          isStrictExam
+                            ? 'bg-white/20 accent-white/50 cursor-not-allowed'
+                            : 'bg-white/20 hover:bg-white/30 accent-blue-500'
+                        }`}
+                      />
+                      <span className="text-type-helper text-slate-300 tabular-nums shrink-0 font-medium">
+                        {formatTime(duration)}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        onClick={toggleMute}
+                        className="p-1.5 text-white/90 hover:text-white hover:bg-white/15 rounded-xl transition cursor-pointer"
+                        title={isMuted ? 'Bật tiếng' : 'Tắt tiếng'}
+                      >
+                        {isMuted ? <VolumeX className="h-4.5 w-4.5 text-rose-400" /> : <Volume2 className="h-4.5 w-4.5" />}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -28,27 +28,87 @@ describe('ExamPaperGenerationCore', () => {
     expect(result.questions.reduce((sum, item) => sum + item.assignedScore, 0)).toBe(10);
   });
 
-  it('normalizes count-based scores to ten points for essay exam (7 questions)', () => {
+  it('preserves actual question scores for essay exam', () => {
     const questions = [
-      question(1, 'EASY'),
-      question(2, 'EASY'),
-      question(3, 'EASY'),
-      question(4, 'MEDIUM'),
-      question(5, 'MEDIUM'),
-      question(6, 'HARD'),
-      question(7, 'HARD'),
+      question(1, 'EASY', 2.0),
+      question(2, 'EASY', 2.0),
+      question(3, 'EASY', 2.0),
+      question(4, 'MEDIUM', 2.0),
+      question(5, 'MEDIUM', 2.0),
     ];
     const result = core.assignScores(questions, {
       targetType: 'TU_LUAN',
       isEssay: true,
       isByScore: false,
     });
-    expect(result.totalScore).toBe(10);
-    const sum = Math.round(result.questions.reduce((acc, item) => acc + item.assignedScore, 0) * 100) / 100;
-    expect(sum).toBe(10);
-    // All scores should be positive
+    expect(result.totalScore).toBe(10.0);
     result.questions.forEach((q) => {
-      expect(q.assignedScore).toBeGreaterThan(0);
+      expect(q.assignedScore).toBe(2.0);
     });
+  });
+
+  it('preserves custom individual scores for essay exam without rescaling to 10', () => {
+    const questions = [
+      question(1, 'EASY', 1.5),
+      question(2, 'MEDIUM', 3.0),
+      question(3, 'HARD', 4.0),
+    ];
+    const result = core.assignScores(questions, {
+      targetType: 'TU_LUAN',
+      isEssay: true,
+      isByScore: false,
+    });
+    expect(result.totalScore).toBe(8.5);
+    expect(result.questions[0].assignedScore).toBe(1.5);
+    expect(result.questions[1].assignedScore).toBe(3.0);
+    expect(result.questions[2].assignedScore).toBe(4.0);
+  });
+
+  it('preserves fill in the blank blank scores', () => {
+    const questions = [
+      {
+        id: 1,
+        difficulty: 'EASY',
+        score: 2.0,
+        fillBlankAnswers: [{ blankIndex: 1, score: 1.0 }, { blankIndex: 2, score: 1.0 }],
+      },
+      {
+        id: 2,
+        difficulty: 'MEDIUM',
+        score: 3.0,
+        fillBlankAnswers: [{ blankIndex: 1, score: 1.5 }, { blankIndex: 2, score: 1.5 }],
+      },
+    ];
+    const result = core.assignScores(questions, {
+      targetType: 'FILL_BLANK',
+      isEssay: false,
+      isByScore: false,
+    });
+    expect(result.totalScore).toBe(5.0);
+    expect(result.questions[0].assignedScore).toBe(2.0);
+    expect(result.questions[1].assignedScore).toBe(3.0);
+  });
+
+  it('selectByCount smartly finds the question combination summing up to 10 points using real scores', () => {
+    const easyPool = [
+      question(1, 'EASY', 1.0),
+      question(2, 'EASY', 2.0),
+      question(3, 'EASY', 2.0),
+      question(4, 'EASY', 1.0),
+    ];
+    const medPool = [
+      question(5, 'MEDIUM', 3.0),
+      question(6, 'MEDIUM', 1.0),
+      question(7, 'MEDIUM', 3.0),
+    ];
+    // Select 3 Easy + 2 Medium: e.g. Easy (2.0 + 2.0 + 1.0 = 5.0) + Medium (3.0 + 2.0? No, 3.0 + 2.0 not available, 3.0 + 3.0? No, 2+2+1=5, wait 2+2+0? 2+1+1=4 and 3+3=6 -> 4+6=10!)
+    const selected = core.selectByCount(
+      { easy: easyPool, medium: medPool, hard: [] },
+      { easy: 3, medium: 2, hard: 0 },
+      { targetScore: 10.0, isEssay: true },
+    );
+    expect(selected).toHaveLength(5);
+    const sum = selected.reduce((s, q) => s + core.getRealScore(q, true), 0);
+    expect(sum).toBe(10.0);
   });
 });

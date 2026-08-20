@@ -21,6 +21,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { OnlineExamsModule } from './online-exams/online-exams.module';
 import { ProctorModule } from './proctor/proctor.module';
 import { ContactModule } from './contact/contact.module';
+import { SupportChatModule } from './support-chat/support-chat.module';
 import { SecurityModule } from './common/security/security.module';
 import { EssayModule } from './essay/essay.module';
 import { AiModule } from './ai/ai.module';
@@ -57,6 +58,7 @@ import { BackupsModule } from './backups/backup.module';
     ProctorModule,
     EssayModule,
     ContactModule,
+    SupportChatModule,
     AiModule,
     TrashModule,
     PracticeModule,

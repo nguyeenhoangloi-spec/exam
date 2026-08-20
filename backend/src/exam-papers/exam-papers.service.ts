@@ -253,9 +253,12 @@ export class ExamPapersService {
           );
         }
 
+        const isEssay = targetType === 'TU_LUAN' || schedule.examType === 'TU_LUAN';
+
         rawSelected = this.generationCore.selectByCount(
           { easy: byDifficulty.EASY, medium: byDifficulty.MEDIUM, hard: byDifficulty.HARD },
           { easy: data.easyCount, medium: data.mediumCount, hard: data.hardCount },
+          { targetScore: 10.0, isEssay },
         );
       }
 

@@ -7,7 +7,7 @@ export class DeepSeekProvider {
 
   constructor(private readonly configService: ConfigService) {}
 
-  async generateText(prompt: string, options?: { systemPrompt?: string; timeoutMs?: number }): Promise<string> {
+  async generateText(prompt: string, options?: { systemPrompt?: string; timeoutMs?: number; maxTokens?: number }): Promise<string> {
     const apiKey = this.configService.get<string>('DEEPSEEK_API_KEY');
     if (!apiKey) {
       throw new Error('DEEPSEEK_API_KEY is not configured');
@@ -42,6 +42,7 @@ export class DeepSeekProvider {
           messages,
           stream: false,
           temperature: 0.3,
+          ...(options?.maxTokens ? { max_tokens: options.maxTokens } : {}),
         }),
         signal: controller.signal,
       });

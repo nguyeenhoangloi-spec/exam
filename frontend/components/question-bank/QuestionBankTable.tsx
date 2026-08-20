@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, MoreVertical, Edit, CheckCircle2, XCircle, Trash2, HelpCircle, FileText, ImageIcon, BookOpen, Sliders } from 'lucide-react';
+import { Eye, Edit, CheckCircle2, XCircle, Trash2, FileText, BookOpen, Sliders, Maximize2 } from 'lucide-react';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { RubricDialog } from './RubricDialog';
@@ -11,11 +11,12 @@ import {
   QuestionStatusBadge,
   QuestionTypeBadge,
 } from './QuestionBadges';
-import { getImageUrl, cleanMediaFileName } from '../../lib/media-utils';
+import { getImageUrl } from '../../lib/media-utils';
 import { ImageLightboxModal } from '../ImageLightboxModal';
 import { VideoLightboxModal } from '../VideoLightboxModal';
 import { AudioLightboxModal } from '../AudioLightboxModal';
 import { DynamicImage } from '../ui/DynamicImage';
+import { QuestionMediaPlayer } from '../exam/QuestionMediaPlayer';
 
 interface QuestionBankTableProps {
   questions: Question[];
@@ -51,7 +52,6 @@ export function QuestionBankTable({
   isAdmin,
   onRubricSaved,
 }: QuestionBankTableProps) {
-  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [rubricQuestion, setRubricQuestion] = useState<Question | null>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [videoLightbox, setVideoLightbox] = useState<{ url: string; fileName?: string } | null>(null);
@@ -88,7 +88,6 @@ export function QuestionBankTable({
           const isChecked = selected.includes(q.id);
           const codeText = q.code || `QH${q.id.slice(-5).toUpperCase()}`;
           const subjectName = q.subject?.subjectName || 'Chưa gán môn';
-          const creatorName = q.createdByName || (q.createdBy as any)?.teacher?.fullName || q.createdBy?.fullName || q.createdBy?.username || (q.createdById ? `User #${q.createdById}` : 'Hệ thống');
 
           const isEssay = q.type === 'ESSAY';
           const optionsList = Array.isArray(q.options) ? q.options : [];
@@ -570,58 +569,82 @@ export function QuestionBankTable({
                           </div>
                         ) : null}
 
-                        {/* Tầng 3: Dải Đa phương tiện đính kèm (Media Attachment Strip) */}
+                        {/* Tầng 3: Dải Đa phương tiện đính kèm (Media Attachment Strip) - Hiển thị trực quan, kích thước vừa vặn, không lộ tên file */}
                         {q.media && q.media.length > 0 && (
-                          <div className="table-action flex flex-wrap items-center gap-1.5 pt-0.5 border-t border-dashed border-slate-100 dark:border-slate-800/80">
+                          <div className="table-action flex flex-wrap items-center gap-2 pt-1.5 border-t border-dashed border-slate-100 dark:border-slate-800/80">
                             {q.media.map((m, idx) => {
                               const mime = m.mimeType || '';
                               const isImg = mime.startsWith('image/') || (!mime && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(m.url));
                               const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(m.url);
                               const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(m.url);
+                              const fullUrl = getImageUrl(m.url);
 
                               if (isImg) return (
-                                <button
+                                <div
                                   key={m.id || idx}
-                                  type="button"
-                                  onClick={(e) => { e.stopPropagation(); setLightboxUrl(m.url); }}
-                                  className="table-action group inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 py-1 text-type-helper font-medium text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:text-blue-600 dark:hover:text-blue-400 shadow-2xs transition cursor-zoom-in shrink-0 select-none"
+                                  role="button"
+                                  tabIndex={0}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setLightboxUrl(m.url);
+                                  }}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      setLightboxUrl(m.url);
+                                    }
+                                  }}
+                                  className="group relative inline-flex items-center justify-center overflow-hidden rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-1 hover:border-blue-400 dark:hover:border-blue-500 transition cursor-zoom-in shadow-2xs shrink-0 select-none"
                                   title="Bấm để phóng to xem ảnh"
                                 >
-                                  <ImageIcon className="w-3.5 h-3.5 text-blue-500 group-hover:scale-110 transition-transform" />
-                                  <span className="max-w-[130px] truncate">{cleanMediaFileName(m.fileName, 'Xem hình ảnh')}</span>
-                                </button>
+                                  <DynamicImage
+                                    src={fullUrl}
+                                    alt={m.altText || 'Hình minh họa'}
+                                    className="h-14 sm:h-16 w-auto max-w-[140px] rounded-lg object-contain bg-white dark:bg-slate-950 transition duration-200 group-hover:scale-105"
+                                  />
+                                  <div className="absolute top-1 right-1 flex items-center justify-center p-1 rounded-md bg-slate-900/60 text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                    <Maximize2 className="h-3 w-3 text-white" />
+                                  </div>
+                                </div>
                               );
 
                               if (isVid) return (
-                                <button
+                                <div
                                   key={m.id || idx}
-                                  type="button"
-                                  onClick={(e) => { e.stopPropagation(); setVideoLightbox({ url: m.url, fileName: m.fileName }); }}
-                                  className="table-action inline-flex items-center gap-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white px-2.5 py-1 text-type-helper font-medium hover:bg-slate-800 dark:hover:bg-slate-700 shadow-2xs transition cursor-pointer shrink-0 select-none"
-                                  title="Bấm để phát video"
+                                  className="w-full max-w-[240px] shrink-0"
+                                  onClick={(e) => e.stopPropagation()}
                                 >
-                                  <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 text-amber-400"><polygon points="5,3 19,12 5,21" /></svg>
-                                  <span className="max-w-[130px] truncate">{cleanMediaFileName(m.fileName, 'Xem video')}</span>
-                                </button>
+                                  <QuestionMediaPlayer
+                                    src={fullUrl}
+                                    type="video"
+                                    fileName={m.fileName}
+                                    maxPlays={0}
+                                    mode="REFERENCE"
+                                  />
+                                </div>
                               );
 
                               if (isAud) return (
-                                <button
+                                <div
                                   key={m.id || idx}
-                                  type="button"
-                                  onClick={(e) => { e.stopPropagation(); setAudioLightbox({ url: m.url, fileName: m.fileName }); }}
-                                  className="table-action inline-flex items-center gap-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800 px-2.5 py-1 text-type-helper font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition cursor-pointer shrink-0 select-none"
-                                  title="Bấm để nghe audio"
+                                  className="w-full max-w-[240px] shrink-0"
+                                  onClick={(e) => e.stopPropagation()}
                                 >
-                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>
-                                  <span className="max-w-[130px] truncate">{cleanMediaFileName(m.fileName, 'Nghe audio')}</span>
-                                </button>
+                                  <QuestionMediaPlayer
+                                    src={fullUrl}
+                                    type="audio"
+                                    fileName={m.fileName}
+                                    maxPlays={0}
+                                    mode="REFERENCE"
+                                  />
+                                </div>
                               );
 
                               return (
-                                <span key={m.id || idx} className="table-badge ui-pill inline-flex items-center gap-1 rounded-full border border-slate-200 px-2 py-0.5 text-type-helper font-medium text-slate-500 shrink-0">
+                                <span key={m.id || idx} className="table-badge ui-pill inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-800 px-2.5 py-0.5 text-type-helper font-medium text-slate-600 dark:text-slate-400 shrink-0">
                                   <FileText className="h-3.5 w-3.5 text-slate-400" />
-                                  {cleanMediaFileName(m.fileName, 'Tập tin')}
+                                  Tệp đính kèm
                                 </span>
                               );
                             })}

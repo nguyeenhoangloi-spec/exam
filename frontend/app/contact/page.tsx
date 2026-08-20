@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -59,6 +59,14 @@ interface ArticleItem {
   updatedAt: string;
 }
 
+interface ChatMessage {
+  sender: 'bot' | 'user';
+  text: string;
+  sources?: Array<{ id: string; title: string }>;
+  shouldEscalate?: boolean;
+  userQuestion?: string;
+}
+
 export const dynamic = 'force-dynamic';
 
 export default function ContactSupportPage() {
@@ -85,13 +93,26 @@ export default function ContactSupportPage() {
 
   // Widget State
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState<Array<{ sender: 'bot' | 'user'; text: string }>>([
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       sender: 'bot',
       text: 'Xin chào! Bạn cần trợ giúp gì về hệ thống quản lý khảo thí hôm nay?',
     },
   ]);
   const [chatInput, setChatInput] = useState('');
+  const [chatSending, setChatSending] = useState(false);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
+  const chatInputRef = useRef<HTMLInputElement>(null);
+
+  const chatSuggestions = ['Quên mật khẩu', 'Không vào được ca thi', 'Cách xem lịch thi'];
+
+  useEffect(() => {
+    if (!isChatOpen) return;
+    const frame = requestAnimationFrame(() => {
+      chatScrollRef.current?.scrollTo({ top: chatScrollRef.current.scrollHeight, behavior: 'smooth' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [isChatOpen, chatMessages, chatSending]);
 
   useEffect(() => {
     setCurrentUser(getAuthUser());
@@ -299,26 +320,56 @@ export default function ContactSupportPage() {
     }
   };
 
-  const handleSendChatMessage = (e: React.FormEvent) => {
+  const handleSendChatMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!chatInput.trim()) return;
+    if (!chatInput.trim() || chatSending) return;
 
     const userText = chatInput.trim();
     setChatMessages((prev) => [...prev, { sender: 'user', text: userText }]);
     setChatInput('');
+    setChatSending(true);
 
-    setTimeout(() => {
-      let botReply =
-        'Cảm ơn bạn đã liên hệ! Bộ phận hỗ trợ kỹ thuật Trung tâm Khảo thí đã ghi nhận câu hỏi. Bạn cũng có thể gọi Hotline 1800-EXAM-HELP để được hỗ trợ trực tiếp.';
-      if (userText.toLowerCase().includes('mật khẩu') || userText.toLowerCase().includes('quen')) {
-        botReply =
-          'Để khôi phục mật khẩu, bạn vui lòng truy cập trang Quên mật khẩu hoặc liên hệ Quản trị viên hệ thống qua email support@exam.edu.vn.';
-      } else if (userText.toLowerCase().includes('lịch thi') || userText.toLowerCase().includes('phòng thi')) {
-        botReply =
-          'Lịch thi và thông tin phòng thi được cập nhật realtime trong mục "Lịch thi cá nhân" khi bạn đăng nhập tài khoản sinh viên.';
-      }
-      setChatMessages((prev) => [...prev, { sender: 'bot', text: botReply }]);
-    }, 600);
+    try {
+      const response = await api.post('/support-chat/message', { message: userText });
+      const data = response.data || {};
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          sender: 'bot',
+          text: typeof data.answer === 'string' ? data.answer : 'Mình chưa thể xử lý câu hỏi này. Vui lòng gửi yêu cầu hỗ trợ để được kiểm tra.',
+          sources: Array.isArray(data.sources) ? data.sources : [],
+          shouldEscalate: Boolean(data.shouldEscalate),
+          userQuestion: userText,
+        },
+      ]);
+    } catch {
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          sender: 'bot',
+          text: 'Kênh hỗ trợ tự động đang tạm thời bận. Bạn có thể gửi yêu cầu hỗ trợ trực tiếp để quản trị viên kiểm tra.',
+          shouldEscalate: true,
+          userQuestion: userText,
+        },
+      ]);
+    } finally {
+      setChatSending(false);
+    }
+  };
+
+  const handleChatSuggestion = (suggestion: string) => {
+    setChatInput(suggestion);
+    requestAnimationFrame(() => chatInputRef.current?.focus());
+  };
+
+  const handleEscalateChat = (question?: string) => {
+    if (question) {
+      setMessage((current) => current.trim() || `Nội dung cần hỗ trợ: ${question}`);
+    }
+    setIsChatOpen(false);
+    requestAnimationFrame(() => {
+      document.getElementById('support-request-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   };
 
   return (
@@ -672,7 +723,7 @@ export default function ContactSupportPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSendSupportForm} className="space-y-4 pt-2">
+          <form id="support-request-form" onSubmit={handleSendSupportForm} className="space-y-4 pt-2">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">
@@ -851,26 +902,31 @@ export default function ContactSupportPage() {
         {!isChatOpen ? (
           <button
             type="button"
-            onClick={() => setIsChatOpen(true)}
+            onClick={() => {
+              setIsChatOpen(true);
+              requestAnimationFrame(() => chatInputRef.current?.focus());
+            }}
             aria-label="Mở chat hỗ trợ tự động"
-            className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-xl shadow-blue-500/25 transition-transform hover:scale-105 active:scale-95 cursor-pointer ring-4 ring-blue-100 dark:ring-blue-950"
+            className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-xl shadow-blue-500/25 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer ring-4 ring-blue-100 dark:ring-blue-950"
             title="Chat hỗ trợ tự động"
           >
-            <MessageSquare className="h-6 w-6 text-white" />
+            <span className="absolute -inset-1 rounded-full border border-blue-400/50 animate-ping" aria-hidden="true" />
+            <MessageSquare className="relative h-6 w-6 text-white transition-transform duration-200 group-hover:scale-110" />
+            <span className="absolute -right-0.5 -top-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-400 dark:border-slate-950" aria-label="Trợ lý đang trực tuyến" />
           </button>
         ) : (
-          <div className="w-80 sm:w-96 rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col h-[460px] animate-in fade-in zoom-in-95 duration-150">
+          <div className="w-[calc(100vw-2rem)] sm:w-96 rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col h-[min(560px,calc(100vh-6.5rem))] animate-in fade-in zoom-in-95 slide-in-from-bottom-3 duration-200">
             {/* Widget Header */}
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 text-white flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/20 text-white font-semibold text-type-helper">
-                  AI
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/20 text-white font-semibold text-type-helper shadow-inner">
+                  <Bot className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-type-body-sm font-semibold leading-tight">Hỗ trợ Khảo thí Nhanh</h4>
+                  <h4 className="text-type-body-sm font-semibold leading-tight">Trợ lý Hỗ trợ Khảo thí</h4>
                   <p className="text-type-helper text-blue-200 font-medium flex items-center gap-1 mt-0.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Trực tuyến 24/7
+                    Tra cứu hướng dẫn đã duyệt
                   </p>
                 </div>
               </div>
@@ -884,20 +940,82 @@ export default function ContactSupportPage() {
             </div>
 
             {/* Chat Body */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 text-type-helper bg-slate-50/50 dark:bg-slate-950/50">
+            <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 text-type-helper bg-slate-50/50 dark:bg-slate-950/50 scroll-smooth">
               {chatMessages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div
-                    className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-type-helper font-medium leading-relaxed ${
+                <div key={i} className={`flex animate-in fade-in slide-in-from-bottom-2 duration-200 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className="max-w-[80%]">
+                    {msg.sender === 'bot' && (
+                      <div className="mb-1 flex items-center gap-1.5 text-type-helper font-medium text-slate-500 dark:text-slate-400">
+                        <Bot className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                        Trợ lý khảo thí
+                      </div>
+                    )}
+                    <div
+                      className={`rounded-2xl px-3.5 py-2.5 text-type-helper font-medium leading-relaxed ${
                       msg.sender === 'user'
                         ? 'bg-blue-600 text-white rounded-br-none'
                         : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-bl-none shadow-2xs'
-                    }`}
-                  >
-                    {msg.text}
+                      }`}
+                    >
+                      {msg.text}
+                    </div>
+                    {msg.sender === 'bot' && msg.sources && msg.sources.length > 0 && (
+                      <div className="mt-1.5 flex flex-wrap gap-1.5">
+                        {msg.sources.map((source) => (
+                          <button
+                            key={source.id}
+                            type="button"
+                            onClick={() => setSelectedArticle(articles.find((article) => article.id === source.id) || null)}
+                            className="max-w-full truncate rounded-xl border border-blue-200 bg-blue-50 px-2 py-1 text-left text-type-helper font-medium text-blue-700 transition hover:bg-blue-100 dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-300 dark:hover:bg-blue-950/70"
+                            title={`Mở hướng dẫn: ${source.title}`}
+                          >
+                            {source.title}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {msg.sender === 'bot' && msg.shouldEscalate && (
+                      <button
+                        type="button"
+                        onClick={() => handleEscalateChat(msg.userQuestion)}
+                        className="mt-2 inline-flex h-8 items-center gap-1.5 rounded-xl border border-blue-200 bg-white px-2.5 text-type-helper font-semibold text-blue-700 transition hover:bg-blue-50 dark:border-blue-800 dark:bg-slate-900 dark:text-blue-300 dark:hover:bg-blue-950/40"
+                      >
+                        <Headphones className="h-3.5 w-3.5" />
+                        Gửi yêu cầu hỗ trợ
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
+              {chatMessages.length === 1 && !chatSending && (
+                <div className="flex flex-wrap gap-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  {chatSuggestions.map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      type="button"
+                      onClick={() => handleChatSuggestion(suggestion)}
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 bg-white px-2.5 py-1.5 text-type-helper font-medium text-blue-700 shadow-2xs transition hover:-translate-y-0.5 hover:border-blue-300 hover:bg-blue-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-blue-800 dark:bg-slate-900 dark:text-blue-300 dark:hover:bg-blue-950/40"
+                    >
+                      <Sparkles className="h-3.5 w-3.5" />
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {chatSending && (
+                <div className="flex justify-start animate-in fade-in slide-in-from-bottom-2 duration-150">
+                  <div className="rounded-2xl rounded-bl-none border border-slate-200 bg-white px-3.5 py-2.5 text-type-helper font-medium text-slate-600 shadow-2xs dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                    <div className="flex items-center gap-2">
+                      <span className="flex items-center gap-1" aria-label="Trợ lý đang trả lời">
+                        {[0, 1, 2].map((dot) => (
+                          <span key={dot} className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: `${dot * 140}ms` }} />
+                        ))}
+                      </span>
+                      <span>Đang suy nghĩ...</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Chat Input Footer */}
@@ -906,16 +1024,19 @@ export default function ContactSupportPage() {
               className="p-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center gap-2"
             >
               <input
+                ref={chatInputRef}
                 type="text"
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 placeholder="Nhập câu hỏi cần hỗ trợ..."
-                className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-type-body outline-none focus:border-blue-600 focus:bg-white dark:focus:bg-slate-800"
+                maxLength={500}
+                disabled={chatSending}
+                className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-type-body outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 dark:focus:bg-slate-800 dark:focus:ring-blue-950"
               />
               <button
                 type="submit"
-                disabled={!chatInput.trim()}
-                className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 transition cursor-pointer"
+                disabled={!chatInput.trim() || chatSending}
+                className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm transition hover:bg-blue-700 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100 cursor-pointer"
               >
                 <Send className="h-3.5 w-3.5" />
               </button>

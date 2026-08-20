@@ -35,6 +35,7 @@ import {
   Monitor,
 } from 'lucide-react';
 import { Toast } from '@/components/Toast';
+import { formatErrorPresentation, getOnlineExamErrorPresentation } from '@/lib/error-message';
 
 export default function StudentExamLobbyPage() {
   const router = useRouter();
@@ -43,6 +44,7 @@ export default function StudentExamLobbyPage() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [eligibilityErrorCode, setEligibilityErrorCode] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [eligibility, setEligibility] = useState<any>(null);
   const [starting, setStarting] = useState(false);
@@ -87,6 +89,7 @@ export default function StudentExamLobbyPage() {
     try {
       setLoading(true);
       setError(null);
+      setEligibilityErrorCode(null);
       const res = await onlineExamService.checkEligibility(scheduleId);
       setEligibility(res?.data ? { ...res, ...res.data } : res);
       setRulesAccepted(false);
@@ -108,14 +111,19 @@ export default function StudentExamLobbyPage() {
       }
 
       if (!res.isEligible && !res.isPreviewMode) {
-        const msg = res.reason || 'Bạn chưa đủ điều kiện dự thi ca thi này.';
+        const presentation = getOnlineExamErrorPresentation(res.errorCode, res.reason);
+        const msg = presentation ? formatErrorPresentation(presentation) : res.reason || 'Bạn chưa đủ điều kiện dự thi ca thi này.';
+        setEligibilityErrorCode(res.errorCode || null);
         setError(msg);
         if (!msg.toLowerCase().includes('mật khẩu') && !msg.toLowerCase().includes('truy cập')) {
           setToast({ message: msg, type: 'error' });
         }
       }
     } catch (err: any) {
-      const msg = err.response?.data?.message || err.message || 'Không thể kiểm tra điều kiện dự thi';
+      const errorCode = err.response?.data?.errorCode;
+      const presentation = getOnlineExamErrorPresentation(errorCode, err.response?.data?.message || err.message);
+      const msg = presentation ? formatErrorPresentation(presentation) : err.response?.data?.message || err.message || 'Không thể kiểm tra điều kiện dự thi';
+      setEligibilityErrorCode(errorCode || null);
       setError(msg);
       if (!msg.toLowerCase().includes('mật khẩu') && !msg.toLowerCase().includes('truy cập')) {
         setToast({ message: msg, type: 'error' });
@@ -146,18 +154,28 @@ export default function StudentExamLobbyPage() {
   const student = eligibilityData.student;
   const config = eligibilityData.config ?? schedule?.onlineExamConfig;
   const existingAttempt = eligibilityData.existingAttempt || eligibility?.existingAttempt;
+  const eligibilityIssue = getOnlineExamErrorPresentation(
+    eligibilityErrorCode || eligibility?.errorCode,
+    eligibility?.reason || error || undefined,
+  );
 
   const isCompleted = existingAttempt && ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(existingAttempt.status);
 
   const isPasswordRequired = Boolean(
     examInfo?.examPasswordRequired ||
-    eligibility?.errorCode === 'EXAM_PASSWORD_REQUIRED' ||
+    eligibilityErrorCode === 'EXAM_PASSWORD_REQUIRED' ||
     (error && error.toLowerCase().includes('mật khẩu'))
   );
   const isAccessCodeRequired = Boolean(
     examInfo?.accessCodeRequired ||
-    eligibility?.errorCode === 'ACCESS_CODE_REQUIRED' ||
+    eligibilityErrorCode === 'ACCESS_CODE_REQUIRED' ||
     (error && error.toLowerCase().includes('mã truy cập'))
+  );
+  const hasBlockingEligibilityIssue = Boolean(
+    !eligibility?.isEligible &&
+    !eligibility?.isPreviewMode &&
+    !isPasswordRequired &&
+    !isAccessCodeRequired,
   );
 
   // Live Countdown Calculation
@@ -226,10 +244,19 @@ export default function StudentExamLobbyPage() {
 
   const handleStartExam = async () => {
     if (starting) return;
+    if (config?.requireRulesAcceptance !== false && !rulesAccepted && !eligibility?.isPreviewMode) {
+      const presentation = getOnlineExamErrorPresentation('RULES_NOT_ACCEPTED');
+      const msg = presentation ? formatErrorPresentation(presentation) : 'Bạn cần xác nhận quy chế thi trước khi bắt đầu.';
+      setEligibilityErrorCode('RULES_NOT_ACCEPTED');
+      setError(msg);
+      setToast({ message: msg, type: 'error' });
+      return;
+    }
+
     try {
       setStarting(true);
       setError(null);
-      setRulesAccepted(true);
+      setEligibilityErrorCode(null);
 
       if (document.documentElement.requestFullscreen) {
         try {
@@ -243,16 +270,19 @@ export default function StudentExamLobbyPage() {
         scheduleId,
         navigator.userAgent,
         undefined,
-        true,
+        rulesAccepted,
         examPassword.trim() || undefined,
         accessCode.trim() || undefined,
       );
       sessionStorage.setItem('attemptToken', res.attemptToken);
       router.push(`/student/online-exam/${res.attemptId}/take`);
     } catch (err: any) {
-      const msg = err.response?.data?.message || err.message || 'Không thể bắt đầu làm bài thi. Vui lòng kiểm tra lại mật khẩu/mã truy cập.';
+      const errorCode = err.response?.data?.errorCode;
+      const presentation = getOnlineExamErrorPresentation(errorCode, err.response?.data?.message || err.message);
+      const msg = presentation ? formatErrorPresentation(presentation) : err.response?.data?.message || err.message || 'Không thể bắt đầu làm bài thi. Vui lòng kiểm tra lại mật khẩu/mã truy cập.';
+      setEligibilityErrorCode(errorCode || null);
       setError(msg);
-      if (msg.toLowerCase().includes('mật khẩu') || msg.toLowerCase().includes('truy cập')) {
+      if (errorCode === 'EXAM_PASSWORD_REQUIRED' || errorCode === 'EXAM_PASSWORD_INVALID' || errorCode === 'ACCESS_CODE_REQUIRED' || errorCode === 'ACCESS_CODE_INVALID') {
         setShowPasswordModal(true);
       } else {
         setToast({ message: msg, type: 'error' });
@@ -642,17 +672,27 @@ export default function StudentExamLobbyPage() {
               )}
             </div>
 
-            {/* 2. Banner Trạng Thái Ca Thi */}
-            <div className="rounded-2xl bg-gradient-to-r from-blue-50 via-sky-50/60 to-blue-50/40 dark:from-blue-950/40 dark:via-slate-900 dark:to-blue-950/20 border border-blue-100 dark:border-blue-900/60 p-4 flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-600/25 shrink-0">
-                <ShieldCheck className="w-6 h-6" />
+            {/* 2. Trạng thái ca thi: hiển thị rõ nguyên nhân nếu không thể vào thi */}
+            <div className={`rounded-2xl border p-4 flex items-center gap-3.5 ${eligibilityIssue && hasBlockingEligibilityIssue
+              ? 'bg-rose-50/80 dark:bg-rose-950/30 border-rose-200 dark:border-rose-900/60'
+              : 'bg-gradient-to-r from-blue-50 via-sky-50/60 to-blue-50/40 dark:from-blue-950/40 dark:via-slate-900 dark:to-blue-950/20 border-blue-100 dark:border-blue-900/60'
+            }`}>
+              <div className={`w-12 h-12 rounded-2xl text-white flex items-center justify-center shadow-md shrink-0 ${eligibilityIssue && hasBlockingEligibilityIssue
+                ? 'bg-rose-600 shadow-rose-600/25'
+                : 'bg-blue-600 shadow-blue-600/25'
+              }`}>
+                {eligibilityIssue && hasBlockingEligibilityIssue ? <AlertCircle className="w-6 h-6" /> : <ShieldCheck className="w-6 h-6" />}
               </div>
               <div className="min-w-0">
-                <h4 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug">
-                  {countdown.isReady || eligibility?.isPreviewMode ? 'Ca thi đang mở' : 'Chờ mở đề thi'}
+                <h4 className={`text-type-body-sm font-semibold leading-snug ${eligibilityIssue && hasBlockingEligibilityIssue ? 'text-rose-900 dark:text-rose-100' : 'text-slate-900 dark:text-slate-100'}`}>
+                  {eligibilityIssue && hasBlockingEligibilityIssue
+                    ? eligibilityIssue.title
+                    : countdown.isReady || eligibility?.isPreviewMode ? 'Ca thi đang mở' : 'Chờ mở đề thi'}
                 </h4>
-                <p className="text-type-helper text-slate-600 dark:text-slate-300 font-normal leading-relaxed mt-0.5">
-                  Hệ thống đã sẵn sàng. Xác nhận cam kết và bấm bắt đầu để vào thi.
+                <p className={`text-type-helper font-normal leading-relaxed mt-0.5 ${eligibilityIssue && hasBlockingEligibilityIssue ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-300'}`}>
+                  {eligibilityIssue && hasBlockingEligibilityIssue
+                    ? [eligibilityIssue.message, eligibilityIssue.action].filter(Boolean).join(' ')
+                    : 'Hệ thống đã sẵn sàng. Xác nhận cam kết và bấm bắt đầu để vào thi.'}
                 </p>
               </div>
             </div>
@@ -688,8 +728,8 @@ export default function StudentExamLobbyPage() {
                 }}
                 disabled={
                   starting ||
+                  hasBlockingEligibilityIssue ||
                   (!countdown.isReady && !eligibility?.isEligible && !eligibility?.isPreviewMode) ||
-                  (error && !isPasswordRequired && !isAccessCodeRequired && !countdown.isReady) ||
                   (config?.requireRulesAcceptance !== false && !rulesAccepted && !eligibility?.isPreviewMode)
                 }
                 isLoading={starting}

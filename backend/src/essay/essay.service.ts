@@ -543,6 +543,41 @@ export class EssayService {
       }),
     );
 
+    // Đảm bảo tất cả câu hỏi tự luận trong attempt đều có bản ghi AttemptAnswer để có thể chấm điểm và lưu điểm thủ công
+    for (const q of essayQuestions) {
+      let existingAns = (attempt.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
+      if (!existingAns) {
+        try {
+          existingAns = (await this.prisma.attemptAnswer.create({
+            data: {
+              attempt: { connect: { id: attempt.id } },
+              questionId: q.questionId,
+              textAnswer: '(Sinh viên không nhập nội dung văn bản)',
+              gradingStatus: 'GRADED',
+              finalScore: 0,
+              clientTimestamp: new Date(),
+            },
+            include: {
+              essayGrades: { include: { criterion: true, gradedBy: true } },
+              submissionFiles: true,
+              gradeHistories: { include: { actor: true }, orderBy: { createdAt: 'desc' } },
+            },
+          })) as any;
+          attempt.attemptAnswers.push(existingAns);
+        } catch (e) {
+          const found = await this.prisma.attemptAnswer.findFirst({
+            where: { attemptId: attempt.id, questionId: q.questionId },
+            include: {
+              essayGrades: { include: { criterion: true, gradedBy: true } },
+              submissionFiles: true,
+              gradeHistories: { include: { actor: true }, orderBy: { createdAt: 'desc' } },
+            },
+          });
+          if (found) attempt.attemptAnswers.push(found as any);
+        }
+      }
+    }
+
     return {
       ...attempt,
       snapshot: undefined,
