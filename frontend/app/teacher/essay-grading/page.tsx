@@ -234,6 +234,7 @@ function TeacherEssayGradingContent() {
   };
 
   const [batchAiLoading, setBatchAiLoading] = useState(false);
+  const [aiProgress, setAiProgress] = useState<{ current: number; total: number; percent: number } | null>(null);
 
   const saveAllQuestionGrades = async (options: { showPopup?: boolean } = { showPopup: true }) => {
     if (!selected || !selected.id || String(selected.id).startsWith('virtual-')) {
@@ -315,13 +316,18 @@ function TeacherEssayGradingContent() {
     }
 
     setBatchAiLoading(true);
+    setAiProgress({ current: 0, total: essayQuestions.length, percent: 0 });
     let actualAiGradedCount = 0;
     let emptyAnswerCount = 0;
 
     try {
-      for (const q of essayQuestions) {
+      for (let i = 0; i < essayQuestions.length; i++) {
+        const q = essayQuestions[i];
         const ans = (selected.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
-        if (!ans?.id) continue;
+        if (!ans?.id) {
+          setAiProgress({ current: i + 1, total: essayQuestions.length, percent: Math.round(((i + 1) / essayQuestions.length) * 100) });
+          continue;
+        }
 
         try {
           const res = await api.post(`/essay-grading/answers/${ans.id}/ai-suggest`);
@@ -346,7 +352,8 @@ function TeacherEssayGradingContent() {
             }
             setHasUnsavedChanges(true);
 
-            const isBlank = !ans.textAnswer || !ans.textAnswer.trim() || ans.textAnswer.includes('không nhập') || data?.warning?.includes('không nhập');
+            const rawAnsText = ((ans.textAnswer as string) || '').trim();
+            const isBlank = !rawAnsText || rawAnsText === '(Sinh viên không nhập nội dung)' || rawAnsText === '(Sinh viên không nhập nội dung văn bản)' || rawAnsText === '(Sinh viên không nhập văn bản)';
             if (isBlank) {
               emptyAnswerCount++;
             } else {
@@ -355,6 +362,8 @@ function TeacherEssayGradingContent() {
           }
         } catch (err) {
           // Bỏ qua lỗi câu đơn lẻ để tiếp tục câu tiếp theo
+        } finally {
+          setAiProgress({ current: i + 1, total: essayQuestions.length, percent: Math.round(((i + 1) / essayQuestions.length) * 100) });
         }
       }
 
@@ -367,12 +376,12 @@ function TeacherEssayGradingContent() {
         });
       } else if (actualAiGradedCount > 0) {
         setToast({
-          message: 'Đã điền điểm mẫu AI thành công!',
+          message: 'Đã dùng AI phân tích bài làm và điền điểm mẫu theo Rubric thành công!',
           type: 'success',
         });
       } else {
         setToast({
-          message: 'Đã tự động gán 0đ cho bài làm bỏ trống theo quy chế.',
+          message: 'Thí sinh bỏ trống câu hỏi — AI đã tự động gán 0đ theo quy chế.',
           type: 'success',
         });
       }
@@ -380,6 +389,7 @@ function TeacherEssayGradingContent() {
       setToast({ message: e?.message || 'Có lỗi xảy ra khi thực hiện chấm AI.', type: 'error' });
     } finally {
       setBatchAiLoading(false);
+      setAiProgress(null);
     }
   };
 
@@ -999,16 +1009,31 @@ function TeacherEssayGradingContent() {
                         )
                       ) : (
                         <>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={handleAiGradeCurrentStudent}
+                          <button
+                            type="button"
                             disabled={batchAiLoading || saving}
-                            isLoading={batchAiLoading}
-                            title="AI phân tích và tự động điền điểm mẫu theo Rubric cho toàn bộ câu tự luận của bài thi này"
+                            onClick={handleAiGradeCurrentStudent}
+                            className="relative overflow-hidden inline-flex items-center justify-center h-9 min-h-0 px-3.5 rounded-xl font-semibold text-type-body bg-blue-100 text-blue-700 hover:bg-blue-200/90 active:bg-blue-300/80 dark:bg-blue-900/40 dark:text-blue-200 dark:hover:bg-blue-800/60 transition select-none disabled:opacity-85 disabled:cursor-not-allowed shadow-2xs cursor-pointer"
+                            title="AI phân tích bài làm của sinh viên và tự động điền điểm gợi ý theo từng tiêu chí Rubric"
                           >
-                            {batchAiLoading ? 'AI đang chấm...' : 'Mẫu chấm AI'}
-                          </Button>
+                            {batchAiLoading && aiProgress && (
+                              <span
+                                className="absolute inset-y-0 left-0 bg-blue-200/95 dark:bg-blue-800/80 transition-all duration-300 ease-out pointer-events-none"
+                                style={{ width: `${aiProgress.percent}%` }}
+                              />
+                            )}
+
+                            <span className="relative z-10 inline-flex items-center gap-1.5 whitespace-nowrap">
+                              {batchAiLoading && aiProgress ? (
+                                <>
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-600 dark:text-blue-300" />
+                                  <span>AI đang chấm {aiProgress.current}/{aiProgress.total} ({aiProgress.percent}%)</span>
+                                </>
+                              ) : (
+                                <span>Chấm mẫu AI</span>
+                              )}
+                            </span>
+                          </button>
                           <Button
                             variant={hasUnsavedChanges ? 'primary' : 'secondary'}
                             size="sm"
@@ -1109,9 +1134,9 @@ function TeacherEssayGradingContent() {
                 <div className="space-y-6 pt-2">
                   {(selected.questions || []).filter((q: any) => q.type === 'ESSAY').map((q: any, idx: number) => {
                     const ans = (selected.attemptAnswers || []).find((a: any) => a.questionId === q.questionId);
-                    const currentScore = ans?.finalScore !== undefined && ans?.finalScore !== null
-                      ? ans.finalScore
-                      : (q.rubric || []).reduce((acc: number, r: any) => acc + Number(scores[r.id] || 0), 0);
+                    const currentScore = (q.rubric || []).length > 0
+                      ? (q.rubric || []).reduce((acc: number, r: any) => acc + Number(scores[r.id] ?? 0), 0)
+                      : (scores[`q_${q.questionId}`] ?? (ans?.finalScore ?? 0));
 
                     return (
                       <div
