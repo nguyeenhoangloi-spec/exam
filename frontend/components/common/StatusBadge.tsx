@@ -92,11 +92,14 @@ const statusConfigs: Record<string, StatusConfig> = {
   CHANGE_REQUESTED: { label: 'Cần chỉnh sửa', category: 'info', icon: AlertCircle },
   RUNNING: { label: 'Đang chạy', category: 'info', icon: RefreshCw },
   PROCESSING: { label: 'Đang xử lý', category: 'info', icon: RefreshCw },
+  QUEUED: { label: 'Đang xếp hàng', category: 'info', icon: Clock },
+  VERIFYING: { label: 'Đang kiểm tra', category: 'info', icon: RefreshCw },
 
   // ── 3. CHỜ XỬ LÝ (Warning - Vàng cam: amber) ──
   WAITING_APPROVAL: { label: 'Chờ phê duyệt', category: 'warning', icon: Clock },
   PENDING: { label: 'Chờ duyệt', category: 'warning', icon: Clock },
   PENDING_VERIFY: { label: 'Chờ xác minh', category: 'warning', icon: Clock },
+  PENDING_APPROVAL: { label: 'Chờ phê duyệt', category: 'warning', icon: Clock },
   UNDER_REVIEW: { label: 'Đang xem xét', category: 'warning', icon: Eye },
   NEW: { label: 'Mới gửi', category: 'warning', icon: Zap },
   MAINTENANCE: { label: 'Bảo trì', category: 'warning', icon: AlertTriangle },
@@ -108,6 +111,7 @@ const statusConfigs: Record<string, StatusConfig> = {
   REJECTED: { label: 'Bị từ chối', category: 'danger', icon: XCircle },
   ABSENT: { label: 'Vắng thi', category: 'danger', icon: XCircle },
   FAILED: { label: 'Thất bại', category: 'danger', icon: XCircle },
+  VERIFY_FAILED: { label: 'Kiểm tra thất bại', category: 'danger', icon: XCircle },
   NOT_PASSED: { label: 'Không đạt', category: 'danger', icon: XCircle },
 
   // ── 5. TRUNG TÍNH (Neutral - Xám xanh: slate) ──
@@ -144,7 +148,7 @@ export function StatusBadge({
 }: StatusBadgeProps) {
   const normalizedKey = (status || '').toUpperCase().trim();
   const config = statusConfigs[normalizedKey] || {
-    label: customLabel || status,
+    label: customLabel || 'Chưa xác định',
     category: 'neutral' as StatusCategory,
     icon: HelpCircle,
   };

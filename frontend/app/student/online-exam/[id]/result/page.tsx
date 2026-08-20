@@ -164,7 +164,7 @@ export default function StudentExamResultPage() {
                   <span className="text-slate-500 dark:text-slate-400 font-semibold text-type-body-sm leading-5 tracking-wide">Trạng thái bài thi:</span>
                   <StatusBadge status={result.status} />
                   <span className="sr-only">
-                    {result.status === 'UNDER_REVIEW' ? 'Đang được xem xét' : result.status === 'GRADED' ? 'Đã chấm điểm' : result.status === 'SUBMITTED' ? 'Đã nộp bài' : result.status}
+                    {result.status === 'UNDER_REVIEW' ? 'Đang được xem xét' : result.status === 'GRADED' ? 'Đã chấm điểm' : result.status === 'SUBMITTED' ? 'Đã nộp bài' : 'Chưa xác định'}
                   </span>
                 </div>
                 <div className="flex justify-between border-b border-slate-200/60 dark:border-slate-700 pb-2.5 text-type-body">

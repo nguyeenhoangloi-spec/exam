@@ -756,7 +756,7 @@ export default function ExamPapersPage() {
         idx + 1,
         p.paperCode,
         p.subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '---',
-        p.status === 'PUBLISHED' ? 'Đã phát hành' : p.status === 'DRAFT' ? 'Bản nháp' : p.status,
+        p.status === 'PUBLISHED' ? 'Đã phát hành' : p.status === 'DRAFT' ? 'Bản nháp' : p.status === 'ARCHIVED' ? 'Đã lưu trữ' : p.status === 'CANCELLED' ? 'Đã hủy' : 'Chưa xác định',
         `${p.questionCount ?? p.questions?.length ?? 0} câu`,
         `${p.durationMinutes} phút`,
       ]),

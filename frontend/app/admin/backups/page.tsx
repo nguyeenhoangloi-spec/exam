@@ -441,7 +441,7 @@ export default function BackupsPage() {
             case 'RUNNING':
                 return <StatusBadge status="RUNNING" customLabel="Đang chạy" />;
             case 'VERIFYING':
-                return <StatusBadge status="PROCESSING" customLabel="Đang verify" />;
+                return <StatusBadge status="PROCESSING" customLabel="Đang kiểm tra" />;
             case 'QUEUED':
                 return <StatusBadge status="PENDING" customLabel="Đang chờ" />;
             case 'FAILED':

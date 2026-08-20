@@ -239,7 +239,6 @@ function TeacherEssayGradingContent() {
   };
 
   const [batchAiLoading, setBatchAiLoading] = useState(false);
-  const [justFinishedAi, setJustFinishedAi] = useState(false);
   const [aiProgress, setAiProgress] = useState<{ current: number; total: number; percent: number; phase: string } | null>(null);
 
   const saveAllQuestionGrades = async (options: { showPopup?: boolean } = { showPopup: true }) => {
@@ -421,13 +420,6 @@ function TeacherEssayGradingContent() {
           message: `${emptyAnswerCount} câu bỏ trống được áp dụng 0đ theo quy định; AI không cần phân tích các câu này.`,
           type: 'success',
         });
-      }
-
-      if (actualAiGradedCount > 0 || emptyAnswerCount > 0) {
-        setJustFinishedAi(true);
-        setTimeout(() => {
-          setJustFinishedAi(false);
-        }, 1600);
       }
     } catch (e: any) {
       setToast({ message: e?.message || 'Có lỗi xảy ra khi thực hiện chấm AI.', type: 'error' });
@@ -1025,13 +1017,18 @@ function TeacherEssayGradingContent() {
                 </div>
 
                 <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
-                  <div className="text-right">
-                    <span className="text-type-section tabular-nums font-semibold text-slate-900 dark:text-slate-100">
-                      {liveTotalScore !== null && liveTotalScore !== undefined ? liveTotalScore : (selected.totalScore ?? 'Chưa có điểm')} <span className="text-type-helper text-slate-500 font-normal">/ {selected.maxScore || 10}đ</span>
+                  <div className="text-right w-[115px] min-w-[115px] max-w-[115px] shrink-0">
+                    <span className="text-type-section tabular-nums font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
+                      {liveTotalScore !== null && liveTotalScore !== undefined
+                        ? (Number(liveTotalScore) || 0).toFixed(2)
+                        : selected.totalScore !== null && selected.totalScore !== undefined
+                          ? (Number(selected.totalScore) || 0).toFixed(2)
+                          : '--'}{' '}
+                      <span className="text-type-helper text-slate-500 font-normal">/ {(Number(selected.maxScore) || 10).toFixed(2)}đ</span>
                     </span>
                     {selected.penaltyPoints > 0 && (
-                      <p className="text-type-helper font-semibold text-rose-600 mt-0.5">
-                        Điểm phạt: -{selected.penaltyPoints}đ ({selected.penaltyReason})
+                      <p className="text-type-helper font-semibold text-rose-600 mt-0.5 whitespace-nowrap">
+                        Điểm phạt: -{(Number(selected.penaltyPoints) || 0).toFixed(2)}đ ({selected.penaltyReason})
                       </p>
                     )}
                   </div>
@@ -1057,12 +1054,10 @@ function TeacherEssayGradingContent() {
                             type="button"
                             disabled={batchAiLoading || saving}
                             onClick={handleAiGradeCurrentStudent}
-                            className={`relative overflow-hidden inline-flex items-center justify-center h-9 w-[124px] min-w-[124px] rounded-xl font-semibold text-type-body transition-all duration-300 select-none disabled:cursor-not-allowed shadow-2xs cursor-pointer ${
-                              justFinishedAi
-                                ? 'bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700/80 text-emerald-700 dark:text-emerald-300'
-                                : batchAiLoading
-                                  ? 'bg-blue-100/90 dark:bg-blue-950/60 border border-blue-300 dark:border-blue-700/80 text-blue-800 dark:text-blue-200'
-                                  : 'bg-blue-100 text-blue-700 hover:bg-blue-200/90 active:bg-blue-300/80 dark:bg-blue-900/40 dark:text-blue-200 dark:hover:bg-blue-800/60'
+                            className={`relative overflow-hidden inline-flex items-center justify-center h-9 w-[124px] min-w-[124px] rounded-xl font-semibold text-type-body transition-colors duration-300 select-none disabled:cursor-not-allowed shadow-2xs cursor-pointer ${
+                              batchAiLoading
+                                ? 'bg-blue-100/90 dark:bg-blue-950/60 border border-blue-300 dark:border-blue-700/80 text-blue-800 dark:text-blue-200'
+                                : 'bg-blue-100 text-blue-700 hover:bg-blue-200/90 active:bg-blue-300/80 dark:bg-blue-900/40 dark:text-blue-200 dark:hover:bg-blue-800/60'
                             }`}
                             title="AI phân tích bài làm của sinh viên và tự động điền điểm gợi ý theo từng tiêu chí Rubric"
                           >
@@ -1075,12 +1070,7 @@ function TeacherEssayGradingContent() {
                             )}
 
                             <span className="relative z-10 inline-flex items-center gap-1.5 whitespace-nowrap tabular-nums">
-                              {justFinishedAi ? (
-                                <>
-                                  <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                                  <span className="text-emerald-700 dark:text-emerald-300 font-semibold">100%</span>
-                                </>
-                              ) : batchAiLoading && aiProgress ? (
+                              {batchAiLoading && aiProgress ? (
                                 <>
                                   <Loader2 className="h-4 w-4 animate-spin text-blue-700 dark:text-blue-200" />
                                   <span>{aiProgress.percent}%</span>
@@ -1096,11 +1086,7 @@ function TeacherEssayGradingContent() {
                             onClick={handleSaveAllClick}
                             disabled={batchAiLoading || saving}
                             isLoading={saving}
-                            className={
-                              justFinishedAi
-                                ? 'ring-4 ring-blue-400/50 shadow-md scale-[1.03] transition-all duration-500'
-                                : 'transition-all duration-300'
-                            }
+                            className="transition-colors duration-300"
                             title="Lưu tất cả điểm vừa nhập"
                           >
                             {saving ? 'Đang lưu...' : hasUnsavedChanges ? 'Lưu điểm *' : 'Lưu điểm'}

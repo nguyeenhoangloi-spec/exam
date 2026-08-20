@@ -439,9 +439,9 @@ export function BackupFilterPopover({
                   <div className="space-y-1.5">
                     {[
                       { key: '', label: 'Tất cả trạng thái', desc: 'Mọi bản ghi sao lưu', count: counts.total },
-                      { key: 'SUCCEEDED', label: 'Thành công (SUCCEEDED)', desc: 'Đã hoàn thành và kiểm tra hash', count: counts.succeeded },
-                      { key: 'RUNNING', label: 'Đang thực hiện (RUNNING)', desc: 'Đang dump dữ liệu hoặc đóng gói', count: counts.running },
-                      { key: 'FAILED', label: 'Thất bại (FAILED)', desc: 'Lỗi tiến trình sao lưu', count: counts.failed },
+                      { key: 'SUCCEEDED', label: 'Thành công', desc: 'Đã hoàn thành và kiểm tra dữ liệu', count: counts.succeeded },
+                      { key: 'RUNNING', label: 'Đang thực hiện', desc: 'Đang sao lưu hoặc đóng gói dữ liệu', count: counts.running },
+                      { key: 'FAILED', label: 'Thất bại', desc: 'Lỗi tiến trình sao lưu', count: counts.failed },
                     ].map((item) => (
                       <button
                         key={item.key}

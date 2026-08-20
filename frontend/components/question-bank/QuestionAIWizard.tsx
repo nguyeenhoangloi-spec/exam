@@ -411,7 +411,7 @@ export function QuestionAIWizard({
               onClick={() => setShowSaveConfirm(true)}
               className="w-full"
             >
-              {busy ? 'Đang lưu vào ngân hàng dữ liệu...' : `Lưu ${items.length} câu hỏi AI vào Ngân hàng (Bản nháp DRAFT)`}
+              {busy ? 'Đang lưu vào ngân hàng dữ liệu...' : `Lưu ${items.length} câu hỏi AI vào Ngân hàng (Bản nháp)`}
             </Button>
           </div>
         )}

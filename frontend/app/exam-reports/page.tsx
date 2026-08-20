@@ -85,6 +85,19 @@ interface SummaryResponse {
   };
 }
 
+const CANDIDATE_STATUS_LABELS: Record<string, string> = {
+  SUBMITTED: 'Đã nộp bài',
+  AUTO_SUBMITTED: 'Tự động nộp bài',
+  GRADED: 'Đã chấm điểm',
+  UNDER_REVIEW: 'Đang xem xét',
+  IN_PROGRESS: 'Đang làm bài',
+  ABSENT: 'Vắng thi',
+};
+
+function formatCandidateStatus(status?: string): string {
+  return CANDIDATE_STATUS_LABELS[String(status || '').toUpperCase()] || 'Chưa xác định';
+}
+
 function escapeHtml(str: string) {
   return str.replace(/[&<>"']/g, (m) => {
     switch (m) {
@@ -526,7 +539,7 @@ export default function ExamReportsPage() {
       `"${c.studentCode}"`,
       `"${c.fullName}"`,
       `"${c.className}"`,
-      `"${c.status}"`,
+      `"${formatCandidateStatus(c.status)}"`,
       c.status === 'ABSENT' ? 'Vắng thi' : c.totalScore,
       c.submittedAt ? `"${new Date(c.submittedAt).toLocaleString('vi-VN')}"` : '—',
       c.violationCount,
@@ -601,7 +614,7 @@ export default function ExamReportsPage() {
  <td style="border: 1px solid #cbd5e1; padding: 6px; font-weight: bold;">${escapeHtml(c.studentCode)}</td>
  <td style="border: 1px solid #cbd5e1; padding: 6px;">${escapeHtml(c.fullName)}</td>
  <td style="border: 1px solid #cbd5e1; padding: 6px;">${escapeHtml(c.className)}</td>
- <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">${c.status}</td>
+ <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">${formatCandidateStatus(c.status)}</td>
  <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; font-weight: bold; font-size: 11pt; ${c.totalScore >= 5 ? 'color: #047857;' : 'color: #b91c1c;'}">${c.status === 'ABSENT' ? 'Vắng' : c.totalScore}</td>
  <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">${c.submittedAt ? new Date(c.submittedAt).toLocaleTimeString('vi-VN') : '—'}</td>
  </tr>

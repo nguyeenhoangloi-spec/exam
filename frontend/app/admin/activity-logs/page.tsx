@@ -17,6 +17,7 @@ import { Toast } from '../../../components/Toast';
 import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
 import { printReport } from '../../../lib/export-print';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
+import { USER_ROLE_LABELS } from '../../../lib/enum-labels';
 import { ActivityLogFilterPopover } from '../../../components/activity-logs/ActivityLogFilterPopover';
 import { ActivityLogBulkAction } from '../../../components/activity-logs/ActivityLogBulkAction';
 import {
@@ -81,6 +82,36 @@ interface AuditLogRecord {
 
 function getActionMeta(action: string) {
     const normalized = (action || '').toUpperCase().trim();
+    const translatedActions: Record<string, string> = {
+        ARCHIVE: 'Lưu trữ',
+        ASSIGN: 'Phân công',
+        PASSWORD_RESET: 'Đặt lại mật khẩu',
+        BACKUP_QUEUED: 'Đang xếp hàng sao lưu',
+        BACKUP_SUCCEEDED: 'Sao lưu thành công',
+        BACKUP_RESTORE_APPROVED: 'Đã duyệt khôi phục',
+        BACKUP_RESTORE_FAILED: 'Khôi phục thất bại',
+        BACKUP_RESTORE_REJECTED: 'Đã từ chối khôi phục',
+        BACKUP_RESTORE_REQUESTED: 'Đã yêu cầu khôi phục',
+        ESSAY_AI_SUGGEST: 'AI đề xuất chấm bài',
+        ESSAY_APPROVE: 'Duyệt bài tự luận',
+        ESSAY_GRADING_SUBMIT: 'Gửi chấm bài',
+        ESSAY_PUBLISH: 'Công bố điểm',
+        ESSAY_REOPEN: 'Mở lại bài chấm',
+        ESSAY_RETURN: 'Trả lại bài chấm',
+        ESSAY_GRADE: 'Chấm bài tự luận',
+        RUBRIC_UPDATE: 'Cập nhật Rubric',
+        REOPEN_ENTRY: 'Mở lại lượt nhập',
+        REOPEN_EXAM_ATTEMPT: 'Mở lại lượt thi',
+        RESET_ARRANGEMENT: 'Đặt lại xếp phòng',
+        RESOLVE_EXAM_INCIDENT: 'Xử lý sự cố thi',
+        RESTORE_EXAM_PAPER: 'Khôi phục đề thi',
+        REVIEW_GRADE_APPEAL: 'Xem xét phúc khảo',
+        UPDATE_EXAM_PASSWORD: 'Cập nhật mật khẩu đề thi',
+        UPDATE_STATUS: 'Cập nhật trạng thái',
+    };
+    if (translatedActions[normalized]) {
+        return { label: translatedActions[normalized], Icon: ShieldCheck, className: 'text-blue-700 dark:text-blue-400' };
+    }
     switch (normalized) {
         case 'LOGIN':
             return { label: 'Đăng nhập', Icon: CheckCircle2, className: 'text-emerald-700 dark:text-emerald-400' };
@@ -124,11 +155,7 @@ function getActionMeta(action: string) {
             if (normalized.includes('APPEAL') || normalized.includes('REGRADE')) {
                 return { label: 'Phúc khảo', Icon: AlertCircle, className: 'text-amber-700 dark:text-amber-400' };
             }
-            const humanized = action
-                .toLowerCase()
-                .replace(/_/g, ' ')
-                .replace(/^\w/, (c) => c.toUpperCase());
-            return { label: humanized, Icon: ShieldCheck, className: 'text-blue-700 dark:text-blue-400' };
+            return { label: 'Thao tác khác', Icon: ShieldCheck, className: 'text-blue-700 dark:text-blue-400' };
         }
     }
 }
@@ -143,6 +170,9 @@ const entityTypeMap: Record<string, { label: string; Icon: React.ElementType }> 
     BackupRestoreRequest: { label: 'Khôi phục DB', Icon: HardDrive },
     GRADE_APPEAL: { label: 'Phúc khảo', Icon: FileCheck },
     GradeAppeal: { label: 'Phúc khảo', Icon: FileCheck },
+    grade_appeals: { label: 'Đơn phúc khảo', Icon: FileCheck },
+    AttemptAnswer: { label: 'Câu trả lời', Icon: FileText },
+    ExamAttempt: { label: 'Lượt làm bài', Icon: FileCheck },
     QUESTION: { label: 'Câu hỏi', Icon: HelpCircle },
     Question: { label: 'Câu hỏi', Icon: HelpCircle },
     EXAM_PAPER: { label: 'Đề thi', Icon: FileText },
@@ -169,7 +199,7 @@ const entityTypeMap: Record<string, { label: string; Icon: React.ElementType }> 
 
 function getEntityInfo(entityType: string) {
     const key = entityType?.trim() || '';
-    return entityTypeMap[key] || entityTypeMap[key.toUpperCase()] || { label: entityType, Icon: Building };
+    return entityTypeMap[key] || entityTypeMap[key.toUpperCase()] || { label: 'Đối tượng khác', Icon: Building };
 }
 
 function EntityTarget({ entityType, entityId }: { entityType: string; entityId?: string | null }) {
@@ -1181,7 +1211,7 @@ export default function ActivityLogsPage() {
                                         <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">Hành động:</span>
                                             <span className="font-semibold text-blue-600 dark:text-blue-400">
-                                                {getActionMeta(drawerOpenLog.action).label} ({drawerOpenLog.action})
+                                                {getActionMeta(drawerOpenLog.action).label}
                                             </span>
                                         </div>
 
@@ -1189,14 +1219,14 @@ export default function ActivityLogsPage() {
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">Tài khoản thực hiện:</span>
                                             <span className="font-semibold text-slate-900 dark:text-white text-right">
                                                 {drawerOpenLog.actor?.username || 'Hệ thống'}
-                                                {drawerOpenLog.actor?.role ? ` (${drawerOpenLog.actor.role})` : ''}
+                                                {drawerOpenLog.actor?.role ? ` (${USER_ROLE_LABELS[drawerOpenLog.actor.role] || 'Người dùng'})` : ''}
                                             </span>
                                         </div>
 
                                         <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500 dark:text-slate-400 font-medium">Thực thể tác động:</span>
                                             <span className="font-semibold text-slate-900 dark:text-white">
-                                                {getEntityInfo(drawerOpenLog.entityType).label} ({drawerOpenLog.entityType})
+                                                {getEntityInfo(drawerOpenLog.entityType).label}
                                             </span>
                                         </div>
 

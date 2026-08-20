@@ -877,14 +877,18 @@ function AdminEssayReviewContent() {
                 </div>
 
                 <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
-                  <div className="text-right">
-                    <span className="text-type-section tabular-nums font-semibold text-slate-900 dark:text-slate-100">
-                      {isEditMode ? currentTotalCalculatedScore : (selected.totalScore ?? 'Chưa có điểm')}{' '}
-                      <span className="text-type-helper text-slate-500 font-normal">/ {selected.maxScore || 10}đ</span>
+                  <div className="text-right w-[115px] min-w-[115px] max-w-[115px] shrink-0">
+                    <span className="text-type-section tabular-nums font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
+                      {isEditMode
+                        ? (Number(currentTotalCalculatedScore) || 0).toFixed(2)
+                        : selected.totalScore !== null && selected.totalScore !== undefined
+                          ? (Number(selected.totalScore) || 0).toFixed(2)
+                          : '--'}{' '}
+                      <span className="text-type-helper text-slate-500 font-normal">/ {(Number(selected.maxScore) || 10).toFixed(2)}đ</span>
                     </span>
                     {selected.penaltyPoints > 0 && (
-                      <p className="text-type-helper font-semibold text-rose-600 mt-0.5">
-                        Điểm phạt: -{selected.penaltyPoints}đ ({selected.penaltyReason})
+                      <p className="text-type-helper font-semibold text-rose-600 mt-0.5 whitespace-nowrap">
+                        Điểm phạt: -{(Number(selected.penaltyPoints) || 0).toFixed(2)}đ ({selected.penaltyReason})
                       </p>
                     )}
                   </div>

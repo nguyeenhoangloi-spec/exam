@@ -468,11 +468,11 @@ export function ActivityLogFilterPopover({
                   <div className="space-y-1.5">
                     {[
                       { key: '', label: 'Tất cả thao tác', desc: 'Mọi phân loại hoạt động', count: counts.total },
-                      { key: 'CREATE', label: 'Tạo mới (CREATE)', desc: 'Thêm bản ghi mới vào CSDL', count: counts.actionCounts['CREATE'] || 0 },
-                      { key: 'UPDATE', label: 'Cập nhật (UPDATE)', desc: 'Thay đổi thông tin dữ liệu', count: counts.actionCounts['UPDATE'] || 0 },
-                      { key: 'DELETE', label: 'Xóa dữ liệu (DELETE)', desc: 'Xóa bản ghi khỏi hệ thống', count: counts.actionCounts['DELETE'] || 0 },
-                      { key: 'LOGIN', label: 'Đăng nhập (LOGIN)', desc: 'Lượt xác thực tài khoản', count: counts.actionCounts['LOGIN'] || 0 },
-                      { key: 'APPROVE', label: 'Phê duyệt (APPROVE)', desc: 'Duyệt bài thi hoặc phục hồi', count: counts.actionCounts['APPROVE'] || 0 },
+                      { key: 'CREATE', label: 'Tạo mới', desc: 'Thêm bản ghi mới vào CSDL', count: counts.actionCounts['CREATE'] || 0 },
+                      { key: 'UPDATE', label: 'Cập nhật', desc: 'Thay đổi thông tin dữ liệu', count: counts.actionCounts['UPDATE'] || 0 },
+                      { key: 'DELETE', label: 'Xóa dữ liệu', desc: 'Xóa bản ghi khỏi hệ thống', count: counts.actionCounts['DELETE'] || 0 },
+                      { key: 'LOGIN', label: 'Đăng nhập', desc: 'Lượt xác thực tài khoản', count: counts.actionCounts['LOGIN'] || 0 },
+                      { key: 'APPROVE', label: 'Phê duyệt', desc: 'Duyệt bài thi hoặc phục hồi', count: counts.actionCounts['APPROVE'] || 0 },
                     ].map((item) => (
                       <button
                         key={item.key}

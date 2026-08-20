@@ -1,9 +1,10 @@
 'use client';
 import { FilterSelect } from '../ui/FilterSelect';
 
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import {
-  AlertTriangle, X, ArrowLeftRight,
+  AlertTriangle, X, ArrowLeftRight, Check,
 } from 'lucide-react';
 import { ExamSchedule } from '../../types';
 import { Button } from '../ui/Button';
@@ -59,6 +60,62 @@ export function ExamPaperMatrixForm({
   currentTotal,
 }: ExamPaperMatrixFormProps) {
   const [showPanel, setShowPanel] = useState(false);
+  const [isCustomPlaysOpen, setIsCustomPlaysOpen] = useState(false);
+  const customButtonRef = useRef<HTMLButtonElement>(null);
+  const customMenuRef = useRef<HTMLDivElement>(null);
+  const [customMenuStyle, setCustomMenuStyle] = useState<React.CSSProperties>({});
+
+  const updateCustomMenuPosition = useCallback(() => {
+    if (!customButtonRef.current) return;
+    const rect = customButtonRef.current.getBoundingClientRect();
+    const minWidth = 208;
+    const estimatedHeight = 270;
+
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const openUpward = spaceBelow < estimatedHeight + 10 && rect.top > estimatedHeight;
+    const top = openUpward ? Math.max(10, rect.top - estimatedHeight - 6) : rect.bottom + 6;
+    const left = Math.max(16, rect.right - minWidth);
+
+    setCustomMenuStyle({
+      position: 'fixed',
+      top: `${top}px`,
+      left: `${left}px`,
+      minWidth: `${minWidth}px`,
+      zIndex: 99999,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isCustomPlaysOpen) return;
+    updateCustomMenuPosition();
+
+    const handleScrollOrResize = () => {
+      updateCustomMenuPosition();
+    };
+
+    window.addEventListener('scroll', handleScrollOrResize, true);
+    window.addEventListener('resize', handleScrollOrResize);
+    return () => {
+      window.removeEventListener('scroll', handleScrollOrResize, true);
+      window.removeEventListener('resize', handleScrollOrResize);
+    };
+  }, [isCustomPlaysOpen, updateCustomMenuPosition]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Node;
+      if (
+        customButtonRef.current && !customButtonRef.current.contains(target) &&
+        customMenuRef.current && !customMenuRef.current.contains(target)
+      ) {
+        setIsCustomPlaysOpen(false);
+      }
+    }
+    if (isCustomPlaysOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isCustomPlaysOpen]);
 
   const examType = formData.examType || 'TRAC_NGHIEM';
   const isEssay = examType === 'TU_LUAN';
@@ -143,8 +200,8 @@ export function ExamPaperMatrixForm({
             type="button"
             onClick={() => handleDurationChange('60')}
             className={`transition cursor-pointer ${formData.durationMinutes !== '90'
-                ? 'text-blue-600 dark:text-blue-400 font-semibold'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              ? 'text-blue-600 dark:text-blue-400 font-semibold'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
           >
             60 phút
@@ -154,8 +211,8 @@ export function ExamPaperMatrixForm({
             type="button"
             onClick={() => handleDurationChange('90')}
             className={`transition cursor-pointer ${formData.durationMinutes === '90'
-                ? 'text-blue-600 dark:text-blue-400 font-semibold'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              ? 'text-blue-600 dark:text-blue-400 font-semibold'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
           >
             90 phút
@@ -178,8 +235,8 @@ export function ExamPaperMatrixForm({
                 type="button"
                 onClick={() => switchType('TRAC_NGHIEM')}
                 className={`flex h-10 items-center justify-center gap-1 rounded-xl text-type-helper font-semibold border transition cursor-pointer ${examType === 'TRAC_NGHIEM'
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
-                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                  ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                   }`}
               >
                 TN
@@ -188,8 +245,8 @@ export function ExamPaperMatrixForm({
                 type="button"
                 onClick={() => switchType('DIEN_LO')}
                 className={`flex h-10 items-center justify-center gap-1 rounded-xl text-type-helper font-semibold border transition cursor-pointer ${examType === 'DIEN_LO' || examType === 'FILL_BLANK'
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
-                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                  ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                   }`}
               >
                 Điền lỗ
@@ -198,8 +255,8 @@ export function ExamPaperMatrixForm({
                 type="button"
                 onClick={() => switchType('TU_LUAN')}
                 className={`flex h-10 items-center justify-center gap-1 rounded-xl text-type-helper font-semibold border transition cursor-pointer ${examType === 'TU_LUAN'
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
-                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                  ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                   }`}
               >
                 TL
@@ -473,32 +530,42 @@ export function ExamPaperMatrixForm({
           )}
         </div>
 
-        {/* ── ROW 3: Ma trận phân bổ đề thi ── */}
-        <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h4 className="text-type-body font-medium text-slate-700 dark:text-slate-300">
+        {/* ── ROW 3: Ma trận phân bổ đề thi (Thiết kế phẳng, chỉ dùng đường kẻ, không khung nền, không icon) ── */}
+        <div className="space-y-4 pt-3 border-t border-slate-200/80 dark:border-slate-800">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
               Ma trận phân bổ đề thi
             </h4>
 
-            {/* Switch Mode: Pill Tabs */}
-            <div className="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 shrink-0">
+            {/* Switch Mode: Line Tabs phẳng với đường gạch chân trượt mượt mà */}
+            <div className="relative flex items-center gap-5 text-type-body font-semibold shrink-0">
+              {/* Smooth Sliding Underline Bar */}
+              <span
+                className="absolute -bottom-0.5 h-[2px] bg-blue-600 dark:bg-blue-400 rounded-full transition-all duration-300 ease-out pointer-events-none"
+                style={{
+                  width: formData.selectionMode !== 'BY_SCORE' ? '88px' : '118px',
+                  transform: `translateX(${formData.selectionMode !== 'BY_SCORE' ? 0 : 108}px)`,
+                }}
+              />
               <button
                 type="button"
                 onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_COUNT' }))}
-                className={`px-3 py-1 rounded-xl text-type-helper font-semibold transition-all cursor-pointer ${formData.selectionMode !== 'BY_SCORE'
-                    ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                  }`}
+                className={`pb-1 transition-colors duration-200 cursor-pointer ${
+                  formData.selectionMode !== 'BY_SCORE'
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
+                }`}
               >
                 Theo số câu
               </button>
               <button
                 type="button"
                 onClick={() => setFormData((p: any) => ({ ...p, selectionMode: 'BY_SCORE', easyScore: '3', mediumScore: '4', hardScore: '3' }))}
-                className={`px-3 py-1 rounded-xl text-type-helper font-semibold transition-all cursor-pointer ${formData.selectionMode === 'BY_SCORE'
-                    ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                  }`}
+                className={`pb-1 transition-colors duration-200 cursor-pointer ${
+                  formData.selectionMode === 'BY_SCORE'
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
+                }`}
               >
                 Theo thang điểm
               </button>
@@ -506,13 +573,13 @@ export function ExamPaperMatrixForm({
           </div>
 
           {formData.selectionMode === 'BY_SCORE' ? (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[
                 { label: 'Dễ (Điểm)', key: 'easyScore' },
                 { label: 'Trung bình (Điểm)', key: 'mediumScore' },
                 { label: 'Khó (Điểm)', key: 'hardScore' },
               ].map(({ label: lb, key }) => (
-                <div key={key} className="space-y-1">
+                <div key={key} className="space-y-1.5">
                   <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">{lb}</label>
                   <input
                     type="number"
@@ -521,26 +588,26 @@ export function ExamPaperMatrixForm({
                     max={10}
                     value={(formData as any)[key] || ''}
                     onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
-                    className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 outline-none transition"
+                    className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 outline-none transition-colors duration-200"
                   />
                 </div>
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[
                 { label: 'Dễ (Số câu)', key: 'easyCount' },
                 { label: 'Trung bình (Số câu)', key: 'mediumCount' },
                 { label: 'Khó (Số câu)', key: 'hardCount' },
               ].map(({ label: lb, key }) => (
-                <div key={key} className="space-y-1">
+                <div key={key} className="space-y-1.5">
                   <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">{lb}</label>
                   <input
                     type="number"
                     min={0}
                     value={(formData as any)[key]}
                     onChange={(e) => setFormData((p: any) => ({ ...p, [key]: e.target.value }))}
-                    className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 outline-none transition"
+                    className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:border-blue-500 outline-none transition-colors duration-200"
                   />
                 </div>
               ))}
@@ -548,87 +615,223 @@ export function ExamPaperMatrixForm({
           )}
         </div>
 
-        {/* ── ROW 4: Cấu hình Media cho Đề thi (Khảo thí vs Tham khảo) ── */}
-        <div className="space-y-3 py-1 border-t border-slate-100 dark:border-slate-800 pt-3">
+        {/* ── ROW 4: Cấu hình Media cho Đề thi (Khảo thí vs Tham khảo — phẳng, tinh gọn) ── */}
+        <div className="pt-3 border-t border-slate-200/80 dark:border-slate-800">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             <div>
-              <h4 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
+              <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
                 Quy chế Đa phương tiện cho đề thi
               </h4>
-              <p className="text-type-helper font-normal text-slate-400 dark:text-slate-500 mt-0.5">
+              <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400 mt-0.5">
                 Áp dụng tự động cho toàn bộ câu hỏi có Audio/Video trong đề thi này
               </p>
             </div>
 
-            {/* Switch Mode: Khảo thí vs Tự do */}
-            <div className="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 shrink-0">
+            {/* Switch Mode: Line Tabs phẳng với đường gạch chân trượt mượt mà */}
+            <div className="relative flex items-center gap-5 text-type-body font-semibold shrink-0">
+              {/* Smooth Sliding Underline Bar */}
+              <span
+                className="absolute -bottom-0.5 h-[2px] bg-blue-600 dark:bg-blue-400 rounded-full transition-all duration-300 ease-out pointer-events-none"
+                style={{
+                  width: (formData.mediaMode !== 'REFERENCE' && formData.mediaMaxPlays !== '0') ? '138px' : '116px',
+                  transform: `translateX(${(formData.mediaMode !== 'REFERENCE' && formData.mediaMaxPlays !== '0') ? 0 : 158}px)`,
+                }}
+              />
               <button
                 type="button"
                 onClick={() => setFormData((p: any) => ({ ...p, mediaMode: 'STRICT_EXAM', mediaMaxPlays: p.mediaMaxPlays === '0' ? '2' : (p.mediaMaxPlays || '2') }))}
-                className={`px-3 py-1 rounded-xl text-type-helper font-semibold transition-all cursor-pointer ${formData.mediaMode !== 'REFERENCE' && formData.mediaMaxPlays !== '0'
-                    ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                className={`pb-1 transition-colors duration-200 cursor-pointer ${formData.mediaMode !== 'REFERENCE' && formData.mediaMaxPlays !== '0'
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
                   }`}
               >
-                🏆 Khảo thí chuẩn hóa
+                Khảo thí chuẩn hóa
               </button>
               <button
                 type="button"
                 onClick={() => setFormData((p: any) => ({ ...p, mediaMode: 'REFERENCE', mediaMaxPlays: '0' }))}
-                className={`px-3 py-1 rounded-xl text-type-helper font-semibold transition-all cursor-pointer ${formData.mediaMode === 'REFERENCE' || formData.mediaMaxPlays === '0'
-                    ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                className={`pb-1 transition-colors duration-200 cursor-pointer ${formData.mediaMode === 'REFERENCE' || formData.mediaMaxPlays === '0'
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
                   }`}
               >
-                📖 Tham khảo tự do
+                Tham khảo tự do
               </button>
             </div>
           </div>
 
-          {formData.mediaMode !== 'REFERENCE' && formData.mediaMaxPlays !== '0' && (
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              <span className="text-type-body font-medium text-slate-700 dark:text-slate-300">
-                Số lần phát tối đa cho thí sinh:
-              </span>
-              <div className="flex items-center gap-1.5">
-                {[
-                  { count: '1', label: '1 lần (Ngặt nghèo)' },
-                  { count: '2', label: '2 lần (IELTS / Chuẩn)' },
-                  { count: '3', label: '3 lần' },
-                ].map(({ count, label }) => (
-                  <button
-                    key={count}
-                    type="button"
-                    onClick={() => setFormData((p: any) => ({ ...p, mediaMaxPlays: count }))}
-                    className={`px-3 py-1 rounded-xl text-type-helper font-semibold transition cursor-pointer ${
-                      (formData.mediaMaxPlays || '2') === count
-                        ? 'bg-blue-600 text-white shadow-2xs'
-                        : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
+          {/* Smooth Expand/Collapse Container cho hàng Số lượt phát */}
+          {(() => {
+            const isStrictMode = formData.mediaMode !== 'REFERENCE' && formData.mediaMaxPlays !== '0';
+            return (
+              <div
+                className={`grid transition-all duration-300 ease-out ${
+                  isStrictMode
+                    ? 'grid-rows-[1fr] opacity-100 mt-2.5 pt-1'
+                    : 'grid-rows-[0fr] opacity-0 mt-0 pt-0 pointer-events-none'
+                }`}
+              >
+                <div className="overflow-hidden">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-0.5">
+                    <span className="text-type-body font-medium text-slate-700 dark:text-slate-300">
+                      Số lượt phát tối đa cho thí sinh:
+                    </span>
+                    <div className="relative grid grid-cols-3 gap-1.5 w-[228px] shrink-0">
+                      {/* Hardware-accelerated Smooth Sliding Pill + Underline Indicator */}
+                      {(() => {
+                        const currentMediaPlays = formData.mediaMaxPlays || '2';
+                        const activeIndex = (currentMediaPlays === '1' && !isCustomPlaysOpen) ? 0 : (currentMediaPlays === '2' && !isCustomPlaysOpen) ? 1 : 2;
+                        return (
+                          <div
+                            className="absolute inset-y-0 w-[72px] rounded-full border border-blue-500 dark:border-blue-400 bg-blue-50/70 dark:bg-blue-950/40 transition-all duration-300 ease-out pointer-events-none"
+                            style={{
+                              transform: `translateX(${activeIndex * 78}px)`,
+                            }}
+                          >
+                            <span className="absolute -bottom-1 left-2.5 right-2.5 h-[2px] bg-blue-600 dark:bg-blue-400 rounded-full" />
+                          </div>
+                        );
+                      })()}
+
+                      {/* Option 1: 1 lượt */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((p: any) => ({ ...p, mediaMaxPlays: '1' }));
+                          setIsCustomPlaysOpen(false);
+                        }}
+                        className={`relative z-10 w-full h-7 flex items-center justify-center rounded-full text-type-body transition-colors duration-200 cursor-pointer ${(formData.mediaMaxPlays || '2') === '1'
+                          ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium'
+                          }`}
+                      >
+                        <span>1 lượt</span>
+                      </button>
+
+                      {/* Option 2: 2 lượt */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((p: any) => ({ ...p, mediaMaxPlays: '2' }));
+                          setIsCustomPlaysOpen(false);
+                        }}
+                        className={`relative z-10 w-full h-7 flex items-center justify-center rounded-full text-type-body transition-colors duration-200 cursor-pointer ${(formData.mediaMaxPlays || '2') === '2'
+                          ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium'
+                          }`}
+                      >
+                        <span>2 lượt</span>
+                      </button>
+
+                      {/* Option 3: Khác & Menu Chọn Số Lượt (Đồng bộ 100% SortDropdown) */}
+                      <div className="relative z-10 w-full h-7">
+                        {(() => {
+                          const isCustomActive = formData.mediaMaxPlays !== '1' && (formData.mediaMaxPlays || '2') !== '2';
+                          const customLabel = isCustomActive ? `${formData.mediaMaxPlays} lượt` : 'Khác';
+                          return (
+                            <button
+                              ref={customButtonRef}
+                              type="button"
+                              onClick={() => setIsCustomPlaysOpen((v) => !v)}
+                              className={`w-full h-7 flex items-center justify-center rounded-full text-type-body transition-colors duration-200 cursor-pointer ${
+                                isCustomActive
+                                  ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium'
+                              }`}
+                            >
+                              <span className="truncate">{customLabel}</span>
+                            </button>
+                          );
+                        })()}
+
+                        {/* Popover Menu: createPortal + animate-popover-in + Scroll-Tracking */}
+                        {isCustomPlaysOpen && typeof document !== 'undefined' &&
+                          createPortal(
+                            <div
+                              ref={customMenuRef}
+                              style={customMenuStyle}
+                              className="w-52 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl p-3 z-[99999] animate-popover-in will-change-transform"
+                            >
+                              <div className="text-type-body font-semibold text-slate-800 dark:text-slate-200 px-1 pb-1.5">
+                                Chọn số lượt phát
+                              </div>
+                              <div className="space-y-0.5">
+                                {['3', '4', '5', '10'].map((val) => {
+                                  const isSelected = formData.mediaMaxPlays === val;
+                                  return (
+                                    <button
+                                      key={val}
+                                      type="button"
+                                      onClick={() => {
+                                        setFormData((p: any) => ({ ...p, mediaMaxPlays: val }));
+                                        setIsCustomPlaysOpen(false);
+                                      }}
+                                      className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-type-body transition-colors cursor-pointer ${
+                                        isSelected
+                                          ? 'text-blue-600 dark:text-blue-400 font-semibold bg-blue-50/50 dark:bg-blue-950/40'
+                                          : 'text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium'
+                                      }`}
+                                    >
+                                      <span className="font-semibold">{val} lượt</span>
+                                      {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 font-semibold" />}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+
+                              <div className="border-t border-slate-100 dark:border-slate-800 mt-2 pt-2 px-1">
+                                <span className="text-type-body font-semibold text-slate-800 dark:text-slate-200 block mb-1.5">
+                                  Số lượt tùy chỉnh:
+                                </span>
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="number"
+                                    min={1}
+                                    max={50}
+                                    defaultValue={!['1', '2'].includes(formData.mediaMaxPlays || '') ? formData.mediaMaxPlays : '3'}
+                                    id="custom-media-plays-input"
+                                    className="w-14 h-10 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800 text-type-body font-semibold text-center text-slate-900 dark:text-slate-100 outline-none focus:border-blue-500"
+                                  />
+                                  <span className="text-type-body text-slate-600 dark:text-slate-400 font-medium">lượt</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const el = document.getElementById('custom-media-plays-input') as HTMLInputElement;
+                                      const v = Math.max(1, Math.min(50, Number(el?.value) || 3));
+                                      setFormData((p: any) => ({ ...p, mediaMaxPlays: String(v) }));
+                                      setIsCustomPlaysOpen(false);
+                                    }}
+                                    className="ml-auto h-10 px-4 text-type-body rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold cursor-pointer shadow-xs transition-colors"
+                                  >
+                                    Xong
+                                  </button>
+                                </div>
+                              </div>
+                            </div>,
+                            document.body
+                          )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
 
-        {/* ── ROW 5: Footer ── */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+        {/* ── ROW 5: Footer (Phẳng, không icon, phân cách bằng đường kẻ) ── */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mt-3 pt-3 border-t border-slate-200/80 dark:border-slate-800">
           {isPublished ? (
-            <p className="text-type-helper font-semibold text-rose-600 flex items-center gap-1.5">
-              <AlertTriangle className="h-4 w-4 shrink-0 text-rose-500" />
+            <p className="text-type-helper font-medium text-rose-600 dark:text-rose-400">
               Lịch thi này đã có đề công bố. Không thể sinh thêm đề tự động.
             </p>
           ) : !isValidMatrix ? (
-            <p className="text-type-helper font-semibold text-red-600 flex items-center gap-1">
-              <AlertTriangle className="h-3.5 w-3.5" />
+            <p className="text-type-helper font-medium text-rose-600 dark:text-rose-400">
               {isByScoreMode ? 'Cần nhập tổng điểm phân bổ > 0' : 'Cần ít nhất 1 câu hỏi'}
             </p>
           ) : (
-            <span className="text-type-helper font-semibold text-emerald-600 dark:text-emerald-400">
-              ✓ Sẵn sàng tạo đề
+            <span className="text-type-helper font-medium text-emerald-600 dark:text-emerald-400">
+              Sẵn sàng tạo đề
             </span>
           )}
 
