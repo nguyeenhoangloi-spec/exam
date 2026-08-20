@@ -685,9 +685,9 @@ export default function LoginPage() {
                       }`}
                     >
                       {loading ? (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 text-white">
                           <div className="h-4.5 w-4.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          <span>Đang xác thực...</span>
+                          <span className="text-white">Đang xác thực...</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">

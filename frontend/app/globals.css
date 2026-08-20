@@ -234,6 +234,11 @@ html.dark {
     opacity: 1 !important;
   }
 
+  :where(button, [role='button']):disabled:where(.text-white, [class*='text-white'], [class*='bg-blue-'], [class*='from-blue-'], [class*='bg-emerald-'], [class*='bg-rose-']),
+  :where(button, [role='button']):disabled:where(.text-white, [class*='text-white'], [class*='bg-blue-'], [class*='from-blue-'], [class*='bg-emerald-'], [class*='bg-rose-']) * {
+    color: #ffffff !important;
+  }
+
   /* Keep hover motion subtle and disable hover-only movement on touch
    * devices. Existing page classes are normalized here at the shared layer. */
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
