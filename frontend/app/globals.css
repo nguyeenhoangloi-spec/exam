@@ -234,8 +234,8 @@ html.dark {
     opacity: 1 !important;
   }
 
-  :where(button, [role='button']):disabled:where(.text-white, [class*='text-white'], [class*='bg-blue-'], [class*='from-blue-'], [class*='bg-emerald-'], [class*='bg-rose-']),
-  :where(button, [role='button']):disabled:where(.text-white, [class*='text-white'], [class*='bg-blue-'], [class*='from-blue-'], [class*='bg-emerald-'], [class*='bg-rose-']) * {
+  :where(button, [role='button']):disabled:where(.text-white, [class*='text-white'], .bg-blue-600, .bg-blue-700, [class~='bg-blue-600'], [class~='bg-blue-700'], [class~='bg-emerald-600'], [class~='bg-rose-600']),
+  :where(button, [role='button']):disabled:where(.text-white, [class*='text-white'], .bg-blue-600, .bg-blue-700, [class~='bg-blue-600'], [class~='bg-blue-700'], [class~='bg-emerald-600'], [class~='bg-rose-600']) * {
     color: #ffffff !important;
   }
 
