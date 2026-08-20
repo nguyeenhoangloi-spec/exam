@@ -2,9 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import api from '../../lib/api';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Maximize2 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Modal } from '../Modal';
+import { QuestionMediaPlayer } from '../exam/QuestionMediaPlayer';
+import { DynamicImage } from '../ui/DynamicImage';
+import { ImageLightboxModal } from '../ImageLightboxModal';
+import { getImageUrl } from '../../lib/media-utils';
 
 interface RubricCriterion {
   id?: string;
@@ -26,6 +30,7 @@ interface RubricViewerModalProps {
     questionId?: string;
     code?: string;
     content?: string;
+    media?: any[];
     score?: number;
     sampleAnswer?: string;
     explanation?: string;
@@ -38,6 +43,7 @@ interface RubricViewerModalProps {
 export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerModalProps) {
   const [criteria, setCriteria] = useState<RubricCriterion[]>([]);
   const [fetchedAnswer, setFetchedAnswer] = useState<string>('');
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -103,6 +109,62 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
           <p className="text-type-body leading-relaxed text-slate-800 dark:text-slate-200 font-normal">
             {question.content}
           </p>
+          {Array.isArray(question.media) && question.media.length > 0 && (
+            <div className="flex flex-wrap gap-3 pt-2">
+              {question.media.map((mediaItem: any, mIdx: number) => {
+                const fullUrl = getImageUrl(mediaItem.url);
+                const mime: string = mediaItem.mimeType || '';
+                const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(mediaItem.url);
+                const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(mediaItem.url);
+
+                if (isVid) {
+                  return (
+                    <div key={mediaItem.id || mIdx} className="w-full max-w-lg">
+                      <QuestionMediaPlayer
+                        src={fullUrl}
+                        type="video"
+                        fileName={mediaItem.fileName}
+                        maxPlays={0}
+                        mode="REFERENCE"
+                      />
+                    </div>
+                  );
+                }
+
+                if (isAud) {
+                  return (
+                    <div key={mediaItem.id || mIdx} className="w-full max-w-lg">
+                      <QuestionMediaPlayer
+                        src={fullUrl}
+                        type="audio"
+                        fileName={mediaItem.fileName}
+                        maxPlays={0}
+                        mode="REFERENCE"
+                      />
+                    </div>
+                  );
+                }
+
+                return (
+                  <div
+                    key={mediaItem.id || mIdx}
+                    onClick={() => setLightboxUrl(mediaItem.url)}
+                    className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 p-1 transition hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md"
+                    title="Bấm để xem ảnh phóng to"
+                  >
+                    <DynamicImage
+                      src={fullUrl}
+                      alt={mediaItem.altText || mediaItem.fileName || 'Hình minh họa'}
+                      className="max-h-44 rounded-xl object-contain bg-white transition duration-200 group-hover:scale-105"
+                    />
+                    <div className="absolute top-2.5 right-2.5 flex items-center justify-center rounded-xl bg-slate-900/75 p-2 text-white shadow-md backdrop-blur-sm opacity-0 transition-all duration-150 group-hover:opacity-100 hover:bg-slate-900 hover:scale-110 active:scale-95" title="Bấm để xem ảnh phóng to">
+                      <Maximize2 className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Đáp án mẫu / Hướng dẫn giải */}
@@ -202,6 +264,13 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
           </Button>
         </div>
       </div>
+
+      {lightboxUrl && (
+        <ImageLightboxModal
+          imageUrl={lightboxUrl}
+          onClose={() => setLightboxUrl(null)}
+        />
+      )}
     </Modal>
   );
 }

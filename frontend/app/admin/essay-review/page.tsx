@@ -37,12 +37,18 @@ import {
   Lock,
   Pencil,
   Save,
+  Maximize2,
 } from 'lucide-react';
+import { QuestionMediaPlayer } from '../../../components/exam/QuestionMediaPlayer';
+import { DynamicImage } from '../../../components/ui/DynamicImage';
+import { ImageLightboxModal } from '../../../components/ImageLightboxModal';
+import { getImageUrl } from '../../../lib/media-utils';
 
 function AdminEssayReviewContent() {
   usePageTitle('Duyệt bài tự luận');
   const [rows, setRows] = useState<any[]>([]);
   const [selected, setSelected] = useState<any>(null);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
@@ -1099,6 +1105,64 @@ function AdminEssayReviewContent() {
                         </div>
                       </div>
 
+                      {/* Media đính kèm câu hỏi (Ảnh / Video / Audio) */}
+                      {Array.isArray(q.media) && q.media.length > 0 && (
+                        <div className="flex flex-wrap gap-3 pt-1">
+                          {q.media.map((mediaItem: any, mIdx: number) => {
+                            const fullUrl = getImageUrl(mediaItem.url);
+                            const mime: string = mediaItem.mimeType || '';
+                            const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(mediaItem.url);
+                            const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(mediaItem.url);
+
+                            if (isVid) {
+                              return (
+                                <div key={mediaItem.id || mIdx} className="w-full max-w-lg">
+                                  <QuestionMediaPlayer
+                                    src={fullUrl}
+                                    type="video"
+                                    fileName={mediaItem.fileName}
+                                    maxPlays={0}
+                                    mode="REFERENCE"
+                                  />
+                                </div>
+                              );
+                            }
+
+                            if (isAud) {
+                              return (
+                                <div key={mediaItem.id || mIdx} className="w-full max-w-lg">
+                                  <QuestionMediaPlayer
+                                    src={fullUrl}
+                                    type="audio"
+                                    fileName={mediaItem.fileName}
+                                    maxPlays={0}
+                                    mode="REFERENCE"
+                                  />
+                                </div>
+                              );
+                            }
+
+                            return (
+                              <div
+                                key={mediaItem.id || mIdx}
+                                onClick={() => setLightboxUrl(mediaItem.url)}
+                                className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 p-1 transition hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md"
+                                title="Bấm để xem ảnh phóng to"
+                              >
+                                <DynamicImage
+                                  src={fullUrl}
+                                  alt={mediaItem.altText || mediaItem.fileName || 'Hình minh họa'}
+                                  className="max-h-52 rounded-xl object-contain bg-white transition duration-200 group-hover:scale-105"
+                                />
+                                <div className="absolute top-2.5 right-2.5 flex items-center justify-center rounded-xl bg-slate-900/75 p-2 text-white shadow-md backdrop-blur-sm opacity-0 transition-all duration-150 group-hover:opacity-100 hover:bg-slate-900 hover:scale-110 active:scale-95" title="Bấm để xem ảnh phóng to">
+                                  <Maximize2 className="h-4 w-4 text-white" />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
                       {/* Student Answer Box */}
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between text-type-helper font-semibold text-slate-500">
@@ -1450,6 +1514,13 @@ function AdminEssayReviewContent() {
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+
+      {lightboxUrl && (
+        <ImageLightboxModal
+          imageUrl={lightboxUrl}
+          onClose={() => setLightboxUrl(null)}
+        />
+      )}
     </main>
   );
 }

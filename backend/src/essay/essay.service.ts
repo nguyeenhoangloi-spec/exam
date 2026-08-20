@@ -493,7 +493,7 @@ export class EssayService {
     const dbQuestions = questionIds.length
       ? await this.prisma.question.findMany({
           where: { id: { in: questionIds } },
-          select: { id: true, explanation: true },
+          select: { id: true, explanation: true, media: true },
         })
       : [];
     const dbQuestionMap = new Map(dbQuestions.map((q) => [q.id, q]));
@@ -513,6 +513,7 @@ export class EssayService {
       essayQuestions.map(async (q) => {
         const dbQ = dbQuestionMap.get(q.questionId);
         const resolvedExplanation = q.explanation || q.sampleAnswer || dbQ?.explanation || '';
+        const resolvedMedia = (Array.isArray(q.media) && q.media.length > 0) ? q.media : (dbQ?.media || []);
         let questionRubric = rubricByQuestion.get(q.questionId) || [];
         if (!questionRubric.length && q.type === 'ESSAY') {
           const maxSc = Number(q.score || 1);
@@ -533,6 +534,7 @@ export class EssayService {
         }
         return {
           ...q,
+          media: resolvedMedia,
           sampleAnswer: resolvedExplanation,
           explanation: resolvedExplanation,
           options: undefined,

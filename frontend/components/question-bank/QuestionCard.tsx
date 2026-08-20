@@ -6,6 +6,7 @@ import { fixHtmlImageUrls, getImageUrl } from '../../lib/media-utils';
 import { ImageLightboxModal } from '../ImageLightboxModal';
 import { DynamicImage } from '../ui/DynamicImage';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
+import { QuestionMediaPlayer } from '../exam/QuestionMediaPlayer';
 
 export function QuestionCard({
   question: q,
@@ -173,19 +174,26 @@ export function QuestionCard({
 
               if (mime.startsWith('video/')) {
                 return (
-                  <div key={mediaItem.id || idx} className="rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-black shadow-2xs">
-                    <video src={fullUrl} controls className="h-24 w-44 object-cover rounded-xl" />
+                  <div key={mediaItem.id || idx} className="w-full max-w-sm">
+                    <QuestionMediaPlayer
+                      src={fullUrl}
+                      type="video"
+                      maxPlays={0}
+                      mode="REFERENCE"
+                    />
                   </div>
                 );
               }
 
               if (mime.startsWith('audio/')) {
                 return (
-                  <div key={mediaItem.id || idx} className="flex flex-col items-center justify-center gap-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 shadow-2xs">
-                    <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 max-w-[140px] truncate">
-                      {mediaItem.fileName || `Audio ${idx + 1}`}
-                    </span>
-                    <audio src={fullUrl} controls className="h-8 w-44" />
+                  <div key={mediaItem.id || idx} className="w-full max-w-sm">
+                    <QuestionMediaPlayer
+                      src={fullUrl}
+                      type="audio"
+                      maxPlays={0}
+                      mode="REFERENCE"
+                    />
                   </div>
                 );
               }
@@ -221,10 +229,6 @@ export function QuestionCard({
                     <div className="absolute top-1.5 right-1.5 flex items-center justify-center rounded-lg bg-slate-900/75 p-1.5 text-white shadow-md backdrop-blur-sm opacity-0 transition-all duration-150 group-hover:opacity-100 hover:bg-slate-900 hover:scale-110 active:scale-95" title="Bấm vào để xem ảnh phóng to">
                       <Maximize2 className="h-3.5 w-3.5 text-white" />
                     </div>
-                  </div>
-                  <div className="mt-1 flex items-center justify-center gap-1 text-type-helper font-normal text-slate-500 dark:text-slate-400">
-                    <ImageIcon className="h-3.5 w-3.5 text-primary-600" />
-                    <span className="truncate max-w-[110px]">{mediaItem.fileName || `Hình ${idx + 1}`}</span>
                   </div>
                 </div>
               );
