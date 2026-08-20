@@ -312,30 +312,6 @@ function TrashPageContent() {
     });
   };
 
-  const handleAutoClean = () => {
-    setConfirmModal({
-      isOpen: true,
-      title: 'Tự động dọn dẹp Thùng rác?',
-      message: 'Hệ thống sẽ quét và XÓA VĨNH VIỄN toàn bộ các bản ghi trong Thùng rác đã quá 30 ngày. Bạn có chắc chắn muốn thực hiện?',
-      type: 'danger',
-      onConfirm: async () => {
-        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
-        try {
-          const res = await api.post('/trash/auto-clean');
-          const count = res.data?.totalCleaned ?? 0;
-          setToast({
-            message: count > 0 ? `Đã tự động dọn dẹp vĩnh viễn ${count} bản ghi quá 30 ngày!` : 'Không có bản ghi nào quá 30 ngày cần dọn dẹp.',
-            type: 'success',
-          });
-          fetchStats();
-          fetchItems();
-        } catch (err: any) {
-          setToast({ message: err?.response?.data?.message || 'Không thể dọn dẹp thùng rác', type: 'error' });
-        }
-      },
-    });
-  };
-
   const CATEGORY_MAP: Record<string, { title: string; subtitle: string; label: string }> = {
     schedules: { title: 'Lịch thi đã xóa', subtitle: 'Quản lý các lịch thi khảo thí đã bị xóa tạm thời', label: 'Lịch thi đã xóa' },
     papers: { title: 'Đề thi đã xóa', subtitle: 'Quản lý các bộ đề thi trắc nghiệm & tự luận đã bị xóa tạm thời', label: 'Đề thi đã xóa' },
@@ -378,19 +354,6 @@ function TrashPageContent() {
           <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
             {currentCategoryInfo.subtitle} · Tự động dọn dẹp và hủy vĩnh viễn sau 30 ngày
           </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            onClick={handleAutoClean}
-            leftIcon={<Trash2 className="h-4 w-4 text-slate-500" />}
-            title="Quét và xóa vĩnh viễn toàn bộ bản ghi trong Thùng rác đã quá 30 ngày"
-          >
-            Dọn dẹp tự động (&gt; 30 ngày)
-          </Button>
         </div>
       </div>
 

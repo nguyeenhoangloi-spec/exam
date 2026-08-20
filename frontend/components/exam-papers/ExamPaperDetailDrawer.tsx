@@ -114,7 +114,6 @@ export function ExamPaperDetailDrawer({
   }, [paper]);
 
   const questionCount = rawQuestions.length;
-  const avgScorePerQuestion = questionCount > 0 && paper ? (paper.totalScore / questionCount).toFixed(2) : '0.00';
 
   // Lọc câu hỏi theo từ khóa và độ khó
   const filteredQuestions = useMemo(() => {
@@ -199,7 +198,7 @@ export function ExamPaperDetailDrawer({
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs">
                 <Award className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                <strong className="font-semibold">{paper.totalScore}</strong> điểm ({avgScorePerQuestion}đ/câu)
+                <strong className="font-semibold">{paper.totalScore}</strong> điểm
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs">
                 <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
