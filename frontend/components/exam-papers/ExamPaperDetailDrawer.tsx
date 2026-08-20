@@ -14,6 +14,7 @@ import {
   HelpCircle,
   FileText,
   Volume2,
+  Maximize2,
 } from 'lucide-react';
 import { ExamPaper } from '../../types';
 import { Button } from '../ui/Button';
@@ -21,6 +22,7 @@ import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { QuestionMediaPlayer } from '../exam/QuestionMediaPlayer';
 import { getImageUrl } from '../../lib/media-utils';
 import { DynamicImage } from '../ui/DynamicImage';
+import { ImageLightboxModal } from '../ImageLightboxModal';
 
 export interface ExamPaperDetailDrawerProps {
   paper: ExamPaper | null;
@@ -104,11 +106,13 @@ export function ExamPaperDetailDrawer({
 }: ExamPaperDetailDrawerProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState<'ALL' | 'EASY' | 'MEDIUM' | 'HARD'>('ALL');
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       setSearchTerm('');
       setActiveFilter('ALL');
+      setLightboxUrl(null);
     }
   }, [isOpen, paper?.id]);
 
@@ -427,13 +431,18 @@ export function ExamPaperDetailDrawer({
                           return (
                             <div
                               key={media.id || media.url}
-                              className="group relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 p-1"
+                              onClick={() => setLightboxUrl(media.url)}
+                              className="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 p-1 transition hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md"
+                              title="Bấm để xem ảnh phóng to"
                             >
                               <DynamicImage
                                 src={fullUrl}
                                 alt={media.altText || media.fileName}
-                                className="max-h-48 max-w-full rounded-xl object-contain bg-white"
+                                className="max-h-48 max-w-full rounded-xl object-contain bg-white transition duration-200 group-hover:scale-105"
                               />
+                              <div className="absolute top-2.5 right-2.5 flex items-center justify-center rounded-xl bg-slate-900/75 p-2 text-white shadow-md backdrop-blur-sm opacity-0 transition-all duration-150 group-hover:opacity-100 hover:bg-slate-900 hover:scale-110 active:scale-95" title="Bấm để xem ảnh phóng to">
+                                <Maximize2 className="h-4 w-4 text-white" />
+                              </div>
                             </div>
                           );
                         })}
@@ -580,6 +589,13 @@ export function ExamPaperDetailDrawer({
           </div>
         </div>
       </div>
+
+      {lightboxUrl && (
+        <ImageLightboxModal
+          imageUrl={lightboxUrl}
+          onClose={() => setLightboxUrl(null)}
+        />
+      )}
     </div>
   );
 }

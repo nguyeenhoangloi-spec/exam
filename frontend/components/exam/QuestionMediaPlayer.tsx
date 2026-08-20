@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Volume2, VolumeX, Lock, Video, Music, Sparkles, Sliders } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Lock, Video, Music, Sliders, Maximize2, Minimize2 } from 'lucide-react';
 
 interface QuestionMediaPlayerProps {
   attemptId?: string;
@@ -22,7 +22,8 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
   maxPlays = 2,
   mode,
 }) => {
-  const mediaRef = useRef<HTMLMediaElement | any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mediaRef = useRef<HTMLMediaElement | HTMLVideoElement | HTMLAudioElement | any>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
@@ -30,6 +31,7 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
   const [duration, setDuration] = useState<number>(0);
   const [playsCount, setPlaysCount] = useState<number>(0);
   const [hasStartedCurrentPlay, setHasStartedCurrentPlay] = useState(false);
+  const [videoFullscreen, setVideoFullscreen] = useState(false);
 
   // Xác định chế độ: nếu mode được truyền hoặc nếu maxPlays > 0 thì là STRICT_EXAM, ngược lại REFERENCE
   const isStrictExam = mode === 'STRICT_EXAM' || (mode === undefined && maxPlays > 0);
@@ -50,7 +52,16 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
     }
   }, [storageKey]);
 
-  const handlePlayPause = () => {
+  useEffect(() => {
+    const handleFs = () => {
+      setVideoFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener('fullscreenchange', handleFs);
+    return () => document.removeEventListener('fullscreenchange', handleFs);
+  }, []);
+
+  const handlePlayPause = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     if (!mediaRef.current) return;
 
     if (isPlaying) {
@@ -115,10 +126,25 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
     }
   };
 
-  const toggleMute = () => {
+  const toggleMute = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     if (!mediaRef.current) return;
     mediaRef.current.muted = !isMuted;
     setIsMuted(!isMuted);
+  };
+
+  const toggleFullscreen = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (!containerRef.current) return;
+    if (!document.fullscreenElement) {
+      if (mediaRef.current?.requestFullscreen) {
+        mediaRef.current.requestFullscreen().catch(() => {});
+      } else if (containerRef.current.requestFullscreen) {
+        containerRef.current.requestFullscreen().catch(() => {});
+      }
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
   };
 
   const formatTime = (seconds: number) => {
@@ -129,7 +155,10 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
   };
 
   return (
-    <div className="w-full max-w-xl rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm transition hover:shadow-md">
+    <div
+      ref={containerRef}
+      className="w-full max-w-xl rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm transition hover:shadow-md"
+    >
       {/* Header Bar */}
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
         <div className="flex items-center gap-2 overflow-hidden">
@@ -171,22 +200,99 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
       {/* Media Playback Viewport */}
       <div className="relative overflow-hidden rounded-xl bg-slate-950 p-1">
         {type === 'video' ? (
-          <video
-            ref={mediaRef}
-            src={src}
-            controls={!isStrictExam && !isLimitReached}
-            controlsList={isStrictExam ? 'nodownload noplaybackrate' : 'nodownload'}
-            onEnded={handleEnded}
-            onTimeUpdate={handleTimeUpdate}
-            onLoadedMetadata={handleLoadedMetadata}
-            onContextMenu={(e) => e.preventDefault()}
-            className="max-h-60 w-full rounded-xl object-contain"
-          />
+          <div className="relative group flex flex-col items-center justify-center bg-black rounded-lg overflow-hidden">
+            <video
+              ref={mediaRef}
+              src={src}
+              playsInline
+              preload="metadata"
+              onClick={handlePlayPause}
+              onEnded={handleEnded}
+              onTimeUpdate={handleTimeUpdate}
+              onLoadedMetadata={handleLoadedMetadata}
+              onContextMenu={(e) => e.preventDefault()}
+              className="max-h-64 w-full object-contain cursor-pointer bg-black"
+            />
+
+            {/* Center Big Play Button when paused */}
+            {!isPlaying && !isLimitReached && (
+              <button
+                type="button"
+                onClick={handlePlayPause}
+                className="absolute inset-0 flex items-center justify-center bg-black/35 hover:bg-black/45 transition cursor-pointer"
+                title="Bấm để phát video"
+              >
+                <div className="w-13 h-13 rounded-full bg-blue-600/90 text-white flex items-center justify-center shadow-xl backdrop-blur-xs transform group-hover:scale-110 active:scale-95 transition">
+                  <Play className="h-6 w-6 ml-0.5" />
+                </div>
+              </button>
+            )}
+
+            {/* Video Bottom Control Bar */}
+            <div className="w-full flex items-center justify-between gap-2.5 p-2 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white">
+              <button
+                type="button"
+                onClick={handlePlayPause}
+                disabled={isLimitReached}
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition cursor-pointer shadow-sm ${
+                  isLimitReached
+                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-500 active:scale-95'
+                }`}
+                title={isPlaying ? 'Tạm dừng' : 'Phát video'}
+              >
+                {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
+              </button>
+
+              {/* Time Progress Bar */}
+              <div className="flex-1 flex flex-col gap-1 min-w-0">
+                <div className="flex items-center justify-between text-type-helper text-slate-300 tabular-nums">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(duration)}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max={duration || 100}
+                  value={currentTime}
+                  onChange={handleSeek}
+                  disabled={isStrictExam || isLimitReached}
+                  className={`w-full h-1.5 rounded-xl appearance-none cursor-pointer ${
+                    isStrictExam
+                      ? 'bg-slate-800 accent-slate-600 cursor-not-allowed'
+                      : 'bg-slate-700 accent-blue-500'
+                  }`}
+                />
+              </div>
+
+              {/* Volume & Fullscreen Actions */}
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={toggleMute}
+                  className="p-1.5 text-slate-400 hover:text-white rounded-xl transition cursor-pointer"
+                  title={isMuted ? 'Bật tiếng' : 'Tắt tiếng'}
+                >
+                  {isMuted ? <VolumeX className="h-4 w-4 text-rose-400" /> : <Volume2 className="h-4 w-4" />}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={toggleFullscreen}
+                  className="p-1.5 text-slate-400 hover:text-white rounded-xl transition cursor-pointer"
+                  title={videoFullscreen ? 'Thu nhỏ' : 'Toàn màn hình'}
+                >
+                  {videoFullscreen ? <Minimize2 className="h-4 w-4 text-blue-400" /> : <Maximize2 className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+          </div>
         ) : (
           <div className="flex flex-col items-center justify-center p-3 sm:p-4 text-white">
             <audio
               ref={mediaRef}
               src={src}
+              preload="metadata"
               onEnded={handleEnded}
               onTimeUpdate={handleTimeUpdate}
               onLoadedMetadata={handleLoadedMetadata}
@@ -309,3 +415,4 @@ export const QuestionMediaPlayer: React.FC<QuestionMediaPlayerProps> = ({
     </div>
   );
 };
+

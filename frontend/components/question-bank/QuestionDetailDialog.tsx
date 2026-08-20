@@ -236,10 +236,8 @@ export function QuestionDetailDialog({
                           alt={media.altText || media.fileName}
                           className="max-h-48 max-w-full rounded-lg object-contain bg-white transition duration-200 group-hover:scale-105"
                         />
-                        <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
-                          <span className="flex items-center gap-1.5 ui-pill rounded-full bg-slate-900/80 px-3 py-1.5 text-type-helper font-medium text-white shadow-lg backdrop-blur-xs">
-                            <Maximize2 className="h-4 w-4 text-blue-400" /> Phóng to
-                          </span>
+                        <div className="absolute top-2.5 right-2.5 flex items-center justify-center rounded-xl bg-slate-900/75 p-2 text-white shadow-md backdrop-blur-sm opacity-0 transition-all duration-150 group-hover:opacity-100 hover:bg-slate-900 hover:scale-110 active:scale-95" title="Bấm để xem phóng to">
+                          <Maximize2 className="h-4 w-4 text-white" />
                         </div>
                       </div>
                     );

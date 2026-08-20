@@ -218,10 +218,8 @@ export function QuestionCard({
                         (e.target as HTMLElement).style.display = 'none';
                       }}
                     />
-                    <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/40 opacity-0 transition-opacity group-hover:opacity-100">
-                      <span className="flex items-center gap-1.5 ui-pill rounded-full bg-slate-900/80 px-2.5 py-1 text-type-helper font-medium text-white shadow-lg backdrop-blur-xs">
-                        <Maximize2 className="h-3.5 w-3.5 text-blue-400" /> Xem rõ ảnh
-                      </span>
+                    <div className="absolute top-1.5 right-1.5 flex items-center justify-center rounded-lg bg-slate-900/75 p-1.5 text-white shadow-md backdrop-blur-sm opacity-0 transition-all duration-150 group-hover:opacity-100 hover:bg-slate-900 hover:scale-110 active:scale-95" title="Bấm vào để xem ảnh phóng to">
+                      <Maximize2 className="h-3.5 w-3.5 text-white" />
                     </div>
                   </div>
                   <div className="mt-1 flex items-center justify-center gap-1 text-type-helper font-normal text-slate-500 dark:text-slate-400">
