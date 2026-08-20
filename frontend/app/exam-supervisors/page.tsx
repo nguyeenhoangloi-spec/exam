@@ -617,43 +617,41 @@ export default function ExamSupervisorsPage() {
 
           {/* Inline Expandable Panels Container */}
           <div
-            className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${activeInlinePanel === 'create'
-              ? 'grid-rows-[1fr] opacity-100'
-              : 'grid-rows-[0fr] opacity-0 pointer-events-none'
-              }`}
+            className={`grid transition-all duration-300 ease-out ${
+              activeInlinePanel === 'create'
+                ? 'grid-rows-[1fr] opacity-100 mt-2.5'
+                : 'grid-rows-[0fr] opacity-0 mt-0 pointer-events-none'
+            }`}
           >
-            <div className="min-h-0 overflow-hidden">
-              <div className="pt-2.5">
-                <InlineCreateAssignmentPanel
-                  isOpen={activeInlinePanel === 'create'}
-                  onClose={() => setActiveInlinePanel(null)}
-                  onSubmit={handleCreateAssignment}
-                  rooms={currentRooms}
-                  teachers={teachers}
-                  defaultRoomId={selectedScheduleRoomId}
-                />
-              </div>
+            <div className="overflow-hidden">
+              <InlineCreateAssignmentPanel
+                isOpen={activeInlinePanel === 'create'}
+                onClose={() => setActiveInlinePanel(null)}
+                onSubmit={handleCreateAssignment}
+                rooms={currentRooms}
+                teachers={teachers}
+                defaultRoomId={selectedScheduleRoomId}
+              />
             </div>
           </div>
 
           <div
-            className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${activeInlinePanel === 'auto'
-              ? 'grid-rows-[1fr] opacity-100'
-              : 'grid-rows-[0fr] opacity-0 pointer-events-none'
-              }`}
+            className={`grid transition-all duration-300 ease-out ${
+              activeInlinePanel === 'auto'
+                ? 'grid-rows-[1fr] opacity-100 mt-2.5'
+                : 'grid-rows-[0fr] opacity-0 mt-0 pointer-events-none'
+            }`}
           >
-            <div className="min-h-0 overflow-hidden">
-              <div className="pt-2.5">
-                <InlineAutoProposalPanel
-                  isOpen={activeInlinePanel === 'auto'}
-                  onClose={() => setActiveInlinePanel(null)}
-                  autoProposal={autoProposal}
-                  teachers={teachers}
-                  rooms={currentRooms}
-                  onAccept={acceptAutoAssign}
-                  loading={autoLoading}
-                />
-              </div>
+            <div className="overflow-hidden">
+              <InlineAutoProposalPanel
+                isOpen={activeInlinePanel === 'auto'}
+                onClose={() => setActiveInlinePanel(null)}
+                autoProposal={autoProposal}
+                teachers={teachers}
+                rooms={currentRooms}
+                onAccept={acceptAutoAssign}
+                loading={autoLoading}
+              />
             </div>
           </div>
         </div>

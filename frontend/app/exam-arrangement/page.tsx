@@ -821,19 +821,19 @@ export default function ExamArrangementPage() {
 
           {/* Expandable Room Selection Grid */}
           <div
-            className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${showRoomGrid
-              ? 'grid-rows-[1fr] opacity-100'
-              : 'grid-rows-[0fr] opacity-0 pointer-events-none'
-              }`}
+            className={`grid transition-all duration-300 ease-out ${
+              showRoomGrid
+                ? 'grid-rows-[1fr] opacity-100 mt-2.5 pt-0.5'
+                : 'grid-rows-[0fr] opacity-0 mt-0 pt-0 pointer-events-none'
+            }`}
           >
-            <div className="min-h-0 overflow-hidden">
-              <div className="pt-2.5">
-                <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-3">
-                  <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-type-helper font-semibold text-slate-800 dark:text-slate-200 tracking-wider">
-                        Phòng Thi Khả Dụng Trong Ca
-                      </h3>
+            <div className="overflow-hidden">
+              <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-type-helper font-semibold text-slate-800 dark:text-slate-200 tracking-wider">
+                      Phòng Thi Khả Dụng Trong Ca
+                    </h3>
                       <span className="text-type-helper font-medium text-slate-500">
                         ({availableCount} phòng trống • Tổng sức chứa: {selectedCapacity} chỗ)
                       </span>
@@ -911,7 +911,6 @@ export default function ExamArrangementPage() {
               </div>
             </div>
           </div>
-        </div>
 
         {/* ── 4. Tab Switcher Bar ── */}
         <div className="-mt-2">

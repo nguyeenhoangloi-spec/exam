@@ -16,17 +16,27 @@ export function ViewModeSegmentedControl({
   onChange,
   className = '',
 }: ViewModeSegmentedControlProps) {
+  const activeIndex = viewMode === 'list' ? 0 : viewMode === 'grid' ? 1 : 2;
+
   return (
     <div
-      className={`h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs ${className}`}
+      className={`relative h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs select-none ${className}`}
     >
+      {/* Sliding Pill Indicator */}
+      <div
+        className="absolute top-0.5 bottom-0.5 left-0.5 w-9 rounded-xl bg-blue-50 dark:bg-blue-950/60 transition-transform duration-200 ease-out pointer-events-none"
+        style={{
+          transform: `translateX(${activeIndex * 38}px)`,
+        }}
+      />
+
       <button
         type="button"
         onClick={() => onChange('list')}
-        className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
+        className={`relative z-10 flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 cursor-pointer ${
           viewMode === 'list'
-            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-            : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+            ? 'text-blue-600 dark:text-blue-400 font-semibold'
+            : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
         }`}
         title="Dạng danh sách"
       >
@@ -35,10 +45,10 @@ export function ViewModeSegmentedControl({
       <button
         type="button"
         onClick={() => onChange('grid')}
-        className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
+        className={`relative z-10 flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 cursor-pointer ${
           viewMode === 'grid'
-            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-            : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+            ? 'text-blue-600 dark:text-blue-400 font-semibold'
+            : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
         }`}
         title="Dạng thẻ"
       >
@@ -47,10 +57,10 @@ export function ViewModeSegmentedControl({
       <button
         type="button"
         onClick={() => onChange('compact')}
-        className={`flex h-9 w-9 items-center justify-center rounded-xl transition cursor-pointer ${
+        className={`relative z-10 flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 cursor-pointer ${
           viewMode === 'compact'
-            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-            : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+            ? 'text-blue-600 dark:text-blue-400 font-semibold'
+            : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
         }`}
         title="Dạng thu gọn"
       >
