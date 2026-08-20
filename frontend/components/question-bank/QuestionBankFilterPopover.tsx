@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  ListFilter,
   SlidersHorizontal,
   ChevronDown,
   X,
@@ -11,7 +10,6 @@ import {
   Check,
   BookOpen,
   Zap,
-  Filter,
   CheckCheck,
   Layers,
   Brain,

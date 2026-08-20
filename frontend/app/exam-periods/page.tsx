@@ -318,22 +318,23 @@ export default function ExamPeriodsPage() {
 
         {/* Search & Unified Smart Filter Popover Row */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          {/* Left: Search input + 1 Unified Filter Button */}
-          <div className="flex items-center gap-2 flex-1 max-w-xl">
-            {/* Search Input Field */}
-            <div className="relative flex-1 min-w-[240px]">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Tìm theo tên kỳ thi, học kỳ, năm học..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
-              />
+          {/* Left: Unified Search Bar with Embedded SlidersHorizontal Popover */}
+          <div className="relative flex-1 max-w-xl min-w-[240px]">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Tìm theo tên kỳ thi, học kỳ, năm học..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+            />
+
+            {/* Embedded actions on right edge of search input */}
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
               {search ? (
                 <button
                   type="button"
@@ -341,49 +342,50 @@ export default function ExamPeriodsPage() {
                     setSearch('');
                     setPage(1);
                   }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                  className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer p-0.5"
                   title="Xóa tìm kiếm"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
               ) : (
                 <kbd
-                  className="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
+                  className="hidden sm:inline-flex h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
                   onClick={() => searchInputRef.current?.focus()}
                   title="Nhấn phím / để tìm nhanh"
                 >
                   /
                 </kbd>
               )}
-            </div>
 
-            {/* 1 Nút Bộ Lọc Duy Nhất (Gom toàn bộ Học kỳ, Năm học, Trạng thái) */}
-            <ExamPeriodFilterPopover
-              selectedSemester={selectedSemester}
-              onSemesterChange={(val) => {
-                setSelectedSemester(val);
-                setPage(1);
-              }}
-              selectedSchoolYear={selectedSchoolYear}
-              onSchoolYearChange={(val) => {
-                setSelectedSchoolYear(val);
-                setPage(1);
-              }}
-              selectedStatus={selectedStatus}
-              onStatusChange={(val) => {
-                setSelectedStatus(val);
-                setPage(1);
-              }}
-              schoolYearsList={schoolYearsList}
-              periods={periods}
-              totalFilteredCount={filteredPeriods.length}
-              onResetAll={() => {
-                setSelectedSemester('');
-                setSelectedSchoolYear('');
-                setSelectedStatus('');
-                setPage(1);
-              }}
-            />
+              <div className="h-3.5 w-px bg-slate-200 dark:bg-slate-700" />
+
+              <ExamPeriodFilterPopover
+                selectedSemester={selectedSemester}
+                onSemesterChange={(val) => {
+                  setSelectedSemester(val);
+                  setPage(1);
+                }}
+                selectedSchoolYear={selectedSchoolYear}
+                onSchoolYearChange={(val) => {
+                  setSelectedSchoolYear(val);
+                  setPage(1);
+                }}
+                selectedStatus={selectedStatus}
+                onStatusChange={(val) => {
+                  setSelectedStatus(val);
+                  setPage(1);
+                }}
+                schoolYearsList={schoolYearsList}
+                periods={periods}
+                totalFilteredCount={filteredPeriods.length}
+                onResetAll={() => {
+                  setSelectedSemester('');
+                  setSelectedSchoolYear('');
+                  setSelectedStatus('');
+                  setPage(1);
+                }}
+              />
+            </div>
           </div>
 
           {/* Right: Table Action Controls (Sort, Column Toggle, View Mode Switch, Refresh) */}

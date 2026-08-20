@@ -206,7 +206,7 @@ Hệ thống đã có file seed mẫu tạo sẵn các tài khoản:
 
 5. Khởi động Backend API Server (Cổng `3001`):
    ```bash
-   npm run start:dev
+   npm run start
    ```
 
 ---

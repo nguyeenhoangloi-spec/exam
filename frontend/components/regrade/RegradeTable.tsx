@@ -173,12 +173,12 @@ export function RegradeTable({
                 <IdentifierBadge tone="blue">{item.student.studentCode}</IdentifierBadge>
 
                 <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-2">
                     <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
                       {item.student.fullName}
                     </span>
                     {item.student.class && (
-                      <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full border border-slate-200/80 dark:border-slate-700">
+                      <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full border border-slate-200/80 dark:border-slate-700 shrink-0">
                         {item.student.class.code || item.student.class.name}
                       </span>
                     )}
@@ -238,7 +238,7 @@ export function RegradeTable({
                 className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
               />
             </th>
-            {visibleColumns.student !== false && <th scope="col" className="p-3.5 font-medium whitespace-nowrap">Sinh viên</th>}
+            {visibleColumns.student !== false && <th scope="col" className="p-3.5 font-medium whitespace-nowrap min-w-[200px]">Sinh viên</th>}
             {visibleColumns.subject !== false && <th scope="col" className="p-3.5 font-medium min-w-[200px]">Môn học</th>}
             {visibleColumns.reason !== false && <th scope="col" className="p-3.5 font-medium min-w-[280px]">Nội dung xin phúc khảo</th>}
             {visibleColumns.originalScore !== false && <th scope="col" className="p-3.5 font-medium whitespace-nowrap text-center">Điểm ban đầu</th>}
@@ -271,15 +271,15 @@ export function RegradeTable({
                 </td>
 
                 {visibleColumns.student !== false && (
-                  <td className="p-3.5 whitespace-nowrap">
+                  <td className="p-3.5 whitespace-nowrap min-w-[200px]">
                     <div>
-                      <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body leading-[22px]">
+                      <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body leading-[22px] truncate">
                         {item.student.fullName}
                       </p>
-                      <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
+                      <div className="mt-1 flex items-center gap-1.5 whitespace-nowrap">
                         <IdentifierBadge tone="blue">{item.student.studentCode}</IdentifierBadge>
                         {item.student.class && (
-                          <span className="table-badge text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full border border-slate-200/80 dark:border-slate-700">
+                          <span className="table-badge text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full border border-slate-200/80 dark:border-slate-700 shrink-0">
                             {item.student.class.code || item.student.class.name}
                           </span>
                         )}
@@ -290,9 +290,11 @@ export function RegradeTable({
 
                 {visibleColumns.subject !== false && (
                   <td className="p-3.5 min-w-[200px]">
-                    <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body leading-[22px]">{subjectName}</p>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body leading-[22px] truncate">{subjectName}</p>
                     {subjectCode && (
-                      <IdentifierBadge tone="neutral">{subjectCode}</IdentifierBadge>
+                      <div className="mt-1">
+                        <IdentifierBadge tone="neutral">{subjectCode}</IdentifierBadge>
+                      </div>
                     )}
                   </td>
                 )}

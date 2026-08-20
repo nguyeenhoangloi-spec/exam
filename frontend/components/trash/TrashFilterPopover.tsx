@@ -9,7 +9,6 @@ import {
   RotateCcw,
   Check,
   Zap,
-  Filter,
   CheckCheck,
   CalendarCheck,
   FileText,
@@ -156,51 +155,35 @@ export function TrashFilterPopover({
   ];
 
   return (
-    <div className="relative inline-block">
-      {/* ── Nút kích hoạt Bộ lọc chuẩn w-[116px] ── */}
+    <div className="relative inline-flex items-center">
+      {/* ── Nút kích hoạt SlidersHorizontal thuần túy không khung viền nhúng trong Search Bar ── */}
       <button
         ref={buttonRef}
         type="button"
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         onClick={() => setIsOpen(!isOpen)}
-        className={`group relative flex h-10 w-[116px] shrink-0 items-center justify-between rounded-xl border px-3 text-type-helper font-medium transition-all duration-150 cursor-pointer shadow-2xs select-none ${activeFilterCount > 0
-            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/15 font-semibold'
-            : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-slate-300/90 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
-          }`}
-        title="Mở bảng điều khiển bộ lọc thùng rác"
+        className={`group relative flex h-7 w-7 items-center justify-center rounded-xl transition-colors cursor-pointer select-none ${
+          activeFilterCount > 0
+            ? 'text-blue-600 dark:text-blue-400'
+            : 'text-slate-400 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400'
+        }`}
+        title="Bộ lọc thùng rác"
       >
-        <div className="flex items-center gap-1.5">
-          <SlidersHorizontal
-            className={`h-4 w-4 shrink-0 transition-transform duration-150 ${activeFilterCount > 0
-                ? 'text-blue-600 dark:text-blue-400 stroke-[2.3]'
-                : 'text-slate-500 dark:text-slate-400 group-hover:text-blue-600 group-hover:scale-105'
-              }`}
-          />
-          <span>Bộ lọc</span>
-        </div>
+        <SlidersHorizontal className="h-4 w-4 shrink-0 transition-transform duration-150 group-hover:scale-110" />
 
-        {/* Cột phải kích thước cố định */}
-        <div className="flex h-5 w-5 items-center justify-center shrink-0">
-          {activeFilterCount > 0 ? (
-            <div
-              onClick={(e) => {
-                e.stopPropagation();
-                onResetAll();
-              }}
-              title="Nhấn để xóa nhanh toàn bộ lọc (1-Click Reset)"
-              className="group/badge relative flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 hover:bg-rose-500 text-type-helper font-semibold text-white shadow-2xs transition-colors cursor-pointer"
-            >
-              <span className="group-hover/badge:hidden">{activeFilterCount}</span>
-              <X className="hidden h-3 w-3 group-hover/badge:block stroke-[3]" />
-            </div>
-          ) : (
-            <ChevronDown
-              className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
-                }`}
-            />
-          )}
-        </div>
+        {activeFilterCount > 0 && (
+          <span
+            onClick={(e) => {
+              e.stopPropagation();
+              onResetAll();
+            }}
+            title="Nhấn để xóa nhanh toàn bộ lọc (1-Click Reset)"
+            className="table-badge absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-blue-600 text-type-helper font-semibold text-white hover:bg-rose-500 transition-colors shadow-2xs"
+          >
+            {activeFilterCount}
+          </span>
+        )}
       </button>
 
       {/* ── Bảng Popover 2 Cột Đồng Bộ Chuẩn Question Bank ── */}
@@ -217,7 +200,7 @@ export function TrashFilterPopover({
             <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40">
               <div className="flex items-center gap-2.5">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm shadow-blue-600/20">
-                  <Filter className="h-3.5 w-3.5" />
+                  <SlidersHorizontal className="h-3.5 w-3.5" />
                 </div>
                 <div>
                   <h4 className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
