@@ -219,6 +219,88 @@ export function QuestionBankTable({
                     ))}
                   </div>
                 ) : null}
+
+                {/* Media Attachment Strip for Grid View */}
+                {q.media && q.media.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2 pt-1.5 border-t border-dashed border-slate-100 dark:border-slate-800">
+                    {q.media.map((m, idx) => {
+                      const mime = m.mimeType || '';
+                      const isImg = mime.startsWith('image/') || (!mime && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(m.url));
+                      const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(m.url);
+                      const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(m.url);
+                      const fullUrl = getImageUrl(m.url);
+
+                      if (isImg) return (
+                        <div
+                          key={m.id || idx}
+                          role="button"
+                          tabIndex={0}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setLightboxUrl(m.url);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setLightboxUrl(m.url);
+                            }
+                          }}
+                          className="group relative inline-flex items-center justify-center overflow-hidden rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-1 hover:border-blue-400 dark:hover:border-blue-500 transition cursor-zoom-in shadow-2xs shrink-0 select-none"
+                          title="Bấm để phóng to xem ảnh"
+                        >
+                          <DynamicImage
+                            src={fullUrl}
+                            alt={m.altText || 'Hình minh họa'}
+                            className="h-14 sm:h-16 w-auto max-w-[120px] rounded-lg object-contain bg-white dark:bg-slate-950 transition duration-200 group-hover:scale-105"
+                          />
+                          <div className="absolute top-1 right-1 flex items-center justify-center p-1 rounded-md bg-slate-900/60 text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                            <Maximize2 className="h-3 w-3 text-white" />
+                          </div>
+                        </div>
+                      );
+
+                      if (isVid) return (
+                        <div
+                          key={m.id || idx}
+                          className="w-full max-w-[200px] shrink-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <QuestionMediaPlayer
+                            src={fullUrl}
+                            type="video"
+                            fileName={m.fileName}
+                            maxPlays={0}
+                            mode="REFERENCE"
+                          />
+                        </div>
+                      );
+
+                      if (isAud) return (
+                        <div
+                          key={m.id || idx}
+                          className="w-full max-w-[200px] shrink-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <QuestionMediaPlayer
+                            src={fullUrl}
+                            type="audio"
+                            fileName={m.fileName}
+                            maxPlays={0}
+                            mode="REFERENCE"
+                          />
+                        </div>
+                      );
+
+                      return (
+                        <span key={m.id || idx} className="ui-pill inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-800 px-2.5 py-0.5 text-type-helper font-medium text-slate-600 dark:text-slate-400 shrink-0">
+                          <FileText className="h-3.5 w-3.5 text-slate-400" />
+                          Tệp đính kèm
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               {/* Card Footer: Metadata & Actions */}
@@ -320,6 +402,47 @@ export function QuestionBankTable({
                     <span className="text-slate-400">
                       Tạo bởi: <strong className="text-slate-600 dark:text-slate-300 font-medium">{creatorName}</strong> ({formatDate(q.createdAt).slice(0, 10)})
                     </span>
+                    {q.media && q.media.length > 0 && (
+                      <span className="flex items-center gap-1.5 flex-wrap">
+                        {q.media.map((m, idx) => {
+                          const mime = m.mimeType || '';
+                          const isImg = mime.startsWith('image/') || (!mime && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(m.url));
+                          const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(m.url);
+                          const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(m.url);
+                          const fullUrl = getImageUrl(m.url);
+
+                          if (isImg) return (
+                            <button
+                              key={m.id || idx}
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setLightboxUrl(m.url);
+                              }}
+                              className="inline-flex items-center gap-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-1.5 py-0.5 hover:border-blue-400 transition cursor-zoom-in"
+                              title="Bấm để xem ảnh"
+                            >
+                              <DynamicImage src={fullUrl} alt="Thumbnail" className="h-5 w-5 rounded object-cover" />
+                              <span className="text-type-helper text-blue-600 dark:text-blue-400 font-medium">Ảnh</span>
+                            </button>
+                          );
+
+                          if (isVid) return (
+                            <span key={m.id || idx} className="inline-flex items-center gap-1 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50/60 dark:bg-blue-950/40 px-2 py-0.5 text-type-helper text-blue-700 dark:text-blue-300 font-medium">
+                              Video
+                            </span>
+                          );
+
+                          if (isAud) return (
+                            <span key={m.id || idx} className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/40 px-2 py-0.5 text-type-helper text-emerald-700 dark:text-emerald-300 font-medium">
+                              Audio
+                            </span>
+                          );
+
+                          return null;
+                        })}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
