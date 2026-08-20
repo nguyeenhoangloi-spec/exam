@@ -178,9 +178,9 @@ export class ExamPaperGenerationCore {
     const isFillBlank = options.targetType === 'FILL_BLANK' || options.targetType === 'DIEN_LO';
     const isEssay = options.isEssay || options.targetType === 'TU_LUAN';
 
-    // 1. Chế độ Theo thang điểm (BY_SCORE) HOẶC Đề Tự luận (TU_LUAN) HOẶC Đề Điền khuyết (FILL_BLANK):
-    // GIỮ NGUYÊN 100% ĐIỂM THẬT CỦA CÂU HỎI lúc tạo trong Ngân hàng đề (hoặc Rubric)
-    if (options.isByScore || isEssay || isFillBlank) {
+    // 1. Chế độ Theo thang điểm (BY_SCORE):
+    // Giữ nguyên điểm mục tiêu / điểm thật của từng câu hỏi được người dùng chọn
+    if (options.isByScore) {
       const scored = questions.map((question) => {
         const actualScore = this.getRealScore(question, isEssay);
         return {
@@ -194,34 +194,54 @@ export class ExamPaperGenerationCore {
       };
     }
 
-    // 2. Chế độ Theo số câu (BY_COUNT) đối với Đề Trắc nghiệm:
-    // Nếu câu hỏi trắc nghiệm có điểm thật riêng > 0 thì giữ nguyên điểm thật
-    const hasCustomScores = questions.some((q) => q.score && Number(q.score) > 0);
-    if (hasCustomScores) {
-      const scored = questions.map((question) => ({
-        ...question,
-        assignedScore: this.getRealScore(question, false),
-      }));
-      return {
-        questions: scored,
-        totalScore: Math.round(scored.reduce((sum, item) => sum + item.assignedScore, 0) * 100) / 100,
-      };
-    }
-
-    // Trắc nghiệm mặc định không điểm riêng: chia đều thang điểm 10.0 (ví dụ 40 câu = 0.25đ/câu)
+    // 2. Chế độ Theo số câu (BY_COUNT) - Áp dụng cho TẤT CẢ các loại đề thi (Tự luận, Trắc nghiệm, Điền khuyết):
+    // MẶC ĐỊNH TỔNG ĐIỂM BỘ ĐỀ LUÔN LUÔN BẰNG ĐÚNG 10.0 ĐIỂM (Thang điểm 10 chuẩn khảo thí)
     const targetTotalScore = 10.0;
     const count = questions.length || 1;
+
+    // Trích xuất trọng số điểm của từng câu
+    const rawWeights = questions.map((q) => this.getRealScore(q, isEssay));
+    const totalRawWeight = Math.round(rawWeights.reduce((sum, w) => sum + w, 0) * 100) / 100;
+
+    // Trường hợp A: Nếu tổng điểm gốc của các câu đã bằng đúng 10.0đ -> Giữ nguyên 100% điểm gốc từng câu
+    if (Math.abs(totalRawWeight - targetTotalScore) < 0.001) {
+      const scored = questions.map((question, idx) => ({
+        ...question,
+        assignedScore: rawWeights[idx],
+      }));
+      return { questions: scored, totalScore: targetTotalScore };
+    }
+
+    // Trường hợp B: Nếu các câu có trọng số bằng nhau hoặc không có trọng số riêng -> Chia đều 10.0 / N
+    const allEqual = rawWeights.every((w) => Math.abs(w - rawWeights[0]) < 0.001);
+    if (allEqual || totalRawWeight <= 0) {
+      let currentSum = 0;
+      const scored = questions.map((question, index) => {
+        let assignedScore: number;
+        if (index === questions.length - 1) {
+          assignedScore = Math.round((targetTotalScore - currentSum) * 100) / 100;
+        } else {
+          assignedScore = Math.round((targetTotalScore / count) * 100) / 100;
+          currentSum += assignedScore;
+        }
+        return { ...question, assignedScore };
+      });
+      return { questions: scored, totalScore: targetTotalScore };
+    }
+
+    // Trường hợp C: Phân bổ tỷ lệ theo trọng số để tổng điểm LUÔN BẰNG ĐÚNG 10.0 ĐIỂM
     let currentSum = 0;
     const scored = questions.map((question, index) => {
       let assignedScore: number;
       if (index === questions.length - 1) {
         assignedScore = Math.round((targetTotalScore - currentSum) * 100) / 100;
       } else {
-        assignedScore = Math.round((targetTotalScore / count) * 100) / 100;
+        assignedScore = Math.round(((rawWeights[index] / totalRawWeight) * targetTotalScore) * 100) / 100;
         currentSum += assignedScore;
       }
       return { ...question, assignedScore };
     });
+
     return { questions: scored, totalScore: targetTotalScore };
   }
 }

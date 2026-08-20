@@ -36,17 +36,6 @@ import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { User } from '../../types';
 
-function getSmartMonogram(fullName?: string): string {
-  if (!fullName || !fullName.trim()) return 'U';
-  const clean = fullName
-    .replace(/^(TS\.|ThS\.|PGS\.|GS\.|Thầy|Cô)\s+/i, '')
-    .trim();
-  const parts = clean.split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return 'U';
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
-
 interface ArticleItem {
   id: string;
   category: 'STUDENT' | 'TEACHER' | 'ADMIN' | 'RULES';
@@ -413,39 +402,37 @@ export default function ContactSupportPage() {
           </Link>
 
           <div className="flex items-center gap-3">
-            {currentUser ? (
-              /* Visual Smart Return Avatar Button (Zero-Text & Intuitive) */
-              <Link
-                href={dashboardRoute}
-                title={`Quay lại không gian làm việc (${currentDisplayName})`}
-                className="group flex items-center gap-2 p-1.5 pr-2.5 rounded-2xl bg-blue-50/80 hover:bg-blue-100 dark:bg-blue-950/60 dark:hover:bg-blue-900/60 border border-blue-200/80 dark:border-blue-800/60 transition-all duration-200 cursor-pointer shadow-2xs active:scale-95"
-              >
-                <div className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-blue-600 font-semibold text-white text-type-helper shadow-xs group-hover:scale-105 transition-transform duration-200">
-                  {getSmartMonogram(currentDisplayName)}
-                  <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
-                </div>
-                <ArrowLeft className="h-4 w-4 text-blue-600 dark:text-blue-400 group-hover:-translate-x-0.5 transition-transform duration-200" strokeWidth={1.5} />
-              </Link>
-            ) : (
-              /* Compact Minimalist Login Icon Button (Zero-Text) */
-              <Link
-                href="/login"
-                title="Đăng nhập"
-                className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
-              >
-                <LogIn className="h-4 w-4" strokeWidth={1.5} />
-              </Link>
-            )}
-
             <button
               type="button"
               onClick={toggleDark}
               aria-label="Chuyển chủ đề sáng/tối"
               title={isDark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
-              className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/90 dark:hover:bg-slate-800/90 transition-colors duration-200 cursor-pointer shadow-2xs"
+              className="flex h-10 w-10 items-center justify-center text-slate-400 transition-colors duration-200 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-200 cursor-pointer"
             >
               {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-600" />}
             </button>
+
+            {currentUser ? (
+              /* Compact return action for authenticated users */
+              <Link
+                href={dashboardRoute}
+                title={`Quay lại không gian làm việc (${currentDisplayName})`}
+                aria-label="Về trang chính"
+                className="group flex h-10 w-10 items-center justify-center text-slate-400 transition-all duration-200 hover:scale-105 hover:text-slate-700 active:scale-95 dark:text-slate-500 dark:hover:text-slate-200"
+              >
+                <ArrowLeft className="h-4.5 w-4.5 transition-transform duration-200 group-hover:-translate-x-0.5" strokeWidth={1.9} />
+              </Link>
+            ) : (
+              /* Compact primary action for visitors */
+              <Link
+                href="/login"
+                title="Đăng nhập"
+                aria-label="Đăng nhập"
+                className="group flex h-10 w-10 items-center justify-center text-slate-400 transition-all duration-200 hover:scale-105 hover:text-slate-700 active:scale-95 dark:text-slate-500 dark:hover:text-slate-200"
+              >
+                <LogIn className="h-4.5 w-4.5 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={1.9} />
+              </Link>
+            )}
           </div>
         </div>
       </header>
