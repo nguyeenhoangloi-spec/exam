@@ -641,6 +641,9 @@ export default function StudentExamTakePage() {
                       {currentQ.media.map((mediaItem: any, idx: number) => {
                         const fullUrl = getImageUrl(mediaItem.url);
                         const mime: string = mediaItem.mimeType || '';
+                        const examMediaMode = attemptData?.mediaMode || (attemptData?.mediaMaxPlays === 0 ? 'REFERENCE' : 'STRICT_EXAM');
+                        const examMaxPlays = attemptData?.mediaMaxPlays !== undefined ? attemptData?.mediaMaxPlays : (mediaItem.maxPlays !== undefined ? mediaItem.maxPlays : 2);
+
                         if (mime.startsWith('video/')) {
                           return (
                             <QuestionMediaPlayer
@@ -650,7 +653,8 @@ export default function StudentExamTakePage() {
                               src={fullUrl}
                               type="video"
                               fileName={mediaItem.fileName}
-                              maxPlays={mediaItem.maxPlays !== undefined ? mediaItem.maxPlays : 2}
+                              maxPlays={examMaxPlays}
+                              mode={examMediaMode}
                             />
                           );
                         }
@@ -663,7 +667,8 @@ export default function StudentExamTakePage() {
                               src={fullUrl}
                               type="audio"
                               fileName={mediaItem.fileName}
-                              maxPlays={mediaItem.maxPlays !== undefined ? mediaItem.maxPlays : 2}
+                              maxPlays={examMaxPlays}
+                              mode={examMediaMode}
                             />
                           );
                         }

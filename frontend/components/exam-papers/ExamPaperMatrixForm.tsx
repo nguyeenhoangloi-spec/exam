@@ -21,6 +21,7 @@ export interface ExamPaperMatrixFormData {
   easyScore?: string;
   mediumScore?: string;
   hardScore?: string;
+  mediaMode?: 'STRICT_EXAM' | 'REFERENCE';
   mediaMaxPlays?: string;
 }
 
@@ -547,27 +548,70 @@ export function ExamPaperMatrixForm({
           )}
         </div>
 
-        {/* ── ROW 4: Cấu hình Media (Không icon, không khung nền thừa) ── */}
-        <div className="flex flex-wrap items-center justify-between gap-4 py-1 border-t border-slate-100 dark:border-slate-800 pt-3">
-          <div className="flex flex-col min-w-0 flex-1">
-            <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
-              Số lần phát Video/Audio mặc định cho đề thi
-            </span>
-            <span className="text-type-helper font-normal text-slate-400 dark:text-slate-500 mt-0.5">
-              Tất cả câu hỏi nghe/xem trong đề thi này sẽ tự động áp dụng số lượt phát tối đa này
-            </span>
+        {/* ── ROW 4: Cấu hình Media cho Đề thi (Khảo thí vs Tham khảo) ── */}
+        <div className="space-y-3 py-1 border-t border-slate-100 dark:border-slate-800 pt-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div>
+              <h4 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
+                Quy chế Đa phương tiện cho đề thi
+              </h4>
+              <p className="text-type-helper font-normal text-slate-400 dark:text-slate-500 mt-0.5">
+                Áp dụng tự động cho toàn bộ câu hỏi có Audio/Video trong đề thi này
+              </p>
+            </div>
+
+            {/* Switch Mode: Khảo thí vs Tự do */}
+            <div className="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 shrink-0">
+              <button
+                type="button"
+                onClick={() => setFormData((p: any) => ({ ...p, mediaMode: 'STRICT_EXAM', mediaMaxPlays: p.mediaMaxPlays === '0' ? '2' : (p.mediaMaxPlays || '2') }))}
+                className={`px-3 py-1 rounded-xl text-type-helper font-semibold transition-all cursor-pointer ${formData.mediaMode !== 'REFERENCE' && formData.mediaMaxPlays !== '0'
+                    ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+              >
+                🏆 Khảo thí chuẩn hóa
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData((p: any) => ({ ...p, mediaMode: 'REFERENCE', mediaMaxPlays: '0' }))}
+                className={`px-3 py-1 rounded-xl text-type-helper font-semibold transition-all cursor-pointer ${formData.mediaMode === 'REFERENCE' || formData.mediaMaxPlays === '0'
+                    ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+              >
+                📖 Tham khảo tự do
+              </button>
+            </div>
           </div>
-          <FilterSelect
-            value={formData.mediaMaxPlays || '2'}
-            onChange={(e) => setFormData((p: any) => ({ ...p, mediaMaxPlays: e.target.value }))}
-            className="h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-type-body font-medium text-slate-800 dark:text-slate-200 shadow-2xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none cursor-pointer shrink-0"
-          >
-            <option value="1">1 lần (Ngặt nghèo / Thi Nghe)</option>
-            <option value="2">2 lần (Chuẩn Khảo thí / IELTS)</option>
-            <option value="3">3 lần</option>
-            <option value="5">5 lần</option>
-            <option value="0">Không giới hạn</option>
-          </FilterSelect>
+
+          {formData.mediaMode !== 'REFERENCE' && formData.mediaMaxPlays !== '0' && (
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <span className="text-type-body font-medium text-slate-700 dark:text-slate-300">
+                Số lần phát tối đa cho thí sinh:
+              </span>
+              <div className="flex items-center gap-1.5">
+                {[
+                  { count: '1', label: '1 lần (Ngặt nghèo)' },
+                  { count: '2', label: '2 lần (IELTS / Chuẩn)' },
+                  { count: '3', label: '3 lần' },
+                ].map(({ count, label }) => (
+                  <button
+                    key={count}
+                    type="button"
+                    onClick={() => setFormData((p: any) => ({ ...p, mediaMaxPlays: count }))}
+                    className={`px-3 py-1 rounded-xl text-type-helper font-semibold transition cursor-pointer ${
+                      (formData.mediaMaxPlays || '2') === count
+                        ? 'bg-blue-600 text-white shadow-2xs'
+                        : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* ── ROW 5: Footer ── */}

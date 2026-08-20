@@ -509,6 +509,8 @@ export default function ExamPapersPage() {
         easyScore: Number(formData.easyScore) || 0,
         mediumScore: Number(formData.mediumScore) || 0,
         hardScore: Number(formData.hardScore) || 0,
+        mediaMode: formData.mediaMode || (formData.mediaMaxPlays === '0' ? 'REFERENCE' : 'STRICT_EXAM'),
+        mediaMaxPlays: Number(formData.mediaMaxPlays ?? 2),
       };
 
       const preview = await api.post<any>('/exam-papers/preview-random', payload);

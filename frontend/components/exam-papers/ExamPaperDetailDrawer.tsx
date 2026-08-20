@@ -17,6 +17,9 @@ import {
 import { ExamPaper } from '../../types';
 import { Button } from '../ui/Button';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
+import { QuestionMediaPlayer } from '../exam/QuestionMediaPlayer';
+import { getImageUrl } from '../../lib/media-utils';
+import { DynamicImage } from '../ui/DynamicImage';
 
 export interface ExamPaperDetailDrawerProps {
   paper: ExamPaper | null;
@@ -204,6 +207,14 @@ export function ExamPaperDetailDrawer({
                 <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 <strong className="font-semibold">{paper.durationMinutes}</strong> phút
               </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs text-type-helper">
+                <span>{(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0 ? '📖' : '🏆'}</span>
+                <strong className="font-semibold text-slate-700 dark:text-slate-200">
+                  {(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0
+                    ? 'Media tham khảo tự do'
+                    : `Khảo thí: ${(paper as any).mediaMaxPlays || 2} lượt nghe`}
+                </strong>
+              </span>
             </div>
 
             {/* Hàng 1 (phải): Actions (Hiện đáp án / Xuất Word) */}
@@ -381,6 +392,44 @@ export function ExamPaperDetailDrawer({
                   <div className="text-type-body font-medium text-slate-900 dark:text-slate-100 leading-relaxed break-words pl-0.5">
                     {q.content}
                   </div>
+
+                  {/* Media đính kèm (Ảnh / Video / Audio) */}
+                  {Array.isArray(q.media) && q.media.length > 0 && (
+                    <div className="flex flex-wrap gap-3 pt-1">
+                      {q.media.map((media: any) => {
+                        const fullUrl = getImageUrl(media.url);
+                        const mime: string = media.mimeType || '';
+                        const isVid = mime.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(media.url);
+                        const isAud = mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/i.test(media.url);
+
+                        if (isVid || isAud) {
+                          return (
+                            <div key={media.id || media.url} className="w-full max-w-lg">
+                              <QuestionMediaPlayer
+                                src={fullUrl}
+                                type={isVid ? 'video' : 'audio'}
+                                fileName={media.fileName}
+                                maxPlays={(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0 ? 0 : ((paper as any).mediaMaxPlays || 2)}
+                                mode={(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0 ? 'REFERENCE' : 'STRICT_EXAM'}
+                              />
+                            </div>
+                          );
+                        }
+                        return (
+                          <div
+                            key={media.id || media.url}
+                            className="group relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 p-1"
+                          >
+                            <DynamicImage
+                              src={fullUrl}
+                              alt={media.altText || media.fileName}
+                              className="max-h-48 max-w-full rounded-xl object-contain bg-white"
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
 
                   {/* Multiple Choice Options (A, B, C, D) */}
                   {choices.length > 0 ? (
