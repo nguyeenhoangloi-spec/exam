@@ -28,6 +28,7 @@ import {
   Cpu,
 } from 'lucide-react';
 import api from '../../../lib/api';
+import { invalidateCache } from '../../../lib/api-cache';
 import { getAuthUser } from '../../../lib/auth';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Button } from '../../../components/ui/Button';
@@ -166,6 +167,23 @@ export default function AccessControlPage() {
   const [historyPageSize, setHistoryPageSize] = useState(10);
 
   const matrixSearchInputRef = useRef<HTMLInputElement>(null);
+  const [isSpinning, setIsSpinning] = useState(false);
+
+  const handleRefreshClick = async () => {
+    setIsSpinning(true);
+    try {
+      invalidateCache('/access-control/matrix');
+      invalidateCache('/access-control/users');
+      invalidateCache('/access-control/history');
+      await load(false);
+      setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
+    } catch (err: any) {
+      console.error(err);
+      setToast({ message: err?.response?.data?.message || err?.message || 'Lỗi khi làm mới dữ liệu', type: 'error' });
+    } finally {
+      setTimeout(() => setIsSpinning(false), 600);
+    }
+  };
 
   // Close reset menu on outside click
   useEffect(() => {
@@ -683,20 +701,6 @@ export default function AccessControlPage() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <Button
-            variant="secondary"
-            size="md"
-            leftIcon={
-              <RefreshCw
-                className={`h-4 w-4 text-slate-500 ${loading || saving ? 'animate-spin text-blue-600' : ''
-                  }`}
-              />
-            }
-            onClick={() => void load()}
-            isLoading={loading || saving}
-          >
-            Làm mới
-          </Button>
           <DataActionsDropdown onExportExcel={handleExportExcel} onPrint={handlePrint} />
         </div>
       </div>
@@ -815,7 +819,7 @@ export default function AccessControlPage() {
                   </div>
                 </div>
 
-                {/* Right side: Active Filters summary badge / result count */}
+                {/* Right side: Active Filters summary badge / result count & Refresh button */}
                 <div className="flex items-center gap-2">
                   {matrixModuleFilter !== 'ALL' && (
                     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-type-helper font-medium bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
@@ -845,6 +849,15 @@ export default function AccessControlPage() {
                   <span className="table-meta text-slate-400 font-normal shrink-0">
                     Hiển thị <strong className="font-semibold text-slate-700 dark:text-slate-300">{filteredPermissions.length}</strong>/{permissions.length} quyền
                   </span>
+
+                  <button
+                    type="button"
+                    onClick={handleRefreshClick}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0"
+                    title="Làm mới dữ liệu"
+                  >
+                    <RefreshCw className={`h-4 w-4 ${loading || saving || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
+                  </button>
                 </div>
               </div>
 
@@ -983,25 +996,35 @@ export default function AccessControlPage() {
                       </span>
                     </div>
 
-                    {/* Search box */}
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
-                      <input
-                        type="text"
-                        placeholder="Tìm tài khoản, họ tên, email..."
-                        value={userSearch}
-                        onChange={(e) => setUserSearch(e.target.value)}
-                        className="h-9 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-8 pr-8 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
-                      />
-                      {userSearch && (
-                        <button
-                          type="button"
-                          onClick={() => setUserSearch('')}
-                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                        >
-                          <X className="h-3.5 w-3.5" />
-                        </button>
-                      )}
+                    {/* Search box & Refresh */}
+                    <div className="flex items-center gap-1.5">
+                      <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
+                        <input
+                          type="text"
+                          placeholder="Tìm tài khoản, họ tên, email..."
+                          value={userSearch}
+                          onChange={(e) => setUserSearch(e.target.value)}
+                          className="h-9 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-8 pr-8 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                        />
+                        {userSearch && (
+                          <button
+                            type="button"
+                            onClick={() => setUserSearch('')}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRefreshClick}
+                        className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0"
+                        title="Làm mới dữ liệu"
+                      >
+                        <RefreshCw className={`h-3.5 w-3.5 ${loading || saving || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
+                      </button>
                     </div>
 
                     {/* Role filter segmented control */}
@@ -1437,9 +1460,20 @@ export default function AccessControlPage() {
                   </div>
                 </div>
 
-                <span className="table-meta text-slate-400 font-normal">
-                  Tổng số {filteredHistory.length} bản ghi truy vết
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="table-meta text-slate-400 font-normal">
+                    Tổng số {filteredHistory.length} bản ghi truy vết
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={handleRefreshClick}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0"
+                    title="Làm mới dữ liệu"
+                  >
+                    <RefreshCw className={`h-4 w-4 ${loading || saving || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
+                  </button>
+                </div>
               </div>
 
               {/* Active Filter Chips Banner */}

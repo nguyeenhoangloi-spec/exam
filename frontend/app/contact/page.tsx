@@ -186,7 +186,7 @@ export default function ContactSupportPage() {
         updatedAt: '04/08/2026',
         content: [
           '1. Đơn phúc khảo được mở trong vòng 07 ngày kể từ khi công bố điểm thi môn học.',
-          '2. Vào mục "Báo cáo Điểm thi" ➔ Chọn môn học cần phúc khảo ➔ Bấm nút "Nộp đơn phúc khảo".',
+          '2. Vào mục "Thống kê kỳ thi" ➔ Chọn môn học cần phúc khảo ➔ Bấm nút "Nộp đơn phúc khảo".',
           '3. Nhập lý do phúc khảo và tải lên ảnh chụp minh chứng (nếu có).',
           '4. Hội đồng Khảo thí sẽ chấm lại bài thi và cập nhật điểm mới lên hệ thống. Lịch sử thay đổi điểm được lưu minh bạch.',
         ],

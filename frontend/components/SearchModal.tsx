@@ -156,8 +156,8 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
 
   {
     id: 'exam-reports',
-    title: 'Báo cáo điểm thi',
-    desc: 'Thống kê kết quả thi, phân tích phổ điểm & xuất bảng điểm',
+    title: 'Thống kê kỳ thi',
+    desc: 'Thống kê kết quả, phân tích phổ điểm & xuất bảng điểm theo kỳ thi',
     href: '/exam-reports',
     icon: BarChart3,
     roles: ['ADMIN', 'TEACHER'],
@@ -165,8 +165,8 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'reports',
-    title: 'Thống kê & Báo cáo nâng cao',
-    desc: 'Tổng hợp số liệu toàn trường, năng suất & tỷ lệ đạt',
+    title: 'Báo cáo tổng quan',
+    desc: 'Tổng hợp số liệu toàn hệ thống về lịch thi, phòng thi, sinh viên và ngân hàng đề',
     href: '/reports',
     icon: BarChart3,
     roles: ['ADMIN'],
