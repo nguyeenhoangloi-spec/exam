@@ -12,11 +12,13 @@ export class ExamPeriodsController {
   constructor(private readonly examPeriodsService: ExamPeriodsService) {}
 
   @Get()
+  @Roles('ADMIN', 'TEACHER')
   findAll() {
     return this.examPeriodsService.findAll();
   }
 
   @Get(':id')
+  @Roles('ADMIN', 'TEACHER')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.examPeriodsService.findOne(id);
   }

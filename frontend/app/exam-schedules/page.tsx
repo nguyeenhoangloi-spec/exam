@@ -132,12 +132,13 @@ export default function ExamSchedulesPage() {
   const fetchInitialData = useCallback(async () => {
     setLoading(true);
     try {
-      const [resPeriods, resRooms, resSubjects, resSchedules] = await Promise.all([
+      const isTeacher = getAuthUser()?.role === 'TEACHER';
+      const [resPeriods, resSubjects, resSchedules] = await Promise.all([
         cachedGet('/exam-periods'),
-        cachedGet('/exam-rooms'),
         cachedGet('/subjects'),
         cachedGet('/exam-schedules'),
       ]);
+      const resRooms = isTeacher ? { data: [] } : await cachedGet('/exam-rooms');
 
       const realPeriods = resPeriods.data || [];
       const realRooms = resRooms.data || [];
@@ -286,7 +287,7 @@ export default function ExamSchedulesPage() {
       startTime: defaultStart,
       endTime: calculateEndTime(defaultStart, duration),
       examType: 'TRAC_NGHIEM',
-      mode: 'OFFICIAL',
+      mode: currentUser?.role === 'TEACHER' ? 'MOCK' : 'OFFICIAL',
     });
     setIsModalOpen(true);
   };
@@ -314,7 +315,7 @@ export default function ExamSchedulesPage() {
       startTime: startT,
       endTime: s?.endTime || calculateEndTime(startT, duration),
       examType: s?.examType || 'TRAC_NGHIEM',
-      mode: (s as any)?.mode === 'MOCK' ? 'MOCK' : 'OFFICIAL',
+      mode: currentUser?.role === 'TEACHER' ? 'MOCK' : ((s as any)?.mode === 'MOCK' ? 'MOCK' : 'OFFICIAL'),
     });
     setIsModalOpen(true);
   };
@@ -344,7 +345,7 @@ export default function ExamSchedulesPage() {
       startTime: formData.startTime,
       endTime: formData.endTime,
       examType: formData.examType || 'TRAC_NGHIEM',
-      mode: formData.mode || 'OFFICIAL',
+      mode: currentUser?.role === 'TEACHER' ? 'MOCK' : (formData.mode || 'OFFICIAL'),
     };
 
     try {
@@ -461,7 +462,8 @@ export default function ExamSchedulesPage() {
           onAdd={openAddModal}
           onExport={exportExcel}
           onPrint={handlePrintReport}
-          isAdmin={currentUser?.role === 'ADMIN'}
+          isAdmin={currentUser?.role === 'ADMIN' || currentUser?.role === 'TEACHER'}
+          teacherMockMode={currentUser?.role === 'TEACHER'}
         />
 
         {/* Dynamic KPI Cards Row calculated from REAL API data */}
@@ -586,7 +588,7 @@ export default function ExamSchedulesPage() {
             onDetail={setDrawerSchedule}
             onEdit={openEditModal}
             onDelete={handleDelete}
-            isAdmin={currentUser?.role === 'ADMIN'}
+            isAdmin={currentUser?.role === 'ADMIN' || currentUser?.role === 'TEACHER'}
           />
         )}
 
@@ -778,15 +780,21 @@ export default function ExamSchedulesPage() {
               <label className="block text-type-body font-medium text-slate-500 mb-1">
                 Loại ca thi (Chế độ dự thi) <span className="text-red-500">*</span>
               </label>
-              <FilterSelect containerClassName="w-full"
-                required
-                value={formData.mode}
-                onChange={(e) => setFormData({ ...formData, mode: e.target.value as 'OFFICIAL' | 'MOCK' })}
-                className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-type-body focus:border-blue-500 focus:outline-none bg-white font-semibold text-blue-700 shadow-2xs"
-              >
-                <option value="OFFICIAL">Thi chính thức (Xếp SBD & Phòng thi)</option>
-                <option value="MOCK">Thi thử (Dự thi tự do online)</option>
-              </FilterSelect>
+              {currentUser?.role === 'TEACHER' ? (
+                <div className="flex h-10 items-center rounded-xl border border-blue-200 bg-blue-50 px-3.5 text-type-body font-semibold text-blue-700">
+                  Thi thử — dự thi tự do online
+                </div>
+              ) : (
+                <FilterSelect containerClassName="w-full"
+                  required
+                  value={formData.mode}
+                  onChange={(e) => setFormData({ ...formData, mode: e.target.value as 'OFFICIAL' | 'MOCK' })}
+                  className="w-full h-10 rounded-xl border border-slate-200 px-3.5 text-type-body focus:border-blue-500 focus:outline-none bg-white font-semibold text-blue-700 shadow-2xs"
+                >
+                  <option value="OFFICIAL">Thi chính thức (Xếp SBD & Phòng thi)</option>
+                  <option value="MOCK">Thi thử (Dự thi tự do online)</option>
+                </FilterSelect>
+              )}
             </div>
 
             <div>

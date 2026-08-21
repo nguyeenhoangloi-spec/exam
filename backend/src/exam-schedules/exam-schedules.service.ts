@@ -191,16 +191,14 @@ export class ExamSchedulesService {
     });
   }
 
-  async findAll(actor: Actor, examPeriodId?: number) {
+  async findAll(actor: Actor, examPeriodId?: number, mode?: 'MOCK' | 'OFFICIAL') {
     return this.prisma.examSchedule.findMany({
       where: {
         deletedAt: null,
         ...(examPeriodId ? { examPeriodId } : {}),
-        ...(actor.role === 'TEACHER' ? {
-          examScheduleRooms: {
-            some: { supervisors: { some: { teacher: { userId: actor.id } } } },
-          },
-        } : {}),
+        // Giảng viên chỉ thao tác luồng thi thử. Không dùng phân công coi thi
+        // làm điều kiện vì thi thử không có phòng hoặc giám thị.
+        ...(actor.role === 'TEACHER' ? { mode: 'MOCK' } : (mode ? { mode } : {})),
       },
       include: {
         examPeriod: true,
@@ -217,11 +215,7 @@ export class ExamSchedulesService {
       where: {
         id,
         deletedAt: null,
-        ...(actor.role === 'TEACHER' ? {
-          examScheduleRooms: {
-            some: { supervisors: { some: { teacher: { userId: actor.id } } } },
-          },
-        } : {}),
+        ...(actor.role === 'TEACHER' ? { mode: 'MOCK' } : {}),
       },
       include: {
         examPeriod: true,
@@ -357,6 +351,9 @@ export class ExamSchedulesService {
   }
 
   async create(actor: Actor, data: CreateExamScheduleDto) {
+    if (actor.role === 'TEACHER' && data.mode && data.mode !== 'MOCK') {
+      throw new ForbiddenException('Giảng viên chỉ được tạo lịch thi thử. Lịch thi chính thức do quản trị viên quản lý.');
+    }
     this.assertTimeRange(data.startTime, data.endTime);
     return this.serializable(async (tx) => {
       const [period, subject] = await Promise.all([
@@ -378,7 +375,7 @@ export class ExamSchedulesService {
           startTime: data.startTime,
           endTime: data.endTime,
           examType: data.examType || 'TRAC_NGHIEM',
-          mode: (data.mode as any) || 'OFFICIAL',
+          mode: actor.role === 'TEACHER' ? 'MOCK' : ((data.mode as any) || 'OFFICIAL'),
           status: data.status || 'SCHEDULED',
           note: data.note,
         },
@@ -397,6 +394,9 @@ export class ExamSchedulesService {
 
   async update(actor: Actor, id: number, data: UpdateExamScheduleDto, allowUnlock = false) {
     const existing = await this.findOne(actor, id);
+    if (actor.role === 'TEACHER' && data.mode && data.mode !== 'MOCK') {
+      throw new ForbiddenException('Giảng viên không được chuyển lịch thi thử thành lịch thi chính thức.');
+    }
     if (existing.status === 'LOCKED' && !allowUnlock) {
       throw new BadRequestException('Lịch thi đã khóa, chỉ được mở khóa trước khi thay đổi.');
     }
@@ -443,6 +443,7 @@ export class ExamSchedulesService {
         where: { id },
         data: {
           ...(data as any),
+          ...(actor.role === 'TEACHER' ? { mode: 'MOCK' } : {}),
           examDate: data.examDate ? this.dayRange(data.examDate).start : undefined,
         },
         include: { examPeriod: true, subject: true },

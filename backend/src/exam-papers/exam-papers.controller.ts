@@ -45,7 +45,7 @@ export class ExamPapersController {
     return this.examPapersService.findOne(req.user, id);
   }
 
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'TEACHER')
   @Post(':id/publish')
   publish(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() body: any) {
     return this.examPapersService.publish(req.user, id, body);
@@ -78,4 +78,3 @@ export class ExamPapersController {
     return this.examPapersService.remove(req.user, id);
   }
 }
-

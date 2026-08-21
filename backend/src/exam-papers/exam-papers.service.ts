@@ -158,8 +158,8 @@ export class ExamPapersService {
       if ((schedule.examPapers || []).some((paper) => paper.status === ExamPaperStatus.PUBLISHED)) {
         throw new BadRequestException('Lịch thi đã có đề công bố, không được tạo lại đề tự động.');
       }
-      if (actor.role === 'TEACHER' && (schedule.examScheduleRooms || []).length === 0) {
-        throw new ForbiddenException('Bạn chỉ được tạo đề cho lịch thi mà mình được phân công.');
+      if (actor.role === 'TEACHER' && schedule.mode !== 'MOCK') {
+        throw new ForbiddenException('Giảng viên chỉ được tạo đề cho lịch thi thử. Đề thi chính thức do quản trị viên quản lý.');
       }
       const startTimeStr = schedule.startTime || '07:00';
       const endTimeStr = schedule.endTime || '22:00';
@@ -480,6 +480,10 @@ export class ExamPapersService {
       await this.actionVerifier.verify(actor.id, dto, 'PHAT HANH DE THI');
     }
     const paper = await this.current(id);
+    this.assertOwner(actor, paper);
+    if (actor.role === 'TEACHER' && paper.examSchedule?.mode !== 'MOCK') {
+      throw new ForbiddenException('Giảng viên chỉ được phát hành đề thuộc lịch thi thử. Đề thi chính thức do quản trị viên phát hành.');
+    }
     if (paper.status !== ExamPaperStatus.DRAFT) {
       throw new BadRequestException('Chỉ đề thi ở trạng thái bản nháp mới được phát hành.');
     }

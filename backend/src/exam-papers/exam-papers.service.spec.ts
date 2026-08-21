@@ -169,4 +169,20 @@ describe('ExamPapersService permissions', () => {
     expect(mockPrisma.examSchedule.findFirst).toHaveBeenCalled();
     expect(tx.examSchedule.findFirst).toHaveBeenCalled();
   });
+
+  it('không cho TEACHER phát hành đề thi chính thức', async () => {
+    prisma.examPaper.findFirst.mockResolvedValue({
+      id: 50,
+      paperCode: 'P-OFFICIAL',
+      status: 'DRAFT',
+      createdById: 7,
+      examScheduleId: 60,
+      examSchedule: { mode: 'OFFICIAL' },
+      questions: [],
+    });
+
+    await expect(service.publish({ id: 7, role: 'TEACHER' }, 50))
+      .rejects
+      .toBeInstanceOf(ForbiddenException);
+  });
 });

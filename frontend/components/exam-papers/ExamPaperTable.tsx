@@ -21,6 +21,7 @@ interface ExamPaperTableProps {
   onChangePassword?: (paper: ExamPaper) => void;
   busyId: number | null;
   isAdmin: boolean;
+  canPublishMock?: boolean;
 }
 
 export function ExamPaperTable({
@@ -43,9 +44,13 @@ export function ExamPaperTable({
   onChangePassword,
   busyId,
   isAdmin,
+  canPublishMock = false,
 }: ExamPaperTableProps) {
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
   const allSelected = papers.length > 0 && selected.length === papers.length;
+  const canPublishPaper = (paper: ExamPaper) => isAdmin || (
+    canPublishMock && (paper as any).examSchedule?.mode === 'MOCK'
+  );
 
   // 1. Dạng Lưới (Grid View Mode)
   if (viewMode === 'grid') {
@@ -152,7 +157,7 @@ export function ExamPaperTable({
                     <Download className="h-3.5 w-3.5" />
                   </button>
 
-                  {p.status === 'DRAFT' && isAdmin && (
+                  {p.status === 'DRAFT' && canPublishPaper(p) && (
                     <button
                       type="button"
                       onClick={() => onAction(p, 'publish')}
@@ -255,7 +260,7 @@ export function ExamPaperTable({
                     <Download className="h-4 w-4" />
                   </button>
 
-                  {p.status === 'DRAFT' && isAdmin && (
+                  {p.status === 'DRAFT' && canPublishPaper(p) && (
                     <button
                       type="button"
                       onClick={() => onAction(p, 'publish')}
@@ -477,21 +482,22 @@ export function ExamPaperTable({
                             </button>
                           )}
 
+                          {p.status === 'DRAFT' && canPublishPaper(p) && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                closeMenu();
+                                onAction(p, 'publish');
+                              }}
+                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
+                            >
+                              <Send className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                              <span>Phát hành</span>
+                            </button>
+                          )}
+
                           {isAdmin && (
                             <>
-                              {p.status === 'DRAFT' && (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    closeMenu();
-                                    onAction(p, 'publish');
-                                  }}
-                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
-                                >
-                                  <Send className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                                  <span>Phát hành</span>
-                                </button>
-                              )}
 
                               {p.status === 'PUBLISHED' && (
                                 <button

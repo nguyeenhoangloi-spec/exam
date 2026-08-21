@@ -14,7 +14,7 @@ export class ExamSchedulesController {
   @Get()
   @Roles('ADMIN', 'TEACHER')
   findAll(@Request() req: any, @Query() query: FindExamSchedulesDto) {
-    return this.examSchedulesService.findAll(req.user, query.examPeriodId);
+    return this.examSchedulesService.findAll(req.user, query.examPeriodId, query.mode);
   }
 
   @Get('conflicts')
@@ -59,19 +59,19 @@ export class ExamSchedulesController {
     return this.examSchedulesService.findOne(req.user, id);
   }
 
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'TEACHER')
   @Post()
   create(@Request() req: any, @Body() body: CreateExamScheduleDto) {
     return this.examSchedulesService.create(req.user, body);
   }
 
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'TEACHER')
   @Patch(':id')
   update(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() body: UpdateExamScheduleDto) {
     return this.examSchedulesService.update(req.user, id, body);
   }
 
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'TEACHER')
   @Delete(':id')
   remove(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
     return this.examSchedulesService.remove(req.user, id);

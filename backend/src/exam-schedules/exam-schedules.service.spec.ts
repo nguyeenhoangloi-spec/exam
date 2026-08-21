@@ -54,7 +54,7 @@ describe('ExamSchedulesService conflict rules', () => {
     expect(tx.examSchedule.create).toHaveBeenCalledTimes(1);
   });
 
-  it('chỉ trả lịch được phân công cho TEACHER', async () => {
+  it('chỉ trả lịch thi thử cho TEACHER, không dựa vào phân công coi thi', async () => {
     const prisma: any = { examSchedule: { findMany: jest.fn().mockResolvedValue([]) } };
     const service = new ExamSchedulesService(prisma, { write: jest.fn() } as any);
 
@@ -63,9 +63,27 @@ describe('ExamSchedulesService conflict rules', () => {
     expect(prisma.examSchedule.findMany).toHaveBeenCalledWith(expect.objectContaining({
       where: expect.objectContaining({
         examPeriodId: 1,
-        examScheduleRooms: { some: { supervisors: { some: { teacher: { userId: 7 } } } } },
+        mode: 'MOCK',
       }),
     }));
+  });
+
+  it('tự ép lịch do TEACHER tạo về chế độ MOCK', async () => {
+    const { service, tx } = createService();
+
+    await service.create({ id: 7, role: 'TEACHER' }, input);
+
+    expect(tx.examSchedule.create).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ mode: 'MOCK' }),
+    }));
+  });
+
+  it('từ chối TEACHER cố tạo lịch thi chính thức qua API', async () => {
+    const { service } = createService();
+
+    await expect(service.create({ id: 7, role: 'TEACHER' }, { ...input, mode: 'OFFICIAL' }))
+      .rejects
+      .toBeInstanceOf(ForbiddenException);
   });
 
   it('không lộ danh sách sinh viên khi TEACHER xem lịch coi của mình', async () => {

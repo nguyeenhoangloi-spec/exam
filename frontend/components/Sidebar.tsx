@@ -203,8 +203,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
         ],
       },
       {
-        group: 'Tài liệu chuyên môn',
+        group: 'Thi thử & tài liệu chuyên môn',
         items: [
+          { name: 'Lịch thi thử', href: '/exam-schedules', icon: Sparkles },
           { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
           { name: 'Kho đề thi', href: '/exam-papers', icon: FileText },
         ],

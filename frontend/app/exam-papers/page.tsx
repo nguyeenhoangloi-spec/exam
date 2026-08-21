@@ -780,7 +780,7 @@ export default function ExamPapersPage() {
           totalQuestionsInPapers={kpiData.totalQuestionsInPapers}
         />
 
-        {currentUser?.role === 'ADMIN' && (
+        {['ADMIN', 'TEACHER'].includes(currentUser?.role || '') && (
           <ExamPaperMatrixForm
             schedules={schedules}
             formData={formData}
@@ -910,9 +910,10 @@ export default function ExamPapersPage() {
             onDetail={openDetail}
             onExportWord={exportPaper}
             onAction={runAction}
-            onChangePassword={(paper) => setChangePasswordModal({ isOpen: true, paper })}
-            busyId={busyId}
-            isAdmin={currentUser?.role === 'ADMIN'}
+          onChangePassword={(paper) => setChangePasswordModal({ isOpen: true, paper })}
+          busyId={busyId}
+          isAdmin={currentUser?.role === 'ADMIN'}
+          canPublishMock={currentUser?.role === 'TEACHER'}
           />
         )}
 
@@ -1042,10 +1043,12 @@ export default function ExamPapersPage() {
         onExportWord={(p, showAns) => exportExamPaperToWord(formatPaperForExport(p), showAns)}
         onSwapQuestion={(index, q) => openSwapModal(index, q)}
         onRubric={(rubricData) => setRubricQuestion(rubricData)}
-        onPublish={(p) => {
-          setSelectedPaper(null);
-          runAction(p, 'publish');
-        }}
+        onPublish={currentUser?.role === 'ADMIN' || (currentUser?.role === 'TEACHER' && (drawerOpenPaper as any)?.examSchedule?.mode === 'MOCK')
+          ? (p) => {
+              setSelectedPaper(null);
+              runAction(p, 'publish');
+            }
+          : undefined}
         onArchive={(p) => {
           setSelectedPaper(null);
           runAction(p, 'archive');
@@ -1134,10 +1137,12 @@ export default function ExamPapersPage() {
 
       <CriticalConfirmModal
         isOpen={criticalModal.isOpen}
-        title={`Phát hành đề thi #${criticalModal.paper?.paperCode || ''}`}
-        warningMessage={`Khi phát hành đề thi ${criticalModal.paper?.paperCode || ''}, đề thi sẽ chính thức được niêm phong, lịch thi chuyển sang trạng thái sẵn sàng và thí sinh có thể bắt đầu làm bài theo ca thi.`}
+        title={`${(criticalModal.paper as any)?.examSchedule?.mode === 'MOCK' ? 'Phát hành đề thi thử' : 'Phát hành đề thi'} #${criticalModal.paper?.paperCode || ''}`}
+        warningMessage={(criticalModal.paper as any)?.examSchedule?.mode === 'MOCK'
+          ? `Khi phát hành đề thi thử ${criticalModal.paper?.paperCode || ''}, sinh viên có thể vào làm bài theo thời gian của lịch thi thử. Điểm chỉ dùng cho luyện tập.`
+          : `Khi phát hành đề thi ${criticalModal.paper?.paperCode || ''}, đề thi sẽ chính thức được niêm phong, lịch thi chuyển sang trạng thái sẵn sàng và thí sinh có thể bắt đầu làm bài theo ca thi.`}
         confirmPhrase="PHAT HANH DE THI"
-        examPasswordRequired={true}
+        examPasswordRequired={(criticalModal.paper as any)?.examSchedule?.mode === 'OFFICIAL'}
         onClose={() => setCriticalModal({ isOpen: false, paper: null })}
         onConfirm={handleCriticalConfirm}
       />
