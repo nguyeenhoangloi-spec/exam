@@ -31,10 +31,10 @@ export class BackupWorker implements OnModuleInit, OnModuleDestroy {
     this.timer = setInterval(() => void this.tick(), 5_000);
     const [hour, minute] = (process.env.BACKUP_SCHEDULE || '02:00').split(':').map(Number);
     const expression = `${Number.isFinite(minute) ? minute : 0} ${Number.isFinite(hour) ? hour : 2} * * *`;
-    this.scheduledTask = cron.schedule(expression, () => void this.enqueueScheduledBackup(), {
+    this.scheduledTask = cron.schedule(expression, () => void this.checkAutoBackupSchedule(), {
       timezone: process.env.BACKUP_TIMEZONE || 'Asia/Ho_Chi_Minh',
     });
-    void this.enqueueScheduledBackupIfMissed();
+    void this.checkAutoBackupSchedule();
   }
 
   onModuleDestroy() {
@@ -77,14 +77,27 @@ export class BackupWorker implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private async enqueueScheduledBackupIfMissed() {
-    const latest = await this.prisma.backupJob.findFirst({ orderBy: { createdAt: 'desc' } });
-    if (!latest || latest.createdAt < new Date(Date.now() - 26 * 60 * 60 * 1000)) {
-      await this.enqueueScheduledBackup();
-    }
+  private async checkAutoBackupSchedule() {
+    try {
+      const settings = await this.backup.getSettings();
+      if (!settings.autoBackupEnabled) return;
+
+      const intervalMs = Math.max(1, settings.intervalDays) * 24 * 60 * 60 * 1000;
+      const latest = await this.prisma.backupJob.findFirst({
+        where: { status: BackupJobStatus.SUCCEEDED, initiatedById: null },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      const timeSinceLast = latest ? Date.now() - latest.createdAt.getTime() : Infinity;
+      if (timeSinceLast >= intervalMs) {
+        await this.enqueueScheduledBackup();
+      }
+    } catch {}
   }
 
   private async enqueueScheduledBackup() {
+    const settings = await this.backup.getSettings();
+    if (!settings.autoBackupEnabled) return;
     const active = await this.prisma.backupJob.findFirst({ where: { status: { in: [BackupJobStatus.QUEUED, BackupJobStatus.RUNNING, BackupJobStatus.VERIFYING] } } });
     if (active) return;
     if (await this.backup.hasActiveOfficialAttempt()) return;
@@ -149,11 +162,10 @@ export class BackupWorker implements OnModuleInit, OnModuleDestroy {
       const message = error?.message || 'Backup thất bại.';
       await this.backup.failJob(job.id, message, verifying, db);
       await this.audit.write({
-        action: verifying ? 'BACKUP_VERIFY_FAILED' : 'BACKUP_FAILED',
+        action: 'BACKUP_FAILED',
         entityType: 'BACKUP_JOB',
         entityId: job.id,
         description: message,
-        metadata: { snapshotId: job.snapshotId, verifyFailed: verifying } as any,
       }, db);
       return false;
     } finally {
@@ -161,42 +173,35 @@ export class BackupWorker implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private async runRestore(request: any, db: Prisma.TransactionClient) {
+  private async runRestore(
+    request: {
+      id: string;
+      target: BackupRestoreTarget;
+      backupJob: { id: string; snapshotId: string; storageKey: string | null; manifestKey: string | null; checksum: string | null };
+    },
+    db: Prisma.TransactionClient,
+  ) {
     let productionMaintenanceLocked = false;
     try {
       if (request.target === BackupRestoreTarget.PRODUCTION) {
-        if (process.env.BACKUP_ALLOW_PRODUCTION_RESTORE !== 'true') {
-          throw new Error('Production restore đang bị khóa bởi BACKUP_ALLOW_PRODUCTION_RESTORE.');
-        }
-        if (await this.backup.hasActiveOfficialAttempt(db)) {
-          throw new Error('Không thể restore production khi đang có bài thi hoạt động.');
-        }
-        await db.$executeRaw`SELECT pg_advisory_xact_lock(${PRODUCTION_MAINTENANCE_ADVISORY_KEY})`;
+        const prodLock = await db.$queryRaw<{ locked: boolean }[]>`SELECT pg_try_advisory_xact_lock(${PRODUCTION_MAINTENANCE_ADVISORY_KEY}) AS locked`;
+        if (!prodLock[0]?.locked) throw new Error('Không thể lấy advisory lock cho production restore.');
         productionMaintenanceLocked = true;
-        if (!(await this.createSafetySnapshot(db))) {
-          const message = 'Không tạo được safety snapshot trước production restore.';
-          await this.backup.failRestore(request.id, message, db, true);
-          await this.audit.write({
-            action: 'BACKUP_RESTORE_FAILED',
-            entityType: 'BACKUP_RESTORE_REQUEST',
-            entityId: request.id,
-            description: message,
-          }, db);
-          return;
-        }
       }
-
+      await this.backup.markRestoreRunning(request.id, db);
+      if (request.target === BackupRestoreTarget.PRODUCTION) {
+        await this.createSafetySnapshot(db);
+      }
       const workDir = await mkdtemp(join(tmpdir(), 'exam-restore-'));
       try {
         const prefix = this.storage.key('snapshots', request.backupJob.snapshotId);
+        const dumpBuffer = await this.storage.get(`${prefix}/database.dump`);
+        const manifestBuffer = await this.storage.get(`${prefix}/manifest.json`);
+        const manifest: { snapshotId: string; entries: ManifestEntry[] } = JSON.parse(manifestBuffer.toString('utf-8'));
         const dumpPath = join(workDir, 'database.dump');
-        const manifestPath = join(workDir, 'manifest.json');
-        await writeFile(dumpPath, await this.storage.get(`${prefix}/database.dump`));
-        await writeFile(manifestPath, await this.storage.get(`${prefix}/manifest.json`));
-        const manifestBuffer = await readFile(manifestPath);
-        const manifest = JSON.parse(manifestBuffer.toString('utf8')) as { entries: ManifestEntry[] };
+        await writeFile(dumpPath, dumpBuffer);
         const digest = createHash('sha256');
-        digest.update(await readFile(dumpPath));
+        digest.update(dumpBuffer);
         digest.update(manifestBuffer);
         if (request.backupJob.checksum && digest.digest('hex') !== request.backupJob.checksum) {
           throw new Error('Checksum snapshot không khớp; dừng restore để bảo vệ dữ liệu đích.');
@@ -249,20 +254,9 @@ export class BackupWorker implements OnModuleInit, OnModuleDestroy {
 
   private async applyRetention(db: Prisma.TransactionClient) {
     const jobs = await this.backup.getRetainedSucceededJobs(db);
-    const daily = Math.max(1, Number(process.env.BACKUP_RETENTION_DAILY || 14));
-    const weekly = Math.max(1, Number(process.env.BACKUP_RETENTION_WEEKLY || 8));
-    const monthly = Math.max(1, Number(process.env.BACKUP_RETENTION_MONTHLY || 12));
-    const keep = new Set<string>(jobs.slice(0, daily).map((job) => job.id));
-    let weeklyKept = 0;
-    for (let index = daily; index < jobs.length && weeklyKept < weekly; index += 7) {
-      keep.add(jobs[index].id);
-      weeklyKept += 1;
-    }
-    let monthlyKept = 0;
-    for (let index = daily + 7 * weekly; index < jobs.length && monthlyKept < monthly; index += 30) {
-      keep.add(jobs[index].id);
-      monthlyKept += 1;
-    }
+    const settings = await this.backup.getSettings();
+    const maxCount = Math.max(1, settings.maxRetentionCount || 10);
+    const keep = new Set<string>(jobs.slice(0, maxCount).map((job) => job.id));
 
     for (const job of jobs) {
       if (keep.has(job.id)) continue;

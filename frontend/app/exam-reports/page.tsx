@@ -2,7 +2,7 @@
 import { FilterSelect } from '../../components/ui/FilterSelect';
 
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
@@ -24,6 +24,7 @@ import { ExamReportTableToolbar } from '../../components/exam-reports/ExamReport
 import { ExamReportTable, CandidateReport } from '../../components/exam-reports/ExamReportTable';
 import { ExamReportPaginationBar } from '../../components/exam-reports/ExamReportPaginationBar';
 import { ExamReportBulkAction } from '../../components/exam-reports/ExamReportBulkAction';
+import { ExamReportSummaryTab, SummaryData } from '../../components/exam-reports/ExamReportSummaryTab';
 import { TabBar } from '../../components/ui/TabBar';
 
 interface GradeReportResponse {
@@ -49,41 +50,6 @@ interface GradeReportResponse {
   candidates: CandidateReport[];
 }
 
-interface SummaryResponse {
-  stats: {
-    totalExams: number;
-    totalSchedules: number;
-    totalAssigned: number;
-    totalSubmitted: number;
-    totalAbsent: number;
-    totalUngraded: number;
-    totalFlagged: number;
-    passCount: number;
-    passRate: number;
-    avgScore: number;
-  };
-  schedules: Array<{
-    id: number;
-    periodName: string;
-    subjectCode: string;
-    subjectName: string;
-    departmentName: string;
-    examDate: string;
-    assigned: number;
-    submitted: number;
-    absent: number;
-    ungraded: number;
-    flagged: number;
-    passCount: number;
-    avgScore: number;
-  }>;
-  options?: {
-    classes: Array<{ id: number; name: string }>;
-    periods: Array<{ id: number; name: string }>;
-    subjects: Array<{ id: number; code: string; name: string }>;
-    departments: Array<{ id: number; name: string }>;
-  };
-}
 
 const CANDIDATE_STATUS_LABELS: Record<string, string> = {
   SUBMITTED: 'Đã nộp bài',
@@ -232,23 +198,59 @@ function getScheduleStatusBadge(s: any) {
 }
 
 export default function ExamReportsPage() {
-  usePageTitle('Báo cáo thống kê');
+  usePageTitle('Báo cáo & Thống kê');
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const viewParam = searchParams.get('view');
+
+  const [activeMainTab, setActiveMainTab] = useState<'summary' | 'schedule'>(
+    viewParam === 'schedule' ? 'schedule' : 'summary'
+  );
 
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
   const [selectedScheduleId, setSelectedScheduleId] = useState<string>('');
   const [report, setReport] = useState<GradeReportResponse | null>(null);
-  const [summary, setSummary] = useState<SummaryResponse | null>(null);
+  const [summary, setSummary] = useState<SummaryData | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [summaryFilters, setSummaryFilters] = useState({ examPeriodId: 'ALL', subjectId: 'ALL', departmentId: 'ALL', classId: 'ALL', fromDate: '', toDate: '' });
   const [loadingSchedules, setLoadingSchedules] = useState(true);
   const [loadingReport, setLoadingReport] = useState(false);
   const [showSchedulePicker, setShowSchedulePicker] = useState(false);
 
+  // Chỉ chọn ca mặc định khi chưa có ca được chọn từ URL hoặc từ tab Tổng Báo Cáo.
+  // Không để lần tải lại danh sách ghi đè ca chính thức người dùng vừa chọn.
+
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (viewParam === 'schedule') {
+      setActiveMainTab('schedule');
+    } else if (viewParam === 'summary') {
+      setActiveMainTab('summary');
+    }
+  }, [viewParam]);
+
+  useEffect(() => {
+    const paramScheduleId = searchParams.get('scheduleId');
+    if (paramScheduleId) {
+      setSelectedScheduleId(paramScheduleId);
+    }
+  }, [searchParams]);
+
+  const handleMainTabChange = (key: string) => {
+    const nextTab = key as 'summary' | 'schedule';
+    setActiveMainTab(nextTab);
+    router.push(`/exam-reports?view=${nextTab}`, { scroll: false });
+  };
+
+  const handleSelectScheduleFromSummary = (scheduleId: number) => {
+    setSelectedScheduleId(String(scheduleId));
+    setActiveMainTab('schedule');
+    router.push(`/exam-reports?view=schedule&scheduleId=${scheduleId}`, { scroll: false });
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -384,7 +386,7 @@ export default function ExamReportsPage() {
       Object.entries(summaryFilters).forEach(([key, value]) => {
         if (value && value !== 'ALL') params.set(key, value);
       });
-      const response = await api.get<SummaryResponse>(`/exam-reports/summary?${params.toString()}`);
+      const response = await api.get<SummaryData>(`/exam-reports/summary?${params.toString()}`);
       setSummary(response.data);
     } catch (error: any) {
       setToast({ message: error.message || 'Không tải được thống kê tổng hợp.', type: 'error' });
@@ -400,12 +402,9 @@ export default function ExamReportsPage() {
   const fetchSchedules = useCallback(async () => {
     setLoadingSchedules(true);
     try {
-      const response = await api.get<ExamSchedule[]>('/exam-schedules');
+      const response = await api.get<ExamSchedule[]>('/exam-reports/schedules');
       const data = response.data || [];
       setSchedules(data);
-      if (data.length > 0) {
-        setSelectedScheduleId(String(data[0].id));
-      }
     } catch (error: any) {
       setToast({ message: error.message || 'Không tải được danh sách lịch thi.', type: 'error' });
     } finally {
@@ -451,6 +450,12 @@ export default function ExamReportsPage() {
       fetchReport(selectedScheduleId);
     }
   }, [selectedScheduleId, fetchReport]);
+
+  useEffect(() => {
+    if (!selectedScheduleId && !searchParams.get('scheduleId') && schedules.length > 0) {
+      setSelectedScheduleId(String(schedules[0].id));
+    }
+  }, [schedules, selectedScheduleId, searchParams]);
 
   // Compute DYNAMIC KPI Metrics from real API report
   const kpiData = useMemo(() => {
@@ -671,26 +676,50 @@ export default function ExamReportsPage() {
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
         {/* Header */}
         <ExamReportHeader
+          title={activeMainTab === 'summary' ? 'Tổng Báo Cáo' : 'Bảng điểm chi tiết ca thi'}
+          subtitle={
+            activeMainTab === 'summary'
+              ? 'Tổng hợp số liệu toàn diện về kỳ thi, môn học, phổ điểm và tỷ lệ đạt toàn trường'
+              : 'Xem kết quả điểm thi chi tiết, tỷ lệ đạt, thống kê vi phạm và xuất báo cáo ca thi'
+          }
           onExport={exportSummaryCsv}
           onExportExcel={exportSummaryExcel}
-          onPrint={printOfficialReport}
+          onPrint={activeMainTab === 'schedule' ? printOfficialReport : undefined}
         />
 
-
-        <ExamReportKPICards
-          totalExams={summary?.stats.totalExams ?? 0}
-          totalSchedules={summary?.stats.totalSchedules ?? 0}
-          totalAssigned={summary?.stats.totalAssigned ?? kpiData.totalAssigned}
-          totalSubmitted={summary?.stats.totalSubmitted ?? kpiData.totalSubmitted}
-          totalAbsent={summary?.stats.totalAbsent ?? kpiData.totalAbsent}
-          totalUngraded={summary?.stats.totalUngraded ?? 0}
-          totalFlagged={summary?.stats.totalFlagged ?? 0}
-          avgScore={summary?.stats.avgScore ?? kpiData.avgScore}
-          passRate={summary?.stats.passRate ?? kpiData.passRate}
-          passCount={summary?.stats.passCount ?? kpiData.passCount}
+        {/* ── Top-Level Navigation TabBar ── */}
+        <TabBar
+          tabs={[
+            { key: 'summary', label: 'Tổng Báo Cáo', count: summary?.stats.totalSchedules },
+            { key: 'schedule', label: 'Bảng điểm ca thi' },
+          ]}
+          active={activeMainTab}
+          onChange={handleMainTabChange}
         />
 
-        {/* ── 3. Active Exam Session Strip ── */}
+        {activeMainTab === 'summary' ? (
+          <ExamReportSummaryTab
+            summary={summary}
+            loading={summaryLoading}
+            onSelectSchedule={handleSelectScheduleFromSummary}
+            onRefresh={fetchSummary}
+          />
+        ) : (
+          <>
+            <ExamReportKPICards
+              totalExams={summary?.stats.totalExams ?? 0}
+              totalSchedules={summary?.stats.totalSchedules ?? 0}
+              totalAssigned={summary?.stats.totalAssigned ?? kpiData.totalAssigned}
+              totalSubmitted={summary?.stats.totalSubmitted ?? kpiData.totalSubmitted}
+              totalAbsent={summary?.stats.totalAbsent ?? kpiData.totalAbsent}
+              totalUngraded={summary?.stats.totalUngraded ?? 0}
+              totalFlagged={summary?.stats.totalFlagged ?? 0}
+              avgScore={summary?.stats.avgScore ?? kpiData.avgScore}
+              passRate={summary?.stats.passRate ?? kpiData.passRate}
+              passCount={summary?.stats.passCount ?? kpiData.passCount}
+            />
+
+            {/* ── 3. Active Exam Session Strip ── */}
         {(() => {
           const activeSched = schedules.find((x) => String(x.id) === selectedScheduleId);
           const typeBadge = activeSched ? getScheduleTypeBadge(activeSched) : null;
@@ -1101,6 +1130,8 @@ export default function ExamReportsPage() {
           }}
           onClear={() => setSelected([])}
         />
+          </>
+        )}
       </main>
 
       {/* Candidate Detail Profile Drawer */}

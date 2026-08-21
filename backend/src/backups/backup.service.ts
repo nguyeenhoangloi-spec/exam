@@ -9,9 +9,23 @@ import { BackupJobStatus, BackupJobType, BackupRestoreStatus, BackupRestoreTarge
 import * as bcrypt from 'bcryptjs';
 import { createHash, randomUUID } from 'node:crypto';
 import { spawn } from 'node:child_process';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { ApproveRestoreRequestDto, CreateBackupJobDto, CreateRestoreRequestDto, RejectRestoreRequestDto } from './dto/backup.dto';
+import { UpdateBackupSettingsDto } from './dto/backup-settings.dto';
+import { BackupStorageService } from './backup-storage.service';
+
+export interface BackupSettings {
+  autoBackupEnabled: boolean;
+  intervalDays: number;
+  backupTime: string;
+  maxRetentionCount: number;
+  dualStorageEnabled: boolean;
+  primaryPath: string;
+  secondaryPath: string;
+}
 
 const ACTIVE_ATTEMPT_STATUSES = ['DEVICE_CHECK', 'READY', 'IN_PROGRESS', 'DISCONNECTED'] as const;
 export const PRODUCTION_MAINTENANCE_LOCK_PREFIX = '[MAINTENANCE_LOCKED]';
@@ -21,9 +35,12 @@ type BackupDb = PrismaService | Prisma.TransactionClient;
 
 @Injectable()
 export class BackupService {
+  private readonly configPath = join(process.cwd(), 'backup-runtime', 'backup-config.json');
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly storage: BackupStorageService,
   ) {}
 
   private restoreConfirmationPhrase(requestId: string) {
@@ -69,8 +86,74 @@ export class BackupService {
     });
   }
 
+  async getSettings(): Promise<BackupSettings> {
+    try {
+      const content = await readFile(this.configPath, 'utf-8');
+      const parsed = JSON.parse(content);
+      const settings: BackupSettings = {
+        autoBackupEnabled: parsed.autoBackupEnabled !== false,
+        intervalDays: Number(parsed.intervalDays) || 1,
+        backupTime: parsed.backupTime || '02:00',
+        maxRetentionCount: Number(parsed.maxRetentionCount) || 10,
+        dualStorageEnabled: parsed.dualStorageEnabled !== false,
+        primaryPath: parsed.primaryPath || this.storage.getPrimaryPath(),
+        secondaryPath: parsed.secondaryPath || this.storage.getSecondaryPath(),
+      };
+      this.storage.setDualStorageEnabled(settings.dualStorageEnabled);
+      this.storage.setSecondaryPath(settings.secondaryPath);
+      return settings;
+    } catch {
+      const defaultSettings: BackupSettings = {
+        autoBackupEnabled: true,
+        intervalDays: Number(process.env.BACKUP_INTERVAL_DAYS || 1),
+        backupTime: process.env.BACKUP_SCHEDULE || '02:00',
+        maxRetentionCount: Number(process.env.BACKUP_MAX_RETENTION || 10),
+        dualStorageEnabled: true,
+        primaryPath: this.storage.getPrimaryPath(),
+        secondaryPath: this.storage.getSecondaryPath(),
+      };
+      try {
+        await mkdir(dirname(this.configPath), { recursive: true });
+        await writeFile(this.configPath, JSON.stringify(defaultSettings, null, 2), 'utf-8');
+      } catch {}
+      this.storage.setDualStorageEnabled(defaultSettings.dualStorageEnabled);
+      this.storage.setSecondaryPath(defaultSettings.secondaryPath);
+      return defaultSettings;
+    }
+  }
+
+  async updateSettings(dto: UpdateBackupSettingsDto, user?: { id: number; username: string }): Promise<BackupSettings> {
+    const current = await this.getSettings();
+    const updated: BackupSettings = {
+      autoBackupEnabled: dto.autoBackupEnabled !== undefined ? dto.autoBackupEnabled : current.autoBackupEnabled,
+      intervalDays: dto.intervalDays !== undefined ? dto.intervalDays : current.intervalDays,
+      backupTime: dto.backupTime !== undefined ? dto.backupTime : current.backupTime,
+      maxRetentionCount: dto.maxRetentionCount !== undefined ? dto.maxRetentionCount : current.maxRetentionCount,
+      dualStorageEnabled: dto.dualStorageEnabled !== undefined ? dto.dualStorageEnabled : current.dualStorageEnabled,
+      primaryPath: current.primaryPath,
+      secondaryPath: dto.secondaryPath !== undefined && dto.secondaryPath.trim() ? dto.secondaryPath.trim() : current.secondaryPath,
+    };
+
+    await mkdir(dirname(this.configPath), { recursive: true });
+    await writeFile(this.configPath, JSON.stringify(updated, null, 2), 'utf-8');
+
+    this.storage.setDualStorageEnabled(updated.dualStorageEnabled);
+    this.storage.setSecondaryPath(updated.secondaryPath);
+
+    await this.audit.write({
+      action: 'BACKUP_SETTINGS_UPDATED',
+      entityType: 'BACKUP_SETTINGS',
+      entityId: 'GLOBAL',
+      description: `Cập nhật cấu hình sao lưu tự động & lưu trữ: Chu kỳ ${updated.intervalDays} ngày, chạy lúc ${updated.backupTime}, giữ tối đa ${updated.maxRetentionCount} bản, lưu 2 nơi: ${updated.dualStorageEnabled ? 'BẬT' : 'TẮT'}.`,
+      metadata: updated as any,
+      actorId: user?.id,
+    });
+
+    return updated;
+  }
+
   async overview() {
-    const [latest, running, failed24h, totalBytes, pendingRestores, lastFailedJob, pgDumpOk, pgRestoreOk] = await Promise.all([
+    const [latest, running, failed24h, totalBytes, pendingRestores, lastFailedJob, pgDumpOk, pgRestoreOk, settings, storageOverview] = await Promise.all([
       this.prisma.backupJob.findFirst({ where: { status: BackupJobStatus.SUCCEEDED }, orderBy: { completedAt: 'desc' } }),
       this.prisma.backupJob.count({ where: { status: { in: [BackupJobStatus.QUEUED, BackupJobStatus.RUNNING, BackupJobStatus.VERIFYING] } } }),
       this.prisma.backupJob.count({
@@ -88,6 +171,8 @@ export class BackupService {
       }),
       this.checkToolAvailable('pg_dump'),
       this.checkToolAvailable('pg_restore'),
+      this.getSettings(),
+      this.storage.getStorageStatusOverview(),
     ]);
 
     const ageHours = latest?.completedAt ? (Date.now() - latest.completedAt.getTime()) / 3_600_000 : Infinity;
@@ -98,22 +183,26 @@ export class BackupService {
     return {
       status,
       timezone: process.env.BACKUP_TIMEZONE || 'Asia/Ho_Chi_Minh',
-      schedule: process.env.BACKUP_SCHEDULE || '02:00',
+      schedule: settings.backupTime,
       retention: {
-        daily: Number(process.env.BACKUP_RETENTION_DAILY || 14),
+        daily: settings.maxRetentionCount,
         weekly: Number(process.env.BACKUP_RETENTION_WEEKLY || 8),
         monthly: Number(process.env.BACKUP_RETENTION_MONTHLY || 12),
       },
+      settings,
       worker: {
-        enabled: isWorkerEnabled,
-        schedule: process.env.BACKUP_SCHEDULE || '02:00',
+        enabled: settings.autoBackupEnabled && isWorkerEnabled,
+        schedule: settings.backupTime,
         lastError: lastFailedJob?.errorMessage || null,
         lastErrorAt: lastFailedJob?.createdAt ? lastFailedJob.createdAt.toISOString() : null,
       },
       storage: {
         provider: isLocal ? 'LOCAL' : 'S3',
         isLocal,
-        warning: isLocal ? 'Backup hiện chỉ lưu trên máy local, chưa có bản sao offsite.' : null,
+        dualStorageEnabled: storageOverview.dualStorageEnabled,
+        primary: storageOverview.primary,
+        secondary: storageOverview.secondary,
+        warning: !storageOverview.dualStorageEnabled && isLocal ? 'Backup hiện chỉ lưu tại 1 vị trí local, chưa kích hoạt kho lưu trữ dự phòng thứ 2.' : null,
       },
       tools: {
         pgDumpAvailable: pgDumpOk,
@@ -366,6 +455,10 @@ export class BackupService {
 
   async markJobVerifying(id: string, db: BackupDb = this.prisma) {
     return db.backupJob.update({ where: { id }, data: { status: BackupJobStatus.VERIFYING } });
+  }
+
+  async markRestoreRunning(id: string, db: BackupDb = this.prisma) {
+    return db.backupRestoreRequest.update({ where: { id }, data: { status: BackupRestoreStatus.RUNNING, startedAt: new Date() } });
   }
 
   async completeJob(id: string, data: { storageKey: string; manifestKey: string; checksum: string; sizeBytes: bigint; migration?: string; appCommit?: string }, db: BackupDb = this.prisma) {

@@ -21,6 +21,7 @@ import { ExamScheduleHeader } from '../../components/exam-schedules/ExamSchedule
 import { ExamScheduleKPICards } from '../../components/exam-schedules/ExamScheduleKPICards';
 import { ExamScheduleFilterPopover, ExamScheduleFilterValues } from '../../components/exam-schedules/ExamScheduleFilterPopover';
 import { ExamScheduleTableToolbar } from '../../components/exam-schedules/ExamScheduleTableToolbar';
+import { ViewMode } from '../../components/ui/ViewModeSegmentedControl';
 import { ExamScheduleBulkAction } from '../../components/exam-schedules/ExamScheduleBulkAction';
 import { ExamScheduleTable, ExamScheduleItemExtended, computeShiftName, computeScheduleStatus } from '../../components/exam-schedules/ExamScheduleTable';
 import { ExamSchedulePaginationBar } from '../../components/exam-schedules/ExamSchedulePaginationBar';
@@ -66,7 +67,7 @@ export default function ExamSchedulesPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
   const [sortOrder, setSortOrder] = useState('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     code: true,
     period: true,
@@ -575,7 +576,7 @@ export default function ExamSchedulesPage() {
           </div>
         ) : (
           <ExamScheduleTable
-            schedules={paginatedSchedules}
+            schedules={viewMode === 'calendar' ? filteredSchedules : paginatedSchedules}
             selected={selected}
             viewMode={viewMode}
             visibleColumns={visibleColumns}
@@ -593,17 +594,19 @@ export default function ExamSchedulesPage() {
         )}
 
         {/* Dynamic Pagination Footer */}
-        <ExamSchedulePaginationBar
-          page={page}
-          totalPages={totalPages}
-          limit={limit}
-          totalItems={filteredSchedules.length}
-          onPage={setPage}
-          onLimit={(v) => {
-            setLimit(v);
-            setPage(1);
-          }}
-        />
+        {viewMode !== 'calendar' && (
+          <ExamSchedulePaginationBar
+            page={page}
+            totalPages={totalPages}
+            limit={limit}
+            totalItems={filteredSchedules.length}
+            onPage={setPage}
+            onLimit={(v) => {
+              setLimit(v);
+              setPage(1);
+            }}
+          />
+        )}
 
         {/* Floating Bulk Action Bar */}
         <ExamScheduleBulkAction

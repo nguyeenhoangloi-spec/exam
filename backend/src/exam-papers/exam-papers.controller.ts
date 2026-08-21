@@ -15,12 +15,15 @@ import {
 import { Roles } from '../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
+import { PermissionGuard } from '../access-control/permission.guard';
+import { Permissions } from '../access-control/permissions.decorator';
 import { CreateRandomExamPaperDto, ExamPaperQueryDto, UpdateExamPasswordDto } from './dto/exam-paper.dto';
 import { ExamPapersService } from './exam-papers.service';
 
 @Controller('exam-papers')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 @Roles('ADMIN', 'TEACHER')
+@Permissions('EXAM_PAPER_MANAGE')
 export class ExamPapersController {
   constructor(private readonly examPapersService: ExamPapersService) {}
 

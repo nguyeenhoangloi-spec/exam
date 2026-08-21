@@ -3,11 +3,13 @@ import { GradeAppealsService } from './grade-appeals.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { PermissionGuard } from '../access-control/permission.guard';
+import { Permissions } from '../access-control/permissions.decorator';
 import { CreateGradeAppealDto } from './dto/create-grade-appeal.dto';
 import { ReviewGradeAppealDto } from './dto/review-grade-appeal.dto';
 
 @Controller('grade-appeals')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 export class GradeAppealsController {
   constructor(private readonly gradeAppealsService: GradeAppealsService) {}
 
@@ -25,6 +27,7 @@ export class GradeAppealsController {
 
   @Get()
   @Roles('ADMIN', 'TEACHER')
+  @Permissions('GRADE_APPEAL_REVIEW')
   async findAll(
     @Request() req: any,
     @Query('status') status?: string,
@@ -42,6 +45,7 @@ export class GradeAppealsController {
 
   @Patch(':id/review')
   @Roles('ADMIN', 'TEACHER')
+  @Permissions('GRADE_APPEAL_REVIEW')
   async reviewAppeal(
     @Request() req: any,
     @Param('id') id: string,

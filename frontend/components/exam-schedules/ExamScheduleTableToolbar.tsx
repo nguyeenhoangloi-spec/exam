@@ -4,14 +4,14 @@ import React, { useState } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { SortDropdown } from '../ui/SortDropdown';
 import { ColumnToggleDropdown } from '../ui/ColumnToggleDropdown';
-import { ViewModeSegmentedControl } from '../ui/ViewModeSegmentedControl';
+import { ViewMode, ViewModeSegmentedControl } from '../ui/ViewModeSegmentedControl';
 
 interface ExamScheduleTableToolbarProps {
   totalCount: number;
   sortOrder?: string;
   onSortChange?: (sort: string) => void;
-  viewMode?: 'list' | 'grid' | 'compact';
-  onViewModeChange?: (mode: 'list' | 'grid' | 'compact') => void;
+  viewMode?: ViewMode;
+  onViewModeChange?: (mode: ViewMode) => void;
   visibleColumns?: Record<string, boolean>;
   onColumnToggle?: (columnKey: string) => void;
   onRefresh?: () => void;
@@ -94,6 +94,7 @@ export function ExamScheduleTableToolbar({
         <ViewModeSegmentedControl
           viewMode={viewMode}
           onChange={(mode) => onViewModeChange?.(mode)}
+          supportedModes={['list', 'grid', 'compact', 'calendar']}
         />
 
         {/* Refresh */}

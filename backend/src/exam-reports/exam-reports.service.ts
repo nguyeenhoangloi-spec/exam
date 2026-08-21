@@ -7,6 +7,29 @@ const submittedStatuses = ['SUBMITTED', 'AUTO_SUBMITTED', 'UNDER_REVIEW', 'GRADE
 export class ExamReportsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private officialScheduleWhere(actor: any) {
+    const where: any = { deletedAt: null, mode: 'OFFICIAL' };
+    if (actor?.role === 'TEACHER') {
+      where.AND = [
+        { examScheduleRooms: { some: { supervisors: { some: { teacher: { userId: actor.id } } } } } },
+      ];
+    }
+    return where;
+  }
+
+  async getSchedules(actor: any) {
+    return this.prisma.examSchedule.findMany({
+      where: this.officialScheduleWhere(actor),
+      include: {
+        examPeriod: true,
+        subject: true,
+        examPapers: { where: { deletedAt: null }, select: { id: true, paperCode: true, status: true } },
+        examScheduleRooms: { include: { room: true, _count: { select: { examRoomStudents: true, supervisors: true } } } },
+      },
+      orderBy: { examDate: 'asc' },
+    });
+  }
+
   async getSummary(actor: any, query: Record<string, string>) {
     const int = (value?: string) => (value && /^\d+$/.test(value) ? Number(value) : undefined);
     const examPeriodId = int(query.examPeriodId);
@@ -17,7 +40,7 @@ export class ExamReportsService {
     const toDate = query.toDate ? new Date(`${query.toDate}T23:59:59.999Z`) : undefined;
 
     // Báo cáo khảo thí chính thức không bao gồm dữ liệu luyện tập/thi thử.
-    const scheduleWhere: any = { deletedAt: null, mode: 'OFFICIAL' };
+    const scheduleWhere: any = this.officialScheduleWhere(actor);
     if (examPeriodId) scheduleWhere.examPeriodId = examPeriodId;
     if (subjectId) scheduleWhere.subjectId = subjectId;
     if (fromDate || toDate) scheduleWhere.examDate = { ...(fromDate ? { gte: fromDate } : {}), ...(toDate ? { lte: toDate } : {}) };
@@ -28,13 +51,6 @@ export class ExamReportsService {
         { examScheduleRooms: { some: { examRoomStudents: { some: { student: { classId } } } } } },
       ];
     }
-    if (actor?.role === 'TEACHER') {
-      scheduleWhere.AND = [
-        ...(scheduleWhere.AND || []),
-        { examScheduleRooms: { some: { supervisors: { some: { teacher: { userId: actor.id } } } } } },
-      ];
-    }
-
     const schedules: any[] = await this.prisma.examSchedule.findMany({
       where: scheduleWhere,
       select: {
@@ -51,7 +67,7 @@ export class ExamReportsService {
     const scheduleIds = schedules.map((schedule) => schedule.id);
     const attempts: any[] = scheduleIds.length
       ? await this.prisma.examAttempt.findMany({
-        where: { onlineExamConfig: { examScheduleId: { in: scheduleIds } } },
+        where: { mode: 'OFFICIAL', onlineExamConfig: { examScheduleId: { in: scheduleIds } } },
         select: { studentId: true, status: true, totalScore: true, submittedAt: true, gradingStatus: true, isFlagged: true, riskScore: true, incidents: { select: { id: true } }, onlineExamConfig: { select: { examScheduleId: true } } },
       })
       : [];
@@ -90,7 +106,7 @@ export class ExamReportsService {
       const scheduleSubmitted = scheduleAttempts.filter((attempt) => submittedStatuses.includes(attempt.status));
       const scheduleScores = scheduleSubmitted.filter((attempt) => typeof attempt.totalScore === 'number').map((attempt) => attempt.totalScore as number);
       const scheduleFlagged = scheduleAttempts.filter((attempt) => attempt.isFlagged || attempt.riskScore > 0 || attempt.incidents.length > 0).length;
-      const scheduleUngraded = scheduleSubmitted.filter((attempt) => attempt.gradingStatus !== 'PUBLISHED' && attempt.gradingStatus !== 'SUBMITTED' || attempt.totalScore === null).length;
+      const scheduleUngraded = scheduleSubmitted.filter((attempt) => attempt.totalScore === null).length;
       const schedulePassed = scheduleScores.filter((score) => score >= 5).length;
 
       assigned += studentIds.size;
@@ -113,6 +129,7 @@ export class ExamReportsService {
         examDate: schedule.examDate,
         assigned: studentIds.size,
         submitted: scheduleSubmitted.length,
+        graded: scheduleScores.length,
         absent: Math.max(0, studentIds.size - scheduleSubmitted.length),
         ungraded: scheduleUngraded,
         flagged: scheduleFlagged,
@@ -121,6 +138,15 @@ export class ExamReportsService {
       };
     });
 
+    const scoreDistribution = {
+      excellent: scores.filter((s) => s >= 9.0).length,
+      good: scores.filter((s) => s >= 8.0 && s < 9.0).length,
+      fair: scores.filter((s) => s >= 7.0 && s < 8.0).length,
+      average: scores.filter((s) => s >= 5.0 && s < 7.0).length,
+      poor: scores.filter((s) => s < 5.0).length,
+      totalGraded: scores.length,
+    };
+
     return {
       filters: { examPeriodId: examPeriodId ?? null, subjectId: subjectId ?? null, departmentId: departmentId ?? null, classId: classId ?? null, fromDate: query.fromDate || null, toDate: query.toDate || null },
       stats: {
@@ -128,12 +154,14 @@ export class ExamReportsService {
         totalSchedules: schedules.length,
         totalAssigned: assigned,
         totalSubmitted: submitted,
+        totalGraded: scores.length,
         totalAbsent: absent,
         totalUngraded: ungraded,
         totalFlagged: flagged,
         passCount,
-        passRate: submitted ? Number(((passCount / submitted) * 100).toFixed(1)) : 0,
+        passRate: scores.length ? Number(((passCount / scores.length) * 100).toFixed(1)) : 0,
         avgScore: scores.length ? Number((scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2)) : 0,
+        scoreDistribution,
       },
       schedules: scheduleRows,
       options: {

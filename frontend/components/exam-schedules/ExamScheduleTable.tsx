@@ -7,6 +7,8 @@ import { ExamSchedule } from '../../types';
 import { StatusBadge } from '../common/StatusBadge';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { formatExamType } from '../../lib/enum-labels';
+import { ViewMode } from '../ui/ViewModeSegmentedControl';
+import { ExamScheduleCalendarView } from './ExamScheduleCalendarView';
 
 export interface ExamScheduleItemExtended {
   id: number;
@@ -36,7 +38,7 @@ export interface ExamScheduleItemExtended {
 interface ExamScheduleTableProps {
   schedules: ExamScheduleItemExtended[];
   selected: number[];
-  viewMode?: 'list' | 'grid' | 'compact';
+  viewMode?: ViewMode;
   visibleColumns?: Record<string, boolean>;
   isTrash?: boolean;
   onSelect: (id: number, checked: boolean) => void;
@@ -154,6 +156,19 @@ export function ExamScheduleTable({
     const s = (schedule ? computeScheduleStatus(schedule) : statusBadge?.toUpperCase()) || 'UPCOMING';
     return <StatusBadge status={s} />;
   };
+
+  // 0. Dạng Thời khóa biểu / Lịch (Calendar / Timetable View Mode)
+  if (viewMode === 'calendar') {
+    return (
+      <ExamScheduleCalendarView
+        schedules={schedules}
+        onDetail={onDetail}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        isAdmin={isAdmin}
+      />
+    );
+  }
 
   // 1. Dạng Lưới (Grid View Mode)
   if (viewMode === 'grid') {

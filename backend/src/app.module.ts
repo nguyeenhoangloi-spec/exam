@@ -32,6 +32,7 @@ import { ExamReportsModule } from './exam-reports/exam-reports.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { MaintenanceGuard } from './common/guards/maintenance.guard';
 import { BackupsModule } from './backups/backup.module';
+import { AccessControlModule } from './access-control/access-control.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { BackupsModule } from './backups/backup.module';
     GradeAppealsModule,
     ExamReportsModule,
     BackupsModule,
+    AccessControlModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },

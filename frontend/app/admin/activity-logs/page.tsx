@@ -108,6 +108,11 @@ function getActionMeta(action: string) {
         REVIEW_GRADE_APPEAL: 'Xem xét phúc khảo',
         UPDATE_EXAM_PASSWORD: 'Cập nhật mật khẩu đề thi',
         UPDATE_STATUS: 'Cập nhật trạng thái',
+        ACCESS_ROLE_PERMISSION_GRANTED: 'Cấp quyền vai trò',
+        ACCESS_ROLE_PERMISSION_REVOKED: 'Thu hồi quyền vai trò',
+        ACCESS_USER_OVERRIDE_SET: 'Thiết lập quyền riêng',
+        ACCESS_USER_OVERRIDE_REMOVED: 'Gỡ quyền riêng',
+        ACCESS_SCOPE_REPLACED: 'Cập nhật phạm vi truy cập',
     };
     if (translatedActions[normalized]) {
         return { label: translatedActions[normalized], Icon: ShieldCheck, className: 'text-blue-700 dark:text-blue-400' };
@@ -195,6 +200,7 @@ const entityTypeMap: Record<string, { label: string; Icon: React.ElementType }> 
     Department: { label: 'Khoa / Viện', Icon: Building2 },
     SUBJECT: { label: 'Môn học', Icon: BookOpen },
     Subject: { label: 'Môn học', Icon: BookOpen },
+    ACCESS_CONTROL: { label: 'Phân quyền & truy cập', Icon: ShieldCheck },
 };
 
 function getEntityInfo(entityType: string) {

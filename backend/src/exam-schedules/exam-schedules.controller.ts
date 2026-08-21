@@ -2,11 +2,14 @@ import { Controller, Get, Post, Patch, Delete, Body, Param, Query, ParseIntPipe,
 import { ExamSchedulesService } from './exam-schedules.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
+import { PermissionGuard } from '../access-control/permission.guard';
+import { Permissions } from '../access-control/permissions.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { AutoScheduleAcceptDto, AutoSchedulePreviewDto, CreateExamScheduleDto, FindExamSchedulesDto, ReopenEntryDto, UpdateExamScheduleDto } from './dto/exam-schedule.dto';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 @Roles('ADMIN')
+@Permissions('EXAM_SCHEDULE_MANAGE')
 @Controller('exam-schedules')
 export class ExamSchedulesController {
   constructor(private readonly examSchedulesService: ExamSchedulesService) {}

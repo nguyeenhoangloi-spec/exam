@@ -91,8 +91,81 @@ model User {
   backupJobs            BackupJob[]
   backupRestoreRequests BackupRestoreRequest[] @relation("BackupRestoreRequester")
   backupRestoreApprovals BackupRestoreRequest[] @relation("BackupRestoreApprover")
+  permissionOverrides   UserPermissionOverride[]
+  accessScopes          UserAccessScope[]
 
   @@map("users")
+}
+
+enum PermissionOverrideEffect {
+  ALLOW
+  DENY
+}
+
+enum AccessScopeType {
+  DEPARTMENT
+  CLASS
+  SUBJECT
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  module      String
+  description String?
+  sensitive   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rolePermissions     RolePermission[]
+  userOverrides       UserPermissionOverride[]
+
+  @@index([module])
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String     @id @default(uuid())
+  role         String
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([role, permissionId])
+  @@index([role])
+  @@map("role_permissions")
+}
+
+model UserPermissionOverride {
+  id           String                   @id @default(uuid())
+  userId       Int
+  user         User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permissionId String
+  permission   Permission               @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  effect       PermissionOverrideEffect
+  reason       String?
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime                 @updatedAt
+
+  @@unique([userId, permissionId])
+  @@index([userId])
+  @@map("user_permission_overrides")
+}
+
+model UserAccessScope {
+  id        String          @id @default(uuid())
+  userId    Int
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      AccessScopeType
+  resourceId Int
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@unique([userId, type, resourceId])
+  @@index([userId, type])
+  @@map("user_access_scopes")
 }
 
 model AuthSession {

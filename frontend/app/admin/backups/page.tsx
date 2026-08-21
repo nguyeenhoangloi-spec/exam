@@ -39,6 +39,7 @@ import {
     LayoutGrid,
     Layers,
     Check,
+    FolderSync,
 } from 'lucide-react';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
@@ -55,10 +56,29 @@ import { CriticalConfirmModal, CriticalConfirmPayload } from '../../../component
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { BackupFilterPopover } from '../../../components/backups/BackupFilterPopover';
 import { BackupBulkAction } from '../../../components/backups/BackupBulkAction';
+import { BackupSettingsModal, BackupSettingsPayload } from '../../../components/backups/BackupSettingsModal';
 
 type BackupJobType = 'FULL' | 'DATABASE' | 'UPLOADS' | 'SAFETY';
 type BackupStatus = 'QUEUED' | 'RUNNING' | 'VERIFYING' | 'SUCCEEDED' | 'FAILED' | 'VERIFY_FAILED' | 'CANCELLED';
 type RestoreTarget = 'STAGING' | 'PRODUCTION';
+
+interface StorageEndpointInfo {
+    name: string;
+    type: string;
+    path: string;
+    isAvailable: boolean;
+    status: 'ONLINE' | 'STANDBY' | 'ERROR';
+}
+
+interface BackupSettingsData {
+    autoBackupEnabled: boolean;
+    intervalDays: number;
+    backupTime: string;
+    maxRetentionCount: number;
+    dualStorageEnabled: boolean;
+    primaryPath: string;
+    secondaryPath: string;
+}
 
 interface BackupJob {
     id: string;
@@ -82,6 +102,7 @@ interface Overview {
     timezone: string;
     schedule: string;
     retention: { daily: number; weekly: number; monthly: number };
+    settings?: BackupSettingsData;
     worker: {
         enabled: boolean;
         schedule: string;
@@ -91,6 +112,9 @@ interface Overview {
     storage: {
         provider: 'LOCAL' | 'S3';
         isLocal: boolean;
+        dualStorageEnabled?: boolean;
+        primary?: StorageEndpointInfo;
+        secondary?: StorageEndpointInfo;
         warning: string | null;
     };
     tools: {
@@ -215,9 +239,9 @@ export default function BackupsPage() {
     }, [detailJob]);
 
     const [copiedChecksum, setCopiedChecksum] = useState(false);
-
     // Modal & Policy States
     const [policyOpen, setPolicyOpen] = useState(false);
+    const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
     const [restoreOpen, setRestoreOpen] = useState(false);
     const [selectedJob, setSelectedJob] = useState<BackupJob | null>(null);
     const [target, setTarget] = useState<RestoreTarget>('STAGING');
@@ -230,6 +254,17 @@ export default function BackupsPage() {
     const [dynamicPhrase, setDynamicPhrase] = useState<string>('');
     const [rejectRequest, setRejectRequest] = useState<RestoreRequest | null>(null);
     const [rejectReason, setRejectReason] = useState('');
+
+    const handleSaveSettings = async (settingsPayload: BackupSettingsPayload) => {
+        try {
+            await api.put('/backups/settings', settingsPayload);
+            setToast({ message: 'Cập nhật cấu hình tự động sao lưu & lưu trữ kép thành công!', type: 'success' });
+            await fetchData(true);
+        } catch (err: any) {
+            setToast({ message: err?.response?.data?.message || 'Không thể lưu cấu hình sao lưu.', type: 'error' });
+            throw err;
+        }
+    };
 
     const fetchData = useCallback(async (silent = false) => {
         if (!silent) setLoading(true);
@@ -485,6 +520,16 @@ export default function BackupsPage() {
 
                     <Button
                         type="button"
+                        variant="secondary"
+                        size="md"
+                        onClick={() => setIsSettingsModalOpen(true)}
+                        leftIcon={<SlidersHorizontal className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                    >
+                        Cài đặt tự động & Lưu trữ
+                    </Button>
+
+                    <Button
+                        type="button"
                         variant="primary"
                         size="md"
                         onClick={() => void createBackup('FULL')}
@@ -531,20 +576,31 @@ export default function BackupsPage() {
 
                     <div className="mt-2.5">
                         <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
-                            Lịch chạy: {overview?.worker?.schedule || '02:00'} ({overview?.timezone || 'Asia/Ho_Chi_Minh'})
+                            Chu kỳ: {overview?.settings?.intervalDays ? `${overview.settings.intervalDays} ngày/lần` : 'Hàng ngày'} · {overview?.worker?.schedule || '02:00'}
                         </span>
                     </div>
                 </div>
 
-                {/* Card 2: Storage Connection */}
-                <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer">
+                {/* Card 2: Dual Storage Connection */}
+                <div
+                    onClick={() => setIsSettingsModalOpen(true)}
+                    className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer"
+                    title="Nhấp để cấu hình kho lưu trữ kép"
+                >
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0 flex-1">
-                            <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
-                                Nơi lưu trữ (Storage)
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                                    Nơi lưu trữ (Storage)
+                                </span>
+                                {overview?.storage?.dualStorageEnabled && (
+                                    <span className="ui-pill inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-type-helper font-medium border border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-300">
+                                        Lưu 2 nơi
+                                    </span>
+                                )}
+                            </div>
                             <div className="h-[38px] flex items-center text-type-card sm:text-type-section font-semibold text-slate-900 dark:text-slate-100 leading-[28px] truncate">
-                                {overview?.storage?.provider === 'S3' ? 'Amazon S3 / MinIO' : 'Ổ đĩa máy chủ (Local)'}
+                                {overview?.storage?.dualStorageEnabled ? 'Lưu trữ kép (Mất 1 còn 1)' : overview?.storage?.provider === 'S3' ? 'Amazon S3' : 'Ổ đĩa máy chủ (1 nơi)'}
                             </div>
                         </div>
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
@@ -554,13 +610,15 @@ export default function BackupsPage() {
 
                     <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
                         <div
-                            className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500 w-full"
+                            className="bg-emerald-600 dark:bg-emerald-500 h-full rounded-full transition-all duration-500 w-full"
                         />
                     </div>
 
                     <div className="mt-2.5">
                         <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
-                            {overview?.storage?.provider === 'S3' ? 'Lưu trữ offsite đã cấu hình' : 'Thư mục máy chủ cục bộ'}
+                            {overview?.storage?.dualStorageEnabled
+                                ? 'Kho chính + Kho dự phòng (Mirror: Sẵn sàng 100%)'
+                                : overview?.storage?.warning || 'Chỉ lưu ở 1 vị trí, khuyến nghị bật lưu trữ kép'}
                         </span>
                     </div>
                 </div>
@@ -1592,6 +1650,13 @@ BACKUP_RETENTION_MONTHLY="12" # Số tháng lưu trữ`}
                     </div>
                 </div>
             </Modal>
+                    {/* Backup Settings Modal */}
+            <BackupSettingsModal
+                isOpen={isSettingsModalOpen}
+                onClose={() => setIsSettingsModalOpen(false)}
+                initialSettings={overview?.settings || null}
+                onSave={handleSaveSettings}
+            />
         </main>
     );
 }

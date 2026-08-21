@@ -23,6 +23,8 @@ import { validateOrReject } from 'class-validator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
+import { PermissionGuard } from '../access-control/permission.guard';
+import { Permissions } from '../access-control/permissions.decorator';
 import { AiQuestionsService } from './ai.service';
 import {
   BulkActionDto,
@@ -71,8 +73,9 @@ const mediaUpload = FilesInterceptor('files', 10, {
   },
 });
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 @Roles('ADMIN', 'TEACHER')
+@Permissions('QUESTION_MANAGE')
 @Controller('questions')
 export class QuestionsController {
   constructor(

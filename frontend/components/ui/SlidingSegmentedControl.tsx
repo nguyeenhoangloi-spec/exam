@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
 export interface SlidingSegmentedOption<T extends string = string> {
   value: T;
   label: string;
-  icon?: React.ComponentType<{ className?: string }>;
+  icon?: React.ElementType<{ className?: string }>;
   count?: number;
 }
 
@@ -15,6 +15,7 @@ interface SlidingSegmentedControlProps<T extends string = string> {
   options: SlidingSegmentedOption<T>[];
   className?: string;
   size?: 'sm' | 'md';
+  variant?: 'default' | 'primary';
 }
 
 export function SlidingSegmentedControl<T extends string = string>({
@@ -23,6 +24,7 @@ export function SlidingSegmentedControl<T extends string = string>({
   options,
   className = '',
   size = 'md',
+  variant = 'default',
 }: SlidingSegmentedControlProps<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -66,24 +68,32 @@ export function SlidingSegmentedControl<T extends string = string>({
     return () => window.removeEventListener('resize', handleResize);
   }, [updateIndicator]);
 
-  const heightClass = size === 'sm' ? 'h-8 text-type-helper' : 'h-10 text-type-helper';
-  const paddingClass = size === 'sm' ? 'px-2.5 py-1' : 'px-3.5 py-1.5';
-  const iconSizeClass = size === 'sm' ? 'h-3.5 w-3.5' : 'h-4 w-4';
+  const heightClass = size === 'sm' ? 'h-9 text-type-helper' : 'h-10.5 text-type-helper';
+  const paddingClass = size === 'sm' ? 'px-3 py-1.5' : 'px-4 py-2';
+  const iconSizeClass = size === 'sm' ? 'h-4 w-4' : 'h-4.5 w-4.5';
+
+  const isPrimary = variant === 'primary';
 
   return (
     <div
       ref={containerRef}
       role="tablist"
-      className={`relative inline-flex items-center rounded-xl bg-slate-100 dark:bg-slate-800/90 p-1 border border-slate-200/60 dark:border-slate-700/60 select-none shadow-2xs ${heightClass} ${className}`}
+      className={`relative inline-flex items-center rounded-xl bg-slate-100/90 dark:bg-slate-800/90 p-1 border border-slate-200/80 dark:border-slate-700/80 select-none shadow-2xs ${heightClass} ${className}`}
     >
       {/* Sliding Background Indicator Pill */}
       <div
-        className="absolute top-1 bottom-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700/80 shadow-xs shadow-slate-900/5 dark:shadow-black/20 pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[transform,width]"
+        className={`absolute top-1 bottom-1 rounded-xl pointer-events-none transition-all will-change-[transform,width] ${
+          isPrimary
+            ? 'bg-blue-600 dark:bg-blue-600 shadow-sm shadow-blue-600/30'
+            : 'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700/80 shadow-xs shadow-slate-900/5 dark:shadow-black/20'
+        }`}
         style={{
           transform: `translateX(${indicatorStyle.left}px)`,
           width: `${indicatorStyle.width}px`,
           opacity: indicatorStyle.opacity,
-          transition: isReady ? 'transform 300ms cubic-bezier(0.16, 1, 0.3, 1), width 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease' : 'none',
+          transition: isReady
+            ? 'transform 300ms cubic-bezier(0.16, 1, 0.3, 1), width 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease'
+            : 'none',
         }}
       />
 
@@ -102,26 +112,34 @@ export function SlidingSegmentedControl<T extends string = string>({
             role="tab"
             aria-selected={isActive}
             onClick={() => onChange(option.value)}
-            className={`relative z-10 flex items-center justify-center gap-1.5 rounded-xl font-semibold transition-colors duration-200 cursor-pointer active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/30 ${paddingClass} ${
+            className={`relative z-10 flex items-center justify-center gap-2 rounded-xl font-semibold transition-colors duration-200 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/30 ${paddingClass} ${
               isActive
-                ? 'text-slate-900 dark:text-slate-100 font-semibold'
+                ? isPrimary
+                  ? 'text-white font-semibold'
+                  : 'text-slate-900 dark:text-slate-100 font-semibold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
             }`}
           >
             {Icon && (
               <Icon
                 className={`${iconSizeClass} transition-colors duration-200 ${
-                  isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'
+                  isActive
+                    ? isPrimary
+                      ? 'text-white'
+                      : 'text-blue-600 dark:text-blue-400'
+                    : 'text-slate-400 dark:text-slate-500'
                 }`}
               />
             )}
-            <span className="whitespace-nowrap">{option.label}</span>
+            <span className="whitespace-nowrap text-type-body font-medium">{option.label}</span>
 
             {typeof option.count === 'number' && (
               <span
                 className={`ui-pill ml-1 px-1.5 py-0.5 rounded-full text-type-helper font-medium tabular-nums border transition-colors duration-200 ${
                   isActive
-                    ? 'ui-pill-solid bg-blue-600 text-white border-blue-600'
+                    ? isPrimary
+                      ? 'bg-white/20 text-white border-white/30'
+                      : 'ui-pill-solid bg-blue-600 text-white border-blue-600'
                     : 'text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600'
                 }`}
               >

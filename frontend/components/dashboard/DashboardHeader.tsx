@@ -1,15 +1,19 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Calendar, Clock } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { FilterSelect } from '../ui/FilterSelect';
 
 export function DashboardHeader({
   selectedPeriod = 'ALL',
   onPeriodChange,
+  title = 'Tổng quan hệ thống',
+  subtitle = 'Trung tâm điều hành và giám sát khảo thí toàn trường',
 }: {
   selectedPeriod?: string;
   onPeriodChange?: (period: string) => void;
+  title?: string;
+  subtitle?: string;
 }) {
   const [currentDateStr, setCurrentDateStr] = useState('');
   const [lastUpdatedStr, setLastUpdatedStr] = useState('');
@@ -47,10 +51,10 @@ export function DashboardHeader({
       {/* Left: Page Title & Executive Subtitle */}
       <div className="space-y-0.5">
         <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-          Tổng quan hệ thống
+          {title}
         </h1>
         <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-          Trung tâm điều hành và giám sát khảo thí toàn trường
+          {subtitle}
         </p>
       </div>
 
