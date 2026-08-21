@@ -36,6 +36,7 @@ import {
   LayoutGrid,
   Layers,
   Check,
+  Send,
   Lock,
   Clock,
   Maximize2,
@@ -70,7 +71,7 @@ function TeacherEssayGradingContent() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [aiLoading, setAiLoading] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'NOT_SUBMITTED' | 'GRADING' | 'WAITING_APPROVAL' | 'PUBLISHED'>('ALL');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'NOT_SUBMITTED' | 'GRADING' | 'WAITING_APPROVAL' | 'APPROVED' | 'PUBLISHED'>('ALL');
   const [subjectFilter, setSubjectFilter] = useState<string>('ALL');
   const [dateFilter, setDateFilter] = useState<string>('ALL');
   const [scheduleFilter, setScheduleFilter] = useState<string>('ALL');
@@ -496,6 +497,29 @@ function TeacherEssayGradingContent() {
     });
   };
 
+  const handlePublishApproved = () => {
+    if (!selected || currentUser?.role !== 'ADMIN') return;
+    setConfirmModal({
+      isOpen: true,
+      title: 'Công bố điểm bài thi?',
+      message: `Công bố điểm bài thi của ${selected.student?.fullName}. Sinh viên chỉ xem được điểm sau khi ca thi chính thức kết thúc.`,
+      type: 'info',
+      confirmText: 'Công bố điểm',
+      cancelText: 'Hủy bỏ',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.post(`/essay/grading/attempts/${selected.id}/publish`);
+          setToast({ message: 'Đã công bố điểm. Kết quả sẽ mở cho sinh viên sau giờ kết thúc ca thi.', type: 'success' });
+          await loadAssignments();
+          await openAttempt(selected.id);
+        } catch (e: any) {
+          setToast({ message: e?.response?.data?.message || 'Không thể công bố điểm bài thi.', type: 'error' });
+        }
+      },
+    });
+  };
+
   const availableDates = useMemo(() => {
     const set = new Set<string>();
     rows.forEach((r) => {
@@ -555,15 +579,16 @@ function TeacherEssayGradingContent() {
   }, [rows, dateFilter, subjectFilter]);
 
   const counts = useMemo(() => {
-    let all = 0, notSubmitted = 0, grading = 0, waiting = 0, published = 0;
+    let all = 0, notSubmitted = 0, grading = 0, waiting = 0, approved = 0, published = 0;
     rows.forEach((r) => {
       all++;
       if (r.gradingStatus === 'PUBLISHED') published++;
+      else if (r.gradingStatus === 'APPROVED') approved++;
       else if (r.gradingStatus === 'WAITING_APPROVAL') waiting++;
       else if (isNotSubmitted(r)) notSubmitted++;
       else grading++;
     });
-    return { all, notSubmitted, grading, waiting, published };
+    return { all, notSubmitted, grading, waiting, approved, published };
   }, [rows, isNotSubmitted]);
 
   const filteredRows = useMemo(() => {
@@ -571,8 +596,9 @@ function TeacherEssayGradingContent() {
       // 1. Status Filter
       if (statusFilter !== 'ALL') {
         if (statusFilter === 'NOT_SUBMITTED' && !isNotSubmitted(r)) return false;
-        if (statusFilter === 'GRADING' && (isNotSubmitted(r) || r.gradingStatus === 'PUBLISHED' || r.gradingStatus === 'WAITING_APPROVAL')) return false;
+        if (statusFilter === 'GRADING' && (isNotSubmitted(r) || r.gradingStatus === 'PUBLISHED' || r.gradingStatus === 'APPROVED' || r.gradingStatus === 'WAITING_APPROVAL')) return false;
         if (statusFilter === 'WAITING_APPROVAL' && r.gradingStatus !== 'WAITING_APPROVAL') return false;
+        if (statusFilter === 'APPROVED' && r.gradingStatus !== 'APPROVED') return false;
         if (statusFilter === 'PUBLISHED' && r.gradingStatus !== 'PUBLISHED') return false;
       }
 
@@ -673,7 +699,9 @@ function TeacherEssayGradingContent() {
 
   const isReadOnly = useMemo(() => {
     if (!selected) return false;
-    return selected.gradingStatus === 'PUBLISHED' || selected.gradingStatus === 'WAITING_APPROVAL';
+    return selected.gradingStatus === 'PUBLISHED'
+      || selected.gradingStatus === 'APPROVED'
+      || selected.gradingStatus === 'WAITING_APPROVAL';
   }, [selected]);
 
   return (
@@ -777,6 +805,7 @@ function TeacherEssayGradingContent() {
                     { key: 'ALL', label: 'Tất cả', count: counts.all },
                     { key: 'GRADING', label: 'Đang chấm', count: counts.grading },
                     { key: 'WAITING_APPROVAL', label: 'Chờ duyệt', count: counts.waiting },
+                    { key: 'APPROVED', label: 'Đã duyệt', count: counts.approved },
                     { key: 'PUBLISHED', label: 'Công bố', count: counts.published },
                   ]}
                   active={statusFilter}
@@ -1044,13 +1073,25 @@ function TeacherEssayGradingContent() {
                     {!isNotSubmitted(selected) && !selected.isVirtual && (
                       isReadOnly ? (
                         selected.gradingStatus === 'PUBLISHED' ? (
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-type-helper font-semibold select-none shadow-2xs">
-                            <Lock className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-300/80 dark:border-emerald-700/80 text-emerald-800 dark:text-emerald-300 text-type-helper font-medium select-none shadow-2xs">
+                            <Lock className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                             <span>Đã công bố (Khóa điểm)</span>
                           </div>
+                        ) : selected.gradingStatus === 'APPROVED' ? (
+                          <div className="flex items-center gap-2">
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50/70 dark:bg-blue-950/40 border border-blue-300/80 dark:border-blue-700/80 text-blue-800 dark:text-blue-300 text-type-helper font-medium select-none shadow-2xs">
+                              <Lock className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                              <span>Đã duyệt nội bộ</span>
+                            </div>
+                            {currentUser?.role === 'ADMIN' && (
+                              <Button type="button" variant="primary" size="sm" onClick={handlePublishApproved} leftIcon={<Send className="w-3.5 h-3.5" />}>
+                                Công bố điểm
+                              </Button>
+                            )}
+                          </div>
                         ) : (
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/80 text-amber-800 dark:text-amber-300 text-type-helper font-semibold select-none shadow-2xs">
-                            <Clock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50/70 dark:bg-amber-950/40 border border-amber-300/80 dark:border-amber-700/80 text-amber-800 dark:text-amber-300 text-type-helper font-medium select-none shadow-2xs">
+                            <Clock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
                             <span>Đang chờ Admin duyệt</span>
                           </div>
                         )

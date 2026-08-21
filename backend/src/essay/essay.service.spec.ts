@@ -158,15 +158,32 @@ describe('EssayService', () => {
       ).rejects.toBeInstanceOf(ForbiddenException);
     });
 
-    it('ADMIN duyệt điểm và chuyển trạng thái công bố thành công', async () => {
+    it('ADMIN duyệt nội bộ nhưng không công bố điểm cho sinh viên', async () => {
       prisma.examAttempt.findUnique.mockResolvedValue({
         id: 'att1',
         gradingStatus: EssayAttemptGradingStatus.WAITING_APPROVAL,
       });
       prisma.examAttempt.update.mockResolvedValue({});
 
+      const res = await service.approve({ id: 1, role: 'ADMIN' }, 'att1', false);
+      expect(res.gradingStatus).toBe(EssayAttemptGradingStatus.APPROVED);
+      expect(prisma.examAttempt.update).toHaveBeenCalledWith(expect.objectContaining({
+        data: expect.objectContaining({ gradingStatus: EssayAttemptGradingStatus.APPROVED, publishedAt: null }),
+      }));
+    });
+
+    it('ADMIN chỉ công bố khi bài đã được duyệt hoặc đang chờ duyệt', async () => {
+      prisma.examAttempt.findUnique.mockResolvedValue({
+        id: 'att1',
+        gradingStatus: EssayAttemptGradingStatus.APPROVED,
+      });
+      prisma.examAttempt.update.mockResolvedValue({});
+
       const res = await service.approve({ id: 1, role: 'ADMIN' }, 'att1', true);
       expect(res.gradingStatus).toBe(EssayAttemptGradingStatus.PUBLISHED);
+      expect(prisma.examAttempt.update).toHaveBeenCalledWith(expect.objectContaining({
+        data: expect.objectContaining({ gradingStatus: EssayAttemptGradingStatus.PUBLISHED, publishedAt: expect.any(Date) }),
+      }));
     });
 
     it('ADMIN trả lại bài thi để chấm lại thành công', async () => {

@@ -44,12 +44,11 @@ export class OnlineExamVisibilityCore {
     const mode = attempt.mode || config?.mode || 'OFFICIAL';
     const isOfficial = mode === 'OFFICIAL';
 
-    const canShowScore = hasEssay
-      ? isPublished
-      : isPublished
-        || attempt.status === 'GRADED'
-        || scheduleEnded
-        || (!isOfficial && Boolean(config?.showResultImmediately));
+    // Điểm kỳ thi chính thức chỉ được trả ra khi ADMIN đã công bố và ca thi
+    // đã kết thúc. Không chỉ ẩn ở UI: mọi API dùng core này đều áp dụng luật.
+    const canShowScore = isOfficial
+      ? isPublished && scheduleEnded
+      : isPublished || Boolean(config?.showResultImmediately);
 
     const canReviewAnswers = Boolean(config?.allowReview)
       && canShowScore

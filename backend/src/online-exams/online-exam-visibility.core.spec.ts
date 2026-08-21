@@ -14,14 +14,25 @@ describe('OnlineExamVisibilityCore', () => {
     expect(visibility.canReviewAnswers).toBe(false);
   });
 
-  it('allows an objective score after the exam closes but still withholds the answer key', () => {
+  it('does not release an official score merely because the exam has ended', () => {
     const visibility = core.evaluate(
       { mode: 'OFFICIAL', status: 'SUBMITTED', gradingStatus: 'NOT_SUBMITTED' },
       { mode: 'OFFICIAL', allowReview: true },
       true,
     );
 
-    expect(visibility.canShowScore).toBe(true);
+    expect(visibility.canShowScore).toBe(false);
+    expect(visibility.canReviewAnswers).toBe(false);
+  });
+
+  it('withholds a published official score until the exam window has ended', () => {
+    const visibility = core.evaluate(
+      { mode: 'OFFICIAL', status: 'GRADED', gradingStatus: 'PUBLISHED', publishedAt: new Date() },
+      { mode: 'OFFICIAL', allowReview: true },
+      false,
+    );
+
+    expect(visibility.canShowScore).toBe(false);
     expect(visibility.canReviewAnswers).toBe(false);
   });
 

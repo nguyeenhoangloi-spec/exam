@@ -17,14 +17,12 @@ describe('GradeAppealsService permissions', () => {
     prisma.gradeAppeal.findFirst.mockResolvedValue(appeal);
 
     await expect(service.findOne({ id: 42, role: 'STUDENT' }, 'appeal-1')).resolves.toBe(appeal);
-    expect(prisma.gradeAppeal.findFirst).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: {
-          id: 'appeal-1',
-          student: { userId: 42 },
-        },
-      }),
-    );
+    const where = prisma.gradeAppeal.findFirst.mock.calls[0][0].where;
+    expect(where.id).toBe('appeal-1');
+    expect(where.student).toEqual({ userId: 42 });
+    expect(where.AND).toEqual(expect.arrayContaining([
+      { attempt: { onlineExamConfig: { examSchedule: { mode: 'OFFICIAL' } } } },
+    ]));
   });
 
   it('không tiết lộ đơn phúc khảo của tài khoản khác', async () => {
@@ -40,9 +38,10 @@ describe('GradeAppealsService permissions', () => {
     await expect(service.findOne({ id: 7, role: 'TEACHER' }, 'appeal-2')).resolves.toBe(appeal);
     const where = prisma.gradeAppeal.findFirst.mock.calls[0][0].where;
     expect(where.id).toBe('appeal-2');
-    expect(where.attempt.onlineExamConfig.examSchedule.examScheduleRooms).toEqual({
-      some: { supervisors: { some: { teacher: { userId: 7 } } } },
-    });
+    expect(where.AND).toEqual(expect.arrayContaining([
+      { attempt: { onlineExamConfig: { examSchedule: { mode: 'OFFICIAL' } } } },
+      { attempt: { onlineExamConfig: { examSchedule: { examScheduleRooms: { some: { supervisors: { some: { teacher: { userId: 7 } } } } } } } } },
+    ]));
   });
 
   it('Admin mở chi tiết đơn mà không bị giới hạn theo ca', async () => {
@@ -50,9 +49,11 @@ describe('GradeAppealsService permissions', () => {
     prisma.gradeAppeal.findFirst.mockResolvedValue(appeal);
 
     await expect(service.findOne({ id: 1, role: 'ADMIN' }, 'appeal-3')).resolves.toBe(appeal);
-    expect(prisma.gradeAppeal.findFirst).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { id: 'appeal-3' } }),
-    );
+    const where = prisma.gradeAppeal.findFirst.mock.calls[0][0].where;
+    expect(where.id).toBe('appeal-3');
+    expect(where.AND).toEqual(expect.arrayContaining([
+      { attempt: { onlineExamConfig: { examSchedule: { mode: 'OFFICIAL' } } } },
+    ]));
   });
 
   it('không cho sinh viên phúc khảo trước khi kết quả được công bố', async () => {
@@ -74,5 +75,26 @@ describe('GradeAppealsService permissions', () => {
       attemptId: 'attempt-1',
       reason: 'Đề nghị kiểm tra lại kết quả.',
     })).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('không cho sinh viên phúc khảo kết quả thi thử', async () => {
+    const scopedPrisma: any = {
+      student: { findUnique: jest.fn().mockResolvedValue({ id: 12 }) },
+      examAttempt: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 'attempt-mock',
+          studentId: 12,
+          totalScore: 8,
+          publishedAt: new Date(),
+          onlineExamConfig: { examSchedule: { mode: 'MOCK' } },
+        }),
+      },
+    };
+    const scopedService = new GradeAppealsService(scopedPrisma, audit as any);
+
+    await expect(scopedService.createAppeal(42, {
+      attemptId: 'attempt-mock',
+      reason: 'Đề nghị kiểm tra lại kết quả thi thử.',
+    })).rejects.toThrow('không hỗ trợ phúc khảo');
   });
 });

@@ -275,6 +275,7 @@ export class EssayService {
               data: {
                 student: { connect: { id: ers.studentId } },
                 onlineExamConfig: { connect: { id: config.id } },
+                mode: sched.mode,
                 attemptToken: randomUUID(),
                 status: AttemptStatus.AUTO_SUBMITTED,
                 gradingStatus: EssayAttemptGradingStatus.PUBLISHED,
@@ -1123,13 +1124,26 @@ Hãy đánh giá và trả về JSON duy nhất theo đúng cấu trúc schema s
     const attempt = await this.prisma.examAttempt.findUnique({ where: { id: attemptId } });
     if (!attempt) throw new NotFoundException('Không tìm thấy bài thi.');
 
-    const nextGradingStatus = EssayAttemptGradingStatus.PUBLISHED;
+    if (!publish && attempt.gradingStatus !== EssayAttemptGradingStatus.WAITING_APPROVAL) {
+      throw new BadRequestException('Chỉ bài đang chờ duyệt mới có thể được duyệt nội bộ.');
+    }
+    const publishableStatuses: EssayAttemptGradingStatus[] = [
+      EssayAttemptGradingStatus.WAITING_APPROVAL,
+      EssayAttemptGradingStatus.APPROVED,
+    ];
+    if (publish && !publishableStatuses.includes(attempt.gradingStatus)) {
+      throw new BadRequestException('Chỉ bài chờ duyệt hoặc đã duyệt nội bộ mới có thể công bố.');
+    }
+
+    const nextGradingStatus = publish
+      ? EssayAttemptGradingStatus.PUBLISHED
+      : EssayAttemptGradingStatus.APPROVED;
 
     const data: Prisma.ExamAttemptUpdateInput = {
       gradingStatus: nextGradingStatus,
       approvedBy: { connect: { id: actor.id } },
       approvedAt: new Date(),
-      publishedAt: new Date(),
+      ...(publish ? { publishedAt: new Date() } : { publishedAt: null }),
     };
 
     await this.prisma.$transaction(async (tx) => {

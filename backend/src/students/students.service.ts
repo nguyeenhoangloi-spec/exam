@@ -7,6 +7,17 @@ import { AuditService } from '../audit/audit.service';
 export class StudentsService {
   constructor(private prisma: PrismaService, private audit: AuditService) {}
 
+  /** Kết quả thi chính thức chỉ được mở sau giờ kết thúc của ca thi. */
+  private isScheduleEnded(schedule?: { examDate?: Date | string | null; endTime?: string | null }): boolean {
+    if (!schedule?.examDate || !schedule.endTime) return false;
+    const [hours, minutes] = schedule.endTime.split(':').map(Number);
+    if (!Number.isInteger(hours) || !Number.isInteger(minutes)) return false;
+    const endAt = new Date(schedule.examDate);
+    if (Number.isNaN(endAt.getTime())) return false;
+    endAt.setHours(hours, minutes, 0, 0);
+    return new Date() >= endAt;
+  }
+
   async setLock(actor: { id: number }, id: number, locked: boolean) {
     const student = await this.findOne(id);
     return this.prisma.$transaction(async (tx) => {
@@ -260,8 +271,11 @@ export class StudentsService {
     });
 
     const officialSchedules = roomStudents.map((rs) => {
-      const config = rs.examScheduleRoom.examSchedule.onlineExamConfig;
+      const schedule = rs.examScheduleRoom.examSchedule;
+      const config = schedule.onlineExamConfig;
       const attempt = config?.attempts?.[0];
+      const isMarkedPublished = Boolean(attempt?.publishedAt) || attempt?.gradingStatus === 'PUBLISHED';
+      const hasPublishedResult = isMarkedPublished && this.isScheduleEnded(schedule);
       return {
         id: rs.id,
         scheduleId: rs.examScheduleRoom.examSchedule.id,
@@ -286,8 +300,8 @@ export class StudentsService {
               id: attempt.id,
               gradingStatus: attempt.gradingStatus,
               status: attempt.status,
-              publishedAt: attempt.publishedAt,
-              hasPublishedResult: Boolean(attempt.publishedAt),
+              publishedAt: hasPublishedResult ? attempt.publishedAt : null,
+              hasPublishedResult,
             }
           : null,
       };
@@ -462,6 +476,7 @@ export class StudentsService {
           examSchedule: {
             status: { not: 'CANCELLED' },
             deletedAt: null,
+            mode: 'OFFICIAL',
           },
         },
       },
@@ -508,8 +523,11 @@ export class StudentsService {
       const attempt = config?.attempts?.[0];
 
       // Determine publication and grading status
-      const isPublished = Boolean(attempt?.publishedAt);
-      const isGrading = attempt && (!isPublished || attempt.gradingStatus === 'UNDER_GRADING' || attempt.gradingStatus === 'WAITING_APPROVAL');
+      const isMarkedPublished = Boolean(attempt?.publishedAt) || attempt?.gradingStatus === 'PUBLISHED';
+      const isPublished = isMarkedPublished && this.isScheduleEnded(schedule);
+      const isGrading = attempt
+        && !isMarkedPublished
+        && (!isPublished || attempt.gradingStatus === 'UNDER_GRADING' || attempt.gradingStatus === 'WAITING_APPROVAL');
 
       let statusLabel: 'PASSED' | 'FAILED' | 'GRADING' | 'UNPUBLISHED' = 'UNPUBLISHED';
       let score: number | null = null;
@@ -591,7 +609,7 @@ export class StudentsService {
         essayMax,
         lecturerComments: attempt?.penaltyReason || null,
         canAppeal,
-        publishedAt: attempt?.publishedAt || null,
+        publishedAt: isPublished ? attempt?.publishedAt || null : null,
       };
     });
 
@@ -628,9 +646,18 @@ export class StudentsService {
   async requestAppeal(userId: number, attemptId: string, reason: string) {
     const student = await this.prisma.student.findUnique({ where: { userId } });
     if (!student) throw new NotFoundException('Không tìm thấy thông tin sinh viên.');
-    const attempt = await this.prisma.examAttempt.findUnique({ where: { id: attemptId } });
+    const attempt = await this.prisma.examAttempt.findUnique({
+      where: { id: attemptId },
+      include: { onlineExamConfig: { select: { examSchedule: { select: { mode: true, examDate: true, endTime: true } } } } },
+    });
     if (!attempt || attempt.studentId !== student.id) {
       throw new BadRequestException('Lượt thi không hợp lệ hoặc không thuộc quyền sở hữu.');
+    }
+    if (attempt.onlineExamConfig?.examSchedule?.mode !== 'OFFICIAL') {
+      throw new BadRequestException('Kết quả thi thử chỉ phục vụ luyện tập và không hỗ trợ phúc khảo.');
+    }
+    if (!this.isScheduleEnded(attempt.onlineExamConfig?.examSchedule)) {
+      throw new BadRequestException('Kết quả chưa đến thời điểm mở cho sinh viên nên chưa thể gửi phúc khảo.');
     }
     if (!attempt.publishedAt || attempt.totalScore === null || attempt.totalScore === undefined) {
       throw new BadRequestException('Chỉ được gửi phúc khảo sau khi kết quả đã được công bố.');

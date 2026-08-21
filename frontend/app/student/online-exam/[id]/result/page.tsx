@@ -97,16 +97,23 @@ export default function StudentExamResultPage() {
   }
 
   const isUnderReview = result.status === 'UNDER_REVIEW' || result.isFlagged;
-  const isEssayWaiting = Boolean(result.gradingStatus && result.gradingStatus !== 'PUBLISHED');
+  // Backend is authoritative. A PUBLISHED status before the official exam end
+  // still must look unpublished to students until the release gate opens.
+  const isResultReleased = result.showResultImmediately === true;
+  const isEssayWaiting = !isResultReleased;
 
   if (isEssayWaiting) {
     return (
       <div className="min-h-screen bg-slate-50/60 dark:bg-slate-950 p-6 md:p-12 text-slate-900 dark:text-slate-100 flex items-center justify-center">
         <div className="mx-auto max-w-xl rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 text-center shadow-2xs space-y-4">
           <CheckCircle2 className="mx-auto h-12 w-12 text-blue-600" />
-          <h1 className="text-type-section font-semibold text-slate-900 dark:text-slate-100">Bài đã nộp, đang chờ chấm điểm</h1>
+          <h1 className="text-type-section font-semibold text-slate-900 dark:text-slate-100">
+            {result.gradingStatus === 'PUBLISHED' && result.isExamEnded === false ? 'Kết quả chưa đến giờ mở' : 'Bài đã nộp, đang chờ chấm điểm'}
+          </h1>
           <p className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-            Điểm tự luận sẽ hiển thị sau khi giảng viên hoàn tất chấm bài và ban quản trị duyệt công bố kết quả.
+            {result.gradingStatus === 'PUBLISHED' && result.isExamEnded === false
+              ? 'Điểm đã được chuẩn bị nhưng chỉ hiển thị sau khi ca thi chính thức kết thúc.'
+              : 'Điểm sẽ hiển thị sau khi giảng viên hoàn tất chấm bài, ban quản trị công bố và đến thời điểm mở kết quả.'}
           </p>
           <Button
             type="button"

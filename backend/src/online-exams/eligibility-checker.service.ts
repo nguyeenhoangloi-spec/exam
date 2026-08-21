@@ -258,8 +258,8 @@ export class EligibilityCheckerService {
       if (publishedPaper) {
         config = await this.prisma.onlineExamConfig.upsert({
           where: { examScheduleId: scheduleId },
-          update: { examPaperId: publishedPaper.id },
-          create: { examScheduleId: scheduleId, examPaperId: publishedPaper.id },
+          update: { examPaperId: publishedPaper.id, mode: schedule.mode },
+          create: { examScheduleId: scheduleId, examPaperId: publishedPaper.id, mode: schedule.mode },
           include: { examPaper: true },
         });
       }

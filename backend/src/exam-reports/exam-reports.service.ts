@@ -16,7 +16,8 @@ export class ExamReportsService {
     const fromDate = query.fromDate ? new Date(`${query.fromDate}T00:00:00.000Z`) : undefined;
     const toDate = query.toDate ? new Date(`${query.toDate}T23:59:59.999Z`) : undefined;
 
-    const scheduleWhere: any = { deletedAt: null };
+    // Báo cáo khảo thí chính thức không bao gồm dữ liệu luyện tập/thi thử.
+    const scheduleWhere: any = { deletedAt: null, mode: 'OFFICIAL' };
     if (examPeriodId) scheduleWhere.examPeriodId = examPeriodId;
     if (subjectId) scheduleWhere.subjectId = subjectId;
     if (fromDate || toDate) scheduleWhere.examDate = { ...(fromDate ? { gte: fromDate } : {}), ...(toDate ? { lte: toDate } : {}) };

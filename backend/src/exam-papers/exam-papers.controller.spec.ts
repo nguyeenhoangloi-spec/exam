@@ -6,11 +6,11 @@ describe('ExamPapersController roles', () => {
     expect(Reflect.getMetadata(ROLES_KEY, ExamPapersController)).toEqual(['ADMIN', 'TEACHER']);
   });
 
-  it('chỉ ADMIN được phát hành đề', () => {
+  it('chỉ ADMIN và TEACHER được phát hành đề', () => {
     const roles = Reflect.getMetadata(
       ROLES_KEY,
       ExamPapersController.prototype.publish,
     );
-    expect(roles).toEqual(['ADMIN']);
+    expect(roles).toEqual(['ADMIN', 'TEACHER']);
   });
 });

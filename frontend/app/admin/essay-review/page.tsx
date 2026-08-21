@@ -297,10 +297,12 @@ function AdminEssayReviewContent() {
     setConfirmModal({
       isOpen: true,
       title: publish ? 'Duyệt & Công bố điểm thi?' : 'Duyệt điểm bài thi?',
-      message: `Bạn có chắc chắn muốn DUYỆT & CÔNG BỐ điểm bài thi của thí sinh ${selected.student?.fullName}? Sau khi công bố, sinh viên sẽ nhìn thấy kết quả bài làm và điểm số chính thức.`,
+      message: publish
+        ? `Bạn có chắc chắn muốn công bố điểm bài thi của thí sinh ${selected.student?.fullName}? Sinh viên chỉ xem được kết quả sau khi ca thi chính thức kết thúc.`
+        : `Bạn có chắc chắn muốn duyệt nội bộ điểm bài thi của thí sinh ${selected.student?.fullName}? Điểm sẽ chưa hiển thị cho sinh viên cho đến khi được công bố.`,
       type: 'info',
       requireReason: false,
-      confirmText: 'Duyệt & Công bố',
+      confirmText: publish ? 'Duyệt & Công bố' : 'Duyệt nội bộ',
       cancelText: 'Hủy bỏ',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -506,14 +508,16 @@ function AdminEssayReviewContent() {
     let all = 0,
       waiting = 0,
       grading = 0,
+      approved = 0,
       published = 0;
     rows.forEach((r) => {
       all++;
       if (r.gradingStatus === 'PUBLISHED') published++;
+      else if (r.gradingStatus === 'APPROVED') approved++;
       else if (r.gradingStatus === 'WAITING_APPROVAL') waiting++;
       else grading++;
     });
-    return { all, waiting, grading, published };
+    return { all, waiting, grading, approved, published };
   }, [rows]);
 
   const filteredRows = useMemo(() => {
@@ -522,8 +526,9 @@ function AdminEssayReviewContent() {
       if (statusFilter !== 'ALL') {
         if (statusFilter === 'WAITING_APPROVAL' && r.gradingStatus !== 'WAITING_APPROVAL') return false;
         if (statusFilter === 'PUBLISHED' && r.gradingStatus !== 'PUBLISHED') return false;
-        if (statusFilter === 'GRADING' && (r.gradingStatus === 'PUBLISHED' || r.gradingStatus === 'WAITING_APPROVAL'))
+        if (statusFilter === 'GRADING' && (r.gradingStatus === 'PUBLISHED' || r.gradingStatus === 'APPROVED' || r.gradingStatus === 'WAITING_APPROVAL'))
           return false;
+        if (statusFilter === 'APPROVED' && r.gradingStatus !== 'APPROVED') return false;
       }
       // 2. Subject Filter
       if (subjectFilter !== 'ALL') {
@@ -666,6 +671,7 @@ function AdminEssayReviewContent() {
                   tabs={[
                     { key: 'ALL', label: 'Tất cả', count: counts.all },
                     { key: 'WAITING_APPROVAL', label: 'Chờ duyệt', count: counts.waiting },
+                    { key: 'APPROVED', label: 'Đã duyệt', count: counts.approved },
                     { key: 'GRADING', label: 'Đang chấm', count: counts.grading },
                     { key: 'PUBLISHED', label: 'Công bố', count: counts.published },
                   ]}
@@ -943,7 +949,7 @@ function AdminEssayReviewContent() {
                             <Lock className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                             <span>Đã công bố (Khóa điểm)</span>
                           </div>
-                        ) : (
+                        ) : selected.gradingStatus === 'APPROVED' ? (
                           <Button
                             type="button"
                             variant="primary"
@@ -951,8 +957,28 @@ function AdminEssayReviewContent() {
                             onClick={() => handleApprove(true)}
                             leftIcon={<Send className="w-3.5 h-3.5" />}
                           >
-                            Duyệt & Công bố
+                            Công bố điểm
                           </Button>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => handleApprove(false)}
+                            >
+                              Duyệt nội bộ
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="primary"
+                              size="sm"
+                              onClick={() => handleApprove(true)}
+                              leftIcon={<Send className="w-3.5 h-3.5" />}
+                            >
+                              Duyệt & Công bố
+                            </Button>
+                          </div>
                         )}
                       </>
                     )}

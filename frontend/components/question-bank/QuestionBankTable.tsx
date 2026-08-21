@@ -428,13 +428,13 @@ export function QuestionBankTable({
                           );
 
                           if (isVid) return (
-                            <span key={m.id || idx} className="inline-flex items-center gap-1 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50/60 dark:bg-blue-950/40 px-2 py-0.5 text-type-helper text-blue-700 dark:text-blue-300 font-medium">
+                            <span key={m.id || idx} className="ui-pill inline-flex items-center gap-1 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-50/60 dark:bg-blue-950/40 px-2 py-0.5 text-type-helper text-blue-700 dark:text-blue-300 font-medium">
                               Video
                             </span>
                           );
 
                           if (isAud) return (
-                            <span key={m.id || idx} className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/40 px-2 py-0.5 text-type-helper text-emerald-700 dark:text-emerald-300 font-medium">
+                            <span key={m.id || idx} className="ui-pill inline-flex items-center gap-1 rounded-full border border-emerald-200 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/40 px-2 py-0.5 text-type-helper text-emerald-700 dark:text-emerald-300 font-medium">
                               Audio
                             </span>
                           );
@@ -644,10 +644,10 @@ export function QuestionBankTable({
                                   return (
                                     <span
                                       key={ans.id || aIdx}
-                                      className="table-badge inline-flex items-center gap-1.5 rounded-lg border border-emerald-200/80 dark:border-emerald-800/80 bg-emerald-50/70 dark:bg-emerald-950/40 px-2 py-0.5 text-type-helper font-medium text-emerald-900 dark:text-emerald-200 shadow-2xs max-w-[200px]"
+                                      className="ui-pill table-badge inline-flex items-center gap-1.5 rounded-full border border-emerald-200/80 dark:border-emerald-800/80 bg-emerald-50/70 dark:bg-emerald-950/40 px-2 py-0.5 text-type-helper font-medium text-emerald-900 dark:text-emerald-200 shadow-2xs max-w-[200px]"
                                       title={`Ô trống #${bIdx}: ${mainAns}`}
                                     >
-                                      <span className="table-badge flex h-4.5 px-1.5 shrink-0 items-center justify-center rounded bg-emerald-600 text-type-helper font-medium text-white">
+                                      <span className="table-badge flex h-4.5 px-1.5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-type-helper font-medium text-white">
                                         Ô #{bIdx}
                                       </span>
                                       <span className="table-badge truncate font-medium text-emerald-800 dark:text-emerald-300">

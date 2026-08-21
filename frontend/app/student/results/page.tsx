@@ -219,8 +219,9 @@ export default function StudentResultsPage() {
   };
 
   const handleSubmitAppeal = async () => {
-    if (!selectedExamForAppeal || !selectedExamForAppeal.attemptId) {
-      setToast({ message: 'Không thể gửi đơn do không tìm thấy thông tin lượt thi.', type: 'error' });
+    const target = selectedExamForAppeal || detailItem;
+    if (!target || !target.attemptId) {
+      setToast({ message: 'Không tìm thấy thông tin lượt thi trực tuyến để gửi đơn phúc khảo.', type: 'error' });
       return;
     }
     if (!appealReason.trim()) {
@@ -231,7 +232,7 @@ export default function StudentResultsPage() {
     try {
       setSubmittingAppeal(true);
       await api.post('/grade-appeals', {
-        attemptId: selectedExamForAppeal.attemptId,
+        attemptId: target.attemptId,
         reason: appealReason.trim(),
       });
 
@@ -240,6 +241,7 @@ export default function StudentResultsPage() {
         type: 'success',
       });
       setShowAppealModal(false);
+      setSelectedExamForAppeal(null);
       setAppealReason('');
       fetchData();
       fetchMyAppeals();
@@ -1191,17 +1193,43 @@ export default function StudentResultsPage() {
                     </div>
                   )}
 
-                  {detailItem.canAppeal && (
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => setShowAppealModal(true)}
-                      leftIcon={<MessageSquare className="w-3.5 h-3.5" />}
-                      className="w-full justify-center"
-                    >
-                      Xin phúc khảo
-                    </Button>
-                  )}
+                  {(() => {
+                    const existingAppeal = myAppeals.find((a) => a.attemptId === detailItem.attemptId);
+                    if (existingAppeal) {
+                      const statusLabel = existingAppeal.status === 'PENDING'
+                        ? 'Đang chờ duyệt'
+                        : existingAppeal.status === 'APPROVED_REGRADE'
+                        ? 'Đã duyệt chấm lại'
+                        : existingAppeal.status === 'REJECTED'
+                        ? 'Bị từ chối'
+                        : 'Đang xử lý';
+                      return (
+                        <div className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-300/80 dark:border-amber-700/80 text-type-helper text-amber-800 dark:text-amber-300 shadow-2xs">
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                            <span className="font-medium">Đơn phúc khảo: {statusLabel}</span>
+                          </div>
+                        </div>
+                      );
+                    }
+                    if (detailItem.canAppeal) {
+                      return (
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedExamForAppeal(detailItem);
+                            setShowAppealModal(true);
+                          }}
+                          leftIcon={<MessageSquare className="w-3.5 h-3.5" />}
+                          className="w-full justify-center"
+                        >
+                          Xin phúc khảo
+                        </Button>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
               ),
             },
@@ -1219,19 +1247,22 @@ export default function StudentResultsPage() {
 
         {/* ── 8. Appeal Modal ── */}
         <Modal
-          isOpen={showAppealModal && Boolean(detailItem)}
-          onClose={() => setShowAppealModal(false)}
+          isOpen={showAppealModal && Boolean(detailItem || selectedExamForAppeal)}
+          onClose={() => {
+            setShowAppealModal(false);
+            setSelectedExamForAppeal(null);
+          }}
           title="Gửi yêu cầu phúc khảo"
-          subtitle={`Môn học: ${detailItem?.subjectName} (${detailItem?.subjectCode})`}
+          subtitle={`Môn học: ${(detailItem || selectedExamForAppeal)?.subjectName} (${(detailItem || selectedExamForAppeal)?.subjectCode})`}
           icon={<MessageSquare className="h-6 w-6 text-white" />}
           badge="Phúc khảo"
           variant="gradient"
           size="md"
         >
-          {detailItem && (
+          {(detailItem || selectedExamForAppeal) && (
             <div className="space-y-4 text-type-helper -mt-1">
               <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                Môn học: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{detailItem.subjectName}</strong> ({detailItem.subjectCode})
+                Môn học: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{(detailItem || selectedExamForAppeal)?.subjectName}</strong> ({(detailItem || selectedExamForAppeal)?.subjectCode})
               </p>
               <label className="block font-medium text-slate-700 dark:text-slate-300 text-type-body">
                 Lý do xin phúc khảo:
@@ -1248,7 +1279,10 @@ export default function StudentResultsPage() {
                 <Button
                   variant="secondary"
                   size="md"
-                  onClick={() => setShowAppealModal(false)}
+                  onClick={() => {
+                    setShowAppealModal(false);
+                    setSelectedExamForAppeal(null);
+                  }}
                   disabled={submittingAppeal}
                 >
                   Hủy bỏ

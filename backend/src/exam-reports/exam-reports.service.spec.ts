@@ -11,6 +11,7 @@ describe('ExamReportsService permissions', () => {
 
     expect(prisma.examSchedule.findMany).toHaveBeenCalledWith(expect.objectContaining({
       where: expect.objectContaining({
+        mode: 'OFFICIAL',
         AND: expect.arrayContaining([
           { examScheduleRooms: { some: { supervisors: { some: { teacher: { userId: 7 } } } } } },
         ]),
@@ -27,7 +28,7 @@ describe('ExamReportsService permissions', () => {
     await service.getSummary({ id: 1, role: 'ADMIN' }, {});
 
     expect(prisma.examSchedule.findMany).toHaveBeenCalledWith(expect.objectContaining({
-      where: { deletedAt: null },
+      where: { deletedAt: null, mode: 'OFFICIAL' },
     }));
   });
 });

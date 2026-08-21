@@ -440,7 +440,7 @@ export default function StudentExamSchedulePage() {
                         Ghế #{item.seatNumber || 'Chưa xếp'}
                       </span>
                     </div>
-                    {(item as any).attempt?.gradingStatus === 'PUBLISHED' && (
+                    {(item as any).attempt?.hasPublishedResult && (
                       <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-slate-700">
                         <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-semibold">
                           <Award className="w-3.5 h-3.5 text-blue-600" />
@@ -461,7 +461,7 @@ export default function StudentExamSchedulePage() {
 
                 {/* Footer actions */}
                 <div className="pt-4 mt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-                  {(item as any).attempt?.gradingStatus === 'PUBLISHED' ? (
+                  {(item as any).attempt?.hasPublishedResult ? (
                     <Button
                       variant="secondary"
                       size="sm"
@@ -529,7 +529,7 @@ export default function StudentExamSchedulePage() {
                   Vui lòng có mặt tại phòng thi hoặc vào phòng chờ trực tuyến trước giờ bắt đầu ít nhất 15 phút để chuẩn bị thiết bị và làm thủ tục điểm danh.
                 </p>
                 <div className="flex items-center justify-end gap-2 pt-1">
-                  {(drawerSchedule as any)?.attempt?.gradingStatus === 'PUBLISHED' ? (
+                  {(drawerSchedule as any)?.attempt?.hasPublishedResult ? (
                     <Button
                       variant="primary"
                       size="sm"

@@ -508,8 +508,8 @@ export class ExamSchedulesService {
       if (!paper) throw new BadRequestException('Lịch thi chưa có đề thi PUBLISHED để mở lại.');
       const config = await tx.onlineExamConfig.upsert({
         where: { examScheduleId: id },
-        update: { lateEntryWindowMinutes: minutes },
-        create: { examScheduleId: id, examPaperId: paper, lateEntryWindowMinutes: minutes },
+        update: { lateEntryWindowMinutes: minutes, mode: schedule.mode },
+        create: { examScheduleId: id, examPaperId: paper, lateEntryWindowMinutes: minutes, mode: schedule.mode },
       });
       await this.audit.write({
         actorId: actor.id,

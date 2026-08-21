@@ -548,6 +548,7 @@ enum EssayAttemptGradingStatus {
   SUBMITTED
   UNDER_GRADING
   WAITING_APPROVAL
+  APPROVED
   PUBLISHED
 }
 

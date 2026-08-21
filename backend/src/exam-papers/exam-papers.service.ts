@@ -569,6 +569,7 @@ export class ExamPapersService {
         where: { examScheduleId: paper.examScheduleId },
         update: {
           examPaperId: id,
+          mode: paper.examSchedule.mode,
           essayEnabled: hasEssayQuestions,
           // Thi thử không giữ mật khẩu từ cấu hình cũ; đổi sang OFFICIAL
           // sau này sẽ buộc thiết lập mật khẩu mới tại lúc phát hành.
@@ -577,6 +578,7 @@ export class ExamPapersService {
         create: {
           examScheduleId: paper.examScheduleId,
           examPaperId: id,
+          mode: paper.examSchedule.mode,
           requireFullscreen: true,
           preventTabSwitch: true,
           preventCopyPaste: true,
@@ -692,11 +694,13 @@ export class ExamPapersService {
         where: { examScheduleId: paper.examScheduleId },
         update: {
           examPaperId: id,
+          mode: paper.examSchedule.mode,
           examPasswordHash,
         },
         create: {
           examScheduleId: paper.examScheduleId,
           examPaperId: id,
+          mode: paper.examSchedule.mode,
           requireFullscreen: true,
           preventTabSwitch: true,
           preventCopyPaste: true,

@@ -95,10 +95,16 @@ export class OnlineExamsService {
       if (!publishedPaper) {
         throw new BadRequestException('Lịch thi chưa có đề thi chính thức được phát hành.');
       }
+      const schedule = await this.prisma.examSchedule.findUnique({
+        where: { id: scheduleId },
+        select: { mode: true },
+      });
+      if (!schedule) throw new NotFoundException('Không tìm thấy lịch thi.');
       config = await this.prisma.onlineExamConfig.create({
         data: {
           examScheduleId: scheduleId,
           examPaperId: publishedPaper.id,
+          mode: schedule.mode,
         },
       });
     }
@@ -361,6 +367,7 @@ export class OnlineExamsService {
         data: {
           examScheduleId: scheduleId,
           examPaperId: publishedPaper.id,
+          mode: schedule.mode,
           requireFullscreen: true,
           preventTabSwitch: true,
           preventCopyPaste: true,
@@ -441,6 +448,9 @@ export class OnlineExamsService {
         data: {
           onlineExamConfigId: config.id,
           studentId: student.id,
+          // Lưu mode theo lịch tại thời điểm bắt đầu để dữ liệu lượt thi tự mô tả
+          // đúng là thi thử hay thi chính thức, kể cả khi cấu hình bị thay đổi sau này.
+          mode: schedule.mode,
           attemptToken,
           status: AttemptStatus.IN_PROGRESS,
           startTime: now,

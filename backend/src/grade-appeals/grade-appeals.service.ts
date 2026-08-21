@@ -36,6 +36,27 @@ export class GradeAppealsService {
     };
   }
 
+  /** Phúc khảo chỉ áp dụng cho điểm thi chính thức, không áp dụng thi thử. */
+  private officialAttemptScope() {
+    return {
+      attempt: {
+        onlineExamConfig: {
+          examSchedule: { mode: 'OFFICIAL' as const },
+        },
+      },
+    };
+  }
+
+  private isScheduleEnded(schedule?: { examDate?: Date | string | null; endTime?: string | null }): boolean {
+    if (!schedule?.examDate || !schedule.endTime) return false;
+    const [hours, minutes] = schedule.endTime.split(':').map(Number);
+    if (!Number.isInteger(hours) || !Number.isInteger(minutes)) return false;
+    const endAt = new Date(schedule.examDate);
+    if (Number.isNaN(endAt.getTime())) return false;
+    endAt.setHours(hours, minutes, 0, 0);
+    return new Date() >= endAt;
+  }
+
   async createAppeal(userId: number, dto: CreateGradeAppealDto) {
     const student = await this.prisma.student.findUnique({
       where: { userId },
@@ -53,6 +74,13 @@ export class GradeAppealsService {
 
     if (!attempt || attempt.studentId !== student.id) {
       throw new NotFoundException('Không tìm thấy bài thi tương ứng của sinh viên.');
+    }
+
+    if (attempt.onlineExamConfig?.examSchedule?.mode !== 'OFFICIAL') {
+      throw new BadRequestException('Kết quả thi thử chỉ phục vụ luyện tập và không hỗ trợ phúc khảo.');
+    }
+    if (!this.isScheduleEnded(attempt.onlineExamConfig?.examSchedule)) {
+      throw new BadRequestException('Kết quả chưa đến thời điểm mở cho sinh viên nên chưa thể gửi phúc khảo.');
     }
 
     if (!attempt.publishedAt || attempt.totalScore === null || attempt.totalScore === undefined) {
@@ -110,7 +138,7 @@ export class GradeAppealsService {
     }
 
     return this.prisma.gradeAppeal.findMany({
-      where: { studentId: student.id },
+      where: { studentId: student.id, ...this.officialAttemptScope() },
       include: {
         attempt: {
           include: {
@@ -130,7 +158,12 @@ export class GradeAppealsService {
   }
 
   async findAll(actor: { id: number; role: string }, query: { status?: string; subjectId?: string; search?: string }) {
-    const where: any = { ...this.teacherScope(actor) };
+    const where: any = {
+      AND: [
+        this.officialAttemptScope(),
+        ...(actor.role === 'TEACHER' ? [this.teacherScope(actor)] : []),
+      ],
+    };
 
     if (query.status && Object.values(GradeAppealStatus).includes(query.status as any)) {
       where.status = query.status as GradeAppealStatus;
@@ -193,7 +226,10 @@ export class GradeAppealsService {
       where: {
         id,
         ...(actor.role === 'STUDENT' ? { student: { userId: actor.id } } : {}),
-        ...this.teacherScope(actor),
+        AND: [
+          this.officialAttemptScope(),
+          ...(actor.role === 'TEACHER' ? [this.teacherScope(actor)] : []),
+        ],
       },
       include: {
         student: {
@@ -243,7 +279,13 @@ export class GradeAppealsService {
     }
 
     const appeal = await this.prisma.gradeAppeal.findFirst({
-      where: { id, ...this.teacherScope(actor) },
+      where: {
+        id,
+        AND: [
+          this.officialAttemptScope(),
+          ...(actor.role === 'TEACHER' ? [this.teacherScope(actor)] : []),
+        ],
+      },
       include: { attempt: true },
     });
 
@@ -265,7 +307,8 @@ export class GradeAppealsService {
         throw new BadRequestException('Khi chấp nhận phúc khảo, bắt buộc phải nhập điểm mới.');
       }
       newScore = Number(dto.revisedScore);
-      if (newScore > Number(appeal.attempt.maxScore ?? 10)) {
+      const maxScore = (appeal as any).attempt?.maxScore ?? 10;
+      if (newScore > Number(maxScore)) {
         throw new BadRequestException('Điểm mới không được vượt quá thang điểm của bài thi.');
       }
 

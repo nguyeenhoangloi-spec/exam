@@ -168,6 +168,10 @@ describe('ExamPapersService permissions', () => {
     await expect(mockService.publish({ id: 1, role: 'ADMIN' }, 12)).resolves.toEqual({ id: 12, status: 'PUBLISHED' });
     expect(mockPrisma.examSchedule.findFirst).toHaveBeenCalled();
     expect(tx.examSchedule.findFirst).toHaveBeenCalled();
+    expect(tx.onlineExamConfig.upsert).toHaveBeenCalledWith(expect.objectContaining({
+      update: expect.objectContaining({ mode: 'MOCK' }),
+      create: expect.objectContaining({ mode: 'MOCK' }),
+    }));
   });
 
   it('không cho TEACHER phát hành đề thi chính thức', async () => {
