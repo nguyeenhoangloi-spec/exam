@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { normalizeQuestionContent, validateQuestionOptions } from './question-validation';
+import { autoFormatFillBlankData, normalizeQuestionContent, validateFillBlankAnswers, validateQuestionOptions } from './question-validation';
 
 const options = [
   { label: 'A', content: 'Đúng', isCorrect: true, order: 0 },
@@ -25,5 +25,19 @@ describe('Question validation', () => {
   it('không cho ESSAY chứa lựa chọn', () => {
     expect(() => validateQuestionOptions('ESSAY', options)).toThrow(BadRequestException);
     expect(() => validateQuestionOptions('ESSAY', [])).not.toThrow();
+  });
+  it('chuẩn hóa mọi ô điền về 0,25 điểm và tự tính tổng điểm câu', () => {
+    const formatted = autoFormatFillBlankData('FILL_BLANK', 'A {{blank_1}} B {{blank_2}}', 99, [
+      { blankIndex: 1, answer: 'một', score: 2 },
+      { blankIndex: 2, answer: 'hai', score: 3 },
+    ]);
+    expect(formatted.fillBlankAnswers.map((item) => item.score)).toEqual([0.25, 0.25]);
+    expect(() => validateFillBlankAnswers('FILL_BLANK', formatted.content, 0.5, formatted.fillBlankAnswers)).not.toThrow();
+  });
+  it('từ chối câu điền có điểm mỗi ô khác 0,25', () => {
+    expect(() => validateFillBlankAnswers('FILL_BLANK', 'A {{blank_1}} B {{blank_2}}', 1, [
+      { blankIndex: 1, answer: 'một', score: 0.5 },
+      { blankIndex: 2, answer: 'hai', score: 0.5 },
+    ])).toThrow('0.25');
   });
 });

@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { AccessControlController } from './access-control.controller';
 import { AccessControlService } from './access-control.service';
 import { AccessPolicyService } from './access-policy.service';
 import { PermissionGuard } from './permission.guard';
 
+@Global()
 @Module({
   controllers: [AccessControlController],
   providers: [AccessControlService, AccessPolicyService, PermissionGuard],

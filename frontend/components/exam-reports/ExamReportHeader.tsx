@@ -12,8 +12,8 @@ interface ExamReportHeaderProps {
 }
 
 export function ExamReportHeader({
-  title = 'Báo cáo & Thống kê',
-  subtitle = 'Xem số liệu thống kê tổng hợp toàn trường, phân tích phổ điểm và bảng điểm chi tiết ca thi',
+  title = 'Thống kê kỳ thi',
+  subtitle = 'Xem kết quả, phổ điểm và bảng điểm chi tiết các kỳ thi trong phạm vi được phép',
   onExport,
   onExportExcel,
   onPrint,

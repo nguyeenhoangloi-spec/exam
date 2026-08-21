@@ -30,7 +30,7 @@ const fillBlankAnswer = z.object({
   blankIndex: z.number().int().min(1),
   answer: z.string().min(1, 'Vui lòng nhập đáp án cho ô trống'),
   acceptedAnswersText: z.string().optional(),
-  score: z.number().min(0, 'Điểm số phải >= 0'),
+  score: z.literal(0.25),
   caseSensitive: z.boolean().optional(),
   ignoreWhitespace: z.boolean().optional(),
   ignoreVietnameseTone: z.boolean().optional(),
@@ -184,7 +184,7 @@ export function QuestionFormDialog({
           explanation: question.explanation || '',
           keywords: question.keywords || '',
           options: question.options || [],
-          fillBlankAnswers: (question as any).fillBlankAnswers?.map((item: any) => ({ ...item, acceptedAnswersText: (item.acceptedAnswers || []).join(', ') })) || [],
+          fillBlankAnswers: (question as any).fillBlankAnswers?.map((item: any) => ({ ...item, score: 0.25, acceptedAnswersText: (item.acceptedAnswers || []).join(', ') })) || [],
         }
         : {
           ...defaults,
@@ -211,6 +211,25 @@ export function QuestionFormDialog({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchType, question, setValue]);
 
+  useEffect(() => {
+    if (watchType === 'FILL_BLANK') {
+      setValue('score', Number((Math.max(1, fillBlankFields.fields.length) * 0.25).toFixed(2)), { shouldValidate: true });
+    }
+  }, [watchType, fillBlankFields.fields.length, setValue]);
+
+  const removeFillBlankField = (index: number) => {
+    if (fillBlankFields.fields.length <= 1) {
+      setToastError('Câu điền khuyết phải có ít nhất một ô trống.');
+      return;
+    }
+    const currentHtml = watch('contentRich')?.html || watch('content') || '';
+    let nextIndex = 0;
+    const nextHtml = currentHtml.replace(/\{\{blank_\d+\}\}/g, () => `{{blank_${++nextIndex}}}`).replace(`{{blank_${index + 1}}}`, '');
+    fillBlankFields.remove(index);
+    setValue('contentRich', { html: nextHtml });
+    setValue('content', nextHtml);
+  };
+
   const submit = async (data: Form) => {
     try {
       const html = data.contentRich?.html || '';
@@ -221,10 +240,11 @@ export function QuestionFormDialog({
       const payload = {
         ...data,
         content: plain,
+        score: data.type === 'FILL_BLANK' ? (data.fillBlankAnswers?.length || 1) * 0.25 : data.score,
         contentRich: html ? { html } : undefined,
         options: (data.type === 'ESSAY' || data.type === 'FILL_BLANK') ? [] : (data.options || []),
         fillBlankAnswers: data.type === 'FILL_BLANK'
-          ? (data.fillBlankAnswers?.length ? data.fillBlankAnswers : [{ blankIndex: 1, answer: 'đáp_án_đúng', score: data.score || 0.25 }]).map(({ acceptedAnswersText, ...item }) => ({ ...item, acceptedAnswers: acceptedAnswersText?.split(',').map(value => value.trim()).filter(Boolean) || [] }))
+          ? (data.fillBlankAnswers?.length ? data.fillBlankAnswers : [{ blankIndex: 1, answer: 'đáp_án_đúng', score: 0.25 }]).map((item) => { const acceptedAnswersText = item.acceptedAnswersText || ''; const { acceptedAnswersText: _ignored, ...rest } = item; return { ...rest, score: 0.25, acceptedAnswers: acceptedAnswersText.split(',').map(value => value.trim()).filter(Boolean) }; })
           : [],
       };
       const response = await (question ? api.patch(`/questions/${question.id}`, payload) : api.post('/questions', payload));
@@ -355,14 +375,15 @@ export function QuestionFormDialog({
             {/* Điểm số */}
             <div className="md:col-span-2">
               <label className="block text-type-body font-medium text-slate-500 mb-1">
-                Điểm số mặc định câu hỏi <span className="text-rose-500">*</span>
+                {type === 'FILL_BLANK' ? 'Tổng điểm tự tính theo số ô trống' : 'Điểm số mặc định câu hỏi'} <span className="text-rose-500">*</span>
               </label>
               <input
                 type="number"
                 step="0.25"
+                readOnly={type === 'FILL_BLANK'}
                 {...register('score', { valueAsNumber: true })}
-                placeholder="Điểm số câu hỏi (ví dụ: 0.25)"
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body font-medium text-blue-700 focus:border-blue-500 focus:outline-none bg-white"
+                placeholder={type === 'FILL_BLANK' ? 'Tự động tính: số ô × 0,25' : 'Điểm số câu hỏi (ví dụ: 0.25)'}
+                className={`w-full rounded-xl border border-slate-200 px-3.5 py-2 text-type-body font-medium text-blue-700 focus:border-blue-500 focus:outline-none ${type === 'FILL_BLANK' ? 'bg-slate-50' : 'bg-white'}`}
               />
             </div>
           </div>
@@ -549,7 +570,7 @@ export function QuestionFormDialog({
                       <span className="text-type-helper font-semibold text-slate-700">Ô trống #{watch(`fillBlankAnswers.${i}.blankIndex`) || i + 1}</span>
                       <button
                         type="button"
-                        onClick={() => fillBlankFields.remove(i)}
+                        onClick={() => removeFillBlankField(i)}
                         className="text-type-helper font-semibold text-rose-600 hover:underline"
                       >
                         Xóa ô này
@@ -565,12 +586,14 @@ export function QuestionFormDialog({
                         />
                       </div>
                       <div>
-                        <label className="block text-type-body font-medium text-slate-500 mb-0.5">Điểm số cho ô này *</label>
+                        <label className="block text-type-body font-medium text-slate-500 mb-0.5">Điểm cố định cho ô này</label>
                         <input
                           type="number"
-                          step="0.1"
+                          step="0.25"
+                          value={0.25}
+                          readOnly
                           {...register(`fillBlankAnswers.${i}.score`, { valueAsNumber: true })}
-                          placeholder="Điểm (VD: 0.25)"
+                          aria-label="Điểm cố định 0.25 cho ô trống"
                           className="w-full rounded-xl border border-slate-200 px-3 py-1.5 text-type-body font-normal text-blue-700 bg-white"
                         />
                       </div>

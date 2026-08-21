@@ -57,11 +57,20 @@ export class BackupStorageService {
   }
 
   getPrimaryPath() {
-    return this.bucket ? `s3://${this.bucket}/${this.prefix}` : this.localRoot;
+    if (this.bucket) return `s3://${this.bucket}/${this.prefix}`;
+    const cwd = process.cwd();
+    if (this.localRoot.startsWith(cwd)) {
+      return this.localRoot.slice(cwd.length).replace(/^[\\\/]+/, '').replaceAll('\\', '/');
+    }
+    return this.localRoot.replaceAll('\\', '/');
   }
 
   getSecondaryPath() {
-    return this.secondaryRoot;
+    const cwd = process.cwd();
+    if (this.secondaryRoot.startsWith(cwd)) {
+      return this.secondaryRoot.slice(cwd.length).replace(/^[\\\/]+/, '').replaceAll('\\', '/');
+    }
+    return this.secondaryRoot.replaceAll('\\', '/');
   }
 
   isDualStorageActive() {

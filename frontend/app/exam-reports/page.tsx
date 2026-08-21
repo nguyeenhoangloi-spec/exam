@@ -218,7 +218,7 @@ export default function ExamReportsPage() {
   const [loadingReport, setLoadingReport] = useState(false);
   const [showSchedulePicker, setShowSchedulePicker] = useState(false);
 
-  // Chỉ chọn ca mặc định khi chưa có ca được chọn từ URL hoặc từ tab Tổng Báo Cáo.
+  // Chỉ chọn ca mặc định khi chưa có ca được chọn từ URL hoặc từ tab Thống kê kỳ thi.
   // Không để lần tải lại danh sách ghi đè ca chính thức người dùng vừa chọn.
 
   const [search, setSearch] = useState('');
@@ -676,25 +676,15 @@ export default function ExamReportsPage() {
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
         {/* Header */}
         <ExamReportHeader
-          title={activeMainTab === 'summary' ? 'Tổng Báo Cáo' : 'Bảng điểm chi tiết ca thi'}
+          title={activeMainTab === 'summary' ? 'Thống kê kỳ thi' : 'Bảng điểm chi tiết ca thi'}
           subtitle={
             activeMainTab === 'summary'
-              ? 'Tổng hợp số liệu toàn diện về kỳ thi, môn học, phổ điểm và tỷ lệ đạt toàn trường'
+              ? 'Tổng hợp kết quả kỳ thi, môn học, phổ điểm và tỷ lệ đạt trong phạm vi được phép'
               : 'Xem kết quả điểm thi chi tiết, tỷ lệ đạt, thống kê vi phạm và xuất báo cáo ca thi'
           }
           onExport={exportSummaryCsv}
           onExportExcel={exportSummaryExcel}
           onPrint={activeMainTab === 'schedule' ? printOfficialReport : undefined}
-        />
-
-        {/* ── Top-Level Navigation TabBar ── */}
-        <TabBar
-          tabs={[
-            { key: 'summary', label: 'Tổng Báo Cáo', count: summary?.stats.totalSchedules },
-            { key: 'schedule', label: 'Bảng điểm ca thi' },
-          ]}
-          active={activeMainTab}
-          onChange={handleMainTabChange}
         />
 
         {activeMainTab === 'summary' ? (

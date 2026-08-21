@@ -8,7 +8,7 @@ import ExcelJS from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { BulkActionDto, CreateQuestionDto, ImportConfirmDto, ImportPreviewDto, QuestionQueryDto, SaveAiQuestionsDto, UpdateQuestionDto } from './dto/question.dto';
-import { autoFormatFillBlankData, normalizeFillBlankAnswer, normalizeQuestionContent, validateFillBlankAnswers, validateQuestionOptions } from './question-validation';
+import { autoFormatFillBlankData, getFillBlankScore, normalizeFillBlankAnswer, normalizeQuestionContent, validateFillBlankAnswers, validateQuestionOptions } from './question-validation';
 
 type Actor = { id: number; role: string };
 const include = {
@@ -140,6 +140,12 @@ export class QuestionsService {
     for (const question of d.questions) {
       await this.assertSubjectAccess(a, question.subjectId);
       await this.chapter(question.subjectId, question.chapterId);
+      if (question.type === 'FILL_BLANK') {
+        const formatted = autoFormatFillBlankData(question.type, question.content, question.score, question.fillBlankAnswers);
+        question.content = formatted.content;
+        question.fillBlankAnswers = formatted.fillBlankAnswers;
+        question.score = getFillBlankScore(formatted.fillBlankAnswers.length);
+      }
       validateQuestionOptions(question.type, question.options);
       validateFillBlankAnswers(question.type, question.content, question.score, question.fillBlankAnswers);
       if (!Number.isFinite(question.score) || question.score < 0.01 || question.score > 100) {
@@ -247,6 +253,7 @@ export class QuestionsService {
       const formatted = autoFormatFillBlankData(d.type, d.content, d.score, d.fillBlankAnswers);
       d.content = formatted.content;
       d.fillBlankAnswers = formatted.fillBlankAnswers;
+      d.score = getFillBlankScore(formatted.fillBlankAnswers.length);
     }
     validateQuestionOptions(d.type, d.options); validateFillBlankAnswers(d.type, d.content, d.score, d.fillBlankAnswers); await this.noDuplicate(a, d.content, d.overrideDuplicate);
     return this.prisma.$transaction(async tx => this.createInTransaction(tx, a, d));
@@ -263,8 +270,10 @@ export class QuestionsService {
       const formatted = autoFormatFillBlankData(nextType, nextContent, nextScore, nextFillBlank);
       nextContent = formatted.content;
       nextFillBlank = formatted.fillBlankAnswers;
+      nextScore = getFillBlankScore(formatted.fillBlankAnswers.length);
       if (d.content !== undefined) d.content = nextContent;
       if (d.fillBlankAnswers !== undefined || old.type !== 'FILL_BLANK') d.fillBlankAnswers = nextFillBlank as any;
+      d.score = nextScore;
     }
     validateQuestionOptions(nextType, d.options ?? old.options); validateFillBlankAnswers(nextType, nextContent, nextScore, nextFillBlank); if (d.content) await this.noDuplicate(a, d.content, d.overrideDuplicate, id);
     return this.prisma.$transaction(async tx => {

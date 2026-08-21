@@ -24,12 +24,12 @@ export class ExamPaperGenerationCore {
   }
 
   getRealScore(question: ExamPaperQuestion, isEssay: boolean = false): number {
-    if (question.score && Number(question.score) > 0) {
-      return Number(question.score);
-    }
     if (question.fillBlankAnswers && Array.isArray(question.fillBlankAnswers) && question.fillBlankAnswers.length > 0) {
       const bSum = question.fillBlankAnswers.reduce((sum: number, b: any) => sum + Number(b.score || 0), 0);
       if (bSum > 0) return bSum;
+    }
+    if (question.score && Number(question.score) > 0) {
+      return Number(question.score);
     }
     if (question.essayRubrics && Array.isArray(question.essayRubrics) && question.essayRubrics.length > 0) {
       const rSum = question.essayRubrics.reduce((sum: number, r: any) => sum + Number(r.maxScore || 0), 0);

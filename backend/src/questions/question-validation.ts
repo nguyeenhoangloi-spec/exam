@@ -1,5 +1,11 @@
 import { BadRequestException } from '@nestjs/common';
 
+export const FILL_BLANK_UNIT_SCORE = 0.25;
+
+export function getFillBlankScore(blankCount: number): number {
+  return Number((Math.max(1, blankCount) * FILL_BLANK_UNIT_SCORE).toFixed(2));
+}
+
 export function normalizeQuestionContent(value: string): string {
   return value
     .normalize('NFD')
@@ -79,7 +85,7 @@ export function autoFormatFillBlankData(
   let answers = Array.isArray(fillBlankAnswers) ? [...fillBlankAnswers] : [];
 
   if (answers.length === 0) {
-    const itemScore = Number(score || 0.25) / count;
+    const itemScore = FILL_BLANK_UNIT_SCORE;
     answers = matches.map((blankIndex) => ({
       blankIndex,
       answer: 'đáp_án_đúng',
@@ -90,26 +96,26 @@ export function autoFormatFillBlankData(
       ignoreVietnameseTone: false,
     }));
   } else if (answers.length !== count) {
-    const itemScore = Number(score || 0.25) / count;
+    const itemScore = FILL_BLANK_UNIT_SCORE;
     answers = matches.map((blankIndex, idx) => {
       const existing = answers.find((a) => Number(a.blankIndex) === blankIndex) || answers[idx];
       return {
         blankIndex,
         answer: String(existing?.answer || '').trim() || 'đáp_án_đúng',
         acceptedAnswers: Array.isArray(existing?.acceptedAnswers) ? existing.acceptedAnswers : [],
-        score: Number(existing?.score) || itemScore,
+        score: itemScore,
         caseSensitive: Boolean(existing?.caseSensitive),
         ignoreWhitespace: existing?.ignoreWhitespace !== false,
         ignoreVietnameseTone: Boolean(existing?.ignoreVietnameseTone),
       };
     });
   } else {
-    const itemScore = Number(score || 0.25) / count;
+    const itemScore = FILL_BLANK_UNIT_SCORE;
     answers = answers.map((ans, idx) => ({
       ...ans,
       blankIndex: matches[idx] || idx + 1,
       answer: String(ans.answer || '').trim() || 'đáp_án_đúng',
-      score: Number(ans.score) || itemScore,
+      score: itemScore,
     }));
   }
 
@@ -133,8 +139,9 @@ export function validateFillBlankAnswers(type: string, content: string, score: n
   const sorted = [...answers].sort((a, b) => Number(a.blankIndex) - Number(b.blankIndex));
   sorted.forEach((item, index) => {
     if (Number(item.blankIndex) !== expected[index] || !String(item.answer || '').trim()) throw new BadRequestException(`Đáp án cho blank_${expected[index]} không hợp lệ.`);
-    if (!Number.isFinite(Number(item.score)) || Number(item.score) < 0) throw new BadRequestException(`Điểm cho blank_${expected[index]} không hợp lệ.`);
+    if (Math.abs(Number(item.score) - FILL_BLANK_UNIT_SCORE) > 0.0001) throw new BadRequestException(`Mỗi ô trống phải có đúng ${FILL_BLANK_UNIT_SCORE} điểm.`);
   });
   const total = sorted.reduce((sum, item) => sum + Number(item.score), 0);
-  if (Math.abs(total - Number(score)) > 0.0001) throw new BadRequestException(`Tổng điểm các chỗ trống (${total}) phải bằng điểm câu hỏi (${score}).`);
+  const expectedScore = getFillBlankScore(sorted.length);
+  if (Math.abs(Number(score) - expectedScore) > 0.0001 || Math.abs(total - expectedScore) > 0.0001) throw new BadRequestException(`Câu có ${sorted.length} ô trống phải có tổng ${expectedScore} điểm.`);
 }

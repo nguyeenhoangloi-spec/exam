@@ -9,6 +9,7 @@ import { ExamPaperStatus, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { FILL_BLANK_UNIT_SCORE } from '../questions/question-validation';
 import { CreateRandomExamPaperDto, UpdateExamPasswordDto } from './dto/exam-paper.dto';
 
 type Actor = { id: number; role: string };
@@ -63,6 +64,19 @@ export class ExamPapersService {
   private assertOwner(actor: Actor, paper: { createdById: number }) {
     if (actor.role !== 'ADMIN' && paper.createdById !== actor.id) {
       throw new ForbiddenException('Bạn chỉ được quản lý đề thi do mình tạo.');
+    }
+  }
+
+  private validateFillBlankScoring(questions: any[]) {
+    for (const question of questions.filter((item) => item?.type === 'FILL_BLANK')) {
+      const blanks = Array.isArray(question.fillBlankAnswers) ? question.fillBlankAnswers : [];
+      if (!blanks.length || blanks.some((blank: any) => Math.abs(Number(blank.score) - FILL_BLANK_UNIT_SCORE) > 0.0001)) {
+        throw new BadRequestException(`Câu điền khuyết "${question.code}" chưa tuân thủ quy định mỗi ô ${FILL_BLANK_UNIT_SCORE} điểm. Hãy cập nhật câu hỏi trước khi tạo đề.`);
+      }
+      const expectedScore = Number((blanks.length * FILL_BLANK_UNIT_SCORE).toFixed(2));
+      if (Math.abs(Number(question.score) - expectedScore) > 0.0001) {
+        throw new BadRequestException(`Câu điền khuyết "${question.code}" phải có tổng ${expectedScore} điểm theo ${blanks.length} ô trống.`);
+      }
     }
   }
 
@@ -306,6 +320,8 @@ export class ExamPapersService {
       let selectedQuestions: any[] = [];
       let totalScore = 10.0;
 
+      this.validateFillBlankScoring(rawSelected);
+
       const isEssay = targetType === 'TU_LUAN' || schedule.examType === 'TU_LUAN';
 
       if (isByScore) {
@@ -540,8 +556,10 @@ export class ExamPapersService {
     for (const q of paper.questions.map((item: any) => item.question).filter((question: any) => question?.type === 'FILL_BLANK')) {
       const blanks = q.fillBlankAnswers || [];
       const total = blanks.reduce((sum: number, blank: any) => sum + Number(blank.score || 0), 0);
-      if (!blanks.length || Math.abs(total - Number((paper.questions.find((item: any) => item.questionId === q.id)?.score) || 0)) > 0.001) {
-        throw new BadRequestException(`Câu điền khuyết "${q.code}" thiếu đáp án hoặc tổng điểm chỗ trống không khớp điểm trong đề.`);
+      const paperQuestionScore = Number((paper.questions.find((item: any) => item.questionId === q.id)?.score) || 0);
+      const expectedScore = Number((blanks.length * FILL_BLANK_UNIT_SCORE).toFixed(2));
+      if (!blanks.length || blanks.some((blank: any) => Math.abs(Number(blank.score) - FILL_BLANK_UNIT_SCORE) > 0.0001) || Math.abs(total - paperQuestionScore) > 0.001 || Math.abs(paperQuestionScore - expectedScore) > 0.001) {
+        throw new BadRequestException(`Câu điền khuyết "${q.code}" phải có ${blanks.length} ô, mỗi ô ${FILL_BLANK_UNIT_SCORE} điểm và tổng câu ${expectedScore} điểm.`);
       }
     }
     let examPasswordHash: string | null = null;

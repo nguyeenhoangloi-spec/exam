@@ -163,7 +163,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             href: '/exam-reports',
             icon: BarChart3,
             children: [
-              { name: 'Thống kê tổng hợp', href: '/exam-reports?view=summary' },
+              { name: 'Thống kê kỳ thi', href: '/exam-reports?view=summary' },
               { name: 'Bảng điểm ca thi', href: '/exam-reports?view=schedule' },
             ],
           },
@@ -216,7 +216,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             href: '/exam-reports',
             icon: BarChart3,
             children: [
-              { name: 'Thống kê tổng hợp', href: '/exam-reports?view=summary' },
+              { name: 'Thống kê kỳ thi', href: '/exam-reports?view=summary' },
               { name: 'Bảng điểm ca thi', href: '/exam-reports?view=schedule' },
             ],
           },
@@ -424,26 +424,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             }}
                             onMouseEnter={(e) => handleItemMouseEnter(item, group.group, e.currentTarget)}
                             onMouseLeave={handleItemMouseLeave}
-                            className={`group relative w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-type-body-sm transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] cursor-pointer overflow-hidden active:scale-[0.98] ${
+                            className={`group relative w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-type-body-sm transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] cursor-pointer overflow-hidden active:scale-[0.98] active:translate-x-0.5 ${
                               isActive
-                                ? 'bg-blue-50/90 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200/70 dark:border-blue-800/60 shadow-2xs'
+                                ? 'bg-gradient-to-r from-blue-600 via-blue-600 to-blue-700 text-white font-semibold shadow-md shadow-blue-600/25'
                                 : 'sidebar-text hover:bg-slate-100/90 dark:hover:bg-slate-800/80 hover:text-blue-600 dark:hover:text-blue-400 font-medium'
                             }`}
                           >
-                            {/* Subtle Indicator Pill */}
+                            {/* Magnetic Pill Indicator */}
                             <span
                               className={`absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                                 isActive
-                                  ? 'w-1 h-4 bg-blue-600 dark:bg-blue-400 opacity-100'
-                                  : 'w-1 h-3 bg-blue-500/60 opacity-0 group-hover:opacity-100 group-hover:h-4'
+                                  ? 'w-1.5 h-5 bg-white/95 shadow-[0_0_8px_rgba(255,255,255,0.7)] opacity-100'
+                                  : 'w-1 h-3 bg-blue-500/60 opacity-0 group-hover:opacity-100 group-hover:h-4.5'
                               }`}
                             />
 
-                            <div className="flex items-center gap-2 min-w-0 flex-1">
+                            <div className="flex items-center gap-2.5 min-w-0 flex-1">
                               <div
-                                className={`flex h-7 w-7 shrink-0 items-center justify-center transition-all duration-200 ease-out group-hover:scale-105 ${
+                                className={`flex h-8 w-8 shrink-0 items-center justify-center transition-all duration-200 ease-out group-hover:scale-105 group-hover:translate-x-0.5 group-active:scale-95 ${
                                   isActive
-                                    ? 'text-blue-600 dark:text-blue-400'
+                                    ? 'text-white drop-shadow-xs'
                                     : 'sidebar-icon group-hover:text-blue-600 dark:group-hover:text-blue-400'
                                 }`}
                               >
@@ -475,12 +475,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                 }
                               }}
                               className={`flex h-6 w-6 items-center justify-center rounded-xl shrink-0 transition-all duration-150 active:scale-90 ${
-                                isActive ? 'hover:bg-blue-100/70 dark:hover:bg-blue-900/60' : 'hover:bg-black/10 dark:hover:bg-white/10'
+                                isActive ? 'hover:bg-white/20 text-white' : 'hover:bg-black/10 dark:hover:bg-white/10'
                               } ${collapsed ? 'opacity-0 pointer-events-none scale-75' : 'opacity-100 scale-100'}`}
                             >
                               <ChevronRight
                                 className={`h-3.5 w-3.5 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                                  isActive ? 'text-blue-600 dark:text-blue-400' : 'sidebar-icon group-hover:text-blue-600 dark:group-hover:text-blue-400'
+                                  isActive ? 'text-white' : 'sidebar-icon group-hover:text-blue-600 dark:group-hover:text-blue-400'
                                 } ${isSubOpen ? 'rotate-90' : 'rotate-0'}`}
                                 strokeWidth={1.5}
                               />

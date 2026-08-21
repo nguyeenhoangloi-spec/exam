@@ -14,8 +14,9 @@ interface SlidingSegmentedControlProps<T extends string = string> {
   onChange: (val: T) => void;
   options: SlidingSegmentedOption<T>[];
   className?: string;
-  size?: 'sm' | 'md';
-  variant?: 'default' | 'primary';
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'primary' | 'dock';
+  pillShape?: 'rounded' | 'pill';
 }
 
 export function SlidingSegmentedControl<T extends string = string>({
@@ -25,6 +26,7 @@ export function SlidingSegmentedControl<T extends string = string>({
   className = '',
   size = 'md',
   variant = 'default',
+  pillShape = 'rounded',
 }: SlidingSegmentedControlProps<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -68,36 +70,43 @@ export function SlidingSegmentedControl<T extends string = string>({
     return () => window.removeEventListener('resize', handleResize);
   }, [updateIndicator]);
 
-  const heightClass = size === 'sm' ? 'h-9 text-type-helper' : 'h-10.5 text-type-helper';
-  const paddingClass = size === 'sm' ? 'px-3 py-1.5' : 'px-4 py-2';
-  const iconSizeClass = size === 'sm' ? 'h-4 w-4' : 'h-4.5 w-4.5';
+  // Kích thước chuẩn Design System 2026
+  const heightClass =
+    size === 'sm' ? 'h-9 text-type-body-sm' : size === 'lg' ? 'h-12 text-type-body' : 'h-10.5 text-type-body';
+  const paddingClass =
+    size === 'sm' ? 'px-3 py-1.5' : size === 'lg' ? 'px-4.5 py-2' : 'px-3.5 sm:px-4 py-1.5';
+  const iconSizeClass = size === 'sm' ? 'h-3.5 w-3.5' : size === 'lg' ? 'h-5 w-5' : 'h-4 w-4';
 
-  const isPrimary = variant === 'primary';
+  const isPrimary = variant === 'primary' || variant === 'dock';
+  const isPill = pillShape === 'pill';
+
+  const shapeContainerClass = isPill ? 'rounded-full' : 'rounded-2xl';
+  const shapePillClass = isPill ? 'rounded-full' : 'rounded-xl';
 
   return (
     <div
       ref={containerRef}
       role="tablist"
-      className={`relative inline-flex items-center rounded-xl bg-slate-100/90 dark:bg-slate-800/90 p-1 border border-slate-200/80 dark:border-slate-700/80 select-none shadow-2xs ${heightClass} ${className}`}
+      className={`relative inline-flex items-center gap-1 ${shapeContainerClass} bg-white/95 dark:bg-slate-900/95 p-1 border border-slate-200/90 dark:border-slate-700/80 backdrop-blur-2xl select-none shadow-[0_24px_64px_-12px_rgba(15,23,42,0.28),0_12px_28px_-6px_rgba(15,23,42,0.14),0_0_0_1px_rgba(15,23,42,0.08)] dark:shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85),0_12px_32px_-6px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.12)] ring-1 ring-white/80 dark:ring-white/10 ${heightClass} ${className}`}
     >
-      {/* Sliding Background Indicator Pill */}
+      {/* Sliding Background Indicator Pill - Nổi 3D với đổ bóng ánh xanh */}
       <div
-        className={`absolute top-1 bottom-1 rounded-xl pointer-events-none transition-all will-change-[transform,width] ${
+        className={`absolute top-1 bottom-1 ${shapePillClass} pointer-events-none transition-all will-change-[transform,width] ${
           isPrimary
-            ? 'bg-blue-600 dark:bg-blue-600 shadow-sm shadow-blue-600/30'
-            : 'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700/80 shadow-xs shadow-slate-900/5 dark:shadow-black/20'
+            ? 'bg-blue-600 shadow-[0_4px_14px_rgba(37,99,235,0.4)] ring-1 ring-white/20'
+            : 'bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-xs'
         }`}
         style={{
           transform: `translateX(${indicatorStyle.left}px)`,
           width: `${indicatorStyle.width}px`,
           opacity: indicatorStyle.opacity,
           transition: isReady
-            ? 'transform 300ms cubic-bezier(0.16, 1, 0.3, 1), width 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease'
+            ? 'transform 280ms cubic-bezier(0.16, 1, 0.3, 1), width 280ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease'
             : 'none',
         }}
       />
 
-      {/* Segmented Option Buttons */}
+      {/* Segmented Option Buttons (Padding gọn gàng, ôm sát theo từng mục) */}
       {options.map((option, index) => {
         const isActive = option.value === value;
         const Icon = option.icon;
@@ -112,35 +121,33 @@ export function SlidingSegmentedControl<T extends string = string>({
             role="tab"
             aria-selected={isActive}
             onClick={() => onChange(option.value)}
-            className={`relative z-10 flex items-center justify-center gap-2 rounded-xl font-semibold transition-colors duration-200 cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/30 ${paddingClass} ${
+            className={`relative z-10 flex items-center justify-center gap-2 ${shapePillClass} font-semibold transition-all duration-200 cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 active:scale-[0.98] ${paddingClass} ${
               isActive
                 ? isPrimary
                   ? 'text-white font-semibold'
                   : 'text-slate-900 dark:text-slate-100 font-semibold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
+                : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/50 font-medium'
             }`}
           >
             {Icon && (
               <Icon
-                className={`${iconSizeClass} transition-colors duration-200 ${
-                  isActive
-                    ? isPrimary
-                      ? 'text-white'
-                      : 'text-blue-600 dark:text-blue-400'
-                    : 'text-slate-400 dark:text-slate-500'
+                className={`${iconSizeClass} shrink-0 transition-transform duration-200 ${
+                  isActive ? 'scale-105 stroke-[2.2]' : 'opacity-70 stroke-[1.8]'
                 }`}
               />
             )}
-            <span className="whitespace-nowrap text-type-body font-medium">{option.label}</span>
+            <span className="whitespace-nowrap tracking-tight">
+              {option.label}
+            </span>
 
             {typeof option.count === 'number' && (
               <span
-                className={`ui-pill ml-1 px-1.5 py-0.5 rounded-full text-type-helper font-medium tabular-nums border transition-colors duration-200 ${
+                className={`ui-pill rounded-full ml-0.5 px-2 py-0.5 text-type-helper font-medium tabular-nums transition-colors duration-200 ${
                   isActive
                     ? isPrimary
-                      ? 'bg-white/20 text-white border-white/30'
-                      : 'ui-pill-solid bg-blue-600 text-white border-blue-600'
-                    : 'text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600'
+                      ? 'ui-pill-solid bg-white/20 text-white'
+                      : 'ui-pill-solid bg-blue-600 text-white'
+                    : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
                 }`}
               >
                 {option.count.toLocaleString('vi-VN')}

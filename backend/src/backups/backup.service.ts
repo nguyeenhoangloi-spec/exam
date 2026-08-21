@@ -149,6 +149,11 @@ export class BackupService {
       actorId: user?.id,
     });
 
+    // Tự động dọn dẹp các bản sao lưu cũ vượt quá số lượng lưu giữ mới ngay lập tức
+    try {
+      await this.applyRetention();
+    } catch {}
+
     return updated;
   }
 
@@ -229,7 +234,9 @@ export class BackupService {
     const safePage = Math.max(1, Number(options.page) || 1);
     const safeLimit = Math.min(100, Math.max(1, Number(options.limit) || 20));
     
-    const where: Prisma.BackupJobWhereInput = {};
+    const where: Prisma.BackupJobWhereInput = {
+      retained: true,
+    };
 
     if (options.status) where.status = options.status;
     if (options.type) where.type = options.type;
@@ -470,10 +477,32 @@ export class BackupService {
 
   async getRetainedSucceededJobs(db: BackupDb = this.prisma) {
     return db.backupJob.findMany({
-      where: { status: BackupJobStatus.SUCCEEDED, retained: true, type: { not: BackupJobType.SAFETY } },
-      orderBy: { completedAt: 'desc' },
+      where: { retained: true, type: { not: BackupJobType.SAFETY } },
+      orderBy: [{ completedAt: 'desc' }, { createdAt: 'desc' }],
       select: { id: true, snapshotId: true },
     });
+  }
+
+  async applyRetention(db: BackupDb = this.prisma) {
+    const jobs = await this.getRetainedSucceededJobs(db);
+    const settings = await this.getSettings();
+    const maxCount = Math.max(1, settings.maxRetentionCount || 10);
+    const keep = new Set<string>(jobs.slice(0, maxCount).map((job) => job.id));
+
+    let prunedCount = 0;
+    for (const job of jobs) {
+      if (keep.has(job.id)) continue;
+      try {
+        await this.storage.removePrefix(this.storage.key('snapshots', job.snapshotId));
+      } catch {}
+      try {
+        await (db as any).backupJob.delete({ where: { id: job.id } });
+      } catch {
+        await this.markJobPruned(job.id, db);
+      }
+      prunedCount++;
+    }
+    return { total: jobs.length, kept: Math.min(jobs.length, maxCount), pruned: prunedCount };
   }
 
   async markJobPruned(id: string, db: BackupDb = this.prisma) {

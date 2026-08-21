@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { FilterSelect } from './FilterSelect';
+import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 
 export interface PaginationBarProps {
   page: number;
@@ -48,8 +47,8 @@ export function PaginationBar({
   }
 
   return (
-    <div className={`flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-3.5 pb-1 ${className}`}>
-      <p className="text-type-body-sm font-normal text-slate-600 dark:text-slate-400">
+    <div className={`flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-3 pb-1 ${className}`}>
+      <p className="text-type-body-sm font-normal text-slate-500 dark:text-slate-400">
         Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{startItem}</span> -{' '}
         <span className="font-semibold text-slate-900 dark:text-slate-100">{endItem}</span> trong{' '}
         <span className="font-semibold text-slate-900 dark:text-slate-100">{totalItems.toLocaleString('vi-VN')}</span> {unit}
@@ -61,7 +60,7 @@ export function PaginationBar({
             type="button"
             disabled={page <= 1}
             onClick={() => onPage(page - 1)}
-            className="ui-pressable flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition-colors duration-150 disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer disabled:cursor-not-allowed shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="ui-pressable flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition-colors duration-150 disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer disabled:cursor-not-allowed shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             title="Trang trước"
             aria-label="Trang trước"
           >
@@ -85,7 +84,7 @@ export function PaginationBar({
                 key={pNum}
                 type="button"
                 onClick={() => onPage(pNum)}
-                className={`ui-pressable flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-type-body transition-colors duration-150 cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                className={`ui-pressable flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-type-body-sm transition-colors duration-150 cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                   isCurrent
                     ? 'bg-blue-600 text-white shadow-xs font-semibold dark:bg-blue-600'
                     : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 font-medium'
@@ -101,7 +100,7 @@ export function PaginationBar({
             type="button"
             disabled={page >= safeTotalPages}
             onClick={() => onPage(page + 1)}
-            className="ui-pressable flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition-colors duration-150 disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer disabled:cursor-not-allowed shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="ui-pressable flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition-colors duration-150 disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer disabled:cursor-not-allowed shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             title="Trang sau"
             aria-label="Trang sau"
           >
@@ -109,18 +108,20 @@ export function PaginationBar({
           </button>
         </div>
 
-        <FilterSelect
-          size="sm"
-          align="right"
-          value={limit}
-          onChange={(e) => onLimit(Number(e.target.value))}
-        >
-          {limitOptions.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt} / trang
-            </option>
-          ))}
-        </FilterSelect>
+        <div className="relative">
+          <select
+            value={limit}
+            onChange={(e) => onLimit(Number(e.target.value))}
+            className="h-9 appearance-none rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 pl-3 pr-7 text-type-body font-medium text-slate-700 dark:text-slate-200 outline-none hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer shadow-2xs"
+          >
+            {limitOptions.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt} / trang
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
+        </div>
       </div>
     </div>
   );
