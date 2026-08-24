@@ -350,7 +350,7 @@ export const Header: React.FC<HeaderProps> = ({
 
               {/* Notifications Dropdown Panel */}
               {openPanel === 'notifications' && (
-                <div className="absolute right-0 top-[calc(100%+10px)] w-80 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl shadow-slate-200/60 dark:shadow-slate-950/60 text-type-body z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div className="absolute right-0 top-[calc(100%+10px)] w-[min(20rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl shadow-slate-200/60 dark:shadow-slate-950/60 text-type-body z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="mb-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-2.5">
                     <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body flex items-center gap-1.5">
                       <Bell className="w-4 h-4 text-blue-600" strokeWidth={1.5} />
@@ -475,7 +475,7 @@ export const Header: React.FC<HeaderProps> = ({
                   id="user-account-dropdown"
                   role="menu"
                   aria-orientation="vertical"
-                  className="absolute right-0 top-[calc(100%+8px)] w-64 origin-top-right rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-1.5 shadow-2xl shadow-slate-950/15 dark:shadow-slate-950/70 text-type-helper z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-150 ease-out"
+                  className="absolute right-0 top-[calc(100%+8px)] w-[min(16rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] origin-top-right rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-1.5 shadow-2xl shadow-slate-950/15 dark:shadow-slate-950/70 text-type-helper z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-150 ease-out"
                 >
                   {/* Subtle Top Pointer Tip */}
                   <div className="absolute -top-1.5 right-6 h-3 w-3 rotate-45 border-l border-t border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 z-10" />

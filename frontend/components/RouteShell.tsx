@@ -52,6 +52,19 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
     const [isToggling, setIsToggling] = useState(false);
 
     useEffect(() => {
+        if (typeof document === 'undefined') return;
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = mobileOpen ? 'hidden' : previousOverflow;
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [mobileOpen]);
+
+    useEffect(() => {
+        setMobileOpen(false);
+    }, [pathname]);
+
+    useEffect(() => {
         try {
             const isCollapsed = window.localStorage.getItem('sidebar-collapsed') === 'true';
             setCollapsed(isCollapsed);
@@ -207,6 +220,15 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
     return (
         <div className="min-h-screen overflow-x-clip bg-slate-50 dark:bg-slate-950">
             <NavigationProgress />
+            {mobileOpen && (
+                <button
+                    type="button"
+                    aria-label="Đóng menu điều hướng"
+                    className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-sm md:hidden"
+                    onClick={() => setMobileOpen(false)}
+                />
+            )}
+
             <Sidebar
                 user={user}
                 collapsed={collapsed}
@@ -217,21 +239,12 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
                 effectivePermissions={effectivePermissions}
             />
 
-            {mobileOpen && (
-                <button
-                    type="button"
-                    aria-label="Đóng menu điều hướng"
-                    className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-sm md:hidden"
-                    onClick={() => setMobileOpen(false)}
-                />
-            )}
-
             <div
                 className={`app-shell-main min-h-screen min-w-0 transition-[margin-left] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[margin-left] ${collapsed ? 'md:ml-[72px]' : 'md:ml-[252px]'}`}
             >
                 <Header user={user} title={title} collapsed={collapsed} onToggleSidebar={handleToggle} onMenuClick={() => setMobileOpen(true)} />
                 {/* pt-16 (64px) matches the fixed header height (h-16) so content never hides underneath it */}
-                <main className="w-full pt-16 min-h-screen">{children}</main>
+                <main className="w-full min-w-0 max-w-full overflow-x-clip pt-16 min-h-screen">{children}</main>
             </div>
         </div>
     );

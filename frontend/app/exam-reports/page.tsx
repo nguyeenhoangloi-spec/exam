@@ -757,7 +757,7 @@ export default function ExamReportsPage() {
         {showSchedulePicker && (
           <div role="dialog" aria-modal="true" aria-label="Chọn Lịch thi để xem Báo cáo" className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop" onClick={() => setShowSchedulePicker(false)} />
-            <div className="relative z-[101] w-full max-w-3xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-modal-dialog will-change-transform">
+            <div className="relative z-[101] w-full max-w-3xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[calc(100dvh-1.5rem)] animate-modal-dialog will-change-transform sm:max-h-[calc(100dvh-2rem)]">
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70">

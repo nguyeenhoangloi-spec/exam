@@ -1081,6 +1081,38 @@ html.dark .app-shell-main input:-webkit-autofill:focus {
   .app-header-fixed {
     left: 0 !important;
   }
+
+  /* Page roots commonly use desktop px-6. Reduce only the root page gutter;
+   * card and modal internals keep their own spacing. */
+  .app-shell-main > main > main.px-6,
+  .app-shell-main > main > section.px-6,
+  .app-shell-main > main > div.px-6 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .app-shell-main > main > main[class*='px-6'],
+  .app-shell-main > main > section[class*='px-6'],
+  .app-shell-main > main > div[class*='px-6'] {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .ui-table-wrap,
+  .app-shell-main .overflow-x-auto {
+    max-width: 100%;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Explicit utility for dense data regions: preserve readable columns and
+ * provide intentional horizontal scrolling instead of page-level overflow. */
+.mobile-scroll-x {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .no-scrollbar::-webkit-scrollbar {

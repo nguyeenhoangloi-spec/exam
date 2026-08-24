@@ -114,7 +114,7 @@ export function ExamReportSummaryTab({ summary, loading, filters, setFilters, on
 
   return <section className="space-y-5 pb-28">
     {/* ── Floating Segmented Control Dock (Nằm ở giữa và ở góc dưới màn hình, nổi lên) ── */}
-    <div className="fixed bottom-7 left-0 right-0 md:left-[252px] [html.sidebar-collapsed_&]:md:left-[72px] flex justify-center z-40 pointer-events-none px-4 transition-[left] duration-300">
+    <div className="fixed bottom-7 left-0 right-0 md:left-[252px] [html.sidebar-collapsed_&]:md:left-[72px] flex justify-center z-30 pointer-events-none px-4 transition-[left] duration-300">
       <div className="pointer-events-auto shadow-2xl backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 rounded-full border border-slate-200/90 dark:border-slate-700/90 p-1 ring-1 ring-slate-900/5 dark:ring-white/10 animate-fade-in-up">
         <SlidingSegmentedControl<'overview' | 'builder' | 'history'>
           variant="primary"
@@ -230,7 +230,34 @@ export function ExamReportSummaryTab({ summary, loading, filters, setFilters, on
           </button>
         }
       >
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{catalog.map((item) => { const Icon = icons[item.group] || FileText; return <button key={item.type} type="button" onClick={() => choose(item)} className="group rounded-xl border border-slate-200 p-4 text-left transition hover:border-blue-300 hover:bg-blue-50/50 dark:border-slate-700 dark:hover:bg-blue-950/30"><div className="flex gap-3"><span className="h-fit rounded-xl bg-blue-50 p-2 text-blue-600 dark:bg-blue-950"><Icon className="h-5 w-5" /></span><span className="min-w-0 flex-1"><span className="block text-type-body font-semibold text-slate-950 dark:text-white">{item.name}</span><span className="mt-1 block text-type-body leading-5 text-slate-700 dark:text-slate-300">{item.description}</span></span><ChevronRight className="mt-1 h-4 w-4 text-slate-500 group-hover:text-blue-600" /></div></button>; })}</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {catalog.map((item) => {
+            const Icon = icons[item.group] || FileText;
+            return (
+              <button
+                key={item.type}
+                type="button"
+                onClick={() => choose(item)}
+                className="group flex items-start gap-3 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 text-left shadow-2xs hover:shadow-sm hover:border-blue-300 dark:hover:border-blue-700/80 hover:bg-blue-50/20 dark:hover:bg-blue-950/20 transition-all duration-150 cursor-pointer"
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100/80 dark:border-blue-900/60 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/60 transition-colors">
+                  <Icon className="h-4.5 w-4.5" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-1.5">
+                    <span className="text-type-body font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
+                      {item.name}
+                    </span>
+                    <ChevronRight className="h-4 w-4 text-slate-400 dark:text-slate-500 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+                  </div>
+                  <p className="mt-0.5 text-type-helper text-slate-500 dark:text-slate-400 font-normal leading-relaxed line-clamp-2">
+                    {item.description}
+                  </p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </Panel>
       <Panel title="Các ca thi gần đây" subtitle="Mở bảng điểm chi tiết mà không rời trung tâm báo cáo." action={<div className="relative"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600" /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Tìm mã môn, tên môn..." className="h-10 w-64 rounded-xl border border-slate-200 pl-9 pr-3 text-type-body font-medium text-slate-950 outline-none focus:border-blue-500" /></div>}>
         <div className="ui-table-wrap overflow-x-auto"><table className="ui-table w-full text-type-body"><thead className="bg-slate-50 text-slate-950"><tr>{['Môn thi', 'Kỳ thi', 'Ngày thi', 'Đã chấm', 'Điểm TB', ''].map((h) => <th key={h} className="px-4 py-3 text-left font-medium">{h}</th>)}</tr></thead><tbody>{schedules.map((r) => <tr key={r.id} className="border-t border-slate-100 text-slate-900"><td className="px-4 py-3"><b className="font-medium">{r.subjectCode}</b> {r.subjectName}</td><td className="px-4 py-3">{r.periodName}</td><td className="px-4 py-3">{new Date(r.examDate).toLocaleDateString('vi-VN')}</td><td className="px-4 py-3 font-medium tabular-nums">{r.graded}/{r.submitted}</td><td className="px-4 py-3 font-medium tabular-nums">{r.avgScore}</td><td className="px-4 py-3 text-right"><button type="button" onClick={() => onSelectSchedule(r.id)} className="rounded-xl px-3 py-2 font-medium text-blue-700 hover:bg-blue-50">Xem chi tiết</button></td></tr>)}</tbody></table></div>

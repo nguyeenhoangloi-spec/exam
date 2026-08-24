@@ -61,7 +61,7 @@ export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
       aria-live="polite"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      className={`fixed bottom-5 right-5 z-[110] flex max-w-[calc(100vw-2.5rem)] sm:max-w-lg items-start sm:items-center gap-3 rounded-2xl px-4 py-3 pb-3.5 text-white shadow-xl select-none transition-all duration-200 ease-out overflow-hidden ${
+      className={`fixed bottom-5 right-5 z-[110] left-4 sm:left-auto sm:max-w-lg flex max-w-none items-start sm:items-center gap-3 rounded-2xl px-4 py-3 pb-3.5 text-white shadow-xl select-none transition-all duration-200 ease-out overflow-hidden ${
         isVisible
           ? 'translate-x-0 translate-y-0 opacity-100 scale-100'
           : 'translate-x-4 translate-y-2 opacity-0 scale-95 pointer-events-none'

@@ -124,12 +124,19 @@ export const FilterSelect = React.forwardRef<HTMLSelectElement, FilterSelectProp
       }
     }
 
+    // Keep portal menus inside the viewport on narrow phones. The trigger may
+    // be close to an edge and the menu content can be wider than its trigger.
+    const safeWidth = Math.max(1, window.innerWidth - 24);
+    const effectiveWidth = Math.min(popoverWidth, safeWidth);
+    const maxLeft = Math.max(12, window.innerWidth - effectiveWidth - 12);
+    left = Math.min(Math.max(12, left), maxLeft);
+
     setMenuStyle({
       position: 'fixed',
       top: `${top}px`,
       left: `${left}px`,
       minWidth: `${computedMinWidth}px`,
-      maxWidth: typeof menuMaxWidth === 'number' ? `${menuMaxWidth}px` : menuMaxWidth,
+      maxWidth: `min(${typeof menuMaxWidth === 'number' ? `${menuMaxWidth}px` : menuMaxWidth}, calc(100vw - 24px))`,
       zIndex: 99999,
     });
   }, [parsedOptions.length, align, menuMinWidth, menuMaxWidth, fitTriggerWidth]);

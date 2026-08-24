@@ -325,7 +325,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`sidebar-aside sidebar-text fixed top-0 left-0 z-40 flex flex-col h-screen bg-white dark:bg-slate-900 transition-[width,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] select-none overflow-hidden will-change-[width,transform] ${collapsed ? 'w-[72px]' : 'w-[252px]'
+      className={`sidebar-aside sidebar-text fixed top-0 left-0 z-50 md:z-40 flex flex-col h-screen bg-white dark:bg-slate-900 transition-[width,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] select-none overflow-hidden will-change-[width,transform] ${collapsed ? 'w-[72px]' : 'w-[252px]'
         } ${mobileOpen ? 'translate-x-0 w-[252px]' : '-translate-x-full md:translate-x-0'}`}
     >
       {/* ── 1. Header Section: Brand Logo & Toggle ── */}
@@ -337,6 +337,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             if (collapsed) {
               e.preventDefault();
               onToggle();
+            } else if (mobileOpen && onMobileClose) {
+              onMobileClose();
             }
           }}
           className="flex items-center min-w-0 cursor-pointer group outline-none focus:outline-none ring-0 focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
@@ -537,6 +539,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     key={sub.href}
                                     href={sub.href}
                                     prefetch={true}
+                                    onClick={() => {
+                                      if (mobileOpen && onMobileClose) {
+                                        onMobileClose();
+                                      }
+                                    }}
                                     className={`group/sub flex items-center justify-between px-3 py-1.5 rounded-lg text-type-helper font-medium transition-all duration-150 ease-out active:scale-[0.97] active:translate-x-1 ${
                                       isSubActive
                                         ? 'sidebar-active-text font-semibold bg-blue-50/90 dark:bg-blue-950/60 border-l-[3px] border-blue-600 dark:border-blue-500 pl-2.5 shadow-2xs'
@@ -562,6 +569,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         key={item.href}
                         href={item.href}
                         prefetch={true}
+                        onClick={() => {
+                          if (mobileOpen && onMobileClose) {
+                            onMobileClose();
+                          }
+                        }}
                         onMouseEnter={(e) => handleItemMouseEnter(item, group.group, e.currentTarget)}
                         onMouseLeave={handleItemMouseLeave}
                         className={`group relative flex items-center justify-between px-2.5 py-2 rounded-xl text-type-body-sm transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden active:scale-[0.98] active:translate-x-0.5 ${isActive

@@ -40,6 +40,16 @@ export const Modal: React.FC<ModalProps> = ({
   badge,
   variant = 'default',
 }) => {
+  React.useEffect(() => {
+    if (!isOpen || typeof document === 'undefined') return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
+
   if (!isOpen || typeof document === 'undefined') return null;
 
   const widthClass = sizeClasses[size] || sizeClasses.md;
@@ -52,7 +62,7 @@ export const Modal: React.FC<ModalProps> = ({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-slate-950/55 p-4 backdrop-blur-[2px] animate-modal-backdrop"
+      className="fixed inset-0 z-[100] flex min-h-dvh items-center justify-center overflow-y-auto overscroll-contain bg-slate-950/55 p-3 touch-pan-y backdrop-blur-[2px] animate-modal-backdrop sm:p-4"
       role="presentation"
       onMouseDown={onClose}
     >
@@ -61,10 +71,10 @@ export const Modal: React.FC<ModalProps> = ({
         aria-modal="true"
         aria-label={typeof title === 'string' ? title : 'Modal'}
         onMouseDown={(event) => event.stopPropagation()}
-        className={`relative my-auto flex max-h-[calc(100vh-2rem)] w-full ${widthClass} flex-col overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl shadow-slate-950/20 animate-modal-dialog will-change-transform ${className}`}
+        className={`relative my-auto flex max-h-[calc(100dvh-1.5rem)] min-w-0 w-full ${widthClass} flex-col overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl shadow-slate-950/20 animate-modal-dialog will-change-transform sm:max-h-[calc(100dvh-2rem)] ${className}`}
       >
         {isGradient ? (
-          <div className={`bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-5 sm:p-6 text-white shrink-0 shadow-xs ${headerClassName}`}>
+          <div className={`bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-4 sm:p-6 text-white shrink-0 shadow-xs ${headerClassName}`}>
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3.5 min-w-0 flex-1">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white border border-white/25 shadow-2xs">
@@ -111,7 +121,7 @@ export const Modal: React.FC<ModalProps> = ({
             </div>
           </div>
         ) : (
-          <div className={`flex items-center justify-between px-6 py-4 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 ${headerClassName}`}>
+          <div className={`flex items-center justify-between gap-3 px-4 py-3.5 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sm:px-6 sm:py-4 ${headerClassName}`}>
             <h3 className="text-type-card font-semibold text-slate-900 dark:text-slate-100 tracking-tight">{title}</h3>
             <button
               type="button"
@@ -122,7 +132,7 @@ export const Modal: React.FC<ModalProps> = ({
             </button>
           </div>
         )}
-        <div className="min-h-0 overflow-y-auto p-5">{children}</div>
+        <div className="min-h-0 overflow-y-auto overscroll-contain p-4 sm:p-5">{children}</div>
       </div>
     </div>,
     document.body,

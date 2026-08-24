@@ -777,7 +777,7 @@ export default function AccessControlPage() {
       </div>
 
       {/* ── Floating Segmented Control Dock (Nằm ở giữa và ở góc dưới màn hình, nổi lên) ── */}
-      <div className="fixed bottom-7 left-0 right-0 md:left-[252px] [html.sidebar-collapsed_&]:md:left-[72px] flex justify-center z-40 pointer-events-none px-4 transition-[left] duration-300">
+      <div className="fixed bottom-7 left-0 right-0 md:left-[252px] [html.sidebar-collapsed_&]:md:left-[72px] flex justify-center z-30 pointer-events-none px-4 transition-[left] duration-300">
         <div className="pointer-events-auto shadow-2xl backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 rounded-full border border-slate-200/90 dark:border-slate-700/90 p-1 ring-1 ring-slate-900/5 dark:ring-white/10 animate-fade-in-up">
           <SlidingSegmentedControl
             variant="primary"

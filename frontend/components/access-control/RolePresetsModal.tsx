@@ -88,12 +88,12 @@ export function RolePresetsModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="presets-modal-title"
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in"
+      className="fixed inset-0 z-[100] flex min-h-dvh items-center justify-center p-3 overscroll-contain animate-fade-in sm:p-4"
     >
       <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
 
       <div
-        className="relative z-[101] w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/90 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
+        className="relative z-[101] w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/90 dark:border-slate-800 overflow-hidden flex flex-col max-h-[calc(100dvh-1.5rem)] animate-in zoom-in-95 duration-200 sm:max-h-[calc(100dvh-2rem)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

@@ -89,12 +89,12 @@ export function SchedulePickerModal({
   });
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex min-h-dvh items-center justify-center p-3 overscroll-contain sm:p-4">
       {/* Overlay */}
       <div className="fixed inset-0 bg-slate-950/55 backdrop-blur-xs animate-modal-backdrop" onClick={onClose} />
 
       {/* Modal Box */}
-      <div className="relative z-10 w-full max-w-2xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-modal-dialog will-change-transform">
+      <div className="relative z-10 w-full max-w-2xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[calc(100dvh-1.5rem)] animate-modal-dialog will-change-transform sm:max-h-[calc(100dvh-2rem)]">
         {/* Header Chuẩn Design System */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80">
           <div>
