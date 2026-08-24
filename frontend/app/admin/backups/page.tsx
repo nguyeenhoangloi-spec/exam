@@ -550,17 +550,13 @@ export default function BackupsPage() {
                             <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Backup Worker
                             </span>
-                            <div className="h-[38px] flex items-center text-type-card sm:text-type-section font-semibold text-slate-900 dark:text-slate-100 leading-[28px] truncate">
+                            <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight truncate">
                                 {loading ? (
-                                    <div className="h-5 w-28 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
+                                    <div className="h-6 w-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
                                 ) : overview?.worker?.enabled ? (
-                                    <span className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-semibold">
-                                        <CheckCircle2 className="h-4 w-4" /> Đang hoạt động
-                                    </span>
+                                    <span className="text-blue-600 dark:text-blue-400">Hoạt động</span>
                                 ) : (
-                                    <span className="inline-flex items-center gap-1.5 text-slate-400 font-semibold">
-                                        <XCircle className="h-4 w-4" /> Chưa kích hoạt
-                                    </span>
+                                    <span className="text-slate-400">Chưa bật</span>
                                 )}
                             </div>
                         </div>
@@ -578,7 +574,7 @@ export default function BackupsPage() {
 
                     <div className="mt-2.5">
                         <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
-                            {loading ? 'Đang kiểm tra tiến trình...' : `Chu kỳ: ${overview?.settings?.intervalDays ? `${overview.settings.intervalDays} ngày/lần` : 'Hàng ngày'} · ${overview?.worker?.schedule || '02:00'}`}
+                            {loading ? 'Đang kiểm tra...' : `Chu kỳ: ${overview?.settings?.intervalDays ? `${overview.settings.intervalDays} ngày/lần` : 'Hàng ngày'}`}
                         </span>
                     </div>
                 </div>
@@ -591,20 +587,19 @@ export default function BackupsPage() {
                 >
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
-                                    Kho lưu trữ
-                                </span>
-                                {overview?.storage?.dualStorageEnabled && (
-                                    <span className="ui-pill inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-type-helper font-medium border border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-300">
-                                        Lưu trữ kép
-                                    </span>
-                                )}
-                            </div>
-                            <div className="h-[38px] flex items-center text-type-card sm:text-type-section font-semibold text-slate-900 dark:text-slate-100 leading-[28px] truncate">
+                            <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                                Kho lưu trữ
+                            </span>
+                            <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight truncate">
                                 {loading ? (
-                                    <div className="h-5 w-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
-                                ) : overview?.storage?.dualStorageEnabled ? 'Lưu trữ kép' : overview?.storage?.provider === 'S3' ? 'Amazon S3' : 'Ổ đĩa cục bộ'}
+                                    <div className="h-6 w-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
+                                ) : overview?.storage?.dualStorageEnabled ? (
+                                    'Lưu trữ kép'
+                                ) : overview?.storage?.provider === 'S3' ? (
+                                    'Amazon S3'
+                                ) : (
+                                    'Cục bộ'
+                                )}
                             </div>
                         </div>
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
@@ -614,15 +609,13 @@ export default function BackupsPage() {
 
                     <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
                         <div
-                            className="bg-emerald-600 dark:bg-emerald-500 h-full rounded-full transition-all duration-500 w-full"
+                            className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500 w-full"
                         />
                     </div>
 
                     <div className="mt-2.5">
                         <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
-                            {loading ? 'Đang kết nối lưu trữ...' : overview?.storage?.dualStorageEnabled
-                                ? 'Kho chính & kho dự phòng hoạt động'
-                                : overview?.storage?.warning || 'Đang lưu tại 1 vị trí cục bộ'}
+                            {loading ? 'Đang kết nối...' : overview?.storage?.dualStorageEnabled ? 'Kho chính & dự phòng' : overview?.storage?.warning || '1 vị trí cục bộ'}
                         </span>
                     </div>
                 </div>
@@ -634,26 +627,13 @@ export default function BackupsPage() {
                             <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Công cụ Database CLI
                             </span>
-                            <div className="h-[38px] flex items-center gap-2 text-type-helper font-semibold flex-wrap">
+                            <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight truncate">
                                 {loading ? (
-                                    <div className="h-5 w-32 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
+                                    <div className="h-6 w-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
+                                ) : overview?.tools?.pgDumpAvailable && overview?.tools?.pgRestoreAvailable ? (
+                                    <span className="text-blue-600 dark:text-blue-400">Sẵn sàng</span>
                                 ) : (
-                                    <>
-                                        <span className={`ui-pill inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-type-helper font-medium border ${overview?.tools?.pgDumpAvailable
-                                            ? 'text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700'
-                                            : 'text-slate-500 dark:text-slate-400 border-slate-300 dark:border-slate-600'
-                                            }`}>
-                                            {overview?.tools?.pgDumpAvailable ? <CheckCircle2 className="h-3 w-3 text-blue-600 dark:text-blue-400" /> : <XCircle className="h-3 w-3" />}
-                                            pg_dump
-                                        </span>
-                                        <span className={`ui-pill inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-type-helper font-medium border ${overview?.tools?.pgRestoreAvailable
-                                            ? 'text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700'
-                                            : 'text-slate-500 dark:text-slate-400 border-slate-300 dark:border-slate-600'
-                                            }`}>
-                                            {overview?.tools?.pgRestoreAvailable ? <CheckCircle2 className="h-3 w-3 text-blue-600 dark:text-blue-400" /> : <XCircle className="h-3 w-3" />}
-                                            pg_restore
-                                        </span>
-                                    </>
+                                    <span className="text-amber-600 dark:text-amber-400">Thiếu CLI</span>
                                 )}
                             </div>
                         </div>
@@ -671,7 +651,7 @@ export default function BackupsPage() {
 
                     <div className="mt-2.5">
                         <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
-                            {loading ? 'Đang kiểm tra CLI tools...' : overview?.tools?.pgDumpAvailable && overview?.tools?.pgRestoreAvailable ? 'Sẵn sàng sao lưu & phục hồi' : 'Thiếu công cụ PostgreSQL CLI'}
+                            {loading ? 'Đang kiểm tra...' : overview?.tools?.pgDumpAvailable && overview?.tools?.pgRestoreAvailable ? 'pg_dump & pg_restore' : 'Thiếu pg_dump/restore'}
                         </span>
                     </div>
                 </div>
@@ -683,9 +663,9 @@ export default function BackupsPage() {
                             <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
                                 Dung lượng tổng
                             </span>
-                            <div className="h-[38px] flex items-center text-type-kpi font-semibold text-slate-900 dark:text-slate-100 tracking-tight tabular-nums truncate">
+                            <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums truncate">
                                 {loading ? (
-                                    <div className="h-5 w-20 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
+                                    <div className="h-6 w-20 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
                                 ) : (
                                     formatBytes(overview?.totalBytes)
                                 )}

@@ -759,44 +759,26 @@ export default function AccessControlPage() {
   ];
 
   return (
-    <main className="min-h-screen w-full space-y-6 bg-slate-50/50 px-6 py-6 pb-28 dark:bg-slate-950">
-      {/* ── 1. Standard Header ── */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
-        <div className="space-y-0.5">
-          <h1 className="text-type-page font-semibold leading-[36px] tracking-tight text-slate-900 dark:text-slate-100">
-            Phân quyền & truy cập
-          </h1>
-          <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-            Quản lý quyền theo vai trò, quyền riêng cá nhân và phạm vi dữ liệu theo tài khoản
-          </p>
+    <>
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen pb-28 dark:bg-slate-950">
+        {/* ── 1. Standard Header ── */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
+          <div className="space-y-0.5">
+            <h1 className="text-type-page font-semibold leading-[36px] tracking-tight text-slate-900 dark:text-slate-100">
+              Phân quyền & truy cập
+            </h1>
+            <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
+              Quản lý quyền theo vai trò, quyền riêng cá nhân và phạm vi dữ liệu theo tài khoản
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <DataActionsDropdown onExportExcel={handleExportExcel} onPrint={handlePrint} />
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <DataActionsDropdown onExportExcel={handleExportExcel} onPrint={handlePrint} />
-        </div>
-      </div>
-
-      {/* ── Floating Segmented Control Dock (Nằm ở giữa và ở góc dưới màn hình, nổi lên) ── */}
-      <div className="fixed bottom-7 left-0 right-0 md:left-[252px] [html.sidebar-collapsed_&]:md:left-[72px] flex justify-center z-30 pointer-events-none px-4 transition-[left] duration-300">
-        <div className="pointer-events-auto shadow-2xl backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 rounded-full border border-slate-200/90 dark:border-slate-700/90 p-1 ring-1 ring-slate-900/5 dark:ring-white/10 animate-fade-in-up">
-          <SlidingSegmentedControl
-            variant="primary"
-            pillShape="pill"
-            size="md"
-            value={tab}
-            onChange={(newTab) => setTab(newTab as Tab)}
-            className="border-none bg-transparent shadow-none"
-            options={[
-              { value: 'matrix', label: 'Quyền theo vai trò', icon: ShieldCheck },
-              { value: 'users', label: 'Tài khoản & phạm vi truy cập', icon: UsersRound },
-              { value: 'history', label: 'Lịch sử thay đổi', icon: History },
-            ]}
-          />
-        </div>
-      </div>
-
-      {/* ── 2. Standard KPI Cards Grid ── */}
-      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-5">
+        {/* ── 2. Standard KPI Cards Grid ── */}
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-5">
         {kpiItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -853,9 +835,9 @@ export default function AccessControlPage() {
         <>
           {/* ══════════ TAB 1: MA TRẬN QUYỀN THEO VAI TRÒ ══════════ */}
           {tab === 'matrix' && (
-            <section className="space-y-4">
+            <section className="space-y-5">
               {/* Search & Filter Toolbar (Single Unified Row with Embedded SlidersHorizontal Popover) */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 py-1">
                 {/* Left: Unified Search Bar with Embedded SlidersHorizontal Popover */}
                 <div className="relative flex-1 max-w-xl min-w-[240px]">
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
@@ -952,10 +934,9 @@ export default function AccessControlPage() {
               </div>
 
               {/* Matrix Table */}
-              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
-                <div className="ui-table-wrap overflow-x-auto">
-                  <table className="ui-table min-w-[900px] w-full text-left">
-                    <thead className="bg-slate-50/80 text-type-helper font-medium text-slate-700 dark:bg-slate-800/60 dark:text-slate-200 border-b border-slate-200/80 dark:border-slate-800">
+              <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
+                <table className="ui-table min-w-[900px] w-full text-left">
+                  <thead className="bg-slate-50 text-type-body-sm font-medium tracking-wider text-slate-600 dark:bg-slate-800/80 dark:text-slate-200 border-b border-slate-200 dark:border-slate-800">
                       <tr>
                         <th className="px-5 py-3.5 w-[42%]">Chức năng</th>
                         <th className="px-4 py-3.5 w-[16%]">Nhóm</th>
@@ -1070,7 +1051,6 @@ export default function AccessControlPage() {
                       )}
                     </tbody>
                   </table>
-                </div>
               </div>
             </section>
           )}
@@ -1514,8 +1494,8 @@ export default function AccessControlPage() {
 
           {/* ══════════ TAB 3: NHẬT KÝ THAY ĐỔI ══════════ */}
           {tab === 'history' && (
-            <section className="space-y-4">
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <section className="space-y-5">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 py-1">
                 {/* Unified Search Bar with embedded AccessHistoryFilterPopover */}
                 <div className="relative flex-1 max-w-xl min-w-[240px]">
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
@@ -1658,7 +1638,7 @@ export default function AccessControlPage() {
                 </div>
               )}
 
-              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
+              <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
                 <div className="divide-y divide-slate-100 dark:divide-slate-800">
                   {paginatedHistory.length ? (
                     paginatedHistory.map((item) => (
@@ -1739,5 +1719,25 @@ export default function AccessControlPage() {
       />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </main>
+
+    {/* ── Floating Segmented Control Dock (Nằm ở giữa và ở góc dưới màn hình, nổi lên) ── */}
+    <div className="fixed bottom-7 left-0 right-0 md:left-[252px] [html.sidebar-collapsed_&]:md:left-[72px] flex justify-center z-30 pointer-events-none px-4 transition-[left] duration-300">
+      <div className="pointer-events-auto shadow-2xl backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 rounded-full border border-slate-200/90 dark:border-slate-700/90 p-1 ring-1 ring-slate-900/5 dark:ring-white/10 animate-fade-in-up">
+        <SlidingSegmentedControl
+          variant="primary"
+          pillShape="pill"
+          size="md"
+          value={tab}
+          onChange={(newTab) => setTab(newTab as Tab)}
+          className="border-none bg-transparent shadow-none"
+          options={[
+            { value: 'matrix', label: 'Quyền theo vai trò', icon: ShieldCheck },
+            { value: 'users', label: 'Tài khoản & phạm vi truy cập', icon: UsersRound },
+            { value: 'history', label: 'Lịch sử thay đổi', icon: History },
+          ]}
+        />
+      </div>
+    </div>
+  </>
   );
 }
