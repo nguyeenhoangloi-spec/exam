@@ -156,6 +156,19 @@ export default function AccessControlPage() {
 
   const [userSearch, setUserSearch] = useState('');
   const [userRoleFilter, setUserRoleFilter] = useState('ALL');
+  const roleChipRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+
+  const handleSelectRoleFilter = (key: string) => {
+    setUserRoleFilter(key);
+    const targetEl = roleChipRefs.current[key];
+    if (targetEl) {
+      targetEl.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      });
+    }
+  };
 
   const [historySearch, setHistorySearch] = useState('');
   const [historyFilters, setHistoryFilters] = useState<AccessHistoryFilterState>({
@@ -1027,27 +1040,43 @@ export default function AccessControlPage() {
                       </button>
                     </div>
 
-                    {/* Role filter segmented control */}
-                    <div className="grid grid-cols-4 gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60">
+                    {/* Role filter Capsule Chips - Không dùng icon, có badge đếm số lượng, tự động cuộn vào giữa khi chọn */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar scroll-smooth">
                       {[
-                        { key: 'ALL', label: 'Tất cả' },
-                        { key: 'TEACHER', label: 'Giảng viên' },
-                        { key: 'ADMIN', label: 'Quản trị' },
-                        { key: 'STUDENT', label: 'Sinh viên' },
-                      ].map((item) => (
-                        <button
-                          key={item.key}
-                          type="button"
-                          onClick={() => setUserRoleFilter(item.key as any)}
-                          className={`py-1.5 px-0.5 rounded-xl text-type-helper font-semibold transition cursor-pointer select-none text-center whitespace-nowrap ${userRoleFilter === item.key
-                            ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-xs'
-                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                        { key: 'ALL', label: 'Tất cả', count: users.length },
+                        { key: 'TEACHER', label: 'Giảng viên', count: users.filter((u) => u.role === 'TEACHER').length },
+                        { key: 'ADMIN', label: 'Quản trị', count: users.filter((u) => u.role === 'ADMIN').length },
+                        { key: 'STUDENT', label: 'Sinh viên', count: users.filter((u) => u.role === 'STUDENT').length },
+                      ].map((item) => {
+                        const isActive = userRoleFilter === item.key;
+                        return (
+                          <button
+                            key={item.key}
+                            ref={(el) => {
+                              roleChipRefs.current[item.key] = el;
+                            }}
+                            type="button"
+                            onClick={() => handleSelectRoleFilter(item.key)}
+                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-type-helper font-semibold transition-all duration-200 shrink-0 cursor-pointer ${
+                              isActive
+                                ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/25 scale-[1.02]'
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700/80'
                             }`}
-                          title={item.label}
-                        >
-                          {item.label}
-                        </button>
-                      ))}
+                            title={`${item.label} (${item.count})`}
+                          >
+                            <span>{item.label}</span>
+                            <span
+                              className={`ui-pill px-1.5 py-0.2 rounded-full text-type-helper font-medium ${
+                                isActive
+                                  ? 'ui-pill-solid bg-white/20 text-white'
+                                  : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+                              }`}
+                            >
+                              {item.count}
+                            </span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
