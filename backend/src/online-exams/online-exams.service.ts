@@ -899,7 +899,11 @@ export class OnlineExamsService {
         student: true,
         onlineExamConfig: {
           include: {
-            examSchedule: true,
+            examSchedule: {
+              include: {
+                subject: true,
+              },
+            },
           },
         },
         incidents: true,
@@ -932,6 +936,8 @@ export class OnlineExamsService {
       attemptId: attempt.id,
       status: attempt.status,
       submittedAt: attempt.submittedAt,
+      subjectName: (schedule as any)?.subject?.name || null,
+      subjectCode: (schedule as any)?.subject?.code || null,
       totalScore: canShowScore ? (attempt.totalScore ?? 0) : null,
       maxScore: attempt.maxScore ?? 10,
       showResultImmediately: canShowScore,

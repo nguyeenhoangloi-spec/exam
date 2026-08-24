@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { onlineExamService, AnswerItem, ProctoringEventItem } from '@/lib/services/online-exam.service';
-import { Clock, Shield, Flag, CheckCircle, CheckCircle2, AlertTriangle, Wifi, WifiOff, Send, Maximize2, ChevronLeft, ChevronRight, HelpCircle, X } from 'lucide-react';
+import { Clock, Shield, Flag, CheckCircle, CheckCircle2, AlertTriangle, Wifi, WifiOff, Send, Maximize2, ChevronLeft, ChevronRight, HelpCircle, X, Info } from 'lucide-react';
 import { fixHtmlImageUrls, getImageUrl } from '@/lib/media-utils';
 import { ImageLightboxModal } from '@/components/ImageLightboxModal';
 import { Toast } from '@/components/Toast';
@@ -720,8 +720,11 @@ export default function StudentExamTakePage() {
                     </div>
                   </div>
                 ) : currentQ.type === 'FILL_BLANK' ? (
-                  <div className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/60 p-4 text-type-helper font-normal text-slate-600 dark:text-slate-300 space-y-1">
-                    <p>💡 <strong>Hướng dẫn:</strong> Nhập trực tiếp đáp án vào từng ô trống trong câu hỏi phía trên. Hệ thống tự động ghi nhận và lưu bài làm của bạn khi bạn nhập.</p>
+                  <div className="flex items-start gap-2.5 rounded-xl border border-blue-200/70 dark:border-blue-900/40 bg-blue-50/50 dark:bg-blue-950/20 p-3.5 text-type-helper text-slate-700 dark:text-slate-200">
+                    <Info className="mt-0.5 h-4 w-4 shrink-0 text-blue-600 dark:text-blue-400" />
+                    <p className="leading-relaxed font-normal">
+                      <strong className="font-semibold text-slate-900 dark:text-slate-100">Hướng dẫn:</strong> Nhập trực tiếp đáp án vào từng ô trống trong câu hỏi phía trên. Hệ thống tự động ghi nhận và lưu bài làm của bạn khi bạn nhập.
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-3 pt-2">
