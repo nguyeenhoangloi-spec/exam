@@ -554,9 +554,9 @@ export default function BackupsPage() {
                                 {loading ? (
                                     <div className="h-6 w-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
                                 ) : overview?.worker?.enabled ? (
-                                    <span className="text-blue-600 dark:text-blue-400">Hoạt động</span>
+                                    'Hoạt động'
                                 ) : (
-                                    <span className="text-slate-400">Chưa bật</span>
+                                    'Chưa bật'
                                 )}
                             </div>
                         </div>
@@ -631,9 +631,9 @@ export default function BackupsPage() {
                                 {loading ? (
                                     <div className="h-6 w-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
                                 ) : overview?.tools?.pgDumpAvailable && overview?.tools?.pgRestoreAvailable ? (
-                                    <span className="text-blue-600 dark:text-blue-400">Sẵn sàng</span>
+                                    'Sẵn sàng'
                                 ) : (
-                                    <span className="text-amber-600 dark:text-amber-400">Thiếu CLI</span>
+                                    'Thiếu CLI'
                                 )}
                             </div>
                         </div>
