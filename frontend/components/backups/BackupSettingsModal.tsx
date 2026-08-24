@@ -48,6 +48,17 @@ const RETENTION_OPTIONS = [
   { value: 30, label: '30 bản' },
 ];
 
+const formatPathDisplay = (rawPath?: string, fallback = 'backup-runtime') => {
+  if (!rawPath) return fallback;
+  const normalized = rawPath.replace(/\\/g, '/');
+  const idx = normalized.lastIndexOf('backup-runtime');
+  if (idx !== -1) {
+    return normalized.substring(idx);
+  }
+  const parts = normalized.split('/').filter(Boolean);
+  return parts.length > 2 ? parts.slice(-2).join('/') : normalized;
+};
+
 export function BackupSettingsModal({
   isOpen,
   onClose,
@@ -218,26 +229,32 @@ export function BackupSettingsModal({
             </label>
           </div>
 
-          {/* Vị trí lưu trữ */}
-          <div className="text-type-body-sm space-y-2 pt-1">
-            <div className="flex items-center justify-between py-1">
-              <span className="font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+          {/* Vị trí lưu trữ dạng Sub-card phẳng sang trọng */}
+          <div className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-3 space-y-2.5 dark:border-slate-800 dark:bg-slate-800/40">
+            <div className="flex items-center justify-between gap-3 text-type-body-sm">
+              <span className="font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2 shrink-0 whitespace-nowrap">
                 <HardDrive className="h-4 w-4 text-blue-600 shrink-0" />
                 Kho chính
               </span>
-              <code className="text-type-helper px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700/60 font-medium">
-                {initialSettings?.primaryPath ? (initialSettings.primaryPath.includes('primary') ? 'backup-runtime/primary' : initialSettings.primaryPath) : 'backup-runtime/primary'}
+              <code
+                title={initialSettings?.primaryPath || 'backup-runtime'}
+                className="text-type-helper px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/80 font-medium truncate max-w-[240px] sm:max-w-[280px]"
+              >
+                {formatPathDisplay(initialSettings?.primaryPath, 'backup-runtime')}
               </code>
             </div>
 
             {dualStorageEnabled && (
-              <div className="flex items-center justify-between py-1">
-                <span className="font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <div className="flex items-center justify-between gap-3 text-type-body-sm pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+                <span className="font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2 shrink-0 whitespace-nowrap">
                   <FolderSync className="h-4 w-4 text-emerald-600 shrink-0" />
                   Kho dự phòng
                 </span>
-                <code className="text-type-helper px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700/60 font-medium">
-                  {secondaryPath ? (secondaryPath.includes('mirror_backup') ? 'backup-runtime/mirror_backup' : secondaryPath) : 'backup-runtime/mirror_backup'}
+                <code
+                  title={secondaryPath || 'backup-runtime/mirror_backup'}
+                  className="text-type-helper px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/80 font-medium truncate max-w-[240px] sm:max-w-[280px]"
+                >
+                  {formatPathDisplay(secondaryPath, 'backup-runtime/mirror_backup')}
                 </code>
               </div>
             )}
