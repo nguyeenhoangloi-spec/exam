@@ -412,11 +412,14 @@ export default function AccessControlPage() {
 
   const mutate = async (work: () => Promise<void>, successMessage: string) => {
     setSaving(true);
+    setConfirm(null);
     try {
       await work();
       setToast({ type: 'success', message: successMessage });
-      await load(false);
-      if (selectedUser) await loadEffective(selectedUser);
+      await Promise.all([
+        load(false),
+        selectedUser ? loadEffective(selectedUser) : Promise.resolve(),
+      ]);
     } catch (error: any) {
       setToast({
         type: 'error',
@@ -427,7 +430,6 @@ export default function AccessControlPage() {
       });
     } finally {
       setSaving(false);
-      setConfirm(null);
     }
   };
 
@@ -470,38 +472,60 @@ export default function AccessControlPage() {
 
   const handleQuickAddOverride = (effect: 'ALLOW' | 'DENY') => {
     if (!selectedUser || !overrideCode) return;
-    mutate(
-      () =>
-        api.put(`/access-control/users/${selectedUser.id}/overrides`, {
-          permissionCode: overrideCode,
-          effect,
-          reason: undefined,
-        }),
-      effect === 'ALLOW' ? 'Đã cấp quyền riêng thành công.' : 'Đã từ chối quyền riêng thành công.'
-    );
+    const targetPerm = permissions.find((p) => p.code === overrideCode);
+    const permName = targetPerm ? targetPerm.name : overrideCode;
+    const isAllow = effect === 'ALLOW';
+
+    setConfirm({
+      title: isAllow ? 'Xác nhận cấp thêm quyền riêng?' : 'Xác nhận chặn quyền riêng?',
+      message: `Bạn có chắc chắn muốn ${isAllow ? 'cấp thêm quyền' : 'chặn quyền'} “${permName}” cho tài khoản ${displayName(selectedUser)} (${selectedUser.username})? Cấu hình này sẽ ghi đè quyền mặc định của vai trò.`,
+      onConfirm: () =>
+        mutate(
+          () =>
+            api.put(`/access-control/users/${selectedUser.id}/overrides`, {
+              permissionCode: overrideCode,
+              effect,
+              reason: undefined,
+            }),
+          isAllow ? 'Đã cấp quyền riêng thành công.' : 'Đã thiết lập chặn quyền thành công.'
+        ),
+    });
     setOverrideCode('');
   };
 
   const removeOverride = (permissionCode: string) => {
     if (!selectedUser) return;
-    mutate(
-      () =>
-        api.delete(
-          `/access-control/users/${selectedUser.id}/overrides/${permissionCode}`
+    const targetPerm = permissions.find((p) => p.code === permissionCode);
+    const permName = targetPerm ? targetPerm.name : permissionCode;
+
+    setConfirm({
+      title: 'Gỡ ngoại lệ quyền riêng?',
+      message: `Bạn có chắc chắn muốn gỡ ngoại lệ của quyền “${permName}” khỏi tài khoản ${displayName(selectedUser)}? Quyền sẽ tự động quay về theo vai trò mặc định.`,
+      onConfirm: () =>
+        mutate(
+          () =>
+            api.delete(
+              `/access-control/users/${selectedUser.id}/overrides/${permissionCode}`
+            ),
+          'Đã gỡ quyền riêng thành công.'
         ),
-      'Đã gỡ quyền riêng.'
-    );
+    });
   };
 
   const saveScopes = () => {
     if (!selectedUser) return;
-    mutate(
-      () =>
-        api.put(`/access-control/users/${selectedUser.id}/scopes`, {
-          scopes: draftScopes.map(({ type, resourceId }) => ({ type, resourceId })),
-        }),
-      'Đã lưu phạm vi truy cập.'
-    );
+    setConfirm({
+      title: 'Lưu cấu hình phạm vi truy cập?',
+      message: `Bạn có chắc chắn muốn cập nhật ${draftScopes.length} phạm vi truy cập dữ liệu cho tài khoản ${displayName(selectedUser)}?`,
+      onConfirm: () =>
+        mutate(
+          () =>
+            api.put(`/access-control/users/${selectedUser.id}/scopes`, {
+              scopes: draftScopes.map(({ type, resourceId }) => ({ type, resourceId })),
+            }),
+          'Đã lưu phạm vi truy cập thành công.'
+        ),
+    });
   };
 
   const resetRole = (role: Role) => {
@@ -1057,20 +1081,18 @@ export default function AccessControlPage() {
                             }}
                             type="button"
                             onClick={() => handleSelectRoleFilter(item.key)}
-                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-type-helper font-semibold transition-all duration-200 shrink-0 cursor-pointer ${
-                              isActive
+                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-type-helper font-semibold transition-all duration-200 shrink-0 cursor-pointer ${isActive
                                 ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/25 scale-[1.02]'
                                 : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700/80'
-                            }`}
+                              }`}
                             title={`${item.label} (${item.count})`}
                           >
                             <span>{item.label}</span>
                             <span
-                              className={`ui-pill px-1.5 py-0.2 rounded-full text-type-helper font-medium ${
-                                isActive
+                              className={`ui-pill px-1.5 py-0.2 rounded-full text-type-helper font-medium ${isActive
                                   ? 'ui-pill-solid bg-white/20 text-white'
                                   : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
-                              }`}
+                                }`}
                             >
                               {item.count}
                             </span>
@@ -1353,22 +1375,27 @@ export default function AccessControlPage() {
                                   selectedUser.permissionOverrides.map((override) => (
                                     <div
                                       key={override.id}
-                                      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-type-helper font-semibold shadow-2xs ${override.effect === 'ALLOW'
-                                        ? 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300'
-                                        : 'bg-rose-50 text-rose-800 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300'
+                                      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-type-helper font-medium shadow-2xs transition-all duration-200 ${override.effect === 'ALLOW'
+                                        ? 'bg-emerald-50/70 border-emerald-200/80 text-emerald-950 dark:bg-emerald-950/30 dark:border-emerald-800/80 dark:text-emerald-200'
+                                        : 'bg-rose-50/70 border-rose-200/80 text-rose-950 dark:bg-rose-950/30 dark:border-rose-800/80 dark:text-rose-200'
                                         }`}
                                     >
-                                      <span>{override.permission.name}</span>
-                                      <span className="text-type-helper opacity-75 font-normal">
-                                        [{override.effect === 'ALLOW' ? '✅ Cấp' : '🚫 Chặn'}]
+                                      <span className="font-semibold">{override.permission.name}</span>
+                                      <span
+                                        className={`ui-pill px-2 py-0.5 rounded-full text-type-helper font-medium ${override.effect === 'ALLOW'
+                                          ? 'ui-pill-solid bg-emerald-600 text-white'
+                                          : 'ui-pill-solid bg-rose-600 text-white'
+                                          }`}
+                                      >
+                                        {override.effect === 'ALLOW' ? 'Cấp quyền' : 'Chặn quyền'}
                                       </span>
                                       <button
                                         type="button"
                                         onClick={() => removeOverride(override.permission.code)}
-                                        className="rounded-full p-0.5 hover:bg-black/10 dark:hover:bg-white/10 text-slate-500 cursor-pointer ml-1"
-                                        title="Xóa ngoại lệ"
+                                        className="flex h-4.5 w-4.5 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer ml-0.5 shrink-0"
+                                        title="Gỡ ngoại lệ quyền này"
                                       >
-                                        <X className="h-3.5 w-3.5" />
+                                        <X className="h-3 w-3" />
                                       </button>
                                     </div>
                                   ))
@@ -1415,7 +1442,7 @@ export default function AccessControlPage() {
                                         : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'
                                         }`}
                                     >
-                                      {p.source === 'ROLE' ? 'Vai trò' : '⭐ Quyền riêng'}
+                                      {p.source === 'ROLE' ? 'Vai trò' : 'Quyền riêng'}
                                     </span>
                                   </div>
                                 ))}
@@ -1516,8 +1543,8 @@ export default function AccessControlPage() {
                         {historyFilters.actionCategory === 'OVERRIDE'
                           ? 'Quyền riêng'
                           : historyFilters.actionCategory === 'SCOPE'
-                          ? 'Phạm vi'
-                          : 'Khôi phục'}
+                            ? 'Phạm vi'
+                            : 'Khôi phục'}
                       </span>
                       <button
                         type="button"
@@ -1553,8 +1580,8 @@ export default function AccessControlPage() {
                         {historyFilters.timeframe === 'TODAY'
                           ? 'Hôm nay'
                           : historyFilters.timeframe === 'WEEK'
-                          ? '7 ngày qua'
-                          : '30 ngày qua'}
+                            ? '7 ngày qua'
+                            : '30 ngày qua'}
                       </span>
                       <button
                         type="button"
@@ -1651,6 +1678,7 @@ export default function AccessControlPage() {
       {/* Confirmation & Toast */}
       <ConfirmModal
         isOpen={Boolean(confirm)}
+        isLoading={saving}
         onClose={() => !saving && setConfirm(null)}
         onConfirm={() => confirm?.onConfirm()}
         title={confirm?.title || ''}
