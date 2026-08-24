@@ -176,6 +176,8 @@ function parseStructuredQuestionText(rawText: string, defaultType = 'SINGLE_CHOI
           ignoreVietnameseTone: false,
         });
       });
+    } else {
+      content = content.replace(/\{\{blank_\d+\}\}/gi, '').trim();
     }
 
     results.push({
@@ -729,10 +731,14 @@ function pairQuestionsAndAnswers(rawItems: any[], defaultType: string): any[] {
           .replace(/^["']?\s*content["']?\s*:\s*["']?/i, '')
           .trim();
 
-        // Đảm bảo thẻ {{blank_1}} luôn có đầy đủ ngoặc nhọn đóng }}
-        formattedContent = formattedContent.replace(/(\{\{blank_\d+)(?!\}\})/gi, '$1}}');
-
-        formattedContent = cleanFillBlankContent(rawContentText);
+        if (isFillBlank) {
+          // Đảm bảo thẻ {{blank_1}} luôn có đầy đủ ngoặc nhọn đóng }}
+          formattedContent = formattedContent.replace(/(\{\{blank_\d+)(?!\}\})/gi, '$1}}');
+          formattedContent = cleanFillBlankContent(formattedContent || rawContentText);
+        } else {
+          // Đối với Trắc nghiệm và Tự luận: Tuyệt đối KHÔNG có {{blank_...}}
+          formattedContent = formattedContent.replace(/\{\{blank_\d+\}\}/gi, '').trim();
+        }
 
         let fillBlankAnswers = isFillBlank ? (Array.isArray(item.fillBlankAnswers) ? item.fillBlankAnswers.map((answer: any, index: number) => ({
           blankIndex: Number(answer.blankIndex || index + 1),

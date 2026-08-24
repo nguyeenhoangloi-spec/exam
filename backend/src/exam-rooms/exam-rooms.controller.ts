@@ -4,9 +4,12 @@ import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { CreateExamRoomDto, UpdateExamRoomDto } from './dto/exam-room.dto';
+import { PermissionGuard } from '../access-control/permission.guard';
+import { Permissions } from '../access-control/permissions.decorator';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 @Roles('ADMIN')
+@Permissions('EXAM_ROOM_MANAGE')
 @Controller('exam-rooms')
 export class ExamRoomsController {
   constructor(private readonly examRoomsService: ExamRoomsService) {}

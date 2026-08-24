@@ -144,7 +144,11 @@ export function SlidingSegmentedControl<T extends string = string>({
             {Icon && (
               <Icon
                 className={`${iconSizeClass} shrink-0 transition-transform duration-200 ${
-                  isActive ? 'scale-105 stroke-[2] text-blue-600 dark:text-blue-400' : 'opacity-70 stroke-[1.8]'
+                  isActive
+                    ? isPrimary
+                      ? 'scale-105 stroke-[2] text-white'
+                      : 'scale-105 stroke-[2] text-blue-600 dark:text-blue-400'
+                    : 'opacity-70 stroke-[1.8]'
                 }`}
               />
             )}

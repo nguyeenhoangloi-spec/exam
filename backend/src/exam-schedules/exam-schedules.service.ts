@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { AutoScheduleProposalDto, CreateExamScheduleDto, UpdateExamScheduleDto } from './dto/exam-schedule.dto';
+import { AccessPolicyService } from '../access-control/access-policy.service';
 
 type Actor = { id: number; role?: string };
 type ScheduleData = CreateExamScheduleDto | UpdateExamScheduleDto;
@@ -10,7 +11,14 @@ type DbClient = PrismaService | Prisma.TransactionClient;
 
 @Injectable()
 export class ExamSchedulesService {
-  constructor(private readonly prisma: PrismaService, private readonly audit: AuditService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly audit: AuditService,
+    private readonly accessPolicy: AccessPolicyService = {
+      allowedSubjectIds: async () => null,
+      assertSubjectScope: async () => undefined,
+    } as unknown as AccessPolicyService,
+  ) {}
 
   private serializable<T>(callback: (tx: Prisma.TransactionClient) => Promise<T>) {
     return this.prisma.$transaction(callback, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
@@ -192,6 +200,7 @@ export class ExamSchedulesService {
   }
 
   async findAll(actor: Actor, examPeriodId?: number, mode?: 'MOCK' | 'OFFICIAL') {
+    const allowedSubjectIds = await this.accessPolicy.allowedSubjectIds(actor as { id: number; role?: string });
     return this.prisma.examSchedule.findMany({
       where: {
         deletedAt: null,
@@ -199,6 +208,7 @@ export class ExamSchedulesService {
         // Giảng viên chỉ thao tác luồng thi thử. Không dùng phân công coi thi
         // làm điều kiện vì thi thử không có phòng hoặc giám thị.
         ...(actor.role === 'TEACHER' ? { mode: 'MOCK' } : (mode ? { mode } : {})),
+        ...(allowedSubjectIds !== null ? { subjectId: { in: allowedSubjectIds } } : {}),
       },
       include: {
         examPeriod: true,
@@ -211,11 +221,13 @@ export class ExamSchedulesService {
   }
 
   async findOne(actor: Actor, id: number) {
+    const allowedSubjectIds = await this.accessPolicy.allowedSubjectIds(actor as { id: number; role?: string });
     const schedule = await this.prisma.examSchedule.findFirst({
       where: {
         id,
         deletedAt: null,
         ...(actor.role === 'TEACHER' ? { mode: 'MOCK' } : {}),
+        ...(allowedSubjectIds !== null ? { subjectId: { in: allowedSubjectIds } } : {}),
       },
       include: {
         examPeriod: true,
@@ -354,6 +366,7 @@ export class ExamSchedulesService {
     if (actor.role === 'TEACHER' && data.mode && data.mode !== 'MOCK') {
       throw new ForbiddenException('Giảng viên chỉ được tạo lịch thi thử. Lịch thi chính thức do quản trị viên quản lý.');
     }
+    await this.accessPolicy.assertSubjectScope(actor as { id: number; role?: string }, data.subjectId);
     this.assertTimeRange(data.startTime, data.endTime);
     return this.serializable(async (tx) => {
       const [period, subject] = await Promise.all([
@@ -404,6 +417,7 @@ export class ExamSchedulesService {
       throw new BadRequestException('Lịch thi đã có đề công bố, không được thay đổi.');
     }
     const subjectId = data.subjectId ?? existing.subjectId;
+    await this.accessPolicy.assertSubjectScope(actor as { id: number; role?: string }, subjectId);
     const periodId = data.examPeriodId ?? existing.examPeriodId;
     const examDate = data.examDate ?? existing.examDate;
     const startTime = data.startTime ?? existing.startTime;

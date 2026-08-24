@@ -131,6 +131,8 @@ export default function AccessControlPage() {
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [effective, setEffective] = useState<any>(null);
   const [overrideCode, setOverrideCode] = useState('');
+  const [overrideReason, setOverrideReason] = useState('');
+  const [scopeReason, setScopeReason] = useState('');
   const [draftScopes, setDraftScopes] = useState<Scope[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -138,7 +140,10 @@ export default function AccessControlPage() {
   const [confirm, setConfirm] = useState<{
     title: string;
     message: string;
-    onConfirm: () => Promise<void>;
+    type?: 'danger' | 'success' | 'warning' | 'info';
+    requireReason?: boolean;
+    reasonPlaceholder?: string;
+    onConfirm: (reason?: string) => Promise<void>;
   } | null>(null);
 
   // Quick Simulator Modal State
@@ -360,7 +365,7 @@ export default function AccessControlPage() {
         api.get('/access-control/overview'),
         api.get('/access-control/users'),
         api.get('/access-control/scope-options'),
-        api.get('/access-control/history'),
+        api.get('/access-control/history?limit=200'),
       ]);
       setPermissions(overviewResult.data?.permissions || []);
       setUsers(usersResult.data || []);
@@ -410,11 +415,18 @@ export default function AccessControlPage() {
     void loadEffective(selectedUser);
   }, [selectedUser, loadEffective]);
 
-  const mutate = async (work: () => Promise<void>, successMessage: string) => {
+  useEffect(() => {
+    setOverrideCode('');
+    setOverrideReason('');
+    setScopeReason('');
+  }, [selectedUserId]);
+
+  const mutate = async (work: () => Promise<void>, successMessage: string, onSuccess?: () => void) => {
     setSaving(true);
     setConfirm(null);
     try {
       await work();
+      onSuccess?.();
       setToast({ type: 'success', message: successMessage });
       await Promise.all([
         load(false),
@@ -437,14 +449,17 @@ export default function AccessControlPage() {
     const granted = !permission.roles.includes(role);
     setConfirm({
       title: granted ? 'Cấp quyền cho vai trò?' : 'Thu hồi quyền khỏi vai trò?',
-      message: `${granted ? 'Cấp' : 'Thu hồi'} quyền “${permission.name}” ${granted ? 'cho' : 'khỏi'
-        } ${ROLE_LABEL[role]}.`,
-      onConfirm: () =>
+      message: `${granted ? 'Cấp' : 'Thu hồi'} quyền “${permission.name}” ${granted ? 'cho' : 'khỏi'} ${ROLE_LABEL[role]}.`,
+      type: granted ? 'info' : 'warning',
+      requireReason: true,
+      reasonPlaceholder: 'Ví dụ: Điều chỉnh theo phân công nhiệm vụ học kỳ II...',
+      onConfirm: (reason) =>
         mutate(
           () =>
             api.put(`/access-control/roles/${role}/permissions`, {
               permissionCode: permission.code,
               granted,
+              reason: (reason || '').trim(),
             }),
           granted ? 'Đã cấp quyền thành công.' : 'Đã thu hồi quyền thành công.'
         ),
@@ -453,25 +468,37 @@ export default function AccessControlPage() {
 
   const requestBulkModulePermission = (role: Role, moduleName: string, grantAll: boolean) => {
     const targetPerms = permissions.filter((p) => p.module === moduleName);
+    const changes = targetPerms
+      .filter((permission) => permission.roles.includes(role) !== grantAll)
+      .map((permission) => ({ permissionCode: permission.code, granted: grantAll }));
+    if (!changes.length) {
+      setToast({ type: 'success', message: 'Nhóm quyền đã ở đúng trạng thái yêu cầu.' });
+      return;
+    }
     setConfirm({
       title: grantAll ? `Cấp cả nhóm [${moduleName}]?` : `Thu hồi cả nhóm [${moduleName}]?`,
       message: `${grantAll ? 'Cấp' : 'Thu hồi'} ${targetPerms.length} quyền của nhóm [${moduleName}] cho ${ROLE_LABEL[role]}.`,
-      onConfirm: () =>
-        mutate(async () => {
-          for (const p of targetPerms) {
-            if (p.roles.includes(role) !== grantAll) {
-              await api.put(`/access-control/roles/${role}/permissions`, {
-                permissionCode: p.code,
-                granted: grantAll,
-              });
-            }
-          }
-        }, `Đã ${grantAll ? 'cấp' : 'thu hồi'} nhóm [${moduleName}] cho ${ROLE_LABEL[role]}.`),
+      type: grantAll ? 'info' : 'warning',
+      requireReason: true,
+      reasonPlaceholder: 'Ví dụ: Cấp quyền quản lý ngân hàng câu hỏi theo phân công...',
+      onConfirm: (reason) =>
+        mutate(
+          () =>
+            api.put(`/access-control/roles/${role}/permissions/batch`, {
+              changes,
+              reason: (reason || '').trim(),
+            }),
+          `Đã ${grantAll ? 'cấp' : 'thu hồi'} nhóm [${moduleName}] cho ${ROLE_LABEL[role]}.`
+        ),
     });
   };
 
   const handleQuickAddOverride = (effect: 'ALLOW' | 'DENY') => {
     if (!selectedUser || !overrideCode) return;
+    if (overrideReason.trim().length < 5) {
+      setToast({ type: 'error', message: 'Nhập lý do cấp hoặc chặn quyền riêng (tối thiểu 5 ký tự).' });
+      return;
+    }
     const targetPerm = permissions.find((p) => p.code === overrideCode);
     const permName = targetPerm ? targetPerm.name : overrideCode;
     const isAllow = effect === 'ALLOW';
@@ -485,9 +512,10 @@ export default function AccessControlPage() {
             api.put(`/access-control/users/${selectedUser.id}/overrides`, {
               permissionCode: overrideCode,
               effect,
-              reason: undefined,
+              reason: overrideReason.trim(),
             }),
-          isAllow ? 'Đã cấp quyền riêng thành công.' : 'Đã thiết lập chặn quyền thành công.'
+          isAllow ? 'Đã cấp quyền riêng thành công.' : 'Đã thiết lập chặn quyền thành công.',
+          () => setOverrideReason('')
         ),
     });
     setOverrideCode('');
@@ -514,6 +542,10 @@ export default function AccessControlPage() {
 
   const saveScopes = () => {
     if (!selectedUser) return;
+    if (scopeReason.trim().length < 5) {
+      setToast({ type: 'error', message: 'Nhập lý do thay đổi phạm vi dữ liệu (tối thiểu 5 ký tự).' });
+      return;
+    }
     setConfirm({
       title: 'Lưu cấu hình phạm vi truy cập?',
       message: `Bạn có chắc chắn muốn cập nhật ${draftScopes.length} phạm vi truy cập dữ liệu cho tài khoản ${displayName(selectedUser)}?`,
@@ -522,8 +554,10 @@ export default function AccessControlPage() {
           () =>
             api.put(`/access-control/users/${selectedUser.id}/scopes`, {
               scopes: draftScopes.map(({ type, resourceId }) => ({ type, resourceId })),
+              reason: scopeReason.trim(),
             }),
-          'Đã lưu phạm vi truy cập thành công.'
+          'Đã lưu phạm vi truy cập thành công.',
+          () => setScopeReason('')
         ),
     });
   };
@@ -739,6 +773,25 @@ export default function AccessControlPage() {
 
         <div className="flex items-center gap-2 shrink-0">
           <DataActionsDropdown onExportExcel={handleExportExcel} onPrint={handlePrint} />
+        </div>
+      </div>
+
+      {/* ── Floating Segmented Control Dock (Nằm ở giữa và ở góc dưới màn hình, nổi lên) ── */}
+      <div className="fixed bottom-7 left-0 right-0 md:left-[252px] [html.sidebar-collapsed_&]:md:left-[72px] flex justify-center z-40 pointer-events-none px-4 transition-[left] duration-300">
+        <div className="pointer-events-auto shadow-2xl backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 rounded-full border border-slate-200/90 dark:border-slate-700/90 p-1 ring-1 ring-slate-900/5 dark:ring-white/10 animate-fade-in-up">
+          <SlidingSegmentedControl
+            variant="primary"
+            pillShape="pill"
+            size="md"
+            value={tab}
+            onChange={(newTab) => setTab(newTab as Tab)}
+            className="border-none bg-transparent shadow-none"
+            options={[
+              { value: 'matrix', label: 'Quyền theo vai trò', icon: ShieldCheck },
+              { value: 'users', label: 'Tài khoản & phạm vi truy cập', icon: UsersRound },
+              { value: 'history', label: 'Lịch sử thay đổi', icon: History },
+            ]}
+          />
         </div>
       </div>
 
@@ -992,6 +1045,11 @@ export default function AccessControlPage() {
                                           requestRolePermission(role, permission)
                                         }
                                         aria-pressed={enabled}
+                                        title={
+                                          isLockedAdmin
+                                            ? 'Quyền quản trị cốt lõi không thể thu hồi'
+                                            : `${enabled ? 'Thu hồi' : 'Cấp'} quyền ${permission.name}`
+                                        }
                                         className={`relative inline-flex h-6.5 w-11 items-center rounded-full transition-colors duration-200 ease-in-out cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 ${enabled
                                           ? 'bg-blue-600'
                                           : 'bg-slate-200 dark:bg-slate-700'
@@ -1200,7 +1258,7 @@ export default function AccessControlPage() {
                                 variant="primary"
                                 size="sm"
                                 onClick={saveScopes}
-                                disabled={saving}
+                                disabled={saving || scopeReason.trim().length < 5}
                               >
                                 Lưu phạm vi
                               </Button>
@@ -1245,15 +1303,30 @@ export default function AccessControlPage() {
                         {/* Sub-Tab Content 1: Manual data scope for teachers */}
                         {userStudioTab === 'scopes' && (
                           selectedUser.role === 'TEACHER' ? (
-                            <ScopeManagerStudio
-                              departments={scopeOptions.departments || []}
-                              classes={scopeOptions.classes || []}
-                              subjects={scopeOptions.subjects || []}
-                              draftScopes={draftScopes}
-                              onScopesChange={setDraftScopes}
-                              onSave={saveScopes}
-                              saving={saving}
-                            />
+                            <div className="space-y-4">
+                              <label className="block">
+                                <span className="mb-1.5 block text-type-helper font-medium text-slate-700 dark:text-slate-300">
+                                  Lý do thay đổi phạm vi
+                                </span>
+                                <input
+                                  type="text"
+                                  value={scopeReason}
+                                  onChange={(event) => setScopeReason(event.target.value)}
+                                  maxLength={500}
+                                  placeholder="Ví dụ: Phân công phụ trách khoa và học phần trong học kỳ II"
+                                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                                />
+                              </label>
+                              <ScopeManagerStudio
+                                departments={scopeOptions.departments || []}
+                                classes={scopeOptions.classes || []}
+                                subjects={scopeOptions.subjects || []}
+                                draftScopes={draftScopes}
+                                onScopesChange={setDraftScopes}
+                                onSave={saveScopes}
+                                saving={saving}
+                              />
+                            </div>
                           ) : (
                             <div className="rounded-2xl border border-blue-200 bg-blue-50/70 p-5 dark:border-blue-900/70 dark:bg-blue-950/30">
                               <div className="flex items-start gap-3">
@@ -1297,8 +1370,16 @@ export default function AccessControlPage() {
                               </span>
                             </div>
 
-                            {/* 1-Line Quick Action Bar */}
-                            <div className="flex items-center gap-2">
+                            <div className="space-y-2">
+                              <input
+                                type="text"
+                                value={overrideReason}
+                                onChange={(event) => setOverrideReason(event.target.value)}
+                                maxLength={500}
+                                placeholder="Lý do cấp hoặc chặn quyền riêng (bắt buộc)"
+                                className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                              />
+                              <div className="flex items-center gap-2">
                               <select
                                 value={overrideCode}
                                 onChange={(e) => setOverrideCode(e.target.value)}
@@ -1315,7 +1396,7 @@ export default function AccessControlPage() {
                               <Button
                                 variant="primary"
                                 size="md"
-                                disabled={!overrideCode || saving}
+                                disabled={!overrideCode || saving || overrideReason.trim().length < 5}
                                 onClick={() => handleQuickAddOverride('ALLOW')}
                                 leftIcon={<Plus className="h-4 w-4" />}
                               >
@@ -1325,12 +1406,13 @@ export default function AccessControlPage() {
                               <Button
                                 variant="danger"
                                 size="md"
-                                disabled={!overrideCode || saving}
+                                disabled={!overrideCode || saving || overrideReason.trim().length < 5}
                                 onClick={() => handleQuickAddOverride('DENY')}
                                 leftIcon={<X className="h-4 w-4" />}
                               >
                                 Chặn quyền
                               </Button>
+                              </div>
                             </div>
 
                             {/* Overrides Chips List */}
@@ -1369,7 +1451,7 @@ export default function AccessControlPage() {
                                   ))
                                 ) : (
                                   <div className="w-full rounded-xl border border-slate-100 dark:border-slate-800 p-4 text-center text-type-body-sm text-slate-400 font-normal">
-                                    Tài khoản này đang sử dụng 100% quyền theo vai trò mặc định, chưa có ngoại lệ nào.
+                                    Tài khoản này đang sử dụng quyền theo vai trò mặc định, chưa có ngoại lệ nào.
                                   </div>
                                 )}
                               </div>
@@ -1648,25 +1730,13 @@ export default function AccessControlPage() {
         isOpen={Boolean(confirm)}
         isLoading={saving}
         onClose={() => !saving && setConfirm(null)}
-        onConfirm={() => confirm?.onConfirm()}
+        onConfirm={(reason) => confirm?.onConfirm(reason)}
         title={confirm?.title || ''}
         message={confirm?.message || ''}
-        type="warning"
+        type={confirm?.type || 'warning'}
+        requireReason={confirm?.requireReason}
+        reasonPlaceholder={confirm?.reasonPlaceholder}
       />
-      {/* ── Bottom Floating Tab Dock (Đúng chuẩn Design System & Không lồng khung hộp) ── */}
-      <div className="fixed bottom-7 left-0 right-0 md:left-[252px] [html.sidebar-collapsed_&]:md:left-[72px] flex justify-center z-50 pointer-events-none px-4 transition-[left] duration-300">
-        <SlidingSegmentedControl
-          variant="primary"
-          value={tab}
-          onChange={(newTab) => setTab(newTab as Tab)}
-          className="pointer-events-auto bg-white/95 dark:bg-slate-900/95 shadow-[0_20px_50px_-12px_rgba(15,23,42,0.18)] dark:shadow-[0_24px_60px_-12px_rgba(0,0,0,0.6)] backdrop-blur-xl ring-1 ring-slate-900/5 dark:ring-white/10 animate-in slide-in-from-bottom-5 duration-300"
-          options={[
-            { value: 'matrix', label: 'Quyền theo vai trò', icon: ShieldCheck },
-            { value: 'users', label: 'Tài khoản & phạm vi truy cập', icon: UsersRound },
-            { value: 'history', label: 'Lịch sử thay đổi', icon: History },
-          ]}
-        />
-      </div>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </main>
   );

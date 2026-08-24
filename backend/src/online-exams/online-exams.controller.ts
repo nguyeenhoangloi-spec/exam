@@ -20,8 +20,10 @@ import { StartExamDto } from './dto/start-exam.dto';
 import { SaveAnswersBatchDto } from './dto/save-answer.dto';
 import { ProctoringEventsBatchDto } from './dto/proctoring-event.dto';
 import { SubmitAppealDto } from './dto/appeal.dto';
+import { PermissionGuard } from '../access-control/permission.guard';
+import { Permissions } from '../access-control/permissions.decorator';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 @Roles('STUDENT')
 @Controller('online-exams')
 export class OnlineExamsController {
@@ -64,6 +66,7 @@ export class OnlineExamsController {
    * Bắt đầu phiên thi sau khi vượt qua kiểm tra điều kiện toàn diện
    */
   @Post('schedule/:scheduleId/start')
+  @Permissions('ONLINE_EXAM_TAKE')
   startAttempt(
     @Request() req: any,
     @Param('scheduleId', ParseIntPipe) scheduleId: number,
@@ -85,6 +88,7 @@ export class OnlineExamsController {
    * Lấy danh sách câu hỏi và trạng thái bài thi
    */
   @Get('attempt/:token/questions')
+  @Permissions('ONLINE_EXAM_TAKE')
   getAttemptQuestions(@Request() req: any, @Param('token') token: string, @Headers('x-exam-attempt-token') attemptHeader?: string) {
     return this.onlineExamsService.getAttemptQuestions(req.user.id, this.attemptCredential(token, attemptHeader));
   }
@@ -94,6 +98,7 @@ export class OnlineExamsController {
    * Tự động lưu đáp án (idempotent với version)
    */
   @Post('attempt/:token/answers/save')
+  @Permissions('ONLINE_EXAM_TAKE')
   saveAnswers(
     @Request() req: any,
     @Param('token') token: string,
@@ -108,6 +113,7 @@ export class OnlineExamsController {
    * Giữ kết nối và cập nhật thời gian còn lại
    */
   @Post('attempt/:token/heartbeat')
+  @Permissions('ONLINE_EXAM_TAKE')
   heartbeat(@Request() req: any, @Param('token') token: string, @Headers('x-exam-attempt-token') attemptHeader?: string) {
     return this.onlineExamsService.heartbeat(req.user.id, this.attemptCredential(token, attemptHeader));
   }
@@ -117,6 +123,7 @@ export class OnlineExamsController {
    * Ghi nhận sự kiện giám sát thi
    */
   @Post('attempt/:token/events')
+  @Permissions('ONLINE_EXAM_TAKE')
   recordEvents(
     @Request() req: any,
     @Param('token') token: string,
@@ -131,6 +138,7 @@ export class OnlineExamsController {
    * Nộp bài thi chủ động
    */
   @Post('attempt/:token/submit')
+  @Permissions('ONLINE_EXAM_TAKE')
   submitAttempt(@Request() req: any, @Param('token') token: string, @Headers('x-exam-attempt-token') attemptHeader?: string) {
     return this.onlineExamsService.submitAttempt(req.user.id, this.attemptCredential(token, attemptHeader), false);
   }
@@ -140,6 +148,7 @@ export class OnlineExamsController {
    * Xem kết quả bài thi (theo cấu hình công bố)
    */
   @Get('attempt/:attemptId/result')
+  @Permissions('STUDENT_RESULT_VIEW')
   getAttemptResult(
     @Request() req: any,
     @Param('attemptId') attemptId: string,
@@ -165,6 +174,7 @@ export class OnlineExamsController {
    * Gửi giải trình nếu bị đánh dấu vi phạm
    */
   @Post('attempt/:attemptId/appeal')
+  @Permissions('ONLINE_EXAM_TAKE')
   submitAppeal(
     @Request() req: any,
     @Param('attemptId') attemptId: string,

@@ -41,6 +41,7 @@ interface SidebarProps {
   isToggling?: boolean;
   mobileOpen?: boolean;
   onMobileClose?: () => void;
+  effectivePermissions?: ReadonlySet<string> | null;
 }
 
 interface NavSubItem {
@@ -67,6 +68,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggle,
   mobileOpen,
   onMobileClose,
+  effectivePermissions,
 }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -271,10 +273,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
       rawGroups
         .map((grp) => ({
           group: grp.group,
-          items: grp.items.filter((item) => canAccessPath(role, item.href)),
+          items: grp.items.filter((item) => canAccessPath(role, item.href, effectivePermissions)),
         }))
         .filter((grp) => grp.items.length > 0),
-    [rawGroups, role]
+    [rawGroups, role, effectivePermissions]
   );
 
   const isItemActive = (href: string) => {

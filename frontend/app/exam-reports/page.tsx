@@ -315,7 +315,6 @@ export default function ExamReportsPage() {
     return { all: schedules.length, official, mock, retake };
   }, [schedules]);
 
-  // Compute counts for exam formats (Trắc nghiệm, Tự luận, Điền khuyết...)
   const formatCounts = useMemo(() => {
     let tracNghiem = 0;
     let tuLuan = 0;
@@ -333,35 +332,41 @@ export default function ExamReportsPage() {
     return { all: schedules.length, tracNghiem, tuLuan, dienKhuyet, honHop, thucHanh };
   }, [schedules]);
 
-  // Modal filtered schedules
   const modalFilteredSchedules = useMemo(() => {
-    return schedules.filter((s: any) => {
-      const code = (s.subjectCode || s.subject?.subjectCode || '').toLowerCase();
-      const name = (s.subjectName || s.subject?.subjectName || '').toLowerCase();
-      const period = (s.periodName || s.examPeriod?.name || '').toLowerCase();
-      const q = modalSearch.trim().toLowerCase();
+    return schedules
+      .filter((s: any) => {
+        const code = (s.subjectCode || s.subject?.subjectCode || '').toLowerCase();
+        const name = (s.subjectName || s.subject?.subjectName || '').toLowerCase();
+        const period = (s.periodName || s.examPeriod?.name || '').toLowerCase();
+        const q = modalSearch.trim().toLowerCase();
 
-      const matchesSearch = !q || code.includes(q) || name.includes(q) || period.includes(q);
+        const matchesSearch = !q || code.includes(q) || name.includes(q) || period.includes(q);
 
-      const typeInfo = getScheduleTypeBadge(s);
-      const matchesMode =
-        modalModeFilter === 'ALL' ||
-        (modalModeFilter === 'OFFICIAL' && typeInfo.key === 'OFFICIAL') ||
-        (modalModeFilter === 'MOCK' && typeInfo.key === 'MOCK') ||
-        (modalModeFilter === 'RETAKE' && typeInfo.key === 'RETAKE');
+        const typeInfo = getScheduleTypeBadge(s);
+        const matchesMode =
+          modalModeFilter === 'ALL' ||
+          (modalModeFilter === 'OFFICIAL' && typeInfo.key === 'OFFICIAL') ||
+          (modalModeFilter === 'MOCK' && typeInfo.key === 'MOCK') ||
+          (modalModeFilter === 'RETAKE' && typeInfo.key === 'RETAKE');
 
-      const fmtInfo = getExamFormatBadge(s);
-      const matchesFormat =
-        modalFormatFilter === 'ALL' || fmtInfo.key === modalFormatFilter;
+        const fmtInfo = getExamFormatBadge(s);
+        const matchesFormat =
+          modalFormatFilter === 'ALL' || fmtInfo.key === modalFormatFilter;
 
-      const sCode = s.subjectCode || s.subject?.subjectCode || '';
-      const matchesSubject = modalSubjectFilter === 'ALL' || sCode === modalSubjectFilter;
+        const sCode = s.subjectCode || s.subject?.subjectCode || '';
+        const matchesSubject = modalSubjectFilter === 'ALL' || sCode === modalSubjectFilter;
 
-      const statusInfo = getScheduleStatusBadge(s);
-      const matchesStatus = modalStatusFilter === 'ALL' || statusInfo.key === modalStatusFilter;
+        const statusInfo = getScheduleStatusBadge(s);
+        const matchesStatus = modalStatusFilter === 'ALL' || statusInfo.key === modalStatusFilter;
 
-      return matchesSearch && matchesMode && matchesFormat && matchesSubject && matchesStatus;
-    });
+        return matchesSearch && matchesMode && matchesFormat && matchesSubject && matchesStatus;
+      })
+      .sort((a: any, b: any) => {
+        const timeA = new Date(`${(a.examDate || '').split('T')[0]}T${a.startTime || '00:00'}:00`).getTime() || 0;
+        const timeB = new Date(`${(b.examDate || '').split('T')[0]}T${b.startTime || '00:00'}:00`).getTime() || 0;
+        if (timeB !== timeA) return timeB - timeA;
+        return (b.id || 0) - (a.id || 0);
+      });
   }, [schedules, modalSearch, modalModeFilter, modalFormatFilter, modalSubjectFilter, modalStatusFilter]);
 
   const [page, setPage] = useState(1);
@@ -469,7 +474,13 @@ export default function ExamReportsPage() {
 
   useEffect(() => {
     if (!selectedScheduleId && !searchParams.get('scheduleId') && schedules.length > 0) {
-      setSelectedScheduleId(String(schedules[0].id));
+      const sorted = [...schedules].sort((a: any, b: any) => {
+        const timeA = new Date(`${(a.examDate || '').split('T')[0]}T${a.startTime || '00:00'}:00`).getTime() || 0;
+        const timeB = new Date(`${(b.examDate || '').split('T')[0]}T${b.startTime || '00:00'}:00`).getTime() || 0;
+        if (timeB !== timeA) return timeB - timeA;
+        return (b.id || 0) - (a.id || 0);
+      });
+      setSelectedScheduleId(String(sorted[0].id));
     }
   }, [schedules, selectedScheduleId, searchParams]);
 

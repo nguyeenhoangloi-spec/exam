@@ -4,9 +4,12 @@ import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { AutoArrangeDto } from './dto/auto-arrange.dto';
+import { PermissionGuard } from '../access-control/permission.guard';
+import { Permissions } from '../access-control/permissions.decorator';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 @Roles('ADMIN')
+@Permissions('EXAM_ARRANGEMENT_MANAGE')
 @Controller('exam-arrangement')
 export class ExamArrangementController {
   constructor(private readonly examArrangementService: ExamArrangementService) {}

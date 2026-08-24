@@ -9,6 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { BulkActionDto, CreateQuestionDto, ImportConfirmDto, ImportPreviewDto, QuestionQueryDto, SaveAiQuestionsDto, UpdateQuestionDto } from './dto/question.dto';
 import { autoFormatFillBlankData, getFillBlankScore, normalizeFillBlankAnswer, normalizeQuestionContent, validateFillBlankAnswers, validateQuestionOptions } from './question-validation';
+import { AccessPolicyService } from '../access-control/access-policy.service';
 
 type Actor = { id: number; role: string };
 const include = {
@@ -23,6 +24,10 @@ export class QuestionsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly accessPolicy: AccessPolicyService = {
+      allowedSubjectIds: async () => null,
+      assertSubjectScope: async () => undefined,
+    } as unknown as AccessPolicyService,
   ) {}
   private access(a: Actor) { if (!['ADMIN', 'TEACHER'].includes(a.role)) throw new ForbiddenException('Không có quyền truy cập.'); }
   private async teacherDepartmentId(a: Actor) {
@@ -35,6 +40,7 @@ export class QuestionsService {
     return teacher.departmentId;
   }
   private async assertSubjectAccess(a: Actor, subjectId: number) {
+    await this.accessPolicy.assertSubjectScope(a, subjectId);
     const departmentId = await this.teacherDepartmentId(a);
     if (departmentId === null) return;
     const subject = await this.prisma.subject.findFirst({
@@ -42,6 +48,9 @@ export class QuestionsService {
       select: { id: true },
     });
     if (!subject) throw new ForbiddenException('Bạn chỉ được truy cập ngân hàng câu hỏi thuộc khoa của mình.');
+  }
+  private async customSubjectIds(a: Actor) {
+    return this.accessPolicy.allowedSubjectIds(a);
   }
   private json(v: unknown) { return JSON.parse(JSON.stringify(v)) as Prisma.InputJsonValue; }
   private rich(v: unknown) {
@@ -186,9 +195,11 @@ export class QuestionsService {
   async findAll(a: Actor, q: QuestionQueryDto) {
     this.access(a); const page = q.page || 1, limit = q.limit || 20;
     const departmentId = await this.teacherDepartmentId(a);
+    const customSubjectIds = await this.customSubjectIds(a);
     const where: Prisma.QuestionWhereInput = {
       deletedAt: null, ...(q.subjectId && { subjectId: q.subjectId }), ...(q.chapterId && { chapterId: q.chapterId }),
       ...(departmentId !== null && { subject: { departmentId } }),
+      ...(customSubjectIds !== null && { AND: [{ subjectId: { in: customSubjectIds } }] }),
       ...(q.type && { type: q.type }), ...(q.difficulty && { difficulty: q.difficulty }), ...(q.bloomLevel && { bloomLevel: q.bloomLevel }),
       ...(q.status && { status: q.status }),
       ...(q.search && { OR: [{ content: { contains: q.search, mode: 'insensitive' as const } }, { code: { contains: q.search, mode: 'insensitive' as const } }] }),
@@ -214,9 +225,11 @@ export class QuestionsService {
   async statistics(a: Actor, q?: QuestionQueryDto) {
     this.access(a);
     const departmentId = await this.teacherDepartmentId(a);
+    const customSubjectIds = await this.customSubjectIds(a);
     const where: Prisma.QuestionWhereInput = {
       deletedAt: null,
       ...(departmentId !== null && { subject: { departmentId } }),
+      ...(customSubjectIds !== null && { AND: [{ subjectId: { in: customSubjectIds } }] }),
       ...(q?.subjectId ? { subjectId: Number(q.subjectId) } : {}),
       ...(q?.chapterId ? { chapterId: String(q.chapterId) } : {}),
       ...(q?.type ? { type: q.type } : {}),
@@ -240,10 +253,10 @@ export class QuestionsService {
     return out;
   }
   async filterOptions(a: Actor) {
-    this.access(a); const departmentId = await this.teacherDepartmentId(a); return { subjects: await this.prisma.subject.findMany({ where: departmentId === null ? {} : { departmentId }, include: { chapters: { orderBy: { order: 'asc' } } }, orderBy: { subjectName: 'asc' } }), types: Object.values(QuestionType), difficulties: Object.values(QuestionDifficulty), bloomLevels: Object.values(BloomLevel), statuses: Object.values(QuestionStatus) };
+    this.access(a); const departmentId = await this.teacherDepartmentId(a); const customSubjectIds = await this.customSubjectIds(a); return { subjects: await this.prisma.subject.findMany({ where: { ...(departmentId !== null && { departmentId }), ...(customSubjectIds !== null && { id: { in: customSubjectIds } }) }, include: { chapters: { orderBy: { order: 'asc' } } }, orderBy: { subjectName: 'asc' } }), types: Object.values(QuestionType), difficulties: Object.values(QuestionDifficulty), bloomLevels: Object.values(BloomLevel), statuses: Object.values(QuestionStatus) };
   }
   async findOne(a: Actor, id: string) {
-    this.access(a); const departmentId = await this.teacherDepartmentId(a); const q = await this.prisma.question.findFirst({ where: { id, deletedAt: null, ...(departmentId !== null && { subject: { departmentId } }) }, include });
+    this.access(a); const departmentId = await this.teacherDepartmentId(a); const customSubjectIds = await this.customSubjectIds(a); const q = await this.prisma.question.findFirst({ where: { id, deletedAt: null, ...(departmentId !== null && { subject: { departmentId } }), ...(customSubjectIds !== null && { subjectId: { in: customSubjectIds } }) }, include });
     if (!q) throw new NotFoundException('Không tìm thấy câu hỏi.');
     return { ...q, statistic: q.statistic ? { ...q.statistic, correctRate: q.statistic.totalAnswers ? q.statistic.correctAnswers / q.statistic.totalAnswers : null } : null };
   }

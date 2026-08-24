@@ -4,9 +4,12 @@ import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { AssignSupervisorDto, AutoSupervisorAcceptDto, AutoSupervisorPreviewDto, FindSupervisorsDto, UpdateSupervisorStatusDto } from './dto/exam-supervisor.dto';
+import { PermissionGuard } from '../access-control/permission.guard';
+import { Permissions } from '../access-control/permissions.decorator';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 @Roles('ADMIN')
+@Permissions('EXAM_SUPERVISOR_MANAGE')
 @Controller('exam-supervisors')
 export class ExamSupervisorsController {
   constructor(private readonly examSupervisorsService: ExamSupervisorsService) {}

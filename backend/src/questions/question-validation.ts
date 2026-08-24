@@ -200,7 +200,10 @@ export function autoFormatFillBlankData(
   fillBlankAnswers?: any[]
 ): { content: string; fillBlankAnswers: any[] } {
   if (type !== 'FILL_BLANK') {
-    return { content: String(content || '').trim(), fillBlankAnswers: fillBlankAnswers || [] };
+    return {
+      content: String(content || '').replace(/\{\{blank_\d+\}\}/gi, '').trim(),
+      fillBlankAnswers: []
+    };
   }
 
   const formattedContent = cleanFillBlankContent(content);

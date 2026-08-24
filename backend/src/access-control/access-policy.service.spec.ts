@@ -7,6 +7,7 @@ describe('AccessPolicyService', () => {
       userPermissionOverride: { findUnique: jest.fn().mockResolvedValue(null) },
       rolePermission: { findUnique: jest.fn().mockResolvedValue({ id: 'role-permission-1' }) },
       userAccessScope: { findMany: jest.fn().mockResolvedValue([]) },
+      subject: { findMany: jest.fn().mockResolvedValue([]) },
     };
     const accessControl: any = { ensureCatalog: jest.fn().mockResolvedValue(undefined) };
     return { prisma, accessControl, service: new AccessPolicyService(prisma, accessControl) };
@@ -26,7 +27,7 @@ describe('AccessPolicyService', () => {
     await expect(service.can({ id: 7, role: 'TEACHER' }, 'ESSAY_GRADE')).resolves.toBe(true);
   });
 
-  it('requires every requested ABAC scope when custom scopes exist', async () => {
+  it('allows a matching scope and rejects an unrelated scope', async () => {
     const { prisma, service } = createService();
     prisma.userAccessScope.findMany.mockResolvedValue([
       { type: 'DEPARTMENT', resourceId: 4 },
@@ -37,11 +38,49 @@ describe('AccessPolicyService', () => {
     await expect(service.can({ id: 7, role: 'TEACHER' }, 'QUESTION_MANAGE', { departmentId: 5 })).resolves.toBe(false);
   });
 
+  it('treats department, class and subject scopes as a union', async () => {
+    const { prisma, service } = createService();
+    prisma.userAccessScope.findMany.mockResolvedValue([{ type: 'DEPARTMENT', resourceId: 4 }]);
+
+    await expect(
+      service.can(
+        { id: 7, role: 'TEACHER' },
+        'QUESTION_MANAGE',
+        { departmentId: 4, classId: 20, subjectId: 12 },
+      ),
+    ).resolves.toBe(true);
+  });
+
+  it('returns an explainable decision for frontend and audit tools', async () => {
+    const { service } = createService();
+
+    await expect(service.explain({ id: 7, role: 'TEACHER' }, 'ESSAY_GRADE')).resolves.toMatchObject({
+      allowed: true,
+      permissionSource: 'ROLE',
+      scopeSource: 'INHERITED',
+    });
+  });
+
   it('keeps admins unrestricted after their permission is granted', async () => {
     const { prisma, service } = createService();
     prisma.userPermissionOverride.findUnique.mockResolvedValue({ effect: 'ALLOW' });
 
     await expect(service.can({ id: 1, role: 'ADMIN' }, 'ACCESS_CONTROL_MANAGE', { departmentId: 999 })).resolves.toBe(true);
     expect(prisma.userAccessScope.findMany).not.toHaveBeenCalled();
+  });
+
+  it('resolves department, class and subject scopes to an allowed subject union', async () => {
+    const { prisma, service } = createService();
+    prisma.userAccessScope.findMany.mockResolvedValue([
+      { type: 'DEPARTMENT', resourceId: 2 },
+      { type: 'CLASS', resourceId: 8 },
+      { type: 'SUBJECT', resourceId: 21 },
+    ]);
+    prisma.subject.findMany.mockResolvedValue([{ id: 5 }, { id: 21 }, { id: 34 }]);
+
+    await expect(service.allowedSubjectIds({ id: 7, role: 'TEACHER' })).resolves.toEqual([5, 21, 34]);
+    expect(prisma.subject.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: { OR: expect.any(Array) },
+    }));
   });
 });

@@ -5,9 +5,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { User } from '../types';
-import { canAccessPath, workspaceRoutes } from '../lib/access';
+import { canAccessPath, resolveWorkspaceRoute } from '../lib/access';
 import { getAuthUser } from '../lib/auth';
-import { restoreAuthSession, warmupGlobalCache } from '../lib/api';
+import api, { restoreAuthSession, warmupGlobalCache } from '../lib/api';
 import { NavigationProgress } from './NavigationProgress';
 import { usePageTitleValue } from './PageTitleContext';
 
@@ -32,6 +32,10 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
 
     const [user, setUser] = useState<User | null>(null);
     const [authLoaded, setAuthLoaded] = useState(false);
+    const [effectivePermissions, setEffectivePermissions] = useState<Set<string> | null>(null);
+    const [permissionsLoaded, setPermissionsLoaded] = useState(false);
+    const [permissionOwnerId, setPermissionOwnerId] = useState<number | null>(null);
+    const permissionsReady = permissionsLoaded && permissionOwnerId === user?.id;
 
     // Sidebar state persists across navigation (kept in state, not remounted)
     const [collapsed, setCollapsed] = useState<boolean>(() => {
@@ -77,6 +81,27 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
             setAuthLoaded(true);
             if (u?.role) {
                 warmupGlobalCache(u.role);
+                try {
+                    const response = await api.get('/access-control/me/effective');
+                    if (!active) return;
+                    const allowedCodes = (response.data?.permissions || [])
+                        .filter((permission: { allowed?: boolean }) => permission.allowed)
+                        .map((permission: { code: string }) => permission.code);
+                    setEffectivePermissions(new Set(allowedCodes));
+                    setPermissionOwnerId(u.id);
+                } catch {
+                    if (!active) return;
+                    // Backend remains the final authority. Keep role navigation available
+                    // when the effective-permission endpoint is temporarily unavailable.
+                    setEffectivePermissions(new Set());
+                    setPermissionOwnerId(u.id);
+                } finally {
+                    if (active) setPermissionsLoaded(true);
+                }
+            } else {
+                setEffectivePermissions(null);
+                setPermissionOwnerId(null);
+                setPermissionsLoaded(true);
             }
         };
 
@@ -133,17 +158,19 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
             return;
         }
 
+        if (!permissionsReady) return;
+
         if (pathname === '/' || pathname === '/login') {
-            router.replace(workspaceRoutes[user.role] || '/dashboard');
+            router.replace(resolveWorkspaceRoute(user.role, effectivePermissions));
             return;
         }
 
         if (isPublicRoute(pathname)) return;
 
-        if (!canAccessPath(user.role, pathname) && pathname !== workspaceRoutes[user.role]) {
-            router.replace(workspaceRoutes[user.role]);
+        if (!canAccessPath(user.role, pathname, effectivePermissions)) {
+            router.replace(resolveWorkspaceRoute(user.role, effectivePermissions));
         }
-    }, [user, authLoaded, pathname, router]);
+    }, [user, authLoaded, permissionsReady, effectivePermissions, pathname, router]);
 
     if (!authLoaded) {
         return <div className="min-h-screen bg-slate-50 dark:bg-slate-950" aria-live="polite" />;
@@ -157,6 +184,10 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
             : <div className="min-h-screen bg-slate-50 dark:bg-slate-950" aria-live="polite" />;
     }
 
+    if (!permissionsReady && !isPublicRoute(pathname)) {
+        return <div className="min-h-screen bg-slate-50 dark:bg-slate-950" aria-live="polite" />;
+    }
+
     // Keep entry routes blank while an authenticated user is redirected to the
     // correct workspace, preventing the login page from flashing on Back.
     if (pathname === '/' || pathname === '/login') {
@@ -164,12 +195,12 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
     }
 
     // Public support routes and protected exam routes render without the shell.
-    if (isPublicRoute(pathname) || (isShelllessRoute(pathname) && canAccessPath(user.role, pathname))) {
+    if (isPublicRoute(pathname) || (isShelllessRoute(pathname) && canAccessPath(user.role, pathname, effectivePermissions))) {
         return <>{children}</>;
     }
 
     // While redirecting to the workspace, keep the shell mounted but blank
-    if (!canAccessPath(user.role, pathname)) {
+    if (!canAccessPath(user.role, pathname, effectivePermissions)) {
         return <div className="min-h-screen bg-slate-50 dark:bg-slate-950" aria-live="polite" />;
     }
 
@@ -183,6 +214,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
                 isToggling={isToggling}
                 mobileOpen={mobileOpen}
                 onMobileClose={() => setMobileOpen(false)}
+                effectivePermissions={effectivePermissions}
             />
 
             {mobileOpen && (

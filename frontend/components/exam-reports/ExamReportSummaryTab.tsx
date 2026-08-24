@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, BarChart3, CheckCircle2, ChevronRight, ClipboardList, Download, Eye, FileSpreadsheet, FileText, History, Loader2, Printer, RefreshCw, Search, Settings2, Users } from 'lucide-react';
+import { AlertTriangle, BarChart3, CheckCircle2, ChevronLeft, ChevronRight, ClipboardList, Download, Eye, FileSpreadsheet, FileText, History, Loader2, Printer, RefreshCw, Search, Settings2, Users } from 'lucide-react';
 import api from '../../lib/api';
 import { printReport } from '../../lib/export-print';
 import { Toast } from '../Toast';
+import { SlidingSegmentedControl } from '../ui/SlidingSegmentedControl';
+import { DataActionsDropdown } from '../ui/DataActionsDropdown';
 
 export interface SummaryScheduleRow {
   id: number; examPeriodId: number; periodName: string; subjectId: number; subjectCode: string;
@@ -51,6 +53,22 @@ export function ExamReportSummaryTab({ summary, loading, filters, setFilters, on
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [notice, setNotice] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [search, setSearch] = useState('');
+  const [collapseConfig, setCollapseConfig] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
+
+  const handleRefreshClick = async () => {
+    setIsSpinning(true);
+    try {
+      if (onRefresh) {
+        await onRefresh();
+      }
+      setNotice({ type: 'success', message: 'Đã cập nhật và làm mới dữ liệu mới nhất!' });
+    } catch {
+      setNotice({ type: 'error', message: 'Không thể làm mới dữ liệu.' });
+    } finally {
+      setTimeout(() => setIsSpinning(false), 600);
+    }
+  };
 
   useEffect(() => {
     api.get<CatalogItem[]>('/exam-reports/catalog').then((r) => setCatalog(r.data)).catch((e: Error) => setNotice({ type: 'error', message: e.message }));
@@ -94,20 +112,124 @@ export function ExamReportSummaryTab({ summary, loading, filters, setFilters, on
     return (summary?.schedules || []).filter((r) => !key || [r.subjectCode, r.subjectName, r.periodName, r.departmentName].some((v) => v.toLocaleLowerCase('vi').includes(key))).slice(0, 8);
   }, [search, summary?.schedules]);
 
-  return <section className="space-y-5">
-    <div className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 shadow-xs dark:border-slate-700 dark:bg-slate-900">
-      {([{ key: 'overview', label: 'Tổng quan', icon: BarChart3 }, { key: 'builder', label: 'Tạo báo cáo', icon: Settings2 }, { key: 'history', label: 'Lịch sử xuất', icon: History }] as const).map((item) => <button key={item.key} type="button" onClick={() => setTab(item.key)} className={`flex h-10 items-center gap-2 rounded-xl px-4 text-type-body font-medium transition ${tab === item.key ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-900 hover:bg-blue-50 hover:text-blue-700 dark:text-white dark:hover:bg-blue-950'}`}><item.icon className="h-4 w-4" />{item.label}</button>)}
+  return <section className="space-y-5 pb-28">
+    {/* ── Floating Segmented Control Dock (Nằm ở giữa và ở góc dưới màn hình, nổi lên) ── */}
+    <div className="fixed bottom-7 left-0 right-0 md:left-[252px] [html.sidebar-collapsed_&]:md:left-[72px] flex justify-center z-40 pointer-events-none px-4 transition-[left] duration-300">
+      <div className="pointer-events-auto shadow-2xl backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 rounded-full border border-slate-200/90 dark:border-slate-700/90 p-1 ring-1 ring-slate-900/5 dark:ring-white/10 animate-fade-in-up">
+        <SlidingSegmentedControl<'overview' | 'builder' | 'history'>
+          variant="primary"
+          pillShape="pill"
+          size="md"
+          value={tab}
+          onChange={(newTab) => setTab(newTab)}
+          className="border-none bg-transparent shadow-none"
+          options={[
+            { value: 'overview', label: 'Tổng quan', icon: BarChart3 },
+            { value: 'builder', label: 'Tạo báo cáo', icon: Settings2 },
+            { value: 'history', label: 'Lịch sử xuất', icon: History },
+          ]}
+        />
+      </div>
     </div>
     {notice && <Toast message={notice.message} type={notice.type} onClose={() => setNotice(null)} />}
 
     {tab === 'overview' && <div className="space-y-5">
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{[
-        ['Ca thi chính thức', summary?.stats.totalSchedules ?? 0, 'Trong phạm vi được phép', BarChart3],
-        ['Bài đã nộp', summary?.stats.totalSubmitted ?? 0, `${summary?.stats.totalAssigned ?? 0} lượt được phân công`, Users],
-        ['Tiến độ chấm', summary?.stats.totalGraded ?? 0, `${summary?.stats.totalUngraded ?? 0} bài chưa chấm`, ClipboardList],
-        ['Tỷ lệ đạt', `${summary?.stats.passRate ?? 0}%`, `Điểm trung bình ${summary?.stats.avgScore ?? 0}`, CheckCircle2],
-      ].map(([label, value, helper, Icon]: any) => <article key={label} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs dark:border-slate-700 dark:bg-slate-900"><div className="mb-4 flex justify-between"><p className="text-type-body font-medium text-slate-900 dark:text-white">{label}</p><Icon className="h-5 w-5 text-blue-600" /></div><p className="text-type-kpi font-semibold tabular-nums text-slate-950 dark:text-white">{value}</p><p className="mt-2 text-type-body text-slate-700 dark:text-slate-300">{helper}</p></article>)}</div>
-      <Panel title="Mẫu báo cáo thường dùng" subtitle="Chọn mẫu, điều chỉnh phạm vi rồi xem trước trước khi xuất." action={<button type="button" onClick={onRefresh} disabled={loading} className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 px-3 text-type-body font-medium"><RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />Làm mới</button>}>
+      <div className="grid gap-3.5 sm:grid-cols-2 xl:grid-cols-4">
+        {[
+          {
+            title: 'Ca thi chính thức',
+            value: summary?.stats.totalSchedules ?? 0,
+            unit: '',
+            subtext: 'Trong phạm vi được phép',
+            progressPercent: (summary?.stats.totalSchedules ?? 0) > 0 ? 100 : 0,
+            icon: BarChart3,
+          },
+          {
+            title: 'Bài đã nộp',
+            value: summary?.stats.totalSubmitted ?? 0,
+            unit: '',
+            subtext: `${summary?.stats.totalAssigned ?? 0} lượt được phân công`,
+            progressPercent: (summary?.stats.totalAssigned ?? 0) > 0
+              ? Math.min(100, Math.round(((summary?.stats.totalSubmitted || 0) / (summary?.stats.totalAssigned || 1)) * 100))
+              : 100,
+            icon: Users,
+          },
+          {
+            title: 'Tiến độ chấm',
+            value: summary?.stats.totalGraded ?? 0,
+            unit: '',
+            subtext: `${summary?.stats.totalUngraded ?? 0} bài chưa chấm`,
+            progressPercent: (summary?.stats.totalSubmitted ?? 0) > 0
+              ? Math.min(100, Math.round(((summary?.stats.totalGraded || 0) / (summary?.stats.totalSubmitted || 1)) * 100))
+              : 100,
+            icon: ClipboardList,
+          },
+          {
+            title: 'Tỷ lệ đạt',
+            value: summary?.stats.passRate ?? 0,
+            unit: '%',
+            subtext: `Điểm trung bình ${summary?.stats.avgScore ?? 0}/10`,
+            progressPercent: Math.min(Math.max(summary?.stats.passRate ?? 0, 0), 100),
+            icon: CheckCircle2,
+          },
+        ].map((item) => {
+          const IconComponent = item.icon;
+          return (
+            <div
+              key={item.title}
+              className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-1 min-w-0">
+                  <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                    {item.title}
+                  </span>
+                  <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                    {typeof item.value === 'number' ? item.value.toLocaleString('vi-VN') : item.value}
+                    {item.unit}
+                  </div>
+                </div>
+
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
+                  <IconComponent className="h-5 w-5 stroke-[2.2]" />
+                </div>
+              </div>
+
+              {/* Micro Progress Track */}
+              <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
+                <div
+                  className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(Math.max(item.progressPercent, 5), 100)}%` }}
+                />
+              </div>
+
+              <div className="mt-2.5">
+                <span
+                  title={item.subtext}
+                  className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
+                >
+                  {item.subtext}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <Panel
+        title="Mẫu báo cáo thường dùng"
+        subtitle="Chọn mẫu, điều chỉnh phạm vi rồi xem trước trước khi xuất."
+        action={
+          <button
+            type="button"
+            onClick={handleRefreshClick}
+            disabled={loading || isSpinning}
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-blue-400 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 disabled:opacity-50 shrink-0"
+            title="Làm mới dữ liệu"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
+          </button>
+        }
+      >
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{catalog.map((item) => { const Icon = icons[item.group] || FileText; return <button key={item.type} type="button" onClick={() => choose(item)} className="group rounded-xl border border-slate-200 p-4 text-left transition hover:border-blue-300 hover:bg-blue-50/50 dark:border-slate-700 dark:hover:bg-blue-950/30"><div className="flex gap-3"><span className="h-fit rounded-xl bg-blue-50 p-2 text-blue-600 dark:bg-blue-950"><Icon className="h-5 w-5" /></span><span className="min-w-0 flex-1"><span className="block text-type-body font-semibold text-slate-950 dark:text-white">{item.name}</span><span className="mt-1 block text-type-body leading-5 text-slate-700 dark:text-slate-300">{item.description}</span></span><ChevronRight className="mt-1 h-4 w-4 text-slate-500 group-hover:text-blue-600" /></div></button>; })}</div>
       </Panel>
       <Panel title="Các ca thi gần đây" subtitle="Mở bảng điểm chi tiết mà không rời trung tâm báo cáo." action={<div className="relative"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600" /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Tìm mã môn, tên môn..." className="h-10 w-64 rounded-xl border border-slate-200 pl-9 pr-3 text-type-body font-medium text-slate-950 outline-none focus:border-blue-500" /></div>}>
@@ -115,16 +237,52 @@ export function ExamReportSummaryTab({ summary, loading, filters, setFilters, on
       </Panel>
     </div>}
 
-    {tab === 'builder' && <div className="grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)]">
-      <aside className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-xs dark:border-slate-700 dark:bg-slate-900"><div><h2 className="text-type-section font-semibold text-slate-950 dark:text-white">Cấu hình báo cáo</h2><p className="mt-1 text-type-body text-slate-700 dark:text-slate-300">Bản xem trước và file xuất dùng chung cấu hình.</p></div>
-        <Select label="Loại báo cáo" value={type} onChange={(v) => { setType(v); setPreview(null); setColumns([]); }} options={catalog.map((i) => ({ value: i.type, label: i.name }))} all={false} />
-        <label className="block"><span className="mb-1.5 block text-type-body font-medium text-slate-900">Tiêu đề báo cáo</span><input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={catalog.find((i) => i.type === type)?.name} className="h-11 w-full rounded-xl border border-slate-200 px-3 text-type-body font-medium text-slate-950 outline-none focus:border-blue-500" /></label>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1"><Select label="Kỳ thi" value={filters.examPeriodId} onChange={(v) => setFilters((f) => ({ ...f, examPeriodId: v }))} options={summary?.options.periods.map((i) => ({ value: String(i.id), label: i.name })) || []} /><Select label="Môn học" value={filters.subjectId} onChange={(v) => setFilters((f) => ({ ...f, subjectId: v }))} options={summary?.options.subjects.map((i) => ({ value: String(i.id), label: `${i.code} — ${i.name}` })) || []} /><Select label="Khoa" value={filters.departmentId} onChange={(v) => setFilters((f) => ({ ...f, departmentId: v }))} options={summary?.options.departments.map((i) => ({ value: String(i.id), label: i.name })) || []} /><Select label="Lớp" value={filters.classId} onChange={(v) => setFilters((f) => ({ ...f, classId: v }))} options={summary?.options.classes.map((i) => ({ value: String(i.id), label: i.name })) || []} /></div>
-        <div className="grid grid-cols-2 gap-3"><DateInput label="Từ ngày" value={filters.fromDate} onChange={(v) => setFilters((f) => ({ ...f, fromDate: v }))} /><DateInput label="Đến ngày" value={filters.toDate} onChange={(v) => setFilters((f) => ({ ...f, toDate: v }))} /></div>
-        <button type="button" onClick={loadPreview} disabled={!!busy} className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 text-type-body font-semibold text-white hover:bg-blue-700 disabled:opacity-60">{busy === 'preview' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}Xem trước báo cáo</button>
+    {tab === 'builder' && <div className="flex flex-col xl:flex-row gap-5 items-start">
+      <aside
+        aria-label="Cấu hình báo cáo"
+        className={`transition-all duration-300 ease-in-out shrink-0 xl:sticky xl:top-4 overflow-hidden ${
+          collapseConfig
+            ? 'max-h-0 xl:max-h-none xl:w-0 xl:opacity-0 xl:pointer-events-none xl:-mr-5 hidden xl:block'
+            : 'w-full xl:w-[360px] xl:opacity-100'
+        }`}
+      >
+        <div className="w-full xl:w-[360px] space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-xs dark:border-slate-700 dark:bg-slate-900">
+          <div><h2 className="text-type-section font-semibold text-slate-950 dark:text-white">Cấu hình báo cáo</h2><p className="mt-1 text-type-body text-slate-700 dark:text-slate-300">Bản xem trước và file xuất dùng chung cấu hình.</p></div>
+          <Select label="Loại báo cáo" value={type} onChange={(v) => { setType(v); setPreview(null); setColumns([]); }} options={catalog.map((i) => ({ value: i.type, label: i.name }))} all={false} />
+          <label className="block"><span className="mb-1.5 block text-type-body font-medium text-slate-900">Tiêu đề báo cáo</span><input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={catalog.find((i) => i.type === type)?.name} className="h-11 w-full rounded-xl border border-slate-200 px-3 text-type-body font-medium text-slate-950 outline-none focus:border-blue-500" /></label>
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1"><Select label="Kỳ thi" value={filters.examPeriodId} onChange={(v) => setFilters((f) => ({ ...f, examPeriodId: v }))} options={summary?.options.periods.map((i) => ({ value: String(i.id), label: i.name })) || []} /><Select label="Môn học" value={filters.subjectId} onChange={(v) => setFilters((f) => ({ ...f, subjectId: v }))} options={summary?.options.subjects.map((i) => ({ value: String(i.id), label: `${i.code} — ${i.name}` })) || []} /><Select label="Khoa" value={filters.departmentId} onChange={(v) => setFilters((f) => ({ ...f, departmentId: v }))} options={summary?.options.departments.map((i) => ({ value: String(i.id), label: i.name })) || []} /><Select label="Lớp" value={filters.classId} onChange={(v) => setFilters((f) => ({ ...f, classId: v }))} options={summary?.options.classes.map((i) => ({ value: String(i.id), label: i.name })) || []} /></div>
+          <div className="grid grid-cols-2 gap-3"><DateInput label="Từ ngày" value={filters.fromDate} onChange={(v) => setFilters((f) => ({ ...f, fromDate: v }))} /><DateInput label="Đến ngày" value={filters.toDate} onChange={(v) => setFilters((f) => ({ ...f, toDate: v }))} /></div>
+          <button type="button" onClick={loadPreview} disabled={!!busy} className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 text-type-body font-semibold text-white hover:bg-blue-700 disabled:opacity-60">{busy === 'preview' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}Xem trước báo cáo</button>
+        </div>
       </aside>
-      <div className="min-w-0 rounded-2xl border border-slate-200 bg-white shadow-xs dark:border-slate-700 dark:bg-slate-900"><div className="flex flex-wrap justify-between gap-3 border-b border-slate-200 p-5"><div><h2 className="text-type-section font-semibold text-slate-950">{preview?.title || 'Bản xem trước'}</h2><p className="mt-1 text-type-body text-slate-700">{preview ? `${preview.totalRows} bản ghi · ${new Date(preview.generatedAt).toLocaleString('vi-VN')}` : 'Chọn cấu hình rồi bấm Xem trước báo cáo.'}</p></div>{preview && <div className="flex gap-2"><Action label="CSV" icon={Download} onClick={() => exportFile('CSV')} disabled={!!busy} /><Action label="Excel" icon={busy === 'XLSX' ? Loader2 : FileSpreadsheet} primary onClick={() => exportFile('XLSX')} disabled={!!busy} spin={busy === 'XLSX'} /><Action label="In / PDF" icon={Printer} onClick={printPreview} /></div>}</div>
-        {!preview ? <div className="flex min-h-96 flex-col items-center justify-center p-8 text-center"><FileText className="h-12 w-12 text-blue-300" /><p className="mt-4 font-semibold text-slate-950">Chưa có bản xem trước</p><p className="mt-1 max-w-md text-type-body text-slate-700">Hệ thống yêu cầu xem trước để tránh xuất nhầm phạm vi dữ liệu.</p></div> : <><div className="border-b border-slate-200 p-4"><p className="mb-2 text-type-body font-medium text-slate-900">Các cột được xuất</p><div className="flex flex-wrap gap-2">{preview.columns.map((c) => <button key={c.key} type="button" onClick={() => setColumns((x) => x.includes(c.key) ? x.filter((k) => k !== c.key) : [...x, c.key])} className={`rounded-xl border px-3 py-1.5 text-type-body font-medium ${columns.includes(c.key) ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-700'}`}>{columns.includes(c.key) ? '✓ ' : ''}{c.label}</button>)}</div></div><div className="ui-table-wrap max-h-[560px] overflow-auto"><table className="ui-table w-full min-w-[760px] text-type-body"><thead className="sticky top-0 bg-slate-50"><tr>{preview.columns.filter((c) => columns.includes(c.key)).map((c) => <th key={c.key} className="px-4 py-3 text-left font-medium">{c.label}</th>)}</tr></thead><tbody>{preview.rows.map((row, i) => <tr key={i} className="border-t border-slate-100">{preview.columns.filter((c) => columns.includes(c.key)).map((c) => <td key={c.key} className={`px-4 py-3 ${c.align === 'right' ? 'text-right tabular-nums' : ''}`}>{String(row[c.key] ?? '')}</td>)}</tr>)}</tbody></table>{!preview.rows.length && <p className="p-10 text-center text-type-body font-medium text-slate-700">Không có dữ liệu phù hợp.</p>}</div></>}
+      <div className="flex-1 min-w-0 rounded-2xl border border-slate-200 bg-white shadow-xs dark:border-slate-700 dark:bg-slate-900">
+        <div className="flex flex-wrap justify-between items-center gap-3 border-b border-slate-200 p-5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <button
+              type="button"
+              onClick={() => setCollapseConfig(!collapseConfig)}
+              className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0"
+              title={collapseConfig ? 'Mở cột cấu hình' : 'Thu gọn cột cấu hình'}
+            >
+              <ChevronLeft
+                className={`h-4 w-4 transition-transform duration-300 ease-in-out ${collapseConfig ? 'rotate-180' : ''}`}
+              />
+            </button>
+            <div className="min-w-0">
+              <h2 className="text-type-section font-semibold text-slate-950 dark:text-white truncate">{preview?.title || 'Bản xem trước'}</h2>
+              <p className="mt-1 text-type-body text-slate-700 dark:text-slate-300 truncate">{preview ? `${preview.totalRows} bản ghi · ${new Date(preview.generatedAt).toLocaleString('vi-VN')}` : 'Chọn cấu hình rồi bấm Xem trước báo cáo.'}</p>
+            </div>
+          </div>
+          {preview && (
+            <DataActionsDropdown
+              onExportExcel={() => exportFile('XLSX')}
+              onExportCsv={() => exportFile('CSV')}
+              onPrint={printPreview}
+              printLabel="In / PDF"
+            />
+          )}
+        </div>
+        {!preview ? <div className="flex min-h-96 flex-col items-center justify-center p-8 text-center"><FileText className="h-12 w-12 text-blue-300" /><p className="mt-4 font-semibold text-slate-950 dark:text-white">Chưa có bản xem trước</p><p className="mt-1 max-w-md text-type-body text-slate-700 dark:text-slate-300">Hệ thống yêu cầu xem trước để tránh xuất nhầm phạm vi dữ liệu.</p>{collapseConfig && <button type="button" onClick={() => setCollapseConfig(false)} className="mt-4 rounded-xl bg-blue-50 px-4 py-2 text-type-body font-semibold text-blue-700 hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-300">Mở cột cấu hình</button>}</div> : <><div className="border-b border-slate-200 p-4"><p className="mb-2 text-type-body font-medium text-slate-900">Các cột được xuất</p><div className="flex flex-wrap gap-2">{preview.columns.map((c) => <button key={c.key} type="button" onClick={() => setColumns((x) => x.includes(c.key) ? x.filter((k) => k !== c.key) : [...x, c.key])} className={`rounded-xl border px-3 py-1.5 text-type-body font-medium ${columns.includes(c.key) ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-700'}`}>{columns.includes(c.key) ? '✓ ' : ''}{c.label}</button>)}</div></div><div className="ui-table-wrap max-h-[560px] overflow-auto"><table className="ui-table w-full min-w-[760px] text-type-body"><thead className="sticky top-0 bg-slate-50"><tr>{preview.columns.filter((c) => columns.includes(c.key)).map((c) => <th key={c.key} className="px-4 py-3 text-left font-medium">{c.label}</th>)}</tr></thead><tbody>{preview.rows.map((row, i) => <tr key={i} className="border-t border-slate-100">{preview.columns.filter((c) => columns.includes(c.key)).map((c) => <td key={c.key} className={`px-4 py-3 ${c.align === 'right' ? 'text-right tabular-nums' : ''}`}>{String(row[c.key] ?? '')}</td>)}</tr>)}</tbody></table>{!preview.rows.length && <p className="p-10 text-center text-type-body font-medium text-slate-700">Không có dữ liệu phù hợp.</p>}</div></>}
       </div>
     </div>}
 
@@ -135,6 +293,5 @@ export function ExamReportSummaryTab({ summary, loading, filters, setFilters, on
 function Panel({ title, subtitle, action, children }: { title: string; subtitle: string; action?: React.ReactNode; children: React.ReactNode }) { return <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs dark:border-slate-700 dark:bg-slate-900"><div className="mb-4 flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-type-section font-semibold text-slate-950 dark:text-white">{title}</h2><p className="mt-1 text-type-body text-slate-700 dark:text-slate-300">{subtitle}</p></div>{action}</div>{children}</div>; }
 function Select({ label, value, onChange, options, all = true }: { label: string; value: string; onChange: (v: string) => void; options: Array<{ value: string; label: string }>; all?: boolean }) { return <label className="block"><span className="mb-1.5 block text-type-body font-medium text-slate-900">{label}</span><select value={value} onChange={(e) => onChange(e.target.value)} className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body font-medium text-slate-950 outline-none focus:border-blue-500">{all && <option value="ALL">Tất cả</option>}{options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select></label>; }
 function DateInput({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) { return <label className="block"><span className="mb-1.5 block text-type-body font-medium text-slate-900">{label}</span><input type="date" value={value} onChange={(e) => onChange(e.target.value)} className="h-11 w-full rounded-xl border border-slate-200 px-3 text-type-body font-medium text-slate-950 outline-none focus:border-blue-500" /></label>; }
-function Action({ label, icon: Icon, onClick, primary, disabled, spin }: { label: string; icon: React.ElementType; onClick: () => void; primary?: boolean; disabled?: boolean; spin?: boolean }) { return <button type="button" onClick={onClick} disabled={disabled} className={`flex h-10 items-center gap-2 rounded-xl px-3 text-type-body font-medium disabled:opacity-50 ${primary ? 'bg-blue-600 text-white hover:bg-blue-700' : 'border border-slate-200 text-slate-900 hover:bg-slate-50'}`}><Icon className={`h-4 w-4 ${spin ? 'animate-spin' : ''}`} />{label}</button>; }
 
 

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as ExcelJS from 'exceljs';
 import { AuditService } from '../audit/audit.service';
+import { AccessPolicyService } from '../access-control/access-policy.service';
 import {
   ExamReportExportDto,
   ExamReportExportFormat,
@@ -33,16 +34,23 @@ export class ExamReportsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit?: AuditService,
+    private readonly accessPolicy: AccessPolicyService = {
+      allowedSubjectIds: async () => null,
+      assertSubjectScope: async () => undefined,
+    } as unknown as AccessPolicyService,
   ) {}
 
   getCatalog() {
     return reportCatalog;
   }
 
-  private officialScheduleWhere(actor: any) {
+  private async officialScheduleWhere(actor: any) {
     const where: any = { deletedAt: null, mode: 'OFFICIAL' };
+    const allowedSubjectIds = await this.accessPolicy.allowedSubjectIds(actor);
+    if (allowedSubjectIds !== null) where.AND = [{ subjectId: { in: allowedSubjectIds } }];
     if (actor?.role === 'TEACHER') {
       where.AND = [
+        ...(where.AND || []),
         { examScheduleRooms: { some: { supervisors: { some: { teacher: { userId: actor.id } } } } } },
       ];
     }
@@ -51,14 +59,14 @@ export class ExamReportsService {
 
   async getSchedules(actor: any) {
     return this.prisma.examSchedule.findMany({
-      where: this.officialScheduleWhere(actor),
+      where: await this.officialScheduleWhere(actor),
       include: {
         examPeriod: true,
         subject: true,
         examPapers: { where: { deletedAt: null }, select: { id: true, paperCode: true, status: true } },
         examScheduleRooms: { include: { room: true, _count: { select: { examRoomStudents: true, supervisors: true } } } },
       },
-      orderBy: { examDate: 'asc' },
+      orderBy: [{ examDate: 'desc' }, { startTime: 'desc' }, { id: 'desc' }],
     });
   }
 
@@ -75,7 +83,7 @@ export class ExamReportsService {
     const toDate = query.toDate ? new Date(`${query.toDate}T23:59:59.999Z`) : undefined;
 
     // Báo cáo khảo thí chính thức không bao gồm dữ liệu luyện tập/thi thử.
-    const scheduleWhere: any = this.officialScheduleWhere(actor);
+    const scheduleWhere: any = await this.officialScheduleWhere(actor);
     if (examPeriodId) scheduleWhere.examPeriodId = examPeriodId;
     if (subjectId) scheduleWhere.subjectId = subjectId;
     if (fromDate || toDate) scheduleWhere.examDate = { ...(fromDate ? { gte: fromDate } : {}), ...(toDate ? { lte: toDate } : {}) };
@@ -96,7 +104,7 @@ export class ExamReportsService {
         examPeriod: { select: { id: true, name: true } },
         examScheduleRooms: { select: { examRoomStudents: { select: { studentId: true, student: { select: { classId: true, class: { select: { id: true, name: true } } } } } } } },
       },
-      orderBy: { examDate: 'asc' },
+      orderBy: [{ examDate: 'desc' }, { id: 'desc' }],
     });
 
     const scheduleIds = schedules.map((schedule) => schedule.id);
@@ -270,7 +278,7 @@ export class ExamReportsService {
         rows = scheduleRows.filter((row: any) => row.flagged > 0);
         break;
       case ExamReportType.GRADE_APPEALS: {
-        const scheduleWhere = this.buildScheduleWhere(actor, filters);
+        const scheduleWhere = await this.buildScheduleWhere(actor, filters);
         const appeals = await this.prisma.gradeAppeal.findMany({
           where: {
             attempt: { mode: 'OFFICIAL', onlineExamConfig: { examSchedule: scheduleWhere } },
@@ -413,8 +421,8 @@ export class ExamReportsService {
     return { buffer, contentType, filename };
   }
 
-  private buildScheduleWhere(actor: any, filters: ExamReportFiltersDto) {
-    const where: any = this.officialScheduleWhere(actor);
+  private async buildScheduleWhere(actor: any, filters: ExamReportFiltersDto) {
+    const where: any = await this.officialScheduleWhere(actor);
     if (filters.examPeriodId) where.examPeriodId = filters.examPeriodId;
     if (filters.subjectId) where.subjectId = filters.subjectId;
     if (filters.departmentId) where.subject = { departmentId: filters.departmentId };

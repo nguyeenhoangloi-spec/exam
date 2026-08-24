@@ -176,7 +176,13 @@ export function QuestionImportWizard({
             cleanContent = cleanContent.replace(/","(score|explanation|keywords|options|fillBlankAnswers|imageIndexes)":[\s\S]*/gi, '');
           }
           cleanContent = cleanContent.replace(/^["']?\s*content["']?\s*:\s*["']?/i, '').replace(/^[{["]+/g, '').replace(/["]+$/g, '').trim();
-          cleanContent = cleanContent.replace(/(\{\{blank_\d+)(?!\}\})/gi, '$1}}');
+          
+          const isFillBlank = (q.type || meta.defaultType) === 'FILL_BLANK';
+          if (isFillBlank) {
+            cleanContent = cleanContent.replace(/(\{\{blank_\d+)(?!\}\})/gi, '$1}}');
+          } else {
+            cleanContent = cleanContent.replace(/\{\{blank_\d+\}\}/gi, '').trim();
+          }
 
           let cleanExplanation = String(q.explanation || '')
             .replace(/\{\{blank_\d+\}\}/gi, '')
@@ -272,7 +278,13 @@ export function QuestionImportWizard({
           cleanContent = cleanContent.replace(/","(score|explanation|keywords|options|fillBlankAnswers|imageIndexes)":[\s\S]*/gi, '');
         }
         cleanContent = cleanContent.replace(/^["']?\s*content["']?\s*:\s*["']?/i, '').replace(/^[{["]+/g, '').replace(/["]+$/g, '').trim();
-        cleanContent = cleanContent.replace(/(\{\{blank_\d+)(?!\}\})/gi, '$1}}');
+        
+        const isFillBlank = (q.type || meta.defaultType) === 'FILL_BLANK';
+        if (isFillBlank) {
+          cleanContent = cleanContent.replace(/(\{\{blank_\d+)(?!\}\})/gi, '$1}}');
+        } else {
+          cleanContent = cleanContent.replace(/\{\{blank_\d+\}\}/gi, '').trim();
+        }
 
         let cleanExplanation = String(q.explanation || '')
           .replace(/\{\{blank_\d+\}\}/gi, '')

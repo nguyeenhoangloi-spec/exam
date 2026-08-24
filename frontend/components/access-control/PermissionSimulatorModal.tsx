@@ -17,6 +17,7 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import { Button } from '../ui/Button';
+import api from '../../lib/api';
 
 interface PermissionSimulatorModalProps {
   isOpen: boolean;
@@ -62,8 +63,12 @@ export function PermissionSimulatorModal({
   const [selectedUserId, setSelectedUserId] = useState<string>('');
   const [selectedPermissionCode, setSelectedPermissionCode] = useState<string>('');
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>('');
+  const [selectedClassId, setSelectedClassId] = useState<string>('');
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>('');
   const [hasSimulated, setHasSimulated] = useState<boolean>(false);
+  const [simulating, setSimulating] = useState(false);
+  const [authoritativeResult, setAuthoritativeResult] = useState<any>(null);
+  const [simulationError, setSimulationError] = useState('');
 
   const currentUser = useMemo(() => {
     return users.find((u) => String(u.id) === selectedUserId) || null;
@@ -73,126 +78,62 @@ export function PermissionSimulatorModal({
     return permissions.find((p) => p.code === selectedPermissionCode) || null;
   }, [permissions, selectedPermissionCode]);
 
-  // Simulation Evaluation Engine
-  const simulationResult = useMemo(() => {
-    if (!currentUser || !currentPermission) return null;
-
-    const steps = [];
-    let isAllowed = false;
-    let finalVerdictReason = '';
-
-    // Step 1: Check User Personal Overrides
-    const override = currentUser.permissionOverrides.find(
-      (o) => o.permission.code === currentPermission.code
-    );
-
-    if (override) {
-      if (override.effect === 'DENY') {
-        steps.push({
-          title: 'Bước 1: Quyền riêng của tài khoản (User Override)',
-          status: 'FAIL',
-          detail: `Tài khoản bị cài đặt TỪ CHỐI RIÊNG quyền này${override.reason ? ` (Lý do: ${override.reason})` : ''}. Quyền riêng từ chối có mức ưu tiên cao nhất.`,
-        });
-        isAllowed = false;
-        finalVerdictReason = 'Bị từ chối bởi cấu hình quyền riêng của tài khoản.';
-        return { isAllowed, steps, finalVerdictReason };
-      } else {
-        steps.push({
-          title: 'Bước 1: Quyền riêng của tài khoản (User Override)',
-          status: 'PASS',
-          detail: `Tài khoản được CẤP RIÊNG quyền này${override.reason ? ` (Lý do: ${override.reason})` : ''}, vượt qua quyền theo vai trò.`,
-        });
-        isAllowed = true;
-      }
-    } else {
-      steps.push({
-        title: 'Bước 1: Quyền riêng của tài khoản (User Override)',
-        status: 'INFO',
-        detail: 'Tài khoản không có thiết lập quyền riêng cho chức năng này. Chuyển sang kiểm tra quyền theo vai trò.',
-      });
-
-      // Step 2: Check Role Matrix
-      const roleAllowed = currentPermission.roles.includes(currentUser.role);
-      if (roleAllowed) {
-        steps.push({
-          title: 'Bước 2: Ma trận quyền theo vai trò (Role-Based Access)',
-          status: 'PASS',
-          detail: `Vai trò [${currentUser.role}] ĐƯỢC PHÉP thực hiện chức năng [${currentPermission.name}].`,
-        });
-        isAllowed = true;
-      } else {
-        steps.push({
-          title: 'Bước 2: Ma trận quyền theo vai trò (Role-Based Access)',
-          status: 'FAIL',
-          detail: `Vai trò [${currentUser.role}] KHÔNG CÓ quyền thực hiện chức năng [${currentPermission.name}] trong ma trận hệ thống.`,
-        });
-        isAllowed = false;
-        finalVerdictReason = `Vai trò ${currentUser.role} không có quyền thực hiện chức năng này.`;
-        return { isAllowed, steps, finalVerdictReason };
-      }
-    }
-
-    // Step 3: Check ABAC Scope Constraints (if user is restricted by scopes)
-    if (isAllowed) {
-      const userScopes = currentUser.accessScopes || [];
-      const deptScopes = userScopes.filter((s) => s.type === 'DEPARTMENT');
-      const subjectScopes = userScopes.filter((s) => s.type === 'SUBJECT');
-
-      let scopePass = true;
-      let scopeDetail = 'Tài khoản có toàn quyền truy cập dữ liệu không bị giới hạn phạm vi.';
-
-      if (deptScopes.length > 0 && selectedDepartmentId) {
-        const allowedDept = deptScopes.some((s) => String(s.resourceId) === selectedDepartmentId);
-        if (!allowedDept) {
-          scopePass = false;
-          scopeDetail = `Khoa đang chọn không nằm trong danh sách ${deptScopes.length} khoa được phân công cho tài khoản này.`;
-        }
-      }
-
-      if (subjectScopes.length > 0 && selectedSubjectId) {
-        const allowedSubject = subjectScopes.some((s) => String(s.resourceId) === selectedSubjectId);
-        if (!allowedSubject) {
-          scopePass = false;
-          scopeDetail = `Môn học đang chọn không nằm trong danh sách ${subjectScopes.length} môn học được phân công cho tài khoản này.`;
-        }
-      }
-
-      if (userScopes.length > 0) {
-        if (scopePass) {
-          steps.push({
-            title: 'Bước 3: Phạm vi dữ liệu ABAC (Attribute-Based Scope)',
-            status: 'PASS',
-            detail: 'Ngữ cảnh thao tác hoàn toàn khớp với phạm vi dữ liệu được gán cho tài khoản.',
-          });
-          finalVerdictReason = 'Tài khoản có đầy đủ quyền hạn và nằm trong đúng phạm vi phân công.';
-        } else {
-          steps.push({
-            title: 'Bước 3: Phạm vi dữ liệu ABAC (Attribute-Based Scope)',
-            status: 'FAIL',
-            detail: scopeDetail,
-          });
-          isAllowed = false;
-          finalVerdictReason = 'Có quyền chức năng nhưng bị chặn bởi giới hạn phạm vi dữ liệu (Khoa/Môn).';
-        }
-      } else {
-        steps.push({
-          title: 'Bước 3: Phạm vi dữ liệu ABAC (Attribute-Based Scope)',
-          status: 'PASS',
-          detail: 'Tài khoản không bị ràng buộc phạm vi dữ liệu riêng; có quyền trên toàn hệ thống.',
-        });
-        finalVerdictReason = 'Cho phép truy cập toàn diện theo vai trò.';
-      }
-    }
-
-    return { isAllowed, steps, finalVerdictReason };
-  }, [currentUser, currentPermission, selectedDepartmentId, selectedSubjectId]);
+  React.useEffect(() => {
+    setHasSimulated(false);
+    setAuthoritativeResult(null);
+    setSimulationError('');
+  }, [selectedUserId, selectedPermissionCode, selectedDepartmentId, selectedClassId, selectedSubjectId]);
 
   if (!isOpen) return null;
 
-  const handleRunSimulation = () => {
+  const handleRunSimulation = async () => {
     if (!selectedUserId || !selectedPermissionCode) return;
-    setHasSimulated(true);
+    setSimulating(true);
+    setSimulationError('');
+    try {
+      const response = await api.post('/access-control/simulate', {
+        userId: Number(selectedUserId),
+        permissionCode: selectedPermissionCode,
+        context: {
+          ...(selectedDepartmentId ? { departmentId: Number(selectedDepartmentId) } : {}),
+          ...(selectedClassId ? { classId: Number(selectedClassId) } : {}),
+          ...(selectedSubjectId ? { subjectId: Number(selectedSubjectId) } : {}),
+        },
+      });
+      const decision = response.data;
+      setAuthoritativeResult({
+        isAllowed: decision.allowed,
+        finalVerdictReason: decision.reason,
+        steps: [
+          {
+            title: 'Nguồn quyền chức năng',
+            status: decision.permissionSource === 'USER_DENY' || decision.permissionSource === 'NONE' ? 'FAIL' : 'PASS',
+            detail:
+              decision.permissionSource === 'ROLE'
+                ? 'Quyền được cấp bởi vai trò hiện tại.'
+                : decision.permissionSource === 'USER_ALLOW'
+                  ? 'Quyền được cấp bằng ngoại lệ riêng của tài khoản.'
+                  : decision.permissionSource === 'USER_DENY'
+                    ? 'Quyền bị chặn bằng ngoại lệ riêng của tài khoản.'
+                    : 'Không tìm thấy nguồn cấp quyền hợp lệ.',
+          },
+          {
+            title: 'Kết quả kiểm tra phạm vi dữ liệu',
+            status: decision.scopeSource === 'CUSTOM_MISMATCH' ? 'FAIL' : 'PASS',
+            detail: decision.reason,
+          },
+        ],
+      });
+      setHasSimulated(true);
+    } catch (error: any) {
+      setSimulationError(error?.response?.data?.message || error?.message || 'Không chạy được mô phỏng quyền.');
+      setHasSimulated(false);
+    } finally {
+      setSimulating(false);
+    }
   };
+
+  const simulationResult = authoritativeResult;
 
   const getDisplayName = (u: any) => u.teacher?.fullName || u.student?.fullName || u.username;
 
@@ -222,10 +163,10 @@ export function PermissionSimulatorModal({
             </div>
             <div>
               <h3 id="simulator-modal-title" className="text-type-section font-semibold text-slate-900 dark:text-slate-100">
-                Mô Phỏng & Kiểm Tra Phân Quyền Trực Tiếp
+                Mô phỏng quyền truy cập
               </h3>
               <p className="text-type-helper text-slate-500 font-normal">
-                Giải lập phán quyết quyền hạn dựa trên RBAC, Quyền riêng và Ràng buộc ABAC
+                Kiểm tra quyết định thực tế từ máy chủ theo vai trò, quyền riêng và phạm vi dữ liệu
               </p>
             </div>
           </div>
@@ -317,6 +258,25 @@ export function PermissionSimulatorModal({
               {/* Optional Scope: Subject */}
               <div className="space-y-1">
                 <label className="text-type-body font-medium text-slate-700 dark:text-slate-300">
+                  Lớp sinh viên (Tùy chọn)
+                </label>
+                <select
+                  value={selectedClassId}
+                  onChange={(e) => setSelectedClassId(e.target.value)}
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body font-normal text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                >
+                  <option value="">-- Bất kỳ lớp nào --</option>
+                  {scopeOptions.classes.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.code ? `[${item.code}] ` : ''}{item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Optional Scope: Subject */}
+              <div className="space-y-1">
+                <label className="text-type-body font-medium text-slate-700 dark:text-slate-300">
                   Môn học (Tùy chọn)
                 </label>
                 <select
@@ -342,12 +302,18 @@ export function PermissionSimulatorModal({
                 variant="primary"
                 size="md"
                 onClick={handleRunSimulation}
-                disabled={!selectedUserId || !selectedPermissionCode}
+                disabled={!selectedUserId || !selectedPermissionCode || simulating}
+                isLoading={simulating}
                 leftIcon={<Play className="h-4 w-4 fill-current" />}
               >
                 Chạy mô phỏng kiểm tra
               </Button>
             </div>
+            {simulationError && (
+              <p className="text-type-helper font-medium text-rose-600 dark:text-rose-400">
+                {simulationError}
+              </p>
+            )}
           </div>
 
           {/* Result Area */}

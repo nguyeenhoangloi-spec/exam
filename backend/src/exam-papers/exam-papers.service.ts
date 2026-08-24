@@ -51,6 +51,7 @@ const paperDetailInclude = {
 import { ActionVerifierService } from '../common/security/action-verifier.service';
 import { ConfirmCriticalActionDto } from '../common/dto/critical-action.dto';
 import { ExamPaperGenerationCore } from './exam-paper-generation.core';
+import { AccessPolicyService } from '../access-control/access-policy.service';
 
 @Injectable()
 export class ExamPapersService {
@@ -59,6 +60,10 @@ export class ExamPapersService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly actionVerifier: ActionVerifierService,
+    private readonly accessPolicy: AccessPolicyService = {
+      allowedSubjectIds: async () => null,
+      assertSubjectScope: async () => undefined,
+    } as unknown as AccessPolicyService,
   ) { }
 
   private assertOwner(actor: Actor, paper: { createdById: number }) {
@@ -154,6 +159,7 @@ export class ExamPapersService {
         },
       });
       if (!schedule) throw new NotFoundException('Không tìm thấy lịch thi.');
+      await this.accessPolicy.assertSubjectScope(actor, schedule.subjectId);
 
       const targetType = data.examType || schedule.examType || 'TRAC_NGHIEM';
       if (schedule.examType !== targetType) {
@@ -444,9 +450,13 @@ export class ExamPapersService {
   }
 
   async findAll(actor: Actor, examScheduleId?: number) {
+    const allowedSubjectIds = await this.accessPolicy.allowedSubjectIds(actor);
     const where: Prisma.ExamPaperWhereInput = {
       deletedAt: null,
-      examSchedule: { deletedAt: null },
+      examSchedule: {
+        deletedAt: null,
+        ...(allowedSubjectIds !== null ? { subjectId: { in: allowedSubjectIds } } : {}),
+      },
       ...(examScheduleId && { examScheduleId }),
       ...(actor.role === 'TEACHER' && { createdById: actor.id }),
     };
@@ -488,6 +498,7 @@ export class ExamPapersService {
   async findOne(actor: Actor, id: number) {
     const paper = await this.current(id);
     this.assertOwner(actor, paper);
+    await this.accessPolicy.assertSubjectScope(actor, paper.examSchedule.subjectId);
     return paper;
   }
 
@@ -497,6 +508,7 @@ export class ExamPapersService {
     }
     const paper = await this.current(id);
     this.assertOwner(actor, paper);
+    await this.accessPolicy.assertSubjectScope(actor, paper.examSchedule.subjectId);
     if (actor.role === 'TEACHER' && paper.examSchedule?.mode !== 'MOCK') {
       throw new ForbiddenException('Giảng viên chỉ được phát hành đề thuộc lịch thi thử. Đề thi chính thức do quản trị viên phát hành.');
     }
@@ -669,6 +681,7 @@ export class ExamPapersService {
   async remove(actor: Actor, id: number) {
     const paper = await this.current(id);
     this.assertOwner(actor, paper);
+    await this.accessPolicy.assertSubjectScope(actor, paper.examSchedule.subjectId);
     if (paper.status !== ExamPaperStatus.DRAFT) {
       throw new BadRequestException('Chỉ đề thi bản nháp mới được xóa. Hãy lưu trữ đề đã phát hành.');
     }
@@ -695,6 +708,7 @@ export class ExamPapersService {
   async updatePassword(actor: Actor, id: number, dto: UpdateExamPasswordDto) {
     const paper = await this.current(id);
     this.assertOwner(actor, paper);
+    await this.accessPolicy.assertSubjectScope(actor, paper.examSchedule.subjectId);
 
     if (!paper.examScheduleId) {
       throw new BadRequestException('Đề thi chưa được gán vào lịch thi.');

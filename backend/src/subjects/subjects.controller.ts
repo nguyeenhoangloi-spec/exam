@@ -4,8 +4,10 @@ import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { CreateSubjectDto, UpdateSubjectDto } from './dto/subject.dto';
+import { PermissionGuard } from '../access-control/permission.guard';
+import { Permissions } from '../access-control/permissions.decorator';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 @Roles('ADMIN', 'TEACHER', 'STUDENT')
 @Controller('subjects')
 export class SubjectsController {
@@ -28,6 +30,7 @@ export class SubjectsController {
 
   @Get(':id/enrollments/summary')
   @Roles('ADMIN')
+  @Permissions('ACADEMIC_STRUCTURE_MANAGE')
   getEnrollmentsSummary(
     @Param('id', ParseIntPipe) id: number,
     @Query('semester') semester?: string,
@@ -38,6 +41,7 @@ export class SubjectsController {
 
   @Get(':id/enrollments')
   @Roles('ADMIN')
+  @Permissions('ACADEMIC_STRUCTURE_MANAGE')
   getEnrollments(
     @Param('id', ParseIntPipe) id: number,
     @Query('semester') semester?: string,
@@ -49,6 +53,7 @@ export class SubjectsController {
 
   @Get(':id/enroll-class/preview')
   @Roles('ADMIN')
+  @Permissions('ACADEMIC_STRUCTURE_MANAGE')
   previewEnrollByClass(
     @Param('id', ParseIntPipe) id: number,
     @Query('classId') classId: string,
@@ -59,6 +64,7 @@ export class SubjectsController {
   }
 
   @Roles('ADMIN')
+  @Permissions('ACADEMIC_STRUCTURE_MANAGE')
   @Post(':id/enroll-by-class')
   enrollByClass(
     @Param('id', ParseIntPipe) id: number,
@@ -68,24 +74,28 @@ export class SubjectsController {
   }
 
   @Roles('ADMIN')
+  @Permissions('ACADEMIC_STRUCTURE_MANAGE')
   @Post(':id/enroll-students')
   enrollStudents(@Param('id', ParseIntPipe) id: number, @Body() body: { studentIds: number[]; semester: string; schoolYear: string }) {
     return this.subjectsService.enrollStudents(id, body);
   }
 
   @Roles('ADMIN')
+  @Permissions('ACADEMIC_STRUCTURE_MANAGE')
   @Post()
   create(@Body() body: CreateSubjectDto) {
     return this.subjectsService.create(body);
   }
 
   @Roles('ADMIN')
+  @Permissions('ACADEMIC_STRUCTURE_MANAGE')
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateSubjectDto) {
     return this.subjectsService.update(id, body);
   }
 
   @Roles('ADMIN')
+  @Permissions('ACADEMIC_STRUCTURE_MANAGE')
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.subjectsService.remove(id);

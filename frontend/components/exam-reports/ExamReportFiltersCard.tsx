@@ -1,9 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Calendar, Clock, GraduationCap } from 'lucide-react';
-import { Button } from '../ui/Button';
-import { IdentifierBadge } from '../ui/IdentifierBadge';
+import { ArrowLeftRight, Calendar, Clock, DoorOpen, GraduationCap } from 'lucide-react';
 
 interface ExamReportFiltersCardProps {
   reportSchedule?: any;
@@ -20,73 +18,76 @@ export function ExamReportFiltersCard({
   onOpenSchedulePicker,
 }: ExamReportFiltersCardProps) {
   let formattedDate = reportSchedule?.examDate || '';
-  if (formattedDate.includes('T')) {
-    formattedDate = formattedDate.split('T')[0];
-  }
-  if (formattedDate.includes('-')) {
-    const parts = formattedDate.split('-');
-    if (parts.length === 3) {
-      formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+  if (formattedDate) {
+    try {
+      const d = new Date(formattedDate);
+      if (!isNaN(d.getTime())) {
+        formattedDate = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+      }
+    } catch {
+      // keep original
     }
   }
 
   return (
-    <div className="pt-1">
-      {/* ── Dải Ca Thi Hiện Tại Tinh Gọn (Clean Frameless Session Row) ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-        {/* Left: Icon Avatar + Subject & Schedule Meta */}
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold shadow-2xs">
-            <GraduationCap className="h-5 w-5" />
+    <div className="py-0.5">
+      {/* ── Active Schedule Shift Banner (Chuẩn đồng nhất như exam-supervisors) ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5 min-w-0">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">
+            <GraduationCap className="h-5 w-5 stroke-[2]" />
           </div>
 
           <div className="space-y-0.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2 py-0.5 ui-pill rounded-full ui-pill-solid bg-blue-600 text-white text-type-helper font-medium tracking-wider shrink-0  shadow-2xs">
-                {activeTypeBadge?.label || 'Chính thức'}
+              <span className="inline-flex items-center px-2 py-0.5 ui-pill rounded-full text-type-helper font-medium ui-pill-solid bg-blue-600 text-white tracking-wide">
+                {activeTypeBadge?.label ? activeTypeBadge.label.toUpperCase() : 'CHÍNH THỨC'}
               </span>
 
-              {reportSchedule ? (
-                <>
-                  <h2 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 tracking-tight truncate">
-                    {reportSchedule.subjectName}
-                  </h2>
-                  <IdentifierBadge>{reportSchedule.subjectCode}</IdentifierBadge>
-                </>
-              ) : (
-                <span className="text-type-body-sm text-slate-500 font-medium">
-                  {loadingSchedules ? 'Đang tải ca thi...' : 'Chưa chọn ca thi cụ thể'}
-                </span>
-              )}
+              <h3 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate">
+                {reportSchedule?.subjectName || (loadingSchedules ? 'Đang tải ca thi...' : 'Chưa chọn ca thi')}
+              </h3>
+
+              <span className="text-type-helper font-medium text-slate-400">
+                #{reportSchedule?.subjectCode || 'MH'}
+              </span>
+
+              {/* Nút Đổi Ca thuần icon, không chữ, không khung, không nền */}
+              <button
+                type="button"
+                onClick={onOpenSchedulePicker}
+                disabled={loadingSchedules}
+                className="p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer inline-flex items-center justify-center disabled:opacity-50"
+                title="Đổi ca thi"
+                aria-label="Đổi ca thi"
+              >
+                <ArrowLeftRight className="h-3.5 w-3.5" />
+              </button>
             </div>
 
-            {reportSchedule && (
-              <div className="flex items-center gap-2 text-type-helper text-slate-500 dark:text-slate-400 font-medium truncate">
-                <span className="text-slate-600 dark:text-slate-300 font-semibold">{reportSchedule.periodName}</span>
-                <span>•</span>
-                <span className="flex items-center gap-1 text-slate-700 dark:text-slate-300">
-                  <Clock className="w-3.5 h-3.5 text-slate-400" />
-                  <strong>{reportSchedule.startTime} – {reportSchedule.endTime}</strong>
-                  {formattedDate && ` (${formattedDate})`}
-                </span>
-              </div>
-            )}
+            <div className="flex items-center gap-2.5 text-type-helper text-slate-500 dark:text-slate-400 flex-wrap min-h-[20px]">
+              {reportSchedule && (
+                <>
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-3.5 w-3.5 text-slate-400" />
+                    {reportSchedule.startTime} - {reportSchedule.endTime}
+                  </span>
+                  {formattedDate && (
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                      {formattedDate}
+                    </span>
+                  )}
+                  {reportSchedule.periodName && (
+                    <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
+                      <DoorOpen className="h-3.5 w-3.5 text-blue-600" />
+                      {reportSchedule.periodName}
+                    </span>
+                  )}
+                </>
+              )}
+            </div>
           </div>
-        </div>
-
-        {/* Right: Actions */}
-        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            disabled={loadingSchedules}
-            onClick={onOpenSchedulePicker}
-            leftIcon={<Calendar className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
-            className="font-semibold shadow-2xs cursor-pointer"
-          >
-            Đổi ca thi khác
-          </Button>
         </div>
       </div>
     </div>

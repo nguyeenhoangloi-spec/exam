@@ -1,7 +1,12 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { ReplaceUserScopesDto, SystemRole, UpsertUserPermissionOverrideDto } from './dto/access-control.dto';
+import {
+  ReplaceUserScopesDto,
+  SystemRole,
+  UpdateRolePermissionsBatchDto,
+  UpsertUserPermissionOverrideDto,
+} from './dto/access-control.dto';
 
 type PermissionSeed = {
   code: string;
@@ -12,11 +17,17 @@ type PermissionSeed = {
   roles: SystemRole[];
 };
 
-const PERMISSIONS: PermissionSeed[] = [
+export const ACCESS_PERMISSION_CATALOG: PermissionSeed[] = [
   { code: 'ACCESS_CONTROL_VIEW', name: 'Xem phân quyền', module: 'Quản trị hệ thống', description: 'Xem ma trận quyền, quyền riêng và phạm vi truy cập.', sensitive: true, roles: ['ADMIN'] },
   { code: 'ACCESS_CONTROL_MANAGE', name: 'Quản lý phân quyền', module: 'Quản trị hệ thống', description: 'Cấp, thu hồi quyền và thay đổi phạm vi truy cập.', sensitive: true, roles: ['ADMIN'] },
   { code: 'AUDIT_LOG_VIEW', name: 'Xem nhật ký hệ thống', module: 'Quản trị hệ thống', description: 'Tra cứu lịch sử thao tác và thay đổi bảo mật.', sensitive: true, roles: ['ADMIN'] },
   { code: 'BACKUP_MANAGE', name: 'Quản lý sao lưu', module: 'Quản trị hệ thống', description: 'Tạo, khôi phục và duyệt sao lưu dữ liệu.', sensitive: true, roles: ['ADMIN'] },
+  { code: 'USER_MANAGE', name: 'Quản lý tài khoản', module: 'Quản trị hệ thống', description: 'Tạo, cập nhật, khóa và quản lý tài khoản người dùng.', sensitive: true, roles: ['ADMIN'] },
+  { code: 'ACADEMIC_STRUCTURE_MANAGE', name: 'Quản lý danh mục đào tạo', module: 'Danh mục', description: 'Quản lý khoa, lớp sinh viên và môn học.', roles: ['ADMIN'] },
+  { code: 'EXAM_PERIOD_MANAGE', name: 'Quản lý kỳ thi', module: 'Tổ chức thi', description: 'Tạo và điều chỉnh kỳ thi.', roles: ['ADMIN'] },
+  { code: 'EXAM_ROOM_MANAGE', name: 'Quản lý phòng thi', module: 'Tổ chức thi', description: 'Quản lý phòng và sức chứa phòng thi.', roles: ['ADMIN'] },
+  { code: 'EXAM_ARRANGEMENT_MANAGE', name: 'Xếp phòng thi', module: 'Tổ chức thi', description: 'Xếp thí sinh vào phòng và vị trí thi.', sensitive: true, roles: ['ADMIN'] },
+  { code: 'EXAM_SUPERVISOR_MANAGE', name: 'Phân công coi thi', module: 'Tổ chức thi', description: 'Phân công và điều chỉnh giảng viên coi thi.', sensitive: true, roles: ['ADMIN'] },
   { code: 'EXAM_SCHEDULE_MANAGE', name: 'Quản lý lịch thi', module: 'Tổ chức thi', description: 'Tạo và điều chỉnh lịch thi.', roles: ['ADMIN', 'TEACHER'] },
   { code: 'QUESTION_MANAGE', name: 'Quản lý ngân hàng câu hỏi', module: 'Ngân hàng đề', description: 'Tạo, cập nhật và quản lý câu hỏi trong phạm vi được phép.', roles: ['ADMIN', 'TEACHER'] },
   { code: 'EXAM_PAPER_MANAGE', name: 'Quản lý đề thi', module: 'Ngân hàng đề', description: 'Tạo và quản lý đề thi trong phạm vi được phép.', roles: ['ADMIN', 'TEACHER'] },
@@ -26,12 +37,16 @@ const PERMISSIONS: PermissionSeed[] = [
   { code: 'ESSAY_GRADE', name: 'Chấm bài tự luận', module: 'Chấm thi', description: 'Chấm bài tự luận được phân công.', sensitive: true, roles: ['ADMIN', 'TEACHER'] },
   { code: 'ESSAY_PUBLISH', name: 'Công bố điểm tự luận', module: 'Chấm thi', description: 'Duyệt và công bố điểm tự luận.', sensitive: true, roles: ['ADMIN'] },
   { code: 'GRADE_APPEAL_REVIEW', name: 'Xử lý phúc khảo', module: 'Chấm thi', description: 'Xem xét và xử lý đơn phúc khảo.', sensitive: true, roles: ['ADMIN', 'TEACHER'] },
+  { code: 'PROCTOR_ASSIGNMENT_VIEW', name: 'Xem lịch coi thi', module: 'Giảng viên', description: 'Xem các ca coi thi được phân công.', roles: ['TEACHER'] },
+  { code: 'TRASH_MANAGE', name: 'Quản lý thùng rác', module: 'Quản trị hệ thống', description: 'Xem, khôi phục hoặc xóa vĩnh viễn dữ liệu trong thùng rác.', sensitive: true, roles: ['ADMIN'] },
   { code: 'STUDENT_SCHEDULE_VIEW', name: 'Xem lịch thi cá nhân', module: 'Sinh viên', description: 'Xem lịch thi thuộc tài khoản sinh viên.', roles: ['STUDENT'] },
   { code: 'STUDENT_RESULT_VIEW', name: 'Xem kết quả cá nhân', module: 'Sinh viên', description: 'Xem kết quả đủ điều kiện công bố.', sensitive: true, roles: ['STUDENT'] },
+  { code: 'STUDENT_CURRICULUM_VIEW', name: 'Xem chương trình đào tạo', module: 'Sinh viên', description: 'Xem chương trình đào tạo thuộc hồ sơ sinh viên.', roles: ['STUDENT'] },
   { code: 'ONLINE_EXAM_TAKE', name: 'Làm bài trực tuyến', module: 'Sinh viên', description: 'Truy cập lượt thi trực tuyến hợp lệ.', roles: ['STUDENT'] },
 ];
 
 const ROLES: SystemRole[] = ['ADMIN', 'TEACHER', 'STUDENT'];
+const CORE_ADMIN_PERMISSIONS = new Set(['ACCESS_CONTROL_VIEW', 'ACCESS_CONTROL_MANAGE']);
 
 @Injectable()
 export class AccessControlService {
@@ -41,20 +56,42 @@ export class AccessControlService {
   ) {}
 
   async ensureCatalog() {
-    for (const seed of PERMISSIONS) {
-      const permission = await this.prisma.permission.upsert({
-        where: { code: seed.code },
-        update: { name: seed.name, module: seed.module, description: seed.description, sensitive: Boolean(seed.sensitive) },
-        create: { code: seed.code, name: seed.name, module: seed.module, description: seed.description, sensitive: Boolean(seed.sensitive) },
-      });
-      for (const role of seed.roles) {
-        await this.prisma.rolePermission.upsert({
-          where: { role_permissionId: { role, permissionId: permission.id } },
-          update: {},
-          create: { role, permissionId: permission.id },
+    const existing = await this.prisma.permission.findMany({
+      where: { code: { in: ACCESS_PERMISSION_CATALOG.map((permission) => permission.code) } },
+      select: { code: true },
+    });
+    const existingCodes = new Set(existing.map((permission) => permission.code));
+
+    await this.prisma.$transaction(async (tx) => {
+      for (const seed of ACCESS_PERMISSION_CATALOG) {
+        const permission = await tx.permission.upsert({
+          where: { code: seed.code },
+          update: {
+            name: seed.name,
+            module: seed.module,
+            description: seed.description,
+            sensitive: Boolean(seed.sensitive),
+          },
+          create: {
+            code: seed.code,
+            name: seed.name,
+            module: seed.module,
+            description: seed.description,
+            sensitive: Boolean(seed.sensitive),
+          },
         });
+
+        // Default grants are applied only when a permission code is introduced.
+        // Existing role configuration is administrator-owned and must never be
+        // silently restored during a read or authorization check.
+        if (!existingCodes.has(seed.code) && seed.roles.length) {
+          await tx.rolePermission.createMany({
+            data: seed.roles.map((role) => ({ role, permissionId: permission.id })),
+            skipDuplicates: true,
+          });
+        }
       }
-    }
+    });
   }
 
   async getOverview() {
@@ -95,13 +132,17 @@ export class AccessControlService {
     return { departments, classes, subjects };
   }
 
-  async setRolePermission(actor: { id: number; username?: string }, role: string, permissionCode: string, granted: boolean) {
+  async setRolePermission(
+    actor: { id: number; username?: string },
+    role: string,
+    permissionCode: string,
+    granted: boolean,
+    reason: string,
+  ) {
     await this.ensureCatalog();
-    if (!ROLES.includes(role as SystemRole)) throw new BadRequestException('Vai trò không hợp lệ.');
+    this.assertRole(role);
     const permission = await this.findPermission(permissionCode);
-    if (role === 'ADMIN' && ['ACCESS_CONTROL_VIEW', 'ACCESS_CONTROL_MANAGE'].includes(permission.code) && !granted) {
-      throw new BadRequestException('Không thể thu hồi quyền quản trị phân quyền cốt lõi của vai trò Admin.');
-    }
+    this.assertRolePermissionChange(role as SystemRole, permission.code, granted);
 
     if (granted) {
       await this.prisma.rolePermission.upsert({
@@ -118,15 +159,66 @@ export class AccessControlService {
       entityType: 'ACCESS_CONTROL',
       entityId: `${role}:${permission.code}`,
       description: `${granted ? 'Đã cấp' : 'Đã thu hồi'} quyền ${permission.name} cho vai trò ${role}.`,
-      metadata: { role, permissionCode: permission.code, granted },
+      metadata: { role, permissionCode: permission.code, granted, reason: reason.trim() },
     });
     return { role, permissionCode: permission.code, granted };
   }
 
+  async setRolePermissionsBatch(
+    actor: { id: number; username?: string },
+    role: string,
+    dto: UpdateRolePermissionsBatchDto,
+  ) {
+    await this.ensureCatalog();
+    this.assertRole(role);
+    const normalized = new Map<string, boolean>();
+    for (const change of dto.changes) normalized.set(change.permissionCode.trim(), change.granted);
+    const codes = [...normalized.keys()];
+    const permissions = await this.prisma.permission.findMany({ where: { code: { in: codes } } });
+    if (permissions.length !== codes.length) {
+      throw new BadRequestException('Danh sách thay đổi chứa quyền không tồn tại.');
+    }
+    for (const permission of permissions) {
+      this.assertRolePermissionChange(role as SystemRole, permission.code, normalized.get(permission.code) === true);
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      for (const permission of permissions) {
+        const granted = normalized.get(permission.code) === true;
+        if (granted) {
+          await tx.rolePermission.upsert({
+            where: { role_permissionId: { role, permissionId: permission.id } },
+            update: {},
+            create: { role, permissionId: permission.id },
+          });
+        } else {
+          await tx.rolePermission.deleteMany({ where: { role, permissionId: permission.id } });
+        }
+      }
+      await this.audit.write({
+        actorId: actor.id,
+        action: 'ACCESS_ROLE_PERMISSIONS_BATCH_UPDATED',
+        entityType: 'ACCESS_CONTROL',
+        entityId: role,
+        description: `Đã cập nhật ${permissions.length} quyền cho vai trò ${role}.`,
+        metadata: {
+          role,
+          reason: dto.reason.trim(),
+          changes: permissions.map((permission) => ({
+            permissionCode: permission.code,
+            granted: normalized.get(permission.code) === true,
+          })),
+        },
+      }, tx);
+    });
+
+    return { role, updatedCount: permissions.length };
+  }
+
   async resetRolePermissions(actor: { id: number }, role: string) {
     await this.ensureCatalog();
-    if (!ROLES.includes(role as SystemRole)) throw new BadRequestException('Vai trò không hợp lệ.');
-    const defaults = PERMISSIONS.filter((permission) => permission.roles.includes(role as SystemRole));
+    this.assertRole(role);
+    const defaults = ACCESS_PERMISSION_CATALOG.filter((permission) => permission.roles.includes(role as SystemRole));
     const permissions = await this.prisma.permission.findMany({ where: { code: { in: defaults.map((permission) => permission.code) } }, select: { id: true, code: true } });
 
     await this.prisma.$transaction(async (tx) => {
@@ -149,12 +241,23 @@ export class AccessControlService {
 
   async upsertUserOverride(actor: { id: number }, userId: number, dto: UpsertUserPermissionOverrideDto) {
     await this.ensureCatalog();
-    await this.assertUser(userId);
+    const targetUser = await this.getUserForAccessChange(userId);
     const permission = await this.findPermission(dto.permissionCode);
+    const reason = dto.reason?.trim();
+    if (!reason || reason.length < 5) {
+      throw new BadRequestException('Phải nhập lý do thay đổi quyền riêng (tối thiểu 5 ký tự).');
+    }
+    if (targetUser.role === 'ADMIN' && CORE_ADMIN_PERMISSIONS.has(permission.code) && dto.effect === 'DENY') {
+      throw new BadRequestException('Không thể chặn quyền quản trị phân quyền cốt lõi của tài khoản Admin.');
+    }
+    const seed = this.permissionSeed(permission.code);
+    if (dto.effect === 'ALLOW' && (!seed || !seed.roles.includes(targetUser.role as SystemRole))) {
+      throw new BadRequestException('Không thể cấp quyền này ngoài phạm vi chức năng của vai trò tài khoản.');
+    }
     const override = await this.prisma.userPermissionOverride.upsert({
       where: { userId_permissionId: { userId, permissionId: permission.id } },
-      update: { effect: dto.effect, reason: dto.reason?.trim() || null },
-      create: { userId, permissionId: permission.id, effect: dto.effect, reason: dto.reason?.trim() || null },
+      update: { effect: dto.effect, reason },
+      create: { userId, permissionId: permission.id, effect: dto.effect, reason },
       include: { permission: { select: { code: true, name: true } } },
     });
     await this.audit.write({
@@ -163,7 +266,7 @@ export class AccessControlService {
       entityType: 'ACCESS_CONTROL',
       entityId: String(userId),
       description: `Đã đặt quyền riêng ${dto.effect === 'ALLOW' ? 'cho phép' : 'từ chối'} ${permission.name} cho tài khoản #${userId}.`,
-      metadata: { userId, permissionCode: permission.code, effect: dto.effect, reason: dto.reason?.trim() || null },
+      metadata: { userId, permissionCode: permission.code, effect: dto.effect, reason },
     });
     return override;
   }
@@ -198,7 +301,10 @@ export class AccessControlService {
   }
 
   async replaceUserScopes(actor: { id: number }, userId: number, dto: ReplaceUserScopesDto) {
-    await this.assertUser(userId);
+    const targetUser = await this.getUserForAccessChange(userId);
+    if (targetUser.role !== 'TEACHER') {
+      throw new BadRequestException('Chỉ tài khoản Giảng viên hoặc cán bộ nghiệp vụ mới được cấu hình phạm vi dữ liệu riêng.');
+    }
     const normalized = this.normalizeScopes(dto.scopes || []);
     await this.validateScopes(normalized);
     await this.prisma.$transaction(async (tx) => {
@@ -210,7 +316,7 @@ export class AccessControlService {
         entityType: 'ACCESS_CONTROL',
         entityId: String(userId),
         description: `Đã cập nhật phạm vi dữ liệu cho tài khoản #${userId}.`,
-        metadata: { userId, scopes: normalized },
+        metadata: { userId, scopes: normalized, reason: dto.reason.trim() },
       }, tx);
     });
     return this.prisma.userAccessScope.findMany({ where: { userId }, orderBy: [{ type: 'asc' }, { resourceId: 'asc' }] });
@@ -286,6 +392,33 @@ export class AccessControlService {
   private async assertUser(id: number) {
     const user = await this.prisma.user.findUnique({ where: { id }, select: { id: true } });
     if (!user) throw new NotFoundException('Không tìm thấy tài khoản.');
+  }
+
+  private async getUserForAccessChange(id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: { id: true, role: true, status: true },
+    });
+    if (!user) throw new NotFoundException('Không tìm thấy tài khoản.');
+    return user;
+  }
+
+  private assertRole(role: string): asserts role is SystemRole {
+    if (!ROLES.includes(role as SystemRole)) throw new BadRequestException('Vai trò không hợp lệ.');
+  }
+
+  private permissionSeed(code: string) {
+    return ACCESS_PERMISSION_CATALOG.find((permission) => permission.code === code);
+  }
+
+  private assertRolePermissionChange(role: SystemRole, permissionCode: string, granted: boolean) {
+    if (role === 'ADMIN' && CORE_ADMIN_PERMISSIONS.has(permissionCode) && !granted) {
+      throw new BadRequestException('Không thể thu hồi quyền quản trị phân quyền cốt lõi của vai trò Admin.');
+    }
+    const seed = this.permissionSeed(permissionCode);
+    if (granted && (!seed || !seed.roles.includes(role))) {
+      throw new BadRequestException('Không thể cấp quyền này ngoài phạm vi chức năng của vai trò.');
+    }
   }
 
   private normalizeScopes(scopes: Array<{ type: 'DEPARTMENT' | 'CLASS' | 'SUBJECT'; resourceId: number }>) {

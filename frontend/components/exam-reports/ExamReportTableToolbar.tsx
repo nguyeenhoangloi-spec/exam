@@ -94,10 +94,10 @@ export function ExamReportTableToolbar({
           type="button"
           onClick={handleRefreshClick}
           disabled={loading || isSpinning}
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800 transition cursor-pointer disabled:opacity-50"
+          className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-blue-400 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 disabled:opacity-50 shrink-0"
           title="Làm mới dữ liệu"
         >
-          <RefreshCw className={`h-4 w-4 ${isSpinning ? 'animate-spin text-blue-600' : ''}`} />
+          <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
         </button>
       )}
     </div>

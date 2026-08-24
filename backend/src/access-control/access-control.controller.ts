@@ -1,17 +1,33 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { Roles } from '../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { AccessControlService } from './access-control.service';
+import { AccessPolicyService } from './access-policy.service';
 import { PermissionGuard } from './permission.guard';
 import { Permissions } from './permissions.decorator';
-import { ReplaceUserScopesDto, UpdateRolePermissionDto, UpsertUserPermissionOverrideDto } from './dto/access-control.dto';
+import {
+  ReplaceUserScopesDto,
+  SimulatePermissionDto,
+  UpdateRolePermissionDto,
+  UpdateRolePermissionsBatchDto,
+  UpsertUserPermissionOverrideDto,
+} from './dto/access-control.dto';
 
 @Controller('access-control')
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 @Roles('ADMIN')
 export class AccessControlController {
-  constructor(private readonly accessControl: AccessControlService) {}
+  constructor(
+    private readonly accessControl: AccessControlService,
+    private readonly accessPolicy: AccessPolicyService,
+  ) {}
+
+  @Get('me/effective')
+  @Roles('ADMIN', 'TEACHER', 'STUDENT')
+  currentUserEffective(@Request() req: any) {
+    return this.accessControl.getEffectivePermissions(req.user.id);
+  }
 
   @Get('overview')
   @Permissions('ACCESS_CONTROL_VIEW')
@@ -27,7 +43,10 @@ export class AccessControlController {
 
   @Get('history')
   @Permissions('ACCESS_CONTROL_VIEW')
-  history() { return this.accessControl.getHistory(); }
+  history(@Query('limit') limit?: string) {
+    const parsedLimit = Number(limit);
+    return this.accessControl.getHistory(Number.isFinite(parsedLimit) && parsedLimit > 0 ? parsedLimit : 100);
+  }
 
   @Get('users/:userId/effective')
   @Permissions('ACCESS_CONTROL_VIEW')
@@ -36,7 +55,24 @@ export class AccessControlController {
   @Put('roles/:role/permissions')
   @Permissions('ACCESS_CONTROL_MANAGE')
   setRolePermission(@Request() req: any, @Param('role') role: string, @Body() dto: UpdateRolePermissionDto) {
-    return this.accessControl.setRolePermission(req.user, role.toUpperCase(), dto.permissionCode, dto.granted);
+    return this.accessControl.setRolePermission(req.user, role.toUpperCase(), dto.permissionCode, dto.granted, dto.reason);
+  }
+
+  @Put('roles/:role/permissions/batch')
+  @Permissions('ACCESS_CONTROL_MANAGE')
+  setRolePermissionsBatch(
+    @Request() req: any,
+    @Param('role') role: string,
+    @Body() dto: UpdateRolePermissionsBatchDto,
+  ) {
+    return this.accessControl.setRolePermissionsBatch(req.user, role.toUpperCase(), dto);
+  }
+
+  @Post('simulate')
+  @Permissions('ACCESS_CONTROL_VIEW')
+  async simulate(@Body() dto: SimulatePermissionDto) {
+    const effective = await this.accessControl.getEffectivePermissions(dto.userId);
+    return this.accessPolicy.explain(effective.user, dto.permissionCode, dto.context);
   }
 
   @Post('roles/:role/reset')
