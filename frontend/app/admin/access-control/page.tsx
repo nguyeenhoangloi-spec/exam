@@ -894,25 +894,27 @@ export default function AccessControlPage() {
                 {/* Right side: Active Filters summary badge / result count & Refresh button */}
                 <div className="flex items-center gap-2">
                   {matrixModuleFilter !== 'ALL' && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-type-helper font-medium bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                    <span className="ui-pill inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50/90 px-2 py-0.5 text-[12.5px] font-medium text-blue-700 dark:border-blue-800/80 dark:bg-blue-950/40 dark:text-blue-300">
                       <span>Nhóm: {matrixModuleFilter}</span>
                       <button
                         type="button"
                         onClick={() => setMatrixModuleFilter('ALL')}
-                        className="hover:text-blue-900 cursor-pointer"
+                        className="ml-0.5 rounded-full p-0.5 text-blue-600 hover:bg-blue-200/60 hover:text-blue-900 transition cursor-pointer"
+                        title="Gỡ bộ lọc"
                       >
                         <X className="h-3 w-3" />
                       </button>
                     </span>
                   )}
                   {onlySensitive && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-type-helper font-medium bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-                      <LockKeyhole className="h-3 w-3" />
+                    <span className="ui-pill inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50/90 px-2 py-0.5 text-[12.5px] font-medium text-amber-700 dark:border-amber-800/80 dark:bg-amber-950/40 dark:text-amber-300">
+                      <LockKeyhole className="h-3 w-3 text-amber-600 dark:text-amber-400" />
                       <span>Chỉ nhạy cảm</span>
                       <button
                         type="button"
                         onClick={() => setOnlySensitive(false)}
-                        className="hover:text-amber-950 cursor-pointer"
+                        className="ml-0.5 rounded-full p-0.5 text-amber-600 hover:bg-amber-200/60 hover:text-amber-900 transition cursor-pointer"
+                        title="Gỡ bộ lọc"
                       >
                         <X className="h-3 w-3" />
                       </button>

@@ -165,10 +165,10 @@ export function PermissionFilterPopover({
           <div
             ref={popoverRef}
             style={popoverStyle}
-            className="overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/10 dark:shadow-slate-950/50 animate-in fade-in zoom-in-95 duration-150"
+            className="flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/10 dark:shadow-slate-950/50 animate-in fade-in zoom-in-95 duration-150"
           >
             {/* Popover Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40">
+            <div className="shrink-0 flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
@@ -203,7 +203,7 @@ export function PermissionFilterPopover({
             </div>
 
             {/* Popover Body */}
-            <div className="max-h-[360px] overflow-y-auto p-4 space-y-4 custom-scrollbar">
+            <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 custom-scrollbar">
               {/* Section 1: Security Level */}
               <div className="space-y-2">
                 <label className="text-type-body font-medium text-slate-700 dark:text-slate-300 block">
@@ -305,20 +305,6 @@ export function PermissionFilterPopover({
                   })}
                 </div>
               </div>
-            </div>
-
-            {/* Popover Footer */}
-            <div className="flex items-center justify-between border-t border-slate-100 px-4 py-2.5 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
-              <span className="text-type-helper text-slate-500 dark:text-slate-400">
-                Hiển thị <strong className="text-slate-900 dark:text-white font-semibold">{totalFilteredCount}</strong> / {totalCount} quyền
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="rounded-xl bg-blue-600 px-3 py-1.5 text-type-body-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition cursor-pointer"
-              >
-                Áp dụng
-              </button>
             </div>
           </div>,
           document.body
