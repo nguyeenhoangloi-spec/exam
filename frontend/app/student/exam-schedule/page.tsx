@@ -470,6 +470,24 @@ export default function StudentExamSchedulePage() {
                     >
                       Xem Kết Quả & Điểm Thi
                     </Button>
+                  ) : ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'UNDER_REVIEW'].includes((item as any).attempt?.status) ? (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => router.push(`/student/online-exam/${(item as any).attempt.id}/result`)}
+                      leftIcon={<CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />}
+                    >
+                      Xem Bài Nộp
+                    </Button>
+                  ) : ['IN_PROGRESS', 'DISCONNECTED', 'DEVICE_CHECK', 'READY'].includes((item as any).attempt?.status) ? (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => router.push(`/student/online-exam/${item.examScheduleId || item.scheduleId || item.id}/lobby`)}
+                      rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+                    >
+                      Tiếp tục làm bài
+                    </Button>
                   ) : (
                     <Button
                       variant={item.mode === 'MOCK' ? 'secondary' : 'primary'}
@@ -541,6 +559,32 @@ export default function StudentExamSchedulePage() {
                       leftIcon={<Award className="w-3.5 h-3.5" />}
                     >
                       Xem kết quả
+                    </Button>
+                  ) : ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'UNDER_REVIEW'].includes((drawerSchedule as any)?.attempt?.status) ? (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => {
+                        const id = (drawerSchedule as any)?.attempt?.id;
+                        setDrawerSchedule(null);
+                        if (id) router.push(`/student/online-exam/${id}/result`);
+                      }}
+                      leftIcon={<CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />}
+                    >
+                      Xem bài nộp
+                    </Button>
+                  ) : ['IN_PROGRESS', 'DISCONNECTED', 'DEVICE_CHECK', 'READY'].includes((drawerSchedule as any)?.attempt?.status) ? (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => {
+                        const targetId = drawerSchedule?.examScheduleId || drawerSchedule?.scheduleId || drawerSchedule?.id;
+                        setDrawerSchedule(null);
+                        if (targetId) router.push(`/student/online-exam/${targetId}/lobby`);
+                      }}
+                      rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+                    >
+                      Tiếp tục làm bài
                     </Button>
                   ) : (
                     <Button

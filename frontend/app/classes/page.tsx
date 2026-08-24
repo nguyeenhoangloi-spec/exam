@@ -639,11 +639,20 @@ export default function ClassesPage() {
       <ExcelImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
-        title="Nhập danh sách lớp học từ Excel"
-        templateFileName="mau_danh_sach_lop.csv"
-        onImportSuccess={(data: any[]) => {
+ title="Nhập danh sách lớp học"
+ templateFileName="mau_danh_sach_lop.csv"
+ entityLabel="lớp học"
+ templateContent={'code,name,departmentId\nCNTT-K65,Công nghệ thông tin khóa 65,1'}
+ onImportRows={async (row) => {
+  await api.post('/classes', {
+   code: row.code,
+   name: row.name,
+   departmentId: Number(row.departmentId || row.department),
+  });
+ }}
+ onImportSuccess={(data: any[]) => {
           void fetchData();
-          setToast({ message: `Đã nhập thành công ${data.length} lớp học từ file Excel!`, type: 'success' });
+          setToast({ message: `Đã nhập thành công ${data.length} lớp học từ CSV!`, type: 'success' });
         }}
       />
 

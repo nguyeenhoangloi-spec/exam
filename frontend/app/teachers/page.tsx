@@ -721,7 +721,7 @@ export default function TeachersPage() {
                 }}
                 leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
               >
-                Import Excel
+                Nhập từ CSV
               </Button>
             ) : (
               <div />
@@ -751,11 +751,23 @@ export default function TeachersPage() {
       <ExcelImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
-        title="Nhập Danh sách Giảng viên từ Excel"
+        title="Nhập danh sách giảng viên"
         templateFileName="danh_sach_giang_vien_mau.csv"
+        entityLabel="giảng viên"
+        templateContent={'teacherCode,fullName,email,departmentId,degree,phone\nGV2026001,Nguyễn Văn Mẫu,mau@example.edu.vn,1,ThS,0900000000'}
+        onImportRows={async (row) => {
+          await api.post('/teachers', {
+            teacherCode: row.teacherCode || row.code,
+            fullName: row.fullName || row.name,
+            degree: row.degree || 'ThS',
+            email: row.email,
+            phone: row.phone || undefined,
+            departmentId: Number(row.departmentId || row.department),
+          });
+        }}
         onImportSuccess={(data: any[]) => {
           invalidateCache('/teachers');
-          setToast({ message: `Đã nhập thành công ${data.length} giảng viên từ file Excel!`, type: 'success' });
+          setToast({ message: `Đã nhập thành công ${data.length} giảng viên từ CSV!`, type: 'success' });
           fetchData();
         }}
       />

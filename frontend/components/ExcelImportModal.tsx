@@ -6,13 +6,15 @@ import { Modal } from './Modal';
 import { ConfirmModal } from './ConfirmModal';
 import { Button } from './ui';
 import { downloadCsv } from '../lib/export-csv';
-import api from '../lib/api';
 
 interface ExcelImportModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   templateFileName: string;
+  templateContent: string;
+  entityLabel: string;
+  onImportRows?: (row: Record<string, string>, rowIndex: number) => Promise<void>;
   onImportSuccess: (data: any[]) => void | Promise<void>;
 }
 
@@ -21,6 +23,9 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
   onClose,
   title,
   templateFileName,
+  templateContent,
+  entityLabel,
+  onImportRows,
   onImportSuccess,
 }) => {
   const [file, setFile] = useState<File | null>(null);
@@ -33,9 +38,30 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
   const parseCsv = (text: string) => {
     const lines = text.split(/\r?\n/).filter((line) => line.trim());
     if (lines.length < 2) throw new Error('Tệp không có dòng dữ liệu hợp lệ.');
-    const headers = lines[0].split(',').map((h) => h.trim().replace(/^"|"$/g, ''));
+    const parseLine = (line: string) => {
+      const values: string[] = [];
+      let value = '';
+      let quoted = false;
+      for (let index = 0; index < line.length; index += 1) {
+        const character = line[index];
+        if (character === '"' && line[index + 1] === '"' && quoted) {
+          value += '"';
+          index += 1;
+        } else if (character === '"') {
+          quoted = !quoted;
+        } else if (character === ',' && !quoted) {
+          values.push(value.trim());
+          value = '';
+        } else {
+          value += character;
+        }
+      }
+      values.push(value.trim());
+      return values;
+    };
+    const headers = parseLine(lines[0]).map((h) => h.replace(/^\uFEFF/, '').trim());
     return lines.slice(1).map((line) => {
-      const values = line.split(',').map((v) => v.trim().replace(/^"|"$/g, ''));
+      const values = parseLine(line);
       return headers.reduce<Record<string, string>>((row, header, index) => {
         row[header] = values[index] || '';
         return row;
@@ -67,51 +93,24 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
     reader.readAsText(selected, 'UTF-8');
   };
 
-  const downloadTemplate = () => {
-    const isTeacherImport = templateFileName.includes('giang_vien');
-    const content = isTeacherImport
-      ? 'teacherCode,fullName,email,departmentId,degree,phone\nGV2026001,Nguyen Van Mau,mau@example.edu.vn,1,ThS,0900000000'
-      : 'studentCode,fullName,email,classId,gender,dateOfBirth,phone\nSV2026099,Nguyen Van Mau,mau@example.edu.vn,1,Nam,2004-01-01,0900000000';
-    downloadCsv(templateFileName, content);
-  };
+  const downloadTemplate = () => downloadCsv(templateFileName, templateContent);
 
   const handleConfirmImport = async () => {
     if (loading) return;
     if (!file || previewData.length === 0) {
-      setErrorMsg('Vui lòng chọn tệp CSV/Excel có dữ liệu.');
+      setErrorMsg('Vui lòng chọn tệp CSV có dữ liệu.');
       return;
     }
     setLoading(true);
     setErrorMsg('');
     setFailureDetails([]);
     try {
-      const isStudentImport = templateFileName.includes('sinh_vien');
-      const isTeacherImport = templateFileName.includes('giang_vien');
-      if (isStudentImport || isTeacherImport) {
+      if (onImportRows) {
         const failures: string[] = [];
         for (let index = 0; index < previewData.length; index += 1) {
           const row = previewData[index];
           try {
-            if (isStudentImport) {
-              await api.post('/students', {
-                studentCode: row.studentCode || row.code,
-                fullName: row.fullName || row.name,
-                email: row.email,
-                gender: row.gender || 'Nam',
-                dateOfBirth: row.dateOfBirth || '2004-01-01',
-                phone: row.phone || undefined,
-                classId: Number(row.classId || row.class),
-              });
-            } else {
-              await api.post('/teachers', {
-                teacherCode: row.teacherCode || row.code,
-                fullName: row.fullName || row.name,
-                degree: row.degree || 'ThS',
-                email: row.email,
-                phone: row.phone || undefined,
-                departmentId: Number(row.departmentId || row.department),
-              });
-            }
+            await onImportRows(row, index);
           } catch (error: any) {
             failures.push(`Dòng ${index + 2}: ${error?.response?.data?.message || error?.message || 'không hợp lệ'}`);
           }
@@ -120,6 +119,9 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
           setFailureDetails(failures);
           throw new Error(`Đã lưu ${previewData.length - failures.length}/${previewData.length} dòng. Có ${failures.length} dòng chưa được lưu.`);
         }
+      }
+      if (!onImportRows) {
+        throw new Error(`Chức năng nhập ${entityLabel.toLowerCase()} chưa được kết nối với API.`);
       }
       await onImportSuccess(previewData);
       onClose();
@@ -139,8 +141,8 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
             <div className="flex items-center gap-2.5">
               <FileSpreadsheet className="h-5 w-5 text-blue-600 shrink-0" />
               <div>
-                <h4 className="text-type-body-sm font-semibold text-slate-900">Tải tệp mẫu (.csv / .xlsx)</h4>
-                <p className="text-type-helper font-semibold text-slate-500">Dùng đúng tên cột tiêu chuẩn để hệ thống tự động nhận diện.</p>
+                <h4 className="text-type-body-sm font-semibold text-slate-900">Tải tệp mẫu CSV mở bằng Excel</h4>
+                <p className="text-type-helper font-normal text-slate-600">Dùng đúng tên cột mẫu để nhập {entityLabel.toLowerCase()}.</p>
               </div>
             </div>
             <button
@@ -157,8 +159,8 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
           <div className="relative rounded-2xl border-2 border-dashed border-slate-200 hover:border-blue-500 bg-slate-50/50 p-6 text-center transition">
             <input type="file" accept=".csv,text/csv" onChange={handleFileChange} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
             <Upload className="mx-auto h-8 w-8 text-blue-600" />
-            <p className="mt-2 text-type-body-sm font-semibold text-slate-800">{file ? file.name : 'Kéo thả hoặc bấm để chọn tệp (.csv / .xlsx)'}</p>
-            <p className="text-type-helper font-semibold text-slate-400 mt-1">Dung lượng tối đa 5 MB. Dữ liệu chỉ được lưu sau khi bấm Xác nhận nhập.</p>
+            <p className="mt-2 text-type-body-sm font-semibold text-slate-800">{file ? file.name : 'Kéo thả hoặc bấm để chọn tệp CSV'}</p>
+            <p className="text-type-helper font-normal text-slate-600 mt-1">Tối đa 5 MB. Dữ liệu chỉ được lưu sau khi bạn xác nhận.</p>
           </div>
 
           {/* Frameless Alerts */}
@@ -237,8 +239,8 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
           setShowConfirm(false);
           void handleConfirmImport();
         }}
-        title="Nhập dữ liệu từ tệp Excel?"
-        message={`Hệ thống sẽ tạo ${previewData.length} bản ghi từ tệp đã xem trước. Các dòng không hợp lệ sẽ được thông báo chi tiết.`}
+        title={`Xác nhận nhập ${entityLabel.toLowerCase()}?`}
+        message={`Hệ thống sẽ tạo ${previewData.length} bản ghi từ tệp CSV đã xem trước. Các dòng không hợp lệ sẽ được thông báo chi tiết.`}
         type="info"
         confirmText="Nhập dữ liệu"
         cancelText="Hủy bỏ"

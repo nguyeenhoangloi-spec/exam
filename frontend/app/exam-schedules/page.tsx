@@ -904,7 +904,7 @@ export default function ExamSchedulesPage() {
                 }}
                 leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
               >
-                Import Excel
+                Nhập từ CSV
               </Button>
             ) : (
               <div />
@@ -935,8 +935,22 @@ export default function ExamSchedulesPage() {
       <ExcelImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
-        title="Import danh sách lịch thi từ Excel"
+        title="Nhập danh sách lịch thi"
         templateFileName="danh_sach_lich_thi_mau.csv"
+        entityLabel="lịch thi"
+        templateContent={'examPeriodId,subjectId,examDate,startTime,endTime,examType,mode,note\n1,1,2025-12-15,08:00,09:00,TRAC_NGHIEM,OFFICIAL,Lịch thi mẫu'}
+        onImportRows={async (row) => {
+          await api.post('/exam-schedules', {
+            examPeriodId: Number(row.examPeriodId),
+            subjectId: Number(row.subjectId),
+            examDate: row.examDate,
+            startTime: row.startTime,
+            endTime: row.endTime,
+            examType: row.examType || undefined,
+            mode: row.mode || undefined,
+            note: row.note || undefined,
+          });
+        }}
         onImportSuccess={async () => {
           invalidateCache('/exam-schedules');
           await fetchInitialData();

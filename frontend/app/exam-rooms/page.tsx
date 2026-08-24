@@ -662,7 +662,7 @@ export default function ExamRoomsPage() {
                 }}
                 leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
               >
-                Import Excel
+                Nhập từ CSV
               </Button>
             ) : (
               <div />
@@ -692,8 +692,20 @@ export default function ExamRoomsPage() {
       <ExcelImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
-        title="Import danh sách phòng thi từ Excel"
+        title="Nhập danh sách phòng thi"
         templateFileName="danh_sach_phong_thi_mau.csv"
+        entityLabel="phòng thi"
+        templateContent={'roomCode,roomName,building,capacity,roomType,status\nP.302,Phòng thi 302,A2,40,THEORY,AVAILABLE'}
+        onImportRows={async (row) => {
+          await api.post('/exam-rooms', {
+            roomCode: row.roomCode || row.code,
+            roomName: row.roomName || row.name,
+            building: row.building,
+            capacity: Number(row.capacity),
+            roomType: row.roomType || undefined,
+            status: row.status || undefined,
+          });
+        }}
         onImportSuccess={async () => {
           await fetchData();
           setToast({ message: 'Nhập danh sách phòng thi từ file thành công!', type: 'success' });

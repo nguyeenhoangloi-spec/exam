@@ -620,7 +620,7 @@ export default function ExamPeriodsPage() {
                 }}
                 leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
               >
-                Import Excel
+                Nhập từ CSV
               </Button>
             ) : (
               <div />
@@ -641,8 +641,20 @@ export default function ExamPeriodsPage() {
       <ExcelImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
-        title="Import danh sách kỳ thi từ Excel"
+        title="Nhập danh sách kỳ thi"
         templateFileName="danh_sach_ky_thi_mau.csv"
+        entityLabel="kỳ thi"
+        templateContent={'name,semester,schoolYear,startDate,endDate,status\nKỳ thi Cuối HK1,Học kỳ I,2025-2026,2025-12-01,2025-12-31,UPCOMING'}
+        onImportRows={async (row) => {
+          await api.post('/exam-periods', {
+            name: row.name,
+            semester: row.semester,
+            schoolYear: row.schoolYear,
+            startDate: row.startDate,
+            endDate: row.endDate,
+            status: row.status || undefined,
+          });
+        }}
         onImportSuccess={async () => {
           await fetchData();
           setToast({ message: 'Nhập danh sách kỳ thi từ file thành công!', type: 'success' });

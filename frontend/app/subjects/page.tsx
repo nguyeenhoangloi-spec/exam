@@ -665,7 +665,7 @@ export default function SubjectsPage() {
  }}
  leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
  >
- Import Excel
+ Nhập từ CSV
  </Button>
  ) : (
  <div />
@@ -695,8 +695,18 @@ export default function SubjectsPage() {
  <ExcelImportModal
  isOpen={isImportModalOpen}
  onClose={() => setIsImportModalOpen(false)}
- title="Import danh sách môn học từ Excel"
+ title="Nhập danh sách môn học"
  templateFileName="danh_sach_mon_hoc_mau.csv"
+ entityLabel="môn học"
+ templateContent={'subjectCode,subjectName,credits,departmentId\nCS101,Cơ sở dữ liệu,3,1'}
+ onImportRows={async (row) => {
+  await api.post('/subjects', {
+   subjectCode: row.subjectCode || row.code,
+   subjectName: row.subjectName || row.name,
+   credits: Number(row.credits),
+   departmentId: Number(row.departmentId || row.department),
+  });
+ }}
  onImportSuccess={async () => {
  await fetchData();
  setToast({ message: 'Nhập danh sách môn học từ file thành công!', type: 'success' });
