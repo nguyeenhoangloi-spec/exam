@@ -753,7 +753,9 @@ export function QuestionImportWizard({
                           {q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'HARD' ? 'Khó' : 'Trung bình'}
                         </span>
                         <span className="ui-pill rounded-full border border-blue-200 px-2.5 py-0.5 text-type-helper font-medium text-blue-800">
-                          {q.score || meta.defaultScore} điểm
+                          {q.type === 'FILL_BLANK'
+                            ? `${((q.fillBlankAnswers?.length || (q.content?.match(/\{\{blank_\d+\}\}/g) || []).length || 1) * 0.25).toFixed(2).replace(/\.00$/, '')} điểm`
+                            : `${q.score || meta.defaultScore} điểm`}
                         </span>
                       </div>
                     </div>
@@ -786,12 +788,17 @@ export function QuestionImportWizard({
                           Đáp án cho từng chỗ trống:
                         </div>
                         <div className="flex flex-wrap gap-2">
-                          {q.fillBlankAnswers.map((ans: any, aIdx: number) => (
-                            <div key={aIdx} className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-type-helper font-semibold text-slate-700">
-                              <span className="whitespace-nowrap text-slate-500">Ô #{ans.blankIndex || aIdx + 1}:</span>
-                              <span className="font-semibold text-slate-900">{ans.answer || '—'}</span>
-                            </div>
-                          ))}
+                          {q.fillBlankAnswers.map((ans: any, aIdx: number) => {
+                            const cleanAns = String(ans.answer || '')
+                              .replace(/^(?:(?:ô|chỗ\s*trống|vị\s*trí)\s*#?\d+\s*[:.-]*|\d+[\s.:-]+|\[\d+\]\s*[:.-]*)\s*/i, '')
+                              .trim();
+                            return (
+                              <div key={aIdx} className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-type-helper font-semibold text-slate-700">
+                                <span className="whitespace-nowrap text-slate-500">Ô #{ans.blankIndex || aIdx + 1}:</span>
+                                <span className="font-semibold text-slate-900">{cleanAns || '—'}</span>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     )}

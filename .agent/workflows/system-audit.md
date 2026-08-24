@@ -162,7 +162,7 @@ Khi thực hiện audit giao diện Web UI, bắt buộc đối chiếu với [u
    - Thanh trạng thái/khớp điểm inline phẳng trong suốt, không dùng nền màu đặc dày.
 
 3. **Buttons & Controls:**
-   - Bo góc chuẩn `rounded-xl` (12px). Ngoại lệ: Submenu items trong Sidebar, Badge nhỏ, Tooltip và Chip trạng thái vi mô được phép dùng `rounded-lg` (8px).
+   - Bo góc: `rounded-xl` (12px) cho Nút hành động, Input, Control. Ngoại lệ: Filter Chip / Capsule Tab lọc & `SlidingSegmentedControl` có khung rãnh ngoài `rounded-2xl` (16px) đệm `p-1`, chỉ có viên trượt active và các nút chọn bên trong là `rounded-full` (dạng viên thuốc Capsule); Submenu items trong Sidebar, Badge nhỏ, Tooltip và Chip trạng thái vi mô được phép dùng `rounded-lg` (8px).
    - Chiều cao: Nút chính 44px (`lg`), Toolbar/Filter/search/input 40px (`md`), Nút phụ 36px (`sm`), Icon 36–40px, Mobile vùng chạm tối thiểu 44px.
    - Nhóm nút: Chỉ có duy nhất 1 nút Primary trong cùng một nhóm thao tác hoặc một vùng chức năng (Toolbar, Modal Footer, Form Action Bar). Phân cấp 3 bậc thị giác: `Ghost` (phẳng) ➔ `Secondary` (viền) ➔ `Primary` (đặc).
    - Gradient: Không dùng gradient trong màn hình quản trị và dữ liệu; ngoại lệ cho phép: Trang đăng nhập (Login), Khu vực thương hiệu và Nút Active Tab Sidebar.

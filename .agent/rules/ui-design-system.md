@@ -34,7 +34,10 @@ agent PHẢI đọc file skill sau và tuân thủ nghiêm ngặt:
 - **32px**: KPI / Số liệu nổi bật (`font-bold` 700 + `tabular-nums`).
 
 ### 3. Controls & Buttons
-- **Bo góc**: `rounded-xl` (12px) cho mọi Button, Input, Select, Control. (Avatar/switch mới dùng `rounded-full`).
+- **Bo góc**: `rounded-xl` (12px) cho mọi Button hành động, Input, Select, Control.
+- **Ngoại lệ bo góc**:
+  - **Filter Chip / Capsule Tab lọc & Segmented Control (`SlidingSegmentedControl`):** Khung rãnh vỏ ngoài giữ dáng thanh hộp `rounded-2xl` (16px) với đệm `p-1`, **chỉ có viên trượt active và các nút chọn bên trong là `rounded-full` (dạng viên thuốc Capsule)** để viên trượt tròn lướt mượt mà bên trong rãnh hộp mà không ép khung ngoài phải bo tròn giống hệt ruột.
+  - **Badge nhỏ / Submenu / Tooltip**: Dùng `rounded-lg` (8px).
 - **Kích thước**: Nút chính `lg` = 44px (`h-11`), Filter/Control `md` = 40px (`h-10`), Nút phụ `sm` = 36px (`h-9`), `xs` = 32px (`h-8`). Mobile tối thiểu 44px.
 - **Nhóm 2-3 nút**: Chỉ duy nhất 1 nút `Primary` trên cùng một nhóm; cùng chiều cao; nút `Danger` (Xóa) tách biệt hẳn sang bên trái (`justify-between`).
 - **Tên nút**: Cấu trúc `Động từ + Đối tượng` (ngắn gọn, không viết hoa toàn bộ).

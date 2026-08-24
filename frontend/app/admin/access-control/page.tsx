@@ -1208,67 +1208,35 @@ export default function AccessControlPage() {
                           </div>
                         </div>
 
-                        {/* Sub-Tab Navigation Bar */}
-                        <div className="flex items-center gap-1.5 border-t border-slate-100 dark:border-slate-800 pt-3 overflow-x-auto no-scrollbar">
-                          <button
-                            type="button"
-                            onClick={() => setUserStudioTab('scopes')}
-                            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-type-helper font-semibold transition cursor-pointer select-none ${userStudioTab === 'scopes'
-                              ? 'bg-blue-600 text-white shadow-xs'
-                              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                              }`}
-                          >
-                            <Building2 className="h-4 w-4" />
-                            <span>1. Phạm vi dữ liệu</span>
-                            <span
-                              className={`ui-pill rounded-full px-1.5 py-0.2 text-type-helper font-medium ${userStudioTab === 'scopes'
-                                ? 'ui-pill-solid bg-white/20 text-white'
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                                }`}
-                            >
-                              {draftScopes.length}
-                            </span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => setUserStudioTab('overrides')}
-                            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-type-helper font-semibold transition cursor-pointer select-none ${userStudioTab === 'overrides'
-                              ? 'bg-blue-600 text-white shadow-xs'
-                              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                              }`}
-                          >
-                            <Sparkles className="h-4 w-4" />
-                            <span>2. Quyền riêng cá nhân</span>
-                            <span
-                              className={`ui-pill rounded-full px-1.5 py-0.2 text-type-helper font-medium ${userStudioTab === 'overrides'
-                                ? 'ui-pill-solid bg-white/20 text-white'
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                                }`}
-                            >
-                              {selectedUser.permissionOverrides.length}
-                            </span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => setUserStudioTab('effective')}
-                            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-type-helper font-semibold transition cursor-pointer select-none ${userStudioTab === 'effective'
-                              ? 'bg-blue-600 text-white shadow-xs'
-                              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                              }`}
-                          >
-                            <ShieldCheck className="h-4 w-4" />
-                            <span>3. Quyền hiệu lực tổng hợp</span>
-                            <span
-                              className={`ui-pill rounded-full px-1.5 py-0.2 text-type-helper font-medium ${userStudioTab === 'effective'
-                                ? 'ui-pill-solid bg-white/20 text-white'
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                                }`}
-                            >
-                              {effective?.permissions?.filter((item: any) => item.allowed).length || 0}
-                            </span>
-                          </button>
+                        {/* Sub-Tab Navigation Bar with SlidingSegmentedControl */}
+                        <div className="border-t border-slate-100 dark:border-slate-800 pt-3">
+                          <SlidingSegmentedControl<'scopes' | 'overrides' | 'effective'>
+                            value={userStudioTab}
+                            onChange={(val) => setUserStudioTab(val)}
+                            variant="default"
+                            size="md"
+                            className="shadow-xs"
+                            options={[
+                              {
+                                value: 'scopes',
+                                label: 'Phạm vi dữ liệu',
+                                icon: Building2,
+                                count: draftScopes.length,
+                              },
+                              {
+                                value: 'overrides',
+                                label: 'Quyền riêng cá nhân',
+                                icon: Sparkles,
+                                count: selectedUser.permissionOverrides.length,
+                              },
+                              {
+                                value: 'effective',
+                                label: 'Quyền hiệu lực',
+                                icon: ShieldCheck,
+                                count: effective?.permissions?.filter((item: any) => item.allowed).length || 0,
+                              },
+                            ]}
+                          />
                         </div>
                       </div>
 

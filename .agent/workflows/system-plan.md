@@ -60,7 +60,7 @@ Lập kế hoạch triển khai chi tiết, bao gồm:
   - Phân loại NÊN DÙNG Badge (Kỳ thi, Câu hỏi, Đề thi, Lịch thi, Sao lưu, Tài khoản, Phúc khảo, Kết quả) vs KHÔNG DÙNG Badge (Mã KT-1/SV, Tên khoa/môn, Điểm/Ngày, Nút bấm, Mô tả).
   - Thang cỡ chữ 8 tầng (12px ➔ 32px) kèm Line-Height chuẩn 24px/15px cho tiếng Việt.
   - Phân định chiều cao nút: Primary CTA 44px (`lg`), Toolbar/Filter 40px (`md`), Nút phụ 36px (`sm`), Mobile tối thiểu 44px.
-  - Bo góc chuẩn `rounded-xl` (12px), ghi nhận ngoại lệ `rounded-lg` (8px) cho submenu Sidebar, badge, chip, tooltip.
+  - Bo góc: `rounded-xl` (12px) cho Nút hành động, Input, Control. Ngoại lệ: Filter Chip / Capsule Tab lọc & `SlidingSegmentedControl` có khung rãnh ngoài `rounded-2xl` (16px) đệm `p-1`, chỉ có viên trượt active và các nút chọn bên trong là `rounded-full` (dạng viên thuốc Capsule); Submenu/Badge nhỏ/Tooltip dùng `rounded-lg` (8px).
   - Quy tắc chỉ 1 nút Primary trong cùng 1 nhóm thao tác/vùng chức năng.
   - Quy tắc hạn chế gradient (chỉ dùng cho Login, Vùng thương hiệu, Active Tab Sidebar).
 * Thứ tự triển khai.

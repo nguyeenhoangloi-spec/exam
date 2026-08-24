@@ -213,7 +213,14 @@ export default function ExamReportsPage() {
   const [report, setReport] = useState<GradeReportResponse | null>(null);
   const [summary, setSummary] = useState<SummaryData | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
-  const [summaryFilters, setSummaryFilters] = useState({ examPeriodId: 'ALL', subjectId: 'ALL', departmentId: 'ALL', classId: 'ALL', fromDate: '', toDate: '' });
+  const [summaryFilters, setSummaryFilters] = useState({
+    examPeriodId: searchParams.get('examPeriodId') || 'ALL',
+    subjectId: searchParams.get('subjectId') || 'ALL',
+    departmentId: searchParams.get('departmentId') || 'ALL',
+    classId: searchParams.get('classId') || 'ALL',
+    fromDate: searchParams.get('fromDate') || '',
+    toDate: searchParams.get('toDate') || '',
+  });
   const [loadingSchedules, setLoadingSchedules] = useState(true);
   const [loadingReport, setLoadingReport] = useState(false);
   const [showSchedulePicker, setShowSchedulePicker] = useState(false);
@@ -394,6 +401,15 @@ export default function ExamReportsPage() {
       setSummaryLoading(false);
     }
   }, [summaryFilters]);
+
+  useEffect(() => {
+    if (activeMainTab !== 'summary') return;
+    const params = new URLSearchParams({ view: 'summary' });
+    Object.entries(summaryFilters).forEach(([key, value]) => {
+      if (value && value !== 'ALL') params.set(key, value);
+    });
+    router.replace(`/exam-reports?${params.toString()}`, { scroll: false });
+  }, [activeMainTab, router, summaryFilters]);
 
   useEffect(() => {
     fetchSummary();
@@ -676,14 +692,14 @@ export default function ExamReportsPage() {
       <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
         {/* Header */}
         <ExamReportHeader
-          title={activeMainTab === 'summary' ? 'Thống kê kỳ thi' : 'Bảng điểm chi tiết ca thi'}
+          title={activeMainTab === 'summary' ? 'Tổng báo cáo' : 'Bảng điểm chi tiết ca thi'}
           subtitle={
             activeMainTab === 'summary'
-              ? 'Tổng hợp kết quả kỳ thi, môn học, phổ điểm và tỷ lệ đạt trong phạm vi được phép'
+              ? 'Tổng hợp, tạo và xuất báo cáo khảo thí theo nhu cầu trong phạm vi được phép'
               : 'Xem kết quả điểm thi chi tiết, tỷ lệ đạt, thống kê vi phạm và xuất báo cáo ca thi'
           }
-          onExport={exportSummaryCsv}
-          onExportExcel={exportSummaryExcel}
+          onExport={activeMainTab === 'schedule' ? exportSummaryCsv : undefined}
+          onExportExcel={activeMainTab === 'schedule' ? exportSummaryExcel : undefined}
           onPrint={activeMainTab === 'schedule' ? printOfficialReport : undefined}
         />
 
@@ -691,6 +707,8 @@ export default function ExamReportsPage() {
           <ExamReportSummaryTab
             summary={summary}
             loading={summaryLoading}
+            filters={summaryFilters}
+            setFilters={setSummaryFilters}
             onSelectSchedule={handleSelectScheduleFromSummary}
             onRefresh={fetchSummary}
           />

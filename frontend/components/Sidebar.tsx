@@ -28,6 +28,7 @@ import {
   KeyRound,
   Headphones,
   Sparkles,
+  ClipboardList,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Role, User } from '../types';
@@ -156,17 +157,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {
         group: 'Chấm thi & Kết quả',
         items: [
+          { name: 'Bảng điểm ca thi', href: '/exam-reports?view=schedule', icon: ClipboardList },
           { name: 'Duyệt bài tự luận', href: '/admin/essay-review', icon: FileCheck },
           { name: 'Xử lý phúc khảo', href: '/admin/grade-appeals', icon: Award },
-          {
-            name: 'Báo cáo thống kê',
-            href: '/exam-reports',
-            icon: BarChart3,
-            children: [
-              { name: 'Thống kê kỳ thi', href: '/exam-reports?view=summary' },
-              { name: 'Bảng điểm ca thi', href: '/exam-reports?view=schedule' },
-            ],
-          },
+        ],
+      },
+      {
+        group: 'Báo cáo & Phân tích',
+        items: [
+          { name: 'Báo cáo thống kê', href: '/exam-reports?view=summary', icon: BarChart3 },
         ],
       },
       {
@@ -211,15 +210,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
           { name: 'Lịch coi thi', href: '/teacher/assignments', icon: CalendarCheck },
           { name: 'Chấm thi tự luận', href: '/teacher/essay-grading', icon: FileCheck },
           { name: 'Thẩm định phúc khảo', href: '/teacher/regrade', icon: Award },
-          {
-            name: 'Báo cáo thống kê',
-            href: '/exam-reports',
-            icon: BarChart3,
-            children: [
-              { name: 'Thống kê kỳ thi', href: '/exam-reports?view=summary' },
-              { name: 'Bảng điểm ca thi', href: '/exam-reports?view=schedule' },
-            ],
-          },
+          { name: 'Bảng điểm ca thi', href: '/exam-reports?view=schedule', icon: ClipboardList },
+        ],
+      },
+      {
+        group: 'Báo cáo & Phân tích',
+        items: [
+          { name: 'Báo cáo thống kê', href: '/exam-reports?view=summary', icon: BarChart3 },
         ],
       },
       {
@@ -255,9 +252,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
     'Tổ chức thi': true,
     'Ngân hàng & Đề thi': true,
     'Chấm thi & Kết quả': true,
+    'Báo cáo & Phân tích': true,
     'Danh mục': true,
     'Hệ thống': true,
     'Công tác coi thi & chấm thi': true,
+    'Thi thử & tài liệu chuyên môn': true,
     'Tài liệu chuyên môn': true,
     'Khảo thí sinh viên': true,
   });
@@ -278,7 +277,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
     [rawGroups, role]
   );
 
-  const isItemActive = (href: string) => (href === '/dashboard' ? pathname === href : pathname.startsWith(href));
+  const isItemActive = (href: string) => {
+    const [path, query] = href.split('?');
+    if (path === '/dashboard') return pathname === '/dashboard';
+    if (!pathname.startsWith(path)) return false;
+
+    if (query) {
+      const parsedQuery = new URLSearchParams(query);
+      if (parsedQuery.has('type')) {
+        const currentType = searchParams.get('type') || (path === '/trash' ? 'schedules' : '');
+        return parsedQuery.get('type') === currentType;
+      }
+      if (parsedQuery.has('view')) {
+        const currentView = searchParams.get('view') || (path === '/exam-reports' ? 'summary' : '');
+        return parsedQuery.get('view') === currentView;
+      }
+      for (const [k, v] of Array.from(parsedQuery.entries())) {
+        if (searchParams.get(k) !== v) return false;
+      }
+      return true;
+    }
+
+    if (path === '/exam-reports') {
+      const currentView = searchParams.get('view') || 'summary';
+      return currentView === 'summary';
+    }
+
+    return true;
+  };
   const isSubItemActive = (href: string) => {
     const [path, query] = href.split('?');
     if (pathname !== path) return false;

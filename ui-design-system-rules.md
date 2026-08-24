@@ -208,14 +208,17 @@ Mobile áp dụng vùng chạm tối thiểu 44px (touch target), kể cả khi 
 ### Hình dạng và typography
 
 - Nút/control thông thường dùng `rounded-xl` — 12px.
-- **Ngoại lệ bo góc:** Identifier badge (mã sinh viên, mã môn, mã đề), submenu và tooltip được phép dùng `rounded-lg` (8px). Status pill bắt buộc dùng `rounded-full`; không dùng `rounded-lg` cho status pill.
+- **Ngoại lệ bo góc:**
+  - **Status pill & Filter Chip / Capsule Tab:** Bắt buộc dùng `rounded-full` (dạng viên thuốc) cho các nhãn trạng thái và các nút lọc danh mục cuộn ngang (VD: `[ Tất cả 129 ]`, `[ Giảng viên 30 ]`). Dạng viên thuốc giúp người dùng phân biệt rõ giữa "công cụ lọc dữ liệu (Filter)" và "nút bấm thực thi hành động (Action Button)".
+  - **Identifier badge (mã sinh viên, mã môn, mã đề), submenu và tooltip:** Được phép dùng `rounded-lg` (8px).
+  - **Thanh trượt Segmented Control (`SlidingSegmentedControl`) & Dải tab lọc:** Khung rãnh vỏ ngoài giữ dáng thanh hộp `rounded-2xl` (16px) với đệm `p-1`, **chỉ có viên trượt active và các nút chọn bên trong là `rounded-full` (dạng viên thuốc Capsule)** để viên trượt tròn lướt mượt mà bên trong rãnh hộp mà không ép khung ngoài phải bo tròn giống hệt ruột.
 - Chữ button: 15px, weight 600, line-height khoảng 22–24px.
 - Khoảng cách icon và chữ: 8px.
 - Padding ngang: khoảng 12–18px tùy kích thước.
 - **Quy tắc "Một nút Primary":** Chỉ có duy nhất 1 nút Primary trong cùng một nhóm thao tác hoặc một vùng chức năng (Toolbar, Modal Footer, Form Action Bar). Không cấm việc một trang có nhiều nút Primary ở các khối chức năng tách biệt.
 - **Quy tắc Gradient & Ngoại lệ:** Không lạm dụng gradient trong màn hình quản trị và bảng dữ liệu; ngoại lệ cho phép: Trang đăng nhập (Login), Khu vực thương hiệu và Nút Active Tab trên Sidebar.
 - Không dùng chữ IN HOA toàn bộ cho button thông thường.
-- Không dùng `rounded-full` cho button thông thường.
+- Không dùng `rounded-full` cho button hành động thông thường (Lưu, Thêm, Xóa, Gửi...).
 
 ### 7.1 Bảng phân cấp 5 bậc nút bấm (Button Hierarchy System 2026)
 

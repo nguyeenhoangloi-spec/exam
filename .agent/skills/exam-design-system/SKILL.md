@@ -130,8 +130,11 @@ font-family:
 
 ### 4.1 Button ([components/ui/Button.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/ui/Button.tsx))
 
-- **Bo góc**: `rounded-xl` (12px).
-- **Ngoại lệ bo góc:** Submenu items trong Sidebar, Badge nhỏ, Tooltip và Chip trạng thái vi mô được phép dùng `rounded-lg` (8px).
+- **Bo góc**: `rounded-xl` (12px) cho tất cả nút hành động thông thường (Action Buttons: Lưu, Thêm mới, Xóa, Gửi...). Không dùng `rounded-full` cho nút hành động.
+- **Ngoại lệ bo góc:**
+  - **Status pill & Filter Chip / Capsule Tab lọc:** Bắt buộc dùng `rounded-full` (dạng viên thuốc) cho các nhãn trạng thái và các nút lọc danh mục cuộn ngang (VD: `[ Tất cả 129 ]`, `[ Giảng viên 30 ]`). Dạng viên thuốc giúp người dùng phân biệt rõ giữa "công cụ lọc dữ liệu (Filter)" và "nút bấm thực thi hành động (Action Button)".
+  - **Identifier badge (mã sinh viên, mã môn, mã đề), submenu Sidebar và tooltip:** Được phép dùng `rounded-lg` (8px).
+  - **Thanh trượt Segmented Control (`SlidingSegmentedControl`) & Dải tab lọc:** Khung rãnh vỏ ngoài giữ dáng thanh hộp `rounded-2xl` (16px) với đệm `p-1`, **chỉ có viên trượt active và các nút chọn bên trong là `rounded-full` (dạng viên thuốc Capsule)** để viên trượt tròn lướt mượt mà bên trong rãnh hộp mà không ép khung ngoài phải bo tròn giống hệt ruột.
 - **Kích thước**:
   - `lg`: cao **44px** (`h-11`) — Nút hành động chính của trang (Primary CTA), Đăng nhập, Tạo lịch thi...
   - `md`: cao **40px** (`h-10`) — Nút thao tác bảng, toolbar, Lọc kết quả, Bộ lọc, Xuất Excel...

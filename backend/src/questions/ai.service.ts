@@ -3,7 +3,7 @@ import * as mammoth from 'mammoth';
 const pdfParse = require('pdf-parse');
 import { PrismaService } from '../prisma/prisma.service';
 import { GenerateAiQuestionsDto, QuestionOptionDto } from './dto/question.dto';
-import { normalizeQuestionContent, validateQuestionOptions } from './question-validation';
+import { cleanFillBlankContent, cleanSingleAnswer, FILL_BLANK_UNIT_SCORE, normalizeQuestionContent, parseMultiBlankAnswers, validateQuestionOptions } from './question-validation';
 
 function parsePlainTextQuestions(rawText: string, defaultType = 'SINGLE_CHOICE'): any[] {
   return parseStructuredQuestionText(rawText, defaultType);
@@ -162,24 +162,15 @@ function parseStructuredQuestionText(rawText: string, defaultType = 'SINGLE_CHOI
 
     const fillBlankAnswers: any[] = [];
     if (defaultType === 'FILL_BLANK') {
-      if (!content.includes('{{blank_')) {
-        let bCount = 0;
-        content = content.replace(/(?:\.\.\.|_{2,}|\[\s*\]|\(\s*\))/g, () => {
-          bCount++;
-          return `{{blank_${bCount}}}`;
-        });
-        if (bCount === 0) {
-          content += ' {{blank_1}}';
-        }
-      }
-      content = content.replace(/(\{\{blank_\d+)(?!\}\})/gi, '$1}}');
-      const matches = content.match(/\{\{blank_\d+\}\}/g) || [];
+      content = cleanFillBlankContent(content);
+      const matches = content.match(/\{\{blank_\d+\}\}/g) || ['{{blank_1}}'];
+      const parsedAnswers = parseMultiBlankAnswers(keyAnswer, matches.length, explanation);
       matches.forEach((_, idx) => {
         fillBlankAnswers.push({
           blankIndex: idx + 1,
-          answer: keyAnswer || explanation || '',
+          answer: parsedAnswers[idx] || '',
           acceptedAnswers: [],
-          score: 0.25 / matches.length,
+          score: FILL_BLANK_UNIT_SCORE,
           caseSensitive: false,
           ignoreWhitespace: true,
           ignoreVietnameseTone: false,
@@ -189,7 +180,7 @@ function parseStructuredQuestionText(rawText: string, defaultType = 'SINGLE_CHOI
 
     results.push({
       content,
-      score: 0.25,
+      score: defaultType === 'FILL_BLANK' ? Math.max(1, fillBlankAnswers.length) * FILL_BLANK_UNIT_SCORE : 0.25,
       explanation,
       keywords: '',
       options: defaultType === 'ESSAY' || defaultType === 'FILL_BLANK' ? [] : options,
@@ -406,9 +397,12 @@ export class AiQuestionsService {
         `2. KHÔNG TẠO CÂU HỎI DƯ THỪA: Tuyệt đối KHÔNG ĐƯỢC bóc tách phần danh sách đáp án ở cuối bài thành các câu hỏi mới độc lập. Số lượng câu hỏi trích xuất ra phải ĐÚNG BẰNG số câu hỏi thực tế trong đề bài (Ví dụ: Tài liệu có 100 câu hỏi và 100 đáp án ở cuối -> Trích xuất đúng 100 câu hỏi đầy đủ đáp án, KHÔNG TRÍCH XUẤT THÀNH 200 CÂU).`,
         input.type === 'FILL_BLANK'
           ? `3. Dạng ĐIỀN VÀO CHỖ TRỐNG (FILL_BLANK):
-             - Vị trí chỗ trống trong "content" BẮT BUỘC dùng định dạng {{blank_1}}, {{blank_2}}... (Ví dụ: "Từ tiếng Anh của 'Trường học' là: {{blank_1}}"). BẮT BUỘC đóng đủ hai dấu ngoặc nhọn }}.
+             - Vị trí chỗ trống trong "content" BẮT BUỘC đặt trực tiếp trong câu bằng định dạng {{blank_1}}, {{blank_2}}... (Ví dụ: "Trong SQL, lệnh {{blank_1}} dùng để lấy dữ liệu, còn lệnh {{blank_2}} dùng để thêm dữ liệu mới."). BẮT BUỘC đóng đủ hai dấu ngoặc nhọn }}. Tuyệt đối KHÔNG ghi các dòng chú thích như "Ô 1: {{blank_1}}" ở cuối câu hỏi.
              - Đặt options: [].
-             - BẮT BUỘC trả về danh sách đáp án tương ứng trong "fillBlankAnswers": [{"blankIndex": 1, "answer": "đáp_án_chính_xác", "acceptedAnswers": [], "score": 0.25}].
+             - BẮT BUỘC trả về danh sách đáp án tương ứng riêng biệt cho từng chỗ trống trong "fillBlankAnswers":
+               [{"blankIndex": 1, "answer": "SELECT", "acceptedAnswers": [], "score": 0.25}, {"blankIndex": 2, "answer": "INSERT", "acceptedAnswers": [], "score": 0.25}].
+             - Giá trị "answer" CHỈ CHỨA TỪ KHÓA ĐÁP ÁN (ví dụ "SELECT"), TUYỆT ĐỐI KHÔNG chứa tiền tố như "Ô 1:", "1.", "[1]", hay lặp lại toàn bộ các đáp án.
+             - Trường "score" của câu hỏi phải bằng tổng điểm các ô: (số lượng ô trống * 0.25), ví dụ 2 ô = 0.5 điểm.
              - NẾU TRONG TÀI LIỆU KHÔNG CÓ SẴN ĐÁP ÁN HOẶC BỊ THIẾU: Bạn BẮT BUỘC phải dựa vào kiến thức môn học ${subject.subjectName} để TỰ ĐỘNG ĐIỀN ĐÁP ÁN ĐÚNG NGHĨA VÀ CHÍNH XÁC NHẤT vào trường "answer" của "fillBlankAnswers" (Tuyệt đối KHÔNG ĐƯỢC để trường "answer" bị rỗng hoặc để trống).`
           : input.type === 'ESSAY'
             ? `3. Dạng TỰ LUẬN (ESSAY):
@@ -416,7 +410,7 @@ export class AiQuestionsService {
              - Trường "explanation" BẮT BUỘC phải là: NỘI DUNG ĐÁP ÁN HOÀN CHỈNH, CHÍNH XÁC VÀ CHI TIẾT (Sample/Model Answer), giải quyết trọn vẹn toàn bộ yêu cầu của câu hỏi với đầy đủ các ý chính, bước lập luận, định nghĩa, công thức hoặc giải pháp cụ thể (VIẾT TRỰC TIẾP NỘI DUNG, TUYỆT ĐỐI KHÔNG VIẾT CHỮ "Đáp án mẫu:" Ở ĐẦU, TUYỆT ĐỐI KHÔNG CHỈ VIẾT GỢI Ý CHUNG CHUNG).`
             : `3. Dạng TRẮC NGHIỆM: Trích xuất danh sách các lựa chọn A, B, C, D... Đánh dấu isCorrect: true cho đáp án đúng (dựa vào phần đáp án ở cuối tài liệu hoặc tự giải).`,
         `4. Nếu câu hỏi gắn với hình, thêm imageIndexes là mảng chỉ số ảnh (bắt đầu từ 0); nếu không thì [].`,
-        `5. CHỈ TRẢ VỀ DẠNG JSON duy nhất: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","imageIndexes":[],"options":[],"fillBlankAnswers":[{"blankIndex":1,"answer":"đáp án","acceptedAnswers":[]}]}]}.`,
+        `5. CHỈ TRẢ VỀ DẠNG JSON duy nhất: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","imageIndexes":[],"options":[],"fillBlankAnswers":[{"blankIndex":1,"answer":"đáp án","acceptedAnswers":[],"score":0.25}]}]}.`,
         `NỘI DUNG TÀI LIỆU CẦN TRÍCH XUẤT:\n${input.prompt}`,
       ].join('\n')
       : [
@@ -424,7 +418,7 @@ export class AiQuestionsService {
         `Môn: ${subject.subjectName}; ${chapter ? `Chương: ${chapter.name}.` : 'Không phân chương.'}`,
         `Loại: ${input.type}; Độ khó: ${input.difficulty}; Bloom: ${input.bloomLevel}.`,
         input.prompt ? `YÊU CẦU: Sinh các câu hỏi bám sát 100% nội dung Đề cương/Bài giảng tham khảo dưới đây. Tạo đúng chính xác ${input.count} câu hỏi, tuyệt đối không tạo thiếu hay tạo thừa:\n\n${input.prompt}` : '',
-        'Chỉ trả JSON: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","options":[{"label":"A","content":"","isCorrect":true,"order":0}],"fillBlankAnswers":[{"blankIndex":1,"answer":"","acceptedAnswers":[]}]}]}.',
+        'Chỉ trả JSON: {"questions":[{"content":"","score":0.25,"explanation":"","keywords":"","options":[{"label":"A","content":"","isCorrect":true,"order":0}],"fillBlankAnswers":[{"blankIndex":1,"answer":"","acceptedAnswers":[],"score":0.25}]}]}.',
         'SINGLE_CHOICE đúng 1 đáp án; MULTIPLE_CHOICE ít nhất 1; TRUE_FALSE đúng 2 lựa chọn; FILL_BLANK và ESSAY dùng options rỗng.',
         input.type === 'FILL_BLANK' ? 'For FILL_BLANK, content must contain {{blank_1}}, {{blank_2}} and output fillBlankAnswers:[{blankIndex:1,answer:"answer",acceptedAnswers:[],score:0.25}]. options must be [] and blank scores must equal question score.' : '',
         input.type === 'ESSAY' ? 'For ESSAY (Tự luận): options must be []. In "explanation", you MUST provide a COMPREHENSIVE, COMPLETE AND PRECISE MODEL/SAMPLE ANSWER that thoroughly solves the question with clear points/steps. DO NOT write "Đáp án mẫu:" prefix and DO NOT write vague hints or generic suggestions.' : '',
@@ -582,30 +576,16 @@ function pairQuestionsAndAnswers(rawItems: any[], defaultType: string): any[] {
       return firstHalf.map((q, idx) => {
         const ansObj = secondHalf[idx];
         let answerText = String(ansObj?.content || '').trim();
-        answerText = answerText
-          .replace(/\{\{blank_\d+\}\}/gi, '')
-          .replace(/^(?:\d+[\s.:-]*|đáp\s*án\s*[:.-]?|answer\s*[:.-]?|key\s*[:.-]?)\s*/iu, '')
-          .replace(/\{\{blank_\d+\}\}/gi, '')
-          .replace(/^["'«“]+|["'»”]+$/g, '')
-          .trim();
 
-        let content = String(q.content || '');
-        if (!content.includes('{{blank_')) {
-          let bCount = 0;
-          content = content.replace(/(?:\.\.\.|_{2,}|\[\s*\]|\(\s*\))/g, () => {
-            bCount++;
-            return `{{blank_${bCount}}}`;
-          });
-          if (bCount === 0) content += ' {{blank_1}}';
-        }
-        content = content.replace(/(\{\{blank_\d+)(?!\}\})/gi, '$1}}');
-
+        let content = cleanFillBlankContent(String(q.content || ''));
         const matches = content.match(/\{\{blank_\d+\}\}/g) || ['{{blank_1}}'];
+        const parsedAnswers = parseMultiBlankAnswers(answerText, matches.length, String(q.explanation || ''));
+
         const fillBlankAnswers = matches.map((_, mIdx) => ({
           blankIndex: mIdx + 1,
-          answer: answerText || String(q.explanation || '').replace(/\{\{blank_\d+\}\}/gi, '').split('.')[0]?.trim() || '',
+          answer: parsedAnswers[mIdx] || '',
           acceptedAnswers: [],
-          score: 0.25 / matches.length,
+          score: FILL_BLANK_UNIT_SCORE,
           caseSensitive: false,
           ignoreWhitespace: true,
           ignoreVietnameseTone: false,
@@ -613,12 +593,13 @@ function pairQuestionsAndAnswers(rawItems: any[], defaultType: string): any[] {
 
         let cleanExp = String(q.explanation || '').replace(/\{\{blank_\d+\}\}/gi, '').trim();
         if (!cleanExp || cleanExp.includes('{{blank_')) {
-          cleanExp = `Đáp án: ${answerText}`;
+          cleanExp = `Đáp án: ${parsedAnswers.join(', ')}`;
         }
 
         return {
           ...q,
           content,
+          score: matches.length * FILL_BLANK_UNIT_SCORE,
           fillBlankAnswers,
           explanation: cleanExp,
         };
@@ -647,30 +628,17 @@ function pairQuestionsAndAnswers(rawItems: any[], defaultType: string): any[] {
       for (let i = 0; i < total; i += 2) {
         const q = rawItems[i];
         const a = rawItems[i + 1];
-        let answerText = String(a?.content || '').trim()
-          .replace(/\{\{blank_\d+\}\}/gi, '')
-          .replace(/^(?:\d+[\s.:-]*|đáp\s*án\s*[:.-]?|answer\s*[:.-]?|key\s*[:.-]?)\s*/iu, '')
-          .replace(/\{\{blank_\d+\}\}/gi, '')
-          .replace(/^["'«“]+|["'»”]+$/g, '')
-          .trim();
+        let answerText = String(a?.content || '').trim();
 
-        let content = String(q.content || '');
-        if (!content.includes('{{blank_')) {
-          let bCount = 0;
-          content = content.replace(/(?:\.\.\.|_{2,}|\[\s*\]|\(\s*\))/g, () => {
-            bCount++;
-            return `{{blank_${bCount}}}`;
-          });
-          if (bCount === 0) content += ' {{blank_1}}';
-        }
-        content = content.replace(/(\{\{blank_\d+)(?!\}\})/gi, '$1}}');
-
+        let content = cleanFillBlankContent(String(q.content || ''));
         const matches = content.match(/\{\{blank_\d+\}\}/g) || ['{{blank_1}}'];
+        const parsedAnswers = parseMultiBlankAnswers(answerText, matches.length, String(q.explanation || ''));
+
         const fillBlankAnswers = matches.map((_, mIdx) => ({
           blankIndex: mIdx + 1,
-          answer: answerText || String(q.explanation || '').replace(/\{\{blank_\d+\}\}/gi, '').split('.')[0]?.trim() || '',
+          answer: parsedAnswers[mIdx] || '',
           acceptedAnswers: [],
-          score: 0.25 / matches.length,
+          score: FILL_BLANK_UNIT_SCORE,
           caseSensitive: false,
           ignoreWhitespace: true,
           ignoreVietnameseTone: false,
@@ -678,12 +646,13 @@ function pairQuestionsAndAnswers(rawItems: any[], defaultType: string): any[] {
 
         let cleanExp = String(q.explanation || '').replace(/\{\{blank_\d+\}\}/gi, '').trim();
         if (!cleanExp || cleanExp.includes('{{blank_')) {
-          cleanExp = `Đáp án: ${answerText}`;
+          cleanExp = `Đáp án: ${parsedAnswers.join(', ')}`;
         }
 
         paired.push({
           ...q,
           content,
+          score: matches.length * FILL_BLANK_UNIT_SCORE,
           fillBlankAnswers,
           explanation: cleanExp,
         });
@@ -763,61 +732,57 @@ function pairQuestionsAndAnswers(rawItems: any[], defaultType: string): any[] {
         // Đảm bảo thẻ {{blank_1}} luôn có đầy đủ ngoặc nhọn đóng }}
         formattedContent = formattedContent.replace(/(\{\{blank_\d+)(?!\}\})/gi, '$1}}');
 
+        formattedContent = cleanFillBlankContent(rawContentText);
+
         let fillBlankAnswers = isFillBlank ? (Array.isArray(item.fillBlankAnswers) ? item.fillBlankAnswers.map((answer: any, index: number) => ({
           blankIndex: Number(answer.blankIndex || index + 1),
-          answer: String(answer.answer || '')
-            .replace(/\{\{blank_\d+\}\}/gi, '')
-            .replace(/^(?:\d+[\s.:-]*|đáp\s*án\s*[:.-]?|answer\s*[:.-]?|key\s*[:.-]?)\s*/iu, '')
-            .replace(/\{\{blank_\d+\}\}/gi, '')
-            .replace(/^["'«“]+|["'»”]+$/g, '')
-            .trim(),
+          answer: cleanSingleAnswer(answer.answer || ''),
           acceptedAnswers: Array.isArray(answer.acceptedAnswers) ? answer.acceptedAnswers.map(String) : [],
-          score: Number(answer.score ?? Number(item.score || 0.25) / Math.max(1, item.fillBlankAnswers.length)),
+          score: FILL_BLANK_UNIT_SCORE,
           caseSensitive: Boolean(answer.caseSensitive),
           ignoreWhitespace: answer.ignoreWhitespace !== false,
           ignoreVietnameseTone: Boolean(answer.ignoreVietnameseTone)
         })) : []) : [];
 
         if (isFillBlank) {
-          if (!formattedContent.includes('{{blank_')) {
-            let bCount = 0;
-            formattedContent = formattedContent.replace(/(?:\.\.\.|_{2,}|\[\s*\]|\(\s*\))/g, () => {
-              bCount++;
-              return `{{blank_${bCount}}}`;
-            });
-            if (bCount === 0) {
-              formattedContent += ' {{blank_1}}';
-              bCount = 1;
-            }
-          }
-          formattedContent = formattedContent.replace(/(\{\{blank_\d+)(?!\}\})/gi, '$1}}');
+          formattedContent = cleanFillBlankContent(formattedContent);
           const matches = formattedContent.match(/\{\{blank_\d+\}\}/g) || [];
           if (matches.length > 0) {
-            if (fillBlankAnswers.length === 0) {
+            const firstAns = fillBlankAnswers[0]?.answer || '';
+            const isConcatenated = fillBlankAnswers.length < matches.length ||
+              (fillBlankAnswers.length === matches.length && matches.length > 1 && fillBlankAnswers.every(f => f.answer === firstAns && (firstAns.includes('Ô') || firstAns.includes(';') || firstAns.includes(','))));
+
+            if (fillBlankAnswers.length === 0 || isConcatenated) {
+              const parsed = parseMultiBlankAnswers(firstAns || item.answer || item.explanation || '', matches.length, String(item.explanation || ''));
               fillBlankAnswers = matches.map((_, idx) => ({
                 blankIndex: idx + 1,
-                answer: String(item.explanation || '').replace(/\{\{blank_\d+\}\}/gi, '').split('.')[0]?.trim() || '',
+                answer: parsed[idx] || '',
                 acceptedAnswers: [],
-                score: Number(item.score || 0.25) / matches.length,
+                score: FILL_BLANK_UNIT_SCORE,
                 caseSensitive: false,
                 ignoreWhitespace: true,
                 ignoreVietnameseTone: false,
               }));
             } else {
-              fillBlankAnswers.forEach((fa: any) => {
-                fa.answer = String(fa.answer || '')
-                  .replace(/\{\{blank_\d+\}\}/gi, '')
-                  .replace(/^(?:\d+[\s.:-]*|đáp\s*án\s*[:.-]?|answer\s*[:.-]?|key\s*[:.-]?)\s*/iu, '')
-                  .replace(/\{\{blank_\d+\}\}/gi, '')
-                  .replace(/^["'«“]+|["'»”]+$/g, '')
-                  .trim();
-                if (!fa.answer && item.explanation) {
-                  fa.answer = String(item.explanation).replace(/\{\{blank_\d+\}\}/gi, '').split('.')[0]?.trim() || '';
-                }
+              fillBlankAnswers = matches.map((_, idx) => {
+                const existing = fillBlankAnswers.find((fa: any) => fa.blankIndex === idx + 1) || fillBlankAnswers[idx];
+                return {
+                  blankIndex: idx + 1,
+                  answer: cleanSingleAnswer(existing?.answer || ''),
+                  acceptedAnswers: Array.isArray(existing?.acceptedAnswers) ? existing.acceptedAnswers : [],
+                  score: FILL_BLANK_UNIT_SCORE,
+                  caseSensitive: Boolean(existing?.caseSensitive),
+                  ignoreWhitespace: existing?.ignoreWhitespace !== false,
+                  ignoreVietnameseTone: Boolean(existing?.ignoreVietnameseTone),
+                };
               });
             }
           }
         }
+
+        const calculatedScore = isFillBlank
+          ? (fillBlankAnswers.length || 1) * FILL_BLANK_UNIT_SCORE
+          : Number(item.score || 0.25);
 
         const imageIndexes = Array.isArray(item.imageIndexes) ? item.imageIndexes.filter((index: any) => Number.isInteger(index) && index >= 0 && index < (input.images || []).length) : [];
         let cleanExplanation = String(item.explanation || '').replace(/\{\{blank_\d+\}\}/gi, '').trim();
@@ -831,7 +796,7 @@ function pairQuestionsAndAnswers(rawItems: any[], defaultType: string): any[] {
           difficulty: input.difficulty,
           bloomLevel: input.bloomLevel,
           content: formattedContent,
-          score: Number(item.score || 0.25),
+          score: calculatedScore,
           explanation: cleanExplanation,
           keywords: String(item.keywords || ''),
           options,

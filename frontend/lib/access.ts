@@ -43,8 +43,9 @@ const routeAccess: Array<{ prefix: string; roles: Role[] }> = [
 
 export const canAccessPath = (role: Role | undefined, pathname: string) => {
   if (!role) return false;
+  const cleanPath = (pathname || '').split('?')[0];
   const rule = routeAccess
-    .filter((item) => pathname === item.prefix || pathname.startsWith(`${item.prefix}/`))
+    .filter((item) => cleanPath === item.prefix || cleanPath.startsWith(`${item.prefix}/`))
     .sort((a, b) => b.prefix.length - a.prefix.length)[0];
   return rule ? rule.roles.includes(role) : false;
 };

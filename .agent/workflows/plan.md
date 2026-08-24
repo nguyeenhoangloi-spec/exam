@@ -61,7 +61,7 @@ Lập kế hoạch triển khai chi tiết, bao gồm:
   - Thang cỡ chữ 8 tầng (12px ➔ 32px) kèm Line-Height chuẩn 24px/15px cho tiếng Việt.
   - Phân định chiều cao nút: Primary CTA 44px (`lg`), Toolbar/Filter 40px (`md`), Nút phụ 36px (`sm`), Mobile tối thiểu 44px.
   - Phân cấp 5 Bậc Nút Bấm: Bậc 1: Primary CTA (duy nhất 1 nút chính `bg-blue-600 text-white`); Bậc 2: Soft Accent (`variant="soft"`, `bg-blue-100 text-blue-700`, hover/active `bg-blue-200 text-blue-800`, **không viền**, **không icon**, cho tính năng tự động/AI); Bậc 3: Secondary (`bg-white border-slate-200/90 text-slate-800` cho bộ lọc/thao tác); Bậc 4: Ghost (`bg-transparent text-slate-600` cho Đóng/Hủy); Bậc 5: Danger (`bg-danger-600` hoặc viền đỏ, tách riêng sang trái).
-  - Bo góc chuẩn `rounded-xl` (12px), ghi nhận ngoại lệ `rounded-lg` (8px) cho submenu Sidebar, badge, chip, tooltip.
+  - Bo góc: `rounded-xl` (12px) cho Nút hành động, Input, Control. Ngoại lệ: Filter Chip / Capsule Tab lọc & `SlidingSegmentedControl` có khung rãnh ngoài `rounded-2xl` (16px) đệm `p-1`, chỉ có viên trượt active và các nút chọn bên trong là `rounded-full` (dạng viên thuốc Capsule); Submenu/Badge nhỏ/Tooltip dùng `rounded-lg` (8px).
   - Quy tắc chỉ 1 nút Primary trong cùng 1 nhóm thao tác/vùng chức năng.
   - Quy tắc hạn chế gradient (chỉ dùng cho Login, Vùng thương hiệu, Active Tab Sidebar).
 * Thứ tự triển khai.

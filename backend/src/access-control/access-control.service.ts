@@ -22,6 +22,7 @@ const PERMISSIONS: PermissionSeed[] = [
   { code: 'EXAM_PAPER_MANAGE', name: 'Quản lý đề thi', module: 'Ngân hàng đề', description: 'Tạo và quản lý đề thi trong phạm vi được phép.', roles: ['ADMIN', 'TEACHER'] },
   { code: 'SYSTEM_REPORT_VIEW', name: 'Xem báo cáo tổng quan hệ thống', module: 'Báo cáo', description: 'Xem báo cáo tổng thể về lịch thi, phòng thi, sinh viên, ngân hàng đề và hoạt động khảo thí.', sensitive: true, roles: ['ADMIN'] },
   { code: 'EXAM_REPORT_VIEW', name: 'Xem báo cáo thống kê kỳ thi', module: 'Báo cáo', description: 'Xem thống kê kết quả, phổ điểm, tỷ lệ đạt và tình trạng bài thi trong phạm vi được phép.', roles: ['ADMIN', 'TEACHER'] },
+  { code: 'EXAM_REPORT_EXPORT', name: 'Xuất báo cáo kỳ thi', module: 'Báo cáo', description: 'Xuất dữ liệu báo cáo kỳ thi ra CSV, Excel hoặc bản in trong phạm vi được phép.', sensitive: true, roles: ['ADMIN', 'TEACHER'] },
   { code: 'ESSAY_GRADE', name: 'Chấm bài tự luận', module: 'Chấm thi', description: 'Chấm bài tự luận được phân công.', sensitive: true, roles: ['ADMIN', 'TEACHER'] },
   { code: 'ESSAY_PUBLISH', name: 'Công bố điểm tự luận', module: 'Chấm thi', description: 'Duyệt và công bố điểm tự luận.', sensitive: true, roles: ['ADMIN'] },
   { code: 'GRADE_APPEAL_REVIEW', name: 'Xử lý phúc khảo', module: 'Chấm thi', description: 'Xem xét và xử lý đơn phúc khảo.', sensitive: true, roles: ['ADMIN', 'TEACHER'] },
