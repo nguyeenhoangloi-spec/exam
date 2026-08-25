@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AccessControlService } from './access-control.service';
+import { SystemRole } from './dto/access-control.dto';
 
 export type AccessContext = {
   departmentId?: number;
@@ -77,10 +78,15 @@ export class AccessPolicyService {
       return this.decision(false, permissionCode, 'NONE', 'NOT_EVALUATED', 'Quyền không tồn tại trong danh mục hệ thống.');
     }
 
-    const override = await this.prisma.userPermissionOverride.findUnique({
+    const storedOverride = await this.prisma.userPermissionOverride.findUnique({
       where: { userId_permissionId: { userId: actor.id, permissionId: permission.id } },
       select: { effect: true },
     });
+    // Do not honor stale records that predate the current override policy.
+    // This keeps a database row from bypassing an endpoint's role contract.
+    const override = this.accessControl.canUseUserOverride(actor.role as SystemRole, permissionCode)
+      ? storedOverride
+      : null;
     if (override?.effect === 'DENY') {
       return this.decision(false, permissionCode, 'USER_DENY', 'NOT_EVALUATED', 'Tài khoản đang bị chặn quyền này bằng cấu hình quyền riêng.');
     }

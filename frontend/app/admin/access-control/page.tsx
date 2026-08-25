@@ -57,6 +57,8 @@ type Permission = {
   description?: string;
   sensitive: boolean;
   roles: string[];
+  userOverrideAllowed?: boolean;
+  userOverrideRoles?: Role[];
 };
 type Scope = { id?: string; type: 'DEPARTMENT' | 'CLASS' | 'SUBJECT'; resourceId: number };
 type AccessUser = {
@@ -250,8 +252,14 @@ export default function AccessControlPage() {
   );
 
   const availableOverridePermissions = useMemo(
-    () => permissions.filter((permission) => !selectedUserOverrideMap.has(permission.code)),
-    [permissions, selectedUserOverrideMap]
+    () => permissions.filter(
+      (permission) =>
+        selectedUser &&
+        permission.userOverrideAllowed !== false &&
+        (permission.userOverrideRoles || []).includes(selectedUser.role) &&
+        !selectedUserOverrideMap.has(permission.code)
+    ),
+    [permissions, selectedUser, selectedUserOverrideMap]
   );
 
   const selectedPermission = useMemo(
@@ -263,6 +271,12 @@ export default function AccessControlPage() {
   );
   const selectedPermissionAlreadyOverridden = Boolean(
     selectedPermission && selectedUserOverrideMap.has(selectedPermission.code)
+  );
+  const selectedPermissionEligibleForUser = Boolean(
+    selectedPermission &&
+      selectedUser &&
+      selectedPermission.userOverrideAllowed !== false &&
+      (selectedPermission.userOverrideRoles || []).includes(selectedUser.role)
   );
 
   // Stats calculation
@@ -527,6 +541,10 @@ export default function AccessControlPage() {
     if (!selectedUser || !overrideCode) return;
     if (selectedPermissionAlreadyOverridden) {
       setToast({ type: 'error', message: 'Quyền này đã có cấu hình riêng. Hãy chỉnh sửa hoặc gỡ cấu hình hiện tại.' });
+      return;
+    }
+    if (!selectedPermissionEligibleForUser) {
+      setToast({ type: 'error', message: 'Quyền này không thể cấu hình riêng cho vai trò của tài khoản.' });
       return;
     }
     if (effect === 'ALLOW' && selectedPermissionAlreadyInRole) {
@@ -939,7 +957,7 @@ export default function AccessControlPage() {
                 {/* Right side: Active Filters summary badge / result count & Refresh button */}
                 <div className="flex items-center gap-2">
                   {matrixModuleFilter !== 'ALL' && (
-                    <span className="ui-pill inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50/90 px-2 py-0.5 text-[12.5px] font-medium text-blue-700 dark:border-blue-800/80 dark:bg-blue-950/40 dark:text-blue-300">
+                    <span className="ui-pill inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50/90 px-2 py-0.5 text-type-helper font-medium text-blue-700 dark:border-blue-800/80 dark:bg-blue-950/40 dark:text-blue-300">
                       <span>Nhóm: {matrixModuleFilter}</span>
                       <button
                         type="button"
@@ -952,7 +970,7 @@ export default function AccessControlPage() {
                     </span>
                   )}
                   {onlySensitive && (
-                    <span className="ui-pill inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50/90 px-2 py-0.5 text-[12.5px] font-medium text-amber-700 dark:border-amber-800/80 dark:bg-amber-950/40 dark:text-amber-300">
+                    <span className="ui-pill inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50/90 px-2 py-0.5 text-type-helper font-medium text-amber-700 dark:border-amber-800/80 dark:bg-amber-950/40 dark:text-amber-300">
                       <LockKeyhole className="h-3 w-3 text-amber-600 dark:text-amber-400" />
                       <span>Chỉ nhạy cảm</span>
                       <button
@@ -1389,7 +1407,7 @@ export default function AccessControlPage() {
                                   Cấu hình quyền riêng
                                 </h3>
                                 <p className="text-type-helper text-slate-400 font-normal mt-0.5">
-                                  Cấp thêm hoặc chặn từng quyền; cấu hình này ghi đè quyền mặc định theo vai trò
+                                  Chỉ hiện quyền nghiệp vụ tương thích với vai trò; quyền quản trị lõi luôn bị khóa.
                                 </p>
                               </div>
                               <span className="ui-pill rounded-full bg-amber-50 dark:bg-amber-950/60 px-2.5 py-0.5 text-type-helper font-medium text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
@@ -1427,12 +1445,13 @@ export default function AccessControlPage() {
                                   !overrideCode ||
                                   saving ||
                                   overrideReason.trim().length < 5 ||
+                                  !selectedPermissionEligibleForUser ||
                                   selectedPermissionAlreadyInRole ||
                                   selectedPermissionAlreadyOverridden
                                 }
                                 onClick={() => handleQuickAddOverride('ALLOW')}
                                 leftIcon={<Plus className="h-4 w-4" />}
-                                title={selectedPermissionAlreadyInRole ? 'Quyền đã có theo vai trò' : undefined}
+                                title={!selectedPermissionEligibleForUser ? 'Quyền không tương thích với vai trò hoặc bị khóa bảo mật' : selectedPermissionAlreadyInRole ? 'Quyền đã có theo vai trò' : undefined}
                               >
                                 Cấp quyền
                               </Button>
@@ -1444,12 +1463,13 @@ export default function AccessControlPage() {
                                   !overrideCode ||
                                   saving ||
                                   overrideReason.trim().length < 5 ||
+                                  !selectedPermissionEligibleForUser ||
                                   !selectedPermissionAlreadyInRole ||
                                   selectedPermissionAlreadyOverridden
                                 }
                                 onClick={() => handleQuickAddOverride('DENY')}
                                 leftIcon={<X className="h-4 w-4" />}
-                                title={!selectedPermissionAlreadyInRole ? 'Chỉ chặn được quyền đang có theo vai trò' : undefined}
+                                title={!selectedPermissionEligibleForUser ? 'Quyền không tương thích với vai trò hoặc bị khóa bảo mật' : !selectedPermissionAlreadyInRole ? 'Chỉ chặn được quyền đang có theo vai trò' : undefined}
                               >
                                 Chặn quyền
                               </Button>

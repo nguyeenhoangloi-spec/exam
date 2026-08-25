@@ -47,6 +47,20 @@ export const ACCESS_PERMISSION_CATALOG: PermissionSeed[] = [
 
 const ROLES: SystemRole[] = ['ADMIN', 'TEACHER', 'STUDENT'];
 const CORE_ADMIN_PERMISSIONS = new Set(['ACCESS_CONTROL_VIEW', 'ACCESS_CONTROL_MANAGE']);
+// These permissions are intentionally never delegable to an individual account.
+// They remain manageable only through the protected role matrix flow.
+const PROTECTED_USER_OVERRIDE_PERMISSIONS = new Set([
+  'ACCESS_CONTROL_VIEW',
+  'ACCESS_CONTROL_MANAGE',
+  'AUDIT_LOG_VIEW',
+  'BACKUP_MANAGE',
+  'USER_MANAGE',
+  'EXAM_ARRANGEMENT_MANAGE',
+  'EXAM_SUPERVISOR_MANAGE',
+  'SYSTEM_REPORT_VIEW',
+  'ESSAY_PUBLISH',
+  'TRASH_MANAGE',
+]);
 
 @Injectable()
 export class AccessControlService {
@@ -105,6 +119,11 @@ export class AccessControlService {
       permissions: permissions.map((permission) => ({
         ...permission,
         roles: permission.rolePermissions.map((entry) => entry.role),
+        userOverrideAllowed: !PROTECTED_USER_OVERRIDE_PERMISSIONS.has(permission.code),
+        // This list is defined by the API contract, not by the editable role
+        // matrix. It prevents the UI from offering an override that the route's
+        // role guard can never honor.
+        userOverrideRoles: this.permissionSeed(permission.code)?.roles ?? [],
       })),
     };
   }
@@ -247,12 +266,10 @@ export class AccessControlService {
     if (!reason || reason.length < 5) {
       throw new BadRequestException('Phải nhập lý do thay đổi quyền riêng (tối thiểu 5 ký tự).');
     }
-    if (targetUser.role === 'ADMIN' && CORE_ADMIN_PERMISSIONS.has(permission.code) && dto.effect === 'DENY') {
-      throw new BadRequestException('Không thể chặn quyền quản trị phân quyền cốt lõi của tài khoản Admin.');
-    }
-    const seed = this.permissionSeed(permission.code);
-    if (dto.effect === 'ALLOW' && (!seed || !seed.roles.includes(targetUser.role as SystemRole))) {
-      throw new BadRequestException('Không thể cấp quyền này ngoài phạm vi chức năng của vai trò tài khoản.');
+    if (!this.canUseUserOverride(targetUser.role as SystemRole, permission.code)) {
+      throw new BadRequestException(
+        'Quyền này không thể cấu hình riêng cho vai trò của tài khoản. Hãy dùng Ma trận vai trò hoặc chọn quyền nghiệp vụ tương thích.',
+      );
     }
     const override = await this.prisma.userPermissionOverride.upsert({
       where: { userId_permissionId: { userId, permissionId: permission.id } },
@@ -366,9 +383,20 @@ export class AccessControlService {
     return {
       user: { id: user.id, username: user.username, role: user.role, status: user.status },
       permissions: permissions.map((permission) => {
-        const override = overrides.get(permission.code);
+        const storedOverride = overrides.get(permission.code);
+        // Invalid legacy overrides must never create an effective privilege.
+        // The same rule is enforced at request time by AccessPolicyService.
+        const override = this.canUseUserOverride(user.role as SystemRole, permission.code)
+          ? storedOverride
+          : undefined;
         const allowed = override?.effect === 'DENY' ? false : override?.effect === 'ALLOW' || permission.rolePermissions.length > 0;
-        return { code: permission.code, name: permission.name, module: permission.module, allowed, source: override ? `USER_${override.effect}` : permission.rolePermissions.length ? 'ROLE' : 'NONE' };
+        return {
+          code: permission.code,
+          name: permission.name,
+          module: permission.module,
+          allowed,
+          source: override ? `USER_${override.effect}` : permission.rolePermissions.length ? 'ROLE' : 'NONE',
+        };
       }),
       scopes: user.accessScopes,
     };
@@ -409,6 +437,15 @@ export class AccessControlService {
 
   private permissionSeed(code: string) {
     return ACCESS_PERMISSION_CATALOG.find((permission) => permission.code === code);
+  }
+
+  /**
+   * An individual override is an exception inside a role's supported API
+   * surface; it is not a mechanism for bypassing @Roles on another module.
+   */
+  canUseUserOverride(role: SystemRole, permissionCode: string) {
+    const seed = this.permissionSeed(permissionCode);
+    return Boolean(seed && !PROTECTED_USER_OVERRIDE_PERMISSIONS.has(permissionCode) && seed.roles.includes(role));
   }
 
   private assertRolePermissionChange(role: SystemRole, permissionCode: string, granted: boolean) {

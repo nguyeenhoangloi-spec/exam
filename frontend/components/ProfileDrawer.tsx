@@ -5,6 +5,7 @@ import { X } from 'lucide-react';
 import { StatusBadge } from './common/StatusBadge';
 import { Button } from './ui/Button';
 import { IdentifierBadge } from './ui/IdentifierBadge';
+import { getSmartMonogram } from '../lib/format';
 
 interface ProfileDrawerProps {
   isOpen: boolean;
@@ -16,20 +17,6 @@ interface ProfileDrawerProps {
   details: { label: string; value: React.ReactNode; icon?: React.ElementType }[];
   extraSections?: { title: string; content: React.ReactNode }[];
   maxWidth?: 'md' | 'lg';
-}
-
-function getSmartMonogram(title: string, avatarText?: string): string {
-  if (avatarText && avatarText !== 'SV' && avatarText !== 'GV' && avatarText !== 'GT') {
-    return avatarText.trim().slice(0, 3).toUpperCase();
-  }
-  if (!title) return avatarText || 'KT';
-  const clean = title.replace(/^(TS\.|ThS\.|PGS\.|GS\.|ThS|TS|PGS|GS|Thầy|Cô|SV\.|SV)\s+/i, '').trim();
-  const words = clean.split(/\s+/).filter(Boolean);
-  if (words.length === 0) return avatarText || 'KT';
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
-  const firstChar = words[0][0];
-  const lastChar = words[words.length - 1][0];
-  return (firstChar + lastChar).toUpperCase();
 }
 
 export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({

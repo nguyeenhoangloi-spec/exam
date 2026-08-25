@@ -72,7 +72,46 @@ describe('AccessControlService', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('prevents granting a permission outside the target role capability boundary', async () => {
+  it('allows a compatible business permission to be granted to an individual account', async () => {
+    const { service, prisma } = createService();
+    jest.spyOn(service, 'ensureCatalog').mockResolvedValue(undefined);
+    prisma.user.findUnique.mockResolvedValue({ id: 8, role: 'TEACHER', status: 'ACTIVE' });
+    prisma.permission.findUnique.mockResolvedValue({
+      id: 'permission-1',
+      code: 'EXAM_REPORT_VIEW',
+      name: 'Xem báo cáo thống kê kỳ thi',
+    });
+    prisma.userPermissionOverride.upsert.mockResolvedValue({ id: 'override-1' });
+
+    await expect(
+      service.upsertUserOverride(
+        { id: 1 },
+        8,
+        { permissionCode: 'EXAM_REPORT_VIEW', effect: 'ALLOW', reason: 'Cấp quyền báo cáo riêng' },
+      ),
+    ).resolves.toEqual({ id: 'override-1' });
+  });
+
+  it('rejects a grant that the target role cannot use at the API layer', async () => {
+    const { service, prisma } = createService();
+    jest.spyOn(service, 'ensureCatalog').mockResolvedValue(undefined);
+    prisma.user.findUnique.mockResolvedValue({ id: 8, role: 'STUDENT', status: 'ACTIVE' });
+    prisma.permission.findUnique.mockResolvedValue({
+      id: 'permission-1',
+      code: 'EXAM_REPORT_VIEW',
+      name: 'Xem báo cáo thống kê kỳ thi',
+    });
+
+    await expect(
+      service.upsertUserOverride(
+        { id: 1 },
+        8,
+        { permissionCode: 'EXAM_REPORT_VIEW', effect: 'ALLOW', reason: 'Cấp quyền báo cáo riêng' },
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('prevents granting a protected permission to an individual account', async () => {
     const { service, prisma } = createService();
     jest.spyOn(service, 'ensureCatalog').mockResolvedValue(undefined);
     prisma.user.findUnique.mockResolvedValue({ id: 8, role: 'STUDENT', status: 'ACTIVE' });
@@ -86,7 +125,7 @@ describe('AccessControlService', () => {
       service.upsertUserOverride(
         { id: 1 },
         8,
-        { permissionCode: 'BACKUP_MANAGE', effect: 'ALLOW', reason: 'Cấp thử quyền sao lưu' },
+        { permissionCode: 'BACKUP_MANAGE', effect: 'ALLOW', reason: 'Cấp quyền sao lưu riêng' },
       ),
     ).rejects.toBeInstanceOf(BadRequestException);
   });

@@ -12,6 +12,7 @@ import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
+import { getSmartMonogram } from '../../lib/format';
 import { Button } from '../../components/ui/Button';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { Teacher, Department, User } from '../../types';
@@ -709,7 +710,7 @@ export default function TeachersPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
             {!editingTeacher ? (
               <Button
                 type="button"
@@ -795,21 +796,25 @@ export default function TeachersPage() {
                   <div className="flex items-start gap-3.5 min-w-0 flex-1">
                     {/* Avatar thương hiệu */}
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
-                      {drawerOpenTeacher.fullName.trim().split(' ').pop()?.slice(0, 2).toUpperCase() || 'GV'}
+                      {getSmartMonogram(drawerOpenTeacher.fullName, 'GV')}
                     </div>
 
-                    <div className="min-w-0 flex-1">
-                      <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words" title={drawerOpenTeacher.fullName}>
-                        {drawerOpenTeacher.fullName}
-                      </h2>
-
-                      <div className="mt-1.5 flex items-center gap-2 flex-wrap">
-                        <IdentifierBadge tone="neutral" title={drawerOpenTeacher.teacherCode}>
+                    <div className="min-w-0 flex-1 space-y-1">
+                      {/* Dòng 1: Họ tên + Mã cán bộ (Ngang hàng) */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words" title={drawerOpenTeacher.fullName}>
+                          {drawerOpenTeacher.fullName}
+                        </h2>
+                        <IdentifierBadge tone="neutral" title="Mã cán bộ">
                           {drawerOpenTeacher.teacherCode}
                         </IdentifierBadge>
-                        <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400">
-                          • {drawerOpenTeacher.degree || 'Giảng viên'}
-                          {drawerOpenTeacher.department?.name ? ` • ${drawerOpenTeacher.department.name}` : ''}
+                      </div>
+
+                      {/* Dòng 2: Khoa trực thuộc với icon Building2 nhẹ nhàng, không lặp học vị, không rớt chữ */}
+                      <div className="flex items-center gap-1.5 text-type-helper font-medium text-slate-600 dark:text-slate-400 min-w-0">
+                        <Building2 className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
+                        <span className="truncate" title={drawerOpenTeacher.department?.name || 'Chưa phân khoa'}>
+                          {drawerOpenTeacher.department?.name ? `Khoa ${drawerOpenTeacher.department.name.replace(/^Khoa\s+/i, '')}` : 'Chưa phân khoa'}
                         </span>
                       </div>
                     </div>
@@ -827,7 +832,6 @@ export default function TeachersPage() {
                 </div>
               </div>
 
-              {/* Tabs Navigation */}
               <div className="flex border-b border-slate-200/90 dark:border-slate-800 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
                 {[
                   { id: 'info', label: 'Hồ sơ', icon: UserIcon },

@@ -96,11 +96,11 @@ export class BackupService {
         backupTime: parsed.backupTime || '02:00',
         maxRetentionCount: Number(parsed.maxRetentionCount) || 10,
         dualStorageEnabled: parsed.dualStorageEnabled !== false,
-        primaryPath: parsed.primaryPath || this.storage.getPrimaryPath(),
-        secondaryPath: parsed.secondaryPath || this.storage.getSecondaryPath(),
+        // Storage paths are environment-owned and must not be overridden by the runtime config file.
+        primaryPath: this.storage.getPrimaryPath(),
+        secondaryPath: this.storage.getSecondaryPath(),
       };
       this.storage.setDualStorageEnabled(settings.dualStorageEnabled);
-      this.storage.setSecondaryPath(settings.secondaryPath);
       return settings;
     } catch {
       const defaultSettings: BackupSettings = {
@@ -117,7 +117,6 @@ export class BackupService {
         await writeFile(this.configPath, JSON.stringify(defaultSettings, null, 2), 'utf-8');
       } catch {}
       this.storage.setDualStorageEnabled(defaultSettings.dualStorageEnabled);
-      this.storage.setSecondaryPath(defaultSettings.secondaryPath);
       return defaultSettings;
     }
   }
@@ -130,15 +129,15 @@ export class BackupService {
       backupTime: dto.backupTime !== undefined ? dto.backupTime : current.backupTime,
       maxRetentionCount: dto.maxRetentionCount !== undefined ? dto.maxRetentionCount : current.maxRetentionCount,
       dualStorageEnabled: dto.dualStorageEnabled !== undefined ? dto.dualStorageEnabled : current.dualStorageEnabled,
-      primaryPath: current.primaryPath,
-      secondaryPath: dto.secondaryPath !== undefined && dto.secondaryPath.trim() ? dto.secondaryPath.trim() : current.secondaryPath,
+      // Keep both paths sourced from BACKUP_LOCAL_ROOT/BACKUP_SECONDARY_ROOT in .env.
+      primaryPath: this.storage.getPrimaryPath(),
+      secondaryPath: this.storage.getSecondaryPath(),
     };
 
     await mkdir(dirname(this.configPath), { recursive: true });
     await writeFile(this.configPath, JSON.stringify(updated, null, 2), 'utf-8');
 
     this.storage.setDualStorageEnabled(updated.dualStorageEnabled);
-    this.storage.setSecondaryPath(updated.secondaryPath);
 
     await this.audit.write({
       action: 'BACKUP_SETTINGS_UPDATED',

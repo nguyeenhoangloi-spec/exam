@@ -9,7 +9,10 @@ describe('AccessPolicyService', () => {
       userAccessScope: { findMany: jest.fn().mockResolvedValue([]) },
       subject: { findMany: jest.fn().mockResolvedValue([]) },
     };
-    const accessControl: any = { ensureCatalog: jest.fn().mockResolvedValue(undefined) };
+    const accessControl: any = {
+      ensureCatalog: jest.fn().mockResolvedValue(undefined),
+      canUseUserOverride: jest.fn().mockReturnValue(true),
+    };
     return { prisma, accessControl, service: new AccessPolicyService(prisma, accessControl) };
   };
 
@@ -25,6 +28,15 @@ describe('AccessPolicyService', () => {
     const { service } = createService();
 
     await expect(service.can({ id: 7, role: 'TEACHER' }, 'ESSAY_GRADE')).resolves.toBe(true);
+  });
+
+  it('does not let an invalid legacy override create an effective permission', async () => {
+    const { prisma, accessControl, service } = createService();
+    prisma.userPermissionOverride.findUnique.mockResolvedValue({ effect: 'ALLOW' });
+    prisma.rolePermission.findUnique.mockResolvedValue(null);
+    accessControl.canUseUserOverride.mockReturnValue(false);
+
+    await expect(service.can({ id: 7, role: 'STUDENT' }, 'EXAM_REPORT_VIEW')).resolves.toBe(false);
   });
 
   it('allows a matching scope and rejects an unrelated scope', async () => {

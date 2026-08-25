@@ -74,3 +74,24 @@ export function getGreetingEmoji(hour = new Date().getHours()): string {
     if (hour < 18) return '⛅';
     return '🌙';
 }
+
+/**
+ * Smart monogram generator for avatars.
+ * Extracts clean 2-letter initials from names, ignoring academic titles and prefixes.
+ * Examples:
+ * - "PGS.TS Trần Thanh Hải" -> "TH" (Trần Hải)
+ * - "Nguyễn Văn An" -> "NA" (Nguyễn An)
+ * - "Toán cao cấp" -> "TC"
+ */
+export function getSmartMonogram(title: string | null | undefined, defaultFallback = 'KT'): string {
+    if (!title) return defaultFallback;
+    const clean = title
+        .replace(/^(TS\.|ThS\.|PGS\.TS\.|PGS\.TS|PGS\.|GS\.TS\.|GS\.TS|GS\.|ThS|TS|PGS|GS|Thầy|Cô|SV\.|SV|GV\.|GV|Phòng|Lớp|Học phần|Môn)\s+/i, '')
+        .trim();
+    const words = clean.split(/\s+/).filter(Boolean);
+    if (words.length === 0) return defaultFallback;
+    if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+    const firstChar = words[0][0];
+    const lastChar = words[words.length - 1][0];
+    return (firstChar + lastChar).toUpperCase();
+}

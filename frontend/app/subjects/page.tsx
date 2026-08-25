@@ -838,21 +838,24 @@ export default function SubjectsPage() {
  {drawerOpenSubject.subjectCode.substring(0, 3).toUpperCase()}
  </div>
 
- <div className="min-w-0 flex-1">
- <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words" title={drawerOpenSubject.subjectName}>
- {drawerOpenSubject.subjectName}
- </h2>
+                    <div className="min-w-0 flex-1 space-y-1">
+                      {/* Dòng 1: Tên môn học + Mã môn học (Ngang hàng) */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words" title={drawerOpenSubject.subjectName}>
+                          {drawerOpenSubject.subjectName}
+                        </h2>
+                        <IdentifierBadge tone="neutral" title="Mã môn học">
+                          {drawerOpenSubject.subjectCode}
+                        </IdentifierBadge>
+                      </div>
 
- <div className="mt-2 flex items-center gap-2 flex-wrap">
- <IdentifierBadge tone="neutral" title={drawerOpenSubject.subjectCode}>
- {drawerOpenSubject.subjectCode}
- </IdentifierBadge>
-  <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 tabular-nums">
-    {drawerOpenSubject.credits} Tín chỉ
-  </span>
- </div>
- </div>
- </div>
+                      {/* Dòng 2: Tín chỉ với icon GraduationCap */}
+                      <div className="flex items-center gap-1.5 text-type-helper font-medium text-slate-600 dark:text-slate-400 min-w-0">
+                        <GraduationCap className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
+                        <span className="tabular-nums">{drawerOpenSubject.credits} Tín chỉ</span>
+                      </div>
+                    </div>
+                  </div>
 
  {/* Nút Đóng */}
  <button

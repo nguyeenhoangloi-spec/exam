@@ -12,6 +12,7 @@ import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
+import { getSmartMonogram } from '../../lib/format';
 import { Button } from '../../components/ui/Button';
 import { Student, ClassItem, User } from '../../types';
 import { Search, X, ChevronDown, User as UserIcon, School, Mail, Phone, Calendar, BookOpen, Clock, FileText, CheckCircle2, ChevronRight, FileSpreadsheet } from 'lucide-react';
@@ -827,20 +828,25 @@ export default function StudentsPage() {
                   <div className="flex items-start gap-3.5 min-w-0 flex-1">
                     {/* Avatar thương hiệu */}
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
-                      {drawerOpenStudent.fullName.trim().split(' ').pop()?.slice(0, 2).toUpperCase() || 'SV'}
+                      {getSmartMonogram(drawerOpenStudent.fullName, 'SV')}
                     </div>
 
-                    <div className="min-w-0 flex-1">
-                      <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words" title={drawerOpenStudent.fullName}>
-                        {drawerOpenStudent.fullName}
-                      </h2>
-
-                      <div className="mt-1.5 flex items-center gap-2 flex-wrap">
-                        <IdentifierBadge tone="neutral" title={drawerOpenStudent.studentCode}>
+                    <div className="min-w-0 flex-1 space-y-1">
+                      {/* Dòng 1: Họ tên + Mã sinh viên (Ngang hàng) */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words" title={drawerOpenStudent.fullName}>
+                          {drawerOpenStudent.fullName}
+                        </h2>
+                        <IdentifierBadge tone="neutral" title="Mã sinh viên">
                           {drawerOpenStudent.studentCode}
                         </IdentifierBadge>
-                        <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400">
-                          • {drawerOpenStudent.class?.name || 'Chưa xếp lớp'}
+                      </div>
+
+                      {/* Dòng 2: Lớp sinh hoạt với icon School */}
+                      <div className="flex items-center gap-1.5 text-type-helper font-medium text-slate-600 dark:text-slate-400 min-w-0">
+                        <School className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
+                        <span className="truncate" title={drawerOpenStudent.class?.name || 'Chưa xếp lớp'}>
+                          {drawerOpenStudent.class?.name ? `Lớp ${drawerOpenStudent.class.name.replace(/^Lớp\s+/i, '')}` : 'Chưa xếp lớp'}
                         </span>
                       </div>
                     </div>
@@ -886,7 +892,6 @@ export default function StudentsPage() {
 
               {/* Tab Content — Black-forward Palette, Không khung lồng */}
               <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white dark:bg-slate-900">
-                {/* --- TAB INFO --- */}
                 {drawerTab === 'info' && (
                   <div className="space-y-6">
                     {/* Thống kê nhanh */}
