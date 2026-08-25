@@ -235,6 +235,36 @@ export default function AccessControlPage() {
     [users, selectedUserId]
   );
 
+  const selectedUserOverrideMap = useMemo(
+    () => new Map((selectedUser?.permissionOverrides || []).map((override) => [override.permission.code, override])),
+    [selectedUser]
+  );
+
+  const selectedUserRolePermissionCodes = useMemo(
+    () => new Set(
+      permissions
+        .filter((permission) => selectedUser && permission.roles.includes(selectedUser.role))
+        .map((permission) => permission.code)
+    ),
+    [permissions, selectedUser]
+  );
+
+  const availableOverridePermissions = useMemo(
+    () => permissions.filter((permission) => !selectedUserOverrideMap.has(permission.code)),
+    [permissions, selectedUserOverrideMap]
+  );
+
+  const selectedPermission = useMemo(
+    () => permissions.find((permission) => permission.code === overrideCode) || null,
+    [permissions, overrideCode]
+  );
+  const selectedPermissionAlreadyInRole = Boolean(
+    selectedPermission && selectedUserRolePermissionCodes.has(selectedPermission.code)
+  );
+  const selectedPermissionAlreadyOverridden = Boolean(
+    selectedPermission && selectedUserOverrideMap.has(selectedPermission.code)
+  );
+
   // Stats calculation
   const sensitiveCount = useMemo(() => permissions.filter((p) => p.sensitive).length, [permissions]);
   const usersWithOverridesCount = useMemo(
@@ -495,6 +525,18 @@ export default function AccessControlPage() {
 
   const handleQuickAddOverride = (effect: 'ALLOW' | 'DENY') => {
     if (!selectedUser || !overrideCode) return;
+    if (selectedPermissionAlreadyOverridden) {
+      setToast({ type: 'error', message: 'Quyền này đã có cấu hình riêng. Hãy chỉnh sửa hoặc gỡ cấu hình hiện tại.' });
+      return;
+    }
+    if (effect === 'ALLOW' && selectedPermissionAlreadyInRole) {
+      setToast({ type: 'error', message: 'Quyền này đã được cấp theo vai trò, không cần cấp lại.' });
+      return;
+    }
+    if (effect === 'DENY' && !selectedPermissionAlreadyInRole) {
+      setToast({ type: 'error', message: 'Không thể chặn quyền chưa được cấp theo vai trò.' });
+      return;
+    }
     if (overrideReason.trim().length < 5) {
       setToast({ type: 'error', message: 'Nhập lý do cấp hoặc chặn quyền riêng (tối thiểu 5 ký tự).' });
       return;
@@ -509,13 +551,16 @@ export default function AccessControlPage() {
       onConfirm: () =>
         mutate(
           () =>
-            api.put(`/access-control/users/${selectedUser.id}/overrides`, {
+          api.put(`/access-control/users/${selectedUser.id}/overrides`, {
               permissionCode: overrideCode,
               effect,
               reason: overrideReason.trim(),
             }),
           isAllow ? 'Đã cấp quyền riêng thành công.' : 'Đã thiết lập chặn quyền thành công.',
-          () => setOverrideReason('')
+          () => {
+            setOverrideReason('');
+            setUserStudioTab('effective');
+          }
         ),
     });
     setOverrideCode('');
@@ -1368,7 +1413,7 @@ export default function AccessControlPage() {
                                 className="h-10 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-type-body font-normal text-slate-800 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 shadow-2xs"
                               >
                                 <option value="">-- Chọn quyền cần gán ngoại lệ --</option>
-                                {permissions.map((p) => (
+                                {availableOverridePermissions.map((p) => (
                                   <option key={p.code} value={p.code}>
                                     [{p.module}] {p.name} ({p.code})
                                   </option>
@@ -1378,9 +1423,16 @@ export default function AccessControlPage() {
                               <Button
                                 variant="primary"
                                 size="md"
-                                disabled={!overrideCode || saving || overrideReason.trim().length < 5}
+                                disabled={
+                                  !overrideCode ||
+                                  saving ||
+                                  overrideReason.trim().length < 5 ||
+                                  selectedPermissionAlreadyInRole ||
+                                  selectedPermissionAlreadyOverridden
+                                }
                                 onClick={() => handleQuickAddOverride('ALLOW')}
                                 leftIcon={<Plus className="h-4 w-4" />}
+                                title={selectedPermissionAlreadyInRole ? 'Quyền đã có theo vai trò' : undefined}
                               >
                                 Cấp quyền
                               </Button>
@@ -1388,9 +1440,16 @@ export default function AccessControlPage() {
                               <Button
                                 variant="danger"
                                 size="md"
-                                disabled={!overrideCode || saving || overrideReason.trim().length < 5}
+                                disabled={
+                                  !overrideCode ||
+                                  saving ||
+                                  overrideReason.trim().length < 5 ||
+                                  !selectedPermissionAlreadyInRole ||
+                                  selectedPermissionAlreadyOverridden
+                                }
                                 onClick={() => handleQuickAddOverride('DENY')}
                                 leftIcon={<X className="h-4 w-4" />}
+                                title={!selectedPermissionAlreadyInRole ? 'Chỉ chặn được quyền đang có theo vai trò' : undefined}
                               >
                                 Chặn quyền
                               </Button>
