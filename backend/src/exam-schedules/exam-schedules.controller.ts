@@ -91,4 +91,35 @@ export class ExamSchedulesController {
   restore(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
     return this.examSchedulesService.restore(req.user, id);
   }
+
+  @Post(':id/check-conflicts')
+  @Roles('ADMIN', 'TEACHER')
+  checkConflicts(
+    @Request() req: any,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: any,
+  ) {
+    return this.examSchedulesService.checkRescheduleConflicts(req.user, id, body);
+  }
+
+  @Post(':id/reschedule')
+  @Roles('ADMIN', 'TEACHER')
+  reschedule(
+    @Request() req: any,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: any,
+  ) {
+    return this.examSchedulesService.reschedule(req.user, id, body);
+  }
+
+  @Post(':id/cancel')
+  @Roles('ADMIN', 'TEACHER')
+  cancel(
+    @Request() req: any,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: any,
+  ) {
+    return this.examSchedulesService.cancelSchedule(req.user, id, body);
+  }
 }
+

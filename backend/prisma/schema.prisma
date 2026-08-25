@@ -2,7 +2,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -85,6 +84,9 @@ model User {
   deletedExamSchedules ExamSchedule[]    @relation("ExamScheduleDeletedBy")
   questionHistories    QuestionHistory[] @relation("QuestionHistoryActor")
   auditLogs            AuditLog[]        @relation("AuditLogActor")
+  securityAuditEvents  SecurityAuditEvent[] @relation("SecurityAuditActor")
+  securityAuditPolicies SecurityAuditRetentionPolicy[] @relation("SecurityAuditPolicyUpdater")
+  securityAuditHolds   SecurityAuditLegalHold[] @relation("SecurityAuditHoldCreator")
   essayGradeHistories  EssayGradeHistory[] @relation("EssayGradeHistoryActor")
   reviewedGradeAppeals GradeAppeal[]     @relation("GradeAppealReviewer")
   authSessions         AuthSession[]
@@ -93,6 +95,8 @@ model User {
   backupRestoreApprovals BackupRestoreRequest[] @relation("BackupRestoreApprover")
   permissionOverrides   UserPermissionOverride[]
   accessScopes          UserAccessScope[]
+  notifications         Notification[]
+  reviewedSupervisorChangeRequests SupervisorChangeRequest[] @relation("SupervisorChangeReviewer")
 
   @@map("users")
 }
@@ -246,6 +250,9 @@ model Teacher {
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   supervisors ExamSupervisor[]
+  dutyAvailabilities TeacherDutyAvailability[]
+  requestedSupervisorChanges SupervisorChangeRequest[] @relation("SupervisorChangeRequester")
+  replacementSupervisorChanges SupervisorChangeRequest[] @relation("SupervisorChangeReplacement")
 
   @@map("teachers")
 }
@@ -404,10 +411,62 @@ model ExamSupervisor {
   role               String           @default("SUPERVISOR_1")
   status             String           @default("PENDING")
   note               String?
+  changeRequests     SupervisorChangeRequest[]
 
   @@unique([examScheduleRoomId, teacherId])
   @@unique([examScheduleRoomId, role])
   @@map("exam_supervisors")
+}
+
+enum TeacherAvailabilityStatus {
+  AVAILABLE
+  UNAVAILABLE
+}
+
+enum SupervisorChangeRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model TeacherDutyAvailability {
+  id        Int                       @id @default(autoincrement())
+  teacherId Int
+  teacher   Teacher                   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  examDate  DateTime
+  startTime String
+  endTime   String
+  status    TeacherAvailabilityStatus @default(AVAILABLE)
+  note      String?
+  createdAt DateTime                  @default(now())
+  updatedAt DateTime                  @updatedAt
+
+  @@unique([teacherId, examDate, startTime, endTime])
+  @@index([teacherId, examDate])
+  @@map("teacher_duty_availabilities")
+}
+
+model SupervisorChangeRequest {
+  id                   Int                           @id @default(autoincrement())
+  examSupervisorId     Int
+  examSupervisor       ExamSupervisor                @relation(fields: [examSupervisorId], references: [id], onDelete: Cascade)
+  requesterTeacherId   Int
+  requesterTeacher     Teacher                        @relation("SupervisorChangeRequester", fields: [requesterTeacherId], references: [id], onDelete: Restrict)
+  replacementTeacherId Int?
+  replacementTeacher   Teacher?                       @relation("SupervisorChangeReplacement", fields: [replacementTeacherId], references: [id], onDelete: SetNull)
+  reason               String
+  status               SupervisorChangeRequestStatus @default(PENDING)
+  reviewNote           String?
+  reviewedById         Int?
+  reviewedBy           User?                          @relation("SupervisorChangeReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt           DateTime?
+  createdAt            DateTime                       @default(now())
+  updatedAt            DateTime                       @updatedAt
+
+  @@index([examSupervisorId, status])
+  @@index([requesterTeacherId, status])
+  @@map("supervisor_change_requests")
 }
 
 model Question {
@@ -594,6 +653,141 @@ model AuditLog {
   @@index([createdAt])
   @@index([entityType, entityId])
   @@map("audit_logs")
+}
+
+enum SecurityAuditCategory {
+  AUTHENTICATION
+  AUTHORIZATION
+  DATA_ACCESS
+  DATA_EXPORT
+  EXAMINATION
+  BACKUP_RECOVERY
+  AI_PROCESSING
+  SYSTEM_SECURITY
+}
+
+enum SecurityAuditOutcome {
+  SUCCESS
+  DENIED
+  FAILURE
+}
+
+model SecurityAuditEvent {
+  id             String                @id @default(uuid())
+  occurredAt     DateTime              @default(now())
+  category       SecurityAuditCategory
+  action         String
+  outcome        SecurityAuditOutcome
+  actorId        Int?
+  actor          User?                 @relation("SecurityAuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+  subjectUserId  Int?
+  entityType     String?
+  entityId       String?
+  requestId      String?
+  httpMethod     String?
+  route          String?
+  ipAddress      String?
+  ipHash         String?
+  location       String?
+  userAgentHash  String?
+  metadata       Json?
+  previousHash   String?
+  eventHash      String                @unique
+  retentionUntil DateTime
+  archivedAt     DateTime?
+  legalHold      Boolean               @default(false)
+  legalHoldRecord SecurityAuditLegalHold?
+
+  @@index([occurredAt])
+  @@index([actorId, occurredAt])
+  @@index([category, occurredAt])
+  @@index([action, occurredAt])
+  @@index([outcome, occurredAt])
+  @@index([entityType, entityId])
+  @@index([retentionUntil, legalHold])
+  @@index([archivedAt, legalHold])
+  @@map("security_audit_events")
+}
+
+model SecurityAuditRetentionPolicy {
+  id           String                @id @default(uuid())
+  category     SecurityAuditCategory @unique
+  hotDays      Int                   @default(90)
+  retainDays   Int                   @default(1825)
+  rawIpDays    Int                   @default(90)
+  updatedById  Int?
+  updatedBy    User?                 @relation("SecurityAuditPolicyUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  @@map("security_audit_retention_policies")
+}
+
+model SecurityAuditLegalHold {
+  id          String   @id @default(uuid())
+  eventId     String   @unique
+  event       SecurityAuditEvent @relation(fields: [eventId], references: [id], onDelete: Restrict)
+  reason      String
+  caseReference String?
+  createdById Int
+  createdBy   User     @relation("SecurityAuditHoldCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  releasedAt  DateTime?
+  releasedById Int?
+  createdAt   DateTime @default(now())
+
+  @@index([releasedAt])
+  @@map("security_audit_legal_holds")
+}
+
+enum DocumentTemplateDataSource {
+  EXAM_SCHEDULE_LIST
+  ROOM_DOOR_LIST
+  SUPERVISOR_ASSIGNMENT
+  GRADE_REPORT
+  STUDENT_DIRECTORY
+  TEACHER_DIRECTORY
+  GENERIC_REPORT
+}
+
+enum DocumentTemplateVersionStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model DocumentTemplate {
+  id          String                     @id @default(uuid())
+  code        String                     @unique
+  name        String
+  dataSource  DocumentTemplateDataSource
+  description String?
+  isDefault   Boolean                    @default(false)
+  createdById Int?
+  updatedById Int?
+  createdAt   DateTime                   @default(now())
+  updatedAt   DateTime                   @updatedAt
+  versions    DocumentTemplateVersion[]
+
+  @@index([dataSource])
+  @@map("document_templates")
+}
+
+model DocumentTemplateVersion {
+  id          String                        @id @default(uuid())
+  templateId  String
+  template    DocumentTemplate              @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  version     Int
+  status      DocumentTemplateVersionStatus @default(DRAFT)
+  config      Json
+  createdById Int?
+  publishedById Int?
+  publishedAt DateTime?
+  createdAt   DateTime                      @default(now())
+  updatedAt   DateTime                      @updatedAt
+
+  @@unique([templateId, version])
+  @@index([templateId, status])
+  @@map("document_template_versions")
 }
 
 enum AttemptStatus {
@@ -1159,4 +1353,30 @@ model BackupRestoreRequest {
   @@index([status, createdAt])
   @@index([backupJobId])
   @@map("backup_restore_requests")
+}
+
+enum NotificationType {
+  SCHEDULE_CHANGE
+  EXAM_CANCELLED
+  ASSIGNMENT_UPDATE
+  GENERAL
+  SYSTEM
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType @default(GENERAL)
+  title     String
+  message   String
+  link      String?
+  metadata  Json?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
 }

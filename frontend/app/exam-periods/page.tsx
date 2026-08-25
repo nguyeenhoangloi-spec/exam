@@ -273,6 +273,7 @@ export default function ExamPeriodsPage() {
     printReport({
       title: 'BÁO CÁO DANH SÁCH KỲ THI',
       subtitle: 'Danh sách tổng hợp các kỳ thi',
+      facultyName: 'HỘI ĐỒNG THI & ĐẢM BẢO CHẤT LƯỢNG',
       metaInfo: [
         { label: 'Tổng số kỳ thi', value: String(periods.length) },
         { label: 'Sắp diễn ra', value: String(kpiData.upcoming) },
@@ -293,6 +294,11 @@ export default function ExamPeriodsPage() {
         `${p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : ''} - ${p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : ''}`,
         p.status === 'COMPLETED' ? 'Đã hoàn thành' : 'Sắp diễn ra',
       ]),
+      signers: [
+        { title: 'THƯ KÝ HỘI ĐỒNG THI', subtitle: '(Ký, ghi rõ họ tên)' },
+        { title: 'CHỦ TỊCH HỘI ĐỒNG THI', subtitle: '(Ký, đóng dấu)' },
+      ],
+      templateCode: 'EXAM_PERIOD_DIRECTORY',
     });
   };
 

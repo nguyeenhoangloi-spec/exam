@@ -233,9 +233,9 @@ export default function StudentsPage() {
           s.fullName.toLowerCase().includes(search.toLowerCase()) ||
           s.studentCode.toLowerCase().includes(search.toLowerCase()) ||
           (s.email && s.email.toLowerCase().includes(search.toLowerCase()));
-        
+
         const matchClass = selectedClassId ? String(s.classId) === selectedClassId : true;
-        
+
         let matchGender = true;
         if (selectedGender) {
           matchGender = s.gender?.toLowerCase() === selectedGender.toLowerCase();
@@ -390,6 +390,7 @@ export default function StudentsPage() {
     printReport({
       title: 'BÁO CÁO DANH SÁCH SINH VIÊN',
       subtitle: 'Danh sách sinh viên trong cơ sở dữ liệu đào tạo',
+      facultyName: 'PHÒNG ĐÀO TẠO & CÔNG TÁC SINH VIÊN',
       metaInfo: [
         { label: 'Tổng số sinh viên', value: String(students.length) },
         { label: 'Sinh viên đang lọc', value: String(filteredStudents.length) },
@@ -412,6 +413,11 @@ export default function StudentsPage() {
         s.class?.name || '---',
         s.email,
       ]),
+      signers: [
+        { title: 'NGƯỜI LẬP DANH SÁCH', subtitle: '(Ký, ghi rõ họ tên)' },
+        { title: 'TRƯỞNG PHÒNG ĐÀO TẠO & CTSV', subtitle: '(Ký, đóng dấu)' },
+      ],
+      templateCode: 'STUDENT_DIRECTORY',
     });
   };
 
@@ -810,17 +816,15 @@ export default function StudentsPage() {
         <div role="dialog" aria-modal="true" aria-label="Thông tin sinh viên" className="fixed inset-0 z-[100] overflow-hidden">
           {/* Backdrop mờ nền */}
           <div
-            className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              drawerVisible ? 'opacity-100' : 'opacity-0'
-            }`}
+            className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${drawerVisible ? 'opacity-100' : 'opacity-0'
+              }`}
             onClick={closeDrawer}
           />
 
           <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
             <div
-              className={`w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
-                drawerVisible ? 'translate-x-0' : 'translate-x-full'
-              }`}
+              className={`w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${drawerVisible ? 'translate-x-0' : 'translate-x-full'
+                }`}
             >
               {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
               <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
@@ -877,11 +881,10 @@ export default function StudentsPage() {
                     <button
                       key={t.id}
                       onClick={() => handleTabChange(t.id as any)}
-                      className={`whitespace-nowrap border-b-2 px-4 py-3 text-type-body transition cursor-pointer flex items-center gap-2 ${
-                        isActive
+                      className={`whitespace-nowrap border-b-2 px-4 py-3 text-type-body transition cursor-pointer flex items-center gap-2 ${isActive
                           ? 'border-blue-600 text-blue-600 font-semibold'
                           : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-semibold'
-                      }`}
+                        }`}
                     >
                       <Icon className="h-4 w-4" />
                       {t.label}

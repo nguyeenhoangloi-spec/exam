@@ -716,9 +716,8 @@ export default function ActivityLogsPage() {
                         return (
                             <div
                                 key={item.id}
-                                className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-3 hover:shadow-md transition ${
-                                    isChecked ? 'ring-2 ring-blue-500 bg-blue-50/10' : ''
-                                }`}
+                                className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-3 hover:shadow-md transition ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/10' : ''
+                                    }`}
                             >
                                 {/* Header: Checkbox + Time & ActionCode */}
                                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
@@ -738,7 +737,7 @@ export default function ActivityLogsPage() {
 
                                 {/* Actor info */}
                                 <div className="flex items-center gap-2.5">
-                                     <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-type-helper font-semibold text-slate-700 dark:text-slate-300">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-type-helper font-semibold text-slate-700 dark:text-slate-300">
                                         {(item.actor?.username || 'A').slice(0, 1).toUpperCase()}
                                     </div>
                                     <div className="min-w-0">
@@ -788,9 +787,8 @@ export default function ActivityLogsPage() {
                             return (
                                 <div
                                     key={item.id}
-                                    className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
-                                        isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                                    }`}
+                                    className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                                        }`}
                                 >
                                     {/* Left: Checkbox + Description & ActionCode + Meta chips */}
                                     <div className="flex items-center gap-3 min-w-0">
@@ -1154,18 +1152,16 @@ export default function ActivityLogsPage() {
                 <div role="dialog" aria-modal="true" aria-label="Chi tiết nhật ký" className="fixed inset-0 z-[100] overflow-hidden">
                     {/* Backdrop mờ nền */}
                     <div
-                        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                            drawerVisible ? 'opacity-100' : 'opacity-0'
-                        }`}
+                        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${drawerVisible ? 'opacity-100' : 'opacity-0'
+                            }`}
                         onClick={() => setSelectedLog(null)}
                     />
 
                     {/* Drawer Container */}
                     <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
                         <div
-                            className={`w-screen max-w-[560px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
-                                drawerVisible ? 'translate-x-0' : 'translate-x-full'
-                            }`}
+                            className={`w-screen max-w-[560px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${drawerVisible ? 'translate-x-0' : 'translate-x-full'
+                                }`}
                         >
                             {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
                             <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">

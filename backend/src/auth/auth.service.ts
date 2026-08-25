@@ -19,6 +19,7 @@ import { createHash, randomBytes, randomInt } from 'node:crypto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { SecurityAuditService } from '../security-audit/security-audit.service';
 
 @Injectable()
 export class AuthService {
@@ -37,6 +38,7 @@ export class AuthService {
     private jwtService: JwtService,
     private audit: AuditService,
     private contactService: ContactService,
+    private readonly securityAudit?: SecurityAuditService,
   ) {}
 
   private readonly refreshTokenDays = Math.max(1, Number(process.env.REFRESH_TOKEN_EXPIRES_IN_DAYS || 30));
@@ -101,17 +103,22 @@ export class AuthService {
     }
 
     if (!user) {
+      await this.securityAudit?.write({ category: 'AUTHENTICATION', action: 'LOGIN_PASSWORD', outcome: 'FAILURE', metadata: { reason: 'UNKNOWN_ACCOUNT' } });
       throw new UnauthorizedException('Tên đăng nhập hoặc mật khẩu không chính xác.');
     }
 
     const isMatch = await bcrypt.compare(loginDto.password, user.password);
     if (!isMatch) {
+      await this.securityAudit?.write({ category: 'AUTHENTICATION', action: 'LOGIN_PASSWORD', outcome: 'FAILURE', actor: { id: user.id }, subjectUserId: user.id, entityType: 'USER', entityId: user.id, metadata: { reason: 'INVALID_CREDENTIALS' } });
       throw new UnauthorizedException('Tên đăng nhập hoặc mật khẩu không chính xác.');
     }
 
     if (user.status !== 'ACTIVE') {
+      await this.securityAudit?.write({ category: 'AUTHENTICATION', action: 'LOGIN_PASSWORD', outcome: 'DENIED', actor: { id: user.id }, subjectUserId: user.id, entityType: 'USER', entityId: user.id, metadata: { reason: 'ACCOUNT_INACTIVE' } });
       throw new UnauthorizedException('Tài khoản đã bị vô hiệu hóa.');
     }
+
+    await this.securityAudit?.write({ category: 'AUTHENTICATION', action: 'LOGIN_PASSWORD', outcome: 'SUCCESS', actor: { id: user.id }, subjectUserId: user.id, entityType: 'USER', entityId: user.id });
 
     if (user.role === 'ADMIN') {
       await this.audit.write({
@@ -151,10 +158,17 @@ export class AuthService {
 
   async logout(refreshToken?: string) {
     if (refreshToken) {
+      const session = await this.prisma.authSession.findUnique({
+        where: { tokenHash: this.hashRefreshToken(refreshToken) },
+        select: { userId: true, revokedAt: true },
+      });
       await this.prisma.authSession.updateMany({
         where: { tokenHash: this.hashRefreshToken(refreshToken), revokedAt: null },
         data: { revokedAt: new Date() },
       });
+      if (session && !session.revokedAt) {
+        await this.securityAudit?.write({ category: 'AUTHENTICATION', action: 'LOGOUT', outcome: 'SUCCESS', actor: { id: session.userId }, subjectUserId: session.userId, entityType: 'USER', entityId: session.userId });
+      }
     }
   }
 

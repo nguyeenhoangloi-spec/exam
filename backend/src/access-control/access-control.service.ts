@@ -21,6 +21,8 @@ export const ACCESS_PERMISSION_CATALOG: PermissionSeed[] = [
   { code: 'ACCESS_CONTROL_VIEW', name: 'Xem phân quyền', module: 'Quản trị hệ thống', description: 'Xem ma trận quyền, quyền riêng và phạm vi truy cập.', sensitive: true, roles: ['ADMIN'] },
   { code: 'ACCESS_CONTROL_MANAGE', name: 'Quản lý phân quyền', module: 'Quản trị hệ thống', description: 'Cấp, thu hồi quyền và thay đổi phạm vi truy cập.', sensitive: true, roles: ['ADMIN'] },
   { code: 'AUDIT_LOG_VIEW', name: 'Xem nhật ký hệ thống', module: 'Quản trị hệ thống', description: 'Tra cứu lịch sử thao tác và thay đổi bảo mật.', sensitive: true, roles: ['ADMIN'] },
+  { code: 'SECURITY_AUDIT_VIEW', name: 'Xem kiểm toán bảo mật', module: 'Quản trị hệ thống', description: 'Tra cứu sự kiện bảo mật, truy cập dữ liệu nhạy cảm và kiểm tra tính toàn vẹn log.', sensitive: true, roles: ['ADMIN'] },
+  { code: 'SECURITY_AUDIT_MANAGE', name: 'Quản lý kiểm toán bảo mật', module: 'Quản trị hệ thống', description: 'Thiết lập thời hạn lưu giữ và legal hold cho nhật ký kiểm toán.', sensitive: true, roles: ['ADMIN'] },
   { code: 'BACKUP_MANAGE', name: 'Quản lý sao lưu', module: 'Quản trị hệ thống', description: 'Tạo, khôi phục và duyệt sao lưu dữ liệu.', sensitive: true, roles: ['ADMIN'] },
   { code: 'USER_MANAGE', name: 'Quản lý tài khoản', module: 'Quản trị hệ thống', description: 'Tạo, cập nhật, khóa và quản lý tài khoản người dùng.', sensitive: true, roles: ['ADMIN'] },
   { code: 'ACADEMIC_STRUCTURE_MANAGE', name: 'Quản lý danh mục đào tạo', module: 'Danh mục', description: 'Quản lý khoa, lớp sinh viên và môn học.', roles: ['ADMIN'] },
@@ -39,6 +41,8 @@ export const ACCESS_PERMISSION_CATALOG: PermissionSeed[] = [
   { code: 'GRADE_APPEAL_REVIEW', name: 'Xử lý phúc khảo', module: 'Chấm thi', description: 'Xem xét và xử lý đơn phúc khảo.', sensitive: true, roles: ['ADMIN', 'TEACHER'] },
   { code: 'PROCTOR_ASSIGNMENT_VIEW', name: 'Xem lịch coi thi', module: 'Giảng viên', description: 'Xem các ca coi thi được phân công.', roles: ['TEACHER'] },
   { code: 'TRASH_MANAGE', name: 'Quản lý thùng rác', module: 'Quản trị hệ thống', description: 'Xem, khôi phục hoặc xóa vĩnh viễn dữ liệu trong thùng rác.', sensitive: true, roles: ['ADMIN'] },
+  { code: 'DOCUMENT_TEMPLATE_MANAGE', name: 'Quản lý biểu mẫu', module: 'Quản trị hệ thống', description: 'Tạo, sửa, phát hành và khôi phục phiên bản biểu mẫu in.', sensitive: true, roles: ['ADMIN'] },
+  { code: 'DOCUMENT_TEMPLATE_USE', name: 'In theo biểu mẫu', module: 'Báo cáo', description: 'Xem trước và in tài liệu theo biểu mẫu đã phát hành trong phạm vi được phép.', roles: ['ADMIN', 'TEACHER'] },
   { code: 'STUDENT_SCHEDULE_VIEW', name: 'Xem lịch thi cá nhân', module: 'Sinh viên', description: 'Xem lịch thi thuộc tài khoản sinh viên.', roles: ['STUDENT'] },
   { code: 'STUDENT_RESULT_VIEW', name: 'Xem kết quả cá nhân', module: 'Sinh viên', description: 'Xem kết quả đủ điều kiện công bố.', sensitive: true, roles: ['STUDENT'] },
   { code: 'STUDENT_CURRICULUM_VIEW', name: 'Xem chương trình đào tạo', module: 'Sinh viên', description: 'Xem chương trình đào tạo thuộc hồ sơ sinh viên.', roles: ['STUDENT'] },
@@ -53,6 +57,8 @@ const PROTECTED_USER_OVERRIDE_PERMISSIONS = new Set([
   'ACCESS_CONTROL_VIEW',
   'ACCESS_CONTROL_MANAGE',
   'AUDIT_LOG_VIEW',
+  'SECURITY_AUDIT_VIEW',
+  'SECURITY_AUDIT_MANAGE',
   'BACKUP_MANAGE',
   'USER_MANAGE',
   'EXAM_ARRANGEMENT_MANAGE',
@@ -60,6 +66,7 @@ const PROTECTED_USER_OVERRIDE_PERMISSIONS = new Set([
   'SYSTEM_REPORT_VIEW',
   'ESSAY_PUBLISH',
   'TRASH_MANAGE',
+  'DOCUMENT_TEMPLATE_MANAGE',
 ]);
 
 @Injectable()

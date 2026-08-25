@@ -22,6 +22,7 @@ import { ProctoringEventsBatchDto } from './dto/proctoring-event.dto';
 import { SubmitAppealDto } from './dto/appeal.dto';
 import { PermissionGuard } from '../access-control/permission.guard';
 import { Permissions } from '../access-control/permissions.decorator';
+import { SecurityAuditEvent } from '../security-audit/security-audit-event.decorator';
 
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 @Roles('STUDENT')
@@ -148,6 +149,7 @@ export class OnlineExamsController {
    * Xem kết quả bài thi (theo cấu hình công bố)
    */
   @Get('attempt/:attemptId/result')
+  @SecurityAuditEvent({ category: 'DATA_ACCESS', action: 'EXAM_RESULT_VIEWED', entityType: 'EXAM_ATTEMPT', entityIdParam: 'attemptId' })
   @Permissions('STUDENT_RESULT_VIEW')
   getAttemptResult(
     @Request() req: any,
@@ -161,6 +163,7 @@ export class OnlineExamsController {
    * Xem toàn bộ chi tiết bài làm của sinh viên (Review câu hỏi, câu trả lời, đáp án)
    */
   @Get('attempt/:attemptId/review')
+  @SecurityAuditEvent({ category: 'DATA_ACCESS', action: 'EXAM_ATTEMPT_REVIEW_VIEWED', entityType: 'EXAM_ATTEMPT', entityIdParam: 'attemptId' })
   @Roles('STUDENT', 'TEACHER', 'ADMIN')
   getAttemptReview(
     @Request() req: any,
@@ -188,6 +191,7 @@ export class OnlineExamsController {
    * Báo cáo tổng hợp điểm thi cho Giảng viên & Admin
    */
   @Get('schedule/:scheduleId/grade-report')
+  @SecurityAuditEvent({ category: 'DATA_ACCESS', action: 'GRADE_REPORT_VIEWED', entityType: 'EXAM_SCHEDULE', entityIdParam: 'scheduleId' })
   @Roles('ADMIN', 'TEACHER')
   getGradeReport(
     @Request() req: any,

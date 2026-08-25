@@ -68,7 +68,7 @@ export class ExamArrangementService {
     const majorSubjectMap = new Map(majorSubjects.map((ms) => [ms.departmentId, ms]));
 
     // 3. Kiểm tra phòng thi
-    const rooms = await tx.examRoom.findMany({
+    let rooms = await tx.examRoom.findMany({
       where: { id: { in: roomIds }, status: 'AVAILABLE' },
     });
 
@@ -123,12 +123,31 @@ export class ExamArrangementService {
       );
     }
 
-    // Kiểm tra tổng sức chứa các phòng
-    const totalCapacity = rooms.reduce((acc, r) => acc + r.capacity, 0);
+    // Tự đề xuất thêm phòng trống nếu sức chứa được chọn chưa đủ. Phòng bổ sung
+    // luôn được kiểm tra trùng ca như phòng do quản trị viên chọn.
+    const originalRoomIds = [...roomIds];
+    const autoAddedRooms: Array<{ id: number; roomCode: string; roomName: string; capacity: number }> = [];
+    let totalCapacity = rooms.reduce((acc, r) => acc + r.capacity, 0);
     if (totalCapacity < students.length) {
-      throw new BadRequestException(
-        `Tổng sức chứa của các phòng được chọn (${totalCapacity} chỗ) không đủ cho tổng số sinh viên (${students.length} sinh viên).`,
-      );
+      const conflictingRoomIds = new Set(overlappingScheduleRooms.map((item) => item.roomId));
+      const preferredBuilding = rooms[0]?.building;
+      const candidates = await tx.examRoom.findMany({
+        where: { status: 'AVAILABLE', id: { notIn: roomIds } },
+        orderBy: { roomCode: 'asc' },
+      });
+      candidates
+        .filter((room) => !conflictingRoomIds.has(room.id))
+        .sort((a, b) => Number(b.building === preferredBuilding) - Number(a.building === preferredBuilding) || b.capacity - a.capacity || a.roomCode.localeCompare(b.roomCode));
+      for (const room of candidates) {
+        if (totalCapacity >= students.length) break;
+        rooms.push(room);
+        totalCapacity += room.capacity;
+        autoAddedRooms.push({ id: room.id, roomCode: room.roomCode, roomName: room.roomName, capacity: room.capacity });
+      }
+    }
+    if (totalCapacity < students.length) {
+      const shortage = students.length - totalCapacity;
+      if (persist) throw new BadRequestException(`Không đủ chỗ ngồi: còn thiếu ${shortage} chỗ sau khi đã tìm tất cả phòng trống không trùng ca.`);
     }
 
     // 4. Xóa kết quả xếp phòng cũ của lịch thi này nếu có khi lưu chính thức
@@ -216,14 +235,15 @@ export class ExamArrangementService {
     }
 
     const alternativeRooms = persist ? [] : await tx.examRoom.findMany({
-      where: { status: 'AVAILABLE', id: { notIn: roomIds } },
+      where: { status: 'AVAILABLE', id: { notIn: [...roomIds, ...autoAddedRooms.map((room) => room.id)] } },
       orderBy: { capacity: 'desc' },
       take: roomIds.length,
       select: { id: true, capacity: true, roomCode: true },
     });
-    const hasAlternativeCapacity = alternativeRooms.reduce((sum, room) => sum + room.capacity, 0) >= students.length;
+    const hasAlternativeCapacity = totalCapacity >= students.length;
     const warnings: string[] = [];
     if (assignedRoomCount < rooms.length) warnings.push(`${rooms.length - assignedRoomCount} phòng được chọn nhưng không cần sử dụng hết sức chứa.`);
+    if (autoAddedRooms.length) warnings.push(`Đã tự đề xuất thêm ${autoAddedRooms.length} phòng để đủ chỗ ngồi; hãy kiểm tra trước khi lưu.`);
 
     const result = {
       message: persist ? 'Xếp sinh viên vào phòng thi tự động thành công!' : 'Đã tạo phương án xếp phòng. Chưa ghi dữ liệu.',
@@ -237,6 +257,9 @@ export class ExamArrangementService {
         reason: 'Không còn phòng đủ sức chứa',
       })),
       alternatives: hasAlternativeCapacity ? [{ roomIds: alternativeRooms.map((room) => room.id), rationale: `Có thể thay bằng các phòng ${alternativeRooms.map((room) => room.roomCode).join(', ')} với tổng sức chứa tương đương.` }] : [{ roomIds, rationale: 'Giữ nguyên các phòng đã chọn và xác nhận sau khi kiểm tra lại dữ liệu.' }],
+      autoAddedRooms,
+      selectedRoomIds: originalRoomIds,
+      effectiveRoomIds: rooms.map((room) => room.id),
       rationale: `Phân bổ sinh viên theo mã sinh viên tăng dần vào các phòng đã chọn theo sức chứa (${rooms.map((room) => room.roomCode).join(', ')}).`,
       summary: {
         totalStudents: students.length,

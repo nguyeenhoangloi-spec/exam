@@ -7,6 +7,7 @@ import { PermissionGuard } from '../access-control/permission.guard';
 import { Permissions } from '../access-control/permissions.decorator';
 import { ExamReportsService } from './exam-reports.service';
 import { ExamReportExportDto, ExamReportPreviewDto } from './dto/report-request.dto';
+import { SecurityAuditEvent } from '../security-audit/security-audit-event.decorator';
 
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 @Roles('ADMIN', 'TEACHER')
@@ -16,6 +17,7 @@ export class ExamReportsController {
   constructor(private readonly service: ExamReportsService) {}
 
   @Get('summary')
+  @SecurityAuditEvent({ category: 'DATA_ACCESS', action: 'EXAM_REPORT_SUMMARY_VIEWED', entityType: 'EXAM_REPORT' })
   getSummary(@Request() req: any, @Query() query: Record<string, string>) {
     return this.service.getSummary(req.user, query);
   }
@@ -32,6 +34,7 @@ export class ExamReportsController {
 
   @Post('preview')
   @HttpCode(200)
+  @SecurityAuditEvent({ category: 'DATA_ACCESS', action: 'EXAM_REPORT_PREVIEWED', entityType: 'EXAM_REPORT' })
   preview(@Request() req: any, @Body() dto: ExamReportPreviewDto) {
     return this.service.preview(req.user, dto);
   }

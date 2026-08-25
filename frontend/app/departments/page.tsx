@@ -372,6 +372,7 @@ export default function DepartmentsPage() {
     printReport({
       title: 'BÁO CÁO DANH SÁCH KHOA ĐÀO TẠO',
       subtitle: 'Danh mục Khoa / Viện và tổng hợp quy mô trực thuộc',
+      facultyName: 'VĂN PHÒNG BAN GIÁM HIỆU',
       metaInfo: [
         { label: 'Tổng số Khoa', value: String(departments.length) },
         { label: 'Tổng số môn học', value: String(kpiData.totalSubjects) },
@@ -392,6 +393,11 @@ export default function DepartmentsPage() {
         d.classesCount ?? d._count?.classes ?? d.classes?.length ?? 0,
         d.teachersCount ?? d._count?.teachers ?? d.teachers?.length ?? 0,
       ]),
+      signers: [
+        { title: 'NGƯỜI LẬP DANH MỤC', subtitle: '(Ký, ghi rõ họ tên)' },
+        { title: 'BAN GIÁM HIỆU / HIỆU TRƯỞNG', subtitle: '(Ký, đóng dấu)' },
+      ],
+      templateCode: 'DEPARTMENT_DIRECTORY',
     });
   };
 
@@ -752,9 +758,8 @@ export default function DepartmentsPage() {
                       <td className="p-3 font-medium text-slate-800">{item.subject?.subjectName}</td>
                       <td className="p-3 text-center font-semibold text-blue-600">{item.subject?.credits}</td>
                       <td className="p-3">
-                        <span className={`px-2 py-0.5 rounded text-type-body font-semibold ${
-                          item.type === 'MANDATORY' ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-600'
-                        }`}>
+                        <span className={`px-2 py-0.5 rounded text-type-body font-semibold ${item.type === 'MANDATORY' ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-600'
+                          }`}>
                           {item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}
                         </span>
                       </td>

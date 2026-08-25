@@ -64,6 +64,7 @@ export default function ReportsPage() {
     printReport({
       title: 'BÁO CÁO TỔNG QUAN HỆ THỐNG KHẢO THÍ & NGÂN HÀNG ĐỀ THI',
       subtitle: `Tổng hợp số liệu thời gian thực · Ngày trích xuất: ${dateStr}`,
+      facultyName: 'BAN KHẢO THÍ & ĐẢM BẢO CHẤT LƯỢNG',
       metaInfo: [
         { label: 'Đơn vị lập báo cáo', value: 'Ban Khảo thí & Đảm bảo chất lượng giáo dục' },
         { label: 'Hệ thống', value: 'Exam Management System (EMS)' },
@@ -87,6 +88,7 @@ export default function ReportsPage() {
         { title: 'NGƯỜI LẬP BÁO CÁO', subtitle: '(Ký, ghi rõ họ tên)' },
         { title: 'TRƯỞNG BAN KHẢO THÍ', subtitle: '(Ký tên, đóng dấu)' },
       ],
+      templateCode: 'EXAM_SUMMARY_REPORT',
     });
   };
 

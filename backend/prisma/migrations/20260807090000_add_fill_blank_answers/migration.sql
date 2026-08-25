@@ -1,6 +1,6 @@
 CREATE TABLE "fill_blank_answers" (
-    "id" TEXT NOT NULL,
-    "questionId" TEXT NOT NULL,
+    "id" UUID NOT NULL,
+    "questionId" UUID NOT NULL,
     "blankIndex" INTEGER NOT NULL,
     "answer" TEXT NOT NULL,
     "normalizedAnswer" TEXT NOT NULL,

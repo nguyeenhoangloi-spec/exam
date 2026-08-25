@@ -29,6 +29,9 @@ import {
   Headphones,
   Sparkles,
   ClipboardList,
+  FileCog,
+  ShieldAlert,
+  Settings,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Role, User } from '../types';
@@ -185,7 +188,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         items: [
           { name: 'Phân quyền & truy cập', href: '/admin/access-control', icon: KeyRound },
           { name: 'Nhật ký hệ thống', href: '/admin/activity-logs', icon: Activity },
+          { name: 'Kiểm toán & bảo mật', href: '/admin/security-audit', icon: ShieldAlert },
           { name: 'Sao lưu dữ liệu', href: '/admin/backups', icon: DatabaseBackup },
+          { name: 'Cài đặt hệ thống', href: '/admin/settings', icon: Settings },
+          { name: 'Biểu mẫu', href: '/admin/document-templates', icon: FileCog },
           {
             name: 'Thùng rác',
             href: '/trash',

@@ -8,6 +8,7 @@ import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { exportToFormattedExcel } from '../../lib/export-excel';
 import { printReport } from '../../lib/export-print';
+import { printDocumentTemplate } from '../../lib/print-template';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
@@ -25,6 +26,8 @@ import { ViewMode } from '../../components/ui/ViewModeSegmentedControl';
 import { ExamScheduleBulkAction } from '../../components/exam-schedules/ExamScheduleBulkAction';
 import { ExamScheduleTable, ExamScheduleItemExtended, computeShiftName, computeScheduleStatus } from '../../components/exam-schedules/ExamScheduleTable';
 import { ExamSchedulePaginationBar } from '../../components/exam-schedules/ExamSchedulePaginationBar';
+import { RescheduleModal } from '../../components/exam-schedules/RescheduleModal';
+import { CancelScheduleModal } from '../../components/exam-schedules/CancelScheduleModal';
 import { Calendar, Clock, Building, Users, AlertTriangle, FileSpreadsheet, Search, X } from 'lucide-react';
 
 function calculateEndTime(startTime: string, durationMinutes: number): string {
@@ -86,6 +89,8 @@ export default function ExamSchedulesPage() {
 
   const [selected, setSelected] = useState<number[]>([]);
   const [drawerSchedule, setDrawerSchedule] = useState<ExamScheduleItemExtended | null>(null);
+  const [rescheduleSchedule, setRescheduleSchedule] = useState<ExamScheduleItemExtended | null>(null);
+  const [cancelScheduleItem, setCancelScheduleItem] = useState<ExamScheduleItemExtended | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [editingSchedule, setEditingSchedule] = useState<ExamScheduleItemExtended | null>(null);
@@ -426,33 +431,13 @@ export default function ExamSchedulesPage() {
     });
   };
 
-  const handlePrintReport = () => {
-    printReport({
-      title: 'BÁO CÁO KẾ HOẠCH XẾP LỊCH THI',
-      subtitle: 'Danh sách chi tiết ca thi và bố trí phòng thi',
-      metaInfo: [
-        { label: 'Tổng số lịch thi', value: String(counts.total) },
-        { label: 'Sắp diễn ra', value: String(counts.upcoming) },
-      ],
-      columns: [
-        { header: 'STT', width: '40px' },
-        { header: 'Mã lịch', width: '90px' },
-        { header: 'Kỳ thi', width: '180px' },
-        { header: 'Phòng', width: '70px', align: 'center' },
-        { header: 'Ngày thi', width: '100px', align: 'center' },
-        { header: 'Thời gian', width: '110px', align: 'center' },
-        { header: 'Trạng thái', width: '100px', align: 'center' },
-      ],
-      rows: filteredSchedules.map((s, idx) => [
-        idx + 1,
-        s.code || `LCT${String(s.id).padStart(6, '0')}`,
-        s.periodName || '',
-        s.roomName || '',
-        s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : '',
-        `${s.startTime || '—'} - ${s.endTime || '—'}`,
-        s.statusBadge === 'UPCOMING' ? 'Sắp diễn ra' : 'Đã diễn ra',
-      ]),
-    });
+  const handlePrintReport = async () => {
+    try {
+      const opened = await printDocumentTemplate('EXAM_SCHEDULE_LIST');
+      if (!opened) setToast({ message: 'Trình duyệt đang chặn cửa sổ in. Hãy cho phép pop-up rồi thử lại.', type: 'error' });
+    } catch (error: any) {
+      setToast({ message: error?.response?.data?.message || 'Không thể in theo biểu mẫu đã phát hành.', type: 'error' });
+    }
   };
 
   return (
@@ -589,6 +574,8 @@ export default function ExamSchedulesPage() {
             onDetail={setDrawerSchedule}
             onEdit={openEditModal}
             onDelete={handleDelete}
+            onReschedule={setRescheduleSchedule}
+            onCancel={setCancelScheduleItem}
             isAdmin={currentUser?.role === 'ADMIN' || currentUser?.role === 'TEACHER'}
           />
         )}
@@ -984,6 +971,31 @@ export default function ExamSchedulesPage() {
           { label: 'Số lượng thí sinh', value: `${(drawerSchedule as any)?._count?.examRoomStudents ?? drawerSchedule?.studentCount ?? 0} thí sinh`, icon: Users },
           { label: 'Cán bộ giám thị', value: `${drawerSchedule?.supervisorCount || '2/2'} cán bộ`, icon: Users },
         ]}
+      />
+
+      {/* Reschedule Modal */}
+      <RescheduleModal
+        isOpen={Boolean(rescheduleSchedule)}
+        onClose={() => setRescheduleSchedule(null)}
+        schedule={rescheduleSchedule}
+        rooms={rooms}
+        onSuccess={async (msg) => {
+          invalidateCache('/exam-schedules');
+          await fetchInitialData();
+          setToast({ message: msg, type: 'success' });
+        }}
+      />
+
+      {/* Cancel Schedule Modal */}
+      <CancelScheduleModal
+        isOpen={Boolean(cancelScheduleItem)}
+        onClose={() => setCancelScheduleItem(null)}
+        schedule={cancelScheduleItem}
+        onSuccess={async (msg) => {
+          invalidateCache('/exam-schedules');
+          await fetchInitialData();
+          setToast({ message: msg, type: 'success' });
+        }}
       />
 
       {/* Confirm Popup */}

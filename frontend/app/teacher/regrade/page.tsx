@@ -263,6 +263,7 @@ export default function RegradeManagementPage() {
     printReport({
       title: 'BÁO CÁO TỔNG HỢP PHÚC KHẢO ĐIỂM THI',
       subtitle: 'Danh sách thẩm định đơn xin chấm lại bài thi',
+      facultyName: 'HỘI ĐỒNG PHÚC KHẢO & ĐBCL',
       metaInfo: [
         { label: 'Tổng số đơn', value: String(counts.all) },
         { label: 'Chờ thẩm định', value: String(counts.pending) },
@@ -286,6 +287,11 @@ export default function RegradeManagementPage() {
         item.status === 'APPROVED_REGRADE' && item.revisedScore !== null ? `${item.revisedScore.toFixed(1)}đ` : '--',
         item.status === 'APPROVED_REGRADE' ? 'Đã đổi điểm' : item.status === 'REJECTED' ? 'Từ chối' : 'Chờ xử lý',
       ]),
+      signers: [
+        { title: 'CÁN BỘ CHẤM PHÚC KHẢO', subtitle: '(Ký, ghi rõ họ tên)' },
+        { title: 'CHỦ TỊCH HỘI ĐỒNG PHÚC KHẢO', subtitle: '(Ký, đóng dấu)' },
+      ],
+      templateCode: 'GRADE_APPEAL_MINUTES',
     });
   };
 

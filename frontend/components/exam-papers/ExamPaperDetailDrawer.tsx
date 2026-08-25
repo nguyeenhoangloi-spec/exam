@@ -5,6 +5,7 @@ import {
   X,
   KeyRound,
   Download,
+  Printer,
   RotateCcw,
   Award,
   Search,
@@ -23,6 +24,7 @@ import { QuestionMediaPlayer } from '../exam/QuestionMediaPlayer';
 import { getImageUrl } from '../../lib/media-utils';
 import { DynamicImage } from '../ui/DynamicImage';
 import { ImageLightboxModal } from '../ImageLightboxModal';
+import { printExamPaper, getPublishedTemplatesMap } from '../../lib/export-print';
 
 export interface ExamPaperDetailDrawerProps {
   paper: ExamPaper | null;
@@ -139,6 +141,56 @@ export function ExamPaperDetailDrawer({
   const periodName = (paper.examSchedule as any)?.periodName || (paper.examSchedule as any)?.examPeriod?.name || 'Kỳ thi chính thức';
   const isBusy = busyId === Number(paper.id);
 
+  const handlePrintPaper = async () => {
+    if (!paper) return;
+    try {
+      const templateMap = await getPublishedTemplatesMap();
+      const officialTpl = templateMap['EXAM_PAPER_OFFICIAL'] || {};
+      const header = officialTpl.header || {};
+      const examInfo = officialTpl.examInfo || {};
+      const footer = officialTpl.footer || {};
+
+      const questionsList = rawQuestions.map((item: any, idx: number) => {
+        const q = item.question || item;
+        const opts = questionChoices(q);
+        return {
+          index: idx + 1,
+          content: q.content || q.questionText || '',
+          score: item.score || q.score || 1,
+          type: q.type,
+          options: opts.map((opt) => ({
+            key: opt.label,
+            text: opt.text,
+            isCorrect: opt.isCorrect,
+          })),
+          answerExplanation: q.answerExplanation || q.explanation,
+        };
+      });
+
+      printExamPaper({
+        institutionName: header.institutionName,
+        facultyName: header.facultyName,
+        motto: header.motto,
+        paperTitle: header.title || 'ĐỀ THI KẾT THÚC HỌC PHẦN',
+        subtitle: header.subtitle || (periodName ? `Kỳ thi: ${periodName}` : undefined),
+        subjectName: subjectName || 'Môn thi',
+        subjectCode: (paper.examSchedule?.subject as any)?.subjectCode || paper.paperCode || 'HP101',
+        paperCode: paper.paperCode,
+        durationMinutes: paper.durationMinutes || 60,
+        totalScore: paper.totalScore || 10,
+        showScoreBox: examInfo.showScoreBox !== false,
+        showInstructions: examInfo.showInstructions !== false,
+        instructionText: examInfo.instructionText,
+        questions: questionsList,
+        showAnswers: showAnswers,
+        signers: footer.signers,
+        footerNotes: footer.note,
+      });
+    } catch {
+      // Fallback
+    }
+  };
+
   return (
     <div role="dialog" aria-modal="true" aria-label="Chi tiết đề thi" className={`fixed inset-0 z-[100] overflow-hidden ${isOpen ? '' : 'pointer-events-none'}`}>
       {/* ── Overlay Backdrop ── */}
@@ -243,6 +295,16 @@ export function ExamPaperDetailDrawer({
                 leftIcon={<Download className="h-3.5 w-3.5 text-slate-500" />}
               >
                 Xuất Word
+              </Button>
+
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={handlePrintPaper}
+                leftIcon={<Printer className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />}
+              >
+                In đề thi
               </Button>
             </div>
           </div>

@@ -408,11 +408,10 @@ function TrashPageContent() {
                 setPage(1);
                 router.push(`/trash?type=${item.key}`);
               }}
-              className={`group relative flex flex-col justify-between p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer shadow-2xs hover:-translate-y-0.5 hover:shadow-md ${
-                isSelected
+              className={`group relative flex flex-col justify-between p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer shadow-2xs hover:-translate-y-0.5 hover:shadow-md ${isSelected
                   ? 'bg-blue-50/40 dark:bg-blue-950/30 border-blue-500 ring-2 ring-blue-500/20'
                   : 'bg-white dark:bg-slate-900 border-slate-200/90 dark:border-slate-800 hover:border-slate-300/90 dark:hover:border-slate-700'
-              }`}
+                }`}
             >
               <div className="flex items-start justify-between gap-3 w-full">
                 <div className="space-y-1 min-w-0">
@@ -424,11 +423,10 @@ function TrashPageContent() {
                   </div>
                 </div>
                 <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-semibold transition-all duration-200 group-hover:scale-105 ${
-                    isSelected
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-semibold transition-all duration-200 group-hover:scale-105 ${isSelected
                       ? 'bg-blue-600 text-white'
                       : 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white'
-                  }`}
+                    }`}
                 >
                   <IconComponent className="h-5 w-5 stroke-[2.2]" />
                 </div>
@@ -569,184 +567,91 @@ function TrashPageContent() {
         </div>
       </div>
 
-        {/* Render Dữ Liệu Thực Tế Theo 3 Chế Độ Xem (View Mode) */}
-        {loading ? (
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-12 text-center space-y-3 shadow-2xs">
-            <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto" />
-            <p className="text-type-helper font-semibold text-slate-500">Đang tải danh sách dữ liệu...</p>
+      {/* Render Dữ Liệu Thực Tế Theo 3 Chế Độ Xem (View Mode) */}
+      {loading ? (
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-12 text-center space-y-3 shadow-2xs">
+          <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto" />
+          <p className="text-type-helper font-semibold text-slate-500">Đang tải danh sách dữ liệu...</p>
+        </div>
+      ) : sortedItems.length === 0 ? (
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-12 text-center space-y-3 shadow-2xs">
+          <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto text-slate-500">
+            <Trash2 className="w-6 h-6" />
           </div>
-        ) : sortedItems.length === 0 ? (
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-12 text-center space-y-3 shadow-2xs">
-            <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto text-slate-500">
-              <Trash2 className="w-6 h-6" />
-            </div>
-            <h3 className="text-type-card font-semibold text-slate-900">Thùng rác trống</h3>
-            <p className="text-type-body text-slate-500 font-normal">Không có dữ liệu nào bị xóa trong danh mục này.</p>
-          </div>
-        ) : viewMode === 'grid' ? (
-          /* CHẾ ĐỘ XEM GRID (LƯỚI THẺ CARD UI) */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {paginatedItems.map((item) => {
-              const remainingDays = getRemainingDays(item.deletedAt);
-              const isSelected = selectedIds.includes(item.id);
+          <h3 className="text-type-card font-semibold text-slate-900">Thùng rác trống</h3>
+          <p className="text-type-body text-slate-500 font-normal">Không có dữ liệu nào bị xóa trong danh mục này.</p>
+        </div>
+      ) : viewMode === 'grid' ? (
+        /* CHẾ ĐỘ XEM GRID (LƯỚI THẺ CARD UI) */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {paginatedItems.map((item) => {
+            const remainingDays = getRemainingDays(item.deletedAt);
+            const isSelected = selectedIds.includes(item.id);
 
-              return (
-                <div
-                  key={`${item.type}-${item.id}`}
-                  className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-300 rounded-2xl p-5 shadow-2xs hover:shadow-md transition space-y-4 flex flex-col justify-between ${
-                    isSelected ? 'ring-2 ring-blue-500 bg-blue-50/10' : ''
+            return (
+              <div
+                key={`${item.type}-${item.id}`}
+                className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-300 rounded-2xl p-5 shadow-2xs hover:shadow-md transition space-y-4 flex flex-col justify-between ${isSelected ? 'ring-2 ring-blue-500 bg-blue-50/10' : ''
                   }`}
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                          className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
-                        />
-                        <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full tabular-nums border border-slate-200 dark:border-slate-700 truncate">
-                          {categoryLabelMap[item.type] || item.type}
-                        </span>
-                      </div>
-                      <span className={`inline-flex items-center gap-[6px] text-type-helper leading-5 font-semibold ${
-                        remainingDays <= 5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
-                      }`}>
-                        <Clock className="w-3.5 h-3.5" />
-                        Còn {remainingDays} ngày
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={(e) => handleSelectOne(item.id, e.target.checked)}
+                        className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                      />
+                      <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full tabular-nums border border-slate-200 dark:border-slate-700 truncate">
+                        {categoryLabelMap[item.type] || item.type}
                       </span>
                     </div>
-
-                    <div>
-                      <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-type-card leading-[26px] line-clamp-2">{item.title}</h4>
-                      {item.subTitle && (
-                        <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">{item.subTitle}</p>
-                      )}
-                    </div>
-
-                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-type-helper space-y-1 text-slate-600 dark:text-slate-400 font-normal">
-                      {visibleColumns.deletedAt && (
-                        <p className="flex justify-between">
-                          <span className="text-slate-500 dark:text-slate-400">Thời điểm xóa:</span>
-                          <span className="font-medium text-slate-900 dark:text-slate-100">{item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '---'}</span>
-                        </p>
-                      )}
-                      {visibleColumns.deletedBy && (
-                        <p className="flex justify-between">
-                          <span className="text-slate-500 dark:text-slate-400">Người xóa:</span>
-                          <span className="font-medium text-slate-900 dark:text-slate-100">{item.deletedBy}</span>
-                        </p>
-                      )}
-                    </div>
+                    <span className={`inline-flex items-center gap-[6px] text-type-helper leading-5 font-semibold ${remainingDays <= 5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
+                      }`}>
+                      <Clock className="w-3.5 h-3.5" />
+                      Còn {remainingDays} ngày
+                    </span>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                    <button
-                      type="button"
-                      onClick={() => setDetailItem(item)}
-                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-type-body-sm font-medium transition cursor-pointer"
-                    >
-                      <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-                      <span>Xem chi tiết</span>
-                    </button>
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => handleRestore(item)}
-                        title="Khôi phục"
-                        className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 rounded-xl transition cursor-pointer select-none"
-                      >
-                        <RotateCcw className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleHardDelete(item)}
-                        title="Xóa vĩnh viễn"
-                        className="p-1.5 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-xl transition cursor-pointer select-none"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-type-card leading-[26px] line-clamp-2">{item.title}</h4>
+                    {item.subTitle && (
+                      <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">{item.subTitle}</p>
+                    )}
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-type-helper space-y-1 text-slate-600 dark:text-slate-400 font-normal">
+                    {visibleColumns.deletedAt && (
+                      <p className="flex justify-between">
+                        <span className="text-slate-500 dark:text-slate-400">Thời điểm xóa:</span>
+                        <span className="font-medium text-slate-900 dark:text-slate-100">{item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '---'}</span>
+                      </p>
+                    )}
+                    {visibleColumns.deletedBy && (
+                      <p className="flex justify-between">
+                        <span className="text-slate-500 dark:text-slate-400">Người xóa:</span>
+                        <span className="font-medium text-slate-900 dark:text-slate-100">{item.deletedBy}</span>
+                      </p>
+                    )}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        ) : viewMode === 'compact' ? (
-          /* CHẾ ĐỘ XEM THẺ THANH NGANG THU GỌN (COMPACT CARD ROW MODE) */
-          <div className="space-y-2.5">
-            {paginatedItems.map((item) => {
-              const remainingDays = getRemainingDays(item.deletedAt);
-              const isSelected = selectedIds.includes(item.id);
 
-              return (
-                <div
-                  key={`${item.type}-${item.id}`}
-                  className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${
-                    isSelected ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                  }`}
-                >
-                  {/* Left: Checkbox + Title + Meta chips */}
-                  <div className="flex items-center gap-3 min-w-0">
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
-                    />
-
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
-                          {item.title}
-                        </span>
-                        <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full tabular-nums border border-slate-200 dark:border-slate-700">
-                          {categoryLabelMap[item.type] || item.type}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
-                        {item.subTitle && (
-                          <span className="text-slate-600 dark:text-slate-300 truncate max-w-sm">
-                            {item.subTitle}
-                          </span>
-                        )}
-                        <span className={`inline-flex items-center gap-1 font-medium ${
-                          remainingDays <= 5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
-                        }`}>
-                          <Clock className="w-3.5 h-3.5" />
-                          <span>Còn {remainingDays} ngày</span>
-                        </span>
-                        {item.deletedAt && (
-                          <span className="text-slate-400">
-                            Xóa lúc: {new Date(item.deletedAt).toLocaleString('vi-VN')}
-                          </span>
-                        )}
-                        {item.deletedBy && (
-                          <span className="text-slate-400">
-                            Bởi: <strong className="text-slate-600 dark:text-slate-300 font-medium">{item.deletedBy}</strong>
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right: Actions */}
-                  <div className="flex items-center gap-1 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => setDetailItem(item)}
-                      title="Xem chi tiết"
-                      className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </button>
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => setDetailItem(item)}
+                    className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-type-body-sm font-medium transition cursor-pointer"
+                  >
+                    <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+                    <span>Xem chi tiết</span>
+                  </button>
+                  <div className="flex items-center gap-1">
                     <button
                       type="button"
                       onClick={() => handleRestore(item)}
-                      title="Khôi phục dữ liệu"
-                      className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 rounded-xl transition cursor-pointer active:scale-95 select-none"
+                      title="Khôi phục"
+                      className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 rounded-xl transition cursor-pointer select-none"
                     >
                       <RotateCcw className="w-4 h-4" />
                     </button>
@@ -754,236 +659,323 @@ function TrashPageContent() {
                       type="button"
                       onClick={() => handleHardDelete(item)}
                       title="Xóa vĩnh viễn"
-                      className="p-1.5 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-xl transition cursor-pointer active:scale-95 select-none"
+                      className="p-1.5 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-xl transition cursor-pointer select-none"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        ) : (
-          /* CHẾ ĐỘ XEM TABLE (LIST MODE) */
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-2xs overflow-hidden">
-             <div className="ui-table-wrap overflow-x-auto">
-               <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
-                <thead className="bg-slate-50 dark:bg-slate-800 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
-                  <tr>
-                    <th className="px-5 w-10 py-3.5 text-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedIds.length === paginatedItems.length && paginatedItems.length > 0}
-                        onChange={(e) => handleSelectAll(e.target.checked)}
-                        className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                      />
-                    </th>
-                    <th className="px-5 py-3.5">Nội dung / Dữ liệu đã xóa</th>
-                    {visibleColumns.deletedAt && <th className="px-5 py-3.5 whitespace-nowrap">Thời điểm xóa</th>}
-                    {visibleColumns.expiresIn && <th className="px-5 py-3.5 whitespace-nowrap">Tự động hủy</th>}
-                    {visibleColumns.deletedBy && <th className="px-5 py-3.5 whitespace-nowrap">Người xóa</th>}
-                    {visibleColumns.actions && <th className="px-5 text-right py-3.5 whitespace-nowrap">Thao tác</th>}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-normal">
-                  {paginatedItems.map((item) => {
-                    const remainingDays = getRemainingDays(item.deletedAt);
-                    const isSelected = selectedIds.includes(item.id);
+              </div>
+            );
+          })}
+        </div>
+      ) : viewMode === 'compact' ? (
+        /* CHẾ ĐỘ XEM THẺ THANH NGANG THU GỌN (COMPACT CARD ROW MODE) */
+        <div className="space-y-2.5">
+          {paginatedItems.map((item) => {
+            const remainingDays = getRemainingDays(item.deletedAt);
+            const isSelected = selectedIds.includes(item.id);
 
-                    return (
-                      <tr
-                        key={`${item.type}-${item.id}`}
-                        className={`transition hover:bg-slate-50/60 dark:hover:bg-slate-800/40 ${isSelected ? 'bg-blue-50/30' : ''}`}
-                      >
-                        <td className="px-5 py-3.5 text-center w-10">
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                            className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                          />
+            return (
+              <div
+                key={`${item.type}-${item.id}`}
+                className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${isSelected ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
+                  }`}
+              >
+                {/* Left: Checkbox + Title + Meta chips */}
+                <div className="flex items-center gap-3 min-w-0">
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={(e) => handleSelectOne(item.id, e.target.checked)}
+                    className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                  />
+
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
+                        {item.title}
+                      </span>
+                      <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full tabular-nums border border-slate-200 dark:border-slate-700">
+                        {categoryLabelMap[item.type] || item.type}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
+                      {item.subTitle && (
+                        <span className="text-slate-600 dark:text-slate-300 truncate max-w-sm">
+                          {item.subTitle}
+                        </span>
+                      )}
+                      <span className={`inline-flex items-center gap-1 font-medium ${remainingDays <= 5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
+                        }`}>
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>Còn {remainingDays} ngày</span>
+                      </span>
+                      {item.deletedAt && (
+                        <span className="text-slate-400">
+                          Xóa lúc: {new Date(item.deletedAt).toLocaleString('vi-VN')}
+                        </span>
+                      )}
+                      {item.deletedBy && (
+                        <span className="text-slate-400">
+                          Bởi: <strong className="text-slate-600 dark:text-slate-300 font-medium">{item.deletedBy}</strong>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Actions */}
+                <div className="flex items-center gap-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setDetailItem(item)}
+                    title="Xem chi tiết"
+                    className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleRestore(item)}
+                    title="Khôi phục dữ liệu"
+                    className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 rounded-xl transition cursor-pointer active:scale-95 select-none"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleHardDelete(item)}
+                    title="Xóa vĩnh viễn"
+                    className="p-1.5 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-xl transition cursor-pointer active:scale-95 select-none"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        /* CHẾ ĐỘ XEM TABLE (LIST MODE) */
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-2xs overflow-hidden">
+          <div className="ui-table-wrap overflow-x-auto">
+            <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
+              <thead className="bg-slate-50 dark:bg-slate-800 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th className="px-5 w-10 py-3.5 text-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.length === paginatedItems.length && paginatedItems.length > 0}
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    />
+                  </th>
+                  <th className="px-5 py-3.5">Nội dung / Dữ liệu đã xóa</th>
+                  {visibleColumns.deletedAt && <th className="px-5 py-3.5 whitespace-nowrap">Thời điểm xóa</th>}
+                  {visibleColumns.expiresIn && <th className="px-5 py-3.5 whitespace-nowrap">Tự động hủy</th>}
+                  {visibleColumns.deletedBy && <th className="px-5 py-3.5 whitespace-nowrap">Người xóa</th>}
+                  {visibleColumns.actions && <th className="px-5 text-right py-3.5 whitespace-nowrap">Thao tác</th>}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-normal">
+                {paginatedItems.map((item) => {
+                  const remainingDays = getRemainingDays(item.deletedAt);
+                  const isSelected = selectedIds.includes(item.id);
+
+                  return (
+                    <tr
+                      key={`${item.type}-${item.id}`}
+                      className={`transition hover:bg-slate-50/60 dark:hover:bg-slate-800/40 ${isSelected ? 'bg-blue-50/30' : ''}`}
+                    >
+                      <td className="px-5 py-3.5 text-center w-10">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(e) => handleSelectOne(item.id, e.target.checked)}
+                          className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                        />
+                      </td>
+                      <td className="px-5 py-3.5 min-w-[240px]">
+                        <div>
+                          <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body leading-snug">{item.title}</p>
+                          {item.subTitle && (
+                            <p className="table-meta text-type-helper leading-[20px] text-slate-500 dark:text-slate-400 font-normal mt-0.5">{item.subTitle}</p>
+                          )}
+                        </div>
+                      </td>
+                      {visibleColumns.deletedAt && (
+                        <td className="table-meta px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-type-body-sm">
+                          {item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '---'}
                         </td>
-                        <td className="px-5 py-3.5 min-w-[240px]">
-                          <div>
-                            <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body leading-snug">{item.title}</p>
-                            {item.subTitle && (
-                              <p className="table-meta text-type-helper leading-[20px] text-slate-500 dark:text-slate-400 font-normal mt-0.5">{item.subTitle}</p>
-                            )}
+                      )}
+                      {visibleColumns.expiresIn && (
+                        <td className="px-5 whitespace-nowrap py-3.5">
+                          <span className={`table-badge inline-flex items-center gap-[6px] text-type-helper leading-[20px] font-medium ${remainingDays <= 5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
+                            }`}>
+                            <Clock className="w-3.5 h-3.5" />
+                            Còn {remainingDays} ngày
+                          </span>
+                        </td>
+                      )}
+                      {visibleColumns.deletedBy && (
+                        <td className="px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-type-body">
+                          <span className="font-medium text-slate-700 dark:text-slate-300">
+                            {item.deletedBy}
+                          </span>
+                        </td>
+                      )}
+                      {visibleColumns.actions && (
+                        <td className="px-5 text-right whitespace-nowrap py-3.5">
+                          <div className="inline-flex items-center gap-1 justify-end">
+                            <button
+                              onClick={() => setDetailItem(item)}
+                              title="Xem chi tiết"
+                              className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleRestore(item)}
+                              title="Khôi phục dữ liệu"
+                              className="p-1.5 rounded-xl text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer active:scale-95 select-none"
+                            >
+                              <RotateCcw className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleHardDelete(item)}
+                              title="Xóa vĩnh viễn"
+                              className="p-1.5 rounded-xl text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 transition cursor-pointer active:scale-95 select-none"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </div>
                         </td>
-                        {visibleColumns.deletedAt && (
-                          <td className="table-meta px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-type-body-sm">
-                            {item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '---'}
-                          </td>
-                        )}
-                        {visibleColumns.expiresIn && (
-                          <td className="px-5 whitespace-nowrap py-3.5">
-                            <span className={`table-badge inline-flex items-center gap-[6px] text-type-helper leading-[20px] font-medium ${
-                              remainingDays <= 5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
-                            }`}>
-                              <Clock className="w-3.5 h-3.5" />
-                              Còn {remainingDays} ngày
-                            </span>
-                          </td>
-                        )}
-                        {visibleColumns.deletedBy && (
-                          <td className="px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-type-body">
-                            <span className="font-medium text-slate-700 dark:text-slate-300">
-                              {item.deletedBy}
-                            </span>
-                          </td>
-                        )}
-                        {visibleColumns.actions && (
-                          <td className="px-5 text-right whitespace-nowrap py-3.5">
-                            <div className="inline-flex items-center gap-1 justify-end">
-                              <button
-                                onClick={() => setDetailItem(item)}
-                                title="Xem chi tiết"
-                                className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
-                              >
-                                <Eye className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => handleRestore(item)}
-                                title="Khôi phục dữ liệu"
-                                className="p-1.5 rounded-xl text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer active:scale-95 select-none"
-                              >
-                                <RotateCcw className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => handleHardDelete(item)}
-                                title="Xóa vĩnh viễn"
-                                className="p-1.5 rounded-xl text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 transition cursor-pointer active:scale-95 select-none"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </td>
-                        )}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                      )}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Thanh Phân Trang Chuẩn Hệ Thống */}
-        {sortedItems.length > 0 && (
-          <TrashPaginationBar
-            page={page}
-            totalPages={totalPages}
-            limit={pageSize}
-            totalItems={sortedItems.length}
-            categoryLabel={categoryLabelMap[activeCategory] || 'dữ liệu'}
-            onPage={(p) => setPage(p)}
-            onLimit={(l) => {
-              setPageSize(l);
-              setPage(1);
-            }}
-          />
-        )}
-
-        {/* Floating Bulk Action Bar */}
-        <TrashBulkAction
-          selectedCount={selectedIds.length}
-          totalCount={sortedItems.length}
-          allSelected={selectedIds.length === sortedItems.length && sortedItems.length > 0}
-          onToggleAll={() =>
-            setSelectedIds(selectedIds.length === sortedItems.length ? [] : sortedItems.map((i) => i.id))
-          }
-          onRestore={handleBulkRestore}
-          onHardDelete={handleBulkHardDelete}
-          onClear={() => setSelectedIds([])}
-        />
-
-        {/* ── Standardized ProfileDrawer ── */}
-        <ProfileDrawer
-          isOpen={Boolean(detailItem)}
-          onClose={() => setDetailItem(null)}
-          title={detailItem?.title || 'Chi tiết bản ghi'}
-          subtitle={detailItem?.id ? String(detailItem.id) : ''}
-          avatarText={detailItem?.title?.slice(0, 2)?.toUpperCase() || 'TR'}
-          badge={{
-            status: 'DELETED',
-            label: 'Đã xóa tạm thời',
+      {/* Thanh Phân Trang Chuẩn Hệ Thống */}
+      {sortedItems.length > 0 && (
+        <TrashPaginationBar
+          page={page}
+          totalPages={totalPages}
+          limit={pageSize}
+          totalItems={sortedItems.length}
+          categoryLabel={categoryLabelMap[activeCategory] || 'dữ liệu'}
+          onPage={(p) => setPage(p)}
+          onLimit={(l) => {
+            setPageSize(l);
+            setPage(1);
           }}
-          details={[
-            { label: 'Danh mục dữ liệu', value: categoryLabelMap[detailItem?.type || ''] || detailItem?.type || '---' },
-            ...(detailItem?.subTitle ? [{ label: 'Mô tả / Kỳ thi', value: detailItem.subTitle }] : []),
-            { label: 'Thời điểm xóa', value: detailItem?.deletedAt ? new Date(detailItem.deletedAt).toLocaleString('vi-VN') : '---' },
-            { label: 'Người thực hiện xóa', value: detailItem?.deletedBy || 'Hệ thống' },
-          ]}
-          extraSections={[
-            {
-              title: 'Thời hạn lưu trữ trong thùng rác',
-              content: (
-                <div className="space-y-2.5 pt-1">
-                  <div className="flex items-center justify-between text-type-helper">
-                    <span className="font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-slate-400" /> Thời gian còn lại
-                    </span>
-                    <span className="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
-                      Còn {getRemainingDays(detailItem?.deletedAt)} ngày nữa
-                    </span>
-                  </div>
+        />
+      )}
 
-                  <div className="h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-300 ${
-                        getRemainingDays(detailItem?.deletedAt) <= 7
-                          ? 'bg-rose-500'
-                          : getRemainingDays(detailItem?.deletedAt) <= 15
+      {/* Floating Bulk Action Bar */}
+      <TrashBulkAction
+        selectedCount={selectedIds.length}
+        totalCount={sortedItems.length}
+        allSelected={selectedIds.length === sortedItems.length && sortedItems.length > 0}
+        onToggleAll={() =>
+          setSelectedIds(selectedIds.length === sortedItems.length ? [] : sortedItems.map((i) => i.id))
+        }
+        onRestore={handleBulkRestore}
+        onHardDelete={handleBulkHardDelete}
+        onClear={() => setSelectedIds([])}
+      />
+
+      {/* ── Standardized ProfileDrawer ── */}
+      <ProfileDrawer
+        isOpen={Boolean(detailItem)}
+        onClose={() => setDetailItem(null)}
+        title={detailItem?.title || 'Chi tiết bản ghi'}
+        subtitle={detailItem?.id ? String(detailItem.id) : ''}
+        avatarText={detailItem?.title?.slice(0, 2)?.toUpperCase() || 'TR'}
+        badge={{
+          status: 'DELETED',
+          label: 'Đã xóa tạm thời',
+        }}
+        details={[
+          { label: 'Danh mục dữ liệu', value: categoryLabelMap[detailItem?.type || ''] || detailItem?.type || '---' },
+          ...(detailItem?.subTitle ? [{ label: 'Mô tả / Kỳ thi', value: detailItem.subTitle }] : []),
+          { label: 'Thời điểm xóa', value: detailItem?.deletedAt ? new Date(detailItem.deletedAt).toLocaleString('vi-VN') : '---' },
+          { label: 'Người thực hiện xóa', value: detailItem?.deletedBy || 'Hệ thống' },
+        ]}
+        extraSections={[
+          {
+            title: 'Thời hạn lưu trữ trong thùng rác',
+            content: (
+              <div className="space-y-2.5 pt-1">
+                <div className="flex items-center justify-between text-type-helper">
+                  <span className="font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-slate-400" /> Thời gian còn lại
+                  </span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
+                    Còn {getRemainingDays(detailItem?.deletedAt)} ngày nữa
+                  </span>
+                </div>
+
+                <div className="h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-300 ${getRemainingDays(detailItem?.deletedAt) <= 7
+                        ? 'bg-rose-500'
+                        : getRemainingDays(detailItem?.deletedAt) <= 15
                           ? 'bg-amber-500'
                           : 'bg-blue-600'
                       }`}
-                      style={{ width: `${Math.max(5, (getRemainingDays(detailItem?.deletedAt) / 30) * 100)}%` }}
-                    />
-                  </div>
-
-                  <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal leading-relaxed">
-                    Sau thời gian lưu trữ 30 ngày, hệ thống sẽ tự động dọn dẹp và xóa vĩnh viễn bản ghi khỏi cơ sở dữ liệu.
-                  </p>
+                    style={{ width: `${Math.max(5, (getRemainingDays(detailItem?.deletedAt) / 30) * 100)}%` }}
+                  />
                 </div>
-              ),
-            },
-            {
-              title: 'Thao tác bản ghi',
-              content: (
-                <div className="flex items-center justify-between gap-3 pt-1">
-                  <Button
-                    type="button"
-                    variant="danger"
-                    size="sm"
-                    onClick={() => {
-                      const item = detailItem;
-                      setDetailItem(null);
-                      if (item) handleHardDelete(item);
-                    }}
-                    leftIcon={<Trash2 className="w-3.5 h-3.5" />}
-                  >
-                    Xóa vĩnh viễn
-                  </Button>
 
-                  <Button
-                    type="button"
-                    variant="primary"
-                    size="sm"
-                    onClick={() => {
-                      const item = detailItem;
-                      setDetailItem(null);
-                      if (item) handleRestore(item);
-                    }}
-                    leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
-                  >
-                    Khôi phục
-                  </Button>
-                </div>
-              ),
-            },
-          ]}
-        />
+                <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal leading-relaxed">
+                  Sau thời gian lưu trữ 30 ngày, hệ thống sẽ tự động dọn dẹp và xóa vĩnh viễn bản ghi khỏi cơ sở dữ liệu.
+                </p>
+              </div>
+            ),
+          },
+          {
+            title: 'Thao tác bản ghi',
+            content: (
+              <div className="flex items-center justify-between gap-3 pt-1">
+                <Button
+                  type="button"
+                  variant="danger"
+                  size="sm"
+                  onClick={() => {
+                    const item = detailItem;
+                    setDetailItem(null);
+                    if (item) handleHardDelete(item);
+                  }}
+                  leftIcon={<Trash2 className="w-3.5 h-3.5" />}
+                >
+                  Xóa vĩnh viễn
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="sm"
+                  onClick={() => {
+                    const item = detailItem;
+                    setDetailItem(null);
+                    if (item) handleRestore(item);
+                  }}
+                  leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
+                >
+                  Khôi phục
+                </Button>
+              </div>
+            ),
+          },
+        ]}
+      />
     </main>
   );
 }

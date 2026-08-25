@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException, BadRequestException, OnModuleInit, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class TrashService implements OnModuleInit {
   private readonly logger = new Logger(TrashService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly audit: AuditService) {}
 
   /**
    * Tự động chạy khi NestJS Module khởi tạo & lập lịch quét dọn dẹp định kỳ 24h
@@ -65,14 +66,12 @@ export class TrashService implements OnModuleInit {
         `🧹 [TRASH AUTO-CLEANUP] Đã tự động xóa vĩnh viễn ${totalCleaned} bản ghi quá ${retentionDays} ngày (Schedules: ${deletedSchedules.count}, Papers: ${deletedPapers.count}, Questions: ${deletedQuestions.count})`,
       );
 
-      await this.prisma.auditLog.create({
-        data: {
+      await this.audit.write({
           actorId: actorId || null,
           action: 'AUTO_PURGE_TRASH',
           entityType: 'Trash',
           entityId: 'SYSTEM',
           description: `Hệ thống tự động dọn dẹp xóa vĩnh viễn ${totalCleaned} bản ghi trong thùng rác quá ${retentionDays} ngày (Lịch thi: ${deletedSchedules.count}, Đề thi: ${deletedPapers.count}, Câu hỏi: ${deletedQuestions.count})`,
-        },
       });
     }
 
@@ -238,14 +237,12 @@ export class TrashService implements OnModuleInit {
         },
       });
 
-      await this.prisma.auditLog.create({
-        data: {
+      await this.audit.write({
           actorId,
           action: 'RESTORE_EXAM_SCHEDULE',
           entityType: 'ExamSchedule',
           entityId: String(id),
           description: `Khôi phục lịch thi môn ${schedule.subject?.subjectName || ''} từ thùng rác`,
-        },
       });
 
       return { success: true, message: 'Khôi phục lịch thi thành công', item: restored };
@@ -268,14 +265,12 @@ export class TrashService implements OnModuleInit {
         },
       });
 
-      await this.prisma.auditLog.create({
-        data: {
+      await this.audit.write({
           actorId,
           action: 'RESTORE_EXAM_PAPER',
           entityType: 'ExamPaper',
           entityId: String(id),
           description: `Khôi phục đề thi mã ${paper.paperCode} từ thùng rác`,
-        },
       });
 
       return { success: true, message: 'Khôi phục đề thi thành công', item: restored };
@@ -297,14 +292,12 @@ export class TrashService implements OnModuleInit {
         },
       });
 
-      await this.prisma.auditLog.create({
-        data: {
+      await this.audit.write({
           actorId,
           action: 'RESTORE_QUESTION',
           entityType: 'Question',
           entityId: String(id),
           description: `Khôi phục câu hỏi [${question.code}] từ thùng rác`,
-        },
       });
 
       return { success: true, message: 'Khôi phục câu hỏi thành công', item: restored };
@@ -326,14 +319,12 @@ export class TrashService implements OnModuleInit {
 
       await this.prisma.examSchedule.delete({ where: { id: Number(id) } });
 
-      await this.prisma.auditLog.create({
-        data: {
+      await this.audit.write({
           actorId,
           action: 'HARD_DELETE_EXAM_SCHEDULE',
           entityType: 'ExamSchedule',
           entityId: String(id),
           description: `Xóa vĩnh viễn lịch thi ${schedule.subject?.subjectName || ''} khỏi hệ thống`,
-        },
       });
 
       return { success: true, message: 'Đã xóa vĩnh viễn lịch thi khỏi Database' };
@@ -347,14 +338,12 @@ export class TrashService implements OnModuleInit {
 
       await this.prisma.examPaper.delete({ where: { id: Number(id) } });
 
-      await this.prisma.auditLog.create({
-        data: {
+      await this.audit.write({
           actorId,
           action: 'HARD_DELETE_EXAM_PAPER',
           entityType: 'ExamPaper',
           entityId: String(id),
           description: `Xóa vĩnh viễn đề thi ${paper.paperCode} khỏi hệ thống`,
-        },
       });
 
       return { success: true, message: 'Đã xóa vĩnh viễn đề thi khỏi Database' };
@@ -368,14 +357,12 @@ export class TrashService implements OnModuleInit {
 
       await this.prisma.question.delete({ where: { id: String(id) } });
 
-      await this.prisma.auditLog.create({
-        data: {
+      await this.audit.write({
           actorId,
           action: 'HARD_DELETE_QUESTION',
           entityType: 'Question',
           entityId: String(id),
           description: `Xóa vĩnh viễn câu hỏi [${question.code}] khỏi hệ thống`,
-        },
       });
 
       return { success: true, message: 'Đã xóa vĩnh viễn câu hỏi khỏi Database' };

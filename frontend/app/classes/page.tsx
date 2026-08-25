@@ -200,7 +200,7 @@ export default function ClassesPage() {
           c.name.toLowerCase().includes(search.toLowerCase()) ||
           c.code.toLowerCase().includes(search.toLowerCase());
         const matchDept = selectedDeptId ? String(c.departmentId) === selectedDeptId : true;
-        
+
         let matchSize = true;
         const count = c._count?.students ?? c.studentsCount ?? c.students?.length ?? 0;
         if (selectedSizeRange === 'over40') matchSize = count > 40;
@@ -323,6 +323,7 @@ export default function ClassesPage() {
     printReport({
       title: 'BÁO CÁO DANH SÁCH LỚP HỌC',
       subtitle: 'Danh sách lớp học và quy mô sĩ số sinh viên',
+      facultyName: 'PHÒNG ĐÀO TẠO & CÔNG TÁC SINH VIÊN',
       metaInfo: [
         { label: 'Tổng số lớp', value: String(classes.length) },
         { label: 'Tổng số sinh viên', value: `${kpiData.totalStudents} SV` },
@@ -341,6 +342,11 @@ export default function ClassesPage() {
         c.department?.name || c.departmentName || '',
         `${c.studentsCount ?? c._count?.students ?? c.students?.length ?? 0} SV`,
       ]),
+      signers: [
+        { title: 'NGƯỜI LẬP DANH SÁCH', subtitle: '(Ký, ghi rõ họ tên)' },
+        { title: 'TRƯỞNG PHÒNG ĐÀO TẠO', subtitle: '(Ký, đóng dấu)' },
+      ],
+      templateCode: 'CLASS_DIRECTORY',
     });
   };
 
@@ -639,18 +645,18 @@ export default function ClassesPage() {
       <ExcelImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
- title="Nhập danh sách lớp học"
- templateFileName="mau_danh_sach_lop.csv"
- entityLabel="lớp học"
- templateContent={'code,name,departmentId\nCNTT-K65,Công nghệ thông tin khóa 65,1'}
- onImportRows={async (row) => {
-  await api.post('/classes', {
-   code: row.code,
-   name: row.name,
-   departmentId: Number(row.departmentId || row.department),
-  });
- }}
- onImportSuccess={(data: any[]) => {
+        title="Nhập danh sách lớp học"
+        templateFileName="mau_danh_sach_lop.csv"
+        entityLabel="lớp học"
+        templateContent={'code,name,departmentId\nCNTT-K65,Công nghệ thông tin khóa 65,1'}
+        onImportRows={async (row) => {
+          await api.post('/classes', {
+            code: row.code,
+            name: row.name,
+            departmentId: Number(row.departmentId || row.department),
+          });
+        }}
+        onImportSuccess={(data: any[]) => {
           void fetchData();
           setToast({ message: `Đã nhập thành công ${data.length} lớp học từ CSV!`, type: 'success' });
         }}

@@ -33,6 +33,9 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { MaintenanceGuard } from './common/guards/maintenance.guard';
 import { BackupsModule } from './backups/backup.module';
 import { AccessControlModule } from './access-control/access-control.module';
+import { DocumentTemplatesModule } from './document-templates/document-templates.module';
+import { SecurityAuditModule } from './security-audit/security-audit.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -40,6 +43,8 @@ import { AccessControlModule } from './access-control/access-control.module';
     PrismaModule,
     SecurityModule,
     AuditModule,
+    SecurityAuditModule,
+    NotificationsModule,
     AuthModule,
     UsersModule,
     DepartmentsModule,
@@ -67,6 +72,7 @@ import { AccessControlModule } from './access-control/access-control.module';
     ExamReportsModule,
     BackupsModule,
     AccessControlModule,
+    DocumentTemplatesModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },

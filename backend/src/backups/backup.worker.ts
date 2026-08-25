@@ -17,6 +17,7 @@ type ManifestEntry = { path: string; size: number; modifiedAt: string; sha256: s
 export class BackupWorker implements OnModuleInit, OnModuleDestroy {
   private timer?: NodeJS.Timeout;
   private scheduledTask?: cron.ScheduledTask;
+  private lastScheduledSlot?: string;
   private running = false;
 
   constructor(
@@ -29,12 +30,11 @@ export class BackupWorker implements OnModuleInit, OnModuleDestroy {
   onModuleInit() {
     if (process.env.BACKUP_WORKER_ENABLED !== 'true') return;
     this.timer = setInterval(() => void this.tick(), 5_000);
-    const [hour, minute] = (process.env.BACKUP_SCHEDULE || '02:00').split(':').map(Number);
-    const expression = `${Number.isFinite(minute) ? minute : 0} ${Number.isFinite(hour) ? hour : 2} * * *`;
-    this.scheduledTask = cron.schedule(expression, () => void this.checkAutoBackupSchedule(), {
+    // Poll once per minute so a schedule changed from the admin UI takes effect
+    // without restarting the worker. The configured time is checked inside the callback.
+    this.scheduledTask = cron.schedule('* * * * *', () => void this.checkAutoBackupSchedule(), {
       timezone: process.env.BACKUP_TIMEZONE || 'Asia/Ho_Chi_Minh',
     });
-    void this.checkAutoBackupSchedule();
   }
 
   onModuleDestroy() {
@@ -81,6 +81,24 @@ export class BackupWorker implements OnModuleInit, OnModuleDestroy {
     try {
       const settings = await this.backup.getSettings();
       if (!settings.autoBackupEnabled) return;
+
+      const timezone = process.env.BACKUP_TIMEZONE || 'Asia/Ho_Chi_Minh';
+      const parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: timezone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      }).formatToParts(new Date()).reduce<Record<string, string>>((acc, part) => {
+        if (part.type !== 'literal') acc[part.type] = part.value;
+        return acc;
+      }, {});
+      const currentTime = `${parts.hour}:${parts.minute}`;
+      const slot = `${parts.year}-${parts.month}-${parts.day} ${currentTime}`;
+      if (currentTime !== settings.backupTime || this.lastScheduledSlot === slot) return;
+      this.lastScheduledSlot = slot;
 
       const intervalMs = Math.max(1, settings.intervalDays) * 24 * 60 * 60 * 1000;
       const latest = await this.prisma.backupJob.findFirst({

@@ -94,6 +94,21 @@ export class ExamPapersService {
     return paper;
   }
 
+  async recordExport(actor: Actor, id: number, payload: { format?: string; includeAnswerKey?: boolean }) {
+    const paper = await this.findOne(actor, id);
+    const requestedFormat = String(payload?.format || 'WORD').toUpperCase();
+    const format = ['WORD', 'PRINT', 'PDF'].includes(requestedFormat) ? requestedFormat : 'WORD';
+    await this.audit.write({
+      actorId: actor.id,
+      action: 'EXAM_PAPER_EXPORT_REQUESTED',
+      entityType: 'EXAM_PAPER',
+      entityId: id,
+      description: `Đã yêu cầu xuất đề thi ${paper.paperCode} định dạng ${format}.`,
+      metadata: { paperCode: paper.paperCode, format, includeAnswerKey: Boolean(payload?.includeAnswerKey) },
+    });
+    return { recorded: true };
+  }
+
   /**
    * A published paper makes the related exam schedule operational. Therefore,
    * room allocation and invigilator assignment must be complete before this

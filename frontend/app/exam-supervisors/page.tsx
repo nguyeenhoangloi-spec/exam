@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { exportToFormattedExcel } from '../../lib/export-excel';
 import { printReport } from '../../lib/export-print';
+import { printDocumentTemplate } from '../../lib/print-template';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
@@ -43,6 +44,8 @@ let _cache: { schedules: any[]; teachers: any[]; selectedSchedule: any; supervis
 export default function ExamSupervisorsPage() {
   usePageTitle('Phân công coi thi');
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const scheduleIdFromQuery = Number(searchParams.get('examScheduleId')) || null;
 
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(!_cache); // no loading if cache exists
@@ -52,6 +55,7 @@ export default function ExamSupervisorsPage() {
   const [selectedScheduleRoomId, setSelectedScheduleRoomId] = useState<string>('ALL');
 
   const [allScheduleSupervisors, setAllScheduleSupervisors] = useState<any[]>(_cache?.supervisors ?? []);
+  const [changeRequests, setChangeRequests] = useState<any[]>([]);
   const [drawerSupervisor, setDrawerSupervisor] = useState<any | null>(null);
 
   // Search & Filter State
@@ -144,9 +148,10 @@ export default function ExamSupervisorsPage() {
   const fetchData = useCallback(async (background = false) => {
     if (!background) setLoading(true);
     try {
-      const [resSchedules, resTeachers] = await Promise.all([
+      const [resSchedules, resTeachers, resChanges] = await Promise.all([
         api.get('/exam-schedules'),
         api.get('/teachers'),
+        api.get('/teachers/supervisor-change-requests'),
       ]);
 
       const sortedSchedules = (resSchedules.data || []).sort((a: any, b: any) => {
@@ -155,9 +160,10 @@ export default function ExamSupervisorsPage() {
 
       setSchedules(sortedSchedules);
       setTeachers(resTeachers.data || []);
+      setChangeRequests(resChanges.data || []);
 
       if (sortedSchedules.length > 0) {
-        const firstSched = sortedSchedules[0];
+        const firstSched = sortedSchedules.find((schedule: any) => schedule.id === scheduleIdFromQuery) || sortedSchedules[0];
         setSelectedSchedule(firstSched);
         setSelectedScheduleRoomId('ALL');
         const resSupv = await api.get(`/exam-supervisors?examScheduleId=${firstSched.id}`);
@@ -173,7 +179,26 @@ export default function ExamSupervisorsPage() {
     } finally {
       if (!background) setLoading(false);
     }
-  }, []);
+  }, [scheduleIdFromQuery]);
+
+  const reviewChangeRequest = async (request: any, approve: boolean) => {
+    try {
+      if (!approve) {
+        await api.post(`/teachers/supervisor-change-requests/${request.id}/reject`, {});
+        setToast({ message: 'Đã từ chối yêu cầu đổi ca; phân công cũ được giữ nguyên.', type: 'success' });
+      } else {
+        const candidates = await api.get(`/teachers/supervisor-change-requests/${request.id}/eligible-replacements`);
+        const options = (candidates.data || []).map((teacher: any) => `${teacher.id}: ${teacher.fullName} (${teacher.teacherCode})`).join('\n');
+        const selected = window.prompt(`Nhập ID giảng viên thay thế hợp lệ:\n${options}`);
+        if (!selected) return;
+        await api.post(`/teachers/supervisor-change-requests/${request.id}/approve`, { replacementTeacherId: Number(selected) });
+        setToast({ message: 'Đã duyệt đổi ca và gửi yêu cầu xác nhận đến giảng viên thay thế.', type: 'success' });
+      }
+      await fetchData(true);
+    } catch (err: any) {
+      setToast({ message: err?.response?.data?.message || err.message || 'Không thể xử lý yêu cầu đổi ca.', type: 'error' });
+    }
+  };
 
   useEffect(() => {
     const u = getAuthUser();
@@ -431,37 +456,19 @@ export default function ExamSupervisorsPage() {
   };
 
   // Print Report
-  const handlePrintReport = () => {
+  const handlePrintReport = async () => {
     if (!filteredSupervisors.length) {
       setToast({ message: 'Không có dữ liệu phân công để in.', type: 'error' });
       return;
     }
-
-    printReport({
-      title: 'BÁO CÁO PHÂN CÔNG CÁN BỘ COI THI',
-      subtitle: `Môn: ${selectedSchedule?.subject?.subjectName || ''} (${selectedSchedule?.subject?.subjectCode || ''}) | Ngày: ${selectedSchedule?.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : '---'} | Giờ: ${selectedSchedule?.startTime} - ${selectedSchedule?.endTime}`,
-      columns: [
-        { header: 'Mã Cán Bộ', width: '15%' },
-        { header: 'Họ và Tên', width: '25%' },
-        { header: 'Học Vị', width: '15%' },
-        { header: 'Phòng Thi', width: '20%' },
-        { header: 'Vai Trò', width: '15%' },
-        { header: 'Trạng Thái', width: '10%' },
-      ],
-      rows: filteredSupervisors.map((s) => {
-        const roomObj = s.examScheduleRoom?.room || s.examScheduleRoom?.examRoom;
-        const rName = roomObj?.roomName || roomObj?.name || roomObj?.roomCode || `Phòng #${s.examScheduleRoomId}`;
-        const statusLabel = ({ CONFIRMED: 'Đã xác nhận', CHANGE_REQUESTED: 'Xin đổi ca', COMPLETED: 'Hoàn thành', ABSENT: 'Vắng mặt', PENDING: 'Chờ phản hồi', REJECTED: 'Đã từ chối' } as Record<string, string>)[s.status || 'PENDING'] || 'Chờ phản hồi';
-        return [
-          s.teacher?.teacherCode || '',
-          s.teacher?.fullName || '',
-          s.teacher?.degree || 'TS',
-          rName,
-          s.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
-          statusLabel,
-        ];
-      }),
-    });
+    try {
+      const opened = await printDocumentTemplate('SUPERVISOR_ASSIGNMENT', {
+        ...(selectedSchedule?.id ? { examScheduleId: selectedSchedule.id } : {}),
+      });
+      if (!opened) setToast({ message: 'Trình duyệt đang chặn cửa sổ in. Hãy cho phép pop-up rồi thử lại.', type: 'error' });
+    } catch {
+      setToast({ message: 'Không thể tạo biểu mẫu in phân công. Vui lòng thử lại.', type: 'error' });
+    }
   };
 
   return (
@@ -503,6 +510,32 @@ export default function ExamSupervisorsPage() {
           completedCount={completedCount}
           totalRooms={currentRooms.length}
         />
+
+        {changeRequests.filter((request) => request.status === 'PENDING').length > 0 && (
+          <section className="rounded-2xl border border-amber-200/80 bg-white p-4 shadow-2xs dark:border-amber-900/60 dark:bg-slate-900">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">Yêu cầu đổi ca chờ duyệt</h2>
+                <p className="text-type-helper text-slate-600 dark:text-slate-300">Chỉ duyệt khi hệ thống tìm được giảng viên thay thế không trùng lịch và không báo bận.</p>
+              </div>
+              <span className="ui-pill rounded-full border border-amber-200 px-2 py-0.5 text-type-helper font-medium text-amber-700">{changeRequests.filter((request) => request.status === 'PENDING').length} chờ duyệt</span>
+            </div>
+            <div className="space-y-2">
+              {changeRequests.filter((request) => request.status === 'PENDING').map((request) => (
+                <div key={request.id} className="flex flex-col gap-3 rounded-xl border border-slate-200/90 p-3 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800">
+                  <div className="min-w-0">
+                    <p className="text-type-body-sm font-medium text-slate-900 dark:text-slate-100">{request.requesterTeacher?.fullName} · {request.examSupervisor?.examScheduleRoom?.examSchedule?.subject?.subjectName}</p>
+                    <p className="text-type-helper text-slate-700 dark:text-slate-300">Phòng {request.examSupervisor?.examScheduleRoom?.room?.roomCode} — Lý do: {request.reason}</p>
+                  </div>
+                  <div className="flex shrink-0 gap-2">
+                    <Button variant="secondary" size="sm" onClick={() => reviewChangeRequest(request, false)}>Từ chối</Button>
+                    <Button variant="primary" size="sm" onClick={() => reviewChangeRequest(request, true)}>Chọn người thay</Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* ── 3. Active Schedule Shift Banner & Inline Action Panels ── */}
         <div>

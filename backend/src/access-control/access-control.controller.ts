@@ -6,6 +6,7 @@ import { AccessControlService } from './access-control.service';
 import { AccessPolicyService } from './access-policy.service';
 import { PermissionGuard } from './permission.guard';
 import { Permissions } from './permissions.decorator';
+import { SecurityAuditEvent } from '../security-audit/security-audit-event.decorator';
 import {
   ReplaceUserScopesDto,
   SimulatePermissionDto,
@@ -31,6 +32,7 @@ export class AccessControlController {
 
   @Get('overview')
   @Permissions('ACCESS_CONTROL_VIEW')
+  @SecurityAuditEvent({ category: 'AUTHORIZATION', action: 'ACCESS_CONTROL_OVERVIEW_VIEWED', entityType: 'ACCESS_CONTROL' })
   getOverview() { return this.accessControl.getOverview(); }
 
   @Get('users')
@@ -43,6 +45,7 @@ export class AccessControlController {
 
   @Get('history')
   @Permissions('ACCESS_CONTROL_VIEW')
+  @SecurityAuditEvent({ category: 'AUTHORIZATION', action: 'ACCESS_CONTROL_HISTORY_VIEWED', entityType: 'ACCESS_CONTROL' })
   history(@Query('limit') limit?: string) {
     const parsedLimit = Number(limit);
     return this.accessControl.getHistory(Number.isFinite(parsedLimit) && parsedLimit > 0 ? parsedLimit : 100);
@@ -50,6 +53,7 @@ export class AccessControlController {
 
   @Get('users/:userId/effective')
   @Permissions('ACCESS_CONTROL_VIEW')
+  @SecurityAuditEvent({ category: 'AUTHORIZATION', action: 'USER_EFFECTIVE_PERMISSIONS_VIEWED', entityType: 'USER', entityIdParam: 'userId' })
   effective(@Param('userId', ParseIntPipe) userId: number) { return this.accessControl.getEffectivePermissions(userId); }
 
   @Put('roles/:role/permissions')

@@ -117,4 +117,89 @@ describe('ExamSchedulesService conflict rules', () => {
       .rejects
       .toBeInstanceOf(ForbiddenException);
   });
+
+  it('dời lịch thi thành công và kích hoạt gửi thông báo', async () => {
+    const existingSched = {
+      id: 12,
+      examPeriodId: 1,
+      subjectId: 1,
+      examDate: new Date('2026-08-15T00:00:00.000Z'),
+      startTime: '08:00',
+      endTime: '09:30',
+      status: 'SCHEDULED',
+      mode: 'OFFICIAL',
+      note: '',
+      examPeriod: period,
+      subject: { id: 1, subjectName: 'Lập trình', subjectCode: 'IT101' },
+      examScheduleRooms: [{ id: 5, roomId: 2, room: { roomCode: 'P101' }, examRoomStudents: [], supervisors: [] }],
+    };
+    const tx: any = {
+      examSchedule: {
+        update: jest.fn().mockResolvedValue({ ...existingSched, examDate: new Date('2026-08-20T00:00:00.000Z') }),
+      },
+    };
+    const prisma: any = {
+      examSchedule: {
+        findFirst: jest.fn().mockResolvedValue(existingSched),
+        findMany: jest.fn().mockResolvedValue([]),
+      },
+      $transaction: jest.fn((callback) => callback(tx)),
+    };
+    const audit: any = { write: jest.fn().mockResolvedValue(undefined) };
+    const notifs: any = {
+      notifyScheduleChange: jest.fn().mockResolvedValue({ totalNotified: 20 }),
+      notifyScheduleCancelled: jest.fn().mockResolvedValue({ totalNotified: 20 }),
+    };
+    const service = new ExamSchedulesService(prisma, audit, undefined, notifs);
+
+    const result = await service.reschedule({ id: 1, role: 'ADMIN' }, 12, {
+      newExamDate: '2026-08-20',
+      newStartTime: '10:00',
+      newEndTime: '11:30',
+      reason: 'Bảo trì phòng máy',
+    });
+
+    expect(result.message).toContain('Đã dời lịch thi môn Lập trình');
+    expect(result.totalNotified).toBe(20);
+    expect(notifs.notifyScheduleChange).toHaveBeenCalled();
+  });
+
+  it('hủy ca thi thành công và kích hoạt gửi thông báo hủy', async () => {
+    const existingSched = {
+      id: 15,
+      examDate: new Date('2026-08-15T00:00:00.000Z'),
+      startTime: '08:00',
+      endTime: '09:30',
+      status: 'SCHEDULED',
+      mode: 'OFFICIAL',
+      note: '',
+      examPeriod: period,
+      subject: { id: 1, subjectName: 'Lập trình' },
+      examScheduleRooms: [],
+    };
+    const tx: any = {
+      examSchedule: {
+        update: jest.fn().mockResolvedValue({ ...existingSched, status: 'CANCELLED' }),
+      },
+    };
+    const prisma: any = {
+      examSchedule: { findFirst: jest.fn().mockResolvedValue(existingSched) },
+      $transaction: jest.fn((callback) => callback(tx)),
+    };
+    const audit: any = { write: jest.fn().mockResolvedValue(undefined) };
+    const notifs: any = {
+      notifyScheduleChange: jest.fn().mockResolvedValue({ totalNotified: 0 }),
+      notifyScheduleCancelled: jest.fn().mockResolvedValue({ totalNotified: 15 }),
+    };
+    const service = new ExamSchedulesService(prisma, audit, undefined, notifs);
+
+    const result = await service.cancelSchedule({ id: 1, role: 'ADMIN' }, 15, {
+      reason: 'Sự cố mất điện diện rộng',
+    });
+
+    expect(result.schedule.status).toBe('CANCELLED');
+    expect(result.totalNotified).toBe(15);
+    expect(notifs.notifyScheduleCancelled).toHaveBeenCalled();
+  });
 });
+

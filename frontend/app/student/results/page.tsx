@@ -404,6 +404,7 @@ export default function StudentResultsPage() {
     printReport({
       title: 'BÁO CÁO KẾT QUẢ THI SINH VIÊN',
       subtitle: `Sinh viên: ${studentInfo?.fullName || ''} (${studentInfo?.studentCode || ''}) - Lớp: ${studentInfo?.className || ''} - Khoa: ${studentInfo?.departmentName || ''}`,
+      facultyName: 'PHÒNG ĐÀO TẠO & KHẢO THÍ',
       metaInfo: [
         { label: 'Số môn đã thi', value: `${stats.totalExams} môn` },
         { label: 'Điểm trung bình (GPA)', value: `${stats.avgScore.toFixed(1)} / 10` },
@@ -434,6 +435,7 @@ export default function StudentResultsPage() {
         { title: 'SINH VIÊN', subtitle: '(Ký, ghi rõ họ tên)' },
         { title: 'PHÒNG ĐÀO TẠO & KHẢO THÍ', subtitle: '(Ký tên, đóng dấu)' },
       ],
+      templateCode: 'GRADE_REPORT',
     });
   };
 
@@ -878,8 +880,8 @@ export default function StudentResultsPage() {
                   <div className="flex items-center gap-3 shrink-0">
                     {item.score !== null && (
                       <span className={`text-type-helper font-medium px-2.5 py-1 ui-pill rounded-full border tabular-nums ${item.score >= 4.0
-                          ? 'bg-slate-100 text-slate-800 border-slate-200 dark:text-slate-200 dark:border-slate-700'
-                          : 'bg-rose-50 text-rose-700 border-rose-200/80 dark:text-rose-300'
+                        ? 'bg-slate-100 text-slate-800 border-slate-200 dark:text-slate-200 dark:border-slate-700'
+                        : 'bg-rose-50 text-rose-700 border-rose-200/80 dark:text-rose-300'
                         }`}>
                         {item.score.toFixed(1)} điểm
                       </span>
@@ -1199,10 +1201,10 @@ export default function StudentResultsPage() {
                       const statusLabel = existingAppeal.status === 'PENDING'
                         ? 'Đang chờ duyệt'
                         : existingAppeal.status === 'APPROVED_REGRADE'
-                        ? 'Đã duyệt chấm lại'
-                        : existingAppeal.status === 'REJECTED'
-                        ? 'Bị từ chối'
-                        : 'Đang xử lý';
+                          ? 'Đã duyệt chấm lại'
+                          : existingAppeal.status === 'REJECTED'
+                            ? 'Bị từ chối'
+                            : 'Đang xử lý';
                       return (
                         <div className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-300/80 dark:border-amber-700/80 text-type-helper text-amber-800 dark:text-amber-300 shadow-2xs">
                           <div className="flex items-center gap-2">

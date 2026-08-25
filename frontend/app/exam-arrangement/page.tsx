@@ -67,6 +67,8 @@ type ArrangementResult = {
   warnings?: string[];
   errors?: string[];
   unassigned?: Array<{ studentId: number; studentCode: string; fullName: string; reason: string }>;
+  autoAddedRooms?: Array<{ id: number; roomCode: string; roomName: string; capacity: number }>;
+  effectiveRoomIds?: number[];
   summary: {
     totalStudents: number;
     totalRoomsAssigned: number;
@@ -359,6 +361,7 @@ export default function ExamArrangementPage() {
         roomIds: selectedRoomIds,
       });
       setResult(res.data);
+      if (res.data.effectiveRoomIds?.length) setSelectedRoomIds(res.data.effectiveRoomIds);
       setToast({ message: 'Đã tính toán phương án chỗ ngồi. Bấm "Lưu Phân Bổ" để ghi dữ liệu.', type: 'success' });
       // Tự động cuộn mượt mà xuống khu vực kết quả & nút lưu phân bổ (có khoảng đệm an toàn tránh che navbar)
       setTimeout(() => {
@@ -382,7 +385,7 @@ export default function ExamArrangementPage() {
     try {
       const res = await api.post<ArrangementResult>('/exam-arrangement/auto-arrange', {
         examScheduleId: Number(selectedScheduleId),
-        roomIds: selectedRoomIds,
+        roomIds: result?.effectiveRoomIds || selectedRoomIds,
         confirm: true,
       });
       setResult(res.data);
@@ -500,7 +503,7 @@ export default function ExamArrangementPage() {
         <div class="header">
           <div style="text-align:center;">
             <strong>BỘ GIÁO DỤC VÀ ĐÀO TẠO</strong><br/>
-            <strong>TRƯỜNG ĐẠI HỌC KHOA HỌC</strong>
+            <strong>TRƯỜNG ĐẠI HỌC NAM CẦN THƠ</strong>
           </div>
           <div style="text-align:center;">
             <strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br/>
@@ -592,14 +595,50 @@ export default function ExamArrangementPage() {
               )}</td><td style="text-align:center;font-weight:bold;color:#1d4ed8;">Ghế #${st.seatNumber}</td></tr>`
           )
           .join('');
-        return `<div style="page-break-after:always;padding:24px;margin-bottom:30px;border:1px solid #cbd5e1;border-radius:12px;"><div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:12px;margin-bottom:16px;"><h2 style="margin:0;font-size:18px;color:#0f172a;text-transform:uppercase;">HỘI ĐỒNG KHẢO THÍ SV - DANH SÁCH THÍ SINH TẠI PHÒNG THI</h2><h1 style="margin:4px 0 0;font-size:24px;color:#2563eb;font-weight:700;">PHÒNG THI: ${escapeHtml(
+        return `<div style="page-break-after:always;padding:24px;margin-bottom:30px;border:1px solid #cbd5e1;border-radius:12px;">
+          <table style="width:100%;border-collapse:collapse;margin-bottom:12px;">
+            <tr>
+              <td style="width:50%;text-align:center;font-weight:bold;font-size:11pt;border:none;">
+                TRƯỜNG ĐẠI HỌC NAM CẦN THƠ<br/>
+                <span style="font-weight:normal;font-size:10pt;">HỘI ĐỒNG KHẢO THÍ & ĐBCL</span><br/>
+                <div style="border-top:1px solid #334155;display:inline-block;padding-top:2px;width:110px;margin-top:2px;"></div>
+              </td>
+              <td style="width:50%;text-align:center;font-weight:bold;font-size:11pt;border:none;">
+                CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br/>
+                <em style="font-style:italic;font-size:10.5pt;font-weight:bold;">Độc lập - Tự do - Hạnh phúc</em><br/>
+                <div style="border-top:1px solid #334155;display:inline-block;padding-top:2px;width:110px;margin-top:2px;"></div>
+              </td>
+            </tr>
+          </table>
+          <div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:12px;margin-bottom:16px;">
+            <h2 style="margin:0;font-size:16pt;color:#0f172a;text-transform:uppercase;">DANH SÁCH THÍ SINH DÁN CỬA PHÒNG THI</h2>
+            <h1 style="margin:4px 0 0;font-size:20pt;color:#2563eb;font-weight:700;">PHÒNG THI: ${escapeHtml(
           roomInfo?.roomName || roomCode
-        )} (${escapeHtml(roomInfo?.building || 'Khu A')})</h1><p style="margin:4px 0 0;font-size:13px;color:#475569;">Môn thi: <strong>${escapeHtml(
+        )} (${escapeHtml(roomInfo?.building || 'Khu A')})</h1>
+            <p style="margin:6px 0 0;font-size:11pt;color:#475569;">Môn thi: <strong>${escapeHtml(
           currentSched?.subject?.subjectName
         )}</strong> (${escapeHtml(currentSched?.subject?.subjectCode)}) | Ngày: ${new Date(
           currentSched?.examDate || Date.now()
-        ).toLocaleDateString('vi-VN')} | Giờ: ${currentSched?.startTime}-${currentSched?.endTime}</p></div><table style="width:100%;border-collapse:collapse;font-size:12px;" border="1" cellpadding="6"><thead><tr style="background:#f1f5f9;color:#0f172a;text-align:left;"><th style="width:40px;text-align:center;">STT</th><th style="width:70px;text-align:center;">MÃ SBN</th><th style="width:100px;">MÃ SV</th><th>HỌ VÀ TÊN</th><th style="width:90px;">LỚP SH</th><th style="width:70px;text-align:center;">VỊ TRÍ</th></tr></thead><tbody>${rows}</tbody></table><div style="margin-top:20px;display:flex;justify-content:space-between;font-size:12px;"><div>Tổng số thí sinh: <strong>${students.length
-          }</strong> / ${roomInfo?.capacity ?? 0} chỗ</div><div>Cán bộ coi thi ký tên: ....................</div></div></div>`;
+        ).toLocaleDateString('vi-VN')} | Giờ: ${currentSched?.startTime} - ${currentSched?.endTime}</p>
+          </div>
+          <table style="width:100%;border-collapse:collapse;font-size:11pt;" border="1" cellpadding="6">
+            <thead>
+              <tr style="background:#f1f5f9;color:#0f172a;text-align:left;">
+                <th style="width:40px;text-align:center;">STT</th>
+                <th style="width:70px;text-align:center;">MÃ SBN</th>
+                <th style="width:100px;">MÃ SV</th>
+                <th>HỌ VÀ TÊN</th>
+                <th style="width:90px;">LỚP SH</th>
+                <th style="width:70px;text-align:center;">VỊ TRÍ</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+          <div style="margin-top:24px;display:flex;justify-content:space-between;font-size:11pt;">
+            <div>Tổng số thí sinh: <strong>${students.length}</strong> / ${roomInfo?.capacity ?? 0} chỗ</div>
+            <div>Cán bộ coi thi ký tên: ....................</div>
+          </div>
+        </div>`;
       })
       .join('');
     printable.document.write(
@@ -969,6 +1008,11 @@ export default function ExamArrangementPage() {
                         <strong>{roomSummaries.length} phòng thi</strong>
                         {result.summary.timeSlot && ` (${result.summary.timeSlot})`}
                       </p>
+                      {!!result.autoAddedRooms?.length && (
+                        <p className="text-type-helper font-medium text-blue-700 dark:text-blue-300">
+                          Hệ thống đã đề xuất thêm: {result.autoAddedRooms.map((room) => `${room.roomCode} (${room.capacity} chỗ)`).join(', ')}.
+                        </p>
+                      )}
                     </div>
 
                     {/* Action Buttons Toolbar Trong Khu Vực Kết Quả */}
@@ -1014,6 +1058,17 @@ export default function ExamArrangementPage() {
                           leftIcon={<Check className="h-3.5 w-3.5" />}
                         >
                           Lưu phân bổ
+                        </Button>
+                      )}
+                      {!result.preview && selectedScheduleId && (
+                        <Button
+                          type="button"
+                          variant="primary"
+                          size="md"
+                          onClick={() => router.push(`/exam-supervisors?examScheduleId=${selectedScheduleId}`)}
+                          leftIcon={<Users className="h-3.5 w-3.5" />}
+                        >
+                          Phân công giám thị
                         </Button>
                       )}
                     </div>

@@ -94,7 +94,7 @@ export default function ExamRoomsPage() {
     title: '',
     message: '',
     type: 'danger',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const fetchData = useCallback(async () => {
@@ -156,7 +156,7 @@ export default function ExamRoomsPage() {
           rLoc.toLowerCase().includes(search.toLowerCase());
         const matchType = selectedType ? r.roomType === selectedType : true;
         const matchBuilding = selectedBuilding ? (r.building || r.location) === selectedBuilding : true;
-        
+
         let matchCapacity = true;
         const cap = Number(r.capacity) || 40;
         if (selectedCapacityRange === 'under30') matchCapacity = cap < 30;
@@ -300,6 +300,7 @@ export default function ExamRoomsPage() {
     printReport({
       title: 'BÁO CÁO DANH SÁCH PHÒNG THI',
       subtitle: 'Danh sách phòng thi và sức chứa máy tính',
+      facultyName: 'HỘI ĐỒNG KHẢO THÍ & ĐẢM BẢO CHẤT LƯỢNG',
       metaInfo: [
         { label: 'Tổng số phòng', value: String(rooms.length) },
         { label: 'Tổng sức chứa', value: `${kpiData.totalCapacity} chỗ` },
@@ -320,6 +321,11 @@ export default function ExamRoomsPage() {
         r.building || r.location || '',
         r.roomType === 'COMPUTER_LAB' ? 'Phòng máy' : 'Phòng lý thuyết',
       ]),
+      signers: [
+        { title: 'CÁN BỘ QUẢN LÝ PHÒNG THI', subtitle: '(Ký, ghi rõ họ tên)' },
+        { title: 'TRƯỞNG BAN KHẢO THÍ', subtitle: '(Ký, đóng dấu)' },
+      ],
+      templateCode: 'EXAM_ROOM_DIRECTORY',
     });
   };
 
@@ -638,7 +644,7 @@ export default function ExamRoomsPage() {
             </div>
             <div>
               <label className="block text-type-body font-medium text-slate-500 mb-1">Trạng thái</label>
-              <FilterSelect 
+              <FilterSelect
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 className="w-full rounded-xl border border-slate-200 px-3 py-2 text-type-body focus:border-blue-500 focus:outline-none"

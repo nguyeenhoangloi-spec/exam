@@ -167,6 +167,9 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
         if (!user) {
             if (!isPublicRoute(pathname)) {
                 router.replace('/login');
+                if (typeof window !== 'undefined') {
+                    window.location.replace('/login');
+                }
             }
             return;
         }
@@ -185,36 +188,62 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
         }
     }, [user, authLoaded, permissionsReady, effectivePermissions, pathname, router]);
 
-    if (!authLoaded) {
-        return <div className="min-h-screen bg-slate-50 dark:bg-slate-950" aria-live="polite" />;
-    }
-
-    // Never render protected children while unauthenticated. This blocks stale
-    // history snapshots after logout while the router returns to /login.
-    if (!user) {
-        return isPublicRoute(pathname)
-            ? <>{children}</>
-            : <div className="min-h-screen bg-slate-50 dark:bg-slate-950" aria-live="polite" />;
-    }
-
-    if (!permissionsReady && !isPublicRoute(pathname)) {
-        return <div className="min-h-screen bg-slate-50 dark:bg-slate-950" aria-live="polite" />;
-    }
-
-    // Keep entry routes blank while an authenticated user is redirected to the
-    // correct workspace, preventing the login page from flashing on Back.
-    if (pathname === '/' || pathname === '/login') {
-        return <div className="min-h-screen bg-slate-50 dark:bg-slate-950" aria-live="polite" />;
-    }
-
-    // Public support routes and protected exam routes render without the shell.
-    if (isPublicRoute(pathname) || (isShelllessRoute(pathname) && canAccessPath(user.role, pathname, effectivePermissions))) {
+    // 1. Public entry/support routes always render immediately (no auth blocking)
+    if (isPublicRoute(pathname)) {
         return <>{children}</>;
     }
 
-    // While redirecting to the workspace, keep the shell mounted but blank
+    // 2. While checking session on protected routes, show clean loading state
+    if (!authLoaded) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950" aria-live="polite">
+                <div className="flex flex-col items-center gap-3 text-type-body text-slate-700 dark:text-slate-300">
+                    <div className="h-8 w-8 animate-spin rounded-full border-3 border-blue-600 border-t-transparent" />
+                    <span>Đang tải hệ thống khảo thí...</span>
+                </div>
+            </div>
+        );
+    }
+
+    // 3. If unauthenticated on a protected route, show redirecting state
+    if (!user) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950" aria-live="polite">
+                <div className="flex flex-col items-center gap-3 text-type-body text-slate-700 dark:text-slate-300">
+                    <div className="h-8 w-8 animate-spin rounded-full border-3 border-blue-600 border-t-transparent" />
+                    <span>Đang chuyển hướng tới trang đăng nhập...</span>
+                </div>
+            </div>
+        );
+    }
+
+    // 4. While permissions are loading for the authenticated user
+    if (!permissionsReady) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950" aria-live="polite">
+                <div className="flex flex-col items-center gap-3 text-type-body text-slate-700 dark:text-slate-300">
+                    <div className="h-8 w-8 animate-spin rounded-full border-3 border-blue-600 border-t-transparent" />
+                    <span>Đang thiết lập quyền truy cập...</span>
+                </div>
+            </div>
+        );
+    }
+
+    // 5. Public support routes and protected exam routes render without the shell
+    if (isShelllessRoute(pathname) && canAccessPath(user.role, pathname, effectivePermissions)) {
+        return <>{children}</>;
+    }
+
+    // 6. While redirecting to the workspace if user cannot access current path
     if (!canAccessPath(user.role, pathname, effectivePermissions)) {
-        return <div className="min-h-screen bg-slate-50 dark:bg-slate-950" aria-live="polite" />;
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950" aria-live="polite">
+                <div className="flex flex-col items-center gap-3 text-type-body text-slate-700 dark:text-slate-300">
+                    <div className="h-8 w-8 animate-spin rounded-full border-3 border-blue-600 border-t-transparent" />
+                    <span>Đang chuyển đến không gian làm việc...</span>
+                </div>
+            </div>
+        );
     }
 
     return (

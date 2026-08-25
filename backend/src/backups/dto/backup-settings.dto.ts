@@ -29,4 +29,8 @@ export class UpdateBackupSettingsDto {
   @IsOptional()
   @IsString()
   secondaryPath?: string;
+
+  @IsOptional()
+  @IsString()
+  primaryPath?: string;
 }

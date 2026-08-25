@@ -10,7 +10,7 @@ import * as bcrypt from 'bcryptjs';
 import { createHash, randomUUID } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { dirname, join, parse, resolve } from 'node:path';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { ApproveRestoreRequestDto, CreateBackupJobDto, CreateRestoreRequestDto, RejectRestoreRequestDto } from './dto/backup.dto';
@@ -96,10 +96,11 @@ export class BackupService {
         backupTime: parsed.backupTime || '02:00',
         maxRetentionCount: Number(parsed.maxRetentionCount) || 10,
         dualStorageEnabled: parsed.dualStorageEnabled !== false,
-        // Storage paths are environment-owned and must not be overridden by the runtime config file.
-        primaryPath: this.storage.getPrimaryPath(),
-        secondaryPath: this.storage.getSecondaryPath(),
+        primaryPath: parsed.primaryPath || this.storage.getPrimaryPath(),
+        secondaryPath: parsed.secondaryPath || this.storage.getSecondaryPath(),
       };
+      this.storage.setPrimaryPath(settings.primaryPath);
+      this.storage.setSecondaryPath(settings.secondaryPath);
       this.storage.setDualStorageEnabled(settings.dualStorageEnabled);
       return settings;
     } catch {
@@ -123,20 +124,24 @@ export class BackupService {
 
   async updateSettings(dto: UpdateBackupSettingsDto, user?: { id: number; username: string }): Promise<BackupSettings> {
     const current = await this.getSettings();
+    const primaryPath = this.normalizeStoragePath(dto.primaryPath ?? current.primaryPath, 'kho chính');
+    const secondaryPath = this.normalizeStoragePath(dto.secondaryPath ?? current.secondaryPath, 'kho dự phòng');
+    if (primaryPath === secondaryPath) throw new BadRequestException('Kho chính và kho dự phòng phải là hai vị trí khác nhau.');
     const updated: BackupSettings = {
       autoBackupEnabled: dto.autoBackupEnabled !== undefined ? dto.autoBackupEnabled : current.autoBackupEnabled,
       intervalDays: dto.intervalDays !== undefined ? dto.intervalDays : current.intervalDays,
       backupTime: dto.backupTime !== undefined ? dto.backupTime : current.backupTime,
       maxRetentionCount: dto.maxRetentionCount !== undefined ? dto.maxRetentionCount : current.maxRetentionCount,
       dualStorageEnabled: dto.dualStorageEnabled !== undefined ? dto.dualStorageEnabled : current.dualStorageEnabled,
-      // Keep both paths sourced from BACKUP_LOCAL_ROOT/BACKUP_SECONDARY_ROOT in .env.
-      primaryPath: this.storage.getPrimaryPath(),
-      secondaryPath: this.storage.getSecondaryPath(),
+      primaryPath,
+      secondaryPath,
     };
 
     await mkdir(dirname(this.configPath), { recursive: true });
     await writeFile(this.configPath, JSON.stringify(updated, null, 2), 'utf-8');
 
+    this.storage.setPrimaryPath(updated.primaryPath);
+    this.storage.setSecondaryPath(updated.secondaryPath);
     this.storage.setDualStorageEnabled(updated.dualStorageEnabled);
 
     await this.audit.write({
@@ -154,6 +159,16 @@ export class BackupService {
     } catch {}
 
     return updated;
+  }
+
+  private normalizeStoragePath(value: string, label: string) {
+    const trimmed = value.trim();
+    if (!trimmed) throw new BadRequestException(`Vui lòng nhập vị trí ${label}.`);
+    const absolute = resolve(trimmed);
+    if (absolute === parse(absolute).root || absolute === resolve(process.cwd())) {
+      throw new BadRequestException(`Vị trí ${label} không được là thư mục gốc hoặc thư mục ứng dụng.`);
+    }
+    return absolute;
   }
 
   async overview() {

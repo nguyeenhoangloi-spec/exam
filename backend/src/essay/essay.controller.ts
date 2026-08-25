@@ -5,6 +5,7 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { EssayService } from './essay.service';
 import { ActionReasonDto, GradeAnswerDto, RubricDto } from './dto/essay.dto';
+import { SecurityAuditEvent } from '../security-audit/security-audit-event.decorator';
 
 const ESSAY_ALLOWED_MIME = /^(application\/pdf|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document|image\/(jpeg|png))$/;
 
@@ -19,12 +20,14 @@ export class EssayController {
   }
 
   @Get('questions/:questionId/rubric')
+  @SecurityAuditEvent({ category: 'DATA_ACCESS', action: 'RUBRIC_VIEWED', entityType: 'QUESTION_RUBRIC', entityIdParam: 'questionId' })
   @Roles('ADMIN', 'TEACHER')
   getRubric(@Request() req: any, @Param('questionId', ParseUUIDPipe) questionId: string) {
     return this.essay.getRubric(req.user, questionId);
   }
 
   @Get('questions/:questionId/rubric/versions')
+  @SecurityAuditEvent({ category: 'DATA_ACCESS', action: 'RUBRIC_VERSION_HISTORY_VIEWED', entityType: 'QUESTION_RUBRIC', entityIdParam: 'questionId' })
   @Roles('ADMIN', 'TEACHER')
   getRubricVersions(@Request() req: any, @Param('questionId', ParseUUIDPipe) questionId: string) {
     return this.essay.getRubricVersions(req.user, questionId);
@@ -56,6 +59,7 @@ export class EssayController {
   }
 
   @Get('grading/attempts/:attemptId')
+  @SecurityAuditEvent({ category: 'DATA_ACCESS', action: 'ESSAY_ATTEMPT_ANSWER_VIEWED', entityType: 'EXAM_ATTEMPT', entityIdParam: 'attemptId' })
   @Roles('ADMIN', 'TEACHER')
   detail(@Request() req: any, @Param('attemptId', ParseUUIDPipe) attemptId: string) {
     return this.essay.detail(req.user, attemptId);

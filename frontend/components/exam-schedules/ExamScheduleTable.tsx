@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, MoreVertical, Edit, Trash2, RotateCcw, Clock, Calendar, Users, Building } from 'lucide-react';
+import { Eye, MoreVertical, Edit, Trash2, RotateCcw, Clock, Calendar, Users, Building, CalendarClock, Ban } from 'lucide-react';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { ExamSchedule } from '../../types';
 import { StatusBadge } from '../common/StatusBadge';
@@ -46,6 +46,8 @@ interface ExamScheduleTableProps {
   onDetail: (s: ExamScheduleItemExtended) => void;
   onEdit: (s: ExamScheduleItemExtended) => void;
   onDelete: (id: number) => void;
+  onReschedule?: (s: ExamScheduleItemExtended) => void;
+  onCancel?: (s: ExamScheduleItemExtended) => void;
   onRestore?: (id: number) => void;
   onHardDelete?: (id: number) => void;
   isAdmin: boolean;
@@ -132,6 +134,8 @@ export function ExamScheduleTable({
   onDetail,
   onEdit,
   onDelete,
+  onReschedule,
+  onCancel,
   onRestore,
   onHardDelete,
   isAdmin,
@@ -262,6 +266,26 @@ export function ExamScheduleTable({
 
                 {isAdmin && (
                   <div className="flex items-center gap-1">
+                    {onReschedule && (
+                      <button
+                        type="button"
+                        onClick={() => onReschedule(s)}
+                        className="p-1.5 text-slate-500 hover:text-amber-600 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-950/40 transition cursor-pointer"
+                        title="Dời lịch thi"
+                      >
+                        <CalendarClock className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                    {onCancel && s.status !== 'CANCELLED' && (
+                      <button
+                        type="button"
+                        onClick={() => onCancel(s)}
+                        className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                        title="Hủy ca thi"
+                      >
+                        <Ban className="h-3.5 w-3.5" />
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={() => onEdit(s)}
@@ -358,6 +382,26 @@ export function ExamScheduleTable({
                   </button>
                   {isAdmin && (
                     <>
+                      {onReschedule && (
+                        <button
+                          type="button"
+                          onClick={() => onReschedule(s)}
+                          className="p-1.5 text-slate-500 hover:text-amber-600 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-950/40 transition cursor-pointer"
+                          title="Dời lịch thi"
+                        >
+                          <CalendarClock className="h-4 w-4" />
+                        </button>
+                      )}
+                      {onCancel && s.status !== 'CANCELLED' && (
+                        <button
+                          type="button"
+                          onClick={() => onCancel(s)}
+                          className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                          title="Hủy ca thi"
+                        >
+                          <Ban className="h-4 w-4" />
+                        </button>
+                      )}
                       <button
                         type="button"
                         onClick={() => onEdit(s)}
@@ -577,6 +621,32 @@ export function ExamScheduleTable({
                                 </>
                               ) : (
                                 <>
+                                  {onReschedule && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        closeMenu();
+                                        onReschedule(s);
+                                      }}
+                                      className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-amber-700 dark:text-amber-300 cursor-pointer text-type-body font-medium transition select-none"
+                                    >
+                                      <CalendarClock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                                      <span>Dời lịch thi</span>
+                                    </button>
+                                  )}
+                                  {onCancel && s.status !== 'CANCELLED' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        closeMenu();
+                                        onCancel(s);
+                                      }}
+                                      className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-700 dark:text-rose-300 cursor-pointer text-type-body font-medium transition select-none"
+                                    >
+                                      <Ban className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+                                      <span>Hủy ca thi</span>
+                                    </button>
+                                  )}
                                   <button
                                     type="button"
                                     onClick={() => {

@@ -38,6 +38,7 @@ import {
   UpdateQuestionDto,
 } from './dto/question.dto';
 import { QuestionsService } from './questions.service';
+import { SecurityAuditEvent } from '../security-audit/security-audit-event.decorator';
 
 const csvUpload = FileInterceptor('file', {
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -124,6 +125,7 @@ export class QuestionsController {
   }
 
   @Post('export')
+  @SecurityAuditEvent({ category: 'DATA_EXPORT', action: 'QUESTION_BANK_EXPORTED', entityType: 'QUESTION_BANK', metadata: { format: 'csv' } })
   async export(@Request() req: any, @Body() query: QuestionQueryDto, @Res() res: Response) {
     const csv = await this.questions.exportCsv(req.user, query);
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
@@ -205,6 +207,7 @@ export class QuestionsController {
   }
 
   @Get(':id')
+  @SecurityAuditEvent({ category: 'DATA_ACCESS', action: 'QUESTION_ANSWER_KEY_VIEWED', entityType: 'QUESTION', entityIdParam: 'id' })
   findOne(@Request() req: any, @Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.questions.findOne(req.user, id);
   }

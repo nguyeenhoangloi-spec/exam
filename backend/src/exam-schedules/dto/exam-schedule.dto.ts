@@ -157,3 +157,51 @@ export class AutoScheduleAcceptDto {
   @Type(() => AutoScheduleProposalDto)
   proposals: AutoScheduleProposalDto[];
 }
+
+export class CheckRescheduleConflictDto {
+  @IsISO8601({ strict: true })
+  newExamDate: string;
+
+  @Matches(timePattern)
+  newStartTime: string;
+
+  @Matches(timePattern)
+  newEndTime: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  newRoomId?: number;
+}
+
+export class RescheduleExamScheduleDto {
+  @IsISO8601({ strict: true })
+  newExamDate: string;
+
+  @Matches(timePattern)
+  newStartTime: string;
+
+  @Matches(timePattern)
+  newEndTime: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  newRoomId?: number;
+
+  @IsString()
+  @MaxLength(1000)
+  reason: string;
+
+  @IsOptional()
+  keepAssignments?: boolean;
+}
+
+export class CancelExamScheduleDto {
+  @IsString()
+  @MaxLength(1000)
+  reason: string;
+}
+

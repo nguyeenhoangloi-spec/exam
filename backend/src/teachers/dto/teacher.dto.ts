@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEmail, IsInt, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
+import { IsEmail, IsIn, IsInt, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 
 export class CreateTeacherDto {
   @IsString() @MinLength(1) @MaxLength(50) teacherCode: string;
@@ -19,4 +19,21 @@ export class UpdateTeacherDto {
   @IsOptional() @IsEmail() @MaxLength(255) email?: string;
   @IsOptional() @IsString() @MaxLength(30) phone?: string;
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) departmentId?: number;
+}
+
+export class UpdateDutyAvailabilityDto {
+  @IsString() examDate: string;
+  @IsString() @MaxLength(10) startTime: string;
+  @IsString() @MaxLength(10) endTime: string;
+  @IsIn(['AVAILABLE', 'UNAVAILABLE']) status: 'AVAILABLE' | 'UNAVAILABLE';
+  @IsOptional() @IsString() @MaxLength(500) note?: string;
+}
+
+export class CreateSupervisorChangeRequestDto {
+  @IsString() @MinLength(10) @MaxLength(500) reason: string;
+}
+
+export class ReviewSupervisorChangeRequestDto {
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) replacementTeacherId?: number;
+  @IsOptional() @IsString() @MaxLength(500) reviewNote?: string;
 }

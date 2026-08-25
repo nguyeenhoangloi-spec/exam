@@ -26,6 +26,7 @@ import {
   BookOpen,
   DoorOpen,
   CheckCircle2,
+  AlertTriangle,
   Eye,
   ArrowRight,
   Search,
@@ -92,8 +93,9 @@ export default function StudentExamSchedulePage() {
 
   const handlePrintReport = () => {
     printReport({
-      title: 'LỊCH THI CÁ NHÂN SINH VIÊN',
+      title: 'THẺ DỰ THI & LỊCH THI CÁ NHÂN SINH VIÊN',
       subtitle: `Thí sinh: ${currentUser?.username || ''} - Thông tin ca thi và số báo danh`,
+      facultyName: 'HỘI ĐỒNG KHẢO THÍ & ĐẢM BẢO CHẤT LƯỢNG',
       metaInfo: [
         { label: 'Tổng số môn đăng ký thi', value: String(schedules.length) },
       ],
@@ -121,6 +123,7 @@ export default function StudentExamSchedulePage() {
         { title: 'SINH VIÊN KÝ TÊN', subtitle: '(Ký, ghi rõ họ tên)' },
         { title: 'XÁC NHẬN CỦA HỘI ĐỒNG KHẢO THÍ', subtitle: '(Ký, đóng dấu)' },
       ],
+      templateCode: 'STUDENT_EXAM_PASS',
     });
   };
 
@@ -396,6 +399,29 @@ export default function StudentExamSchedulePage() {
                   >
                     {item.subjectName}
                   </h3>
+
+                  {/* Reschedule / Cancellation Banner */}
+                  {item.status === 'CANCELLED' ? (
+                    <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 text-type-helper flex items-start gap-2">
+                      <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="font-semibold block text-rose-700 dark:text-rose-400">Ca thi này đã bị HỦY</strong>
+                        <span className="text-slate-600 dark:text-slate-300 text-type-helper leading-tight block mt-0.5">
+                          {(item as any).note?.includes('[Hủy ca thi:') ? (item as any).note.split('[Hủy ca thi:')[1]?.replace(']', '').trim() : 'Vui lòng chờ thông báo ca thi bù mới.'}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (item as any).note?.includes('[Dời lịch:') ? (
+                    <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-type-helper flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="font-semibold block text-emerald-700 dark:text-emerald-400">Đã cập nhật dời lịch thi</strong>
+                        <span className="text-slate-600 dark:text-slate-300 text-type-helper leading-tight block mt-0.5">
+                          {(item as any).note.split('[Dời lịch:')[1]?.split(']')[0]?.trim()}
+                        </span>
+                      </div>
+                    </div>
+                  ) : null}
 
                   {/* Details grid */}
                   <div className="space-y-2 text-type-helper text-slate-600 dark:text-slate-300 font-medium bg-slate-50/70 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800">

@@ -292,6 +292,7 @@ export default function StudentCurriculumPage() {
     printReport({
       title: 'KHUNG CHƯƠNG TRÌNH ĐÀO TẠO CÁ NHÂN',
       subtitle: `Sinh viên: ${studentInfo?.fullName || ''} (${studentInfo?.studentCode || ''}) - Lớp: ${studentInfo?.className || ''} - Khoa: ${studentInfo?.departmentName || ''}`,
+      facultyName: 'PHÒNG ĐÀO TẠO & KHẢO THÍ',
       metaInfo: [
         { label: 'Tổng số môn học', value: `${stats?.totalSubjects ?? 0} môn` },
         { label: 'Tổng số tín chỉ', value: `${stats?.totalCredits ?? 0} TC` },
@@ -319,6 +320,7 @@ export default function StudentCurriculumPage() {
         { title: 'SINH VIÊN', subtitle: '(Ký và ghi rõ họ tên)' },
         { title: 'PHÒNG ĐÀO TẠO & KHẢO THÍ', subtitle: '(Ký tên, đóng dấu)' },
       ],
+      templateCode: 'SUBJECT_DIRECTORY',
     });
   };
 

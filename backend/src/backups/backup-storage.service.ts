@@ -29,7 +29,7 @@ export class BackupStorageService {
   private readonly prefix = (process.env.BACKUP_STORAGE_PREFIX || 'exam-system').replace(/^\/+|\/+$/g, '');
   
   // Kho lưu trữ chính (Primary Location)
-  private readonly localRoot = process.env.BACKUP_LOCAL_ROOT || join(process.cwd(), 'backup-runtime', 'primary');
+  private localRoot = process.env.BACKUP_LOCAL_ROOT || join(process.cwd(), 'backup-runtime', 'primary');
   
   // Kho lưu trữ dự phòng thứ 2 (Secondary / Mirror Replica Location)
   private secondaryRoot = process.env.BACKUP_SECONDARY_ROOT || join(process.cwd(), 'backup-runtime', 'mirror_backup');
@@ -49,6 +49,12 @@ export class BackupStorageService {
   setSecondaryPath(path: string) {
     if (path && path.trim()) {
       this.secondaryRoot = path.trim();
+    }
+  }
+
+  setPrimaryPath(path: string) {
+    if (!this.bucket && path && path.trim()) {
+      this.localRoot = path.trim();
     }
   }
 

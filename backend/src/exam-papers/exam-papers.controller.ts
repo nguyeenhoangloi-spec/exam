@@ -19,6 +19,7 @@ import { PermissionGuard } from '../access-control/permission.guard';
 import { Permissions } from '../access-control/permissions.decorator';
 import { CreateRandomExamPaperDto, ExamPaperQueryDto, UpdateExamPasswordDto } from './dto/exam-paper.dto';
 import { ExamPapersService } from './exam-papers.service';
+import { SecurityAuditEvent } from '../security-audit/security-audit-event.decorator';
 
 @Controller('exam-papers')
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
@@ -44,8 +45,23 @@ export class ExamPapersController {
   }
 
   @Get(':id')
+  @SecurityAuditEvent({ category: 'DATA_ACCESS', action: 'EXAM_PAPER_ANSWER_KEY_VIEWED', entityType: 'EXAM_PAPER', entityIdParam: 'id' })
   findOne(@Request() req: any, @Param('id', ParseIntPipe) id: number) {
     return this.examPapersService.findOne(req.user, id);
+  }
+
+  /**
+   * The Word file is generated in the browser, so the server cannot observe a
+   * completed download. Record the authorised export request immediately
+   * before the browser receives the data for that operation.
+   */
+  @Post(':id/export-audit')
+  recordExport(
+    @Request() req: any,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: { format?: string; includeAnswerKey?: boolean },
+  ) {
+    return this.examPapersService.recordExport(req.user, id, body);
   }
 
   @Roles('ADMIN', 'TEACHER')

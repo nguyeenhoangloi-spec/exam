@@ -48,6 +48,7 @@ import {
   Check,
   Search,
   X,
+  ArrowLeftRight,
 } from 'lucide-react';
 
 export default function TeacherAssignmentsPage() {
@@ -149,7 +150,7 @@ export default function TeacherAssignmentsPage() {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         setBusyId(id);
         try {
-          await api.patch(`/teachers/my-assignments/${id}/status`, { status });
+          await api.post(`/teachers/my-assignments/${id}/confirm`);
           setToast({
             message: status === 'CONFIRMED' ? 'Đã xác nhận tham gia ca coi thi!' : 'Đã gửi yêu cầu xin đổi ca coi thi.',
             type: 'success',
@@ -164,103 +165,92 @@ export default function TeacherAssignmentsPage() {
     });
   };
 
+  const handleRequestChange = (item: any) => {
+    const reason = window.prompt(`Lý do xin đổi ca môn ${item.subjectName} (tối thiểu 10 ký tự):`);
+    if (reason === null) return;
+    if (reason.trim().length < 10) {
+      setToast({ message: 'Vui lòng nhập lý do đổi ca tối thiểu 10 ký tự.', type: 'error' });
+      return;
+    }
+    setConfirmModal({
+      isOpen: true,
+      title: 'Gửi yêu cầu đổi ca?',
+      message: 'Yêu cầu sẽ được quản trị viên duyệt. Phân công hiện tại vẫn có hiệu lực cho đến khi có giảng viên thay thế hợp lệ.',
+      type: 'warning',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        setBusyId(item.id);
+        try {
+          await api.post(`/teachers/my-assignments/${item.id}/change-requests`, { reason: reason.trim() });
+          setToast({ message: 'Đã gửi yêu cầu đổi ca; hệ thống sẽ thông báo khi có kết quả duyệt.', type: 'success' });
+          await fetchMyAssignments();
+        } catch (err: any) {
+          setToast({ message: err?.response?.data?.message || err.message || 'Không thể gửi yêu cầu đổi ca.', type: 'error' });
+        } finally {
+          setBusyId(null);
+        }
+      },
+    });
+  };
+
+  const handleRegisterAvailability = async () => {
+    const examDate = window.prompt('Ngày có thể/không thể coi thi (YYYY-MM-DD):');
+    if (!examDate) return;
+    const startTime = window.prompt('Giờ bắt đầu (HH:mm):');
+    const endTime = window.prompt('Giờ kết thúc (HH:mm):');
+    const unavailable = window.confirm('Chọn OK nếu KHÔNG THỂ coi thi trong khung giờ này. Chọn Cancel nếu sẵn sàng coi thi.');
+    if (!startTime || !endTime) return;
+    try {
+      await api.patch('/teachers/my-duty-availability', { examDate, startTime, endTime, status: unavailable ? 'UNAVAILABLE' : 'AVAILABLE' });
+      setToast({ message: unavailable ? 'Đã ghi nhận thời gian không thể coi thi.' : 'Đã đăng ký sẵn sàng coi thi.', type: 'success' });
+    } catch (err: any) {
+      setToast({ message: err?.response?.data?.message || err.message || 'Không thể cập nhật khả năng coi thi.', type: 'error' });
+    }
+  };
+
   const handlePrintAttendance = async (item: any) => {
     try {
       const res = await api.get(`/teachers/my-assignments/${item.id}/attendance-sheet`);
       const data = res.data;
-      const printWin = window.open('', '_blank');
-      if (!printWin) return;
-
-      const html = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-      <title>BẢNG ĐIỂM DANH THÍ SINH PHÒNG THI ${data.room.roomCode}</title>
-      <style>
-      body { font-family: 'Times New Roman', Times, serif; margin: 30px; font-size: 13px; color: #1e293b; }
-      .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 15px; }
-      .header h2 { margin: 0; font-size: 18px; text-transform: uppercase; }
-      .header p { margin: 4px 0 0 0; font-size: 13px; font-weight: bold; }
-      .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; font-size: 13px; }
-      table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-      th, td { border: 1px solid #334155; padding: 8px 10px; text-align: left; }
-      th { background-color: #f1f5f9; text-transform: uppercase; font-size: 12px; }
-      .center { text-align: center; }
-      .signatures { display: flex; justify-content: space-between; margin-top: 40px; text-align: center; }
-      .sig-box { width: 45%; }
-      @media print { body { margin: 15mm; } }
-      </style>
-      </head>
-      <body>
-      <div class="header">
-      <h2>DANH SÁCH ĐIỂM DANH & KÝ TÊN THÍ SINH</h2>
-      <p>HỌC KỲ ${data.schedule.periodName || 'HỌC KỲ I'} - MÔN: ${data.schedule.subjectName.toUpperCase()}</p>
-      </div>
-
-      <div class="info-grid">
-      <div><strong>Mã môn:</strong> ${data.schedule.subjectCode}</div>
-      <div><strong>Ngày thi:</strong> ${new Date(data.schedule.examDate).toLocaleDateString('vi-VN')}</div>
-      <div><strong>Ca thi / Thời gian:</strong> ${data.schedule.startTime} - ${data.schedule.endTime}</div>
-      <div><strong>Phòng thi:</strong> ${data.room.roomCode} (${data.room.building || 'Nhà A'})</div>
-      <div><strong>Giám thị phân công:</strong> ${data.role === 'SUPERVISOR_1' ? 'Giám thị 1 (Chính)' : 'Giám thị 2'}</div>
-      <div><strong>Tổng thí sinh:</strong> ${data.students.length} thí sinh</div>
-      </div>
-
-      <table>
-      <thead>
-      <tr>
-      <th class="center" style="width: 40px">STT</th>
-      <th class="center" style="width: 50px">SBD</th>
-      <th class="center" style="width: 50px">Số ghế</th>
-      <th style="width: 100px">Mã sinh viên</th>
-      <th>Họ và Tên</th>
-      <th style="width: 90px">Lớp</th>
-      <th class="center" style="width: 120px">Chữ ký thí sinh</th>
-      <th style="width: 80px">Ghi chú</th>
-      </tr>
-      </thead>
-      <tbody>
-      ${(data.students || [])
-          .map(
-            (st: any, idx: number) => `
-      <tr>
-      <td class="center">${idx + 1}</td>
-      <td class="center"><strong>${st.examNumber || idx + 1}</strong></td>
-      <td class="center">${st.seatNumber}</td>
-      <td><strong>${st.studentCode}</strong></td>
-      <td>${st.fullName}</td>
-      <td>${st.className}</td>
-      <td></td>
-      <td></td>
-      </tr>
-      `,
-          )
-          .join('')}
-      </tbody>
-      </table>
-
-      <div class="signatures">
-      <div class="sig-box">
-      <p><strong>CÁN BỘ COI THI 1</strong></p>
-      <br/><br/><br/>
-      <p><i>(Ký và ghi rõ họ tên)</i></p>
-      </div>
-      <div class="sig-box">
-      <p><strong>CÁN BỘ COI THI 2</strong></p>
-      <br/><br/><br/>
-      <p><i>(Ký và ghi rõ họ tên)</i></p>
-      </div>
-      </div>
-
-      <script>
-      window.onload = function() { window.print(); }
-      </script>
-      </body>
-      </html>
-      `;
-
-      printWin.document.write(html);
-      printWin.document.close();
+      printReport({
+        title: 'DANH SÁCH ĐIỂM DANH & KÝ TÊN THÍ SINH',
+        subtitle: `Học kỳ: ${data.schedule.periodName || 'HỌC KỲ I'} - Môn thi: ${data.schedule.subjectCode} - ${data.schedule.subjectName}`,
+        facultyName: 'HỘI ĐỒNG KHẢO THÍ & ĐẢM BẢO CHẤT LƯỢNG',
+        metaInfo: [
+          { label: 'Môn thi', value: `${data.schedule.subjectCode} - ${data.schedule.subjectName}` },
+          { label: 'Ngày thi', value: new Date(data.schedule.examDate).toLocaleDateString('vi-VN') },
+          { label: 'Ca thi / Khung giờ', value: `${data.schedule.startTime} - ${data.schedule.endTime}` },
+          { label: 'Phòng thi', value: `${data.room.roomCode} (${data.room.building || 'Nhà A'})` },
+          { label: 'Cán bộ coi thi', value: data.role === 'SUPERVISOR_1' ? 'Giám thị 1 (Chính)' : 'Giám thị 2' },
+          { label: 'Tổng số thí sinh', value: `${data.students?.length || 0} thí sinh` },
+        ],
+        columns: [
+          { header: 'STT', width: '40px' },
+          { header: 'SBD', width: '50px', align: 'center' },
+          { header: 'Số ghế', width: '55px', align: 'center' },
+          { header: 'Mã SV', width: '100px', align: 'center' },
+          { header: 'Họ và Tên thí sinh', width: '180px' },
+          { header: 'Lớp', width: '100px', align: 'center' },
+          { header: 'Số tờ', width: '50px', align: 'center' },
+          { header: 'Chữ ký thí sinh', width: '120px', align: 'center' },
+        ],
+        rows: (data.students || []).map((st: any, idx: number) => [
+          idx + 1,
+          st.examNumber || idx + 1,
+          st.seatNumber || idx + 1,
+          st.studentCode,
+          st.fullName,
+          st.className || '---',
+          '',
+          '',
+        ]),
+        signers: [
+          { title: 'CÁN BỘ COI THI 1', subtitle: '(Ký, ghi rõ họ tên)' },
+          { title: 'CÁN BỘ COI THI 2', subtitle: '(Ký, ghi rõ họ tên)' },
+        ],
+        footerNotes: 'Cán bộ coi thi chịu trách nhiệm kiểm tra thẻ dự thi và đối chiếu chữ ký thí sinh khi thu bài.',
+        templateCode: 'ROOM_ATTENDANCE_SHEET',
+      });
     } catch (err: any) {
       setToast({ message: err.message || 'Không thể tải danh sách điểm danh.', type: 'error' });
     }
@@ -300,6 +290,7 @@ export default function TeacherAssignmentsPage() {
     printReport({
       title: 'LỊCH PHÂN CÔNG COI THI GIẢNG VIÊN',
       subtitle: `Giảng viên: ${currentUser?.fullName || currentUser?.teacher?.fullName || currentUser?.username || ''} - Mã CB: ${currentUser?.teacher?.teacherCode || currentUser?.teacherCode || currentUser?.username || ''}`,
+      facultyName: 'HỘI ĐỒNG KHẢO THÍ & ĐẢM BẢO CHẤT LƯỢNG',
       metaInfo: [
         { label: 'Tổng ca coi thi', value: `${assignments.length} ca` },
         { label: 'Giám thị chính', value: `${supervisor1Count} ca` },
@@ -330,6 +321,7 @@ export default function TeacherAssignmentsPage() {
         { title: 'GIẢNG VIÊN COI THI', subtitle: '(Ký, ghi rõ họ tên)' },
         { title: 'TRƯỞNG PHÒNG KHẢO THÍ', subtitle: '(Ký tên, đóng dấu)' },
       ],
+      templateCode: 'SUPERVISOR_ASSIGNMENT',
     });
   };
 
@@ -581,6 +573,10 @@ export default function TeacherAssignmentsPage() {
               viewMode={viewMode}
               onChange={(mode) => setViewMode(mode)}
             />
+
+            <Button type="button" variant="secondary" size="md" onClick={handleRegisterAvailability} leftIcon={<Calendar className="h-4 w-4" />}>
+              Đăng ký coi thi
+            </Button>
 
             {/* Refresh */}
             <button
@@ -840,6 +836,11 @@ export default function TeacherAssignmentsPage() {
                       >
                         {item.status === 'CONFIRMED' ? 'Đã khóa' : 'Xác nhận'}
                       </Button>
+                      {item.status === 'CONFIRMED' && !isExpired && (
+                        <Button variant="secondary" size="xs" disabled={busyId === item.id} onClick={() => handleRequestChange(item)} leftIcon={<ArrowLeftRight className="h-3.5 w-3.5" />}>
+                          Xin đổi ca
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -955,6 +956,11 @@ export default function TeacherAssignmentsPage() {
                               >
                                 {item.status === 'CONFIRMED' ? 'Đã khóa' : 'Xác nhận'}
                               </Button>
+                              {item.status === 'CONFIRMED' && !isExpired && (
+                                <button type="button" onClick={() => handleRequestChange(item)} className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition" title="Xin đổi ca">
+                                  <ArrowLeftRight className="w-4 h-4" />
+                                </button>
+                              )}
                               <button
                                 type="button"
                                 onClick={() => handlePrintAttendance(item)}
@@ -1014,7 +1020,7 @@ export default function TeacherAssignmentsPage() {
               return;
             }
             try {
-              await Promise.all(unconfirmedIds.map((id) => api.patch(`/exam-supervisors/${id}/status`, { status: 'CONFIRMED' })));
+              await Promise.all(unconfirmedIds.map((id) => api.post(`/teachers/my-assignments/${id}/confirm`)));
               setToast({ message: `Đã xác nhận thành công ${unconfirmedIds.length} ca coi thi!`, type: 'success' });
               setSelected([]);
               fetchMyAssignments();

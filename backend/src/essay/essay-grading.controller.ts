@@ -6,6 +6,7 @@ import { PermissionGuard } from '../access-control/permission.guard';
 import { Permissions } from '../access-control/permissions.decorator';
 import { EssayService } from './essay.service';
 import { ActionReasonDto, GradeAnswerDto } from './dto/essay.dto';
+import { SecurityAuditEvent } from '../security-audit/security-audit-event.decorator';
 
 @Controller('essay-grading')
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
@@ -20,6 +21,7 @@ export class EssayGradingController {
   }
 
   @Get('attempts/:attemptId')
+  @SecurityAuditEvent({ category: 'DATA_ACCESS', action: 'ESSAY_ATTEMPT_ANSWER_VIEWED', entityType: 'EXAM_ATTEMPT', entityIdParam: 'attemptId' })
   @Roles('ADMIN', 'TEACHER')
   @Permissions('ESSAY_GRADE')
   detail(@Request() req: any, @Param('attemptId', ParseUUIDPipe) id: string) {

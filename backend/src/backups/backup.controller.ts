@@ -8,6 +8,7 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { BackupService } from './backup.service';
 import { ApproveRestoreRequestDto, CreateBackupJobDto, CreateRestoreRequestDto, RejectRestoreRequestDto } from './dto/backup.dto';
 import { UpdateBackupSettingsDto } from './dto/backup-settings.dto';
+import { SecurityAuditEvent } from '../security-audit/security-audit-event.decorator';
 
 @Controller('backups')
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
@@ -17,11 +18,13 @@ export class BackupController {
   constructor(private readonly backupService: BackupService) {}
 
   @Get('overview')
+  @SecurityAuditEvent({ category: 'BACKUP_RECOVERY', action: 'BACKUP_OVERVIEW_VIEWED', entityType: 'BACKUP_SYSTEM' })
   overview() {
     return this.backupService.overview();
   }
 
   @Get('settings')
+  @SecurityAuditEvent({ category: 'BACKUP_RECOVERY', action: 'BACKUP_SETTINGS_VIEWED', entityType: 'BACKUP_SETTINGS' })
   getSettings() {
     return this.backupService.getSettings();
   }
@@ -55,6 +58,7 @@ export class BackupController {
   }
 
   @Get('jobs/:id')
+  @SecurityAuditEvent({ category: 'BACKUP_RECOVERY', action: 'BACKUP_JOB_VIEWED', entityType: 'BACKUP_JOB', entityIdParam: 'id' })
   getJob(@Param('id') id: string) {
     return this.backupService.getJob(id);
   }

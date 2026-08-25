@@ -195,7 +195,7 @@ export default function TeachersPage() {
           t.fullName.toLowerCase().includes(search.toLowerCase()) ||
           t.teacherCode.toLowerCase().includes(search.toLowerCase()) ||
           (t.email && t.email.toLowerCase().includes(search.toLowerCase()));
-        
+
         const matchDept = !selectedDeptId || String(t.departmentId) === selectedDeptId;
 
         let matchDegree = true;
@@ -348,6 +348,7 @@ export default function TeachersPage() {
     printReport({
       title: 'DANH SÁCH GIẢNG VIÊN ĐÀO TẠO KHẢO THÍ',
       subtitle: 'Hồ sơ đội ngũ giảng viên và phân khoa trực thuộc',
+      facultyName: 'PHÒNG TỔ CHỨC CÁN BỘ & ĐÀO TẠO',
       metaInfo: [
         { label: 'Tổng số giảng viên', value: String(teachers.length) },
         { label: 'Giảng viên đang lọc', value: String(filteredTeachers.length) },
@@ -370,6 +371,11 @@ export default function TeachersPage() {
         t.email,
         t.phone || '---',
       ]),
+      signers: [
+        { title: 'NGƯỜI LẬP DANH SÁCH', subtitle: '(Ký, ghi rõ họ tên)' },
+        { title: 'TRƯỞNG PHÒNG TỔ CHỨC CÁN BỘ', subtitle: '(Ký, đóng dấu)' },
+      ],
+      templateCode: 'TEACHER_DIRECTORY',
     });
   };
 
@@ -675,7 +681,7 @@ export default function TeachersPage() {
 
           <div>
             <label className="block text-type-body font-medium text-slate-500 mb-1">Khoa trực thuộc</label>
-            <FilterSelect 
+            <FilterSelect
               required
               value={formData.departmentId}
               onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
@@ -778,17 +784,15 @@ export default function TeachersPage() {
         <div role="dialog" aria-modal="true" aria-label="Thông tin giảng viên" className="fixed inset-0 z-[100] overflow-hidden">
           {/* Backdrop mờ nền */}
           <div
-            className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              drawerVisible ? 'opacity-100' : 'opacity-0'
-            }`}
+            className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${drawerVisible ? 'opacity-100' : 'opacity-0'
+              }`}
             onClick={() => setDrawerTeacher(null)}
           />
 
           <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
             <div
-              className={`w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
-                drawerVisible ? 'translate-x-0' : 'translate-x-full'
-              }`}
+              className={`w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${drawerVisible ? 'translate-x-0' : 'translate-x-full'
+                }`}
             >
               {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
               <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
@@ -844,11 +848,10 @@ export default function TeachersPage() {
                     <button
                       key={tab.id}
                       onClick={() => setDrawerTab(tab.id as any)}
-                      className={`whitespace-nowrap border-b-2 px-4 py-3 text-type-body transition cursor-pointer flex items-center gap-2 ${
-                        isActive
+                      className={`whitespace-nowrap border-b-2 px-4 py-3 text-type-body transition cursor-pointer flex items-center gap-2 ${isActive
                           ? 'border-blue-600 text-blue-600 font-semibold'
                           : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-semibold'
-                      }`}
+                        }`}
                     >
                       <Icon className="h-4 w-4" />
                       {tab.label}
@@ -935,11 +938,10 @@ export default function TeachersPage() {
                                     </div>
                                   )}
                                 </div>
-                                <span className={`px-2.5 py-1 ui-pill rounded-full text-type-helper font-medium shrink-0 ${
-                                  assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1'
+                                <span className={`px-2.5 py-1 ui-pill rounded-full text-type-helper font-medium shrink-0 ${assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1'
                                     ? 'bg-blue-50 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60'
                                     : 'bg-slate-100 text-slate-700 dark:text-slate-300'
-                                }`}>
+                                  }`}>
                                   {assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ'}
                                 </span>
                               </div>

@@ -7,6 +7,8 @@ import * as express from 'express';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { verifyUploadSignature } from './common/security/file-signing';
+import { AuditRequestContextService } from './security-audit/audit-request-context.service';
+import { SecurityAuditInterceptor } from './security-audit/security-audit.interceptor';
 
 const rateBuckets = new Map<string, { count: number; resetAt: number }>();
 
@@ -85,6 +87,8 @@ function rateLimit(req: express.Request, res: express.Response, next: express.Ne
 async function bootstrap() {
   // Trigger config reload for updated .env
   const app = await NestFactory.create(AppModule);
+  const auditRequestContext = app.get(AuditRequestContextService);
+  const securityAuditInterceptor = app.get(SecurityAuditInterceptor);
   const httpServer = app.getHttpAdapter().getInstance();
   httpServer.set('trust proxy', 1);
   httpServer.disable('x-powered-by');
@@ -111,7 +115,9 @@ async function bootstrap() {
 
   app.use(rateLimit);
   app.use((req, res, next) => {
-    res.setHeader('X-Request-Id', req.header('X-Request-Id') || randomUUID());
+    const requestId = req.header('X-Request-Id') || randomUUID();
+    (req as any).requestId = requestId;
+    res.setHeader('X-Request-Id', requestId);
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Permissions-Policy', 'camera=(self), microphone=(self), geolocation=()');
@@ -123,6 +129,16 @@ async function bootstrap() {
       res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     }
     next();
+  });
+  app.use((req, _res, next) => {
+    const ipAddress = String(req.ip || req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+    auditRequestContext.run({
+      requestId: (req as any).requestId,
+      ipAddress: ipAddress || undefined,
+      httpMethod: req.method,
+      route: req.baseUrl + req.path,
+      userAgent: req.header('user-agent') || undefined,
+    }, next);
   });
 
   app.use('/uploads', (req, res, next) => {
@@ -136,7 +152,7 @@ async function bootstrap() {
   });
   app.use('/uploads', express.static(join(process.cwd(), 'uploads'), { dotfiles: 'deny', index: false }));
 
-  app.useGlobalInterceptors(new LoggingInterceptor());
+  app.useGlobalInterceptors(new LoggingInterceptor(), securityAuditInterceptor);
   app.useGlobalFilters(new AllExceptionsFilter());
 
   app.useGlobalPipes(

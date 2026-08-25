@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class ProctorService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly audit?: AuditService) {}
 
   private async getAuthorizedAttempt(
     actorId: number,
@@ -209,14 +210,12 @@ export class ProctorService {
     });
 
     // Ghi audit log
-    await this.prisma.auditLog.create({
-      data: {
+    await this.audit?.write({
         actorId: teacherUserId,
         action: 'EXTEND_EXAM_TIME',
         entityType: 'ExamAttempt',
         entityId: attemptId,
         description: `Giám thị gia hạn thêm ${extraMinutes} phút. Lý do: ${reason}`,
-      },
     });
 
     return {
@@ -284,14 +283,12 @@ export class ProctorService {
       });
     }
 
-    await this.prisma.auditLog.create({
-      data: {
+    await this.audit?.write({
         actorId: teacherUserId,
         action: 'BULK_EXTEND_EXAM_TIME',
         entityType: 'ExamScheduleRoom',
         entityId: String(scheduleRoomId),
         description: `Giám thị cộng bù giờ hàng loạt +${extraMinutes} phút cho ${attempts.length} sinh viên phòng thi. Lý do: ${reason}`,
-      },
     });
 
     return {
@@ -325,14 +322,12 @@ export class ProctorService {
       },
     });
 
-    await this.prisma.auditLog.create({
-      data: {
+    await this.audit?.write({
         actorId: teacherUserId,
         action: 'REOPEN_EXAM_ATTEMPT',
         entityType: 'ExamAttempt',
         entityId: attemptId,
         description: `Giám thị mở lại bài thi cho sinh viên.${penalty > 0 ? ` Thiết lập điểm trừ vi phạm: ${penalty} điểm.` : ''} Lý do: ${reason}`,
-      },
     });
 
     return {
@@ -415,15 +410,13 @@ export class ProctorService {
           reviewerNote: note || null,
         } as any,
       });
-      await tx.auditLog.create({
-        data: {
+      await this.audit?.write({
           actorId,
           action: 'RESOLVE_EXAM_INCIDENT',
           entityType: 'ExamAttempt',
           entityId: attemptId,
           description: `Xử lý biên bản vi phạm: ${decision}${decision === 'PENALTY' ? `, trừ ${penalty} điểm` : ''}. ${note}`,
-        },
-      });
+      }, tx);
       return next;
     });
     return { success: true, decision, penaltyPoints: penalty, status: updated.status, message: 'Đã xử lý giải trình và cập nhật phiên thi' };

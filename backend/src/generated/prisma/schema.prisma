@@ -1,0 +1,1383 @@
+// Prisma Schema for Student Exam Management System (PostgreSQL)
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum QuestionType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  FILL_BLANK
+  ESSAY
+}
+
+enum QuestionDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum BloomLevel {
+  REMEMBER
+  UNDERSTAND
+  APPLY
+  ANALYZE
+}
+
+enum QuestionStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
+enum QuestionHistoryAction {
+  CREATE
+  UPDATE
+  SUBMIT
+  APPROVE
+  REJECT
+  ARCHIVE
+  DUPLICATE
+  RESTORE
+  DELETE
+  BULK_UPDATE
+}
+
+enum ExamPaperStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ExamMode {
+  MOCK
+  OFFICIAL
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  email     String   @unique
+  role      String   @default("STUDENT")
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student Student?
+  teacher Teacher?
+
+  createdQuestions                 Question[]                     @relation("UserQuestions")
+  approvedQuestions                Question[]                     @relation("ApprovedQuestions")
+  essayGrades                      EssayGrade[]                   @relation("EssayGradeGrader")
+  essayGradedAttempts              ExamAttempt[]                  @relation("EssayAttemptGrader")
+  essayApprovedAttempts            ExamAttempt[]                  @relation("EssayAttemptApprover")
+  createdExamPapers                ExamPaper[]                    @relation("UserExamPapers")
+  deletedExamSchedules             ExamSchedule[]                 @relation("ExamScheduleDeletedBy")
+  questionHistories                QuestionHistory[]              @relation("QuestionHistoryActor")
+  auditLogs                        AuditLog[]                     @relation("AuditLogActor")
+  securityAuditEvents              SecurityAuditEvent[]           @relation("SecurityAuditActor")
+  securityAuditPolicies            SecurityAuditRetentionPolicy[] @relation("SecurityAuditPolicyUpdater")
+  securityAuditHolds               SecurityAuditLegalHold[]       @relation("SecurityAuditHoldCreator")
+  essayGradeHistories              EssayGradeHistory[]            @relation("EssayGradeHistoryActor")
+  reviewedGradeAppeals             GradeAppeal[]                  @relation("GradeAppealReviewer")
+  authSessions                     AuthSession[]
+  backupJobs                       BackupJob[]
+  backupRestoreRequests            BackupRestoreRequest[]         @relation("BackupRestoreRequester")
+  backupRestoreApprovals           BackupRestoreRequest[]         @relation("BackupRestoreApprover")
+  permissionOverrides              UserPermissionOverride[]
+  accessScopes                     UserAccessScope[]
+  notifications                    Notification[]
+  reviewedSupervisorChangeRequests SupervisorChangeRequest[]      @relation("SupervisorChangeReviewer")
+
+  @@map("users")
+}
+
+enum PermissionOverrideEffect {
+  ALLOW
+  DENY
+}
+
+enum AccessScopeType {
+  DEPARTMENT
+  CLASS
+  SUBJECT
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  module      String
+  description String?
+  sensitive   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rolePermissions RolePermission[]
+  userOverrides   UserPermissionOverride[]
+
+  @@index([module])
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String     @id @default(uuid())
+  role         String
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([role, permissionId])
+  @@index([role])
+  @@map("role_permissions")
+}
+
+model UserPermissionOverride {
+  id           String                   @id @default(uuid())
+  userId       Int
+  user         User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permissionId String
+  permission   Permission               @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  effect       PermissionOverrideEffect
+  reason       String?
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime                 @updatedAt
+
+  @@unique([userId, permissionId])
+  @@index([userId])
+  @@map("user_permission_overrides")
+}
+
+model UserAccessScope {
+  id         String          @id @default(uuid())
+  userId     Int
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       AccessScopeType
+  resourceId Int
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  @@unique([userId, type, resourceId])
+  @@index([userId, type])
+  @@map("user_access_scopes")
+}
+
+model AuthSession {
+  id        String    @id @default(uuid())
+  userId    Int
+  tokenHash String    @unique
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  revokedAt DateTime?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@index([expiresAt])
+  @@map("auth_sessions")
+}
+
+enum SubjectRequirementType {
+  MANDATORY
+  ELECTIVE
+}
+
+model Department {
+  id   Int    @id @default(autoincrement())
+  code String @unique
+  name String
+
+  classes       Class[]
+  teachers      Teacher[]
+  subjects      Subject[]
+  majorSubjects MajorSubject[]
+
+  @@map("departments")
+}
+
+model Class {
+  id           Int        @id @default(autoincrement())
+  code         String     @unique
+  name         String
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  students Student[]
+
+  @@map("classes")
+}
+
+model Student {
+  id          Int      @id @default(autoincrement())
+  studentCode String   @unique
+  fullName    String
+  gender      String
+  dateOfBirth DateTime
+  email       String
+  phone       String?
+  classId     Int
+  class       Class    @relation(fields: [classId], references: [id])
+  userId      Int      @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  studentSubjects  StudentSubject[]
+  examRoomStudents ExamRoomStudent[]
+  examAttempts     ExamAttempt[]
+  gradeAppeals     GradeAppeal[]
+
+  @@map("students")
+}
+
+model Teacher {
+  id           Int        @id @default(autoincrement())
+  teacherCode  String     @unique
+  fullName     String
+  degree       String
+  email        String
+  phone        String?
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id])
+  userId       Int        @unique
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  supervisors                  ExamSupervisor[]
+  dutyAvailabilities           TeacherDutyAvailability[]
+  requestedSupervisorChanges   SupervisorChangeRequest[] @relation("SupervisorChangeRequester")
+  replacementSupervisorChanges SupervisorChangeRequest[] @relation("SupervisorChangeReplacement")
+
+  @@map("teachers")
+}
+
+model Subject {
+  id           Int        @id @default(autoincrement())
+  subjectCode  String     @unique
+  subjectName  String
+  credits      Int
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id])
+
+  studentSubjects StudentSubject[]
+  examSchedules   ExamSchedule[]
+  questions       Question[]
+  chapters        Chapter[]
+  majorSubjects   MajorSubject[]
+
+  @@map("subjects")
+}
+
+model MajorSubject {
+  id                  Int                    @id @default(autoincrement())
+  departmentId        Int
+  department          Department             @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  subjectId           Int
+  subject             Subject                @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  type                SubjectRequirementType @default(MANDATORY)
+  recommendedSemester Int                    @default(1)
+  note                String?
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+
+  @@unique([departmentId, subjectId])
+  @@map("major_subjects")
+}
+
+model Chapter {
+  id        String     @id @default(uuid())
+  subjectId Int
+  subject   Subject    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  code      String
+  name      String
+  order     Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  questions Question[]
+
+  @@unique([subjectId, code])
+  @@unique([subjectId, order])
+  @@map("chapters")
+}
+
+model StudentSubject {
+  id         Int     @id @default(autoincrement())
+  studentId  Int
+  student    Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectId  Int
+  subject    Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  semester   String
+  schoolYear String
+  status     String  @default("ELIGIBLE")
+
+  @@unique([studentId, subjectId, semester, schoolYear])
+  @@map("student_subjects")
+}
+
+model ExamPeriod {
+  id         Int      @id @default(autoincrement())
+  name       String
+  semester   String
+  schoolYear String
+  startDate  DateTime
+  endDate    DateTime
+  status     String   @default("UPCOMING")
+
+  examSchedules ExamSchedule[]
+
+  @@map("exam_periods")
+}
+
+model ExamSchedule {
+  id           Int        @id @default(autoincrement())
+  examPeriodId Int
+  examPeriod   ExamPeriod @relation(fields: [examPeriodId], references: [id], onDelete: Cascade)
+  subjectId    Int
+  subject      Subject    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  examDate     DateTime
+  startTime    String
+  endTime      String
+  examType     String     @default("TRAC_NGHIEM")
+  mode         ExamMode   @default(OFFICIAL)
+  status       String     @default("SCHEDULED")
+  note         String?
+  deletedAt    DateTime?
+  deletedById  Int?
+  deletedBy    User?      @relation("ExamScheduleDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+
+  examScheduleRooms ExamScheduleRoom[]
+  examPapers        ExamPaper[]
+  onlineExamConfig  OnlineExamConfig?
+
+  @@index([deletedAt])
+  @@map("exam_schedules")
+}
+
+model ExamRoom {
+  id       Int    @id @default(autoincrement())
+  roomCode String @unique
+  roomName String
+  building String
+  capacity Int
+  roomType String @default("THI_LY_THUYET")
+  status   String @default("AVAILABLE")
+
+  examScheduleRooms ExamScheduleRoom[]
+
+  @@map("exam_rooms")
+}
+
+model ExamScheduleRoom {
+  id             Int          @id @default(autoincrement())
+  examScheduleId Int
+  examSchedule   ExamSchedule @relation(fields: [examScheduleId], references: [id], onDelete: Cascade)
+  roomId         Int
+  room           ExamRoom     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  examRoomStudents ExamRoomStudent[]
+  supervisors      ExamSupervisor[]
+
+  @@unique([examScheduleId, roomId])
+  @@map("exam_schedule_rooms")
+}
+
+model ExamRoomStudent {
+  id                 Int              @id @default(autoincrement())
+  examScheduleRoomId Int
+  examScheduleRoom   ExamScheduleRoom @relation(fields: [examScheduleRoomId], references: [id], onDelete: Cascade)
+  studentId          Int
+  student            Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  examNumber         String
+  seatNumber         Int
+  status             String           @default("ASSIGNED")
+
+  @@unique([examScheduleRoomId, studentId])
+  @@unique([examScheduleRoomId, seatNumber])
+  @@map("exam_room_students")
+}
+
+model ExamSupervisor {
+  id                 Int                       @id @default(autoincrement())
+  examScheduleRoomId Int
+  examScheduleRoom   ExamScheduleRoom          @relation(fields: [examScheduleRoomId], references: [id], onDelete: Cascade)
+  teacherId          Int
+  teacher            Teacher                   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  role               String                    @default("SUPERVISOR_1")
+  status             String                    @default("PENDING")
+  note               String?
+  changeRequests     SupervisorChangeRequest[]
+
+  @@unique([examScheduleRoomId, teacherId])
+  @@unique([examScheduleRoomId, role])
+  @@map("exam_supervisors")
+}
+
+enum TeacherAvailabilityStatus {
+  AVAILABLE
+  UNAVAILABLE
+}
+
+enum SupervisorChangeRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model TeacherDutyAvailability {
+  id        Int                       @id @default(autoincrement())
+  teacherId Int
+  teacher   Teacher                   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  examDate  DateTime
+  startTime String
+  endTime   String
+  status    TeacherAvailabilityStatus @default(AVAILABLE)
+  note      String?
+  createdAt DateTime                  @default(now())
+  updatedAt DateTime                  @updatedAt
+
+  @@unique([teacherId, examDate, startTime, endTime])
+  @@index([teacherId, examDate])
+  @@map("teacher_duty_availabilities")
+}
+
+model SupervisorChangeRequest {
+  id                   Int                           @id @default(autoincrement())
+  examSupervisorId     Int
+  examSupervisor       ExamSupervisor                @relation(fields: [examSupervisorId], references: [id], onDelete: Cascade)
+  requesterTeacherId   Int
+  requesterTeacher     Teacher                       @relation("SupervisorChangeRequester", fields: [requesterTeacherId], references: [id], onDelete: Restrict)
+  replacementTeacherId Int?
+  replacementTeacher   Teacher?                      @relation("SupervisorChangeReplacement", fields: [replacementTeacherId], references: [id], onDelete: SetNull)
+  reason               String
+  status               SupervisorChangeRequestStatus @default(PENDING)
+  reviewNote           String?
+  reviewedById         Int?
+  reviewedBy           User?                         @relation("SupervisorChangeReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt           DateTime?
+  createdAt            DateTime                      @default(now())
+  updatedAt            DateTime                      @updatedAt
+
+  @@index([examSupervisorId, status])
+  @@index([requesterTeacherId, status])
+  @@map("supervisor_change_requests")
+}
+
+model Question {
+  id                String             @id @default(uuid())
+  code              String             @unique
+  subjectId         Int
+  subject           Subject            @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  chapterId         String?
+  chapter           Chapter?           @relation(fields: [chapterId], references: [id], onDelete: Restrict)
+  content           String
+  contentRich       Json?
+  normalizedContent String
+  type              QuestionType
+  difficulty        QuestionDifficulty @default(MEDIUM)
+  bloomLevel        BloomLevel         @default(UNDERSTAND)
+  score             Float              @default(0.25)
+  explanation       String?
+  keywords          String?
+  status            QuestionStatus     @default(DRAFT)
+  rejectionReason   String?
+  isActive          Boolean            @default(true)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  deletedAt         DateTime?
+  approvedAt        DateTime?
+  archivedAt        DateTime?
+  createdById       Int
+  createdBy         User               @relation("UserQuestions", fields: [createdById], references: [id], onDelete: Restrict)
+  approvedById      Int?
+  approvedBy        User?              @relation("ApprovedQuestions", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  options             QuestionOption[]
+  media               QuestionMedia[]
+  examPaperQuestions  ExamPaperQuestion[]
+  histories           QuestionHistory[]
+  statistic           QuestionStatistic?
+  essayRubrics        EssayRubricCriterion[]
+  essayRubricVersions EssayRubricVersion[]
+  fillBlankAnswers    FillBlankAnswer[]
+
+  @@index([subjectId, chapterId, status])
+  @@index([createdById, createdAt])
+  @@map("questions")
+}
+
+model QuestionHistory {
+  id          String                @id @default(uuid())
+  questionId  String
+  question    Question              @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  action      QuestionHistoryAction
+  oldData     Json?
+  newData     Json?
+  note        String?
+  createdAt   DateTime              @default(now())
+  changedById Int
+  changedBy   User                  @relation("QuestionHistoryActor", fields: [changedById], references: [id], onDelete: Restrict)
+
+  @@index([questionId, createdAt])
+  @@map("question_histories")
+}
+
+model QuestionOption {
+  id          String          @id @default(uuid())
+  questionId  String
+  question    Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  media       QuestionMedia[]
+  label       String
+  content     String
+  contentRich Json?
+  isCorrect   Boolean         @default(false)
+  order       Int
+
+  @@unique([questionId, order])
+  @@map("question_options")
+}
+
+// Đáp án cho từng vị trí {{blank_1}}, {{blank_2}} của câu điền khuyết.
+// Đáp án chính và các biến thể được lưu riêng để backend tự chấm mà không
+// bao giờ gửi lời giải xuống trình duyệt của sinh viên.
+model FillBlankAnswer {
+  id                   String   @id @default(uuid())
+  questionId           String
+  question             Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  blankIndex           Int
+  answer               String
+  normalizedAnswer     String
+  acceptedAnswers      Json?
+  score                Float
+  caseSensitive        Boolean  @default(false)
+  ignoreWhitespace     Boolean  @default(true)
+  ignoreVietnameseTone Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@unique([questionId, blankIndex])
+  @@index([questionId])
+  @@map("fill_blank_answers")
+}
+
+model QuestionMedia {
+  id         String          @id @default(uuid())
+  questionId String
+  question   Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  optionId   String?
+  option     QuestionOption? @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  url        String
+  mimeType   String
+  fileName   String
+  width      Int?
+  height     Int?
+  sortOrder  Int             @default(0)
+  altText    String?
+  createdAt  DateTime        @default(now())
+
+  @@index([questionId, sortOrder])
+  @@index([optionId])
+  @@map("question_media")
+}
+
+model QuestionStatistic {
+  id             String    @id @default(uuid())
+  questionId     String    @unique
+  question       Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  usedCount      Int       @default(0)
+  totalAnswers   Int       @default(0)
+  correctAnswers Int       @default(0)
+  lastUsedAt     DateTime?
+  updatedAt      DateTime  @updatedAt
+
+  @@map("question_statistics")
+}
+
+model ExamPaper {
+  id              Int             @id @default(autoincrement())
+  examScheduleId  Int
+  examSchedule    ExamSchedule    @relation(fields: [examScheduleId], references: [id], onDelete: Cascade)
+  paperCode       String
+  title           String
+  durationMinutes Int
+  totalScore      Float
+  status          ExamPaperStatus @default(DRAFT)
+  publishedAt     DateTime?
+  archivedAt      DateTime?
+  deletedAt       DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  createdById     Int
+  createdBy       User            @relation("UserExamPapers", fields: [createdById], references: [id], onDelete: Cascade)
+
+  questions         ExamPaperQuestion[]
+  onlineExamConfigs OnlineExamConfig[]
+
+  @@unique([examScheduleId, paperCode])
+  @@index([status, deletedAt])
+  @@map("exam_papers")
+}
+
+model ExamPaperQuestion {
+  id            Int       @id @default(autoincrement())
+  examPaperId   Int
+  examPaper     ExamPaper @relation(fields: [examPaperId], references: [id], onDelete: Cascade)
+  questionId    String
+  question      Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionOrder Int
+  score         Float
+  usedAt        DateTime  @default(now())
+
+  @@unique([examPaperId, questionId])
+  @@unique([examPaperId, questionOrder])
+  @@map("exam_paper_questions")
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  actorId     Int?
+  actor       User?    @relation("AuditLogActor", fields: [actorId], references: [id], onDelete: SetNull)
+  action      String
+  entityType  String
+  entityId    String?
+  description String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([entityType, entityId])
+  @@map("audit_logs")
+}
+
+enum SecurityAuditCategory {
+  AUTHENTICATION
+  AUTHORIZATION
+  DATA_ACCESS
+  DATA_EXPORT
+  EXAMINATION
+  BACKUP_RECOVERY
+  AI_PROCESSING
+  SYSTEM_SECURITY
+}
+
+enum SecurityAuditOutcome {
+  SUCCESS
+  DENIED
+  FAILURE
+}
+
+model SecurityAuditEvent {
+  id              String                  @id @default(uuid())
+  occurredAt      DateTime                @default(now())
+  category        SecurityAuditCategory
+  action          String
+  outcome         SecurityAuditOutcome
+  actorId         Int?
+  actor           User?                   @relation("SecurityAuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+  subjectUserId   Int?
+  entityType      String?
+  entityId        String?
+  requestId       String?
+  httpMethod      String?
+  route           String?
+  ipAddress       String?
+  ipHash          String?
+  location        String?
+  userAgentHash   String?
+  metadata        Json?
+  previousHash    String?
+  eventHash       String                  @unique
+  retentionUntil  DateTime
+  archivedAt      DateTime?
+  legalHold       Boolean                 @default(false)
+  legalHoldRecord SecurityAuditLegalHold?
+
+  @@index([occurredAt])
+  @@index([actorId, occurredAt])
+  @@index([category, occurredAt])
+  @@index([action, occurredAt])
+  @@index([outcome, occurredAt])
+  @@index([entityType, entityId])
+  @@index([retentionUntil, legalHold])
+  @@index([archivedAt, legalHold])
+  @@map("security_audit_events")
+}
+
+model SecurityAuditRetentionPolicy {
+  id          String                @id @default(uuid())
+  category    SecurityAuditCategory @unique
+  hotDays     Int                   @default(90)
+  retainDays  Int                   @default(1825)
+  rawIpDays   Int                   @default(90)
+  updatedById Int?
+  updatedBy   User?                 @relation("SecurityAuditPolicyUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  @@map("security_audit_retention_policies")
+}
+
+model SecurityAuditLegalHold {
+  id            String             @id @default(uuid())
+  eventId       String             @unique
+  event         SecurityAuditEvent @relation(fields: [eventId], references: [id], onDelete: Restrict)
+  reason        String
+  caseReference String?
+  createdById   Int
+  createdBy     User               @relation("SecurityAuditHoldCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  releasedAt    DateTime?
+  releasedById  Int?
+  createdAt     DateTime           @default(now())
+
+  @@index([releasedAt])
+  @@map("security_audit_legal_holds")
+}
+
+enum DocumentTemplateDataSource {
+  EXAM_SCHEDULE_LIST
+  ROOM_DOOR_LIST
+  SUPERVISOR_ASSIGNMENT
+  GRADE_REPORT
+  STUDENT_DIRECTORY
+  TEACHER_DIRECTORY
+  GENERIC_REPORT
+}
+
+enum DocumentTemplateVersionStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model DocumentTemplate {
+  id          String                     @id @default(uuid())
+  code        String                     @unique
+  name        String
+  dataSource  DocumentTemplateDataSource
+  description String?
+  isDefault   Boolean                    @default(false)
+  createdById Int?
+  updatedById Int?
+  createdAt   DateTime                   @default(now())
+  updatedAt   DateTime                   @updatedAt
+  versions    DocumentTemplateVersion[]
+
+  @@index([dataSource])
+  @@map("document_templates")
+}
+
+model DocumentTemplateVersion {
+  id            String                        @id @default(uuid())
+  templateId    String
+  template      DocumentTemplate              @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  version       Int
+  status        DocumentTemplateVersionStatus @default(DRAFT)
+  config        Json
+  createdById   Int?
+  publishedById Int?
+  publishedAt   DateTime?
+  createdAt     DateTime                      @default(now())
+  updatedAt     DateTime                      @updatedAt
+
+  @@unique([templateId, version])
+  @@index([templateId, status])
+  @@map("document_template_versions")
+}
+
+enum AttemptStatus {
+  NOT_STARTED
+  DEVICE_CHECK
+  READY
+  IN_PROGRESS
+  DISCONNECTED
+  SUBMITTED
+  AUTO_SUBMITTED
+  TERMINATED
+  UNDER_REVIEW
+  GRADED
+  INVALIDATED
+}
+
+enum EssayAnswerGradingStatus {
+  NOT_GRADED
+  IN_PROGRESS
+  GRADED
+}
+
+enum EssayAttemptGradingStatus {
+  NOT_SUBMITTED
+  SUBMITTED
+  UNDER_GRADING
+  WAITING_APPROVAL
+  APPROVED
+  PUBLISHED
+}
+
+enum EssayAiGradingStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+}
+
+enum EssayCriterionAchievementLevel {
+  FULL
+  PARTIAL
+  NOT_MET
+  NEEDS_REVIEW
+}
+
+enum EventSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ProctoringEventType {
+  TAB_HIDDEN
+  WINDOW_BLUR
+  FULLSCREEN_EXIT
+  COPY_ATTEMPT
+  PASTE_ATTEMPT
+  CONTEXT_MENU_ATTEMPT
+  NETWORK_DISCONNECTED
+  NETWORK_RECONNECTED
+  PAGE_RELOAD
+  MULTIPLE_SESSION
+  CAMERA_DISABLED
+  FACE_NOT_FOUND
+  MULTIPLE_FACES
+  SUSPICIOUS_DEVICE_CHANGE
+}
+
+model OnlineExamConfig {
+  id             Int          @id @default(autoincrement())
+  examScheduleId Int          @unique
+  examSchedule   ExamSchedule @relation(fields: [examScheduleId], references: [id], onDelete: Cascade)
+  examPaperId    Int
+  examPaper      ExamPaper    @relation(fields: [examPaperId], references: [id])
+  mode           ExamMode     @default(OFFICIAL)
+
+  // --- Cài đặt thiết bị & an ninh ---
+  requireWebcam        Boolean @default(false)
+  requireMic           Boolean @default(false)
+  requireFullscreen    Boolean @default(true)
+  preventTabSwitch     Boolean @default(true)
+  preventCopyPaste     Boolean @default(true)
+  shuffleQuestions     Boolean @default(true)
+  shuffleOptions       Boolean @default(true)
+  maxAllowedViolations Int     @default(5)
+
+  // --- Hiển thị media câu hỏi & đáp án ---
+  /// Hiển thị ảnh (image/*) của câu hỏi và đáp án
+  showImages Boolean @default(true)
+  /// Hiển thị video (video/*) của câu hỏi và đáp án
+  showVideos Boolean @default(true)
+  /// Hiển thị âm thanh (audio/*) của câu hỏi và đáp án
+  showAudios Boolean @default(true)
+
+  // --- Kết quả & đánh giá ---
+  showResultImmediately        Boolean @default(false)
+  allowReview                  Boolean @default(true)
+  essayEnabled                 Boolean @default(false)
+  allowEssayFileUpload         Boolean @default(true)
+  maxEssayFileSizeMb           Int     @default(20)
+  showEssayResultAfterApproval Boolean @default(true)
+
+  // --- Kiểm soát truy cập ---
+  /// Danh sách IP/subnet được phép (JSON array of strings), null = không giới hạn
+  ipWhitelist            Json?   @default("[]")
+  /// Yêu cầu thiết bị đã đăng ký trước
+  requireDeviceBinding   Boolean @default(false)
+  /// Mã truy cập phòng thi (access code), null = không yêu cầu
+  accessCode             String?
+  /// Mật khẩu thi chính thức (bcrypt hash) do Giảng viên/Admin thiết lập khi phát hành đề,
+  /// bắt buộc với kỳ thi OFFICIAL. Sinh viên phải nhập đúng mật khẩu mới được vào thi.
+  examPasswordHash       String?
+  /// Cho phép vào thi muộn tối đa bao nhiêu phút
+  lateEntryWindowMinutes Int     @default(15)
+  /// Yêu cầu sinh viên đọc và chấp nhận quy định trước khi thi
+  requireRulesAcceptance Boolean @default(true)
+  /// Số lần thi được phép tối đa
+  maxAttempts            Int     @default(1)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attempts       ExamAttempt[]
+  securityPolicy ExamSecurityPolicy?
+
+  @@map("online_exam_configs")
+}
+
+model ExamSecurityPolicy {
+  id                 Int              @id @default(autoincrement())
+  onlineExamConfigId Int              @unique
+  onlineExamConfig   OnlineExamConfig @relation(fields: [onlineExamConfigId], references: [id], onDelete: Cascade)
+
+  weightTabHidden    Int @default(10)
+  weightWindowBlur   Int @default(5)
+  weightExitFull     Int @default(15)
+  weightCopyPaste    Int @default(20)
+  weightMultiSession Int @default(50)
+  weightFaceMissing  Int @default(15)
+  weightMultiFace    Int @default(30)
+
+  reviewThreshold Int @default(40)
+
+  @@map("exam_security_policies")
+}
+
+model ExamAttempt {
+  id                 String           @id @default(uuid())
+  onlineExamConfigId Int
+  onlineExamConfig   OnlineExamConfig @relation(fields: [onlineExamConfigId], references: [id])
+  studentId          Int
+  student            Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  mode               ExamMode         @default(OFFICIAL)
+
+  attemptNumber Int           @default(1)
+  attemptToken  String        @unique
+  status        AttemptStatus @default(NOT_STARTED)
+
+  startTime       DateTime?
+  endTime         DateTime?
+  expectedEndTime DateTime?
+  submittedAt     DateTime?
+
+  extraMinutes    Int     @default(0)
+  extraTimeReason String?
+
+  clientIp          String?
+  userAgent         String?
+  deviceFingerprint String?
+
+  totalScore    Float?
+  maxScore      Float?
+  penaltyPoints Float                     @default(0)
+  penaltyReason String?
+  riskScore     Int                       @default(0)
+  isFlagged     Boolean                   @default(false)
+  gradingStatus EssayAttemptGradingStatus @default(NOT_SUBMITTED)
+  gradedById    Int?
+  gradedBy      User?                     @relation("EssayAttemptGrader", fields: [gradedById], references: [id], onDelete: SetNull)
+  gradedAt      DateTime?
+  approvedById  Int?
+  approvedBy    User?                     @relation("EssayAttemptApprover", fields: [approvedById], references: [id], onDelete: SetNull)
+  approvedAt    DateTime?
+  publishedAt   DateTime?
+
+  /// Sinh viên đã chấp nhận quy định thi hay chưa
+  rulesAcceptedAt DateTime?
+
+  snapshot         ExamSnapshot?
+  attemptAnswers   AttemptAnswer[]
+  proctoringEvents ProctoringEvent[]
+  incidents        ExamIncident[]
+  deviceSessions   DeviceSession[]
+  submissionFiles  EssaySubmissionFile[]
+  gradeAppeals     GradeAppeal[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([onlineExamConfigId, studentId, attemptNumber])
+  @@index([studentId, status])
+  @@map("exam_attempts")
+}
+
+model ExamSnapshot {
+  id        String      @id @default(uuid())
+  attemptId String      @unique
+  attempt   ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  paperTitle    String
+  duration      Int
+  questionCount Int
+  snapshotData  Json
+
+  createdAt DateTime @default(now())
+
+  @@map("exam_snapshots")
+}
+
+model AttemptAnswer {
+  id         String      @id @default(uuid())
+  attemptId  String
+  attempt    ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId String
+
+  selectedOptionIds  Json?
+  textAnswer         String?
+  textAnswerRich     Json?
+  fillBlankAnswers   Json?
+  fillBlankScore     Float?
+  fillBlankResult    Json?
+  isFlaggedForReview Boolean                  @default(false)
+  lastSavedAt        DateTime?
+  submittedAt        DateTime?
+  gradingStatus      EssayAnswerGradingStatus @default(NOT_GRADED)
+  teacherComment     String?
+  finalScore         Float?
+  essayGrades        EssayGrade[]
+  submissionFiles    EssaySubmissionFile[]
+
+  aiSuggestedScore   Float?
+  aiSuggestedComment String?
+  aiConfidence       Float?
+  aiGeneratedAt      DateTime?
+  aiConfirmedById    Int?
+  aiConfirmedAt      DateTime?
+  rubricVersionId    String?
+  rubricVersion      EssayRubricVersion? @relation(fields: [rubricVersionId], references: [id], onDelete: SetNull)
+  aiGradingRuns      EssayAiGradingRun[]
+
+  gradeHistories EssayGradeHistory[]
+
+  version         Int      @default(1)
+  clientTimestamp DateTime
+  serverTimestamp DateTime @default(now())
+
+  @@unique([attemptId, questionId])
+  @@index([attemptId])
+  @@map("attempt_answers")
+}
+
+model EssayGradeHistory {
+  id              String        @id @default(uuid())
+  attemptAnswerId String
+  attemptAnswer   AttemptAnswer @relation(fields: [attemptAnswerId], references: [id], onDelete: Cascade)
+  criterionId     String?
+  oldScore        Float?
+  newScore        Float
+  oldComment      String?
+  newComment      String?
+  actorId         Int
+  actor           User          @relation("EssayGradeHistoryActor", fields: [actorId], references: [id], onDelete: Restrict)
+  reason          String?
+  createdAt       DateTime      @default(now())
+
+  @@index([attemptAnswerId])
+  @@map("essay_grade_histories")
+}
+
+model EssayRubricCriterion {
+  id                 String                   @id @default(uuid())
+  questionId         String
+  question           Question                 @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  label              String
+  description        String?
+  fullCreditGuide    String?
+  partialCreditGuide String?
+  zeroCreditGuide    String?
+  acceptedConcepts   String?
+  commonMistakes     String?
+  scoreStep          Float                    @default(0.25)
+  maxScore           Float
+  sortOrder          Int
+  rubricVersionId    String?
+  rubricVersion      EssayRubricVersion?      @relation(fields: [rubricVersionId], references: [id], onDelete: SetNull)
+  grades             EssayGrade[]
+  aiResults          EssayAiCriterionResult[]
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+
+  @@unique([questionId, sortOrder])
+  @@index([questionId])
+  @@map("essay_rubric_criteria")
+}
+
+model EssayRubricVersion {
+  id              String                 @id @default(uuid())
+  questionId      String
+  question        Question               @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  version         Int
+  referenceAnswer String?
+  gradingGuidance String?
+  totalScore      Float
+  isLocked        Boolean                @default(false)
+  createdById     Int?
+  createdAt       DateTime               @default(now())
+  criteria        EssayRubricCriterion[]
+  attemptAnswers  AttemptAnswer[]
+  aiGradingRuns   EssayAiGradingRun[]
+
+  @@unique([questionId, version])
+  @@index([questionId, createdAt])
+  @@map("essay_rubric_versions")
+}
+
+model EssayAiGradingRun {
+  id              String                   @id @default(uuid())
+  attemptAnswerId String
+  attemptAnswer   AttemptAnswer            @relation(fields: [attemptAnswerId], references: [id], onDelete: Cascade)
+  rubricVersionId String?
+  rubricVersion   EssayRubricVersion?      @relation(fields: [rubricVersionId], references: [id], onDelete: SetNull)
+  status          EssayAiGradingStatus     @default(QUEUED)
+  provider        String?
+  model           String?
+  suggestedScore  Float?
+  overallComment  String?
+  confidence      Float?
+  warning         String?
+  errorMessage    String?
+  requestedById   Int
+  startedAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime                 @default(now())
+  criteria        EssayAiCriterionResult[]
+
+  @@index([attemptAnswerId, createdAt])
+  @@index([status, createdAt])
+  @@map("essay_ai_grading_runs")
+}
+
+model EssayAiCriterionResult {
+  id               String                         @id @default(uuid())
+  aiGradingRunId   String
+  aiGradingRun     EssayAiGradingRun              @relation(fields: [aiGradingRunId], references: [id], onDelete: Cascade)
+  criterionId      String
+  criterion        EssayRubricCriterion           @relation(fields: [criterionId], references: [id], onDelete: Restrict)
+  suggestedScore   Float
+  achievementLevel EssayCriterionAchievementLevel @default(NEEDS_REVIEW)
+  comment          String?
+  evidenceQuote    String?
+  createdAt        DateTime                       @default(now())
+
+  @@unique([aiGradingRunId, criterionId])
+  @@index([criterionId])
+  @@map("essay_ai_criterion_results")
+}
+
+model EssayGrade {
+  id              String               @id @default(uuid())
+  attemptAnswerId String
+  attemptAnswer   AttemptAnswer        @relation(fields: [attemptAnswerId], references: [id], onDelete: Cascade)
+  criterionId     String
+  criterion       EssayRubricCriterion @relation(fields: [criterionId], references: [id], onDelete: Cascade)
+  score           Float
+  comment         String?
+  gradedById      Int
+  gradedBy        User                 @relation("EssayGradeGrader", fields: [gradedById], references: [id], onDelete: Restrict)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  @@unique([attemptAnswerId, criterionId])
+  @@index([gradedById])
+  @@map("essay_grades")
+}
+
+model EssaySubmissionFile {
+  id        String         @id @default(uuid())
+  attemptId String
+  attempt   ExamAttempt    @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  answerId  String?
+  answer    AttemptAnswer? @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  url       String
+  fileName  String
+  mimeType  String
+  size      Int
+  createdAt DateTime       @default(now())
+
+  @@index([attemptId])
+  @@index([answerId])
+  @@map("essay_submission_files")
+}
+
+model ProctoringEvent {
+  id        String      @id @default(uuid())
+  attemptId String
+  attempt   ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  eventType  ProctoringEventType
+  severity   EventSeverity       @default(LOW)
+  occurredAt DateTime            @default(now())
+  duration   Int?
+
+  metadata    Json?
+  evidenceUrl String?
+
+  reviewStatus String  @default("PENDING")
+  reviewerNote String?
+
+  @@index([attemptId, occurredAt])
+  @@map("proctoring_events")
+}
+
+model DeviceSession {
+  id        String      @id @default(uuid())
+  attemptId String
+  attempt   ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  sessionToken String   @unique
+  deviceInfo   String
+  ipAddress    String
+  isActive     Boolean  @default(true)
+  lastSeenAt   DateTime @default(now())
+
+  @@map("device_sessions")
+}
+
+model ExamIncident {
+  id        String      @id @default(uuid())
+  attemptId String
+  attempt   ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  reportedById  Int
+  reason        String
+  decision      String    @default("PENDING")
+  studentAppeal String?
+  reviewerNote  String?
+  resolvedAt    DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@map("exam_incidents")
+}
+
+enum GradeAppealStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED_REGRADE
+  REJECTED
+  CANCELLED
+}
+
+model GradeAppeal {
+  id            String            @id @default(uuid())
+  attemptId     String
+  attempt       ExamAttempt       @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  studentId     Int
+  student       Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  reason        String
+  evidenceUrls  Json?
+  status        GradeAppealStatus @default(PENDING)
+  originalScore Float
+  revisedScore  Float?
+  reviewerNote  String?
+  reviewerId    Int?
+  reviewer      User?             @relation("GradeAppealReviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
+  reviewedAt    DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@index([studentId, status])
+  @@index([attemptId])
+  @@map("grade_appeals")
+}
+
+enum BackupJobType {
+  FULL
+  DATABASE
+  UPLOADS
+  SAFETY
+}
+
+enum BackupJobStatus {
+  QUEUED
+  RUNNING
+  VERIFYING
+  SUCCEEDED
+  FAILED
+  VERIFY_FAILED
+  CANCELLED
+}
+
+enum BackupRestoreTarget {
+  STAGING
+  PRODUCTION
+}
+
+enum BackupRestoreStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  EXPIRED
+}
+
+model BackupJob {
+  id            String          @id @default(uuid())
+  snapshotId    String          @unique
+  type          BackupJobType   @default(FULL)
+  status        BackupJobStatus @default(QUEUED)
+  storageKey    String?
+  manifestKey   String?
+  checksum      String?
+  sizeBytes     BigInt?
+  startedAt     DateTime?
+  completedAt   DateTime?
+  appCommit     String?
+  migration     String?
+  errorMessage  String?
+  retained      Boolean         @default(true)
+  initiatedById Int?
+  initiatedBy   User?           @relation(fields: [initiatedById], references: [id], onDelete: SetNull)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  restoreRequests BackupRestoreRequest[]
+
+  @@index([status, createdAt])
+  @@index([completedAt])
+  @@map("backup_jobs")
+}
+
+model BackupRestoreRequest {
+  id               String              @id @default(uuid())
+  backupJobId      String
+  backupJob        BackupJob           @relation(fields: [backupJobId], references: [id], onDelete: Restrict)
+  target           BackupRestoreTarget
+  status           BackupRestoreStatus @default(PENDING_APPROVAL)
+  reason           String
+  confirmationHash String?
+  requestedById    Int
+  requestedBy      User                @relation("BackupRestoreRequester", fields: [requestedById], references: [id], onDelete: Restrict)
+  approvedById     Int?
+  approvedBy       User?               @relation("BackupRestoreApprover", fields: [approvedById], references: [id], onDelete: SetNull)
+  expiresAt        DateTime
+  startedAt        DateTime?
+  completedAt      DateTime?
+  errorMessage     String?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  @@index([status, createdAt])
+  @@index([backupJobId])
+  @@map("backup_restore_requests")
+}
+
+enum NotificationType {
+  SCHEDULE_CHANGE
+  EXAM_CANCELLED
+  ASSIGNMENT_UPDATE
+  GENERAL
+  SYSTEM
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType @default(GENERAL)
+  title     String
+  message   String
+  link      String?
+  metadata  Json?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}

@@ -7,7 +7,7 @@ import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { exportToFormattedExcel } from '../../lib/export-excel';
 import { exportExamPaperToWord } from '../../lib/export-docx';
-import { printReport } from '../../lib/export-print';
+import { printReport, getPublishedTemplatesMap } from '../../lib/export-print';
 import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
@@ -579,10 +579,14 @@ export default function ExamPapersPage() {
     }
   };
 
-  const exportPaper = async (paper: ExamPaper) => {
+  const exportPaper = async (paper: ExamPaper, includeAnswerKey = showAnswers) => {
     try {
       const response = await api.get<ExamPaper>(`/exam-papers/${paper.id}`);
-      exportExamPaperToWord(formatPaperForExport(response.data), showAnswers);
+      await api.post(`/exam-papers/${paper.id}/export-audit`, {
+        format: 'WORD',
+        includeAnswerKey,
+      });
+      exportExamPaperToWord(formatPaperForExport(response.data), includeAnswerKey);
     } catch (error: any) {
       setToast({ message: error.message || 'Không thể tải đầy đủ nội dung đề thi.', type: 'error' });
     }
@@ -664,7 +668,6 @@ export default function ExamPapersPage() {
       setToast({ message: Array.isArray(apiMsg) ? apiMsg.join(', ') : apiMsg, type: 'error' });
     }
   };
-
   const filteredPapers = useMemo(() => {
     return papers
       .filter((p) => {
@@ -736,10 +739,25 @@ export default function ExamPapersPage() {
     });
   };
 
-  const handlePrintReport = () => {
+  const handlePrintReport = async () => {
+    let tplConfig: any = {};
+    try {
+      const map = await getPublishedTemplatesMap();
+      tplConfig = map['EXAM_PAPER_OFFICIAL'] || map['GENERIC_REPORT'] || {};
+    } catch {
+      // Fallback
+    }
+
+    const header = tplConfig.header || {};
+    const footer = tplConfig.footer || {};
+
     printReport({
-      title: 'BÁO CÁO DANH SÁCH ĐỀ THI',
-      subtitle: 'Danh sách đề thi và phân bổ ma trận câu hỏi',
+      title: header.title || 'BÁO CÁO DANH SÁCH ĐỀ THI',
+      subtitle: header.subtitle || 'Danh sách đề thi và phân bổ ma trận câu hỏi',
+      institutionName: header.institutionName,
+      facultyName: header.facultyName,
+      signers: footer.signers,
+      footerNotes: footer.note,
       metaInfo: [
         { label: 'Tổng số đề thi', value: String(papers.length) },
         { label: 'Đề thi đang lọc', value: String(filteredPapers.length) },
@@ -757,7 +775,6 @@ export default function ExamPapersPage() {
         p.paperCode,
         p.subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '---',
         p.status === 'PUBLISHED' ? 'Đã phát hành' : p.status === 'DRAFT' ? 'Bản nháp' : p.status === 'ARCHIVED' ? 'Đã lưu trữ' : p.status === 'CANCELLED' ? 'Đã hủy' : 'Chưa xác định',
-        `${p.questionCount ?? p.questions?.length ?? 0} câu`,
         `${p.durationMinutes} phút`,
       ]),
     });
@@ -1040,7 +1057,7 @@ export default function ExamPapersPage() {
         onClose={() => setSelectedPaper(null)}
         showAnswers={showAnswers}
         onToggleShowAnswers={() => setShowAnswers(!showAnswers)}
-        onExportWord={(p, showAns) => exportExamPaperToWord(formatPaperForExport(p), showAns)}
+        onExportWord={(p, showAns) => void exportPaper(p, showAns)}
         onSwapQuestion={(index, q) => openSwapModal(index, q)}
         onRubric={(rubricData) => setRubricQuestion(rubricData)}
         onPublish={currentUser?.role === 'ADMIN' || (currentUser?.role === 'TEACHER' && (drawerOpenPaper as any)?.examSchedule?.mode === 'MOCK')

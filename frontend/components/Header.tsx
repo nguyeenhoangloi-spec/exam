@@ -17,6 +17,8 @@ import {
   Headphones,
   Sun,
   Moon,
+  ArrowUpRight,
+  Eye,
 } from 'lucide-react';
 import { removeAuth } from '../lib/auth';
 import { User } from '../types';
@@ -24,6 +26,7 @@ import { DynamicImage } from './ui/DynamicImage';
 import api from '../lib/api';
 import { ConfirmModal } from './ConfirmModal';
 import { SearchModal } from './SearchModal';
+import { NotificationDetailModal } from './notifications/NotificationDetailModal';
 
 interface HeaderProps {
   user: User | null;
@@ -93,6 +96,7 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [detailNotification, setDetailNotification] = useState<NotificationItem | null>(null);
   const [readNotificationIds, setReadNotificationIds] = useState<string[]>(() => {
     if (typeof window === 'undefined') return [];
     try {
@@ -108,22 +112,37 @@ export const Header: React.FC<HeaderProps> = ({
     notifications.filter((n) => !readNotificationIds.includes(n.id)).length
   );
 
-  const handleMarkAllAsRead = () => {
+  const handleMarkAllAsRead = async () => {
     const allIds = notifications.map((n) => n.id);
     setReadNotificationIds(allIds);
     try {
       localStorage.setItem('read_notifications', JSON.stringify(allIds));
+      await api.patch('/notifications/read-all').catch(() => { });
     } catch { }
   };
 
-  const handleNotificationClick = (item: NotificationItem) => {
+  const markAsRead = async (item: NotificationItem) => {
     if (!readNotificationIds.includes(item.id)) {
       const updated = [...readNotificationIds, item.id];
       setReadNotificationIds(updated);
       try {
         localStorage.setItem('read_notifications', JSON.stringify(updated));
+        if (!isNaN(Number(item.id))) {
+          await api.patch(`/notifications/${item.id}/read`).catch(() => { });
+        }
       } catch { }
     }
+  };
+
+  const handleNotificationClick = async (item: NotificationItem) => {
+    await markAsRead(item);
+    setOpenPanel(null);
+    setDetailNotification(item);
+  };
+
+  const handleNavigateDirect = async (item: NotificationItem, e: React.MouseEvent) => {
+    e.stopPropagation();
+    await markAsRead(item);
     setOpenPanel(null);
     if (item.href) {
       router.push(item.href);
@@ -147,76 +166,68 @@ export const Header: React.FC<HeaderProps> = ({
 
     const fetchRealNotifications = async () => {
       try {
-        if (user.role === 'ADMIN') {
-          const res = await api.get('/questions/statistics');
-          const pending = res.data?.pendingCount || 0;
-          if (isMounted) {
-            if (pending > 0) {
-              setNotifications([
-                {
-                  id: 'pending-questions',
-                  title: 'Cần duyệt câu hỏi mới',
-                  desc: `Có ${pending} câu hỏi đang chờ duyệt trong ngân hàng.`,
-                  href: '/question-bank?status=PENDING',
-                },
-                {
-                  id: 'exam-schedules-notice',
-                  title: 'Quản lý lịch thi',
-                  desc: 'Vui lòng kiểm tra xếp phòng và cán bộ coi thi.',
-                  href: '/exam-schedules',
-                },
-              ]);
-            } else {
-              setNotifications([]);
+        const notifList: NotificationItem[] = [];
+
+        // 1. Fetch persistent DB notifications from backend
+        try {
+          const dbNotifRes = await api.get('/notifications?limit=15');
+          const dbItems: any[] = dbNotifRes.data?.items || [];
+          for (const d of dbItems) {
+            notifList.push({
+              id: String(d.id),
+              title: d.title,
+              desc: d.message,
+              href: d.link || (user.role === 'STUDENT' ? '/student/exam-schedule' : user.role === 'TEACHER' ? '/teacher/assignments' : '/exam-schedules'),
+            });
+            if (d.isRead && !readNotificationIds.includes(String(d.id))) {
+              setReadNotificationIds((prev) => [...prev, String(d.id)]);
             }
+          }
+        } catch {
+          // Fallback if db table empty
+        }
+
+        // 2. Fetch role-specific action notices
+        if (user.role === 'ADMIN') {
+          const res = await api.get('/questions/statistics').catch(() => null);
+          const pending = res?.data?.pendingCount || 0;
+          if (pending > 0) {
+            notifList.push({
+              id: 'pending-questions',
+              title: 'Cần duyệt câu hỏi mới',
+              desc: `Có ${pending} câu hỏi đang chờ duyệt trong ngân hàng.`,
+              href: '/question-bank?status=PENDING',
+            });
           }
         } else if (user.role === 'TEACHER') {
-          const res = await api.get('/teachers/my-assignments');
-          const assignments: any[] = res.data || [];
+          const res = await api.get('/teachers/my-assignments').catch(() => null);
+          const assignments: any[] = res?.data || [];
           const unconfirmed = assignments.filter((a: { status: string }) => a.status !== 'CONFIRMED');
-          if (isMounted) {
-            if (unconfirmed.length > 0) {
-              setNotifications([
-                {
-                  id: 'unconfirmed-assignments',
-                  title: 'Ca coi thi chờ xác nhận',
-                  desc: `Thầy/Cô có ${unconfirmed.length} ca coi thi chưa xác nhận nhận ca.`,
-                  href: '/teacher/assignments',
-                },
-                {
-                  id: 'question-bank-notice',
-                  title: 'Ngân hàng câu hỏi',
-                  desc: 'Vui lòng kiểm tra và duyệt thêm câu hỏi mới.',
-                  href: '/question-bank',
-                },
-              ]);
-            } else {
-              setNotifications([]);
-            }
+          if (unconfirmed.length > 0) {
+            notifList.push({
+              id: 'unconfirmed-assignments',
+              title: 'Ca coi thi chờ xác nhận',
+              desc: `Thầy/Cô có ${unconfirmed.length} ca coi thi chưa xác nhận nhận ca.`,
+              href: '/teacher/assignments',
+            });
           }
         } else if (user.role === 'STUDENT') {
-          const res = await api.get('/students/my-schedule');
-          const schedules: any[] = res.data || [];
-          if (isMounted) {
+          if (notifList.length === 0) {
+            const res = await api.get('/students/my-schedule').catch(() => null);
+            const schedules: any[] = res?.data || [];
             if (schedules.length > 0) {
-              setNotifications([
-                {
-                  id: 'student-schedule-1',
-                  title: 'Lịch thi cá nhân',
-                  desc: `Bạn có ${schedules.length} ca thi được sắp xếp trong học kỳ này.`,
-                  href: '/student/exam-schedule',
-                },
-                {
-                  id: 'student-schedule-2',
-                  title: 'Quy chế phòng thi online',
-                  desc: 'Kiểm tra thiết bị & mạng internet trước giờ thi 15 phút.',
-                  href: '/student/exam-schedule',
-                },
-              ]);
-            } else {
-              setNotifications([]);
+              notifList.push({
+                id: 'student-schedule-1',
+                title: 'Lịch thi cá nhân',
+                desc: `Bạn có ${schedules.length} ca thi được sắp xếp trong học kỳ này.`,
+                href: '/student/exam-schedule',
+              });
             }
           }
+        }
+
+        if (isMounted) {
+          setNotifications(notifList);
         }
       } catch {
         if (isMounted) {
@@ -287,6 +298,14 @@ export const Header: React.FC<HeaderProps> = ({
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         user={user}
+      />
+
+      {/* Notification Detail Modal */}
+      <NotificationDetailModal
+        isOpen={Boolean(detailNotification)}
+        onClose={() => setDetailNotification(null)}
+        notification={detailNotification}
+        onNavigate={(href) => router.push(href)}
       />
 
       <header
@@ -385,9 +404,8 @@ export const Header: React.FC<HeaderProps> = ({
                                   handleNotificationClick(item);
                                 }
                               }}
-                              className={`py-3 px-2 transition cursor-pointer space-y-1 group rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 ${
-                                isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
-                              }`}
+                              className={`py-3 px-2 transition cursor-pointer space-y-1 group rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 ${isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
+                                }`}
                             >
                               <div className="flex items-center justify-between gap-1.5">
                                 <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body-sm group-hover:text-blue-600 transition flex items-center gap-2">
@@ -398,11 +416,28 @@ export const Header: React.FC<HeaderProps> = ({
                                   )}
                                   <span>{item.title}</span>
                                 </p>
-                                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition shrink-0" strokeWidth={1.5} />
+                                <div className="flex items-center gap-1 shrink-0">
+                                  {item.href && (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => handleNavigateDirect(item, e)}
+                                      className="p-1 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
+                                      title="Mở trang liên quan"
+                                    >
+                                      <ArrowUpRight className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition" strokeWidth={1.5} />
+                                </div>
                               </div>
-                              <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal leading-relaxed pl-4">
+                              <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal leading-relaxed pl-4 line-clamp-2">
                                 {item.desc}
                               </p>
+                              <div className="pl-4 pt-1 flex items-center gap-2">
+                                <span className="text-type-helper font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                                  Xem chi tiết
+                                </span>
+                              </div>
                             </div>
                           );
                         })}
@@ -428,11 +463,10 @@ export const Header: React.FC<HeaderProps> = ({
                 aria-expanded={openPanel === 'account'}
                 aria-controls="user-account-dropdown"
                 onClick={() => togglePanel('account')}
-                className={`group flex items-center gap-2.5 rounded-xl py-1 px-2 text-left transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                  openPanel === 'account'
+                className={`group flex items-center gap-2.5 rounded-xl py-1 px-2 text-left transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${openPanel === 'account'
                     ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-600'
                     : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/80'
-                }`}
+                  }`}
               >
                 {/* Avatar */}
                 <div className="relative shrink-0">
@@ -462,9 +496,8 @@ export const Header: React.FC<HeaderProps> = ({
 
                 {/* Chevron Arrow */}
                 <ChevronDown
-                  className={`h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-transform duration-200 ${
-                    openPanel === 'account' ? 'rotate-180 text-blue-600' : ''
-                  }`}
+                  className={`h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-transform duration-200 ${openPanel === 'account' ? 'rotate-180 text-blue-600' : ''
+                    }`}
                   strokeWidth={1.5}
                 />
               </button>

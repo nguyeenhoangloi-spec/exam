@@ -2,8 +2,9 @@ import { BadRequestException, ConflictException, ForbiddenException, Injectable,
 import { Prisma } from '@prisma/client';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { AutoScheduleProposalDto, CreateExamScheduleDto, UpdateExamScheduleDto } from './dto/exam-schedule.dto';
+import { AutoScheduleProposalDto, CreateExamScheduleDto, UpdateExamScheduleDto, RescheduleExamScheduleDto, CancelExamScheduleDto, CheckRescheduleConflictDto } from './dto/exam-schedule.dto';
 import { AccessPolicyService } from '../access-control/access-policy.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 type Actor = { id: number; role?: string };
 type ScheduleData = CreateExamScheduleDto | UpdateExamScheduleDto;
@@ -18,6 +19,10 @@ export class ExamSchedulesService {
       allowedSubjectIds: async () => null,
       assertSubjectScope: async () => undefined,
     } as unknown as AccessPolicyService,
+    private readonly notifications: NotificationsService = {
+      notifyScheduleChange: async () => ({ totalNotified: 0 }),
+      notifyScheduleCancelled: async () => ({ totalNotified: 0 }),
+    } as unknown as NotificationsService,
   ) {}
 
   private serializable<T>(callback: (tx: Prisma.TransactionClient) => Promise<T>) {
@@ -586,4 +591,290 @@ export class ExamSchedulesService {
       return restored;
     });
   }
+
+  async checkRescheduleConflicts(actor: Actor, id: number, dto: CheckRescheduleConflictDto) {
+    const existing = await this.prisma.examSchedule.findFirst({
+      where: { id, deletedAt: null },
+      include: {
+        examPeriod: true,
+        subject: true,
+        examScheduleRooms: {
+          include: {
+            room: true,
+            examRoomStudents: { select: { studentId: true, student: { select: { studentCode: true, fullName: true } } } },
+            supervisors: { select: { teacherId: true, teacher: { select: { teacherCode: true, fullName: true } } } },
+          },
+        },
+      },
+    });
+    if (!existing) throw new NotFoundException('Không tìm thấy lịch thi.');
+    if (existing.status === 'CANCELLED') throw new BadRequestException('Không thể kiểm tra lịch thi đã hủy.');
+
+    const conflicts: string[] = [];
+    const warnings: string[] = [];
+
+    // 1. Check period date
+    const { start } = this.dayRange(dto.newExamDate);
+    const periodStart = this.dayRange(existing.examPeriod.startDate).start;
+    const periodEnd = this.dayRange(existing.examPeriod.endDate).end;
+    if (start < periodStart || start >= periodEnd) {
+      conflicts.push(`Ngày thi mới (${dto.newExamDate}) nằm ngoài thời gian kỳ thi (${existing.examPeriod.startDate.toISOString().slice(0, 10)} - ${existing.examPeriod.endDate.toISOString().slice(0, 10)}).`);
+    }
+
+    this.assertTimeRange(dto.newStartTime, dto.newEndTime);
+
+    // 2. Check overlapping schedules
+    const overlapSchedules = await this.prisma.examSchedule.findMany({
+      where: {
+        id: { not: id },
+        status: { not: 'CANCELLED' },
+        deletedAt: null,
+        examDate: { gte: start, lt: this.dayRange(dto.newExamDate).end },
+        startTime: { lt: dto.newEndTime },
+        endTime: { gt: dto.newStartTime },
+      },
+      include: {
+        subject: true,
+        examScheduleRooms: {
+          include: {
+            room: true,
+            examRoomStudents: { select: { studentId: true, student: { select: { studentCode: true, fullName: true } } } },
+            supervisors: { select: { teacherId: true, teacher: { select: { teacherCode: true, fullName: true } } } },
+          },
+        },
+      },
+    });
+
+    // 3. Subject conflict
+    const sameSubj = overlapSchedules.find((s) => s.subjectId === existing.subjectId);
+    if (sameSubj) {
+      conflicts.push(`Môn học ${existing.subject.subjectName} đã có một ca thi khác trong khung giờ ${dto.newStartTime} - ${dto.newEndTime}.`);
+    }
+
+    // 4. Room conflict
+    const targetRoomIds = dto.newRoomId ? [dto.newRoomId] : existing.examScheduleRooms.map((r) => r.roomId);
+    for (const ov of overlapSchedules) {
+      for (const ovRoom of ov.examScheduleRooms) {
+        if (targetRoomIds.includes(ovRoom.roomId)) {
+          conflicts.push(`Phòng ${ovRoom.room.roomCode} đã được dùng cho môn ${ov.subject.subjectName} (${ov.startTime} - ${ov.endTime}).`);
+        }
+      }
+    }
+
+    // 5. Student conflict
+    const myStudentIds = new Set(existing.examScheduleRooms.flatMap((r) => r.examRoomStudents.map((s) => s.studentId)));
+    for (const ov of overlapSchedules) {
+      for (const ovRoom of ov.examScheduleRooms) {
+        for (const ovStudent of ovRoom.examRoomStudents) {
+          if (myStudentIds.has(ovStudent.studentId)) {
+            conflicts.push(`Thí sinh ${ovStudent.student?.fullName || ovStudent.student?.studentCode || 'SV'} có môn thi ${ov.subject.subjectName} trùng khung giờ.`);
+          }
+        }
+      }
+    }
+
+    // 6. Teacher conflict
+    const myTeacherIds = new Set(existing.examScheduleRooms.flatMap((r) => r.supervisors.map((s) => s.teacherId)));
+    for (const ov of overlapSchedules) {
+      for (const ovRoom of ov.examScheduleRooms) {
+        for (const ovSup of ovRoom.supervisors) {
+          if (myTeacherIds.has(ovSup.teacherId)) {
+            conflicts.push(`Giảng viên ${ovSup.teacher?.fullName || 'CB'} đã được phân công coi thi môn ${ov.subject.subjectName} trùng giờ.`);
+          }
+        }
+      }
+    }
+
+    return {
+      scheduleId: id,
+      isValid: conflicts.length === 0,
+      conflicts,
+      warnings,
+      currentSchedule: {
+        subjectName: existing.subject.subjectName,
+        examDate: existing.examDate.toISOString().slice(0, 10),
+        startTime: existing.startTime,
+        endTime: existing.endTime,
+        totalStudents: myStudentIds.size,
+        totalSupervisors: myTeacherIds.size,
+        rooms: existing.examScheduleRooms.map((r) => r.room.roomCode),
+      },
+      targetSchedule: {
+        examDate: dto.newExamDate,
+        startTime: dto.newStartTime,
+        endTime: dto.newEndTime,
+      },
+    };
+  }
+
+  async reschedule(actor: Actor, id: number, dto: RescheduleExamScheduleDto) {
+    if (actor.role === 'TEACHER') {
+      const isMock = await this.prisma.examSchedule.findFirst({
+        where: { id, mode: 'MOCK' },
+      });
+      if (!isMock) {
+        throw new ForbiddenException('Giảng viên chỉ có quyền dời lịch thi thử.');
+      }
+    }
+
+    const check = await this.checkRescheduleConflicts(actor, id, dto);
+    if (!check.isValid) {
+      throw new BadRequestException(`Không thể dời lịch do có xung đột:\n${check.conflicts.join('\n')}`);
+    }
+
+    const existing = await this.prisma.examSchedule.findFirst({
+      where: { id, deletedAt: null },
+      include: {
+        subject: true,
+        examScheduleRooms: { include: { room: true } },
+      },
+    });
+    if (!existing) throw new NotFoundException('Không tìm thấy lịch thi.');
+
+    const oldDateStr = existing.examDate.toISOString().slice(0, 10);
+    const oldTimeStr = `${existing.startTime} - ${existing.endTime}`;
+    const newTimeStr = `${dto.newStartTime} - ${dto.newEndTime}`;
+    const newDateStart = this.dayRange(dto.newExamDate).start;
+
+    return this.serializable(async (tx) => {
+      // 1. Update schedule date/time & append audit note
+      const appendNote = `[Dời lịch: từ ${oldDateStr} ${oldTimeStr} -> ${dto.newExamDate} ${newTimeStr}. Lý do: ${dto.reason}]`;
+      const updatedNote = existing.note ? `${existing.note}\n${appendNote}` : appendNote;
+
+      const schedule = await tx.examSchedule.update({
+        where: { id },
+        data: {
+          examDate: newDateStart,
+          startTime: dto.newStartTime,
+          endTime: dto.newEndTime,
+          note: updatedNote,
+        },
+        include: { examPeriod: true, subject: true, examScheduleRooms: { include: { room: true } } },
+      });
+
+      // 2. If new room specified, update primary room
+      if (dto.newRoomId && existing.examScheduleRooms[0]) {
+        await tx.examScheduleRoom.update({
+          where: { id: existing.examScheduleRooms[0].id },
+          data: { roomId: dto.newRoomId },
+        });
+      }
+
+      // 3. Write Audit Log
+      await this.audit.write({
+        actorId: actor.id,
+        action: 'RESCHEDULE_SCHEDULE',
+        entityType: 'EXAM_SCHEDULE',
+        entityId: id,
+        description: `Đã dời lịch thi môn ${schedule.subject.subjectName} từ ${oldDateStr} (${oldTimeStr}) sang ${dto.newExamDate} (${newTimeStr}). Lý do: ${dto.reason}`,
+        metadata: {
+          oldDate: oldDateStr,
+          oldTime: oldTimeStr,
+          newDate: dto.newExamDate,
+          newTime: newTimeStr,
+          reason: dto.reason,
+          newRoomId: dto.newRoomId,
+        },
+      }, tx);
+
+      // 4. Send Notifications automatically
+      let totalNotified = 0;
+      try {
+        const notifRes = await this.notifications.notifyScheduleChange({
+          scheduleId: id,
+          subjectName: schedule.subject.subjectName,
+          subjectCode: schedule.subject.subjectCode,
+          oldDate: oldDateStr,
+          oldTime: oldTimeStr,
+          newDate: dto.newExamDate,
+          newTime: newTimeStr,
+          reason: dto.reason,
+          roomName: schedule.examScheduleRooms?.[0]?.room?.roomCode,
+        });
+        totalNotified = notifRes.totalNotified;
+      } catch {
+        // Safe fallback
+      }
+
+      return {
+        schedule,
+        message: `Đã dời lịch thi môn ${schedule.subject.subjectName} sang ${dto.newExamDate} (${newTimeStr}) thành công.`,
+        totalNotified,
+      };
+    });
+  }
+
+  async cancelSchedule(actor: Actor, id: number, dto: CancelExamScheduleDto) {
+    if (actor.role === 'TEACHER') {
+      const isMock = await this.prisma.examSchedule.findFirst({
+        where: { id, mode: 'MOCK' },
+      });
+      if (!isMock) {
+        throw new ForbiddenException('Giảng viên chỉ có quyền hủy lịch thi thử.');
+      }
+    }
+
+    const existing = await this.prisma.examSchedule.findFirst({
+      where: { id, deletedAt: null },
+      include: {
+        subject: true,
+        examScheduleRooms: { include: { room: true } },
+      },
+    });
+    if (!existing) throw new NotFoundException('Không tìm thấy lịch thi.');
+    if (existing.status === 'CANCELLED') throw new BadRequestException('Lịch thi này đã ở trạng thái hủy.');
+
+    const examDateStr = existing.examDate.toISOString().slice(0, 10);
+    const timeStr = `${existing.startTime} - ${existing.endTime}`;
+
+    return this.serializable(async (tx) => {
+      const appendNote = `[Hủy ca thi: Ngày ${examDateStr} ${timeStr}. Lý do: ${dto.reason}]`;
+      const updatedNote = existing.note ? `${existing.note}\n${appendNote}` : appendNote;
+
+      const schedule = await tx.examSchedule.update({
+        where: { id },
+        data: {
+          status: 'CANCELLED',
+          note: updatedNote,
+        },
+        include: { examPeriod: true, subject: true, examScheduleRooms: { include: { room: true } } },
+      });
+
+      // Write Audit Log
+      await this.audit.write({
+        actorId: actor.id,
+        action: 'CANCEL_SCHEDULE',
+        entityType: 'EXAM_SCHEDULE',
+        entityId: id,
+        description: `Đã hủy ca thi môn ${schedule.subject.subjectName} ngày ${examDateStr} (${timeStr}). Lý do: ${dto.reason}`,
+        metadata: {
+          examDate: examDateStr,
+          time: timeStr,
+          reason: dto.reason,
+        },
+      }, tx);
+
+      // Send cancellation notifications
+      let totalNotified = 0;
+      try {
+        const notifRes = await this.notifications.notifyScheduleCancelled({
+          scheduleId: id,
+          subjectName: schedule.subject.subjectName,
+          examDate: examDateStr,
+          startTime: timeStr,
+          reason: dto.reason,
+        });
+        totalNotified = notifRes.totalNotified;
+      } catch {
+        // Safe fallback
+      }
+
+      return {
+        schedule,
+        message: `Đã hủy ca thi môn ${schedule.subject.subjectName} thành công.`,
+        totalNotified,
+      };
+    });
+  }
 }
+

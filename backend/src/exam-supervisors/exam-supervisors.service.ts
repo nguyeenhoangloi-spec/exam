@@ -20,13 +20,21 @@ export class ExamSupervisorsService {
       include: { user: { select: { status: true } } },
       orderBy: { teacherCode: 'asc' },
     });
-    const busy = await this.prisma.examSupervisor.findMany({
+    const [busy, availability] = await Promise.all([this.prisma.examSupervisor.findMany({
       where: { examScheduleRoom: { examSchedule: { status: { not: 'CANCELLED' }, deletedAt: null, examDate: schedule.examDate, startTime: { lt: schedule.endTime }, endTime: { gt: schedule.startTime } } } },
       select: { teacherId: true },
-    });
+    }), this.prisma.teacherDutyAvailability.findMany({
+      where: { examDate: schedule.examDate, startTime: { lt: schedule.endTime }, endTime: { gt: schedule.startTime } },
+      select: { teacherId: true, status: true },
+    })]);
     const loads = await this.prisma.examSupervisor.groupBy({ by: ['teacherId'], _count: { _all: true } });
     const teacherLoad = new Map(loads.map((item) => [item.teacherId, item._count._all]));
-    teachers.sort((a, b) => (teacherLoad.get(a.id) || 0) - (teacherLoad.get(b.id) || 0));
+    const unavailableTeachers = new Set(availability.filter((item) => item.status === 'UNAVAILABLE').map((item) => item.teacherId));
+    const availableTeachers = new Set(availability.filter((item) => item.status === 'AVAILABLE').map((item) => item.teacherId));
+    teachers.sort((a, b) => {
+      const availabilityPriority = (availableTeachers.has(b.id) ? 1 : 0) - (availableTeachers.has(a.id) ? 1 : 0);
+      return availabilityPriority || (teacherLoad.get(a.id) || 0) - (teacherLoad.get(b.id) || 0) || a.teacherCode.localeCompare(b.teacherCode);
+    });
     const busyTeachers = new Set(busy.map((item) => item.teacherId));
     const usedInProposal = new Set<number>();
     const proposals: Array<{ examScheduleRoomId: number; teacherId: number; teacherName: string; roomCode: string; role: string }> = [];
@@ -35,7 +43,7 @@ export class ExamSupervisorsService {
       const existingRoles = new Set(room.supervisors.map((item) => item.role));
       for (const role of ['SUPERVISOR_1', 'SUPERVISOR_2'] as const) {
         if (existingRoles.has(role)) continue;
-        const teacher = teachers.find((candidate) => !busyTeachers.has(candidate.id) && !usedInProposal.has(candidate.id));
+        const teacher = teachers.find((candidate) => !busyTeachers.has(candidate.id) && !unavailableTeachers.has(candidate.id) && !usedInProposal.has(candidate.id));
         if (!teacher) {
           unassigned.push({ examScheduleRoomId: room.id, roomCode: room.room.roomCode, reason: 'Không còn giảng viên rảnh trong khung giờ.' });
           continue;
@@ -55,7 +63,7 @@ export class ExamSupervisorsService {
       warnings,
       unassigned,
       alternatives: unassigned.length ? [{ rationale: 'Mở thêm giảng viên rảnh hoặc đổi khung giờ thi.' }] : [{ rationale: 'Có thể chạy lại preview để cân bằng thứ tự giám thị.' }],
-      rationale: 'Chọn giảng viên đang hoạt động, không trùng lịch và cân bằng theo mã giảng viên.',
+      rationale: 'Ưu tiên giảng viên đã đăng ký sẵn sàng, loại trừ người báo không thể coi thi, không trùng lịch và cân bằng tải.',
     };
   }
 
