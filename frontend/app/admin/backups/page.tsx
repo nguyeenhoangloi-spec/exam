@@ -606,7 +606,7 @@ export default function BackupsPage() {
                 <div className="flex flex-wrap items-center gap-2 shrink-0">
                     {/* System Status Indicators */}
                     {overview?.worker && (
-                        <span className="inline-flex items-center gap-1.5 h-10 px-3 rounded-full border border-emerald-300 dark:border-emerald-700 bg-transparent text-emerald-700 dark:text-emerald-400 text-type-body-sm font-semibold">
+                        <span className="inline-flex items-center gap-1.5 h-10 px-3 rounded-xl border border-emerald-300 dark:border-emerald-700 bg-transparent text-emerald-700 dark:text-emerald-400 text-type-body-sm font-semibold">
                             <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
                             <span>Worker: {overview.worker.enabled ? 'Bật' : 'Tắt'}</span>
                         </span>
@@ -879,7 +879,7 @@ export default function BackupsPage() {
                                     <div className="min-w-0">
                                         <div className="flex items-center gap-2 flex-wrap">
                                             <span
-                                                className={`ui-pill text-type-helper font-medium px-2 py-0.5 rounded-full tabular-nums border ${job.type === 'FULL'
+                                                className={`table-badge ui-pill font-medium text-type-helper px-2 py-0.5 rounded-full tabular-nums border ${job.type === 'FULL'
                                                     ? 'ui-pill-solid bg-blue-600 text-white border-blue-600'
                                                     : job.type === 'DATABASE'
                                                         ? 'text-blue-700 border-blue-300'
@@ -914,7 +914,7 @@ export default function BackupsPage() {
                                                 <span>{formatDate(job.completedAt || job.createdAt)}</span>
                                             </span>
                                             {job.checksum && (
-                                                <span className="text-slate-400 tabular-nums font-mono">
+                                                <span className="text-slate-400 tabular-nums">
                                                     #{job.checksum.slice(0, 8)}…
                                                 </span>
                                             )}
@@ -951,7 +951,7 @@ export default function BackupsPage() {
                     })}
                 </div>
             ) : (
-                <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+                <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
                     <table className="ui-table w-full text-left border-collapse text-slate-700 dark:text-slate-300 text-type-body">
                         <thead className="bg-slate-50 dark:bg-slate-800 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
                             <tr>
@@ -976,7 +976,7 @@ export default function BackupsPage() {
                             {paginatedJobs.map((job) => {
                                 const isChecked = selectedIds.includes(job.id);
                                 return (
-                                    <tr key={job.id} className={`transition hover:bg-slate-50/60 dark:hover:bg-slate-800/40 ${isChecked ? 'bg-blue-50/20' : ''}`}>
+                                    <tr key={job.id} className={`transition hover:bg-slate-50/60 dark:hover:bg-slate-850/60 ${isChecked ? 'bg-blue-50/20' : ''}`}>
                                         <td className="p-3.5 pl-4 text-center w-10">
                                             <input
                                                 type="checkbox"
@@ -995,7 +995,7 @@ export default function BackupsPage() {
                                                 {job.snapshotId}
                                             </button>
                                             {job.checksum && (
-                                                <div className="table-meta mt-0.5 text-type-helper leading-[20px] font-mono text-slate-400">
+                                                <div className="table-meta mt-0.5 text-type-helper leading-[20px] text-slate-400">
                                                     #{job.checksum.slice(0, 10)}…
                                                 </div>
                                             )}
@@ -1120,7 +1120,7 @@ export default function BackupsPage() {
                             <h2 className="text-type-card font-semibold text-slate-900 dark:text-slate-100">
                                 Yêu cầu khôi phục chờ phê duyệt
                             </h2>
-                            <span className="ui-pill inline-flex items-center justify-center px-2 py-0.5 rounded-full text-type-badge font-semibold text-amber-700 dark:text-amber-400 border border-amber-200/80 dark:border-amber-800/60 tabular-nums">
+                            <span className="ui-pill inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-type-helper font-medium text-amber-700 dark:text-amber-400 border border-amber-200/80 dark:border-amber-800/60 tabular-nums">
                                 {restoreRequests.length}
                             </span>
                         </div>
@@ -1129,7 +1129,7 @@ export default function BackupsPage() {
                         </p>
                     </div>
 
-                    <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+                    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
                         <table className="ui-table w-full text-left border-collapse text-slate-700 dark:text-slate-300 text-type-body">
                             <thead>
                                 <tr className="bg-slate-50 dark:bg-slate-800 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
@@ -1156,12 +1156,12 @@ export default function BackupsPage() {
                                             {/* Môi trường */}
                                             <td className="p-3.5 whitespace-nowrap">
                                                 {request.target === 'PRODUCTION' ? (
-                                                    <span className="inline-flex items-center gap-1 text-type-body-sm font-semibold text-rose-600 dark:text-rose-400">
+                                                    <span className="table-badge inline-flex items-center gap-1 text-type-body font-semibold text-rose-600 dark:text-rose-400">
                                                         <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
                                                         Production
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1 text-type-body-sm font-semibold text-amber-600 dark:text-amber-400">
+                                                    <span className="table-badge inline-flex items-center gap-1 text-type-body font-semibold text-amber-600 dark:text-amber-400">
                                                         <Server className="h-3.5 w-3.5 shrink-0" />
                                                         Staging
                                                     </span>
@@ -1170,13 +1170,13 @@ export default function BackupsPage() {
 
                                             {/* Lý do */}
                                             <td className="p-3.5">
-                                                <p className="text-type-body-sm text-slate-700 dark:text-slate-300 max-w-[240px] line-clamp-2">
+                                                <p className="text-type-body text-slate-700 dark:text-slate-300 max-w-[240px] line-clamp-2">
                                                     {request.reason || '—'}
                                                 </p>
                                             </td>
 
                                             {/* Người yêu cầu */}
-                                            <td className="p-3.5 whitespace-nowrap text-type-body-sm font-medium text-slate-700 dark:text-slate-300">
+                                            <td className="p-3.5 whitespace-nowrap text-type-body font-medium text-slate-700 dark:text-slate-300">
                                                 <span className="inline-flex items-center gap-1">
                                                     <UserIcon className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                                                     {request.requestedBy?.username || 'admin'}
@@ -1184,11 +1184,11 @@ export default function BackupsPage() {
                                             </td>
 
                                             {/* Thời hạn */}
-                                            <td className="p-3.5 whitespace-nowrap text-type-body-sm tabular-nums">
+                                            <td className="p-3.5 whitespace-nowrap text-type-body tabular-nums">
                                                 {isExpired ? (
                                                     <div className="space-y-0.5">
-                                                        <span className="text-type-helper font-semibold text-rose-600 dark:text-rose-400 block">Đã hết hạn</span>
-                                                        <span className="text-type-helper text-slate-400 block">{formatDate(request.expiresAt)}</span>
+                                                        <span className="table-badge text-type-helper font-semibold text-rose-600 dark:text-rose-400 block">Đã hết hạn</span>
+                                                        <span className="table-meta text-type-helper text-slate-400 block">{formatDate(request.expiresAt)}</span>
                                                     </div>
                                                 ) : (
                                                     <span className="text-slate-600 dark:text-slate-400">{formatDate(request.expiresAt)}</span>
@@ -1202,7 +1202,7 @@ export default function BackupsPage() {
                                                         {selfBlocked ? (
                                                             <span
                                                                 title="Bạn là người tạo yêu cầu nên cần Admin khác duyệt độc lập"
-                                                                className="text-type-helper font-medium text-slate-400 dark:text-slate-500 inline-flex items-center gap-1 cursor-default select-none pr-1"
+                                                                className="table-badge text-type-helper font-medium text-slate-400 dark:text-slate-500 inline-flex items-center gap-1 cursor-default select-none pr-1"
                                                             >
                                                                 <LockKeyhole className="h-3.5 w-3.5 text-slate-400" />
                                                                 <span>Chờ Admin khác duyệt</span>
@@ -1211,7 +1211,7 @@ export default function BackupsPage() {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => openCriticalApproveModal(request)}
-                                                                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-type-body-sm font-semibold rounded-xl transition shadow-2xs cursor-pointer inline-flex items-center gap-1"
+                                                                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-type-body font-semibold rounded-xl transition shadow-2xs cursor-pointer inline-flex items-center gap-1"
                                                             >
                                                                 <LockKeyhole className="h-3.5 w-3.5" />
                                                                 <span>Phê duyệt</span>
@@ -1221,7 +1221,7 @@ export default function BackupsPage() {
                                                         <button
                                                             type="button"
                                                             onClick={() => openRejectModal(request)}
-                                                            className="px-2.5 py-1.5 text-type-body-sm font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition cursor-pointer"
+                                                            className="px-2.5 py-1.5 text-type-body font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition cursor-pointer"
                                                         >
                                                             Từ chối
                                                         </button>
@@ -1230,7 +1230,7 @@ export default function BackupsPage() {
                                                     <button
                                                         type="button"
                                                         onClick={() => openRejectModal(request)}
-                                                        className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-type-body-sm font-semibold rounded-xl transition shadow-2xs cursor-pointer inline-flex items-center gap-1"
+                                                        className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-type-body font-semibold rounded-xl transition shadow-2xs cursor-pointer inline-flex items-center gap-1"
                                                     >
                                                         <Unlock className="h-3.5 w-3.5" />
                                                         <span>Mở khóa</span>

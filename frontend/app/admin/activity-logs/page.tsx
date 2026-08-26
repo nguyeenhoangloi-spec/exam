@@ -824,7 +824,7 @@ function ActivityLogsContent() {
             ========================================================================= */}
             {activeTab === 'activity' && (
                 <div className="space-y-4">
-                    <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+                    <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
                         {loading && logs.length === 0 ? (
                             <div className="py-24 text-center">
                                 <div className="inline-block h-7 w-7 animate-spin rounded-full border-2 border-blue-600 border-t-transparent mb-2" />
@@ -837,7 +837,7 @@ function ActivityLogsContent() {
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
-                                <table className="w-full text-left border-collapse min-w-[760px]">
+                                <table className="ui-table w-full text-left border-collapse min-w-[760px]">
                                     <thead>
                                         <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/50 text-type-body-sm font-semibold text-slate-600 dark:text-slate-400">
                                             <th className="py-3.5 px-5 w-44">Thời gian</th>
@@ -858,8 +858,8 @@ function ActivityLogsContent() {
                                                     onClick={() => setSelectedLog(log)}
                                                     className="group hover:bg-slate-50/80 dark:hover:bg-slate-850/60 transition-colors cursor-pointer"
                                                 >
-                                                    {/* Cột 1: Thời gian (14px) */}
-                                                    <td className="py-4 px-5 whitespace-nowrap text-type-body-sm tabular-nums text-slate-500 dark:text-slate-400">
+                                                    {/* Cột 1: Thời gian */}
+                                                    <td className="py-4 px-5 whitespace-nowrap text-type-body tabular-nums text-slate-500 dark:text-slate-400">
                                                         {new Date(log.createdAt).toLocaleString('vi-VN')}
                                                     </td>
 
@@ -870,14 +870,14 @@ function ActivityLogsContent() {
                                                                 {log.actor?.username || 'Hệ thống'}
                                                             </span>
                                                             {log.actor?.role && (
-                                                                <span className="text-type-helper text-slate-500 dark:text-slate-400">
+                                                                <span className="table-meta text-type-helper text-slate-500 dark:text-slate-400">
                                                                     {USER_ROLE_LABELS[log.actor.role] || log.actor.role}
                                                                 </span>
                                                             )}
                                                         </div>
                                                     </td>
 
-                                                    {/* Cột 3: Nội dung thao tác (Dòng 1: Hành động & Thực thể 15px, Dòng 2: Mô tả 14px) */}
+                                                    {/* Cột 3: Nội dung thao tác (Dòng 1: Hành động & Thực thể 15px, Dòng 2: Mô tả 15px) */}
                                                     <td className="py-4 px-5">
                                                         <div className="space-y-0.5">
                                                             <div className="flex items-center gap-1.5 flex-wrap">
@@ -891,13 +891,13 @@ function ActivityLogsContent() {
                                                                 {shortId && (
                                                                     <span
                                                                         title={log.entityId || ''}
-                                                                        className="text-type-helper font-mono text-slate-500 dark:text-slate-400"
+                                                                        className="table-meta text-type-helper tabular-nums text-slate-500 dark:text-slate-400"
                                                                     >
                                                                         {shortId}
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            <p className="text-type-body-sm text-slate-600 dark:text-slate-400">
+                                                            <p className="text-type-body text-slate-600 dark:text-slate-400">
                                                                 {log.description}
                                                             </p>
                                                         </div>
@@ -942,7 +942,7 @@ function ActivityLogsContent() {
             ========================================================================= */}
             {activeTab === 'security' && (
                 <div className="space-y-4">
-                    <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+                    <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
                         {secLoading && secEvents.length === 0 ? (
                             <div className="py-24 text-center">
                                 <div className="inline-block h-7 w-7 animate-spin rounded-full border-2 border-blue-600 border-t-transparent mb-2" />
@@ -955,7 +955,7 @@ function ActivityLogsContent() {
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
-                                <table className="w-full text-left border-collapse min-w-[850px]">
+                                <table className="ui-table w-full text-left border-collapse min-w-[850px]">
                                     <thead>
                                         <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/50 text-type-body-sm font-semibold text-slate-600 dark:text-slate-400">
                                             <th className="py-3.5 px-5 w-44">Thời điểm</th>
@@ -973,8 +973,8 @@ function ActivityLogsContent() {
 
                                             return (
                                                 <tr key={event.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/60 transition-colors">
-                                                    {/* Cột 1: Thời điểm (14px y hệt Tab 1) */}
-                                                    <td className="py-4 px-5 whitespace-nowrap text-type-body-sm tabular-nums text-slate-500 dark:text-slate-400">
+                                                    {/* Cột 1: Thời điểm */}
+                                                    <td className="py-4 px-5 whitespace-nowrap text-type-body tabular-nums text-slate-500 dark:text-slate-400">
                                                         {new Date(event.occurredAt).toLocaleString('vi-VN')}
                                                     </td>
 
@@ -985,14 +985,14 @@ function ActivityLogsContent() {
                                                                 {event.actor?.username || 'Hệ thống'}
                                                             </span>
                                                             {event.actor?.role && (
-                                                                <span className="text-type-helper text-slate-500 dark:text-slate-400">
+                                                                <span className="table-meta text-type-helper text-slate-500 dark:text-slate-400">
                                                                     {USER_ROLE_LABELS[event.actor.role] || event.actor.role}
                                                                 </span>
                                                             )}
                                                         </div>
                                                     </td>
 
-                                                    {/* Cột 3: Sự kiện & Đối tượng (Dòng 1: Sự kiện & Thực thể 15px, Dòng 2: Nhóm an ninh 14px y hệt Tab 1) */}
+                                                    {/* Cột 3: Sự kiện & Đối tượng (Dòng 1: Sự kiện & Thực thể 15px, Dòng 2: Nhóm an ninh 15px) */}
                                                     <td className="py-4 px-5">
                                                         <div className="space-y-0.5">
                                                             <div className="flex items-center gap-1.5 flex-wrap">
@@ -1010,13 +1010,13 @@ function ActivityLogsContent() {
                                                                 {shortId && (
                                                                     <span
                                                                         title={event.entityId || ''}
-                                                                        className="text-type-helper font-mono text-slate-500 dark:text-slate-400"
+                                                                        className="table-meta text-type-helper tabular-nums text-slate-500 dark:text-slate-400"
                                                                     >
                                                                         {shortId}
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            <p className="text-type-body-sm text-slate-600 dark:text-slate-400">
+                                                            <p className="text-type-body text-slate-600 dark:text-slate-400">
                                                                 {secCategoryLabel[event.category] || event.category}
                                                             </p>
                                                         </div>
@@ -1033,22 +1033,22 @@ function ActivityLogsContent() {
                                                     {/* Cột 5: Nguồn truy cập */}
                                                     <td className="py-4 px-5 whitespace-nowrap">
                                                         <div className="space-y-0.5">
-                                                            <div className="text-type-body-sm text-slate-700 dark:text-slate-300 font-mono flex items-center gap-1.5">
-                                                                <span className="text-type-badge font-semibold text-slate-400">IP</span>
-                                                                <span>{event.ipAddress || '—'}</span>
+                                                            <div className="text-type-body text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                                                                <span className="table-badge text-type-badge font-semibold text-slate-400">IP</span>
+                                                                <span className="tabular-nums">{event.ipAddress || '—'}</span>
                                                             </div>
-                                                            <div className="text-type-helper text-slate-500 dark:text-slate-400 font-mono truncate max-w-[160px]" title={event.route || ''}>
+                                                            <div className="table-meta text-type-helper text-slate-500 dark:text-slate-400 truncate max-w-[160px]" title={event.route || ''}>
                                                                 {event.route || '—'}
                                                             </div>
                                                         </div>
                                                     </td>
 
-                                                    {/* Cột 6: Khóa điều tra (Dùng icon nhỏ gọn, không chiếm chỗ) */}
+                                                    {/* Cột 6: Khóa điều tra */}
                                                     <td className="py-4 px-5 text-center whitespace-nowrap">
                                                         {event.legalHold ? (
                                                             <span
                                                                 title="Đang khóa lưu giữ điều tra pháp lý"
-                                                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 text-type-badge font-semibold border border-amber-200/80 dark:border-amber-800"
+                                                                className="table-badge ui-pill font-medium text-type-helper inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200/80 dark:border-amber-800"
                                                             >
                                                                 <Lock className="h-3 w-3" />
                                                                 <span>Đã khóa</span>
@@ -1058,7 +1058,7 @@ function ActivityLogsContent() {
                                                                 type="button"
                                                                 onClick={() => void handleApplyLegalHold(event)}
                                                                 title="Khóa lưu giữ điều tra pháp lý"
-                                                                className="inline-flex items-center justify-center h-7 w-7 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition cursor-pointer"
+                                                                className="inline-flex items-center justify-center h-7 w-7 rounded-xl text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition cursor-pointer"
                                                             >
                                                                 <Lock className="h-3.5 w-3.5" />
                                                             </button>
@@ -1154,7 +1154,7 @@ function ActivityLogsContent() {
                                     {drawerOpenLog.entityId && (
                                         <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                             <span className="text-slate-500">Mã ID đối tượng:</span>
-                                            <span className="font-mono text-type-helper text-slate-900 dark:text-white break-all">
+                                            <span className="text-type-helper text-slate-900 dark:text-white break-all tabular-nums">
                                                 {drawerOpenLog.entityId}
                                             </span>
                                         </div>

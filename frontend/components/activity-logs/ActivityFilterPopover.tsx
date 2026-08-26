@@ -178,7 +178,7 @@ export function ActivityFilterPopover({
               onResetAll();
             }}
             title="Nhấn để xóa nhanh toàn bộ lọc (1-Click Reset)"
-            className="table-badge absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-xs font-bold text-white hover:bg-rose-500 transition-colors shadow-2xs leading-none"
+            className="table-badge absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-type-helper font-semibold text-white hover:bg-rose-500 transition-colors shadow-2xs"
           >
             {activeFilterCount}
           </span>
@@ -259,11 +259,11 @@ export function ActivityFilterPopover({
                       </div>
 
                       {cat.badge ? (
-                        <span className="h-4 min-w-[16px] rounded-full bg-blue-600 px-1 text-xs font-bold text-white flex items-center justify-center leading-none">
+                        <span className="h-4 min-w-[16px] rounded-full bg-blue-600 px-1 text-type-helper font-semibold text-white flex items-center justify-center">
                           {cat.badge}
                         </span>
                       ) : (
-                        <span className={`text-xs font-normal ${isActive ? 'text-blue-400 dark:text-blue-500' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <span className={`text-type-helper font-normal ${isActive ? 'text-blue-400 dark:text-blue-500' : 'text-slate-400 dark:text-slate-500'}`}>
                           {cat.shortcut}
                         </span>
                       )}
@@ -274,7 +274,7 @@ export function ActivityFilterPopover({
                 <div className="pt-3 px-2">
                   <div className="text-type-helper text-slate-500 dark:text-slate-400 flex items-center gap-1">
                     <span>Phím:</span>
-                    <kbd className="px-1.5 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 font-medium text-xs text-slate-700 dark:text-slate-300">
+                    <kbd className="px-1.5 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 font-medium text-type-helper text-slate-700 dark:text-slate-300">
                       1-{categories.length}
                     </kbd>
                   </div>
