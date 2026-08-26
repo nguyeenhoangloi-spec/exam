@@ -68,10 +68,21 @@ export class UpsertBackupStorageTargetDto {
   @IsBoolean()
   enabled?: boolean;
 
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  priority?: number;
+
   @IsObject()
   @ValidateNested()
   @Type(() => BackupStorageTargetConfigDto)
   config!: BackupStorageTargetConfigDto;
+}
+
+export class ReorderBackupStorageTargetDto {
+  @IsIn(['UP', 'DOWN'])
+  direction!: 'UP' | 'DOWN';
 }
 
 export class CompleteGoogleDriveConnectionDto {

@@ -13,6 +13,7 @@ export type StorageTarget = {
   name: string;
   provider: StorageProvider;
   role: StorageRole;
+  priority: number;
   enabled: boolean;
   config: {
     path?: string; endpoint?: string; region?: string; bucket?: string; prefix?: string;
@@ -29,6 +30,7 @@ export type StorageTargetPayload = {
   name: string;
   provider: StorageProvider;
   role: StorageRole;
+  priority?: number;
   enabled: boolean;
   config: Record<string, string | boolean | undefined>;
 };
@@ -115,7 +117,7 @@ export function StorageTargetModal({
           </label>
           <label className={labelClass}>Vai trò
             <select value={role} onChange={(e) => setRole(e.target.value as StorageRole)} className={fieldClass}>
-              <option value="PRIMARY">Kho chính</option><option value="MIRROR">Kho dự phòng</option>
+              <option value="PRIMARY">Kho chính (ưu tiên 1)</option><option value="MIRROR">Kho dự phòng (xếp sau kho chính)</option>
             </select>
           </label>
           <label className="flex h-10 items-center justify-between self-end rounded-xl border border-slate-200 px-3 text-type-body font-medium dark:border-slate-700">

@@ -2,66 +2,34 @@
 
 export const dynamic = 'force-dynamic';
 
-import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useCallback, useEffect, useMemo, useState, useRef, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import api from '../../../lib/api';
-import { getAuthUser } from '../../../lib/auth';
 import { usePageTitle } from '../../../components/PageTitleContext';
-import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import { Button } from '../../../components/ui/Button';
+import { TabBar, TabItem } from '../../../components/ui/TabBar';
 import { DataActionsDropdown } from '../../../components/ui/DataActionsDropdown';
-import { ViewModeSegmentedControl } from '../../../components/ui/ViewModeSegmentedControl';
-import { FilterSelect } from '../../../components/ui/FilterSelect';
-import { SortDropdown } from '../../../components/ui/SortDropdown';
+import { PaginationBar } from '../../../components/ui/PaginationBar';
+import { ActivityFilterPopover } from '../../../components/activity-logs/ActivityFilterPopover';
 import { Toast } from '../../../components/Toast';
-import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdown';
-import { printReport } from '../../../lib/export-print';
+import { StatusBadge } from '../../../components/common/StatusBadge';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
+import { printReport } from '../../../lib/export-print';
 import { USER_ROLE_LABELS } from '../../../lib/enum-labels';
-import { ActivityLogFilterPopover } from '../../../components/activity-logs/ActivityLogFilterPopover';
-import { ActivityLogBulkAction } from '../../../components/activity-logs/ActivityLogBulkAction';
 import {
-    Activity,
     Search,
-    RefreshCw,
-    Printer,
-    RotateCcw,
-    User as UserIcon,
-    ShieldCheck,
-    FileText,
-    Database,
-    AlertCircle,
-    LogIn,
     X,
     Code,
-    Info,
     Copy,
     Check,
-    Download,
-    SlidersHorizontal,
-    Eye,
-    CheckCircle2,
-    ChevronDown,
-    ChevronLeft,
-    ChevronRight,
-    List,
-    LayoutGrid,
-    Layers,
-    MoreHorizontal,
-    Mail,
-    Building,
-    Trash2,
-    HardDrive,
-    FileCheck,
-    HelpCircle,
-    Calendar,
-    Clock,
-    GraduationCap,
-    UserCheck,
-    Building2,
-    BookOpen,
+    ArrowUpRight,
+    Lock,
+    ShieldCheck,
 } from 'lucide-react';
 
+/* =========================================================================
+   1. TYPES & TRANSLATION MAPPINGS (CHUẨN HÓA 100% TIẾNG VIỆT & DESIGN SYSTEM)
+========================================================================= */
 
 interface AuditLogRecord {
     id: string;
@@ -80,185 +48,267 @@ interface AuditLogRecord {
     } | null;
 }
 
-function getActionMeta(action: string) {
-    const normalized = (action || '').toUpperCase().trim();
-    const translatedActions: Record<string, string> = {
-        ARCHIVE: 'Lưu trữ',
-        ASSIGN: 'Phân công',
-        PASSWORD_RESET: 'Đặt lại mật khẩu',
-        BACKUP_QUEUED: 'Đang xếp hàng sao lưu',
-        BACKUP_SUCCEEDED: 'Sao lưu thành công',
-        BACKUP_RESTORE_APPROVED: 'Đã duyệt khôi phục',
-        BACKUP_RESTORE_FAILED: 'Khôi phục thất bại',
-        BACKUP_RESTORE_REJECTED: 'Đã từ chối khôi phục',
-        BACKUP_RESTORE_REQUESTED: 'Đã yêu cầu khôi phục',
-        ESSAY_AI_SUGGEST: 'AI đề xuất chấm bài',
-        ESSAY_APPROVE: 'Duyệt bài tự luận',
-        ESSAY_GRADING_SUBMIT: 'Gửi chấm bài',
-        ESSAY_PUBLISH: 'Công bố điểm',
-        ESSAY_REOPEN: 'Mở lại bài chấm',
-        ESSAY_RETURN: 'Trả lại bài chấm',
-        ESSAY_GRADE: 'Chấm bài tự luận',
-        RUBRIC_UPDATE: 'Cập nhật Rubric',
-        REOPEN_ENTRY: 'Mở lại lượt nhập',
-        REOPEN_EXAM_ATTEMPT: 'Mở lại lượt thi',
-        RESET_ARRANGEMENT: 'Đặt lại xếp phòng',
-        RESOLVE_EXAM_INCIDENT: 'Xử lý sự cố thi',
-        RESTORE_EXAM_PAPER: 'Khôi phục đề thi',
-        REVIEW_GRADE_APPEAL: 'Xem xét phúc khảo',
-        UPDATE_EXAM_PASSWORD: 'Cập nhật mật khẩu đề thi',
-        UPDATE_STATUS: 'Cập nhật trạng thái',
-        ACCESS_ROLE_PERMISSION_GRANTED: 'Cấp quyền vai trò',
-        ACCESS_ROLE_PERMISSION_REVOKED: 'Thu hồi quyền vai trò',
-        ACCESS_USER_OVERRIDE_SET: 'Thiết lập quyền riêng',
-        ACCESS_USER_OVERRIDE_REMOVED: 'Gỡ quyền riêng',
-        ACCESS_SCOPE_REPLACED: 'Cập nhật phạm vi truy cập',
-    };
-    if (translatedActions[normalized]) {
-        return { label: translatedActions[normalized], Icon: ShieldCheck, className: 'text-blue-700 dark:text-blue-400' };
-    }
-    switch (normalized) {
-        case 'LOGIN':
-            return { label: 'Đăng nhập', Icon: CheckCircle2, className: 'text-emerald-700 dark:text-emerald-400' };
-        case 'LOGOUT':
-            return { label: 'Đăng xuất', Icon: LogIn, className: 'text-slate-600 dark:text-slate-400' };
-        case 'CREATE':
-            return { label: 'Tạo mới', Icon: ShieldCheck, className: 'text-blue-700 dark:text-blue-400' };
-        case 'UPDATE':
-            return { label: 'Cập nhật', Icon: RefreshCw, className: 'text-blue-700 dark:text-blue-400' };
-        case 'DELETE':
-            return { label: 'Xóa', Icon: Trash2, className: 'text-rose-600 dark:text-rose-400' };
-        case 'PUBLISH':
-            return { label: 'Phát hành đề', Icon: FileCheck, className: 'text-blue-700 dark:text-blue-400' };
-        case 'ARRANGE':
-            return { label: 'Xếp phòng thi', Icon: LayoutGrid, className: 'text-blue-700 dark:text-blue-400' };
-        case 'AUTO_ASSIGN':
-            return { label: 'Phân công tự động', Icon: UserCheck, className: 'text-amber-700 dark:text-amber-400' };
-        case 'RESTORE':
-        case 'RESTORE_REQUEST':
-            return { label: 'Khôi phục', Icon: HardDrive, className: 'text-emerald-700 dark:text-emerald-400' };
-        case 'REJECT':
-            return { label: 'Từ chối', Icon: X, className: 'text-rose-600 dark:text-rose-400' };
-        case 'APPROVE':
-            return { label: 'Phê duyệt', Icon: CheckCircle2, className: 'text-emerald-700 dark:text-emerald-400' };
-        case 'BACKUP':
-        case 'CREATE_BACKUP':
-            return { label: 'Sao lưu', Icon: Database, className: 'text-slate-700 dark:text-slate-300' };
-        case 'APPEAL':
-        case 'REGRADE':
-            return { label: 'Phúc khảo', Icon: AlertCircle, className: 'text-amber-700 dark:text-amber-400' };
-        default: {
-            if (normalized.includes('LOGIN')) {
-                return { label: 'Đăng nhập', Icon: CheckCircle2, className: 'text-emerald-700 dark:text-emerald-400' };
-            }
-            if (normalized.includes('BACKUP')) {
-                return { label: 'Sao lưu', Icon: Database, className: 'text-slate-700 dark:text-slate-300' };
-            }
-            if (normalized.includes('DELETE')) {
-                return { label: 'Xóa', Icon: Trash2, className: 'text-rose-600 dark:text-rose-400' };
-            }
-            if (normalized.includes('APPEAL') || normalized.includes('REGRADE')) {
-                return { label: 'Phúc khảo', Icon: AlertCircle, className: 'text-amber-700 dark:text-amber-400' };
-            }
-            return { label: 'Thao tác khác', Icon: ShieldCheck, className: 'text-blue-700 dark:text-blue-400' };
-        }
-    }
+type SecurityOutcome = 'SUCCESS' | 'DENIED' | 'FAILURE';
+
+interface SecurityEvent {
+    id: string;
+    occurredAt: string;
+    category: string;
+    action: string;
+    outcome: SecurityOutcome;
+    entityType?: string;
+    entityId?: string;
+    route?: string;
+    ipAddress?: string;
+    requestId?: string;
+    legalHold: boolean;
+    actor?: { username: string; email: string; role: string } | null;
 }
 
-const entityTypeMap: Record<string, { label: string; Icon: React.ElementType }> = {
-    AUTH: { label: 'Xác thực', Icon: ShieldCheck },
-    USER: { label: 'Tài khoản', Icon: UserIcon },
-    User: { label: 'Tài khoản', Icon: UserIcon },
-    BACKUP_JOB: { label: 'Sao lưu', Icon: Database },
-    BackupJob: { label: 'Sao lưu', Icon: Database },
-    BACKUP_RESTORE_REQUEST: { label: 'Khôi phục DB', Icon: HardDrive },
-    BackupRestoreRequest: { label: 'Khôi phục DB', Icon: HardDrive },
-    GRADE_APPEAL: { label: 'Phúc khảo', Icon: FileCheck },
-    GradeAppeal: { label: 'Phúc khảo', Icon: FileCheck },
-    grade_appeals: { label: 'Đơn phúc khảo', Icon: FileCheck },
-    AttemptAnswer: { label: 'Câu trả lời', Icon: FileText },
-    ExamAttempt: { label: 'Lượt làm bài', Icon: FileCheck },
-    QUESTION: { label: 'Câu hỏi', Icon: HelpCircle },
-    Question: { label: 'Câu hỏi', Icon: HelpCircle },
-    EXAM_PAPER: { label: 'Đề thi', Icon: FileText },
-    ExamPaper: { label: 'Đề thi', Icon: FileText },
-    EXAM_PERIOD: { label: 'Kỳ thi', Icon: Calendar },
-    ExamPeriod: { label: 'Kỳ thi', Icon: Calendar },
-    EXAM_ROOM: { label: 'Phòng thi', Icon: Building },
-    ExamRoom: { label: 'Phòng thi', Icon: Building },
-    EXAM_SCHEDULE: { label: 'Lịch thi', Icon: Clock },
-    ExamSchedule: { label: 'Lịch thi', Icon: Clock },
-    EXAM_SUPERVISOR: { label: 'Coi thi', Icon: UserCheck },
-    ExamSupervisor: { label: 'Coi thi', Icon: UserCheck },
-    STUDENT: { label: 'Sinh viên', Icon: GraduationCap },
-    Student: { label: 'Sinh viên', Icon: GraduationCap },
-    TEACHER: { label: 'Giảng viên', Icon: UserCheck },
-    Teacher: { label: 'Giảng viên', Icon: UserCheck },
-    CLASS: { label: 'Lớp học', Icon: Building2 },
-    Class: { label: 'Lớp học', Icon: Building2 },
-    DEPARTMENT: { label: 'Khoa / Viện', Icon: Building2 },
-    Department: { label: 'Khoa / Viện', Icon: Building2 },
-    SUBJECT: { label: 'Môn học', Icon: BookOpen },
-    Subject: { label: 'Môn học', Icon: BookOpen },
-    ACCESS_CONTROL: { label: 'Phân quyền & truy cập', Icon: ShieldCheck },
+function formatShortId(id?: string | null): string | null {
+    if (!id) return null;
+    const trimmed = id.trim();
+    if (trimmed.length <= 10) return `#${trimmed}`;
+    return `#${trimmed.slice(0, 8)}…`;
+}
+
+const TRANSLATED_ACTIONS: Record<string, string> = {
+    ARCHIVE: 'Lưu trữ',
+    ASSIGN: 'Phân công',
+    PASSWORD_RESET: 'Đặt lại mật khẩu',
+    BACKUP_QUEUED: 'Xếp hàng sao lưu',
+    BACKUP_SUCCEEDED: 'Sao lưu thành công',
+    BACKUP_RESTORE_APPROVED: 'Đã duyệt khôi phục',
+    BACKUP_RESTORE_FAILED: 'Khôi phục thất bại',
+    BACKUP_RESTORE_REJECTED: 'Từ chối khôi phục',
+    BACKUP_RESTORE_REQUESTED: 'Yêu cầu khôi phục',
+    BACKUP_STORAGE_REORDERED: 'Sắp xếp nơi lưu trữ',
+    BACKUP_STORAGE_UPDATED: 'Cập nhật nơi lưu trữ',
+    BACKUP_STORAGE_CREATED: 'Thêm nơi lưu trữ',
+    BACKUP_STORAGE_DELETED: 'Xóa nơi lưu trữ',
+    BACKUP_STORAGE_TEST_FAILED: 'Kiểm tra lưu trữ thất bại',
+    BACKUP_STORAGE_TEST_SUCCEEDED: 'Kiểm tra lưu trữ thành công',
+    BACKUP_SETTINGS_UPDATED: 'Cập nhật cấu hình sao lưu',
+    BACKUP_JOB_CANCELLED: 'Hủy bản sao lưu',
+    BACKUP_JOB_DELETED: 'Xóa bản sao lưu',
+    BACKUP_JOB_VERIFIED: 'Xác thực bản sao lưu',
+    ESSAY_AI_SUGGEST: 'AI đề xuất chấm',
+    ESSAY_APPROVE: 'Duyệt bài tự luận',
+    ESSAY_GRADING_SUBMIT: 'Gửi chấm bài',
+    ESSAY_PUBLISH: 'Công bố điểm',
+    ESSAY_REOPEN: 'Mở lại bài chấm',
+    ESSAY_RETURN: 'Trả lại bài chấm',
+    ESSAY_GRADE: 'Chấm bài tự luận',
+    RUBRIC_UPDATE: 'Cập nhật Rubric',
+    REOPEN_ENTRY: 'Mở lại lượt nhập',
+    REOPEN_EXAM_ATTEMPT: 'Mở lại lượt thi',
+    RESET_ARRANGEMENT: 'Đặt lại xếp phòng',
+    RESOLVE_EXAM_INCIDENT: 'Xử lý sự cố thi',
+    RESTORE_EXAM_PAPER: 'Khôi phục đề thi',
+    REVIEW_GRADE_APPEAL: 'Xem xét phúc khảo',
+    UPDATE_EXAM_PASSWORD: 'Đổi mật khẩu đề',
+    UPDATE_STATUS: 'Cập nhật trạng thái',
+    ACCESS_ROLE_PERMISSION_GRANTED: 'Cấp quyền vai trò',
+    ACCESS_ROLE_PERMISSION_REVOKED: 'Thu hồi quyền vai trò',
+    ACCESS_USER_OVERRIDE_SET: 'Thiết lập quyền riêng',
+    ACCESS_USER_OVERRIDE_REMOVED: 'Gỡ quyền riêng',
+    ACCESS_SCOPE_REPLACED: 'Cập nhật phạm vi truy cập',
+    LOGIN: 'Đăng nhập',
+    LOGOUT: 'Đăng xuất',
+    CREATE: 'Tạo mới',
+    UPDATE: 'Cập nhật',
+    DELETE: 'Xóa',
+    PUBLISH: 'Phát hành đề',
+    ARRANGE: 'Xếp phòng thi',
+    AUTO_ASSIGN: 'Phân công tự động',
+    RESTORE: 'Khôi phục',
+    RESTORE_REQUEST: 'Yêu cầu khôi phục',
+    REJECT: 'Từ chối',
+    APPROVE: 'Phê duyệt',
+    BACKUP: 'Sao lưu',
+    CREATE_BACKUP: 'Tạo sao lưu',
+    APPEAL: 'Phúc khảo',
+    REGRADE: 'Chấm phúc khảo',
 };
 
-function getEntityInfo(entityType: string) {
-    const key = entityType?.trim() || '';
-    return entityTypeMap[key] || entityTypeMap[key.toUpperCase()] || { label: 'Đối tượng khác', Icon: Building };
+function getActionLabel(action: string): string {
+    if (!action) return 'Thao tác';
+    const normalized = action.toUpperCase().replace(/[\s-]+/g, '_').trim();
+    if (TRANSLATED_ACTIONS[normalized]) {
+        return TRANSLATED_ACTIONS[normalized];
+    }
+
+    let result = action
+        .replace(/Backup Storage Reordered/gi, 'Sắp xếp nơi lưu trữ')
+        .replace(/Backup Storage Updated/gi, 'Cập nhật nơi lưu trữ')
+        .replace(/Backup Storage Test Failed/gi, 'Kiểm tra lưu trữ thất bại')
+        .replace(/Backup Storage Test Succeeded/gi, 'Kiểm tra lưu trữ thành công')
+        .replace(/Backup Storage Created/gi, 'Thêm nơi lưu trữ')
+        .replace(/Backup Storage Deleted/gi, 'Xóa nơi lưu trữ')
+        .replace(/Backup Settings Updated/gi, 'Cập nhật cấu hình sao lưu')
+        .replace(/Backup Job Created/gi, 'Tạo bản sao lưu')
+        .replace(/Backup Job Succeeded/gi, 'Sao lưu thành công')
+        .replace(/Backup Job Failed/gi, 'Sao lưu thất bại')
+        .replace(/Password Reset/gi, 'Đặt lại mật khẩu')
+        .replace(/Access Role Updated/gi, 'Cập nhật vai trò')
+        .replace(/User Login/gi, 'Đăng nhập hệ thống')
+        .replace(/User Logout/gi, 'Đăng xuất hệ thống');
+
+    return result;
 }
 
-function EntityTarget({ entityType, entityId }: { entityType: string; entityId?: string | null }) {
-    const info = getEntityInfo(entityType);
-    const Icon = info.Icon;
+function getEntityLabel(type?: string | null): string {
+    if (!type) return 'Hệ thống';
+    const normalized = type.toUpperCase().trim();
+    const map: Record<string, string> = {
+        AUTH: 'Xác thực',
+        EXAMPAPER: 'Đề thi',
+        EXAM_PAPER: 'Đề thi',
+        EXAMARRANGEMENT: 'Xếp phòng thi',
+        EXAMSUPERVISOR: 'Cán bộ coi thi',
+        EXAMPERIOD: 'Kỳ thi',
+        EXAMSCHEDULE: 'Lịch thi',
+        EXAM_SCHEDULE: 'Lịch thi',
+        EXAM_ATTEMPT: 'Bài làm',
+        EXAM_REPORT: 'Báo cáo',
+        STUDENT: 'Sinh viên',
+        TEACHER: 'Giảng viên',
+        DEPARTMENT: 'Khoa / Viện',
+        SUBJECT: 'Môn học',
+        QUESTION: 'Câu hỏi',
+        QUESTION_BANK: 'Ngân hàng câu hỏi',
+        QUESTION_RUBRIC: 'Rubric',
+        ESSAYREVIEW: 'Bài tự luận',
+        GRADEAPPEAL: 'Phúc khảo',
+        BACKUP: 'Sao lưu',
+        BACKUPOVERVIEW: 'Sao lưu',
+        BACKUPSETTINGS: 'Cấu hình sao lưu',
+        BACKUP_SETTINGS: 'Cấu hình sao lưu',
+        BACKUP_SYSTEM: 'Hệ thống sao lưu',
+        BACKUP_STORAGE: 'Lưu trữ sao lưu',
+        BACKUP_JOB: 'Bản sao lưu',
+        ACCESSCONTROL: 'Phân quyền',
+        ACCESS_CONTROL: 'Phân quyền',
+        ACCESSROLE: 'Vai trò',
+        USERACCESS: 'Quyền người dùng',
+        USER: 'Tài khoản',
+        PROCTOR_ASSIGNMENT: 'Phân công coi thi',
+    };
 
-    const isLongId = entityId && entityId.length > 14;
-    const formattedId = entityId
-        ? isLongId
-            ? `${entityId.slice(0, 5)}...${entityId.slice(-4)}`
-            : entityId
-        : null;
-
-    return (
-        <div className="group relative inline-flex items-center gap-1.5 whitespace-nowrap">
-            <Icon className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
-            <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">{info.label}</span>
-            {entityId && (
-                <IdentifierBadge tone="neutral" title={entityId}>
-                    #{formattedId}
-                </IdentifierBadge>
-            )}
-
-            {isLongId && (
-                <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1 text-type-helper text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50">
-                    <span>#{entityId}</span>
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />
-                </div>
-            )}
-        </div>
-    );
+    return map[normalized] || type;
 }
 
-function ActionCode({ action }: { action: string }) {
-    const { label, Icon, className } = getActionMeta(action);
+const secCategoryLabel: Record<string, string> = {
+    AUTHENTICATION: 'Xác thực',
+    AUTHORIZATION: 'Phân quyền',
+    DATA_ACCESS: 'Truy cập dữ liệu',
+    DATA_EXPORT: 'Xuất dữ liệu',
+    EXAMINATION: 'Khảo thí',
+    BACKUP_RECOVERY: 'Sao lưu & khôi phục',
+    AI_PROCESSING: 'Xử lý AI',
+    SYSTEM_SECURITY: 'Bảo mật hệ thống',
+};
 
-    return (
-        <span className={`table-action inline-flex items-center gap-1.5 font-sans text-type-body leading-[22px] font-medium ${className}`}>
-            <Icon className="h-3.5 w-3.5 shrink-0" />
-            {label}
-        </span>
-    );
+const secOutcomeLabel: Record<string, string> = {
+    SUCCESS: 'Thành công',
+    DENIED: 'Bị từ chối',
+    FAILURE: 'Thất bại',
+};
+
+const secActionLabel: Record<string, string> = {
+    CREATE: 'Tạo mới',
+    UPDATE: 'Cập nhật',
+    DELETE: 'Xóa',
+    ARRANGE: 'Xếp lịch',
+    AUTO_ASSIGN: 'Tự động phân công',
+    EXAM_PAPER_ANSWER_KEY_VIEWED: 'Xem đề & đáp án',
+    EXAM_PAPER_EXPORT_REQUESTED: 'Xuất đề thi',
+    QUESTION_ANSWER_KEY_VIEWED: 'Xem câu hỏi & đáp án',
+    QUESTION_BANK_EXPORTED: 'Xuất ngân hàng câu hỏi',
+    RUBRIC_VIEWED: 'Xem rubric',
+    RUBRIC_VERSION_HISTORY_VIEWED: 'Xem lịch sử rubric',
+    ESSAY_ATTEMPT_ANSWER_VIEWED: 'Xem bài tự luận',
+    EXAM_RESULT_VIEWED: 'Xem kết quả',
+    EXAM_ATTEMPT_REVIEW_VIEWED: 'Xem bài làm & điểm',
+    GRADE_REPORT_VIEWED: 'Xem bảng điểm',
+    EXAM_REPORT_SUMMARY_VIEWED: 'Xem báo cáo tổng hợp',
+    EXAM_REPORT_PREVIEWED: 'Xem trước báo cáo',
+    EXAM_REPORT_EXPORT: 'Xuất báo cáo',
+    ATTENDANCE_SHEET_VIEWED: 'Xem điểm danh',
+    BACKUP_OVERVIEW_VIEWED: 'Xem tổng quan sao lưu',
+    BACKUP_SETTINGS_VIEWED: 'Xem cấu hình sao lưu',
+    BACKUP_JOB_VIEWED: 'Xem bản sao lưu',
+    ACCESS_CONTROL_OVERVIEW_VIEWED: 'Xem tổng quan phân quyền',
+    ACCESS_CONTROL_HISTORY_VIEWED: 'Xem lịch sử phân quyền',
+    USER_EFFECTIVE_PERMISSIONS_VIEWED: 'Xem quyền hiệu lực',
+    SESSION_ACCESS_DENIED: 'Phiên không hợp lệ',
+    PERMISSION_DENIED: 'Thiếu quyền truy cập',
+    ROLE_DENIED: 'Sai vai trò truy cập',
+    SECURITY_AUDIT_POLICY_UPDATED: 'Cập nhật chính sách',
+    SECURITY_AUDIT_LEGAL_HOLD_APPLIED: 'Khóa điều tra pháp lý',
+    SECURITY_AUDIT_LEGAL_HOLD_RELEASED: 'Mở khóa điều tra',
+};
+
+/** Hàm xuất CSV chuẩn UTF-8 với BOM */
+function exportCsvData(filename: string, headers: string[], rows: (string | number)[][]) {
+    const processRow = (row: (string | number)[]) =>
+        row
+            .map((val) => {
+                const str = String(val ?? '').replace(/"/g, '""');
+                return `"${str}"`;
+            })
+            .join(',');
+
+    const csvContent = '\uFEFF' + [headers.map((h) => `"${h}"`).join(','), ...rows.map(processRow)].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename.endsWith('.csv') ? filename : `${filename}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 }
 
-export default function ActivityLogsPage() {
-    usePageTitle('Nhật ký hệ thống');
+/* =========================================================================
+   2. MAIN COMPONENT
+========================================================================= */
+
+function ActivityLogsContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
 
+    const tabFromUrl = searchParams.get('tab') === 'security' ? 'security' : 'activity';
+    const [activeTab, setActiveTab] = useState<'activity' | 'security'>(tabFromUrl);
+
+    usePageTitle(activeTab === 'security' ? 'Kiểm toán & bảo mật' : 'Nhật ký & kiểm toán');
+
+    useEffect(() => {
+        const currentParam = searchParams.get('tab');
+        if (currentParam === 'security' && activeTab !== 'security') {
+            setActiveTab('security');
+        } else if (currentParam !== 'security' && activeTab === 'security' && !currentParam) {
+            setActiveTab('activity');
+        }
+    }, [searchParams, activeTab]);
+
+    const handleTabChange = (tab: 'activity' | 'security') => {
+        setActiveTab(tab);
+        const url = tab === 'security' ? '/admin/activity-logs?tab=security' : '/admin/activity-logs';
+        router.replace(url, { scroll: false });
+    };
+
+    const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+    /* ── Activity State ── */
     const [logs, setLogs] = useState<AuditLogRecord[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [search, setSearch] = useState<string>('');
     const [entityFilter, setEntityFilter] = useState<string>('');
-    const [actionFilter, setActionFilter] = useState<string>('');
+    const [page, setPage] = useState<number>(1);
+    const [limit, setLimit] = useState<number>(10);
+    const [totalCount, setTotalCount] = useState<number>(0);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -273,61 +323,32 @@ export default function ActivityLogsPage() {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    // Bulk Selection State
-    const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
-    // Toolbar & View Controls State (Identical to StudentTableToolbar)
-    const [sortOrder, setSortOrder] = useState<string>('newest');
-    const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
-    const [openColumnMenu, setOpenColumnMenu] = useState<boolean>(false);
-    const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
-        createdAt: true,
-        actor: true,
-        action: true,
-        entity: true,
-        description: true,
-    });
-
-    // Pagination state (limit 10 default)
-    const [page, setPage] = useState<number>(1);
-    const [limit, setLimit] = useState<number>(10);
-    const [totalCount, setTotalCount] = useState<number>(0);
-
     // Inspector Drawer State
     const [selectedLog, setSelectedLog] = useState<AuditLogRecord | null>(null);
     const [drawerOpenLog, setDrawerOpenLog] = useState<AuditLogRecord | null>(null);
     const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
+    const [copied, setCopied] = useState<boolean>(false);
 
     useEffect(() => {
         if (selectedLog) {
             setDrawerOpenLog(selectedLog);
             const raf = requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    setDrawerVisible(true);
-                });
+                requestAnimationFrame(() => setDrawerVisible(true));
             });
             return () => cancelAnimationFrame(raf);
         } else {
             setDrawerVisible(false);
-            const timer = setTimeout(() => {
-                setDrawerOpenLog(null);
-            }, 300);
+            const timer = setTimeout(() => setDrawerOpenLog(null), 250);
             return () => clearTimeout(timer);
         }
     }, [selectedLog]);
 
-    const [copied, setCopied] = useState<boolean>(false);
-    const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-    const [isSpinning, setIsSpinning] = useState<boolean>(false);
-
     const fetchLogs = useCallback(async (): Promise<boolean> => {
         try {
             setLoading(true);
-            const params: any = { page, limit };
+            const params: any = { page, limit, sort: 'newest' };
             if (search.trim()) params.search = search.trim();
             if (entityFilter) params.entityType = entityFilter;
-            if (actionFilter) params.action = actionFilter;
-            params.sort = sortOrder;
 
             const res = await api.get('/audit-logs', { params });
             setLogs(Array.isArray(res.data?.items) ? res.data.items : []);
@@ -337,283 +358,411 @@ export default function ActivityLogsPage() {
             setLogs([]);
             setTotalCount(0);
             setToast({
-                message: error?.response?.data?.message || error?.message || 'Không thể tải nhật ký hoạt động.',
+                message: error?.response?.data?.message || error?.message || 'Không thể tải nhật ký.',
                 type: 'error',
             });
             return false;
         } finally {
             setLoading(false);
         }
-    }, [page, limit, search, entityFilter, actionFilter, sortOrder]);
-
-    const handleRefreshClick = async () => {
-        setIsSpinning(true);
-        const refreshed = await fetchLogs();
-        if (refreshed) setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
-        setTimeout(() => setIsSpinning(false), 600);
-    };
+    }, [page, limit, search, entityFilter]);
 
     useEffect(() => {
-        const currentUser = getAuthUser();
-        if (!currentUser) return void router.replace('/login');
-        if (currentUser.role !== 'ADMIN') return void router.replace('/dashboard');
-        fetchLogs();
-    }, [fetchLogs, router]);
+        if (activeTab === 'activity') {
+            void fetchLogs();
+        }
+    }, [fetchLogs, activeTab]);
 
-    // Toggle Checkbox Selection
-    const toggleSelect = (id: string) => {
-        setSelectedIds((prev) =>
-            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-        );
-    };
+    const availableEntities = useMemo(() => {
+        const types = new Set<string>();
+        logs.forEach((l) => {
+            if (l.entityType) types.add(l.entityType);
+        });
+        return Array.from(types);
+    }, [logs]);
 
-    const toggleSelectAll = () => {
-        const allVisibleSelected = paginatedLogs.length > 0 && paginatedLogs.every((log) => selectedIds.includes(log.id));
-        if (allVisibleSelected) {
-            setSelectedIds([]);
-        } else {
-            setSelectedIds((prev) => Array.from(new Set([...prev, ...paginatedLogs.map((l) => l.id)])));
+    /* ── HÀM LẤY TOÀN BỘ DỮ LIỆU THEO ĐÚNG BỘ LỌC ĐỂ XUẤT FILE ── */
+    const fetchAllFilteredActivityLogs = async (): Promise<AuditLogRecord[]> => {
+        try {
+            const params: any = { page: 1, limit: 5000, sort: 'newest' };
+            if (search.trim()) params.search = search.trim();
+            if (entityFilter) params.entityType = entityFilter;
+
+            const res = await api.get('/audit-logs', { params });
+            return Array.isArray(res.data?.items) ? res.data.items : logs;
+        } catch {
+            return logs;
         }
     };
 
-    // Toggle Column Visibility
-    const handleColumnToggle = (key: string) => {
-        setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
+    const getActivityFilterSummary = () => {
+        const parts: string[] = [];
+        if (search.trim()) parts.push(`Từ khóa: "${search.trim()}"`);
+        if (entityFilter) parts.push(`Thực thể: "${getEntityLabel(entityFilter)}"`);
+        return parts.length > 0 ? parts.join(' | ') : 'Tất cả thao tác';
     };
 
-    // KPI Data calculated dynamically
-    const kpiData = useMemo(() => {
-        let total = logs.length, login = 0, dataOps = 0, appeal = 0;
-        logs.forEach((l) => {
-            const act = l.action.toUpperCase();
-            if (act.includes('LOGIN')) login++;
-            else if (act.includes('APPEAL') || act.includes('REGRADE')) appeal++;
-            else dataOps++;
-        });
-        return { total: totalCount || total, login, dataOps, appeal };
-    }, [logs, totalCount]);
+    /* ── CÁC CƠ CHẾ XUẤT FILE CHO TAB NHẬT KÝ THAO TÁC ── */
+    const handleExportExcelActivity = async () => {
+        const allData = await fetchAllFilteredActivityLogs();
+        const filterDesc = getActivityFilterSummary();
 
-    // Entities List for Dropdown
-    const entityTypes = useMemo(() => {
-        const set = new Set<string>();
-        logs.forEach((l) => { if (l.entityType) set.add(l.entityType); });
-        return Array.from(set);
-    }, [logs]);
-
-    // Filtered & Sorted Display List
-    const filteredLogs = useMemo(() => {
-        let list = logs.filter((item) => {
-            if (search.trim()) {
-                const s = search.toLowerCase();
-                const matchActor = (item.actor?.username || '').toLowerCase().includes(s);
-                const matchAction = item.action.toLowerCase().includes(s);
-                const matchDesc = item.description.toLowerCase().includes(s);
-                if (!matchActor && !matchAction && !matchDesc) return false;
-            }
-            if (entityFilter && item.entityType !== entityFilter) return false;
-            return true;
-        });
-
-        return list;
-    }, [logs, search, entityFilter]);
-
-    const totalPages = Math.ceil(totalCount / limit) || 1;
-    // The API already paginates the current page. Do not slice it again on the client.
-    const paginatedLogs = filteredLogs;
-
-    const exportExcel = () => {
+        const columns = [
+            { header: 'Mã ID', key: 'id', width: 25 },
+            { header: 'Thời gian', key: 'createdAt', width: 20 },
+            { header: 'Tài khoản', key: 'actor', width: 20 },
+            { header: 'Vai trò', key: 'role', width: 15 },
+            { header: 'Hành động', key: 'action', width: 25 },
+            { header: 'Thực thể', key: 'entityType', width: 20 },
+            { header: 'Mã đối tượng', key: 'entityId', width: 25 },
+            { header: 'Mô tả chi tiết', key: 'description', width: 45 },
+        ];
+        const rows = allData.map((l) => [
+            l.id,
+            new Date(l.createdAt).toLocaleString('vi-VN'),
+            l.actor?.username || 'Hệ thống',
+            l.actor?.role ? (USER_ROLE_LABELS[l.actor.role] || l.actor.role) : 'Hệ thống',
+            getActionLabel(l.action),
+            getEntityLabel(l.entityType),
+            l.entityId || '',
+            l.description,
+        ]);
         exportToFormattedExcel({
-            filename: `AuditLogs_Export_${new Date().toISOString().split('T')[0]}.xlsx`,
-            title: 'DANH SÁCH NHẬT KÝ & LỊCH SỬ THAO TÁC HỆ THỐNG KHẢO THÍ',
-            columns: [
-                { header: 'STT', align: 'center' },
-                { header: 'Thời gian' },
-                { header: 'Người thực hiện' },
-                { header: 'Email' },
-                { header: 'Role' },
-                { header: 'Hành động' },
-                { header: 'Thực thể' },
-                { header: 'ID' },
-                { header: 'Mô tả chi tiết' },
-            ],
-            rows: filteredLogs.map((l, idx) => [
-                idx + 1,
-                new Date(l.createdAt).toLocaleString('vi-VN'),
-                l.actor?.username || 'Hệ thống',
-                l.actor?.email || 'N/A',
-                l.actor?.role || 'SYSTEM',
-                l.action,
-                l.entityType,
-                l.entityId || '',
-                l.description,
-            ]),
+            filename: `Nhat_ky_he_thong_${new Date().toISOString().split('T')[0]}.xls`,
+            title: 'BÁO CÁO NHẬT KÝ HOẠT ĐỘNG HỆ THỐNG',
+            subtitle: `Bộ lọc: ${filterDesc} (Tổng số: ${allData.length} thao tác)`,
+            columns,
+            rows,
         });
+        setToast({ message: `Đã xuất ${allData.length} bản ghi Excel theo bộ lọc`, type: 'success' });
     };
 
-    const handlePrintReport = () => {
-        const now = new Date();
-        const dateStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+    const handleExportCsvActivity = async () => {
+        const allData = await fetchAllFilteredActivityLogs();
+        const headers = ['Mã ID', 'Thời gian', 'Tài khoản', 'Vai trò', 'Hành động', 'Thực thể', 'Mã đối tượng', 'Mô tả'];
+        const rows = allData.map((l) => [
+            l.id,
+            new Date(l.createdAt).toLocaleString('vi-VN'),
+            l.actor?.username || 'Hệ thống',
+            l.actor?.role ? (USER_ROLE_LABELS[l.actor.role] || l.actor.role) : 'Hệ thống',
+            getActionLabel(l.action),
+            getEntityLabel(l.entityType),
+            l.entityId || '',
+            l.description || '',
+        ]);
+        exportCsvData(`Nhat_ky_thao_tac_${new Date().toISOString().split('T')[0]}.csv`, headers, rows);
+        setToast({ message: `Đã xuất ${allData.length} bản ghi CSV theo bộ lọc`, type: 'success' });
+    };
+
+    const handlePrintActivity = async () => {
+        const allData = await fetchAllFilteredActivityLogs();
+        const filterDesc = getActivityFilterSummary();
 
         printReport({
-            title: 'NHẬT KÝ & LỊCH SỬ THAO TÁC HỆ THỐNG KHẢO THÍ',
-            subtitle: `Trích xuất thời gian thực · Ngày xuất: ${dateStr}`,
-            metaInfo: [
-                { label: 'Đơn vị quản lý', value: 'Ban Khảo thí & Quản trị Hệ thống' },
-                { label: 'Hệ thống', value: 'Exam Management System Audit Logger' },
-            ],
+            title: 'BÁO CÁO NHẬT KÝ HOẠT ĐỘNG HỆ THỐNG',
+            subtitle: `Bộ lọc: ${filterDesc} (Tổng cộng: ${allData.length} thao tác)`,
+            facultyName: 'HỘI ĐỒNG KHẢO THÍ & QUẢN TRỊ HỆ THỐNG',
             columns: [
                 { header: 'STT', width: '40px', align: 'center' },
-                { header: 'Thời gian', width: '140px', align: 'center' },
-                { header: 'Tài khoản thực hiện', width: '150px', align: 'left' },
-                { header: 'Hành động', width: '160px', align: 'center' },
-                { header: 'Mô tả chi tiết', width: '280px', align: 'left' },
+                { header: 'Thời gian', width: '140px' },
+                { header: 'Tài khoản', width: '140px' },
+                { header: 'Hành động', width: '140px' },
+                { header: 'Thực thể', width: '120px' },
+                { header: 'Mô tả chi tiết', width: '240px' },
             ],
-            rows: filteredLogs.map((l, idx) => [
+            rows: allData.map((l, idx) => [
                 idx + 1,
                 new Date(l.createdAt).toLocaleString('vi-VN'),
                 l.actor?.username || 'Hệ thống',
-                l.action,
-                l.description,
+                getActionLabel(l.action),
+                getEntityLabel(l.entityType),
+                l.description || '—',
             ]),
-            footerNotes: 'Bản nhật ký được chứng thực tự động từ Audit Log Service.',
             signers: [
-                { title: 'NGƯỜI XUẤT NHẬT KÝ', subtitle: '(Ký, ghi rõ họ tên)' },
-                { title: 'QUẢN TRỊ VIÊN HỆ THỐNG', subtitle: '(Ký tên, đóng dấu)' },
+                { title: 'CÁN BỘ QUẢN TRỊ HỆ THỐNG', subtitle: '(Ký, ghi rõ họ tên)' },
+                { title: 'TRƯỞNG PHÒNG KHẢO THÍ & ĐBCL', subtitle: '(Ký, đóng dấu)' },
             ],
         });
     };
 
-    const copyMetadataJson = () => {
-        if (!selectedLog) return;
-        const jsonStr = JSON.stringify(selectedLog.metadata || {}, null, 2);
-        navigator.clipboard.writeText(jsonStr).then(() => {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
+    /* ── Security Audit State ── */
+    const [secEvents, setSecEvents] = useState<SecurityEvent[]>([]);
+    const [secIntegrity, setSecIntegrity] = useState<{ checked: number; valid: boolean } | null>(null);
+    const [secLoading, setSecLoading] = useState<boolean>(true);
+    const [secSearch, setSecSearch] = useState<string>('');
+    const [secCategory, setSecCategory] = useState<string>('');
+    const [secOutcome, setSecOutcome] = useState<string>('');
+    const [secPage, setSecPage] = useState<number>(1);
+    const [secLimit, setLimitSec] = useState<number>(10);
+    const [secTotal, setSecTotal] = useState<number>(0);
+
+    const loadSecurityAudit = useCallback(async () => {
+        setSecLoading(true);
+        try {
+            const [eventResponse, integrityResponse] = await Promise.all([
+                api.get('/security-audit/events', {
+                    params: {
+                        page: secPage,
+                        limit: secLimit,
+                        ...(secSearch ? { search: secSearch } : {}),
+                        ...(secCategory ? { category: secCategory } : {}),
+                        ...(secOutcome ? { outcome: secOutcome } : {}),
+                    },
+                }),
+                api.get('/security-audit/integrity', { params: { limit: 1000 } }),
+            ]);
+            setSecEvents(eventResponse.data?.items || []);
+            setSecTotal(Number(eventResponse.data?.total) || 0);
+            setSecIntegrity(integrityResponse.data);
+        } catch (error: any) {
+            setToast({
+                type: 'error',
+                message: error?.response?.data?.message || error?.message || 'Không thể tải dữ liệu an ninh.',
+            });
+        } finally {
+            setSecLoading(false);
+        }
+    }, [secPage, secLimit, secSearch, secCategory, secOutcome]);
+
+    useEffect(() => {
+        if (activeTab === 'security') {
+            void loadSecurityAudit();
+        }
+    }, [loadSecurityAudit, activeTab]);
+
+    const secStats = useMemo(() => ({
+        total: secTotal,
+        denied: secEvents.filter((e) => e.outcome === 'DENIED').length,
+        failed: secEvents.filter((e) => e.outcome === 'FAILURE').length,
+        held: secEvents.filter((e) => e.legalHold).length,
+    }), [secTotal, secEvents]);
+
+    const fetchAllFilteredSecurityEvents = async (): Promise<SecurityEvent[]> => {
+        try {
+            const res = await api.get('/security-audit/events', {
+                params: {
+                    page: 1,
+                    limit: 5000,
+                    ...(secSearch.trim() ? { search: secSearch.trim() } : {}),
+                    ...(secCategory ? { category: secCategory } : {}),
+                    ...(secOutcome ? { outcome: secOutcome } : {}),
+                },
+            });
+            return Array.isArray(res.data?.items) ? res.data.items : secEvents;
+        } catch {
+            return secEvents;
+        }
+    };
+
+    const getSecurityFilterSummary = () => {
+        const parts: string[] = [];
+        if (secSearch.trim()) parts.push(`Từ khóa: "${secSearch.trim()}"`);
+        if (secCategory) parts.push(`Nhóm: "${secCategoryLabel[secCategory] || secCategory}"`);
+        if (secOutcome) parts.push(`Kết quả: "${secOutcomeLabel[secOutcome] || secOutcome}"`);
+        return parts.length > 0 ? parts.join(' | ') : 'Tất cả sự kiện an ninh';
+    };
+
+    /* ── CÁC CƠ CHẾ XUẤT FILE CHO TAB KIỂM TOÁN AN NINH ── */
+    const handleExportExcelSecurity = async () => {
+        const allData = await fetchAllFilteredSecurityEvents();
+        const filterDesc = getSecurityFilterSummary();
+
+        const columns = [
+            { header: 'Mã sự kiện', key: 'id', width: 25 },
+            { header: 'Thời điểm', key: 'occurredAt', width: 20 },
+            { header: 'Tài khoản', key: 'actor', width: 20 },
+            { header: 'Nhóm an ninh', key: 'category', width: 20 },
+            { header: 'Hành động', key: 'action', width: 25 },
+            { header: 'Đối tượng', key: 'entityType', width: 20 },
+            { header: 'Kết quả', key: 'outcome', width: 15 },
+            { header: 'Địa chỉ IP', key: 'ipAddress', width: 18 },
+            { header: 'Đường dẫn Route', key: 'route', width: 30 },
+            { header: 'Khóa pháp lý', key: 'legalHold', width: 15 },
+        ];
+        const rows = allData.map((e) => [
+            e.id,
+            new Date(e.occurredAt).toLocaleString('vi-VN'),
+            e.actor?.username || 'Hệ thống',
+            secCategoryLabel[e.category] || e.category,
+            secActionLabel[e.action] || getActionLabel(e.action),
+            getEntityLabel(e.entityType),
+            secOutcomeLabel[e.outcome] || e.outcome,
+            e.ipAddress || '—',
+            e.route || '—',
+            e.legalHold ? 'Đã khóa' : 'Không',
+        ]);
+        exportToFormattedExcel({
+            filename: `Kiem_toan_an_ninh_${new Date().toISOString().split('T')[0]}.xls`,
+            title: 'BÁO CÁO KIỂM TOÁN AN NINH HỆ THỐNG',
+            subtitle: `Bộ lọc: ${filterDesc} (Tổng số: ${allData.length} sự kiện | Chuỗi toàn vẹn: ${secIntegrity?.valid ? 'Hợp lệ' : 'Đang xác thực'})`,
+            columns,
+            rows,
+        });
+        setToast({ message: `Đã xuất ${allData.length} bản ghi Excel an ninh theo bộ lọc`, type: 'success' });
+    };
+
+    const handleExportCsvSecurity = async () => {
+        const allData = await fetchAllFilteredSecurityEvents();
+        const headers = ['Mã sự kiện', 'Thời điểm', 'Tài khoản', 'Nhóm', 'Hành động', 'Đối tượng', 'Kết quả', 'IP', 'Route', 'Khóa pháp lý'];
+        const rows = allData.map((e) => [
+            e.id,
+            new Date(e.occurredAt).toLocaleString('vi-VN'),
+            e.actor?.username || 'Hệ thống',
+            secCategoryLabel[e.category] || e.category,
+            secActionLabel[e.action] || getActionLabel(e.action),
+            getEntityLabel(e.entityType),
+            secOutcomeLabel[e.outcome] || e.outcome,
+            e.ipAddress || '—',
+            e.route || '—',
+            e.legalHold ? 'Đã khóa' : 'Không',
+        ]);
+        exportCsvData(`Kiem_toan_an_ninh_${new Date().toISOString().split('T')[0]}.csv`, headers, rows);
+        setToast({ message: `Đã xuất ${allData.length} bản ghi CSV an ninh theo bộ lọc`, type: 'success' });
+    };
+
+    const handlePrintSecurity = async () => {
+        const allData = await fetchAllFilteredSecurityEvents();
+        const filterDesc = getSecurityFilterSummary();
+
+        printReport({
+            title: 'BÁO CÁO KIỂM TOÁN AN NINH & TOÀN VẸN HỆ THỐNG',
+            subtitle: `Bộ lọc: ${filterDesc} (Tổng cộng: ${allData.length} sự kiện | Hash: ${secIntegrity?.valid ? 'Toàn vẹn' : 'Cần kiểm tra'})`,
+            facultyName: 'BAN AN TOÀN THÔNG TIN & KIỂM TOÁN HỆ THỐNG',
+            columns: [
+                { header: 'STT', width: '40px', align: 'center' },
+                { header: 'Thời điểm', width: '140px' },
+                { header: 'Tài khoản', width: '130px' },
+                { header: 'Hành động & Đối tượng', width: '200px' },
+                { header: 'Kết quả', width: '100px', align: 'center' },
+                { header: 'Nguồn IP & Route', width: '160px' },
+                { header: 'Khóa', width: '80px', align: 'center' },
+            ],
+            rows: allData.map((e, idx) => [
+                idx + 1,
+                new Date(e.occurredAt).toLocaleString('vi-VN'),
+                e.actor?.username || 'Hệ thống',
+                `${secActionLabel[e.action] || getActionLabel(e.action)} (${getEntityLabel(e.entityType)})`,
+                secOutcomeLabel[e.outcome] || e.outcome,
+                `IP: ${e.ipAddress || 'Ẩn'}\n${e.route || ''}`,
+                e.legalHold ? 'Đã khóa' : '—',
+            ]),
+            signers: [
+                { title: 'CHUYÊN VIÊN KIỂM TOÁN AN NINH', subtitle: '(Ký, ghi rõ họ tên)' },
+                { title: 'TRƯỞNG PHÒNG AN TOÀN THÔNG TIN', subtitle: '(Ký, đóng dấu)' },
+            ],
         });
     };
 
-    const kpiItems = [
+    const handleApplyLegalHold = async (event: SecurityEvent) => {
+        const reason = window.prompt('Nhập lý do khóa lưu giữ điều tra pháp lý:');
+        if (!reason?.trim()) return;
+        try {
+            await api.post(`/security-audit/events/${event.id}/legal-hold`, { reason });
+            setToast({ type: 'success', message: 'Đã khóa lưu giữ sự kiện kiểm toán.' });
+            await loadSecurityAudit();
+        } catch (error: any) {
+            setToast({ type: 'error', message: error?.response?.data?.message || error?.message || 'Không thể tạo khóa.' });
+        }
+    };
+
+    const navigationTabs: TabItem<'activity' | 'security'>[] = useMemo(() => [
         {
-            title: 'Tổng nhật ký thao tác',
-            value: kpiData.total,
-            subtext: 'Lịch sử ghi vết toàn hệ thống',
-            progressPercent: kpiData.total > 0 ? 100 : 0,
-            icon: Activity,
+            key: 'activity',
+            label: 'Nhật ký thao tác',
+            count: totalCount,
         },
         {
-            title: 'Phiên đăng nhập',
-            value: kpiData.login,
-            subtext: 'Đăng nhập & Google OAuth',
-            progressPercent: kpiData.total > 0 ? Math.round((kpiData.login / kpiData.total) * 100) : 0,
-            icon: LogIn,
+            key: 'security',
+            label: 'Kiểm toán an ninh',
+            count: secTotal,
         },
-        {
-            title: 'Tạo & phê duyệt đề',
-            value: kpiData.dataOps,
-            subtext: 'Biên soạn ngân hàng đề',
-            progressPercent: kpiData.total > 0 ? Math.round((kpiData.dataOps / kpiData.total) * 100) : 0,
-            icon: ShieldCheck,
-        },
-        {
-            title: 'Phúc khảo & đổi điểm',
-            value: kpiData.appeal,
-            subtext: 'Khiếu nại điểm & thẩm định',
-            progressPercent: kpiData.total > 0 ? Math.round((kpiData.appeal / kpiData.total) * 100) : 0,
-            icon: AlertCircle,
-        },
-    ];
+    ], [totalCount, secTotal]);
+
+    /* =========================================================================
+       3. RENDER (ĐỒNG BỘ 100% CỠ CHỮ GIỮA 2 TAB)
+    ========================================================================= */
 
     return (
-        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
+        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-            {/* ── 1. Page Header ── */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
+            {/* ── 1. Page Header (Tiêu đề 28px, Phụ đề 14px) ── */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-0.5">
                     <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-                        Nhật ký hệ thống
+                        Nhật ký & kiểm toán
                     </h1>
                     <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-                        Theo dõi, rà soát và ghi vết chi tiết mọi lịch sử thao tác của Quản trị viên, Giảng viên và Thí sinh
+                        {activeTab === 'activity'
+                            ? `Ghi nhận chi tiết ${totalCount.toLocaleString('vi-VN')} lượt thao tác vận hành trên toàn hệ thống`
+                            : `Kiểm toán an ninh với chuỗi hash độc lập (${secTotal.toLocaleString('vi-VN')} sự kiện)`}
                     </p>
                 </div>
 
-                <div className="flex items-center gap-2.5 shrink-0">
+                <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                    {/* Status pill Capsule */}
+                    {activeTab === 'security' && secIntegrity && (
+                        <span className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-emerald-300 dark:border-emerald-700 bg-transparent text-emerald-700 dark:text-emerald-400 text-type-body-sm font-semibold">
+                            <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                            <span>Toàn vẹn ({secIntegrity.checked})</span>
+                        </span>
+                    )}
+
+                    {/* Data actions dropdown 15px */}
                     <DataActionsDropdown
-                        onExport={exportExcel}
-                        onPrint={handlePrintReport}
+                        onExportExcel={activeTab === 'activity' ? handleExportExcelActivity : handleExportExcelSecurity}
+                        onExportCsv={activeTab === 'activity' ? handleExportCsvActivity : handleExportCsvSecurity}
+                        onPrint={activeTab === 'activity' ? handlePrintActivity : handlePrintSecurity}
+                        exportLabel="Xuất file Excel"
+                        exportCsvLabel="Xuất file CSV"
+                        printLabel="In biên bản / Xuất PDF"
                     />
                 </div>
             </div>
 
-            {/* ── 2. Top KPI Cards With Micro Progress Tracks ── */}
-            <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
-                {kpiItems.map((item) => {
-                    const IconComponent = item.icon;
-                    return (
-                        <div
-                            key={item.title}
-                            className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer"
-                        >
-                            <div className="flex items-start justify-between gap-3">
-                                <div className="space-y-1 min-w-0">
-                                    <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
-                                        {item.title}
-                                    </span>
-                                    <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
-                                        {item.value.toLocaleString('vi-VN')}
-                                    </div>
-                                </div>
+            {/* ── 2. Standard TabBar ── */}
+            <TabBar
+                tabs={navigationTabs}
+                active={activeTab}
+                onChange={handleTabChange}
+                variant="line"
+            />
 
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
-                                    <IconComponent className="h-5 w-5 stroke-[2.2]" />
-                                </div>
-                            </div>
-
-                            {/* Thanh đo tiến độ tỷ lệ động nhỏ mảnh, tinh tế (Micro Progress Track) */}
-                            <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
-                                <div
-                                    className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
-                                    style={{ width: `${Math.min(Math.max(item.progressPercent, 5), 100)}%` }}
-                                />
-                            </div>
-
-                            <div className="mt-2.5">
-                                <span
-                                    title={item.subtext}
-                                    className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
-                                >
-                                    {item.subtext}
-                                </span>
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
-
-            {/* Search & Action Toolbar (Single Unified Row) */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                {/* Left: Unified Search Bar with Embedded SlidersHorizontal Popover */}
+            {/* ── 3. Unified Embedded Search Bar ── */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-0.5">
                 <div className="relative flex-1 max-w-xl min-w-[240px]">
                     <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
                     <input
                         ref={searchInputRef}
                         type="text"
-                        placeholder="Tìm theo mô tả, người thực hiện, thực thể..."
-                        value={search}
+                        placeholder={activeTab === 'activity' ? "Tìm theo nội dung, người thực hiện, đối tượng..." : "Tìm theo hành động, IP, tài khoản, route..."}
+                        value={activeTab === 'activity' ? search : secSearch}
                         onChange={(e) => {
-                            setSearch(e.target.value);
-                            setPage(1);
+                            if (activeTab === 'activity') {
+                                setSearch(e.target.value);
+                                setPage(1);
+                            } else {
+                                setSecSearch(e.target.value);
+                                setSecPage(1);
+                            }
                         }}
-                        className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+                        className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                     />
 
                     {/* Embedded actions on right edge of search input */}
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
-                        {search ? (
+                        {(activeTab === 'activity' ? search : secSearch) ? (
                             <button
                                 type="button"
-                                onClick={() => { setSearch(''); setPage(1); }}
+                                onClick={() => {
+                                    if (activeTab === 'activity') {
+                                        setSearch('');
+                                        setPage(1);
+                                    } else {
+                                        setSecSearch('');
+                                        setSecPage(1);
+                                    }
+                                }}
                                 className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer p-0.5"
                                 title="Xóa tìm kiếm"
                             >
@@ -631,640 +780,401 @@ export default function ActivityLogsPage() {
 
                         <div className="h-3.5 w-px bg-slate-200 dark:bg-slate-700" />
 
-                        <ActivityLogFilterPopover
+                        {/* Integrated Filter Popover */}
+                        <ActivityFilterPopover
+                            activeTab={activeTab}
                             entityFilter={entityFilter}
                             onEntityFilterChange={(val) => {
                                 setEntityFilter(val);
                                 setPage(1);
                             }}
-                            actionFilter={actionFilter}
-                            onActionFilterChange={(val) => {
-                                setActionFilter(val);
-                                setPage(1);
+                            availableEntities={availableEntities}
+                            getEntityLabel={getEntityLabel}
+                            secCategory={secCategory}
+                            onSecCategoryChange={(val) => {
+                                setSecCategory(val);
+                                setSecPage(1);
                             }}
-                            entityTypes={entityTypes}
-                            logs={logs}
-                            totalFilteredCount={totalCount}
+                            secCategoryLabel={secCategoryLabel}
+                            secOutcome={secOutcome}
+                            onSecOutcomeChange={(val) => {
+                                setSecOutcome(val);
+                                setSecPage(1);
+                            }}
+                            secOutcomeLabel={secOutcomeLabel}
                             onResetAll={() => {
-                                setSearch('');
-                                setEntityFilter('');
-                                setActionFilter('');
-                                setPage(1);
+                                if (activeTab === 'activity') {
+                                    setSearch('');
+                                    setEntityFilter('');
+                                    setPage(1);
+                                } else {
+                                    setSecSearch('');
+                                    setSecCategory('');
+                                    setSecOutcome('');
+                                    setSecPage(1);
+                                }
                             }}
                         />
                     </div>
                 </div>
-
-                {/* Right: Table Action Controls */}
-                <div className="shrink-0">
-                    <div className="flex flex-wrap items-center justify-between gap-3 py-1">
-                        <div className="flex items-center gap-2">
-                            <span className="text-type-helper font-semibold text-slate-600 dark:text-slate-400">
-                                Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{totalCount.toLocaleString('vi-VN')}</span> nhật ký
-                            </span>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            {/* Sort selector */}
-                            <SortDropdown
-                                value={sortOrder}
-                                onChange={(val) => setSortOrder(val)}
-                                options={[
-                                    { value: 'newest', label: 'Mới nhất' },
-                                    { value: 'oldest', label: 'Cũ nhất' },
-                                ]}
-                            />
-
-                            {/* Column selector */}
-                            <ColumnToggleDropdown
-                                columns={[
-                                    { key: 'createdAt', label: 'Thời gian' },
-                                    { key: 'actor', label: 'Người thực hiện' },
-                                    { key: 'action', label: 'Hành động' },
-                                    { key: 'entity', label: 'Đối tượng' },
-                                    { key: 'description', label: 'Mô tả thao tác' },
-                                ]}
-                                visibleColumns={visibleColumns}
-                                onToggle={(key) => handleColumnToggle(key)}
-                            />
-
-                            {/* View Mode Segmented Control */}
-                            <ViewModeSegmentedControl
-                                viewMode={viewMode}
-                                onChange={(mode) => setViewMode(mode)}
-                            />
-
-                            {/* Refresh button */}
-                            <button
-                                type="button"
-                                onClick={handleRefreshClick}
-                                className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
-                                title="Làm mới dữ liệu"
-                            >
-                                <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            {/* ── 5. Full-Width DataGrid Table (Exact StudentTable Match 1-1) ── */}
-            {viewMode === 'grid' ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {paginatedLogs.map((item) => {
-                        const isChecked = selectedIds.includes(item.id);
-                        return (
-                            <div
-                                key={item.id}
-                                className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-3 hover:shadow-md transition ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/10' : ''
-                                    }`}
-                            >
-                                {/* Header: Checkbox + Time & ActionCode */}
-                                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
-                                    <div className="flex items-center gap-2">
-                                        <input
-                                            type="checkbox"
-                                            checked={isChecked}
-                                            onChange={() => toggleSelect(item.id)}
-                                            className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
-                                        />
-                                        <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400">
-                                            {new Date(item.createdAt).toLocaleString('vi-VN')}
-                                        </span>
-                                    </div>
-                                    <ActionCode action={item.action} />
-                                </div>
-
-                                {/* Actor info */}
-                                <div className="flex items-center gap-2.5">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-type-helper font-semibold text-slate-700 dark:text-slate-300">
-                                        {(item.actor?.username || 'A').slice(0, 1).toUpperCase()}
-                                    </div>
-                                    <div className="min-w-0">
-                                        <p className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
-                                            {item.actor?.username || 'Hệ thống'}
-                                        </p>
-                                        <p className="text-type-helper leading-tight font-normal text-slate-500 dark:text-slate-400 truncate">
-                                            {item.actor?.email || 'N/A'}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Description */}
-                                <p className="text-type-body-sm leading-relaxed font-normal text-slate-700 dark:text-slate-300 line-clamp-2">
-                                    {item.description}
-                                </p>
-
-                                {/* Footer: Xem chi tiết */}
-                                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                                    <button
-                                        type="button"
-                                        onClick={() => setSelectedLog(item)}
-                                        className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-type-body-sm font-medium transition cursor-pointer"
-                                    >
-                                        <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-                                        <span>Xem chi tiết</span>
-                                    </button>
-                                </div>
+            {/* =========================================================================
+               TAB 1: BẢNG NHẬT KÝ THAO TÁC (ĐỒNG BỘ 100% CỠ CHỮ)
+            ========================================================================= */}
+            {activeTab === 'activity' && (
+                <div className="space-y-4">
+                    <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+                        {loading && logs.length === 0 ? (
+                            <div className="py-24 text-center">
+                                <div className="inline-block h-7 w-7 animate-spin rounded-full border-2 border-blue-600 border-t-transparent mb-2" />
+                                <p className="text-type-body-sm text-slate-500">Đang tải nhật ký thao tác...</p>
                             </div>
-                        );
-                    })}
-                </div>
-            ) : viewMode === 'compact' ? (
-                <div className="space-y-2.5">
-                    {loading ? (
-                        <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 text-center text-slate-500 shadow-2xs">
-                            <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2" />
-                            <p className="text-type-body font-semibold text-slate-500">Đang tải nhật ký hoạt động...</p>
-                        </div>
-                    ) : paginatedLogs.length === 0 ? (
-                        <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 text-center text-slate-500 shadow-2xs">
-                            Chưa có nhật ký hoạt động nào phù hợp.
-                        </div>
-                    ) : (
-                        paginatedLogs.map((item) => {
-                            const isChecked = selectedIds.includes(item.id);
-                            return (
-                                <div
-                                    key={item.id}
-                                    className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                                        }`}
-                                >
-                                    {/* Left: Checkbox + Description & ActionCode + Meta chips */}
-                                    <div className="flex items-center gap-3 min-w-0">
-                                        <input
-                                            type="checkbox"
-                                            checked={isChecked}
-                                            onChange={() => toggleSelect(item.id)}
-                                            className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
-                                        />
-
-                                        <div className="min-w-0">
-                                            <div className="flex items-center gap-2 flex-wrap">
-                                                <h4
-                                                    onClick={() => setSelectedLog(item)}
-                                                    className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left max-w-xl"
-                                                >
-                                                    {item.description}
-                                                </h4>
-                                                <ActionCode action={item.action} />
-                                            </div>
-
-                                            <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
-                                                <span className="flex items-center gap-1">
-                                                    <UserIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                    <span className="text-slate-700 dark:text-slate-300 font-medium">{item.actor?.username || 'Hệ thống'}</span>
-                                                    {item.actor?.role && (
-                                                        <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded text-type-helper font-medium border border-slate-200 dark:border-slate-700">
-                                                            {item.actor.role}
-                                                        </span>
-                                                    )}
-                                                </span>
-                                                <span className="flex items-center gap-1">
-                                                    <Database className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                    <span className="text-slate-600 dark:text-slate-400 font-medium">{item.entityType}</span>
-                                                    {item.entityId && (
-                                                        <IdentifierBadge tone="neutral" title={item.entityId}>
-                                                            #{item.entityId.length > 10 ? `${item.entityId.slice(0, 4)}...${item.entityId.slice(-4)}` : item.entityId}
-                                                        </IdentifierBadge>
-                                                    )}
-                                                </span>
-                                                <span className="flex items-center gap-1">
-                                                    <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                    <span>{new Date(item.createdAt).toLocaleString('vi-VN')}</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Right: Direct 1-touch Action */}
-                                    <div className="flex items-center gap-1 shrink-0">
-                                        <button
-                                            type="button"
-                                            onClick={() => setSelectedLog(item)}
-                                            className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
-                                            title="Xem chi tiết"
-                                        >
-                                            <Eye className="h-4 w-4" />
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        })
-                    )}
-                </div>
-            ) : (
-                <div className="ui-table-wrap rounded-2xl border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="ui-table w-full text-left border-collapse">
-                            <thead>
-                                <tr className="border-b border-slate-200/80 bg-slate-50/80 font-semibold leading-5 text-slate-600 text-type-body-sm">
-                                    <th className="w-10 text-center py-3.5 px-4">
-                                        <input
-                                            type="checkbox"
-                                            checked={paginatedLogs.length > 0 && paginatedLogs.every((log) => selectedIds.includes(log.id))}
-                                            onChange={toggleSelectAll}
-                                            className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                                        />
-                                    </th>
-                                    {visibleColumns.createdAt && <th className="whitespace-nowrap py-3.5 px-4">Thời gian</th>}
-                                    {visibleColumns.actor && <th className="whitespace-nowrap py-3.5 px-4">Người thực hiện</th>}
-                                    {visibleColumns.action && <th className="whitespace-nowrap py-3.5 px-4">Hành động</th>}
-                                    {visibleColumns.entity && <th className="whitespace-nowrap py-3.5 px-4">Đối tượng tác động</th>}
-                                    {visibleColumns.description && <th className="min-w-[280px] py-3.5 px-4">Mô tả thao tác</th>}
-                                    <th className="text-right whitespace-nowrap py-3.5 px-4">Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100 font-normal text-slate-900 text-type-body">
-                                {loading ? (
-                                    <tr>
-                                        <td colSpan={7} className="py-12 px-4 text-center text-slate-500">
-                                            <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2" />
-                                            <p className="text-type-body font-semibold text-slate-500">Đang tải nhật ký hoạt động hệ thống...</p>
-                                        </td>
-                                    </tr>
-                                ) : paginatedLogs.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={7} className="py-12 px-4 text-center text-slate-500 font-normal">
-                                            Chưa có nhật ký hoạt động nào phù hợp.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    paginatedLogs.map((item) => (
-                                        <tr
-                                            key={item.id}
-                                            className={`hover:bg-blue-50/40 transition-colors ${selectedIds.includes(item.id) ? 'bg-blue-50/60' : ''
-                                                }`}
-                                        >
-                                            {/* Checkbox */}
-                                            <td className="text-center py-3.5 px-4">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={selectedIds.includes(item.id)}
-                                                    onChange={() => toggleSelect(item.id)}
-                                                    className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                                                />
-                                            </td>
-
-                                            {/* Thời gian */}
-                                            {visibleColumns.createdAt && (
-                                                <td className="whitespace-nowrap font-medium text-slate-800 py-3.5 px-4 text-type-body">
-                                                    {new Date(item.createdAt).toLocaleString('vi-VN')}
-                                                </td>
-                                            )}
-
-                                            {/* Người thực hiện */}
-                                            {visibleColumns.actor && (
-                                                <td className="whitespace-nowrap py-2.5 px-4">
-                                                    <div
-                                                        className="group relative inline-flex items-center gap-2 cursor-pointer"
-                                                        title={item.actor?.email || "system@exam.edu.vn"}
-                                                    >
-                                                        <div className="table-avatar flex shrink-0 items-center justify-center rounded-full border border-slate-200/90 bg-slate-100 dark:border-slate-700 dark:bg-slate-800 font-medium text-slate-700 dark:text-slate-300 h-7 w-7">
-                                                            {(item.actor?.username || "A").slice(0, 1).toUpperCase()}
-                                                        </div>
-                                                        <span className="font-medium text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-type-body leading-[22px]">
-                                                            {item.actor?.username || "Hệ thống"}
-                                                        </span>
-
-                                                        {/* Floating Tooltip khi Hover */}
-                                                        <div className="table-tooltip pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex items-center gap-1.5 rounded-lg bg-slate-900 px-2.5 py-1 text-type-body font-medium text-white shadow-lg dark:bg-slate-800 whitespace-nowrap z-50 transition-opacity">
-                                                            <Mail className="h-3 w-3 text-slate-300" />
-                                                            <span>{item.actor?.email || "system@exam.edu.vn"}</span>
-                                                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900 dark:border-t-slate-800" />
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            )}
-                                            {/* Hành động */}
-                                            {visibleColumns.action && (
-                                                <td className="whitespace-nowrap py-3.5 px-4">
-                                                    <ActionCode action={item.action} />
-                                                </td>
-                                            )}
-
-                                            {/* Đối tượng tác động */}
-                                            {visibleColumns.entity && (
-                                                <td className="whitespace-nowrap py-2.5 px-4">
-                                                    <EntityTarget entityType={item.entityType} entityId={item.entityId} />
-                                                </td>
-                                            )}
-
-                                            {/* Mô tả */}
-                                            {visibleColumns.description && (
-                                                <td className="leading-relaxed font-normal text-slate-700 py-3.5 px-4">
-                                                    {item.description}
-                                                </td>
-                                            )}
-
-                                            {/* Action buttons */}
-                                            <td className="text-right whitespace-nowrap py-3.5 px-4">
-                                                <div className="flex items-center justify-end gap-1">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setSelectedLog(item)}
-                                                        className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/50 dark:hover:text-blue-400 transition cursor-pointer"
-                                                        title="Xem chi tiết nhật ký"
-                                                    >
-                                                        <Eye className="h-4 w-4" />
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            navigator.clipboard.writeText(item.id);
-                                                            setToast({ message: `Đã sao chép mã ID log (${item.id})!`, type: 'success' });
-                                                        }}
-                                                        className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/50 dark:hover:text-emerald-400 transition cursor-pointer"
-                                                        title="Sao chép mã Log ID"
-                                                    >
-                                                        <Copy className="h-4 w-4" />
-                                                    </button>
-                                                </div>
-                                            </td>
+                        ) : logs.length === 0 ? (
+                            <div className="py-20 text-center text-slate-500">
+                                <p className="text-type-body font-semibold text-slate-800 dark:text-slate-200">Không tìm thấy nhật ký phù hợp</p>
+                                <p className="text-type-body-sm text-slate-400 mt-1">Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc thực thể</p>
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left border-collapse min-w-[760px]">
+                                    <thead>
+                                        <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/50 text-type-body-sm font-semibold text-slate-600 dark:text-slate-400">
+                                            <th className="py-3.5 px-5 w-44">Thời gian</th>
+                                            <th className="py-3.5 px-5 w-52">Tài khoản</th>
+                                            <th className="py-3.5 px-5">Nội dung thao tác</th>
+                                            <th className="py-3.5 px-5 w-12 text-right"></th>
                                         </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                                        {logs.map((log) => {
+                                            const actionLabel = getActionLabel(log.action);
+                                            const entityLabel = getEntityLabel(log.entityType);
+                                            const shortId = formatShortId(log.entityId);
+
+                                            return (
+                                                <tr
+                                                    key={log.id}
+                                                    onClick={() => setSelectedLog(log)}
+                                                    className="group hover:bg-slate-50/80 dark:hover:bg-slate-850/60 transition-colors cursor-pointer"
+                                                >
+                                                    {/* Cột 1: Thời gian (14px) */}
+                                                    <td className="py-4 px-5 whitespace-nowrap text-type-body-sm tabular-nums text-slate-500 dark:text-slate-400">
+                                                        {new Date(log.createdAt).toLocaleString('vi-VN')}
+                                                    </td>
+
+                                                    {/* Cột 2: Tài khoản (Tên 15px font-semibold, Vai trò 13px) */}
+                                                    <td className="py-4 px-5 whitespace-nowrap">
+                                                        <div className="flex flex-col">
+                                                            <span className="font-semibold text-type-body text-slate-900 dark:text-slate-100 truncate max-w-[170px]">
+                                                                {log.actor?.username || 'Hệ thống'}
+                                                            </span>
+                                                            {log.actor?.role && (
+                                                                <span className="text-type-helper text-slate-500 dark:text-slate-400">
+                                                                    {USER_ROLE_LABELS[log.actor.role] || log.actor.role}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </td>
+
+                                                    {/* Cột 3: Nội dung thao tác (Dòng 1: Hành động & Thực thể 15px, Dòng 2: Mô tả 14px) */}
+                                                    <td className="py-4 px-5">
+                                                        <div className="space-y-0.5">
+                                                            <div className="flex items-center gap-1.5 flex-wrap">
+                                                                <span className="font-semibold text-type-body text-slate-900 dark:text-slate-100">
+                                                                    {actionLabel}
+                                                                </span>
+                                                                <span className="text-slate-400 dark:text-slate-600">·</span>
+                                                                <span className="font-medium text-type-body text-blue-600 dark:text-blue-400">
+                                                                    {entityLabel}
+                                                                </span>
+                                                                {shortId && (
+                                                                    <span
+                                                                        title={log.entityId || ''}
+                                                                        className="text-type-helper font-mono text-slate-500 dark:text-slate-400"
+                                                                    >
+                                                                        {shortId}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <p className="text-type-body-sm text-slate-600 dark:text-slate-400">
+                                                                {log.description}
+                                                            </p>
+                                                        </div>
+                                                    </td>
+
+                                                    {/* Xem chi tiết */}
+                                                    <td className="py-4 px-5 text-right whitespace-nowrap">
+                                                        <span className="text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 inline-flex items-center justify-center transition">
+                                                            <ArrowUpRight className="h-4 w-4" />
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </div>
-                </div>
-            )}
 
-            {/* ── 6. Pagination Bar (Standalone Custom Inline - Fully Isolated) ── */}
-            {totalCount > 0 && (
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-3">
-                    <p className="text-type-body-sm font-normal text-slate-500">
-                        Hiển thị <span className="font-semibold text-slate-900">{(page - 1) * limit + 1}</span> -{' '}
-                        <span className="font-semibold text-slate-900">{Math.min(page * limit, totalCount)}</span> trong{' '}
-                        <span className="font-semibold text-slate-900">{totalCount.toLocaleString('vi-VN')}</span> Nhật ký
-                    </p>
-
-                    <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1">
-                            <button
-                                type="button"
-                                disabled={page <= 1}
-                                onClick={() => setPage(page - 1)}
-                                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
-                                title="Trang trước"
-                            >
-                                <ChevronLeft className="h-4 w-4" />
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={() => setPage(1)}
-                                className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-type-body-sm transition cursor-pointer shadow-2xs ${page === 1
-                                    ? 'bg-primary-600 text-white shadow-xs font-semibold'
-                                    : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
-                                    }`}
-                            >
-                                1
-                            </button>
-
-                            {totalPages >= 2 && (
-                                <button
-                                    type="button"
-                                    onClick={() => setPage(2)}
-                                    className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-type-body-sm transition cursor-pointer shadow-2xs ${page === 2
-                                        ? 'bg-primary-600 text-white shadow-xs font-semibold'
-                                        : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
-                                        }`}
-                                >
-                                    2
-                                </button>
-                            )}
-
-                            {totalPages > 3 && <span className="px-1 text-type-body-sm font-medium text-slate-500">...</span>}
-
-                            {totalPages > 2 && (
-                                <button
-                                    type="button"
-                                    onClick={() => setPage(totalPages)}
-                                    className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-type-body-sm transition cursor-pointer shadow-2xs ${page === totalPages
-                                        ? 'bg-primary-600 text-white shadow-xs font-semibold'
-                                        : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-medium'
-                                        }`}
-                                >
-                                    {totalPages}
-                                </button>
-                            )}
-
-                            <button
-                                type="button"
-                                disabled={page >= totalPages}
-                                onClick={() => setPage(page + 1)}
-                                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
-                                title="Trang sau"
-                            >
-                                <ChevronRight className="h-4 w-4" />
-                            </button>
-                        </div>
-
-                        <FilterSelect
-                            size="sm"
-                            value={limit}
-                            onChange={(e) => {
-                                setLimit(Number(e.target.value));
+                    {/* Standard PaginationBar */}
+                    {totalCount > 0 && (
+                        <PaginationBar
+                            page={page}
+                            totalPages={Math.max(1, Math.ceil(totalCount / limit))}
+                            limit={limit}
+                            totalItems={totalCount}
+                            unit="bản ghi"
+                            onPage={setPage}
+                            onLimit={(newLimit) => {
+                                setLimit(newLimit);
                                 setPage(1);
                             }}
-                        >
-                            <option value={10}>10 / trang</option>
-                            <option value={20}>20 / trang</option>
-                            <option value={50}>50 / trang</option>
-                            <option value={100}>100 / trang</option>
-                        </FilterSelect>
-                    </div>
+                            limitOptions={[10, 20, 50, 100]}
+                        />
+                    )}
                 </div>
             )}
 
-            {/* Floating Bulk Action Bar */}
-            <ActivityLogBulkAction
-                selectedCount={selectedIds.length}
-                totalCount={totalCount}
-                allSelected={selectedIds.length === paginatedLogs.length && paginatedLogs.length > 0}
-                onToggleAll={toggleSelectAll}
-                onExportExcel={() => {
-                    const selectedLogs = logs.filter((l) => selectedIds.includes(l.id));
-                    const columns = [
-                        { header: 'STT', width: 8, align: 'center' as const },
-                        { header: 'Mã Log ID', width: 15 },
-                        { header: 'Thời gian', width: 22 },
-                        { header: 'Người thực hiện', width: 20 },
-                        { header: 'Hành động', width: 15 },
-                        { header: 'Đối tượng', width: 15 },
-                        { header: 'Nội dung chi tiết', width: 40 },
-                    ];
-                    const rows = selectedLogs.map((l, idx) => [
-                        idx + 1,
-                        l.id,
-                        new Date(l.createdAt).toLocaleString('vi-VN'),
-                        l.actor?.username || 'Hệ thống',
-                        l.action,
-                        l.entityType,
-                        l.description || '',
-                    ]);
-                    exportToFormattedExcel({
-                        filename: 'Nhat_ky_hoat_dong_da_chon.xls',
-                        title: 'NHẬT KÝ HOẠT ĐỘNG HỆ THỐNG ĐÃ CHỌN',
-                        subtitle: `Đã trích xuất ${selectedLogs.length} bản ghi nhật ký`,
-                        columns,
-                        rows,
-                    });
-                    setToast({ message: `Đã xuất ${selectedLogs.length} nhật ký ra Excel`, type: 'success' });
-                }}
-                onPrint={() => {
-                    const selectedLogs = logs.filter((l) => selectedIds.includes(l.id));
-                    printReport({
-                        title: 'BÁO CÁO NHẬT KÝ HOẠT ĐỘNG HỆ THỐNG',
-                        subtitle: `Tổng số bản ghi được chọn: ${selectedLogs.length}`,
-                        metaInfo: [
-                            { label: 'Số lượng đã chọn', value: String(selectedLogs.length) },
-                        ],
-                        columns: [
-                            { header: 'STT', width: '40px' },
-                            { header: 'Thời gian', width: '140px' },
-                            { header: 'Người thực hiện', width: '140px' },
-                            { header: 'Hành động', width: '100px', align: 'center' },
-                            { header: 'Đối tượng', width: '100px', align: 'center' },
-                            { header: 'Mô tả', width: '240px' },
-                        ],
-                        rows: selectedLogs.map((l, idx) => [
-                            idx + 1,
-                            new Date(l.createdAt).toLocaleString('vi-VN'),
-                            l.actor?.username || 'Hệ thống',
-                            l.action,
-                            l.entityType,
-                            l.description || '---',
-                        ]),
-                    });
-                }}
-                onDelete={() => {
-                    const count = selectedIds.length;
-                    setToast({ message: `Đã xử lý xóa ${count} nhật ký được chọn thành công.`, type: 'success' });
-                    setSelectedIds([]);
-                }}
-                onClear={() => setSelectedIds([])}
-            />
+            {/* =========================================================================
+               TAB 2: BẢNG KIỂM TOÁN AN NINH (ĐỒNG BỘ 100% CẤU TRÚC VÀ CỠ CHỮ VỚI TAB 1)
+            ========================================================================= */}
+            {activeTab === 'security' && (
+                <div className="space-y-4">
+                    <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+                        {secLoading && secEvents.length === 0 ? (
+                            <div className="py-24 text-center">
+                                <div className="inline-block h-7 w-7 animate-spin rounded-full border-2 border-blue-600 border-t-transparent mb-2" />
+                                <p className="text-type-body-sm text-slate-500">Đang tải sự kiện kiểm toán an ninh...</p>
+                            </div>
+                        ) : secEvents.length === 0 ? (
+                            <div className="py-20 text-center text-slate-500">
+                                <p className="text-type-body font-semibold text-slate-800 dark:text-slate-200">Không có sự kiện an ninh phù hợp</p>
+                                <p className="text-type-body-sm text-slate-400 mt-1">Thử nới lỏng các tiêu chí bộ lọc</p>
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left border-collapse min-w-[850px]">
+                                    <thead>
+                                        <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/50 text-type-body-sm font-semibold text-slate-600 dark:text-slate-400">
+                                            <th className="py-3.5 px-5 w-44">Thời điểm</th>
+                                            <th className="py-3.5 px-5 w-52">Tài khoản</th>
+                                            <th className="py-3.5 px-5">Sự kiện & Đối tượng</th>
+                                            <th className="py-3.5 px-5 w-36">Kết quả</th>
+                                            <th className="py-3.5 px-5 w-48">Nguồn truy cập</th>
+                                            <th className="py-3.5 px-5 w-28 text-center">Khóa</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                                        {secEvents.map((event) => {
+                                            const shortId = formatShortId(event.entityId);
+                                            const entityName = getEntityLabel(event.entityType);
 
-            {/* ── 7. Metadata Inspector Drawer (Chuẩn Design System & Hoạt ảnh 60 FPS) ── */}
+                                            return (
+                                                <tr key={event.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/60 transition-colors">
+                                                    {/* Cột 1: Thời điểm (14px y hệt Tab 1) */}
+                                                    <td className="py-4 px-5 whitespace-nowrap text-type-body-sm tabular-nums text-slate-500 dark:text-slate-400">
+                                                        {new Date(event.occurredAt).toLocaleString('vi-VN')}
+                                                    </td>
+
+                                                    {/* Cột 2: Tài khoản (Tên 15px font-semibold, Vai trò 13px y hệt Tab 1) */}
+                                                    <td className="py-4 px-5 whitespace-nowrap">
+                                                        <div className="flex flex-col">
+                                                            <span className="font-semibold text-type-body text-slate-900 dark:text-slate-100 truncate max-w-[170px]">
+                                                                {event.actor?.username || 'Hệ thống'}
+                                                            </span>
+                                                            {event.actor?.role && (
+                                                                <span className="text-type-helper text-slate-500 dark:text-slate-400">
+                                                                    {USER_ROLE_LABELS[event.actor.role] || event.actor.role}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </td>
+
+                                                    {/* Cột 3: Sự kiện & Đối tượng (Dòng 1: Sự kiện & Thực thể 15px, Dòng 2: Nhóm an ninh 14px y hệt Tab 1) */}
+                                                    <td className="py-4 px-5">
+                                                        <div className="space-y-0.5">
+                                                            <div className="flex items-center gap-1.5 flex-wrap">
+                                                                <span className="font-semibold text-type-body text-slate-900 dark:text-slate-100">
+                                                                    {secActionLabel[event.action] || getActionLabel(event.action)}
+                                                                </span>
+                                                                {event.entityType && (
+                                                                    <>
+                                                                        <span className="text-slate-400 dark:text-slate-600">·</span>
+                                                                        <span className="font-medium text-type-body text-blue-600 dark:text-blue-400">
+                                                                            {entityName}
+                                                                        </span>
+                                                                    </>
+                                                                )}
+                                                                {shortId && (
+                                                                    <span
+                                                                        title={event.entityId || ''}
+                                                                        className="text-type-helper font-mono text-slate-500 dark:text-slate-400"
+                                                                    >
+                                                                        {shortId}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <p className="text-type-body-sm text-slate-600 dark:text-slate-400">
+                                                                {secCategoryLabel[event.category] || event.category}
+                                                            </p>
+                                                        </div>
+                                                    </td>
+
+                                                    {/* Cột 4: Kết quả (Dùng chung StatusBadge chuẩn 100% đồng bộ toàn hệ thống) */}
+                                                    <td className="py-4 px-5 whitespace-nowrap">
+                                                        <StatusBadge
+                                                            status={event.outcome === 'SUCCESS' ? 'SUCCEEDED' : event.outcome === 'DENIED' ? 'REJECTED' : 'FAILED'}
+                                                            customLabel={secOutcomeLabel[event.outcome] || event.outcome}
+                                                        />
+                                                    </td>
+
+                                                    {/* Cột 5: Nguồn truy cập */}
+                                                    <td className="py-4 px-5 whitespace-nowrap">
+                                                        <div className="space-y-0.5">
+                                                            <div className="text-type-body-sm text-slate-700 dark:text-slate-300 font-mono flex items-center gap-1.5">
+                                                                <span className="text-type-badge font-semibold text-slate-400">IP</span>
+                                                                <span>{event.ipAddress || '—'}</span>
+                                                            </div>
+                                                            <div className="text-type-helper text-slate-500 dark:text-slate-400 font-mono truncate max-w-[160px]" title={event.route || ''}>
+                                                                {event.route || '—'}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+                                                    {/* Cột 6: Khóa điều tra (Dùng icon nhỏ gọn, không chiếm chỗ) */}
+                                                    <td className="py-4 px-5 text-center whitespace-nowrap">
+                                                        {event.legalHold ? (
+                                                            <span
+                                                                title="Đang khóa lưu giữ điều tra pháp lý"
+                                                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 text-type-badge font-semibold border border-amber-200/80 dark:border-amber-800"
+                                                            >
+                                                                <Lock className="h-3 w-3" />
+                                                                <span>Đã khóa</span>
+                                                            </span>
+                                                        ) : (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => void handleApplyLegalHold(event)}
+                                                                title="Khóa lưu giữ điều tra pháp lý"
+                                                                className="inline-flex items-center justify-center h-7 w-7 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition cursor-pointer"
+                                                            >
+                                                                <Lock className="h-3.5 w-3.5" />
+                                                            </button>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Standard PaginationBar */}
+                    {secTotal > 0 && (
+                        <PaginationBar
+                            page={secPage}
+                            totalPages={Math.max(1, Math.ceil(secTotal / secLimit))}
+                            limit={secLimit}
+                            totalItems={secTotal}
+                            unit="sự kiện"
+                            onPage={setSecPage}
+                            onLimit={(newLimit) => {
+                                setLimitSec(newLimit);
+                                setSecPage(1);
+                            }}
+                            limitOptions={[10, 20, 50, 100]}
+                        />
+                    )}
+                </div>
+            )}
+
+            {/* ── 4. Metadata Inspector Drawer ── */}
             {drawerOpenLog && (
                 <div role="dialog" aria-modal="true" aria-label="Chi tiết nhật ký" className="fixed inset-0 z-[100] overflow-hidden">
-                    {/* Backdrop mờ nền */}
                     <div
-                        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${drawerVisible ? 'opacity-100' : 'opacity-0'
-                            }`}
+                        className={`fixed inset-0 bg-slate-950/40 backdrop-blur-[2px] transition-opacity duration-200 ${
+                            drawerVisible ? 'opacity-100' : 'opacity-0'
+                        }`}
                         onClick={() => setSelectedLog(null)}
                     />
 
-                    {/* Drawer Container */}
                     <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
                         <div
-                            className={`w-screen max-w-[560px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${drawerVisible ? 'translate-x-0' : 'translate-x-full'
-                                }`}
+                            className={`w-screen max-w-[480px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col pointer-events-auto transition-transform duration-250 ease-out will-change-transform ${
+                                drawerVisible ? 'translate-x-0' : 'translate-x-full'
+                            }`}
                         >
-                            {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
-                            <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
-                                <div className="flex items-start justify-between gap-4">
-                                    <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
-                                            <Activity className="h-5 w-5 text-white" />
-                                        </div>
-
-                                        <div className="min-w-0 flex-1">
-                                            <div className="flex items-center gap-2 flex-wrap">
-                                                <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words">
-                                                    Chi tiết Nhật ký
-                                                </h2>
-                                                <IdentifierBadge tone="neutral" className="max-w-[200px] truncate" title={String(drawerOpenLog.id)}>
-                                                    {drawerOpenLog.id}
-                                                </IdentifierBadge>
-                                            </div>
-                                            <p className="mt-1 text-type-helper font-medium text-slate-500 dark:text-slate-400 tabular-nums truncate">
-                                                Thời gian: {new Date(drawerOpenLog.createdAt).toLocaleString('vi-VN')}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    {/* Nút Đóng */}
-                                    <button
-                                        type="button"
-                                        onClick={() => setSelectedLog(null)}
-                                        className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition cursor-pointer"
-                                        title="Đóng chi tiết"
-                                    >
-                                        <X className="h-5 w-5" />
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Content Body */}
-                            <div className="flex-1 space-y-6 overflow-y-auto bg-white dark:bg-slate-900 p-6 text-type-body custom-scrollbar">
-                                {/* Section 1: Thông tin định danh */}
-                                <div className="space-y-3">
-                                    <div className="flex items-center gap-2">
-                                        <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                                        <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
-                                            Thông tin định danh thao tác
-                                        </h3>
-                                    </div>
-
-                                    <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
-                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Hành động:</span>
-                                            <span className="font-semibold text-blue-600 dark:text-blue-400">
-                                                {getActionMeta(drawerOpenLog.action).label}
-                                            </span>
-                                        </div>
-
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
-                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Tài khoản thực hiện:</span>
-                                            <span className="font-semibold text-slate-900 dark:text-white text-right">
-                                                {drawerOpenLog.actor?.username || 'Hệ thống'}
-                                                {drawerOpenLog.actor?.role ? ` (${USER_ROLE_LABELS[drawerOpenLog.actor.role] || 'Người dùng'})` : ''}
-                                            </span>
-                                        </div>
-
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
-                                            <span className="text-slate-500 dark:text-slate-400 font-medium">Thực thể tác động:</span>
-                                            <span className="font-semibold text-slate-900 dark:text-white">
-                                                {getEntityInfo(drawerOpenLog.entityType).label}
-                                            </span>
-                                        </div>
-
-                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
-                                            <span className="text-slate-500 dark:text-slate-400 font-medium">ID Thực thể:</span>
-                                            <span className="font-semibold tabular-nums text-slate-900 dark:text-white">
-                                                #{drawerOpenLog.entityId || 'N/A'}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Section 2: Nội dung mô tả (Bố cục phẳng, không lồng khung hộp thô) */}
-                                <div className="space-y-2">
-                                    <div className="flex items-center gap-2">
-                                        <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                                        <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
-                                            Nội dung thao tác chi tiết
-                                        </h3>
-                                    </div>
-                                    <p className="text-type-body-sm font-normal leading-relaxed text-slate-700 dark:text-slate-300 py-1">
-                                        {drawerOpenLog.description}
+                            {/* Drawer Header (18px) */}
+                            <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800">
+                                <div>
+                                    <h2 className="text-type-card font-semibold text-slate-900 dark:text-white">
+                                        Chi tiết nhật ký thao tác
+                                    </h2>
+                                    <p className="text-type-helper text-slate-400 tabular-nums mt-0.5">
+                                        {new Date(drawerOpenLog.createdAt).toLocaleString('vi-VN')}
                                     </p>
                                 </div>
 
-                                {/* Section 3: Data Metadata JSON */}
-                                <div className="space-y-3">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                                            <h3 className="flex items-center gap-1.5 text-type-body font-semibold text-slate-900 dark:text-white">
-                                                <Code className="h-4 w-4 text-blue-600" />
-                                                <span>Dữ liệu Metadata JSON</span>
-                                            </h3>
-                                        </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setSelectedLog(null)}
+                                    className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                                    aria-label="Đóng"
+                                >
+                                    <X className="h-5 w-5" />
+                                </button>
+                            </div>
 
+                            {/* Drawer Body */}
+                            <div className="flex-1 space-y-5 overflow-y-auto p-5 custom-scrollbar">
+                                <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                                    <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
+                                        <span className="text-slate-500">Hành động:</span>
+                                        <span className="font-semibold text-slate-900 dark:text-white">
+                                            {getActionLabel(drawerOpenLog.action)}
+                                        </span>
+                                    </div>
+                                    <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
+                                        <span className="text-slate-500">Người thực hiện:</span>
+                                        <span className="font-semibold text-slate-900 dark:text-white">
+                                            {drawerOpenLog.actor?.username || 'Hệ thống'}
+                                            {drawerOpenLog.actor?.role ? ` (${USER_ROLE_LABELS[drawerOpenLog.actor.role] || drawerOpenLog.actor.role})` : ''}
+                                        </span>
+                                    </div>
+                                    <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
+                                        <span className="text-slate-500">Thực thể:</span>
+                                        <span className="font-semibold text-blue-600 dark:text-blue-400">
+                                            {getEntityLabel(drawerOpenLog.entityType)}
+                                        </span>
+                                    </div>
+                                    {drawerOpenLog.entityId && (
+                                        <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
+                                            <span className="text-slate-500">Mã ID đối tượng:</span>
+                                            <span className="font-mono text-type-helper text-slate-900 dark:text-white break-all">
+                                                {drawerOpenLog.entityId}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-white mb-1">
+                                        Mô tả thao tác
+                                    </h3>
+                                    <p className="text-type-body-sm text-slate-700 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-850 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                                        {drawerOpenLog.description || 'Không có mô tả chi tiết'}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <div className="flex items-center justify-between mb-1.5">
+                                        <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-white">
+                                            Metadata JSON
+                                        </h3>
                                         <button
                                             type="button"
                                             onClick={() => {
@@ -1274,22 +1184,22 @@ export default function ActivityLogsPage() {
                                                     setTimeout(() => setCopied(false), 2000);
                                                 });
                                             }}
-                                            className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-type-helper font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-700/80"
+                                            className="inline-flex items-center gap-1 text-type-helper font-medium text-slate-500 hover:text-blue-600 dark:text-slate-400 cursor-pointer"
                                         >
-                                            {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-slate-500" />}
-                                            <span>{copied ? 'Đã sao chép!' : 'Sao chép JSON'}</span>
+                                            {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                                            <span>{copied ? 'Đã sao chép' : 'Sao chép'}</span>
                                         </button>
                                     </div>
 
-                                    <pre className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950 p-4 text-type-helper leading-relaxed text-emerald-400 shadow-inner custom-scrollbar">
-                                        {JSON.stringify(drawerOpenLog.metadata || { note: 'Không có dữ liệu bổ sung' }, null, 2)}
+                                    <pre className="overflow-x-auto rounded-xl bg-slate-950 p-3.5 text-type-helper leading-relaxed text-emerald-400 custom-scrollbar">
+                                        {JSON.stringify(drawerOpenLog.metadata || { note: 'Không có metadata' }, null, 2)}
                                     </pre>
                                 </div>
                             </div>
 
-                            {/* Standard Footer */}
-                            <div className="border-t border-slate-200/90 dark:border-slate-800 p-4 bg-slate-50/80 dark:bg-slate-900/80 flex justify-end shrink-0 px-6">
-                                <Button variant="secondary" size="md" onClick={() => setSelectedLog(null)}>
+                            {/* Drawer Footer */}
+                            <div className="p-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                                <Button variant="secondary" size="sm" onClick={() => setSelectedLog(null)}>
                                     Đóng
                                 </Button>
                             </div>
@@ -1298,5 +1208,19 @@ export default function ActivityLogsPage() {
                 </div>
             )}
         </main>
+    );
+}
+
+export default function ActivityLogsPage() {
+    return (
+        <Suspense
+            fallback={
+                <div className="flex min-h-screen items-center justify-center p-6">
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                </div>
+            }
+        >
+            <ActivityLogsContent />
+        </Suspense>
     );
 }

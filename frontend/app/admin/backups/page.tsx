@@ -24,7 +24,7 @@ import {
     LockKeyhole,
     Unlock,
     RefreshCw,
-    RotateCcw,
+    ArchiveRestore,
     Search,
     Server,
     ShieldAlert,
@@ -54,6 +54,11 @@ import { ColumnToggleDropdown } from '../../../components/ui/ColumnToggleDropdow
 import { ViewModeSegmentedControl } from '../../../components/ui/ViewModeSegmentedControl';
 import { CriticalConfirmModal, CriticalConfirmPayload } from '../../../components/CriticalConfirmModal';
 import { StatusBadge } from '../../../components/common/StatusBadge';
+import { DataActionsDropdown } from '../../../components/ui/DataActionsDropdown';
+import { PaginationBar } from '../../../components/ui/PaginationBar';
+import { exportToFormattedExcel } from '../../../lib/export-excel';
+import { exportCsvData } from '../../../lib/export-csv';
+import { printReport } from '../../../lib/export-print';
 import { BackupFilterPopover } from '../../../components/backups/BackupFilterPopover';
 import { BackupBulkAction } from '../../../components/backups/BackupBulkAction';
 
@@ -310,16 +315,122 @@ export default function BackupsPage() {
     };
 
     const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
 
     const verifiedJobs = useMemo(() => jobs.filter((job) => job.status === 'SUCCEEDED' && job.retained !== false), [jobs]);
 
+    const filteredJobs = useMemo(() => {
+        return jobs.filter((job) => {
+            if (search.trim()) {
+                const query = search.trim().toLowerCase();
+                const matchSnapshot = job.snapshotId?.toLowerCase().includes(query);
+                const matchError = job.errorMessage?.toLowerCase().includes(query);
+                const matchUser = job.initiatedBy?.username?.toLowerCase().includes(query);
+                const matchChecksum = job.checksum?.toLowerCase().includes(query);
+                if (!matchSnapshot && !matchError && !matchUser && !matchChecksum) {
+                    return false;
+                }
+            }
+            if (filterType && job.type !== filterType) return false;
+            if (filterStatus && job.status !== filterStatus) return false;
+            return true;
+        });
+    }, [jobs, search, filterType, filterStatus]);
+
     const sortedJobs = useMemo(() => {
-        return [...jobs].sort((a, b) => {
+        return [...filteredJobs].sort((a, b) => {
             const tA = new Date(a.createdAt).getTime();
             const tB = new Date(b.createdAt).getTime();
             return sortOrder === 'newest' ? tB - tA : tA - tB;
         });
-    }, [jobs, sortOrder]);
+    }, [filteredJobs, sortOrder]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [search, filterType, filterStatus, sortOrder]);
+
+    const paginatedJobs = useMemo(() => {
+        return sortedJobs.slice((page - 1) * limit, page * limit);
+    }, [sortedJobs, page, limit]);
+
+    /* ── CƠ CHẾ XUẤT FILE ĐỒNG BỘ TOÀN HỆ THỐNG ── */
+    const handleExportExcel = () => {
+        const columns = [
+            { header: 'Mã Snapshot', key: 'snapshotId', width: 35 },
+            { header: 'Loại sao lưu', key: 'type', width: 15 },
+            { header: 'Phương thức', key: 'method', width: 20 },
+            { header: 'Thời gian hoàn thành', key: 'completedAt', width: 22 },
+            { header: 'Thời lượng', key: 'duration', width: 15 },
+            { header: 'Dung lượng', key: 'size', width: 15 },
+            { header: 'Trạng thái', key: 'status', width: 18 },
+            { header: 'Mã băm SHA-256', key: 'checksum', width: 40 },
+        ];
+        const rows = sortedJobs.map((j) => [
+            j.snapshotId,
+            j.type,
+            j.initiatedBy?.username ? `Thủ công (${j.initiatedBy.username})` : 'Tự động',
+            formatDate(j.completedAt || j.createdAt),
+            calculateDuration(j.startedAt || j.createdAt, j.completedAt),
+            formatBytes(j.sizeBytes),
+            j.status === 'SUCCEEDED' ? 'Thành công' : j.status === 'FAILED' ? 'Thất bại' : j.status,
+            j.checksum || '—',
+        ]);
+        exportToFormattedExcel({
+            filename: `Sao_luu_du_lieu_${new Date().toISOString().split('T')[0]}.xls`,
+            title: 'BÁO CÁO SAO LƯU & AN TOÀN DỮ LIỆU KHẢO THÍ',
+            subtitle: `Tổng số: ${sortedJobs.length} bản snapshot · Xuất ngày: ${new Date().toLocaleDateString('vi-VN')}`,
+            columns,
+            rows,
+        });
+        setToast({ message: `Đã xuất ${sortedJobs.length} bản ghi Excel thành công`, type: 'success' });
+    };
+
+    const handleExportCsv = () => {
+        const headers = ['Mã Snapshot', 'Loại', 'Phương thức', 'Thời gian', 'Thời lượng', 'Dung lượng', 'Trạng thái', 'Checksum'];
+        const rows = sortedJobs.map((j) => [
+            j.snapshotId,
+            j.type,
+            j.initiatedBy?.username || 'Tự động',
+            formatDate(j.completedAt || j.createdAt),
+            calculateDuration(j.startedAt || j.createdAt, j.completedAt),
+            formatBytes(j.sizeBytes),
+            j.status,
+            j.checksum || '',
+        ]);
+        exportCsvData(`Sao_luu_du_lieu_${new Date().toISOString().split('T')[0]}.csv`, headers, rows);
+        setToast({ message: `Đã xuất ${sortedJobs.length} bản ghi CSV thành công`, type: 'success' });
+    };
+
+    const handlePrint = () => {
+        printReport({
+            title: 'BÁO CÁO DANH SÁCH BẢN SAO LƯU HỆ THỐNG KHẢO THÍ',
+            subtitle: `Tổng số bản snapshot: ${sortedJobs.length} · Dung lượng: ${overview?.totalBytes ? formatBytes(overview.totalBytes) : '—'}`,
+            facultyName: 'PHÒNG QUẢN TRỊ HỆ THỐNG & DỮ LIỆU KHẢO THÍ',
+            columns: [
+                { header: 'STT', width: '40px', align: 'center' },
+                { header: 'Mã Snapshot', width: '220px' },
+                { header: 'Loại', width: '80px', align: 'center' },
+                { header: 'Phương thức', width: '120px' },
+                { header: 'Thời gian', width: '150px' },
+                { header: 'Dung lượng', width: '100px', align: 'right' },
+                { header: 'Trạng thái', width: '100px', align: 'center' },
+            ],
+            rows: sortedJobs.map((j, idx) => [
+                idx + 1,
+                j.snapshotId,
+                j.type,
+                j.initiatedBy?.username || 'Tự động',
+                formatDate(j.completedAt || j.createdAt),
+                formatBytes(j.sizeBytes),
+                j.status === 'SUCCEEDED' ? 'Thành công' : j.status,
+            ]),
+            signers: [
+                { title: 'CÁN BỘ PHỤ TRÁCH SAO LƯU', subtitle: '(Ký, ghi rõ họ tên)' },
+                { title: 'TRƯỞNG PHÒNG KHẢO THÍ', subtitle: '(Ký, ghi rõ họ tên)' },
+            ],
+        });
+    };
 
     const toggleSelect = (id: string) => {
         setSelectedIds((prev) =>
@@ -490,20 +601,36 @@ export default function BackupsPage() {
                         Sao lưu dữ liệu
                     </h1>
                     <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-                        Màn hình vận hành an toàn database, file upload và các snapshot hệ thống khảo thí
+                        Vận hành an toàn database, file upload và {jobs.length} bản snapshot hệ thống {overview?.totalBytes ? `· Dung lượng: ${formatBytes(overview.totalBytes)}` : ''}
                     </p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-                    <Button
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                    {/* System Status Indicators */}
+                    {overview?.worker && (
+                        <span className="inline-flex items-center gap-1.5 h-10 px-3 rounded-full border border-emerald-300 dark:border-emerald-700 bg-transparent text-emerald-700 dark:text-emerald-400 text-type-body-sm font-semibold">
+                            <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+                            <span>Worker: {overview.worker.enabled ? 'Bật' : 'Tắt'}</span>
+                        </span>
+                    )}
+
+                    <button
                         type="button"
-                        variant="ghost"
-                        size="md"
                         onClick={() => setPolicyOpen(true)}
-                        leftIcon={<BookOpen className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
+                        title="Chính sách & Cấu hình sao lưu"
+                        className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-blue-600 hover:border-blue-300 dark:hover:border-blue-600 transition shadow-2xs cursor-pointer"
                     >
-                        Chính sách & Hướng dẫn
-                    </Button>
+                        <BookOpen className="h-4 w-4" />
+                    </button>
+
+                    <DataActionsDropdown
+                        onExportExcel={handleExportExcel}
+                        onExportCsv={handleExportCsv}
+                        onPrint={handlePrint}
+                        exportLabel="Xuất file Excel"
+                        exportCsvLabel="Xuất file CSV"
+                        printLabel="In biên bản / Xuất PDF"
+                    />
 
                     <Button
                         type="button"
@@ -513,156 +640,11 @@ export default function BackupsPage() {
                         isLoading={actionLoading}
                         leftIcon={<DatabaseBackup className="h-4 w-4" />}
                     >
-                        Tạo bản sao lưu
+                        Tạo sao lưu
                     </Button>
                 </div>
             </div>
 
-            {/* Operational System Cards (Worker, Storage, System Tools, KPI) */}
-            <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
-                {/* Card 1: Worker Status */}
-                <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer">
-                    <div className="flex items-start justify-between gap-3">
-                        <div className="space-y-1 min-w-0 flex-1">
-                            <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
-                                Backup Worker
-                            </span>
-                            <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight truncate">
-                                {loading ? (
-                                    <div className="h-6 w-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
-                                ) : overview?.worker?.enabled ? (
-                                    'Hoạt động'
-                                ) : (
-                                    'Chưa bật'
-                                )}
-                            </div>
-                        </div>
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
-                            <Server className="h-5 w-5 stroke-[2.2]" />
-                        </div>
-                    </div>
-
-                    <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
-                        <div
-                            className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
-                            style={{ width: overview?.worker?.enabled ? '100%' : '15%' }}
-                        />
-                    </div>
-
-                    <div className="mt-2.5">
-                        <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
-                            {loading ? 'Đang kiểm tra...' : `Chu kỳ: ${overview?.settings?.intervalDays ? `${overview.settings.intervalDays} ngày/lần` : 'Hàng ngày'}`}
-                        </span>
-                    </div>
-                </div>
-
-                {/* Card 2: Dual Storage Connection */}
-                <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs">
-                    <div className="flex items-start justify-between gap-3">
-                        <div className="space-y-1 min-w-0 flex-1">
-                            <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
-                                Kho lưu trữ
-                            </span>
-                            <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight truncate">
-                                {loading ? (
-                                    <div className="h-6 w-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
-                                ) : overview?.storage?.dualStorageEnabled ? (
-                                    'Lưu trữ kép'
-                                ) : overview?.storage?.provider === 'S3' ? (
-                                    'Amazon S3'
-                                ) : (
-                                    'Cục bộ'
-                                )}
-                            </div>
-                        </div>
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
-                            <HardDrive className="h-5 w-5 stroke-[2.2]" />
-                        </div>
-                    </div>
-
-                    <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
-                        <div
-                            className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500 w-full"
-                        />
-                    </div>
-
-                    <div className="mt-2.5">
-                        <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
-                            {loading ? 'Đang kết nối...' : overview?.storage?.dualStorageEnabled ? 'Kho chính & dự phòng' : overview?.storage?.warning || '1 vị trí cục bộ'}
-                        </span>
-                    </div>
-                </div>
-
-                {/* Card 3: System Tools pg_dump/pg_restore */}
-                <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer">
-                    <div className="flex items-start justify-between gap-3">
-                        <div className="space-y-1 min-w-0 flex-1">
-                            <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
-                                Công cụ Database CLI
-                            </span>
-                            <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight truncate">
-                                {loading ? (
-                                    <div className="h-6 w-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
-                                ) : overview?.tools?.pgDumpAvailable && overview?.tools?.pgRestoreAvailable ? (
-                                    'Sẵn sàng'
-                                ) : (
-                                    'Thiếu CLI'
-                                )}
-                            </div>
-                        </div>
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
-                            <Terminal className="h-5 w-5 stroke-[2.2]" />
-                        </div>
-                    </div>
-
-                    <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
-                        <div
-                            className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
-                            style={{ width: overview?.tools?.pgDumpAvailable && overview?.tools?.pgRestoreAvailable ? '100%' : overview?.tools?.pgDumpAvailable || overview?.tools?.pgRestoreAvailable ? '50%' : '15%' }}
-                        />
-                    </div>
-
-                    <div className="mt-2.5">
-                        <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
-                            {loading ? 'Đang kiểm tra...' : overview?.tools?.pgDumpAvailable && overview?.tools?.pgRestoreAvailable ? 'pg_dump & pg_restore' : 'Thiếu pg_dump/restore'}
-                        </span>
-                    </div>
-                </div>
-
-                {/* Card 4: Total Capacity & Health */}
-                <div className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer">
-                    <div className="flex items-start justify-between gap-3">
-                        <div className="space-y-1 min-w-0 flex-1">
-                            <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
-                                Dung lượng tổng
-                            </span>
-                            <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums truncate">
-                                {loading ? (
-                                    <div className="h-6 w-20 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
-                                ) : (
-                                    formatBytes(overview?.totalBytes)
-                                )}
-                            </div>
-                        </div>
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
-                            <ShieldCheck className="h-5 w-5 stroke-[2.2]" />
-                        </div>
-                    </div>
-
-                    <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
-                        <div
-                            className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
-                            style={{ width: `${Math.min(Math.max((verifiedJobs.length / Math.max(jobs.length, 1)) * 100, 20), 100)}%` }}
-                        />
-                    </div>
-
-                    <div className="mt-2.5">
-                        <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
-                            {verifiedJobs.length} bản hợp lệ · {overview?.failed24h || 0} lỗi 24h
-                        </span>
-                    </div>
-                </div>
-            </div>
 
             {/* Search & Action Toolbar (Single Unified Row) */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
@@ -808,7 +790,7 @@ export default function BackupsPage() {
                 </div>
             ) : viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                    {sortedJobs.map((job) => {
+                    {paginatedJobs.map((job) => {
                         const isChecked = selectedIds.includes(job.id);
                         return (
                             <article
@@ -866,10 +848,10 @@ export default function BackupsPage() {
                                         <button
                                             type="button"
                                             onClick={() => openRestoreModal(job)}
-                                            className="flex h-8 w-8 items-center justify-center rounded-xl text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition cursor-pointer"
+                                            className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                                             title="Khôi phục bản sao lưu này"
                                         >
-                                            <RotateCcw className="h-4 w-4" />
+                                            <ArchiveRestore className="h-4 w-4" />
                                         </button>
                                     )}
                                 </div>
@@ -879,7 +861,7 @@ export default function BackupsPage() {
                 </div>
             ) : viewMode === 'compact' ? (
                 <div className="space-y-2.5">
-                    {sortedJobs.map((job) => {
+                    {paginatedJobs.map((job) => {
                         const isChecked = selectedIds.includes(job.id);
                         return (
                             <div
@@ -909,12 +891,12 @@ export default function BackupsPage() {
                                         <div className="flex items-center gap-2 flex-wrap">
                                             <span
                                                 className={`ui-pill text-type-helper font-medium px-2 py-0.5 rounded-full tabular-nums border ${job.type === 'FULL'
-                                                        ? 'ui-pill-solid bg-blue-600 text-white border-blue-600'
-                                                        : job.type === 'DATABASE'
-                                                            ? 'text-blue-700 border-blue-300'
-                                                            : job.type === 'UPLOADS'
-                                                                ? 'text-sky-700 border-sky-300'
-                                                                : 'text-amber-700 border-amber-300'
+                                                    ? 'ui-pill-solid bg-blue-600 text-white border-blue-600'
+                                                    : job.type === 'DATABASE'
+                                                        ? 'text-blue-700 border-blue-300'
+                                                        : job.type === 'UPLOADS'
+                                                            ? 'text-sky-700 border-sky-300'
+                                                            : 'text-amber-700 border-amber-300'
                                                     }`}
                                             >
                                                 {job.type}
@@ -934,7 +916,7 @@ export default function BackupsPage() {
                                                 ) : (
                                                     <>
                                                         <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                        <span>Tự động (Cron)</span>
+                                                        <span>Tự động</span>
                                                     </>
                                                 )}
                                             </span>
@@ -943,8 +925,8 @@ export default function BackupsPage() {
                                                 <span>{formatDate(job.completedAt || job.createdAt)}</span>
                                             </span>
                                             {job.checksum && (
-                                                <span className="text-slate-400 tabular-nums">
-                                                    SHA-256: {job.checksum.slice(0, 8)}…
+                                                <span className="text-slate-400 tabular-nums font-mono">
+                                                    #{job.checksum.slice(0, 8)}…
                                                 </span>
                                             )}
                                         </div>
@@ -968,10 +950,10 @@ export default function BackupsPage() {
                                         <button
                                             type="button"
                                             onClick={() => openRestoreModal(job)}
-                                            className="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-xl transition cursor-pointer"
+                                            className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
                                             title="Khôi phục bản sao lưu này"
                                         >
-                                            <RotateCcw className="h-4 w-4" />
+                                            <ArchiveRestore className="h-4 w-4" />
                                         </button>
                                     )}
                                 </div>
@@ -987,7 +969,7 @@ export default function BackupsPage() {
                                 <th scope="col" className="p-3.5 pl-4 text-center w-10">
                                     <input
                                         type="checkbox"
-                                        checked={sortedJobs.length > 0 && sortedJobs.every((j) => selectedIds.includes(j.id))}
+                                        checked={paginatedJobs.length > 0 && paginatedJobs.every((j) => selectedIds.includes(j.id))}
                                         onChange={toggleSelectAll}
                                         className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                                     />
@@ -1002,7 +984,7 @@ export default function BackupsPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-normal">
-                            {sortedJobs.map((job) => {
+                            {paginatedJobs.map((job) => {
                                 const isChecked = selectedIds.includes(job.id);
                                 return (
                                     <tr key={job.id} className={`transition hover:bg-slate-50/60 dark:hover:bg-slate-800/40 ${isChecked ? 'bg-blue-50/20' : ''}`}>
@@ -1024,15 +1006,15 @@ export default function BackupsPage() {
                                                 {job.snapshotId}
                                             </button>
                                             {job.checksum && (
-                                                <div className="table-meta mt-0.5 text-type-helper leading-[20px] tabular-nums text-slate-500 dark:text-slate-400">
-                                                    SHA-256: {job.checksum.slice(0, 12)}…
+                                                <div className="table-meta mt-0.5 text-type-helper leading-[20px] font-mono text-slate-400">
+                                                    #{job.checksum.slice(0, 10)}…
                                                 </div>
                                             )}
                                         </td>
 
                                         <td className="p-3.5 whitespace-nowrap">
                                             <span
-                                                className={`table-badge ui-pill font-medium text-type-helper leading-[18px] px-2.5 py-1 rounded-full border ${job.type === 'FULL'
+                                                className={`table-badge ui-pill font-medium text-type-helper leading-[18px] px-2.5 py-0.5 rounded-full border ${job.type === 'FULL'
                                                     ? 'ui-pill-solid bg-blue-600 text-white shadow-2xs'
                                                     : job.type === 'DATABASE'
                                                         ? 'text-blue-700 border-blue-300 dark:text-blue-400 dark:border-blue-700'
@@ -1048,11 +1030,11 @@ export default function BackupsPage() {
                                         <td className="p-3.5 whitespace-nowrap text-type-body font-medium text-slate-700 dark:text-slate-300">
                                             {job.initiatedBy ? (
                                                 <span className="inline-flex items-center gap-1 text-blue-700 dark:text-blue-400 font-medium">
-                                                    <UserIcon className="h-3 w-3" /> {job.initiatedBy.username}
+                                                    <UserIcon className="h-3.5 w-3.5" /> {job.initiatedBy.username}
                                                 </span>
                                             ) : (
-                                                <span className="inline-flex items-center gap-1 text-slate-600 dark:text-slate-400 font-medium">
-                                                    <Clock className="h-3 w-3 text-slate-400" /> Tự động (Cron)
+                                                <span className="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400 font-medium">
+                                                    <Clock className="h-3.5 w-3.5 text-slate-400" /> Tự động
                                                 </span>
                                             )}
                                         </td>
@@ -1060,7 +1042,7 @@ export default function BackupsPage() {
                                         <td className="p-3.5 whitespace-nowrap text-type-body font-medium text-slate-700 dark:text-slate-300">
                                             {formatDate(job.completedAt || job.createdAt)}
                                             <span className="table-meta block text-type-helper leading-[20px] text-slate-400 mt-0.5">
-                                                Thời lượng: {calculateDuration(job.startedAt || job.createdAt, job.completedAt)}
+                                                {calculateDuration(job.startedAt || job.createdAt, job.completedAt)}
                                             </span>
                                         </td>
 
@@ -1085,10 +1067,10 @@ export default function BackupsPage() {
                                                     <button
                                                         type="button"
                                                         onClick={() => openRestoreModal(job)}
-                                                        className="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-xl transition cursor-pointer"
-                                                        title="Khôi phục bản sao lưu này"
+                                                        className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
+                                                        title="Khôi phục dữ liệu từ bản snapshot này"
                                                     >
-                                                        <RotateCcw className="h-4 w-4" />
+                                                        <ArchiveRestore className="h-4 w-4" />
                                                     </button>
                                                 ) : (
                                                     <span className="table-badge text-type-helper font-medium text-slate-400">
@@ -1103,6 +1085,20 @@ export default function BackupsPage() {
                         </tbody>
                     </table>
                 </div>
+            )}
+
+            {/* Phân trang chuẩn toàn hệ thống */}
+            {sortedJobs.length > 0 && (
+                <PaginationBar
+                    page={page}
+                    totalPages={Math.max(1, Math.ceil(sortedJobs.length / limit))}
+                    limit={limit}
+                    totalItems={sortedJobs.length}
+                    unit="bản snapshot"
+                    onPage={setPage}
+                    onLimit={(l) => { setLimit(l); setPage(1); }}
+                    limitOptions={[10, 20, 50, 100]}
+                />
             )}
 
             {/* Floating Bulk Action Bar */}
@@ -1126,134 +1122,130 @@ export default function BackupsPage() {
                 onClear={() => setSelectedIds([])}
             />
 
-            {/* Pending Restore Requests Table */}
+            {/* Pending Restore Requests Table — Thiết kế phẳng hoàn toàn, không khung hộp thừa */}
             {restoreRequests.length > 0 && (
-                <div className="space-y-3 pt-2">
-                    {/* Section header — Chuẩn Design System */}
-                    <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-2 min-w-0">
-                            <span className="h-4 w-1 rounded-full bg-amber-500 shrink-0" />
+                <section className="space-y-3 pt-4 border-t border-slate-200/80 dark:border-slate-800">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
+                        <div className="flex items-center gap-2">
+                            <ShieldAlert className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
                             <h2 className="text-type-card font-semibold text-slate-900 dark:text-slate-100">
-                                Yêu cầu khôi phục đang chờ xử lý
+                                Yêu cầu khôi phục chờ phê duyệt
                             </h2>
-                            <span className="ui-pill inline-flex items-center justify-center px-2 py-0.5 rounded-full text-type-helper font-medium text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60 tabular-nums">
+                            <span className="ui-pill inline-flex items-center justify-center px-2 py-0.5 rounded-full text-type-badge font-semibold text-amber-700 dark:text-amber-400 border border-amber-200/80 dark:border-amber-800/60 tabular-nums">
                                 {restoreRequests.length}
                             </span>
                         </div>
-                        <p className="text-type-helper text-slate-500 dark:text-slate-400 hidden sm:block shrink-0">
-                            Các yêu cầu chờ Admin thứ hai phê duyệt
+                        <p className="text-type-helper text-slate-500 dark:text-slate-400">
+                            Cần Quản trị viên thứ hai phê duyệt độc lập
                         </p>
                     </div>
 
-                    {/* Table */}
-                    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+                    <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
                         <table className="ui-table w-full text-left border-collapse text-slate-700 dark:text-slate-300 text-type-body">
                             <thead>
-                                <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
-                                    <th scope="col" className="px-4 py-3.5 text-type-body-sm font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Snapshot ID</th>
-                                    <th scope="col" className="px-4 py-3.5 text-type-body-sm font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Môi trường</th>
-                                    <th scope="col" className="px-4 py-3.5 text-type-body-sm font-medium tracking-wide text-slate-600 dark:text-slate-300">Lý do khôi phục</th>
-                                    <th scope="col" className="px-4 py-3.5 text-type-body-sm font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Người tạo yêu cầu</th>
-                                    <th scope="col" className="px-4 py-3.5 text-type-body-sm font-medium tracking-wide text-slate-600 dark:text-slate-300 whitespace-nowrap">Thời hạn</th>
-                                    <th scope="col" className="px-4 py-3.5 text-type-body-sm font-medium tracking-wide text-slate-600 dark:text-slate-300 text-right whitespace-nowrap">Thao tác</th>
+                                <tr className="bg-slate-50 dark:bg-slate-800 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+                                    <th scope="col" className="p-3.5 pl-4 whitespace-nowrap">Snapshot ID</th>
+                                    <th scope="col" className="p-3.5 whitespace-nowrap">Môi trường</th>
+                                    <th scope="col" className="p-3.5">Lý do khôi phục</th>
+                                    <th scope="col" className="p-3.5 whitespace-nowrap">Người yêu cầu</th>
+                                    <th scope="col" className="p-3.5 whitespace-nowrap">Thời hạn</th>
+                                    <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap">Thao tác</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-normal">
                                 {restoreRequests.map((request) => {
                                     const selfBlocked = isSelfApprovalBlocked(request);
                                     const isExpired = request.expiresAt ? new Date(request.expiresAt) < new Date() : false;
 
                                     return (
-                                        <tr key={request.id} className="border-t border-slate-100 transition-colors hover:bg-primary-50/30 dark:border-slate-800 dark:hover:bg-slate-800/40">
+                                        <tr key={request.id} className="transition hover:bg-slate-50/60 dark:hover:bg-slate-800/40">
                                             {/* Snapshot ID */}
-                                            <td className="px-4 py-3.5 tabular-nums text-type-body font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap" title={request.backupJob.snapshotId}>
+                                            <td className="p-3.5 pl-4 tabular-nums text-type-body font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap" title={request.backupJob.snapshotId}>
                                                 {request.backupJob.snapshotId}
                                             </td>
 
-                                            {/* Environment — flat Sentence case */}
-                                            <td className="px-4 py-3.5 whitespace-nowrap">
+                                            {/* Môi trường */}
+                                            <td className="p-3.5 whitespace-nowrap">
                                                 {request.target === 'PRODUCTION' ? (
-                                                    <span className="inline-flex items-center gap-1.5 text-type-body font-semibold text-rose-600 dark:text-rose-400">
-                                                        <ShieldAlert className="h-4 w-4 shrink-0" />
+                                                    <span className="inline-flex items-center gap-1 text-type-body-sm font-semibold text-rose-600 dark:text-rose-400">
+                                                        <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
                                                         Production
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1.5 text-type-body font-semibold text-amber-600 dark:text-amber-400">
-                                                        <Server className="h-4 w-4 shrink-0" />
+                                                    <span className="inline-flex items-center gap-1 text-type-body-sm font-semibold text-amber-600 dark:text-amber-400">
+                                                        <Server className="h-3.5 w-3.5 shrink-0" />
                                                         Staging
                                                     </span>
                                                 )}
                                             </td>
 
-                                            {/* Reason */}
-                                            <td className="px-4 py-3.5">
-                                                <p className="text-type-body font-normal text-slate-700 dark:text-slate-300 max-w-[240px] line-clamp-2">
-                                                    {request.reason || 'Chưa nhập lý do'}
+                                            {/* Lý do */}
+                                            <td className="p-3.5">
+                                                <p className="text-type-body-sm text-slate-700 dark:text-slate-300 max-w-[240px] line-clamp-2">
+                                                    {request.reason || '—'}
                                                 </p>
                                             </td>
 
-                                            {/* Requested by */}
-                                            <td className="px-4 py-3.5 whitespace-nowrap">
-                                                <span className="inline-flex items-center gap-1.5 text-type-body font-medium text-slate-700 dark:text-slate-300">
+                                            {/* Người yêu cầu */}
+                                            <td className="p-3.5 whitespace-nowrap text-type-body-sm font-medium text-slate-700 dark:text-slate-300">
+                                                <span className="inline-flex items-center gap-1">
                                                     <UserIcon className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                                                     {request.requestedBy?.username || 'admin'}
                                                 </span>
                                             </td>
 
-                                            {/* Expires at */}
-                                            <td className="px-4 py-3.5 whitespace-nowrap text-type-body text-slate-600 dark:text-slate-400 tabular-nums">
+                                            {/* Thời hạn */}
+                                            <td className="p-3.5 whitespace-nowrap text-type-body-sm tabular-nums">
                                                 {isExpired ? (
-                                                    <div className="table-meta flex flex-col">
-                                                        <span className="table-meta text-type-helper font-semibold text-rose-600 dark:text-rose-400">Đã hết hạn</span>
-                                                        <span className="table-meta text-type-helper text-slate-400">{formatDate(request.expiresAt)}</span>
+                                                    <div className="space-y-0.5">
+                                                        <span className="text-type-helper font-semibold text-rose-600 dark:text-rose-400 block">Đã hết hạn</span>
+                                                        <span className="text-type-helper text-slate-400 block">{formatDate(request.expiresAt)}</span>
                                                     </div>
                                                 ) : (
-                                                    <span>{formatDate(request.expiresAt)}</span>
+                                                    <span className="text-slate-600 dark:text-slate-400">{formatDate(request.expiresAt)}</span>
                                                 )}
                                             </td>
 
-                                            {/* Actions */}
-                                            <td className="px-4 py-3.5 text-right whitespace-nowrap">
+                                            {/* Thao tác (Phẳng, nút không viền thô) */}
+                                            <td className="p-3.5 pr-4 text-right whitespace-nowrap">
                                                 {request.status === 'PENDING_APPROVAL' ? (
                                                     <div className="inline-flex items-center justify-end gap-2">
                                                         {selfBlocked ? (
                                                             <span
-                                                                title="Cần Admin thứ 2 phê duyệt — người tạo yêu cầu không được tự phê duyệt"
-                                                                className="table-meta inline-flex items-center gap-1.5 text-type-helper font-medium text-slate-400 dark:text-slate-500 cursor-default select-none mr-1"
+                                                                title="Bạn là người tạo yêu cầu nên cần Admin khác duyệt độc lập"
+                                                                className="text-type-helper font-medium text-slate-400 dark:text-slate-500 inline-flex items-center gap-1 cursor-default select-none pr-1"
                                                             >
-                                                                <LockKeyhole className="h-3.5 w-3.5 shrink-0" />
-                                                                Cần Admin khác duyệt
+                                                                <LockKeyhole className="h-3.5 w-3.5 text-slate-400" />
+                                                                <span>Chờ Admin khác duyệt</span>
                                                             </span>
                                                         ) : (
-                                                            <Button
+                                                            <button
                                                                 type="button"
-                                                                variant="primary"
-                                                                size="sm"
                                                                 onClick={() => openCriticalApproveModal(request)}
-                                                                leftIcon={<LockKeyhole className="h-3.5 w-3.5" />}
+                                                                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-type-body-sm font-semibold rounded-xl transition shadow-2xs cursor-pointer inline-flex items-center gap-1"
                                                             >
-                                                                Phê duyệt an toàn
-                                                            </Button>
+                                                                <LockKeyhole className="h-3.5 w-3.5" />
+                                                                <span>Phê duyệt</span>
+                                                            </button>
                                                         )}
-                                                        <Button
+
+                                                        <button
                                                             type="button"
-                                                            variant="secondary"
-                                                            size="sm"
                                                             onClick={() => openRejectModal(request)}
+                                                            className="px-2.5 py-1.5 text-type-body-sm font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition cursor-pointer"
                                                         >
                                                             Từ chối
-                                                        </Button>
+                                                        </button>
                                                     </div>
                                                 ) : request.status === 'FAILED' && request.errorMessage?.startsWith('[MAINTENANCE_LOCKED]') ? (
-                                                    <Button
+                                                    <button
                                                         type="button"
-                                                        variant="danger"
-                                                        size="sm"
                                                         onClick={() => openRejectModal(request)}
-                                                        leftIcon={<Unlock className="h-3.5 w-3.5" />}
+                                                        className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-type-body-sm font-semibold rounded-xl transition shadow-2xs cursor-pointer inline-flex items-center gap-1"
                                                     >
-                                                        Mở khóa hệ thống
-                                                    </Button>
+                                                        <Unlock className="h-3.5 w-3.5" />
+                                                        <span>Mở khóa</span>
+                                                    </button>
                                                 ) : (
                                                     getBackupStatusBadge(request.status as any)
                                                 )}
@@ -1264,7 +1256,7 @@ export default function BackupsPage() {
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </section>
             )}
 
 
@@ -1492,7 +1484,7 @@ export default function BackupsPage() {
                         <Button variant="secondary" size="md" onClick={() => setRestoreOpen(false)} disabled={actionLoading}>
                             Hủy bỏ
                         </Button>
-                        <Button size="md" onClick={() => void handleRequestRestore()} isLoading={actionLoading} leftIcon={<RotateCcw className="h-4 w-4" />}>
+                        <Button size="md" onClick={() => void handleRequestRestore()} isLoading={actionLoading} leftIcon={<ArchiveRestore className="h-4 w-4" />}>
                             Tạo yêu cầu
                         </Button>
                     </div>
@@ -1541,76 +1533,113 @@ export default function BackupsPage() {
             <Modal
                 isOpen={policyOpen}
                 onClose={() => setPolicyOpen(false)}
-                title="Chính sách Sao lưu & Hướng dẫn Vận hành"
+                title="Chính sách & Cấu hình sao lưu"
             >
-                <div className="space-y-6 py-2 text-slate-700 dark:text-slate-300">
-
-                    {/* Section 1: Retention Policy */}
-                    <div className="space-y-2.5">
+                <div className="space-y-5 py-1 text-slate-700 dark:text-slate-300">
+                    {/* Section 1: Chu kỳ lưu trữ (Retention Policy Grid 3 cột) */}
+                    <div className="space-y-3">
                         <div className="flex items-center gap-2">
-                            <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
-                                <Clock className="h-4 w-4 text-blue-600 shrink-0" />
-                                <span>Thời gian lưu trữ dữ liệu (Retention Policy)</span>
+                            <Clock className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
+                            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
+                                Chu kỳ lưu trữ dữ liệu (Retention Policy)
                             </h4>
                         </div>
-                        <p className="text-type-body-sm text-slate-600 dark:text-slate-400 leading-relaxed pl-6">
-                            Hệ thống tự động thực hiện sao lưu định kỳ và dọn dẹp các bản ghi snapshot cũ theo chính sách:
-                        </p>
-                        <ul className="text-type-body-sm space-y-1.5 list-disc pl-11 font-medium text-slate-700 dark:text-slate-300 leading-relaxed">
-                            <li><strong>Bản sao lưu Hàng ngày (Daily):</strong> Lưu trữ <strong>{overview?.retention?.daily || 14} ngày</strong> gần nhất.</li>
-                            <li><strong>Bản sao lưu Hàng tuần (Weekly):</strong> Lưu trữ <strong>{overview?.retention?.weekly || 8} tuần</strong> liên tiếp.</li>
-                            <li><strong>Bản sao lưu Hàng tháng (Monthly):</strong> Lưu trữ <strong>{overview?.retention?.monthly || 12} tháng</strong> chính thức.</li>
-                        </ul>
-                    </div>
 
-                    {/* Section 2: Restore Security Policy */}
-                    <div className="space-y-2.5">
-                        <div className="flex items-center gap-2">
-                            <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
-                                <ShieldCheck className="h-4 w-4 text-blue-600 shrink-0" />
-                                <span>Quy định An toàn & Khôi phục (Security Policy)</span>
-                            </h4>
-                        </div>
-                        <ul className="text-type-body-sm space-y-2 list-disc pl-11 font-medium text-slate-700 dark:text-slate-300 leading-relaxed">
-                            <li>
-                                <strong>Phê duyệt kép (Dual-Admin Approval):</strong> Thao tác khôi phục trên môi trường Production yêu cầu phê duyệt độc lập từ Quản trị viên thứ hai để đảm bảo an toàn tuyệt đối.
-                            </li>
-                            <li>
-                                <strong>Snapshot An toàn (Safety Snapshot):</strong> Ngay trước khi tiến hành ghi đè dữ liệu, hệ thống sẽ tự động tạo một bản snapshot an toàn phòng trường hợp cần khôi phục lại trạng thái trước đó.
-                            </li>
-                            <li>
-                                <strong>Xác nhận Cụm từ ngẫu nhiên:</strong> Mỗi lượt khôi phục yêu cầu nhập đúng cụm từ xác minh tĩnh/động được cấp để loại bỏ rủi ro bấm nhầm nút.
-                            </li>
-                        </ul>
-                    </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                            <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850 p-3 text-center space-y-1">
+                                <span className="text-type-helper text-slate-500 dark:text-slate-400 block font-medium">Hàng ngày</span>
+                                <div className="text-type-body font-bold text-slate-900 dark:text-slate-100">
+                                    {overview?.retention?.daily || 14} ngày
+                                </div>
+                                <span className="text-type-badge text-slate-400 block">Snapshot gần nhất</span>
+                            </div>
 
-                    {/* Section 3: Configuration Guide */}
-                    <div className="space-y-2.5">
-                        <div className="flex items-center gap-2">
-                            <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
-                                <FileCode className="h-4 w-4 text-blue-600 shrink-0" />
-                                <span>Tham chiếu Cấu hình Hệ thống (`backend/.env`)</span>
-                            </h4>
-                        </div>
-                        <p className="text-type-body-sm text-slate-600 dark:text-slate-400 leading-relaxed pl-6">
-                            Các thông số thiết lập trong tập tin cấu hình môi trường server:
-                        </p>
-                        <div className="pl-6 pt-1">
-                            <pre className="p-4 rounded-xl bg-slate-950 text-emerald-400 border border-slate-800 tabular-nums text-type-helper leading-relaxed overflow-x-auto shadow-inner custom-scrollbar">
-                                {`BACKUP_WORKER_ENABLED="true" # Bật/tắt tiến trình tự động
-BACKUP_SCHEDULE="02:00" # Khung giờ chạy sao lưu hàng ngày
-BACKUP_TIMEZONE="Asia/Ho_Chi_Minh" # Múi giờ hệ thống
-BACKUP_RETENTION_DAILY="14" # Số ngày lưu trữ
-BACKUP_RETENTION_WEEKLY="8" # Số tuần lưu trữ
-BACKUP_RETENTION_MONTHLY="12" # Số tháng lưu trữ`}
-                            </pre>
+                            <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850 p-3 text-center space-y-1">
+                                <span className="text-type-helper text-slate-500 dark:text-slate-400 block font-medium">Hàng tuần</span>
+                                <div className="text-type-body font-bold text-slate-900 dark:text-slate-100">
+                                    {overview?.retention?.weekly || 8} tuần
+                                </div>
+                                <span className="text-type-badge text-slate-400 block">Lưu trữ liên tiếp</span>
+                            </div>
+
+                            <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850 p-3 text-center space-y-1">
+                                <span className="text-type-helper text-slate-500 dark:text-slate-400 block font-medium">Hàng tháng</span>
+                                <div className="text-type-body font-bold text-slate-900 dark:text-slate-100">
+                                    {overview?.retention?.monthly || 12} tháng
+                                </div>
+                                <span className="text-type-badge text-slate-400 block">Bản mốc chính thức</span>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Footer actions */}
+                    {/* Section 2: Quy trình an toàn 3 lớp (3-Tier Security Protocol) */}
+                    <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-2">
+                            <ShieldCheck className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
+                            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
+                                Cơ chế an toàn & phục hồi 3 lớp
+                            </h4>
+                        </div>
+
+                        <div className="space-y-2 text-type-body-sm text-slate-600 dark:text-slate-300 divide-y divide-slate-100 dark:divide-slate-800">
+                            <div className="flex items-start gap-2.5 pt-1">
+                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-type-badge font-bold">1</span>
+                                <div>
+                                    <strong className="text-slate-900 dark:text-slate-100 font-semibold">Phê duyệt kép (Dual-Admin):</strong> Khôi phục trên Production bắt buộc có xác nhận độc lập từ Quản trị viên thứ hai.
+                                </div>
+                            </div>
+
+                            <div className="flex items-start gap-2.5 pt-2">
+                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-type-badge font-bold">2</span>
+                                <div>
+                                    <strong className="text-slate-900 dark:text-slate-100 font-semibold">Snapshot an toàn tự động:</strong> Luôn tự động tạo bản lưu dự phòng trước khi thực hiện ghi đè dữ liệu.
+                                </div>
+                            </div>
+
+                            <div className="flex items-start gap-2.5 pt-2">
+                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-type-badge font-bold">3</span>
+                                <div>
+                                    <strong className="text-slate-900 dark:text-slate-100 font-semibold">Cụm từ xác thực ngẫu nhiên:</strong> Yêu cầu nhập đúng mật khẩu và chuỗi ngẫu nhiên để chống bấm nhầm.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Section 3: Thông số cấu hình hệ thống (Flat Key-Value Table) */}
+                    <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-2">
+                            <FileCode className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
+                            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
+                                Thông số cấu hình máy chủ
+                            </h4>
+                        </div>
+
+                        <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800 text-type-body-sm overflow-hidden">
+                            <div className="flex items-center justify-between px-3.5 py-2.5">
+                                <span className="text-slate-500 dark:text-slate-400 font-medium">Lịch chạy định kỳ</span>
+                                <span className="font-semibold text-slate-800 dark:text-slate-200 font-mono text-type-helper">
+                                    {overview?.schedule || '02:00 hàng ngày'} ({overview?.timezone || 'Asia/Ho_Chi_Minh'})
+                                </span>
+                            </div>
+
+                            <div className="flex items-center justify-between px-3.5 py-2.5">
+                                <span className="text-slate-500 dark:text-slate-400 font-medium">Tiến trình tự động (Worker)</span>
+                                <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-700 dark:text-emerald-400">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                                    <span>{overview?.worker?.enabled ? 'Đang hoạt động' : 'Chưa bật'}</span>
+                                </span>
+                            </div>
+
+                            <div className="flex items-center justify-between px-3.5 py-2.5">
+                                <span className="text-slate-500 dark:text-slate-400 font-medium">Vị trí lưu trữ</span>
+                                <span className="font-semibold text-slate-800 dark:text-slate-200">
+                                    {overview?.storage?.dualStorageEnabled ? 'Lưu trữ kép (Local + Cloud)' : '1 Vị trí cục bộ'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer action */}
                     <div className="flex justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
                         <Button variant="primary" size="md" onClick={() => setPolicyOpen(false)}>
                             Đã hiểu

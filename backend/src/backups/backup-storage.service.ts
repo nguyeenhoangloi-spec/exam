@@ -9,6 +9,7 @@ export interface StorageStatusItem {
   name: string;
   provider: string;
   role: 'PRIMARY' | 'MIRROR';
+  priority: number;
   path: string;
   isAvailable: boolean;
   status: 'ONLINE' | 'STANDBY' | 'ERROR';
@@ -37,7 +38,7 @@ export class BackupStorageService {
     const now = new Date().toISOString();
     const bucket = process.env.BACKUP_STORAGE_BUCKET?.trim();
     const primary: BackupStorageTarget = bucket ? {
-      id: 'legacy-s3-primary', name: 'Kho S3 chính', provider: 'S3', role: 'PRIMARY', enabled: true,
+      id: 'legacy-s3-primary', name: 'Kho S3 chính', provider: 'S3', role: 'PRIMARY', priority: 1, enabled: true,
       config: {
         endpoint: process.env.BACKUP_STORAGE_ENDPOINT || undefined,
         region: process.env.BACKUP_STORAGE_REGION || 'us-east-1', bucket, prefix: this.namespace,
@@ -47,12 +48,12 @@ export class BackupStorageService {
         serverSideEncryption: process.env.BACKUP_STORAGE_SSE === 'AES256',
       }, createdAt: now, updatedAt: now,
     } : {
-      id: 'legacy-local-primary', name: 'Kho local chính', provider: 'LOCAL', role: 'PRIMARY', enabled: true,
+      id: 'legacy-local-primary', name: 'Kho local chính', provider: 'LOCAL', role: 'PRIMARY', priority: 1, enabled: true,
       config: { path: process.env.BACKUP_LOCAL_ROOT || join(process.cwd(), 'backup-runtime', 'primary'), prefix: this.namespace },
       createdAt: now, updatedAt: now,
     };
     return [primary, {
-      id: 'legacy-local-mirror', name: 'Kho local dự phòng', provider: 'LOCAL', role: 'MIRROR', enabled: true,
+      id: 'legacy-local-mirror', name: 'Kho local dự phòng', provider: 'LOCAL', role: 'MIRROR', priority: 2, enabled: true,
       config: { path: process.env.BACKUP_SECONDARY_ROOT || join(process.cwd(), 'backup-runtime', 'mirror_backup'), prefix: this.namespace },
       createdAt: now, updatedAt: now,
     }];
@@ -90,7 +91,7 @@ export class BackupStorageService {
   private activeTargets() {
     return this.targets
       .filter((target) => target.enabled && (target.role === 'PRIMARY' || this.dualStorageEnabled))
-      .sort((a, b) => a.role === b.role ? 0 : a.role === 'PRIMARY' ? -1 : 1);
+      .sort((a, b) => (a.priority || (a.role === 'PRIMARY' ? 1 : 2)) - (b.priority || (b.role === 'PRIMARY' ? 1 : 2)));
   }
 
   isConfigured() { return this.activeTargets().some((target) => target.role === 'PRIMARY'); }
@@ -149,24 +150,24 @@ export class BackupStorageService {
   private async statusFor(target: BackupStorageTarget): Promise<StorageStatusItem> {
     const lastWrite = this.lastWrites.get(target.id);
     if (!target.enabled || (target.role === 'MIRROR' && !this.dualStorageEnabled)) {
-      return { id: target.id, name: target.name, provider: target.provider, role: target.role, path: target.config.path || target.config.bucket || target.config.folderId || '', isAvailable: false, status: 'STANDBY', message: 'Đang tạm dừng.', lastWriteAt: lastWrite?.at, lastWriteStatus: lastWrite?.status, lastWriteMessage: lastWrite?.message };
+      return { id: target.id, name: target.name, provider: target.provider, role: target.role, priority: target.priority, path: target.config.path || target.config.bucket || target.config.folderId || '', isAvailable: false, status: 'STANDBY', message: 'Đang tạm dừng.', lastWriteAt: lastWrite?.at, lastWriteStatus: lastWrite?.status, lastWriteMessage: lastWrite?.message };
     }
     try {
       const adapter = createStorageAdapter(target);
       const message = await adapter.test();
-      return { id: target.id, name: target.name, provider: target.provider, role: target.role, path: adapter.displayPath(), isAvailable: true, status: 'ONLINE', message, lastWriteAt: lastWrite?.at, lastWriteStatus: lastWrite?.status, lastWriteMessage: lastWrite?.message };
+      return { id: target.id, name: target.name, provider: target.provider, role: target.role, priority: target.priority, path: adapter.displayPath(), isAvailable: true, status: 'ONLINE', message, lastWriteAt: lastWrite?.at, lastWriteStatus: lastWrite?.status, lastWriteMessage: lastWrite?.message };
     } catch (error: any) {
-      return { id: target.id, name: target.name, provider: target.provider, role: target.role, path: target.config.path || target.config.bucket || target.config.folderId || '', isAvailable: false, status: 'ERROR', message: error?.message || 'Không thể kết nối.', lastWriteAt: lastWrite?.at, lastWriteStatus: lastWrite?.status, lastWriteMessage: lastWrite?.message };
+      return { id: target.id, name: target.name, provider: target.provider, role: target.role, priority: target.priority, path: target.config.path || target.config.bucket || target.config.folderId || '', isAvailable: false, status: 'ERROR', message: error?.message || 'Không thể kết nối.', lastWriteAt: lastWrite?.at, lastWriteStatus: lastWrite?.status, lastWriteMessage: lastWrite?.message };
     }
   }
 
   async getStorageStatusOverview(): Promise<StorageStatusOverview> {
-    const targets = await Promise.all(this.targets.map((target) => this.statusFor(target)));
-    const fallback: StorageStatusItem = { id: '', name: 'Chưa cấu hình', provider: 'LOCAL', role: 'MIRROR', path: '', isAvailable: false, status: 'STANDBY' };
+    const targets = await Promise.all([...this.targets].sort((a, b) => (a.priority || 99) - (b.priority || 99)).map((target) => this.statusFor(target)));
+    const fallback: StorageStatusItem = { id: '', name: 'Chưa cấu hình', provider: 'LOCAL', role: 'MIRROR', priority: 2, path: '', isAvailable: false, status: 'STANDBY' };
     return {
       dualStorageEnabled: this.dualStorageEnabled,
       primary: targets.find((item) => item.role === 'PRIMARY') || { ...fallback, role: 'PRIMARY' },
-      secondary: targets.find((item) => item.role === 'MIRROR') || fallback,
+      secondary: targets.find((item) => item.priority === 2) || targets.find((item) => item.role === 'MIRROR') || fallback,
       targets,
     };
   }

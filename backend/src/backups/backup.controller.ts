@@ -7,7 +7,7 @@ import { Permissions } from '../access-control/permissions.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { BackupService } from './backup.service';
 import { ApproveRestoreRequestDto, CreateBackupJobDto, CreateRestoreRequestDto, RejectRestoreRequestDto } from './dto/backup.dto';
-import { CompleteGoogleDriveConnectionDto, UpdateBackupSettingsDto, UpsertBackupStorageTargetDto } from './dto/backup-settings.dto';
+import { CompleteGoogleDriveConnectionDto, ReorderBackupStorageTargetDto, UpdateBackupSettingsDto, UpsertBackupStorageTargetDto } from './dto/backup-settings.dto';
 import { SecurityAuditEvent } from '../security-audit/security-audit-event.decorator';
 
 @Controller('backups')
@@ -47,6 +47,11 @@ export class BackupController {
   @Delete('storage-targets/:id')
   deleteStorageTarget(@Request() req: any, @Param('id') id: string) {
     return this.backupService.deleteStorageTarget(id, req.user);
+  }
+
+  @Post('storage-targets/:id/reorder')
+  reorderStorageTarget(@Request() req: any, @Param('id') id: string, @Body() dto: ReorderBackupStorageTargetDto) {
+    return this.backupService.reorderStorageTarget(id, dto, req.user);
   }
 
   @Post('storage-targets/:id/test')

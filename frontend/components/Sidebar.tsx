@@ -187,8 +187,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         group: 'Hệ thống',
         items: [
           { name: 'Phân quyền & truy cập', href: '/admin/access-control', icon: KeyRound },
-          { name: 'Nhật ký hệ thống', href: '/admin/activity-logs', icon: Activity },
-          { name: 'Kiểm toán & bảo mật', href: '/admin/security-audit', icon: ShieldAlert },
+          { name: 'Nhật ký & kiểm toán', href: '/admin/activity-logs', icon: Activity },
           { name: 'Sao lưu dữ liệu', href: '/admin/backups', icon: DatabaseBackup },
           { name: 'Cài đặt hệ thống', href: '/admin/settings', icon: Settings },
           { name: 'Biểu mẫu', href: '/admin/document-templates', icon: FileCog },
@@ -208,7 +207,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     ],
     []
   );
-
   // 2. TEACHER Navigation Groups
   const teacherGroups: NavGroup[] = useMemo(
     () => [

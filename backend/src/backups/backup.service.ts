@@ -13,7 +13,7 @@ import { parse, resolve } from 'node:path';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { ApproveRestoreRequestDto, CreateBackupJobDto, CreateRestoreRequestDto, RejectRestoreRequestDto } from './dto/backup.dto';
-import { UpsertBackupStorageTargetDto, UpdateBackupSettingsDto } from './dto/backup-settings.dto';
+import { ReorderBackupStorageTargetDto, UpsertBackupStorageTargetDto, UpdateBackupSettingsDto } from './dto/backup-settings.dto';
 import { BackupStorageService } from './backup-storage.service';
 import { BackupConfigService, BackupRuntimeConfig } from './backup-config.service';
 import { BackupStorageTarget, SafeBackupStorageTarget } from './backup-storage.types';
@@ -139,7 +139,17 @@ export class BackupService {
         ? stored.storageTargets
         : migratedTargets,
     };
-    if (!Array.isArray(stored.storageTargets)) await this.config.write(result);
+    const ordered = [...result.storageTargets].sort((a, b) => {
+      const aPriority = Number(a.priority) || (a.role === 'PRIMARY' ? 1 : 2);
+      const bPriority = Number(b.priority) || (b.role === 'PRIMARY' ? 1 : 2);
+      return aPriority - bPriority;
+    });
+    result.storageTargets = ordered.map((target, index) => ({
+      ...target,
+      priority: index + 1,
+      role: index === 0 ? 'PRIMARY' : 'MIRROR',
+    }));
+    if (!Array.isArray(stored.storageTargets) || result.storageTargets.some((target, index) => target.priority !== stored.storageTargets?.[index]?.priority || target.role !== stored.storageTargets?.[index]?.role)) await this.config.write(result);
     return result;
   }
 
@@ -206,11 +216,10 @@ export class BackupService {
     const stored = await this.loadStoredConfig();
     const validated = this.validateTargetInput(dto);
     const now = new Date().toISOString();
-    if (dto.role === 'PRIMARY') {
-      stored.storageTargets = stored.storageTargets.map((item) => ({ ...item, role: 'MIRROR', updatedAt: now }));
-    }
+    const nextPriority = dto.role === 'PRIMARY' ? 1 : Math.max(1, ...stored.storageTargets.map((item) => Number(item.priority) || 1)) + 1;
+    if (dto.role === 'PRIMARY') stored.storageTargets = stored.storageTargets.map((item) => ({ ...item, role: 'MIRROR', priority: Math.max(2, Number(item.priority) || 2), updatedAt: now }));
     const target: BackupStorageTarget = this.config.encryptTarget({
-      id: randomUUID(), name: validated.name, provider: dto.provider, role: dto.role,
+      id: randomUUID(), name: validated.name, provider: dto.provider, role: dto.role === 'PRIMARY' ? 'PRIMARY' : 'MIRROR', priority: nextPriority,
       enabled: dto.enabled !== false, config: validated.config, createdAt: now, updatedAt: now,
     });
     stored.storageTargets.push(target);
@@ -227,11 +236,10 @@ export class BackupService {
     const existing = this.config.decryptTarget(stored.storageTargets[index]);
     const validated = this.validateTargetInput({ ...dto, config: { ...existing.config, ...dto.config } });
     const now = new Date().toISOString();
-    if (dto.role === 'PRIMARY') {
-      stored.storageTargets = stored.storageTargets.map((item) => item.id === id ? item : ({ ...item, role: 'MIRROR', updatedAt: now }));
-    }
+    if (dto.role === 'PRIMARY') stored.storageTargets = stored.storageTargets.map((item) => item.id === id ? item : ({ ...item, role: 'MIRROR', priority: Math.max(2, Number(item.priority) || 2), updatedAt: now }));
+    const requestedPriority = dto.role === 'PRIMARY' ? 1 : Math.max(2, Number(dto.priority) || Number(existing.priority) || 2);
     const merged: BackupStorageTarget = {
-      ...existing, name: validated.name, provider: dto.provider, role: dto.role,
+      ...existing, name: validated.name, provider: dto.provider, role: dto.role === 'PRIMARY' ? 'PRIMARY' : 'MIRROR', priority: requestedPriority,
       enabled: dto.enabled !== false, config: validated.config, updatedAt: now,
       lastTestedAt: undefined, lastTestStatus: undefined, lastTestMessage: undefined,
     };
@@ -242,6 +250,29 @@ export class BackupService {
     await this.getSettings();
     await this.audit.write({ actorId: user?.id, action: 'BACKUP_STORAGE_UPDATED', entityType: 'BACKUP_STORAGE', entityId: id, description: `Đã cập nhật nơi lưu ${merged.name}.`, metadata: { provider: merged.provider, role: merged.role, enabled: merged.enabled } as any });
     return this.config.sanitizeTarget(stored.storageTargets[index]);
+  }
+
+  async reorderStorageTarget(id: string, dto: ReorderBackupStorageTargetDto, user?: { id: number }) {
+    const stored = await this.loadStoredConfig();
+    const index = stored.storageTargets.findIndex((item) => item.id === id);
+    if (index < 0) throw new NotFoundException('Không tìm thấy nơi lưu backup.');
+    const target = stored.storageTargets[index];
+    if (target.priority <= 1) throw new BadRequestException('Kho chính luôn đứng đầu và không thể di chuyển.');
+    const mirrors = stored.storageTargets.filter((item) => item.priority > 1).sort((a, b) => a.priority - b.priority);
+    const mirrorIndex = mirrors.findIndex((item) => item.id === id);
+    const nextIndex = dto.direction === 'UP' ? mirrorIndex - 1 : mirrorIndex + 1;
+    if (nextIndex < 0 || nextIndex >= mirrors.length) return this.config.sanitizeTarget(target);
+    const other = mirrors[nextIndex];
+    const oldPriority = target.priority;
+    target.priority = other.priority;
+    other.priority = oldPriority;
+    target.updatedAt = new Date().toISOString();
+    other.updatedAt = target.updatedAt;
+    stored.storageTargets = stored.storageTargets.map((item) => item.id === target.id ? target : item.id === other.id ? other : item);
+    await this.config.write(stored);
+    await this.getSettings();
+    await this.audit.write({ actorId: user?.id, action: 'BACKUP_STORAGE_REORDERED', entityType: 'BACKUP_STORAGE', entityId: id, description: `Đã đổi thứ tự nơi lưu ${target.name}.`, metadata: { direction: dto.direction, priority: target.priority } as any });
+    return this.config.sanitizeTarget(target);
   }
 
   async deleteStorageTarget(id: string, user?: { id: number }) {

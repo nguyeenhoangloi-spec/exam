@@ -26,3 +26,13 @@ export function csvField(value: unknown): string {
 export function csvRow(values: unknown[]): string {
   return values.map(csvField).join(',');
 }
+
+/**
+ * Export structured CSV data with headers and rows.
+ */
+export function exportCsvData(filename: string, headers: string[], rows: (string | number | boolean | null | undefined)[][]) {
+  const headerLine = csvRow(headers);
+  const dataLines = rows.map((r) => csvRow(r));
+  const fullContent = [headerLine, ...dataLines].join('\r\n');
+  downloadCsv(filename, fullContent);
+}

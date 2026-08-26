@@ -180,12 +180,9 @@ export function RegradeReviewDrawer({
               {/* Mục 1: Thông tin chung */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                    <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
-                      Thông tin hồ sơ phúc khảo
-                    </h3>
-                  </div>
+                  <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
+                    Thông tin hồ sơ phúc khảo
+                  </h3>
                   <StatusBadge status={badgeStatus} className="text-type-helper" />
                 </div>
 
@@ -268,12 +265,9 @@ export function RegradeReviewDrawer({
 
               {/* Mục 2: Lý do xin phúc khảo (Flat & Clean Layout) */}
               <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                  <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
-                    Lý do &amp; Nguyện vọng xin phúc khảo
-                  </h3>
-                </div>
+                <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
+                  Lý do &amp; Nguyện vọng xin phúc khảo
+                </h3>
                 <div className="rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/90 dark:border-slate-800 p-3.5 text-slate-800 dark:text-slate-200 leading-relaxed font-normal text-type-body-sm flex items-start gap-2.5 shadow-2xs">
                   <MessageSquareQuote className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
                   <span className="flex-1 break-words">{selectedAppeal.reason}</span>
@@ -282,12 +276,9 @@ export function RegradeReviewDrawer({
 
               {/* Mục 3: Quyết định thẩm định & Chấm lại */}
               <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <div className="flex items-center gap-2">
-                  <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                  <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
-                    Quyết định thẩm định &amp; Chấm lại
-                  </h3>
-                </div>
+                <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
+                  Quyết định thẩm định &amp; Chấm lại
+                </h3>
 
                 {/* Segmented 2-State Control */}
                 <div className="rounded-xl bg-slate-100 dark:bg-slate-800 p-1 grid grid-cols-2 gap-1 select-none">

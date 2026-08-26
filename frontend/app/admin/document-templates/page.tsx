@@ -260,14 +260,6 @@ export default function DocumentTemplatesPage() {
   const [zoomScale, setZoomScale] = useState<number>(100);
   const [categoryFilter, setCategoryFilter] = useState<'ALL' | 'EXAM' | 'GRADES' | 'ACADEMIC' | 'USERS'>('ALL');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [newTemplateData, setNewTemplateData] = useState({
-    code: '',
-    name: '',
-    dataSource: 'EXAM_SCHEDULE_LIST' as DataSource,
-    templateType: 'TABLE' as TemplateType,
-    description: '',
-  });
 
   const selected = useMemo(
     () => templates.find((item) => item.id === selectedId) || null,
@@ -501,65 +493,6 @@ export default function DocumentTemplatesPage() {
     }
   };
 
-  const handleCreateSubmit = async () => {
-    if (!newTemplateData.name.trim()) {
-      setToast({ type: 'error', message: 'Vui lòng nhập tên biểu mẫu.' });
-      return;
-    }
-    setSaving(true);
-    try {
-      const code = (newTemplateData.code.trim() || `CUSTOM_${Date.now()}`).toUpperCase();
-      const itemCatalog = catalog.find((c) => c.dataSource === newTemplateData.dataSource) || catalog[0];
-
-      const initialConfig: Config = {
-        templateType: newTemplateData.templateType,
-        page: { size: 'A4', orientation: 'portrait', marginMm: 15 },
-        header: {
-          institutionName: 'HỆ THỐNG QUẢN LÝ KHẢO THÍ',
-          facultyName: 'KHOA CÔNG NGHỆ THÔNG TIN',
-          title: newTemplateData.name,
-          subtitle: '',
-          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
-        },
-        examInfo: {
-          subjectName: 'Môn học khảo thí',
-          subjectCode: 'HP101',
-          durationMinutes: 60,
-          totalScore: 10,
-          showScoreBox: true,
-          showInstructions: true,
-          instructionText: '(Thí sinh không được sử dụng tài liệu. Cán bộ coi thi không giải thích gì thêm.)',
-        },
-        columns: itemCatalog ? itemCatalog.columns : [],
-        footer: {
-          note: 'Dữ liệu xuất từ Hệ thống Quản lý Khảo thí.',
-          signers: [
-            { title: 'NGƯỜI LẬP', subtitle: '(Ký, ghi rõ họ tên)' },
-            { title: 'ĐẠI DIỆN ĐƠN VỊ', subtitle: '(Ký, ghi rõ họ tên)' },
-          ],
-        },
-      };
-
-      const response = await api.post('/document-templates', {
-        code,
-        name: newTemplateData.name,
-        dataSource: newTemplateData.dataSource,
-        description: newTemplateData.description,
-        config: initialConfig,
-      });
-
-      const created = response.data as Template;
-      setTemplates((items) => [created, ...items]);
-      setSelectedId(created.id);
-      setCreateModalOpen(false);
-      setToast({ type: 'success', message: 'Đã tạo biểu mẫu mới thành công.' });
-    } catch (error: any) {
-      setToast({ type: 'error', message: error?.response?.data?.message || 'Không thể tạo biểu mẫu.' });
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const testPrint = () => {
     if (!config || !draft) return;
     const isExam = config.templateType === 'EXAM_PAPER';
@@ -746,7 +679,7 @@ export default function DocumentTemplatesPage() {
             disabled={saving || !draft}
             leftIcon={<Copy className="h-4 w-4 text-slate-700 dark:text-slate-300" />}
           >
-            Nhân bản
+            Nhân bản cấu hình
           </Button>
           <Button
             variant="secondary"
@@ -765,14 +698,6 @@ export default function DocumentTemplatesPage() {
             leftIcon={<Send className="h-4 w-4 text-white" />}
           >
             Áp dụng & Phát hành
-          </Button>
-          <Button
-            variant="soft"
-            size="md"
-            onClick={() => setCreateModalOpen(true)}
-            disabled={saving}
-          >
-            + Tạo biểu mẫu
           </Button>
         </div>
       </div>
@@ -1576,87 +1501,6 @@ export default function DocumentTemplatesPage() {
           </div>
         </div>
       </div>
-
-      {/* Create New Template Modal */}
-      {createModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-700 dark:bg-slate-900 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3 dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                <FilePlus2 className="h-5 w-5 text-blue-600" />
-                <h3 className="text-type-card font-semibold text-slate-950 dark:text-slate-50">
-                  Tạo Biểu Mẫu Mới
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setCreateModalOpen(false)}
-                className="rounded-xl p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              <FormInput
-                label="Tên biểu mẫu *"
-                value={newTemplateData.name}
-                onChange={(v) => setNewTemplateData({ ...newTemplateData, name: v })}
-                placeholder="Ví dụ: Đề thi trắc nghiệm học kỳ 1"
-              />
-              <FormInput
-                label="Mã biểu mẫu (Viết hoa không dấu)"
-                value={newTemplateData.code}
-                onChange={(v) => setNewTemplateData({ ...newTemplateData, code: v })}
-                placeholder="Ví dụ: EXAM_PAPER_CUSTOM_01"
-              />
-              <FormSelect
-                label="Dạng biểu mẫu"
-                value={newTemplateData.templateType}
-                onChange={(v) =>
-                  setNewTemplateData({ ...newTemplateData, templateType: v as TemplateType })
-                }
-                options={[
-                  ['EXAM_PAPER', 'Đề thi chính thức (Có câu hỏi, điểm, chữ ký ra đề)'],
-                  ['TABLE', 'Bảng dữ liệu (Lịch thi, Phòng thi, Bảng điểm...)'],
-                ]}
-              />
-              <FormSelect
-                label="Nguồn dữ liệu liên kết"
-                value={newTemplateData.dataSource}
-                onChange={(v) =>
-                  setNewTemplateData({ ...newTemplateData, dataSource: v as DataSource })
-                }
-                options={Object.entries(sourceLabels).map(([k, v]) => [k, v])}
-              />
-              <FormInput
-                label="Mô tả / Ghi chú"
-                value={newTemplateData.description}
-                onChange={(v) => setNewTemplateData({ ...newTemplateData, description: v })}
-                placeholder="Mục đích sử dụng của biểu mẫu..."
-              />
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-              <Button
-                variant="secondary"
-                size="md"
-                onClick={() => setCreateModalOpen(false)}
-              >
-                Hủy
-              </Button>
-              <Button
-                variant="primary"
-                size="md"
-                onClick={handleCreateSubmit}
-                disabled={saving}
-              >
-                Tạo biểu mẫu
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Toast Notification */}
       {toast && (

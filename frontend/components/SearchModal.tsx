@@ -241,8 +241,8 @@ const ALL_SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'admin-activity-logs',
-    title: 'Nhật ký hoạt động (Audit Logs)',
-    desc: 'Lịch sử thao tác của người dùng trên toàn hệ thống',
+    title: 'Nhật ký & kiểm toán hệ thống',
+    desc: 'Lịch sử thao tác người dùng và sự kiện an ninh bảo mật',
     href: '/admin/activity-logs',
     icon: History,
     roles: ['ADMIN'],

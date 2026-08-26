@@ -31,6 +31,8 @@ export interface BackupStorageTarget {
   name: string;
   provider: BackupStorageProvider;
   role: BackupStorageRole;
+  /** 1 is primary; 2+ are ordered mirrors. */
+  priority: number;
   enabled: boolean;
   config: BackupStorageTargetConfig;
   createdAt: string;
@@ -49,4 +51,3 @@ export interface SafeBackupStorageTarget extends Omit<BackupStorageTarget, 'conf
 }
 
 export const STORAGE_SECRET_FIELDS = ['secretAccessKey', 'clientSecret', 'refreshToken'] as const;
-

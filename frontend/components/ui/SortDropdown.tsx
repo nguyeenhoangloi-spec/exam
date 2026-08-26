@@ -148,12 +148,11 @@ export function SortDropdown({
                     }}
                     className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-type-body leading-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-colors duration-150 cursor-pointer select-none text-left ${
                       isSelected
-                        ? 'text-slate-900 dark:text-slate-100 font-semibold bg-transparent'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium'
+                        ? 'bg-slate-100/90 dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-semibold'
+                        : 'text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60 font-medium'
                     }`}
                   >
                     <span className="truncate pr-2">{option.label}</span>
-                    {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0 ml-1.5" />}
                   </button>
                 );
               })}
