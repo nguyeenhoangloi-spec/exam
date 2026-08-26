@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Cloud, FolderOpen, HardDrive, Save } from 'lucide-react';
 import { Modal } from '../Modal';
 import { Button } from '../ui/Button';
+import { FilterSelect } from '../ui/FilterSelect';
 
 export type StorageProvider = 'LOCAL' | 'R2' | 'B2' | 'S3' | 'WASABI' | 'MINIO' | 'GOOGLE_DRIVE';
 export type StorageRole = 'PRIMARY' | 'MIRROR';
@@ -45,7 +46,7 @@ const providers: Array<{ value: StorageProvider; label: string; hint: string }> 
   { value: 'GOOGLE_DRIVE', label: 'Google Drive', hint: 'Kết nối bằng tài khoản Google' },
 ];
 
-const fieldClass = 'h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-type-body font-medium text-slate-950 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-50';
+const fieldClass = 'h-10 w-full rounded-xl border border-slate-200/90 bg-white px-3 text-type-body font-medium text-slate-900 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-50';
 const labelClass = 'space-y-1.5 text-type-body font-medium text-slate-900 dark:text-slate-100';
 
 function defaults(provider: StorageProvider): StorageTargetPayload['config'] {
@@ -107,50 +108,79 @@ export function StorageTargetModal({
     <Modal isOpen={isOpen} onClose={onClose} title={target ? 'Chỉnh sửa nơi lưu' : 'Thêm nơi lưu backup'} size="2xl" icon={provider === 'LOCAL' ? <HardDrive className="h-5 w-5" /> : <Cloud className="h-5 w-5" />}>
       <form onSubmit={submit} className="space-y-5">
         <div className="grid gap-3 sm:grid-cols-2">
-          <label className={labelClass}>Nhà cung cấp
-            <select value={provider} disabled={Boolean(target)} onChange={(e) => updateProvider(e.target.value as StorageProvider)} className={fieldClass}>
-              {providers.map((item) => <option key={item.value} value={item.value}>{item.label} — {item.hint}</option>)}
-            </select>
-          </label>
-          <label className={labelClass}>Tên hiển thị
+          <div className={labelClass}>
+            <span>Nhà cung cấp</span>
+            <FilterSelect
+              value={provider}
+              disabled={Boolean(target)}
+              onChange={(e) => updateProvider(e.target.value as StorageProvider)}
+              options={providers.map((item) => ({ value: item.value, label: `${item.label} — ${item.hint}` }))}
+              fullWidth
+            />
+          </div>
+          <label className={labelClass}>
+            <span>Tên hiển thị</span>
             <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} maxLength={80} required />
           </label>
-          <label className={labelClass}>Vai trò
-            <select value={role} onChange={(e) => setRole(e.target.value as StorageRole)} className={fieldClass}>
-              <option value="PRIMARY">Kho chính (ưu tiên 1)</option><option value="MIRROR">Kho dự phòng (xếp sau kho chính)</option>
-            </select>
-          </label>
-          <label className="flex h-10 items-center justify-between self-end rounded-xl border border-slate-200 px-3 text-type-body font-medium dark:border-slate-700">
-            Kích hoạt kết nối <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} className="h-5 w-5 accent-blue-600" />
-          </label>
+          <div className={labelClass}>
+            <span>Vai trò</span>
+            <FilterSelect
+              value={role}
+              onChange={(e) => setRole(e.target.value as StorageRole)}
+              options={[
+                { value: 'PRIMARY', label: 'Kho chính (ưu tiên 1)' },
+                { value: 'MIRROR', label: 'Kho dự phòng (xếp sau kho chính)' },
+              ]}
+              fullWidth
+            />
+          </div>
+          <div className="flex h-10 items-center justify-between self-end rounded-xl border border-slate-200/90 px-3.5 bg-white dark:border-slate-700 dark:bg-slate-900">
+            <span className="text-type-body font-medium text-slate-900 dark:text-slate-100">Kích hoạt kết nối</span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={enabled}
+              onClick={() => setEnabled(!enabled)}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 ${
+                enabled ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-700'
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                  enabled ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
         </div>
 
-        {provider === 'LOCAL' && <label className={labelClass}>Đường dẫn thư mục
+        {provider === 'LOCAL' && <label className={labelClass}>
+          <span>Đường dẫn thư mục</span>
           <div className="relative"><FolderOpen className="absolute left-3 top-3 h-4 w-4 text-slate-500" /><input value={String(config.path || '')} onChange={(e) => update('path', e.target.value)} className={`${fieldClass} pl-9`} placeholder="D:/exam-backups" required /></div>
         </label>}
 
         {isS3 && <div className="grid gap-3 sm:grid-cols-2">
-          {provider === 'R2' && <label className={labelClass}>Cloudflare Account ID<input value={String(config.accountId || '')} onChange={(e) => update('accountId', e.target.value)} className={fieldClass} placeholder="Account ID" required={!config.endpoint} /></label>}
-          {['B2', 'MINIO'].includes(provider) && <label className={labelClass}>Endpoint<input value={String(config.endpoint || '')} onChange={(e) => update('endpoint', e.target.value)} className={fieldClass} placeholder={provider === 'B2' ? 'https://s3.us-west-004.backblazeb2.com' : 'https://minio.example.edu'} required /></label>}
-          <label className={labelClass}>Bucket<input value={String(config.bucket || '')} onChange={(e) => update('bucket', e.target.value)} className={fieldClass} required /></label>
-          <label className={labelClass}>Region<input value={String(config.region || '')} onChange={(e) => update('region', e.target.value)} className={fieldClass} required /></label>
-          <label className={labelClass}>Access Key ID<input value={String(config.accessKeyId || '')} onChange={(e) => update('accessKeyId', e.target.value)} className={fieldClass} required /></label>
-          <label className={labelClass}>Secret Access Key<input type="password" value={String(config.secretAccessKey || '')} onChange={(e) => update('secretAccessKey', e.target.value)} className={fieldClass} placeholder={target?.config.hasSecretAccessKey ? 'Để trống nếu không thay đổi' : 'Nhập secret key'} required={!target?.config.hasSecretAccessKey} /></label>
+          {provider === 'R2' && <label className={labelClass}><span>Cloudflare Account ID</span><input value={String(config.accountId || '')} onChange={(e) => update('accountId', e.target.value)} className={fieldClass} placeholder="Account ID" required={!config.endpoint} /></label>}
+          {['B2', 'MINIO'].includes(provider) && <label className={labelClass}><span>Endpoint</span><input value={String(config.endpoint || '')} onChange={(e) => update('endpoint', e.target.value)} className={fieldClass} placeholder={provider === 'B2' ? 'https://s3.us-west-004.backblazeb2.com' : 'https://minio.example.edu'} required /></label>}
+          <label className={labelClass}><span>Bucket</span><input value={String(config.bucket || '')} onChange={(e) => update('bucket', e.target.value)} className={fieldClass} required /></label>
+          <label className={labelClass}><span>Region</span><input value={String(config.region || '')} onChange={(e) => update('region', e.target.value)} className={fieldClass} required /></label>
+          <label className={labelClass}><span>Access Key ID</span><input value={String(config.accessKeyId || '')} onChange={(e) => update('accessKeyId', e.target.value)} className={fieldClass} required /></label>
+          <label className={labelClass}><span>Secret Access Key</span><input type="password" value={String(config.secretAccessKey || '')} onChange={(e) => update('secretAccessKey', e.target.value)} className={fieldClass} placeholder={target?.config.hasSecretAccessKey ? 'Để trống nếu không thay đổi' : 'Nhập secret key'} required={!target?.config.hasSecretAccessKey} /></label>
         </div>}
 
         {provider === 'GOOGLE_DRIVE' && <div className="space-y-3">
           <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 text-type-helper font-medium text-blue-900 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-200">Lưu Client ID và Client Secret trước. Sau đó dùng nút “Kết nối Google” ở danh sách để cấp quyền OAuth.</div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <label className={labelClass}>Google OAuth Client ID<input value={String(config.clientId || '')} onChange={(e) => update('clientId', e.target.value)} className={fieldClass} required /></label>
-            <label className={labelClass}>Google OAuth Client Secret<input type="password" value={String(config.clientSecret || '')} onChange={(e) => update('clientSecret', e.target.value)} className={fieldClass} placeholder={target?.config.hasClientSecret ? 'Để trống nếu không thay đổi' : 'Nhập client secret'} required={!target?.config.hasClientSecret} /></label>
-            <label className={labelClass}>ID thư mục Drive<input value={String(config.folderId || 'root')} onChange={(e) => update('folderId', e.target.value)} className={fieldClass} placeholder="root" /></label>
+            <label className={labelClass}><span>Google OAuth Client ID</span><input value={String(config.clientId || '')} onChange={(e) => update('clientId', e.target.value)} className={fieldClass} required /></label>
+            <label className={labelClass}><span>Google OAuth Client Secret</span><input type="password" value={String(config.clientSecret || '')} onChange={(e) => update('clientSecret', e.target.value)} className={fieldClass} placeholder={target?.config.hasClientSecret ? 'Để trống nếu không thay đổi' : 'Nhập client secret'} required={!target?.config.hasClientSecret} /></label>
+            <label className={labelClass}><span>ID thư mục Drive</span><input value={String(config.folderId || 'root')} onChange={(e) => update('folderId', e.target.value)} className={fieldClass} placeholder="root" /></label>
           </div>
         </div>}
 
-        {provider !== 'LOCAL' && <label className={labelClass}>Tiền tố thư mục<input value={String(config.prefix || '')} onChange={(e) => update('prefix', e.target.value)} className={fieldClass} placeholder="exam-system" /></label>}
-        {error && <div className="rounded-xl border border-red-200 bg-red-100 px-3 py-2 text-type-body font-semibold text-red-700">{error}</div>}
+        {provider !== 'LOCAL' && <label className={labelClass}><span>Tiền tố thư mục</span><input value={String(config.prefix || '')} onChange={(e) => update('prefix', e.target.value)} className={fieldClass} placeholder="exam-system" /></label>}
+        {error && <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-type-body font-semibold text-rose-700">{error}</div>}
         <div className="flex justify-end gap-3 border-t border-slate-100 pt-4 dark:border-slate-800">
-          <Button variant="secondary" onClick={onClose} disabled={saving}>Hủy</Button>
+          <Button variant="ghost" onClick={onClose} disabled={saving}>Hủy</Button>
           <Button type="submit" variant="primary" leftIcon={<Save className="h-4 w-4" />} isLoading={saving}>Lưu nơi lưu</Button>
         </div>
       </form>

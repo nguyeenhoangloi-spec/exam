@@ -522,6 +522,31 @@ export class DocumentTemplatesService {
     });
   }
 
+  async delete(actor: { id: number }, id: string) {
+    const template = await this.prisma.documentTemplate.findUnique({
+      where: { id },
+    });
+    if (!template) throw new NotFoundException('Không tìm thấy biểu mẫu cần xóa.');
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.documentTemplateVersion.deleteMany({
+        where: { templateId: id },
+      });
+      await tx.documentTemplate.delete({
+        where: { id },
+      });
+      await this.audit.write({
+        actorId: actor.id,
+        action: 'DOCUMENT_TEMPLATE_DELETED',
+        entityType: 'DOCUMENT_TEMPLATE',
+        entityId: id,
+        description: `Đã xóa biểu mẫu ${template.name} (${template.code}).`,
+      }, tx);
+    });
+
+    return { success: true, message: 'Đã xóa biểu mẫu thành công.' };
+  }
+
   async render(code: string, actor: { id: number; role: string }, filters: Record<string, unknown> = {}) {
     await this.ensureDefaults();
     const template = await this.prisma.documentTemplate.findUnique({

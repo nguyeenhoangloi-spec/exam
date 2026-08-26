@@ -30,6 +30,7 @@ const routeAccess: RouteAccessRule[] = [
   { prefix: '/exam-reports', roles: ['ADMIN', 'TEACHER'], permission: 'EXAM_REPORT_VIEW' },
   { prefix: '/trash', roles: ['ADMIN'], permission: 'TRASH_MANAGE' },
   { prefix: '/admin/backups', roles: ['ADMIN'], permission: 'BACKUP_MANAGE' },
+  { prefix: '/admin/settings/google-drive/callback', roles: ['ADMIN'], permission: 'BACKUP_MANAGE' },
   { prefix: '/admin/settings', roles: ['ADMIN'], permission: 'BACKUP_MANAGE' },
   { prefix: '/admin/activity-logs', roles: ['ADMIN'], permission: 'AUDIT_LOG_VIEW' },
   { prefix: '/admin/security-audit', roles: ['ADMIN'], permission: 'SECURITY_AUDIT_VIEW' },

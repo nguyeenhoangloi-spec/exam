@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -66,6 +66,13 @@ export class DocumentTemplatesController {
   @Permissions('DOCUMENT_TEMPLATE_MANAGE')
   duplicate(@Request() req: any, @Param('id') id: string) {
     return this.templates.duplicate(req.user, id);
+  }
+
+  @Delete(':id')
+  @Roles('ADMIN')
+  @Permissions('DOCUMENT_TEMPLATE_MANAGE')
+  delete(@Request() req: any, @Param('id') id: string) {
+    return this.templates.delete(req.user, id);
   }
 
   @Post(':code/render')
