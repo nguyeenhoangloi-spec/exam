@@ -544,14 +544,14 @@ export default function DocumentTemplatesPage() {
   }
 
   return (
-    <main className="w-full px-6 py-6 space-y-6 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
-      {/* 1. Header Phẳng Tự Nhiên */}
-      <div className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/80 dark:border-slate-800">
-        <div>
-          <h1 className="text-type-page font-semibold text-slate-900 dark:text-slate-100">
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
+      {/* 1. Header Tiêu Chuẩn Hệ Thống (Đồng bộ khoảng cách pb-1, space-y-0.5) */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
+        <div className="space-y-0.5">
+          <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
             Mẫu biểu in ấn
           </h1>
-          <p className="mt-1 text-type-helper text-slate-500 dark:text-slate-400 font-normal">
+          <p className="text-type-helper text-slate-600 dark:text-slate-400 font-normal">
             Tùy biến tiêu đề, định dạng trang in A4 và áp dụng trực tiếp toàn hệ thống.
           </p>
         </div>
@@ -567,8 +567,8 @@ export default function DocumentTemplatesPage() {
         </Button>
       </div>
 
-      {/* 2. Workspace Liền Mạch (2 Cột) */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[400px_minmax(0,1fr)]">
+      {/* 2. Workspace Liền Mạch (2 Cột đồng bộ gap-5) */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[400px_minmax(0,1fr)]">
         {/* Cột Trái: Sidebar Cấu hình có padding chuẩn p-5 */}
         <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs dark:border-slate-800 dark:bg-slate-900 space-y-4">
           {/* Segmented Tab Switcher Thuần Túy */}
@@ -576,22 +576,20 @@ export default function DocumentTemplatesPage() {
             <button
               type="button"
               onClick={() => setActiveTab('settings')}
-              className={`flex-1 rounded-xl py-2 text-type-body font-medium transition cursor-pointer text-center ${
-                activeTab === 'settings'
+              className={`flex-1 rounded-xl py-2 text-type-body font-medium transition cursor-pointer text-center ${activeTab === 'settings'
                   ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-800 dark:text-slate-100'
                   : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
-              }`}
+                }`}
             >
               Thuộc tính in
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('templates')}
-              className={`flex-1 rounded-xl py-2 text-type-body font-medium transition cursor-pointer text-center ${
-                activeTab === 'templates'
+              className={`flex-1 rounded-xl py-2 text-type-body font-medium transition cursor-pointer text-center ${activeTab === 'templates'
                   ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-800 dark:text-slate-100'
                   : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
-              }`}
+                }`}
             >
               Danh sách mẫu ({templates.length})
             </button>
@@ -990,11 +988,10 @@ export default function DocumentTemplatesPage() {
                     key={key}
                     type="button"
                     onClick={() => setCategoryFilter(key)}
-                    className={`rounded-xl px-2.5 py-1 text-type-helper font-medium transition cursor-pointer ${
-                      categoryFilter === key
+                    className={`rounded-xl px-2.5 py-1 text-type-helper font-medium transition cursor-pointer ${categoryFilter === key
                         ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300'
-                    }`}
+                      }`}
                   >
                     {label}
                   </button>
@@ -1014,11 +1011,10 @@ export default function DocumentTemplatesPage() {
                         setSelectedId(item.id);
                         setActiveTab('settings');
                       }}
-                      className={`w-full py-2.5 px-3 text-left transition cursor-pointer rounded-xl flex items-center justify-between gap-2 ${
-                        isSelected
+                      className={`w-full py-2.5 px-3 text-left transition cursor-pointer rounded-xl flex items-center justify-between gap-2 ${isSelected
                           ? 'bg-blue-50/80 text-blue-900 dark:bg-blue-950/50 dark:text-blue-100'
                           : 'hover:bg-slate-50 dark:hover:bg-slate-850'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-type-body font-medium">
