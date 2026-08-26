@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import {
     AlertCircle,
     AlertTriangle,
-    BookOpen,
     Calendar,
     CheckCircle2,
     Clock,
@@ -243,8 +242,7 @@ export default function BackupsPage() {
     }, [detailJob]);
 
     const [copiedChecksum, setCopiedChecksum] = useState(false);
-    // Modal & Policy States
-    const [policyOpen, setPolicyOpen] = useState(false);
+    // Modal States
     const [restoreOpen, setRestoreOpen] = useState(false);
     const [selectedJob, setSelectedJob] = useState<BackupJob | null>(null);
     const [target, setTarget] = useState<RestoreTarget>('STAGING');
@@ -613,15 +611,6 @@ export default function BackupsPage() {
                             <span>Worker: {overview.worker.enabled ? 'Bật' : 'Tắt'}</span>
                         </span>
                     )}
-
-                    <button
-                        type="button"
-                        onClick={() => setPolicyOpen(true)}
-                        title="Chính sách & Cấu hình sao lưu"
-                        className="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-blue-600 hover:border-blue-300 dark:hover:border-blue-600 transition shadow-2xs cursor-pointer"
-                    >
-                        <BookOpen className="h-4 w-4" />
-                    </button>
 
                     <DataActionsDropdown
                         onExportExcel={handleExportExcel}
@@ -1529,124 +1518,6 @@ export default function BackupsPage() {
                     onConfirm={handleCriticalConfirmApprove}
                 />
             )}
-            {/* Backup Policy & Operating Guidelines Modal */}
-            <Modal
-                isOpen={policyOpen}
-                onClose={() => setPolicyOpen(false)}
-                title="Chính sách & Cấu hình sao lưu"
-            >
-                <div className="space-y-5 py-1 text-slate-700 dark:text-slate-300">
-                    {/* Section 1: Chu kỳ lưu trữ (Retention Policy Grid 3 cột) */}
-                    <div className="space-y-3">
-                        <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
-                            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
-                                Chu kỳ lưu trữ dữ liệu (Retention Policy)
-                            </h4>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                            <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850 p-3 text-center space-y-1">
-                                <span className="text-type-helper text-slate-500 dark:text-slate-400 block font-medium">Hàng ngày</span>
-                                <div className="text-type-body font-bold text-slate-900 dark:text-slate-100">
-                                    {overview?.retention?.daily || 14} ngày
-                                </div>
-                                <span className="text-type-badge text-slate-400 block">Snapshot gần nhất</span>
-                            </div>
-
-                            <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850 p-3 text-center space-y-1">
-                                <span className="text-type-helper text-slate-500 dark:text-slate-400 block font-medium">Hàng tuần</span>
-                                <div className="text-type-body font-bold text-slate-900 dark:text-slate-100">
-                                    {overview?.retention?.weekly || 8} tuần
-                                </div>
-                                <span className="text-type-badge text-slate-400 block">Lưu trữ liên tiếp</span>
-                            </div>
-
-                            <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850 p-3 text-center space-y-1">
-                                <span className="text-type-helper text-slate-500 dark:text-slate-400 block font-medium">Hàng tháng</span>
-                                <div className="text-type-body font-bold text-slate-900 dark:text-slate-100">
-                                    {overview?.retention?.monthly || 12} tháng
-                                </div>
-                                <span className="text-type-badge text-slate-400 block">Bản mốc chính thức</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Section 2: Quy trình an toàn 3 lớp (3-Tier Security Protocol) */}
-                    <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                        <div className="flex items-center gap-2">
-                            <ShieldCheck className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
-                            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
-                                Cơ chế an toàn & phục hồi 3 lớp
-                            </h4>
-                        </div>
-
-                        <div className="space-y-2 text-type-body-sm text-slate-600 dark:text-slate-300 divide-y divide-slate-100 dark:divide-slate-800">
-                            <div className="flex items-start gap-2.5 pt-1">
-                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-type-badge font-bold">1</span>
-                                <div>
-                                    <strong className="text-slate-900 dark:text-slate-100 font-semibold">Phê duyệt kép (Dual-Admin):</strong> Khôi phục trên Production bắt buộc có xác nhận độc lập từ Quản trị viên thứ hai.
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-2.5 pt-2">
-                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-type-badge font-bold">2</span>
-                                <div>
-                                    <strong className="text-slate-900 dark:text-slate-100 font-semibold">Snapshot an toàn tự động:</strong> Luôn tự động tạo bản lưu dự phòng trước khi thực hiện ghi đè dữ liệu.
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-2.5 pt-2">
-                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-type-badge font-bold">3</span>
-                                <div>
-                                    <strong className="text-slate-900 dark:text-slate-100 font-semibold">Cụm từ xác thực ngẫu nhiên:</strong> Yêu cầu nhập đúng mật khẩu và chuỗi ngẫu nhiên để chống bấm nhầm.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Section 3: Thông số cấu hình hệ thống (Flat Key-Value Table) */}
-                    <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                        <div className="flex items-center gap-2">
-                            <FileCode className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
-                            <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
-                                Thông số cấu hình máy chủ
-                            </h4>
-                        </div>
-
-                        <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800 text-type-body-sm overflow-hidden">
-                            <div className="flex items-center justify-between px-3.5 py-2.5">
-                                <span className="text-slate-500 dark:text-slate-400 font-medium">Lịch chạy định kỳ</span>
-                                <span className="font-semibold text-slate-800 dark:text-slate-200 font-mono text-type-helper">
-                                    {overview?.schedule || '02:00 hàng ngày'} ({overview?.timezone || 'Asia/Ho_Chi_Minh'})
-                                </span>
-                            </div>
-
-                            <div className="flex items-center justify-between px-3.5 py-2.5">
-                                <span className="text-slate-500 dark:text-slate-400 font-medium">Tiến trình tự động (Worker)</span>
-                                <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-700 dark:text-emerald-400">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                                    <span>{overview?.worker?.enabled ? 'Đang hoạt động' : 'Chưa bật'}</span>
-                                </span>
-                            </div>
-
-                            <div className="flex items-center justify-between px-3.5 py-2.5">
-                                <span className="text-slate-500 dark:text-slate-400 font-medium">Vị trí lưu trữ</span>
-                                <span className="font-semibold text-slate-800 dark:text-slate-200">
-                                    {overview?.storage?.dualStorageEnabled ? 'Lưu trữ kép (Local + Cloud)' : '1 Vị trí cục bộ'}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Footer action */}
-                    <div className="flex justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
-                        <Button variant="primary" size="md" onClick={() => setPolicyOpen(false)}>
-                            Đã hiểu
-                        </Button>
-                    </div>
-                </div>
-            </Modal>
         </main>
     );
 }
