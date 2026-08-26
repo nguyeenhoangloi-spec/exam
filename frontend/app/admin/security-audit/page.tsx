@@ -1,14 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, CheckCircle2, FileLock2, Filter, Lock, RefreshCw, Search, ShieldAlert, ShieldCheck, SlidersHorizontal } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, FileLock2, Filter, Lock, RefreshCw, Search, ShieldAlert, ShieldCheck } from 'lucide-react';
 import api from '../../../lib/api';
 import { Toast } from '../../../components/Toast';
 import { usePageTitle } from '../../../components/PageTitleContext';
 
 type Outcome = 'SUCCESS' | 'DENIED' | 'FAILURE';
 type Event = { id: string; occurredAt: string; category: string; action: string; outcome: Outcome; entityType?: string; entityId?: string; route?: string; ipAddress?: string; requestId?: string; legalHold: boolean; actor?: { username: string; email: string; role: string } | null };
-type Policy = { id: string; category: string; hotDays: number; retainDays: number; rawIpDays: number; updatedAt: string };
 
 const categoryLabel: Record<string, string> = {
   AUTHENTICATION: 'Xác thực', AUTHORIZATION: 'Phân quyền', DATA_ACCESS: 'Truy cập dữ liệu', DATA_EXPORT: 'Xuất dữ liệu',
@@ -42,9 +41,7 @@ const entityLabel: Record<string, string> = {
 export default function SecurityAuditPage() {
   usePageTitle('Kiểm toán & bảo mật');
   const [events, setEvents] = useState<Event[]>([]);
-  const [policies, setPolicies] = useState<Policy[]>([]);
   const [integrity, setIntegrity] = useState<{ checked: number; valid: boolean } | null>(null);
-  const [archiveStatus, setArchiveStatus] = useState<{ locationLabel: string; total: number; archived: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
@@ -54,16 +51,12 @@ export default function SecurityAuditPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [eventResponse, policyResponse, integrityResponse, archiveResponse] = await Promise.all([
+      const [eventResponse, integrityResponse] = await Promise.all([
         api.get('/security-audit/events', { params: { limit: 50, ...(search ? { search } : {}), ...(category ? { category } : {}), ...(outcome ? { outcome } : {}) } }),
-        api.get('/security-audit/policies'),
         api.get('/security-audit/integrity', { params: { limit: 1000 } }),
-        api.get('/security-audit/archive-status'),
       ]);
       setEvents(eventResponse.data.items || []);
-      setPolicies(policyResponse.data || []);
       setIntegrity(integrityResponse.data);
-      setArchiveStatus(archiveResponse.data);
     } catch (error: any) {
       setToast({ type: 'error', message: error?.message || 'Không thể tải dữ liệu kiểm toán bảo mật.' });
     } finally { setLoading(false); }
@@ -71,14 +64,6 @@ export default function SecurityAuditPage() {
 
   useEffect(() => { void load(); }, [load]);
   const summary = useMemo(() => ({ total: events.length, denied: events.filter((event) => event.outcome === 'DENIED').length, failed: events.filter((event) => event.outcome === 'FAILURE').length, held: events.filter((event) => event.legalHold).length }), [events]);
-
-  const updatePolicy = async (policy: Policy) => {
-    try {
-      await api.patch(`/security-audit/policies/${policy.category}`, { hotDays: policy.hotDays, retainDays: policy.retainDays, rawIpDays: policy.rawIpDays });
-      setToast({ type: 'success', message: `Đã cập nhật chính sách lưu giữ ${categoryLabel[policy.category] || policy.category}.` });
-      await load();
-    } catch (error: any) { setToast({ type: 'error', message: error?.message || 'Không thể cập nhật chính sách lưu giữ.' }); }
-  };
 
   const applyHold = async (event: Event) => {
     const reason = window.prompt('Lý do khóa lưu giữ (legal hold):');
@@ -95,7 +80,7 @@ export default function SecurityAuditPage() {
     <div className="mx-auto max-w-[1560px] space-y-5">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div><h1 className="flex items-center gap-2 text-type-page-title font-semibold"><ShieldAlert className="h-6 w-6 text-blue-600" />Kiểm toán & bảo mật</h1><p className="mt-1 text-type-body text-slate-700 dark:text-slate-300 font-normal">Sự kiện nhạy cảm được lưu độc lập, che dữ liệu bí mật và kiểm tra được tính toàn vẹn.</p></div>
-        <button onClick={() => void load()} className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-type-body font-medium shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 cursor-pointer"><RefreshCw className="h-4 w-4" />Làm mới</button>
+        <div className="flex flex-wrap items-center gap-2"><span className={`inline-flex h-10 items-center gap-2 rounded-xl border px-3 text-type-body font-medium ${integrity?.valid ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-rose-200 bg-rose-50 text-rose-800'}`}>{integrity?.valid ? <CheckCircle2 className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}{integrity?.valid ? `Chuỗi log hợp lệ (${integrity.checked})` : 'Kiểm tra chuỗi log'}</span><button onClick={() => void load()} className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-type-body font-medium shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 cursor-pointer"><RefreshCw className="h-4 w-4" />Làm mới</button></div>
       </header>
 
       <section className="grid gap-3 md:grid-cols-4">
@@ -107,16 +92,6 @@ export default function SecurityAuditPage() {
         <div className="ui-table-wrap overflow-x-auto"><table className="ui-table w-full min-w-[1050px] text-left"><thead className="bg-slate-50 text-type-label font-medium text-slate-800 dark:bg-slate-950 dark:text-slate-200"><tr><th className="px-4 py-3 font-medium">Thời điểm</th><th className="px-4 py-3 font-medium">Tài khoản</th><th className="px-4 py-3 font-medium">Sự kiện</th><th className="px-4 py-3 font-medium">Đối tượng</th><th className="px-4 py-3 font-medium">Kết quả</th><th className="px-4 py-3 font-medium">Nguồn</th><th className="px-4 py-3 font-medium">Trạng thái</th></tr></thead><tbody>{loading ? <tr><td colSpan={7} className="p-10 text-center text-type-body text-slate-600 font-normal">Đang tải nhật ký kiểm toán…</td></tr> : events.length === 0 ? <tr><td colSpan={7} className="p-10 text-center text-type-body text-slate-600 font-normal">Chưa có sự kiện phù hợp.</td></tr> : events.map((event) => <tr key={event.id} className="border-t border-slate-100 dark:border-slate-800"><td className="px-4 py-3 text-type-body tabular-nums font-normal">{new Date(event.occurredAt).toLocaleString('vi-VN')}</td><td className="px-4 py-3 text-type-body font-medium">{event.actor?.username || 'Hệ thống'}</td><td className="px-4 py-3 text-type-body font-normal"><p className="text-type-body font-medium">{actionLabel[event.action] || event.action.replaceAll('_', ' ')}</p><p className="table-meta text-type-helper text-slate-600 font-normal">{categoryLabel[event.category] || event.category}</p></td><td className="px-4 py-3 text-type-body font-normal">{event.entityType ? `${entityLabel[event.entityType] || event.entityType}${event.entityId ? ` · ${event.entityId}` : ''}` : '—'}</td><td className="px-4 py-3 text-type-body font-normal"><span className={`table-badge ui-pill inline-flex rounded-full border px-2.5 py-1 text-type-helper font-medium ${outcomeClass[event.outcome]}`}>{outcomeLabel[event.outcome]}</span></td><td className="px-4 py-3 text-type-body font-normal"><span className="table-meta text-type-helper text-slate-700 font-normal">{event.ipAddress || 'IP đã ẩn'}<br />{event.route || '—'}</span></td><td className="px-4 py-3 text-type-body font-normal">{event.legalHold ? <span title="Đang khóa để điều tra" aria-label="Đang khóa để điều tra" className="table-badge inline-flex items-center justify-center text-amber-800"><Lock className="h-4 w-4" /></span> : <button onClick={() => void applyHold(event)} title="Khóa để điều tra" aria-label="Khóa để điều tra" className="table-action inline-flex h-8 w-8 items-center justify-center rounded-xl text-blue-700 hover:bg-blue-50 cursor-pointer"><Lock className="h-4 w-4" /></button>}</td></tr>)}</tbody></table></div>
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div><h2 className="flex items-center gap-2 text-type-section-title font-semibold"><SlidersHorizontal className="h-5 w-5 text-blue-600" />Chính sách lưu giữ</h2><p className="mt-1 text-type-body text-slate-700 dark:text-slate-300 font-normal">IP gốc được ẩn sau thời hạn đặt trước; log bảo mật giữ tối thiểu 5 năm.</p>{archiveStatus && <p className="mt-1 text-type-helper text-slate-600 font-normal">{archiveStatus.locationLabel} · {archiveStatus.archived}/{archiveStatus.total} sự kiện đã có bản archive nén.</p>}</div>
-          {integrity && <span className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-type-body font-medium ${integrity.valid ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-rose-200 bg-rose-50 text-rose-800'}`}>
-            {integrity.valid ? <CheckCircle2 className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
-            {integrity.valid ? `Chuỗi log hợp lệ (${integrity.checked})` : 'Phát hiện sai lệch chuỗi log'}
-          </span>}
-        </div>
-        <div className="mt-4 ui-table-wrap overflow-x-auto"><table className="ui-table w-full min-w-[760px]"><thead className="text-left text-type-label font-medium text-slate-800 dark:text-slate-200"><tr><th className="pb-2 font-medium">Nhóm</th><th className="pb-2 font-medium">Dữ liệu nóng (ngày)</th><th className="pb-2 font-medium">Giữ log (ngày)</th><th className="pb-2 font-medium">Giữ IP gốc (ngày)</th><th className="pb-2 font-medium" /></tr></thead><tbody>{policies.map((policy, index) => <tr key={policy.id} className="border-t border-slate-100 dark:border-slate-800"><td className="py-3 text-type-body font-medium">{categoryLabel[policy.category] || policy.category}</td>{(['hotDays', 'retainDays', 'rawIpDays'] as const).map((field) => <td key={field} className="py-3 pr-3"><input type="number" value={policy[field]} onChange={(event) => setPolicies((items) => items.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: Number(event.target.value) } : item))} className="h-9 w-28 rounded-xl border border-slate-200 px-2 text-type-body font-normal tabular-nums dark:border-slate-700 dark:bg-slate-950" /></td>)}<td className="py-3 text-right"><button onClick={() => void updatePolicy(policy)} className="h-9 rounded-xl border border-slate-200 px-3 text-type-body font-medium hover:bg-slate-50 dark:border-slate-700 cursor-pointer">Lưu</button></td></tr>)}</tbody></table></div>
-      </section>
     </div>
   </main>;
 }

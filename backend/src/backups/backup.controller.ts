@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Put, Query, Request, UseGuards, Body } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards, Body } from '@nestjs/common';
 import { BackupJobStatus, BackupJobType } from '@prisma/client';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -7,7 +7,7 @@ import { Permissions } from '../access-control/permissions.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { BackupService } from './backup.service';
 import { ApproveRestoreRequestDto, CreateBackupJobDto, CreateRestoreRequestDto, RejectRestoreRequestDto } from './dto/backup.dto';
-import { UpdateBackupSettingsDto } from './dto/backup-settings.dto';
+import { CompleteGoogleDriveConnectionDto, UpdateBackupSettingsDto, UpsertBackupStorageTargetDto } from './dto/backup-settings.dto';
 import { SecurityAuditEvent } from '../security-audit/security-audit-event.decorator';
 
 @Controller('backups')
@@ -32,6 +32,36 @@ export class BackupController {
   @Put('settings')
   updateSettings(@Request() req: any, @Body() dto: UpdateBackupSettingsDto) {
     return this.backupService.updateSettings(dto, req.user);
+  }
+
+  @Post('storage-targets')
+  createStorageTarget(@Request() req: any, @Body() dto: UpsertBackupStorageTargetDto) {
+    return this.backupService.createStorageTarget(dto, req.user);
+  }
+
+  @Put('storage-targets/:id')
+  updateStorageTarget(@Request() req: any, @Param('id') id: string, @Body() dto: UpsertBackupStorageTargetDto) {
+    return this.backupService.updateStorageTarget(id, dto, req.user);
+  }
+
+  @Delete('storage-targets/:id')
+  deleteStorageTarget(@Request() req: any, @Param('id') id: string) {
+    return this.backupService.deleteStorageTarget(id, req.user);
+  }
+
+  @Post('storage-targets/:id/test')
+  testStorageTarget(@Request() req: any, @Param('id') id: string) {
+    return this.backupService.testStorageTarget(id, req.user);
+  }
+
+  @Post('storage-targets/:id/google-drive/authorize')
+  authorizeGoogleDrive(@Request() req: any, @Param('id') id: string) {
+    return this.backupService.getGoogleDriveAuthorization(id, req.user);
+  }
+
+  @Post('storage-targets/:id/google-drive/complete')
+  completeGoogleDrive(@Request() req: any, @Param('id') id: string, @Body() dto: CompleteGoogleDriveConnectionDto) {
+    return this.backupService.completeGoogleDriveConnection(id, dto.code, dto.state, req.user);
   }
 
   @Get('jobs')

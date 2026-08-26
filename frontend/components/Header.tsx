@@ -6,6 +6,7 @@ import Link from 'next/link';
 import {
   Bell,
   ChevronDown,
+  ChevronUp,
   ChevronRight,
   LogOut,
   Menu,
@@ -26,7 +27,6 @@ import { DynamicImage } from './ui/DynamicImage';
 import api from '../lib/api';
 import { ConfirmModal } from './ConfirmModal';
 import { SearchModal } from './SearchModal';
-import { NotificationDetailModal } from './notifications/NotificationDetailModal';
 
 interface HeaderProps {
   user: User | null;
@@ -96,7 +96,7 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-  const [detailNotification, setDetailNotification] = useState<NotificationItem | null>(null);
+  const [expandedNotifIds, setExpandedNotifIds] = useState<string[]>([]);
   const [readNotificationIds, setReadNotificationIds] = useState<string[]>(() => {
     if (typeof window === 'undefined') return [];
     try {
@@ -134,10 +134,19 @@ export const Header: React.FC<HeaderProps> = ({
     }
   };
 
+  const toggleExpandNotif = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setExpandedNotifIds((prev) =>
+      prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
+    );
+  };
+
   const handleNotificationClick = async (item: NotificationItem) => {
     await markAsRead(item);
-    setOpenPanel(null);
-    setDetailNotification(item);
+    const isLong = (item.desc || '').length > 90 || (item.desc || '').includes('\n');
+    if (isLong) {
+      toggleExpandNotif(item.id);
+    }
   };
 
   const handleNavigateDirect = async (item: NotificationItem, e: React.MouseEvent) => {
@@ -300,14 +309,6 @@ export const Header: React.FC<HeaderProps> = ({
         user={user}
       />
 
-      {/* Notification Detail Modal */}
-      <NotificationDetailModal
-        isOpen={Boolean(detailNotification)}
-        onClose={() => setDetailNotification(null)}
-        notification={detailNotification}
-        onNavigate={(href) => router.push(href)}
-      />
-
       <header
         style={{ left: collapsed ? '72px' : '252px' }}
         className="app-header-fixed fixed top-0 right-0 z-30 flex h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md transition-[left] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[left]"
@@ -369,7 +370,7 @@ export const Header: React.FC<HeaderProps> = ({
 
               {/* Notifications Dropdown Panel */}
               {openPanel === 'notifications' && (
-                <div className="absolute right-0 top-[calc(100%+10px)] w-[min(20rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl shadow-slate-200/60 dark:shadow-slate-950/60 text-type-body z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div className="absolute right-0 top-[calc(100%+10px)] w-[min(24rem,calc(100vw-1rem))] sm:w-[24rem] max-w-[calc(100vw-1rem)] rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl shadow-slate-200/60 dark:shadow-slate-950/60 text-type-body z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="mb-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-2.5">
                     <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body flex items-center gap-1.5">
                       <Bell className="w-4 h-4 text-blue-600" strokeWidth={1.5} />
@@ -388,10 +389,13 @@ export const Header: React.FC<HeaderProps> = ({
                   </div>
 
                   {notifications.length > 0 ? (
-                    <div>
+                    <div className="max-h-[28rem] overflow-y-auto ui-scrollbar -mr-1 pr-1">
                       <div className="divide-y divide-slate-100 dark:divide-slate-800 border-t border-b border-slate-100 dark:border-slate-800 -mx-4 px-4">
                         {notifications.map((item) => {
                           const isUnread = !readNotificationIds.includes(item.id);
+                          const isLong = (item.desc || '').length > 90 || (item.desc || '').includes('\n');
+                          const isExpanded = expandedNotifIds.includes(item.id);
+
                           return (
                             <div
                               key={item.id}
@@ -404,17 +408,17 @@ export const Header: React.FC<HeaderProps> = ({
                                   handleNotificationClick(item);
                                 }
                               }}
-                              className={`py-3 px-2 transition cursor-pointer space-y-1 group rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 ${isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
+                              className={`py-3 px-2 transition cursor-pointer space-y-1.5 group rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 ${isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
                                 }`}
                             >
                               <div className="flex items-center justify-between gap-1.5">
                                 <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body-sm group-hover:text-blue-600 transition flex items-center gap-2">
                                   {isUnread ? (
-                                    <span className="h-2 w-2 rounded-full bg-blue-600 shrink-0" />
+                                    <span className="h-2 w-2 rounded-full bg-blue-600 shrink-0" title="Chưa đọc" />
                                   ) : (
-                                    <span className="h-2 w-2 rounded-full bg-slate-300 dark:bg-slate-600 shrink-0" />
+                                    <span className="h-2 w-2 rounded-full bg-slate-300 dark:bg-slate-600 shrink-0" title="Đã đọc" />
                                   )}
-                                  <span>{item.title}</span>
+                                  <span className="break-words">{item.title}</span>
                                 </p>
                                 <div className="flex items-center gap-1 shrink-0">
                                   {item.href && (
@@ -427,17 +431,48 @@ export const Header: React.FC<HeaderProps> = ({
                                       <ArrowUpRight className="w-3.5 h-3.5" />
                                     </button>
                                   )}
-                                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition" strokeWidth={1.5} />
                                 </div>
                               </div>
-                              <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal leading-relaxed pl-4 line-clamp-2">
-                                {item.desc}
-                              </p>
-                              <div className="pl-4 pt-1 flex items-center gap-2">
-                                <span className="text-type-helper font-medium text-blue-600 dark:text-blue-400 hover:underline">
-                                  Xem chi tiết
-                                </span>
-                              </div>
+
+                              {/* Notification Description */}
+                              {isLong ? (
+                                <>
+                                  <p className={`text-type-helper text-slate-600 dark:text-slate-300 font-normal leading-relaxed pl-4 break-words ${
+                                    isExpanded ? 'whitespace-pre-line' : 'line-clamp-2'
+                                  }`}>
+                                    {item.desc}
+                                  </p>
+                                  <div className="pl-4 pt-0.5 flex items-center justify-between gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={(e) => toggleExpandNotif(item.id, e)}
+                                      className="inline-flex items-center gap-1 text-type-helper font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition cursor-pointer"
+                                    >
+                                      <span>{isExpanded ? 'Thu gọn' : 'Xem thêm'}</span>
+                                      {isExpanded ? (
+                                        <ChevronUp className="w-3.5 h-3.5" strokeWidth={2} />
+                                      ) : (
+                                        <ChevronDown className="w-3.5 h-3.5" strokeWidth={2} />
+                                      )}
+                                    </button>
+
+                                    {isExpanded && item.href && (
+                                      <button
+                                        type="button"
+                                        onClick={(e) => handleNavigateDirect(item, e)}
+                                        className="inline-flex items-center gap-1 text-type-helper font-medium text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-300 transition cursor-pointer"
+                                      >
+                                        <span>Đi đến trang</span>
+                                        <ArrowUpRight className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
+                                  </div>
+                                </>
+                              ) : (
+                                <p className="text-type-helper text-slate-600 dark:text-slate-300 font-normal leading-relaxed pl-4 break-words">
+                                  {item.desc}
+                                </p>
+                              )}
                             </div>
                           );
                         })}

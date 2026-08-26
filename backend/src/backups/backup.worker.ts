@@ -131,9 +131,8 @@ export class BackupWorker implements OnModuleInit, OnModuleDestroy {
     const workDir = await mkdtemp(join(tmpdir(), 'exam-backup-'));
     let verifying = false;
     try {
-      if (process.env.NODE_ENV === 'production' && !process.env.BACKUP_STORAGE_BUCKET) {
-        throw new Error('Production backup yêu cầu BACKUP_STORAGE_BUCKET; không dùng local fallback.');
-      }
+      await this.backup.getSettings();
+      if (!this.storage.isConfigured()) throw new Error('Chưa cấu hình kho lưu trữ chính cho backup.');
       const databaseUrl = process.env.DATABASE_URL;
       if (!databaseUrl) throw new Error('Thiếu DATABASE_URL để thực hiện backup.');
       const dumpPath = join(workDir, 'database.dump');

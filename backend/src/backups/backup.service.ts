@@ -7,15 +7,16 @@ import {
 } from '@nestjs/common';
 import { BackupJobStatus, BackupJobType, BackupRestoreStatus, BackupRestoreTarget, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import { spawn } from 'node:child_process';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { dirname, join, parse, resolve } from 'node:path';
+import { parse, resolve } from 'node:path';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { ApproveRestoreRequestDto, CreateBackupJobDto, CreateRestoreRequestDto, RejectRestoreRequestDto } from './dto/backup.dto';
-import { UpdateBackupSettingsDto } from './dto/backup-settings.dto';
+import { UpsertBackupStorageTargetDto, UpdateBackupSettingsDto } from './dto/backup-settings.dto';
 import { BackupStorageService } from './backup-storage.service';
+import { BackupConfigService, BackupRuntimeConfig } from './backup-config.service';
+import { BackupStorageTarget, SafeBackupStorageTarget } from './backup-storage.types';
 
 export interface BackupSettings {
   autoBackupEnabled: boolean;
@@ -25,6 +26,7 @@ export interface BackupSettings {
   dualStorageEnabled: boolean;
   primaryPath: string;
   secondaryPath: string;
+  storageTargets: SafeBackupStorageTarget[];
 }
 
 const ACTIVE_ATTEMPT_STATUSES = ['DEVICE_CHECK', 'READY', 'IN_PROGRESS', 'DISCONNECTED'] as const;
@@ -35,12 +37,11 @@ type BackupDb = PrismaService | Prisma.TransactionClient;
 
 @Injectable()
 export class BackupService {
-  private readonly configPath = join(process.cwd(), 'backup-runtime', 'backup-config.json');
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly storage: BackupStorageService,
+    private readonly config: BackupConfigService,
   ) {}
 
   private restoreConfirmationPhrase(requestId: string) {
@@ -87,69 +88,80 @@ export class BackupService {
   }
 
   async getSettings(): Promise<BackupSettings> {
-    try {
-      const content = await readFile(this.configPath, 'utf-8');
-      const parsed = JSON.parse(content);
-      const settings: BackupSettings = {
-        autoBackupEnabled: parsed.autoBackupEnabled !== false,
-        intervalDays: Number(parsed.intervalDays) || 1,
-        backupTime: parsed.backupTime || '02:00',
-        maxRetentionCount: Number(parsed.maxRetentionCount) || 10,
-        dualStorageEnabled: parsed.dualStorageEnabled !== false,
-        primaryPath: parsed.primaryPath || this.storage.getPrimaryPath(),
-        secondaryPath: parsed.secondaryPath || this.storage.getSecondaryPath(),
-      };
-      this.storage.setPrimaryPath(settings.primaryPath);
-      this.storage.setSecondaryPath(settings.secondaryPath);
-      this.storage.setDualStorageEnabled(settings.dualStorageEnabled);
-      return settings;
-    } catch {
-      const defaultSettings: BackupSettings = {
-        autoBackupEnabled: true,
-        intervalDays: Number(process.env.BACKUP_INTERVAL_DAYS || 1),
-        backupTime: process.env.BACKUP_SCHEDULE || '02:00',
-        maxRetentionCount: Number(process.env.BACKUP_MAX_RETENTION || 10),
-        dualStorageEnabled: true,
-        primaryPath: this.storage.getPrimaryPath(),
-        secondaryPath: this.storage.getSecondaryPath(),
-      };
-      try {
-        await mkdir(dirname(this.configPath), { recursive: true });
-        await writeFile(this.configPath, JSON.stringify(defaultSettings, null, 2), 'utf-8');
-      } catch {}
-      this.storage.setDualStorageEnabled(defaultSettings.dualStorageEnabled);
-      return defaultSettings;
-    }
+    const stored = await this.loadStoredConfig();
+    const runtimeTargets = stored.storageTargets.map((target) => this.config.decryptTarget(target));
+    this.storage.setTargets(runtimeTargets);
+    this.storage.setDualStorageEnabled(stored.dualStorageEnabled);
+    return {
+      autoBackupEnabled: stored.autoBackupEnabled,
+      intervalDays: stored.intervalDays,
+      backupTime: stored.backupTime,
+      maxRetentionCount: stored.maxRetentionCount,
+      dualStorageEnabled: stored.dualStorageEnabled,
+      primaryPath: runtimeTargets.find((target) => target.role === 'PRIMARY')?.config.path || this.storage.getPrimaryPath(),
+      secondaryPath: runtimeTargets.find((target) => target.role === 'MIRROR' && target.provider === 'LOCAL')?.config.path || this.storage.getSecondaryPath(),
+      storageTargets: stored.storageTargets.map((target) => this.config.sanitizeTarget(target)),
+    };
+  }
+
+  private defaultStoredConfig(): BackupRuntimeConfig {
+    const legacyTargets = this.storage.getLegacyTargets().map((target) => this.config.encryptTarget(target));
+    return {
+      autoBackupEnabled: true,
+      intervalDays: Number(process.env.BACKUP_INTERVAL_DAYS || 1),
+      backupTime: process.env.BACKUP_SCHEDULE || '02:00',
+      maxRetentionCount: Number(process.env.BACKUP_MAX_RETENTION || 10),
+      dualStorageEnabled: true,
+      primaryPath: this.storage.getPrimaryPath(),
+      secondaryPath: this.storage.getSecondaryPath(),
+      storageTargets: legacyTargets,
+    };
+  }
+
+  private async loadStoredConfig() {
+    const fallback = this.defaultStoredConfig();
+    const stored = await this.config.read<Partial<BackupRuntimeConfig>>(fallback);
+    const migratedTargets = fallback.storageTargets.map((encrypted) => {
+      const target = this.config.decryptTarget(encrypted);
+      if (target.provider === 'LOCAL' && target.role === 'PRIMARY' && stored.primaryPath) target.config.path = stored.primaryPath;
+      if (target.provider === 'LOCAL' && target.role === 'MIRROR' && stored.secondaryPath) target.config.path = stored.secondaryPath;
+      return this.config.encryptTarget(target);
+    });
+    const result: BackupRuntimeConfig = {
+      ...fallback,
+      ...stored,
+      autoBackupEnabled: stored.autoBackupEnabled !== false,
+      intervalDays: Number(stored.intervalDays) || 1,
+      backupTime: stored.backupTime || '02:00',
+      maxRetentionCount: Number(stored.maxRetentionCount) || 10,
+      dualStorageEnabled: stored.dualStorageEnabled !== false,
+      storageTargets: Array.isArray(stored.storageTargets) && stored.storageTargets.length
+        ? stored.storageTargets
+        : migratedTargets,
+    };
+    if (!Array.isArray(stored.storageTargets)) await this.config.write(result);
+    return result;
   }
 
   async updateSettings(dto: UpdateBackupSettingsDto, user?: { id: number; username: string }): Promise<BackupSettings> {
-    const current = await this.getSettings();
-    const primaryPath = this.normalizeStoragePath(dto.primaryPath ?? current.primaryPath, 'kho chính');
-    const secondaryPath = this.normalizeStoragePath(dto.secondaryPath ?? current.secondaryPath, 'kho dự phòng');
-    if (primaryPath === secondaryPath) throw new BadRequestException('Kho chính và kho dự phòng phải là hai vị trí khác nhau.');
-    const updated: BackupSettings = {
-      autoBackupEnabled: dto.autoBackupEnabled !== undefined ? dto.autoBackupEnabled : current.autoBackupEnabled,
-      intervalDays: dto.intervalDays !== undefined ? dto.intervalDays : current.intervalDays,
-      backupTime: dto.backupTime !== undefined ? dto.backupTime : current.backupTime,
-      maxRetentionCount: dto.maxRetentionCount !== undefined ? dto.maxRetentionCount : current.maxRetentionCount,
-      dualStorageEnabled: dto.dualStorageEnabled !== undefined ? dto.dualStorageEnabled : current.dualStorageEnabled,
-      primaryPath,
-      secondaryPath,
+    const current = await this.loadStoredConfig();
+    const updated: BackupRuntimeConfig = {
+      ...current,
+      autoBackupEnabled: dto.autoBackupEnabled ?? current.autoBackupEnabled,
+      intervalDays: dto.intervalDays ?? current.intervalDays,
+      backupTime: dto.backupTime ?? current.backupTime,
+      maxRetentionCount: dto.maxRetentionCount ?? current.maxRetentionCount,
+      dualStorageEnabled: dto.dualStorageEnabled ?? current.dualStorageEnabled,
     };
-
-    await mkdir(dirname(this.configPath), { recursive: true });
-    await writeFile(this.configPath, JSON.stringify(updated, null, 2), 'utf-8');
-
-    this.storage.setPrimaryPath(updated.primaryPath);
-    this.storage.setSecondaryPath(updated.secondaryPath);
-    this.storage.setDualStorageEnabled(updated.dualStorageEnabled);
+    await this.config.write(updated);
+    const safeUpdated = await this.getSettings();
 
     await this.audit.write({
       action: 'BACKUP_SETTINGS_UPDATED',
       entityType: 'BACKUP_SETTINGS',
       entityId: 'GLOBAL',
-      description: `Cập nhật cấu hình sao lưu tự động & lưu trữ: Chu kỳ ${updated.intervalDays} ngày, chạy lúc ${updated.backupTime}, giữ tối đa ${updated.maxRetentionCount} bản, lưu 2 nơi: ${updated.dualStorageEnabled ? 'BẬT' : 'TẮT'}.`,
-      metadata: updated as any,
+      description: `Cập nhật lịch sao lưu: chu kỳ ${safeUpdated.intervalDays} ngày, chạy lúc ${safeUpdated.backupTime}, giữ tối đa ${safeUpdated.maxRetentionCount} bản.`,
+      metadata: { autoBackupEnabled: safeUpdated.autoBackupEnabled, intervalDays: safeUpdated.intervalDays, backupTime: safeUpdated.backupTime, maxRetentionCount: safeUpdated.maxRetentionCount, dualStorageEnabled: safeUpdated.dualStorageEnabled } as any,
       actorId: user?.id,
     });
 
@@ -158,7 +170,7 @@ export class BackupService {
       await this.applyRetention();
     } catch {}
 
-    return updated;
+    return safeUpdated;
   }
 
   private normalizeStoragePath(value: string, label: string) {
@@ -171,8 +183,187 @@ export class BackupService {
     return absolute;
   }
 
+  private validateTargetInput(dto: UpsertBackupStorageTargetDto) {
+    const name = dto.name.trim();
+    if (name.length < 2 || name.length > 80) throw new BadRequestException('Tên nơi lưu phải từ 2 đến 80 ký tự.');
+    const config = { ...dto.config };
+    if (dto.provider === 'LOCAL') config.path = this.normalizeStoragePath(config.path || '', 'lưu trữ local');
+    if (dto.provider !== 'LOCAL' && dto.provider !== 'GOOGLE_DRIVE' && !config.bucket?.trim()) {
+      throw new BadRequestException('Vui lòng nhập tên bucket.');
+    }
+    if (dto.provider !== 'LOCAL' && dto.provider !== 'GOOGLE_DRIVE' && (!config.accessKeyId || !config.secretAccessKey)) {
+      throw new BadRequestException('Vui lòng nhập đầy đủ Access Key ID và Secret Access Key.');
+    }
+    if (dto.provider === 'R2' && !config.endpoint && !config.accountId) throw new BadRequestException('Cloudflare R2 cần Account ID hoặc endpoint.');
+    if (['B2', 'MINIO'].includes(dto.provider) && !config.endpoint) throw new BadRequestException(`${dto.provider} cần endpoint kết nối.`);
+    if (dto.provider === 'GOOGLE_DRIVE' && (!config.clientId || !config.clientSecret)) {
+      throw new BadRequestException('Google Drive cần Client ID và Client Secret trước khi kết nối OAuth.');
+    }
+    return { name, config };
+  }
+
+  async createStorageTarget(dto: UpsertBackupStorageTargetDto, user?: { id: number }) {
+    const stored = await this.loadStoredConfig();
+    const validated = this.validateTargetInput(dto);
+    const now = new Date().toISOString();
+    if (dto.role === 'PRIMARY') {
+      stored.storageTargets = stored.storageTargets.map((item) => ({ ...item, role: 'MIRROR', updatedAt: now }));
+    }
+    const target: BackupStorageTarget = this.config.encryptTarget({
+      id: randomUUID(), name: validated.name, provider: dto.provider, role: dto.role,
+      enabled: dto.enabled !== false, config: validated.config, createdAt: now, updatedAt: now,
+    });
+    stored.storageTargets.push(target);
+    await this.config.write(stored);
+    await this.getSettings();
+    await this.audit.write({ actorId: user?.id, action: 'BACKUP_STORAGE_CREATED', entityType: 'BACKUP_STORAGE', entityId: target.id, description: `Đã thêm nơi lưu ${target.name} (${target.provider}).`, metadata: { provider: target.provider, role: target.role } as any });
+    return this.config.sanitizeTarget(target);
+  }
+
+  async updateStorageTarget(id: string, dto: UpsertBackupStorageTargetDto, user?: { id: number }) {
+    const stored = await this.loadStoredConfig();
+    const index = stored.storageTargets.findIndex((item) => item.id === id);
+    if (index < 0) throw new NotFoundException('Không tìm thấy nơi lưu backup.');
+    const existing = this.config.decryptTarget(stored.storageTargets[index]);
+    const validated = this.validateTargetInput({ ...dto, config: { ...existing.config, ...dto.config } });
+    const now = new Date().toISOString();
+    if (dto.role === 'PRIMARY') {
+      stored.storageTargets = stored.storageTargets.map((item) => item.id === id ? item : ({ ...item, role: 'MIRROR', updatedAt: now }));
+    }
+    const merged: BackupStorageTarget = {
+      ...existing, name: validated.name, provider: dto.provider, role: dto.role,
+      enabled: dto.enabled !== false, config: validated.config, updatedAt: now,
+      lastTestedAt: undefined, lastTestStatus: undefined, lastTestMessage: undefined,
+    };
+    stored.storageTargets[index] = this.config.encryptTarget(merged);
+    const activePrimaries = stored.storageTargets.filter((item) => item.enabled && item.role === 'PRIMARY');
+    if (activePrimaries.length !== 1) throw new BadRequestException('Phải có đúng một kho chính đang hoạt động.');
+    await this.config.write(stored);
+    await this.getSettings();
+    await this.audit.write({ actorId: user?.id, action: 'BACKUP_STORAGE_UPDATED', entityType: 'BACKUP_STORAGE', entityId: id, description: `Đã cập nhật nơi lưu ${merged.name}.`, metadata: { provider: merged.provider, role: merged.role, enabled: merged.enabled } as any });
+    return this.config.sanitizeTarget(stored.storageTargets[index]);
+  }
+
+  async deleteStorageTarget(id: string, user?: { id: number }) {
+    const stored = await this.loadStoredConfig();
+    const target = stored.storageTargets.find((item) => item.id === id);
+    if (!target) throw new NotFoundException('Không tìm thấy nơi lưu backup.');
+    if (target.role === 'PRIMARY') throw new BadRequestException('Hãy đặt một nơi lưu khác làm kho chính trước khi xóa.');
+    stored.storageTargets = stored.storageTargets.filter((item) => item.id !== id);
+    await this.config.write(stored);
+    await this.getSettings();
+    await this.audit.write({ actorId: user?.id, action: 'BACKUP_STORAGE_DELETED', entityType: 'BACKUP_STORAGE', entityId: id, description: `Đã xóa kết nối ${target.name}; dữ liệu trên kho không bị xóa.`, metadata: { provider: target.provider } as any });
+    return { success: true, message: 'Đã xóa kết nối; dữ liệu backup trên nhà cung cấp được giữ nguyên.' };
+  }
+
+  async testStorageTarget(id: string, user?: { id: number }) {
+    const stored = await this.loadStoredConfig();
+    const index = stored.storageTargets.findIndex((item) => item.id === id);
+    if (index < 0) throw new NotFoundException('Không tìm thấy nơi lưu backup.');
+    const target = this.config.decryptTarget(stored.storageTargets[index]);
+    const testedAt = new Date().toISOString();
+    try {
+      const message = await this.storage.testTarget(target);
+      stored.storageTargets[index] = { ...stored.storageTargets[index], lastTestedAt: testedAt, lastTestStatus: 'ONLINE', lastTestMessage: message };
+      await this.config.write(stored);
+      await this.audit.write({ actorId: user?.id, action: 'BACKUP_STORAGE_TESTED', entityType: 'BACKUP_STORAGE', entityId: id, description: `Kiểm tra kết nối ${target.name} thành công.`, metadata: { provider: target.provider, outcome: 'SUCCESS' } as any });
+      return { success: true, message, testedAt };
+    } catch (error: any) {
+      const message = error?.message || 'Không thể kết nối nơi lưu.';
+      stored.storageTargets[index] = { ...stored.storageTargets[index], lastTestedAt: testedAt, lastTestStatus: 'ERROR', lastTestMessage: message };
+      await this.config.write(stored);
+      await this.audit.write({ actorId: user?.id, action: 'BACKUP_STORAGE_TEST_FAILED', entityType: 'BACKUP_STORAGE', entityId: id, description: `Kiểm tra kết nối ${target.name} thất bại.`, metadata: { provider: target.provider, outcome: 'FAILURE' } as any });
+      throw new BadRequestException(message);
+    }
+  }
+
+  private googleRedirectUri() {
+    const frontend = (process.env.FRONTEND_URL || 'http://localhost:3000').replace(/\/$/, '');
+    return `${frontend}/admin/settings/google-drive/callback`;
+  }
+
+  private signGoogleState(payload: { targetId: string; userId: number; expiresAt: number }) {
+    const encoded = Buffer.from(JSON.stringify(payload)).toString('base64url');
+    const secret = process.env.JWT_SECRET;
+    if (!secret) throw new BadRequestException('Hệ thống chưa có khóa ký OAuth.');
+    const signature = createHmac('sha256', secret).update(encoded).digest('base64url');
+    return `${encoded}.${signature}`;
+  }
+
+  private verifyGoogleState(state: string, targetId: string, userId: number) {
+    const [encoded, signature] = state.split('.');
+    const secret = process.env.JWT_SECRET;
+    if (!encoded || !signature || !secret) throw new BadRequestException('Trạng thái kết nối Google Drive không hợp lệ.');
+    const expected = createHmac('sha256', secret).update(encoded).digest('base64url');
+    const actualBuffer = Buffer.from(signature);
+    const expectedBuffer = Buffer.from(expected);
+    if (actualBuffer.length !== expectedBuffer.length || !timingSafeEqual(actualBuffer, expectedBuffer)) {
+      throw new BadRequestException('Chữ ký kết nối Google Drive không hợp lệ.');
+    }
+    const payload = JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8')) as { targetId: string; userId: number; expiresAt: number };
+    if (payload.targetId !== targetId || payload.userId !== userId || payload.expiresAt < Date.now()) {
+      throw new BadRequestException('Yêu cầu kết nối Google Drive đã hết hạn hoặc không thuộc tài khoản hiện tại.');
+    }
+  }
+
+  async getGoogleDriveAuthorization(id: string, user: { id: number }) {
+    const stored = await this.loadStoredConfig();
+    const encrypted = stored.storageTargets.find((item) => item.id === id);
+    if (!encrypted) throw new NotFoundException('Không tìm thấy nơi lưu backup.');
+    const target = this.config.decryptTarget(encrypted);
+    if (target.provider !== 'GOOGLE_DRIVE') throw new BadRequestException('Nơi lưu này không phải Google Drive.');
+    if (!target.config.clientId || !target.config.clientSecret) throw new BadRequestException('Vui lòng lưu Client ID và Client Secret trước.');
+    const state = this.signGoogleState({ targetId: id, userId: user.id, expiresAt: Date.now() + 10 * 60 * 1000 });
+    const query = new URLSearchParams({
+      client_id: target.config.clientId,
+      redirect_uri: this.googleRedirectUri(),
+      response_type: 'code',
+      scope: 'https://www.googleapis.com/auth/drive.file',
+      access_type: 'offline',
+      prompt: 'consent',
+      state,
+    });
+    return { authorizationUrl: `https://accounts.google.com/o/oauth2/v2/auth?${query.toString()}` };
+  }
+
+  async completeGoogleDriveConnection(id: string, code: string, state: string, user: { id: number }) {
+    this.verifyGoogleState(state, id, user.id);
+    const stored = await this.loadStoredConfig();
+    const index = stored.storageTargets.findIndex((item) => item.id === id);
+    if (index < 0) throw new NotFoundException('Không tìm thấy nơi lưu backup.');
+    const target = this.config.decryptTarget(stored.storageTargets[index]);
+    if (target.provider !== 'GOOGLE_DRIVE' || !target.config.clientId || !target.config.clientSecret) {
+      throw new BadRequestException('Cấu hình Google Drive không hợp lệ.');
+    }
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: target.config.clientId,
+        client_secret: target.config.clientSecret,
+        code,
+        grant_type: 'authorization_code',
+        redirect_uri: this.googleRedirectUri(),
+      }),
+    });
+    const tokenData = await tokenResponse.json() as { refresh_token?: string; error_description?: string };
+    if (!tokenResponse.ok || !tokenData.refresh_token) {
+      throw new BadRequestException(tokenData.error_description || 'Google không trả về quyền truy cập dài hạn. Hãy thử kết nối lại và đồng ý cấp quyền.');
+    }
+    target.config.refreshToken = tokenData.refresh_token;
+    target.updatedAt = new Date().toISOString();
+    target.lastTestStatus = undefined;
+    target.lastTestMessage = undefined;
+    stored.storageTargets[index] = this.config.encryptTarget(target);
+    await this.config.write(stored);
+    await this.getSettings();
+    await this.audit.write({ actorId: user.id, action: 'BACKUP_GOOGLE_DRIVE_CONNECTED', entityType: 'BACKUP_STORAGE', entityId: id, description: `Đã kết nối Google Drive cho ${target.name}.`, metadata: { provider: 'GOOGLE_DRIVE' } as any });
+    return { success: true, message: 'Đã kết nối Google Drive thành công.' };
+  }
+
   async overview() {
-    const [latest, running, failed24h, totalBytes, pendingRestores, lastFailedJob, pgDumpOk, pgRestoreOk, settings, storageOverview] = await Promise.all([
+    const settings = await this.getSettings();
+    const [latest, running, failed24h, totalBytes, pendingRestores, lastFailedJob, pgDumpOk, pgRestoreOk, storageOverview] = await Promise.all([
       this.prisma.backupJob.findFirst({ where: { status: BackupJobStatus.SUCCEEDED }, orderBy: { completedAt: 'desc' } }),
       this.prisma.backupJob.count({ where: { status: { in: [BackupJobStatus.QUEUED, BackupJobStatus.RUNNING, BackupJobStatus.VERIFYING] } } }),
       this.prisma.backupJob.count({
@@ -190,14 +381,13 @@ export class BackupService {
       }),
       this.checkToolAvailable('pg_dump'),
       this.checkToolAvailable('pg_restore'),
-      this.getSettings(),
       this.storage.getStorageStatusOverview(),
     ]);
 
     const ageHours = latest?.completedAt ? (Date.now() - latest.completedAt.getTime()) / 3_600_000 : Infinity;
     const status = failed24h > 0 || ageHours > 26 ? 'WARNING' : latest ? 'HEALTHY' : 'ERROR';
     const isWorkerEnabled = process.env.BACKUP_WORKER_ENABLED === 'true';
-    const isLocal = !process.env.BACKUP_STORAGE_BUCKET;
+    const isLocal = storageOverview.primary.provider === 'LOCAL';
 
     return {
       status,
@@ -216,11 +406,12 @@ export class BackupService {
         lastErrorAt: lastFailedJob?.createdAt ? lastFailedJob.createdAt.toISOString() : null,
       },
       storage: {
-        provider: isLocal ? 'LOCAL' : 'S3',
+        provider: storageOverview.primary.provider,
         isLocal,
         dualStorageEnabled: storageOverview.dualStorageEnabled,
         primary: storageOverview.primary,
         secondary: storageOverview.secondary,
+        targets: storageOverview.targets,
         warning: !storageOverview.dualStorageEnabled && isLocal ? 'Backup hiện chỉ lưu tại 1 vị trí local, chưa kích hoạt kho lưu trữ dự phòng thứ 2.' : null,
       },
       tools: {

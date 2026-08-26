@@ -1,276 +1,173 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { DeleteObjectsCommand, GetObjectCommand, HeadObjectCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { createReadStream } from 'node:fs';
-import { mkdir, readFile, rm, writeFile, stat } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { createStorageAdapter } from './backup-storage.adapters';
+import { BackupStorageTarget } from './backup-storage.types';
+
+export interface StorageStatusItem {
+  id: string;
+  name: string;
+  provider: string;
+  role: 'PRIMARY' | 'MIRROR';
+  path: string;
+  isAvailable: boolean;
+  status: 'ONLINE' | 'STANDBY' | 'ERROR';
+  message?: string;
+  lastWriteAt?: string;
+  lastWriteStatus?: 'SUCCESS' | 'ERROR';
+  lastWriteMessage?: string;
+}
 
 export interface StorageStatusOverview {
   dualStorageEnabled: boolean;
-  primary: {
-    name: string;
-    type: 'LOCAL' | 'S3';
-    path: string;
-    isAvailable: boolean;
-    status: 'ONLINE' | 'ERROR';
-  };
-  secondary: {
-    name: string;
-    type: 'LOCAL_MIRROR';
-    path: string;
-    isAvailable: boolean;
-    status: 'ONLINE' | 'STANDBY' | 'ERROR';
-  };
+  primary: StorageStatusItem;
+  secondary: StorageStatusItem;
+  targets: StorageStatusItem[];
 }
 
 @Injectable()
 export class BackupStorageService {
   private readonly logger = new Logger(BackupStorageService.name);
-  private readonly bucket = process.env.BACKUP_STORAGE_BUCKET || '';
-  private readonly prefix = (process.env.BACKUP_STORAGE_PREFIX || 'exam-system').replace(/^\/+|\/+$/g, '');
-  
-  // Kho lưu trữ chính (Primary Location)
-  private localRoot = process.env.BACKUP_LOCAL_ROOT || join(process.cwd(), 'backup-runtime', 'primary');
-  
-  // Kho lưu trữ dự phòng thứ 2 (Secondary / Mirror Replica Location)
-  private secondaryRoot = process.env.BACKUP_SECONDARY_ROOT || join(process.cwd(), 'backup-runtime', 'mirror_backup');
+  private readonly namespace = (process.env.BACKUP_STORAGE_PREFIX || 'exam-system').replace(/^\/+|\/+$/g, '');
   private dualStorageEnabled = true;
+  private targets: BackupStorageTarget[] = this.legacyTargets();
+  private readonly lastWrites = new Map<string, { at: string; status: 'SUCCESS' | 'ERROR'; message: string }>();
 
-  private readonly client = this.bucket
-    ? new S3Client({
+  private legacyTargets(): BackupStorageTarget[] {
+    const now = new Date().toISOString();
+    const bucket = process.env.BACKUP_STORAGE_BUCKET?.trim();
+    const primary: BackupStorageTarget = bucket ? {
+      id: 'legacy-s3-primary', name: 'Kho S3 chính', provider: 'S3', role: 'PRIMARY', enabled: true,
+      config: {
         endpoint: process.env.BACKUP_STORAGE_ENDPOINT || undefined,
-        region: process.env.BACKUP_STORAGE_REGION || 'us-east-1',
+        region: process.env.BACKUP_STORAGE_REGION || 'us-east-1', bucket, prefix: this.namespace,
+        accessKeyId: process.env.BACKUP_STORAGE_ACCESS_KEY || undefined,
+        secretAccessKey: process.env.BACKUP_STORAGE_SECRET_KEY || undefined,
         forcePathStyle: process.env.BACKUP_STORAGE_FORCE_PATH_STYLE === 'true',
-        credentials: process.env.BACKUP_STORAGE_ACCESS_KEY && process.env.BACKUP_STORAGE_SECRET_KEY
-          ? { accessKeyId: process.env.BACKUP_STORAGE_ACCESS_KEY, secretAccessKey: process.env.BACKUP_STORAGE_SECRET_KEY }
-          : undefined,
-      })
-    : null;
+        serverSideEncryption: process.env.BACKUP_STORAGE_SSE === 'AES256',
+      }, createdAt: now, updatedAt: now,
+    } : {
+      id: 'legacy-local-primary', name: 'Kho local chính', provider: 'LOCAL', role: 'PRIMARY', enabled: true,
+      config: { path: process.env.BACKUP_LOCAL_ROOT || join(process.cwd(), 'backup-runtime', 'primary'), prefix: this.namespace },
+      createdAt: now, updatedAt: now,
+    };
+    return [primary, {
+      id: 'legacy-local-mirror', name: 'Kho local dự phòng', provider: 'LOCAL', role: 'MIRROR', enabled: true,
+      config: { path: process.env.BACKUP_SECONDARY_ROOT || join(process.cwd(), 'backup-runtime', 'mirror_backup'), prefix: this.namespace },
+      createdAt: now, updatedAt: now,
+    }];
+  }
+
+  getLegacyTargets() { return this.legacyTargets(); }
+  setTargets(targets: BackupStorageTarget[]) { this.targets = targets.length ? targets : this.legacyTargets(); }
+  getTargets() { return this.targets.map((target) => ({ ...target, config: { ...target.config } })); }
 
   setSecondaryPath(path: string) {
-    if (path && path.trim()) {
-      this.secondaryRoot = path.trim();
-    }
+    const target = this.targets.find((item) => item.provider === 'LOCAL' && item.role === 'MIRROR');
+    if (target && path?.trim()) target.config.path = path.trim();
   }
 
   setPrimaryPath(path: string) {
-    if (!this.bucket && path && path.trim()) {
-      this.localRoot = path.trim();
-    }
+    const target = this.targets.find((item) => item.provider === 'LOCAL' && item.role === 'PRIMARY');
+    if (target && path?.trim()) target.config.path = path.trim();
   }
 
-  setDualStorageEnabled(enabled: boolean) {
-    this.dualStorageEnabled = enabled;
-  }
+  setDualStorageEnabled(enabled: boolean) { this.dualStorageEnabled = enabled; }
 
   getPrimaryPath() {
-    if (this.bucket) return `s3://${this.bucket}/${this.prefix}`;
-    const cwd = process.cwd();
-    if (this.localRoot.startsWith(cwd)) {
-      return this.localRoot.slice(cwd.length).replace(/^[\\\/]+/, '').replaceAll('\\', '/');
-    }
-    return this.localRoot.replaceAll('\\', '/');
+    const target = this.targets.find((item) => item.role === 'PRIMARY') || this.targets[0];
+    try { return target ? createStorageAdapter(target).displayPath() : ''; } catch { return target?.config.path || ''; }
   }
 
   getSecondaryPath() {
-    const cwd = process.cwd();
-    if (this.secondaryRoot.startsWith(cwd)) {
-      return this.secondaryRoot.slice(cwd.length).replace(/^[\\\/]+/, '').replaceAll('\\', '/');
-    }
-    return this.secondaryRoot.replaceAll('\\', '/');
+    const target = this.targets.find((item) => item.role === 'MIRROR');
+    try { return target ? createStorageAdapter(target).displayPath() : ''; } catch { return target?.config.path || ''; }
   }
 
-  isDualStorageActive() {
-    return this.dualStorageEnabled;
+  isDualStorageActive() { return this.dualStorageEnabled; }
+  key(...parts: string[]) { return [this.namespace, ...parts].filter(Boolean).join('/'); }
+
+  private activeTargets() {
+    return this.targets
+      .filter((target) => target.enabled && (target.role === 'PRIMARY' || this.dualStorageEnabled))
+      .sort((a, b) => a.role === b.role ? 0 : a.role === 'PRIMARY' ? -1 : 1);
   }
 
-  key(...parts: string[]) {
-    return [this.prefix, ...parts].filter(Boolean).join('/');
-  }
+  isConfigured() { return this.activeTargets().some((target) => target.role === 'PRIMARY'); }
 
-  isConfigured() {
-    return Boolean(this.client && this.bucket) || Boolean(this.localRoot);
-  }
-
-  /**
-   * Ghi dữ liệu đồng thời vào Kho chính và Kho dự phòng (nếu bật Dual Storage)
-   */
   async put(key: string, body: Buffer | string, contentType = 'application/octet-stream') {
-    let primarySuccess = false;
-
-    // 1. Ghi vào Kho lưu trữ chính (Primary)
-    if (this.client && this.bucket) {
-      await this.client.send(new PutObjectCommand({
-        Bucket: this.bucket,
-        Key: key,
-        Body: body,
-        ContentType: contentType,
-        ServerSideEncryption: process.env.BACKUP_STORAGE_SSE === 'AES256' ? 'AES256' : undefined,
-      }));
-      primarySuccess = true;
-    } else {
-      const target = join(this.localRoot, key.replaceAll('/', '\\'));
-      await mkdir(dirname(target), { recursive: true });
-      await writeFile(target, body);
-      primarySuccess = true;
-    }
-
-    // 2. Ghi song song vào Kho lưu trữ dự phòng thứ 2 (Secondary Mirror)
-    if (this.dualStorageEnabled && this.secondaryRoot) {
-      try {
-        const mirrorTarget = join(this.secondaryRoot, key.replaceAll('/', '\\'));
-        await mkdir(dirname(mirrorTarget), { recursive: true });
-        await writeFile(mirrorTarget, body);
-      } catch (err: any) {
-        this.logger.warn(`Không thể ghi vào kho lưu trữ dự phòng (${this.secondaryRoot}): ${err.message}`);
-        // Nếu primary thành công thì không throw để không ngắt luồng sao lưu
-        if (!primarySuccess) throw err;
-      }
-    }
-  }
-
-  /**
-   * Ghi file đồng thời vào Kho chính và Kho dự phòng
-   */
-  async putFile(key: string, path: string, contentType = 'application/octet-stream') {
-    const fileBuffer = await readFile(path);
-    await this.put(key, fileBuffer, contentType);
-  }
-
-  /**
-   * Đọc dữ liệu: Ưu tiên Kho chính, tự động Failover sang Kho dự phòng nếu Kho chính lỗi
-   */
-  async get(key: string): Promise<Buffer> {
-    // Thử đọc từ Kho chính
+    const targets = this.activeTargets();
+    const primary = targets.filter((target) => target.role === 'PRIMARY');
+    if (primary.length !== 1) throw new Error('Cấu hình backup phải có đúng một kho chính đang hoạt động.');
     try {
-      if (this.client && this.bucket) {
-        const response = await this.client.send(new GetObjectCommand({ Bucket: this.bucket, Key: key }));
-        const body = response.Body;
-        if (!body) throw new Error(`Storage không trả về dữ liệu cho ${key}`);
-        return Buffer.from(await body.transformToByteArray());
+      await createStorageAdapter(primary[0]).put(key, body, contentType);
+      this.lastWrites.set(primary[0].id, { at: new Date().toISOString(), status: 'SUCCESS', message: `Đã ghi ${key}.` });
+    } catch (error: any) {
+      this.lastWrites.set(primary[0].id, { at: new Date().toISOString(), status: 'ERROR', message: error?.message || 'Ghi dữ liệu thất bại.' });
+      throw error;
+    }
+    for (const target of targets.filter((item) => item.role === 'MIRROR')) {
+      try {
+        await createStorageAdapter(target).put(key, body, contentType);
+        this.lastWrites.set(target.id, { at: new Date().toISOString(), status: 'SUCCESS', message: `Đã ghi ${key}.` });
+      } catch (error: any) {
+        this.lastWrites.set(target.id, { at: new Date().toISOString(), status: 'ERROR', message: error?.message || 'Ghi dữ liệu thất bại.' });
+        this.logger.warn(`Không thể ghi vào kho phụ ${target.name}: ${error?.message || error}`);
       }
-      return await readFile(join(this.localRoot, key.replaceAll('/', '\\')));
-    } catch (primaryError: any) {
-      this.logger.warn(`Kho chính không thể đọc ${key}: ${primaryError.message}. Kích hoạt đọc dự phòng từ Kho thứ 2...`);
-      
-      // Failover sang Kho lưu trữ dự phòng (Secondary Mirror)
-      if (this.dualStorageEnabled && this.secondaryRoot) {
-        try {
-          const mirrorPath = join(this.secondaryRoot, key.replaceAll('/', '\\'));
-          const buffer = await readFile(mirrorPath);
-          this.logger.log(`Phục hồi đọc thành công từ Kho lưu trữ dự phòng (${mirrorPath})!`);
-          return buffer;
-        } catch (secondaryError: any) {
-          throw new Error(`Cả 2 kho lưu trữ (Chính & Dự phòng) đều không thể đọc dữ liệu ${key}: ${primaryError.message} / ${secondaryError.message}`);
-        }
-      }
-      throw primaryError;
     }
   }
 
-  /**
-   * Kiểm tra tồn tại ở Kho chính hoặc Kho dự phòng
-   */
-  async exists(key: string): Promise<boolean> {
-    if (this.client && this.bucket) {
-      try {
-        await this.client.send(new HeadObjectCommand({ Bucket: this.bucket, Key: key }));
-        return true;
-      } catch {
-        // Fallback check secondary
-      }
-    } else {
-      try {
-        await readFile(join(this.localRoot, key.replaceAll('/', '\\')));
-        return true;
-      } catch {
-        // Fallback check secondary
-      }
-    }
+  async putFile(key: string, path: string, contentType = 'application/octet-stream') {
+    await this.put(key, await readFile(path), contentType);
+  }
 
-    if (this.dualStorageEnabled && this.secondaryRoot) {
-      try {
-        await readFile(join(this.secondaryRoot, key.replaceAll('/', '\\')));
-        return true;
-      } catch {
-        return false;
-      }
+  async get(key: string): Promise<Buffer> {
+    const errors: string[] = [];
+    for (const target of this.activeTargets()) {
+      try { return await createStorageAdapter(target).get(key); }
+      catch (error: any) { errors.push(`${target.name}: ${error?.message || error}`); }
+    }
+    throw new Error(`Không thể đọc ${key} từ bất kỳ kho lưu trữ nào. ${errors.join(' | ')}`);
+  }
+
+  async exists(key: string) {
+    for (const target of this.activeTargets()) {
+      try { if (await createStorageAdapter(target).exists(key)) return true; } catch {}
     }
     return false;
   }
 
-  /**
-   * Xóa prefix ở cả Kho chính và Kho dự phòng (dọn dẹp retention)
-   */
   async removePrefix(prefix: string) {
-    // Xóa kho chính
-    try {
-      if (this.client && this.bucket) {
-        let continuationToken: string | undefined;
-        do {
-          const listed = await this.client.send(new ListObjectsV2Command({ Bucket: this.bucket, Prefix: prefix, ContinuationToken: continuationToken }));
-          const objects = (listed.Contents || []).filter((item) => item.Key).map((item) => ({ Key: item.Key! }));
-          if (objects.length) await this.client.send(new DeleteObjectsCommand({ Bucket: this.bucket, Delete: { Objects: objects, Quiet: true } }));
-          continuationToken = listed.IsTruncated ? listed.NextContinuationToken : undefined;
-        } while (continuationToken);
-      } else {
-        const root = join(this.localRoot, prefix.replaceAll('/', '\\'));
-        await rm(root, { recursive: true, force: true });
-      }
-    } catch (err: any) {
-      this.logger.warn(`Lỗi xóa prefix ở kho chính: ${err.message}`);
-    }
-
-    // Xóa kho dự phòng
-    if (this.dualStorageEnabled && this.secondaryRoot) {
-      try {
-        const mirrorRoot = join(this.secondaryRoot, prefix.replaceAll('/', '\\'));
-        await rm(mirrorRoot, { recursive: true, force: true });
-      } catch (err: any) {
-        this.logger.warn(`Lỗi xóa prefix ở kho dự phòng: ${err.message}`);
-      }
+    for (const target of this.activeTargets()) {
+      try { await createStorageAdapter(target).removePrefix(prefix); }
+      catch (error: any) { this.logger.warn(`Không thể dọn dữ liệu tại ${target.name}: ${error?.message || error}`); }
     }
   }
 
-  /**
-   * Lấy thông tin trạng thái chi tiết của cả 2 kho lưu trữ
-   */
+  async testTarget(target: BackupStorageTarget) { return createStorageAdapter(target).test(); }
+
+  private async statusFor(target: BackupStorageTarget): Promise<StorageStatusItem> {
+    const lastWrite = this.lastWrites.get(target.id);
+    if (!target.enabled || (target.role === 'MIRROR' && !this.dualStorageEnabled)) {
+      return { id: target.id, name: target.name, provider: target.provider, role: target.role, path: target.config.path || target.config.bucket || target.config.folderId || '', isAvailable: false, status: 'STANDBY', message: 'Đang tạm dừng.', lastWriteAt: lastWrite?.at, lastWriteStatus: lastWrite?.status, lastWriteMessage: lastWrite?.message };
+    }
+    try {
+      const adapter = createStorageAdapter(target);
+      const message = await adapter.test();
+      return { id: target.id, name: target.name, provider: target.provider, role: target.role, path: adapter.displayPath(), isAvailable: true, status: 'ONLINE', message, lastWriteAt: lastWrite?.at, lastWriteStatus: lastWrite?.status, lastWriteMessage: lastWrite?.message };
+    } catch (error: any) {
+      return { id: target.id, name: target.name, provider: target.provider, role: target.role, path: target.config.path || target.config.bucket || target.config.folderId || '', isAvailable: false, status: 'ERROR', message: error?.message || 'Không thể kết nối.', lastWriteAt: lastWrite?.at, lastWriteStatus: lastWrite?.status, lastWriteMessage: lastWrite?.message };
+    }
+  }
+
   async getStorageStatusOverview(): Promise<StorageStatusOverview> {
-    const isS3 = Boolean(this.client && this.bucket);
-    let primaryOnline = true;
-    let secondaryOnline = true;
-
-    try {
-      if (!isS3) {
-        await mkdir(this.localRoot, { recursive: true });
-      }
-    } catch {
-      primaryOnline = false;
-    }
-
-    try {
-      if (this.dualStorageEnabled && this.secondaryRoot) {
-        await mkdir(this.secondaryRoot, { recursive: true });
-      }
-    } catch {
-      secondaryOnline = false;
-    }
-
+    const targets = await Promise.all(this.targets.map((target) => this.statusFor(target)));
+    const fallback: StorageStatusItem = { id: '', name: 'Chưa cấu hình', provider: 'LOCAL', role: 'MIRROR', path: '', isAvailable: false, status: 'STANDBY' };
     return {
       dualStorageEnabled: this.dualStorageEnabled,
-      primary: {
-        name: isS3 ? 'Cloud S3 Bucket' : 'Kho lưu trữ chính (Primary Disk)',
-        type: isS3 ? 'S3' : 'LOCAL',
-        path: isS3 ? `s3://${this.bucket}/${this.prefix}` : this.localRoot,
-        isAvailable: primaryOnline,
-        status: primaryOnline ? 'ONLINE' : 'ERROR',
-      },
-      secondary: {
-        name: 'Kho lưu trữ dự phòng (Secondary Mirror)',
-        type: 'LOCAL_MIRROR',
-        path: this.secondaryRoot,
-        isAvailable: secondaryOnline,
-        status: !this.dualStorageEnabled ? 'STANDBY' : secondaryOnline ? 'ONLINE' : 'ERROR',
-      },
+      primary: targets.find((item) => item.role === 'PRIMARY') || { ...fallback, role: 'PRIMARY' },
+      secondary: targets.find((item) => item.role === 'MIRROR') || fallback,
+      targets,
     };
   }
 }

@@ -171,15 +171,19 @@ Restore không nên đặt thành nút một-click trong giao diện ở giai đ
 
 ## 10. Chức năng backup trong hệ thống
 
-Giai đoạn đầu nên có màn hình admin chỉ để theo dõi:
+Hệ thống hiện có màn hình admin để theo dõi và vận hành:
 
 - Lần backup thành công gần nhất.
 - Database/file backup gần nhất.
 - Kích thước, checksum, retention và trạng thái verify.
 - Cảnh báo backup quá hạn hoặc thiếu uploads.
-- Link tới runbook vận hành, không đưa secret hoặc đường dẫn storage nhạy cảm ra client.
+- Cấu hình lịch chạy, số bản giữ lại và bật/tắt kho dự phòng.
+- Quản lý nhiều nơi lưu gồm Local/NAS, Cloudflare R2, Backblaze B2, Amazon S3, Wasabi, MinIO và Google Drive.
+- Chọn đúng một kho chính và nhiều kho dự phòng; kiểm tra trạng thái từng kết nối.
+- Thông tin bí mật được mã hóa bằng AES-256-GCM trong cấu hình runtime và chỉ trả cờ `đã cấu hình` cho frontend.
+- Google Drive kết nối qua OAuth; R2/B2/S3/Wasabi/MinIO dùng adapter S3-compatible.
 
-Nút “Tạo backup ngay” chỉ tạo job bất đồng bộ có audit log và giới hạn tần suất. Nút restore để ngoài UI, do vận hành thực hiện theo runbook.
+Nút “Tạo backup ngay” tạo job bất đồng bộ có audit log và giới hạn tần suất. Restore có quy trình yêu cầu, phê duyệt và xác nhận nhạy cảm; không bỏ qua runbook production.
 
 ## 11. Lộ trình triển khai
 
@@ -228,6 +232,14 @@ Nút “Tạo backup ngay” chỉ tạo job bất đồng bộ có audit log v�
 - Thời hạn lưu trữ theo quy định của đơn vị, ngân sách storage/egress và người chịu trách nhiệm restore.
 - Chính sách ẩn danh dữ liệu khi restore staging, chính sách quản lý khóa và quy trình xử lý hai người cho restore production.
 
-## 14. Phạm vi chưa triển khai
+## 14. Trạng thái triển khai và phần cần nghiệm thu môi trường
 
-Đây là kế hoạch phân tích. Chưa tạo job backup, chưa upload archive ra storage ngoài, chưa restore database thật và chưa thêm màn hình admin cho backup. Các thao tác đó cần chốt môi trường production, nơi lưu trữ, retention và quyền vận hành trước khi thực hiện.
+Đã triển khai job backup database + uploads + manifest/checksum, restore có kiểm soát, lịch tự động, retention, giao diện quản trị và adapter đa nhà cung cấp. Cấu hình cũ từ `.env`/hai đường dẫn local được tự chuyển sang danh sách nơi lưu khi đọc lần đầu để giữ tương thích.
+
+Các phần còn phụ thuộc môi trường và phải được người vận hành nghiệm thu bằng tài khoản thật:
+
+- Tạo bucket/tài khoản và khóa truy cập tại nhà cung cấp đã chọn.
+- Với Google Drive, tạo OAuth Client trên Google Cloud và khai báo redirect URI `/admin/settings/google-drive/callback`.
+- Chạy “Kiểm tra kết nối”, tạo một backup thử, đối chiếu đủ `database.dump`, `manifest.json` và `uploads` tại từng nơi lưu.
+- Thực hiện restore drill vào staging trước khi cho phép dùng production.
+- Cấu hình versioning/immutability/lifecycle trực tiếp tại nhà cung cấp; ứng dụng không tự thay thế chính sách bảo vệ phía storage.
