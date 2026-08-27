@@ -14,9 +14,8 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { getSmartMonogram } from '../../lib/format';
 import { Button } from '../../components/ui/Button';
-import { StatusBadge } from '../../components/common/StatusBadge';
 import { Teacher, Department, User } from '../../types';
-import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, Info, ChevronDown, FileSpreadsheet, UserCheck } from 'lucide-react';
+import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, ChevronDown, FileSpreadsheet, UserCheck } from 'lucide-react';
 
 import { TeacherHeader } from '../../components/teachers/TeacherHeader';
 import { TeacherKPICards } from '../../components/teachers/TeacherKPICards';
@@ -630,13 +629,6 @@ export default function TeachersPage() {
         badge={editingTeacher ? 'Chỉnh sửa' : 'Tạo mới'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          {!editingTeacher && (
-            <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl text-type-helper text-blue-700 font-medium flex items-start gap-2">
-              <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-              <span><strong>Lưu ý:</strong> Tài khoản và mật khẩu mặc định được khởi tạo là <strong>Mã giảng viên</strong> (Ví dụ: GV001).</span>
-            </div>
-          )}
-
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-type-body font-medium text-slate-500 mb-1">Mã giảng viên</label>
@@ -715,15 +707,17 @@ export default function TeachersPage() {
             {!editingTeacher ? (
               <Button
                 type="button"
-                variant="secondary"
-                size="md"
+                variant="ghost"
+                size="icon-lg"
                 onClick={() => {
                   setIsModalOpen(false);
                   setIsImportModalOpen(true);
                 }}
-                leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
+                title="Nhập nhanh từ file Excel / CSV"
+                aria-label="Nhập nhanh từ file Excel / CSV"
+                className="text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:text-slate-400 dark:hover:text-blue-400 dark:hover:bg-slate-800"
               >
-                Nhập từ CSV
+                <FileSpreadsheet className="h-5 w-5" strokeWidth={1.75} />
               </Button>
             ) : (
               <div />

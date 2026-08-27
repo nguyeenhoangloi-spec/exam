@@ -746,15 +746,17 @@ export default function StudentsPage() {
             {!editingStudent ? (
               <Button
                 type="button"
-                variant="secondary"
-                size="md"
+                variant="ghost"
+                size="icon-lg"
                 onClick={() => {
                   setIsModalOpen(false);
                   setIsImportModalOpen(true);
                 }}
-                leftIcon={<FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
+                title="Nhập nhanh từ file Excel / CSV"
+                aria-label="Nhập nhanh từ file Excel / CSV"
+                className="text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:text-slate-400 dark:hover:text-blue-400 dark:hover:bg-slate-800"
               >
-                Nhập từ CSV
+                <FileSpreadsheet className="h-5 w-5" strokeWidth={1.75} />
               </Button>
             ) : (
               <div />

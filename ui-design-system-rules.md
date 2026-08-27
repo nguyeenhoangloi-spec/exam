@@ -682,8 +682,8 @@ Vì người dùng đã ở trong ngữ cảnh trang quản lý của đối tư
   - ✅ **`Phê duyệt`** / ❌ **`Từ chối`**
 
 ### 19.2 Style Quy Chuẩn cho Dropdown Menu Item
-- Item bình thường: `flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[14.5px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer select-none`
-- Item Danger: `flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[14.5px] font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer select-none`
+- Item bình thường: `flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-type-body font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition cursor-pointer select-none`
+- Item Danger (Xóa/Hủy): Nền trong suốt phẳng sạch sẽ, không dùng nền đỏ/hồng tĩnh hay khi hover (`hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-rose-600 dark:hover:text-rose-400 group`). Chữ & Icon bình thường màu trung tính (`text-slate-700 dark:text-slate-200`, icon `text-slate-400 dark:text-slate-500`), khi hover chuyển sang đỏ nổi bật (`group-hover:text-rose-600`).
 - Đường kẻ phân cách trước nút Xóa: `<div className="my-1 border-t border-slate-100 dark:border-slate-800" />`
 
 ### 19.3 Tiêu Đề Modal Xác Nhận (ConfirmModal)
