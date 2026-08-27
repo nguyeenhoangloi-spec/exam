@@ -8,7 +8,7 @@ node_modules/
 .pnp.js
 
 # ==========================================
-# 2. Production & Build Outputs
+# 2. Production & Build Outputs / Caches
 # ==========================================
 dist/
 build/
@@ -16,12 +16,18 @@ out/
 .next/
 .next*
 .swc/
+.turbo/
+.parcel-cache/
+.cache/
 *.tsbuildinfo
+tsconfig.tsbuildinfo
 next-env.d.ts
 
-# Backend build outputs
+# Backend build outputs & runtime uploads
 backend/dist/
 backend/uploads/
+uploads/
+frontend/public/uploads/
 
 # ==========================================
 # 3. Environment & Secret Variables
@@ -35,6 +41,13 @@ backend/uploads/
 backend/.env
 frontend/.env.local
 frontend/.env.*.local
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+*.token
 
 # Always keep example configuration files
 !/.env.example
@@ -46,35 +59,56 @@ frontend/.env.*.local
 # ==========================================
 logs/
 *.log
+*.log.*
+.*.log
+.*.log.*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 backend-dev.*.log
+frontend-dev.*.log
 
 # ==========================================
-# 5. Testing & Verification Artifacts
+# 5. Testing, Auditing & Verification Artifacts
 # ==========================================
 coverage/
 .nyc_output/
 .edge-*/
 .ui-verify*
 .temp*
+playwright-report/
+test-results/
+blob-report/
 backend/load-tests/*.local.json
 backend/load-tests/results/
+*.lcov
 
 # ==========================================
-# 6. Database & Local Backups
+# 6. Database Backups, Dumps & Snapshot Mirrors
 # ==========================================
 backend/prisma/dev.db
 backend/prisma/*.sqlite*
 backend/prisma/data-export/
+backend/online-full.sql
 backup-runtime/
 backup-staging-uploads/
-database-backups/*.sql
+database-backups/
+mirror_backup/
+*.dump
+*.backup
+*.bak
+*.sql.gz
 
 # ==========================================
-# 7. Editor & Operating System Artifacts
+# 7. AI Agent Toolkit & Internal Brain
+# ==========================================
+.agent/
+.agent*
+.gemini/
+
+# ==========================================
+# 8. Editor, OS & Temporary System Artifacts
 # ==========================================
 .vscode/
 .idea/
@@ -93,3 +127,10 @@ database-backups/*.sql
 ehthumbs.db
 Thumbs.db
 desktop.ini
+NUL
+nul
+
+# Scratch & Temporary Folders
+tmp/
+temp/
+scratch/
