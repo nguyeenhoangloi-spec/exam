@@ -606,8 +606,7 @@ for (const interactivePrimitive of [
 }
 
 if (!/rounded-lg/.test(identifierBadge)
-  || !/px-2 py-0\.5/.test(identifierBadge)
-  || !/(?:text-\[13px\]|text-type-helper)/.test(identifierBadge)
+  || !/(?:text-\[13px\]|text-\[15px\]|text-type-helper|text-type-body)/.test(identifierBadge)
   || !/font-medium/.test(identifierBadge)
   || !/tabular-nums/.test(identifierBadge)
   || !/whitespace-nowrap/.test(identifierBadge)

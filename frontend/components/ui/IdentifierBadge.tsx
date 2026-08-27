@@ -7,6 +7,7 @@ type IdentifierBadgeProps = {
   tone?: IdentifierBadgeTone;
   className?: string;
   title?: string;
+  size?: 'md' | 'sm';
 };
 
 const toneClasses: Record<IdentifierBadgeTone, string> = {
@@ -15,13 +16,22 @@ const toneClasses: Record<IdentifierBadgeTone, string> = {
   inverse: 'text-white',
 };
 
-/** Shared visual treatment for short technical identifiers in the Web UI (Clean Deep Ink style). */
-export function IdentifierBadge({ children, tone = 'neutral', className = '', title }: IdentifierBadgeProps) {
+/** Shared visual treatment for technical identifiers in the Web UI (Clean Deep Ink style, 15px table data standard). */
+export function IdentifierBadge({
+  children,
+  tone = 'neutral',
+  size = 'md',
+  className = '',
+  title,
+}: IdentifierBadgeProps) {
+  const sizeClass = size === 'sm' ? 'text-type-helper' : 'text-type-body';
+
   return (
     <span
       title={title}
       className={[
-        'inline-flex min-w-0 max-w-full items-center rounded-lg px-2 py-0.5 text-type-helper font-medium tabular-nums whitespace-nowrap select-all',
+        'inline-flex min-w-0 max-w-full items-center rounded-lg font-medium tabular-nums whitespace-nowrap select-all',
+        sizeClass,
         toneClasses[tone],
         className,
       ].join(' ')}
@@ -30,4 +40,3 @@ export function IdentifierBadge({ children, tone = 'neutral', className = '', ti
     </span>
   );
 }
-

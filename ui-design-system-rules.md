@@ -632,7 +632,7 @@ Với nhãn viết trực tiếp chưa thể dùng `StatusBadge`, phải khai b�
 - **Kết quả:** Đã công bố (`PUBLISHED`), Chưa công bố (`UNPUBLISHED`), Đạt (`PASSED`), Không đạt (`NOT_PASSED`/`FAILED`).
 
 ### 18.4 Tuyệt Đối KHÔNG DÙNG Badge Cho
-- **Mã kỹ thuật:** Mã `KT-1`, mã sinh viên `SV...`, mã câu hỏi `Q...` ➔ Dùng `IdentifierBadge` với `rounded-lg`, Inter, `font-medium`, `tabular-nums`; không gắn class `ui-pill`.
+- **Mã kỹ thuật:** Mã `KT-1`, mã sinh viên `SV...`, mã ca thi `LCT...`, mã câu hỏi `Q...` ➔ Dùng `IdentifierBadge` với Inter, `tabular-nums`, màu Deep Ink (`text-slate-900 dark:text-slate-100`); không gắn class `ui-pill`. Khi ở dạng phẳng trong cột bảng, áp dụng cỡ chữ chuẩn **15px** (`text-type-body`) để cân đối với hàng dữ liệu, không dùng khung hộp xám 13px gây lọt thỏm.
 - **Tên khoa, tên môn học:** Dùng typography thường (`text-slate-900` / `text-slate-700`).
 - **Số lượng, điểm số, ngày tháng:** Dùng text thường kèm `tabular-nums`.
 - **Nút hành động:** Bắt buộc dùng component `Button`.
@@ -645,10 +645,10 @@ Với nhãn viết trực tiếp chưa thể dùng `StatusBadge`, phải khai b�
 
 ### 18.6 Phân biệt hình dạng bắt buộc
 
-| Thành phần | Bo góc | Ghi chú |
+| Thành phần | Bo góc | Cỡ chữ & Ghi chú |
 |---|---|---|
-| Status pill, filter chip, tab count | `rounded-full` | Dùng `ui-pill`, 13px/500 |
-| Identifier badge, mã kỹ thuật | `rounded-lg` | Không dùng `ui-pill`; dùng `tabular-nums` |
+| Status pill, filter chip, tab count | `rounded-full` | Dùng `ui-pill`, 13px (`text-type-helper`), font-medium (500) |
+| Identifier badge, mã kỹ thuật phẳng | `rounded-lg` | Cột bảng: 15px (`text-type-body`); inline phụ: 13px (`text-type-helper`); `tabular-nums`, Deep Ink |
 | Button, input, select, search, dropdown trigger | `rounded-xl` | Control tương tác, chữ 15px |
 | Card, modal, drawer panel | `rounded-2xl` | Container nội dung |
 
@@ -698,7 +698,7 @@ Nhằm đảm bảo giao diện luôn mạch lạc, phẳng, thoáng đãng và 
 
 | Nhóm | Bản chất | Quy cách hiển thị chuẩn | Điều CẤM kỵ |
 |---|---|---|---|
-| **1. Mã định danh (Identifier)** | Mã kỹ thuật duy nhất: `GV017`, `SV2024001`, `KT-101`, `P201`, `Q-99` | Dùng `<IdentifierBadge tone="neutral">GV017</IdentifierBadge>`<br>• Bo góc **`rounded-lg` (8px)**<br>• Nền xám nhạt trung tính (`bg-slate-100 dark:bg-slate-800`), font số `tabular-nums` | ❌ **CẤM** nhét cả cụm `"Mã cán bộ:"`, `"Mã SV:"` vào trong badge.<br>❌ **CẤM** dùng `rounded-full` hoặc gắn chấm tròn `●`. |
+| **1. Mã định danh (Identifier)** | Mã kỹ thuật duy nhất: `LCT000122`, `GV017`, `SV2024001`, `KT-101`, `P201`, `Q-99` | Dùng `<IdentifierBadge tone="neutral">LCT000122</IdentifierBadge>`<br>• Cột bảng phẳng: cỡ chữ **15px** (`text-type-body`), `font-medium` (500) hoặc `font-semibold` (600)<br>• Font số `tabular-nums`, màu Deep Ink (`text-slate-900 dark:text-slate-100`) | ❌ **CẤM** nhét cả cụm `"Mã cán bộ:"`, `"Mã SV:"` vào trong badge.<br>❌ **CẤM** dùng `rounded-full` hoặc gắn chấm tròn `●`.<br>❌ **CẤM** bọc khung nền xám nhỏ 13px gây lọt thỏm khi chuyển sang bố cục phẳng. |
 | **2. Trạng thái (Lifecycle Status)** | Tiến trình vòng đời: *Đã xác nhận, Chờ duyệt, Từ chối, Đang diễn ra, Đã khóa* | Dùng `<StatusBadge />`<br>• **Trong Bảng dữ liệu**: Bắt buộc dùng `variant="dot"` (`● Đã xác nhận`)<br>• **Trong Drawer / Card**: dùng `variant="pill"` (`rounded-full`, `ui-pill`) | ❌ **CẤM** dùng cho danh từ, vai trò hay chức danh cố định. |
 | **3. Vai trò / Chức danh (Role & Position)** | Phân công vai trò: *Giám thị 1 (Chính), Giám thị 2 (Phụ), Trưởng điểm* | **Typography phân cấp phẳng** (Typography-First):<br>• `Giám thị 1 (Chính)`: chữ `text-slate-900 dark:text-slate-100 font-semibold`<br>• `Giám thị 2 (Phụ)`: chữ `text-slate-600 dark:text-slate-400 font-normal` | ❌ **CẤM** gắn chấm `●` giả làm trạng thái.<br>❌ **CẤM** đóng khung hộp badge màu mè tranh chấp với cột Trạng thái. |
 | **4. Họ tên & Học hàm/Học vị** | Danh xưng & Tên: *ThS. Nguyễn Đức Thắng* | • Danh xưng gắn liền trước họ tên: `ThS. Nguyễn Đức Thắng`<br>• Thông tin phụ: dùng text `text-type-helper text-slate-500` (`Học vị: ThS`) | ❌ **CẤM** đóng khung badge cho tên hoặc học vị. |
