@@ -107,7 +107,7 @@ export function RegradeTable({
                       <div className="mt-0.5 flex items-center gap-1.5 whitespace-nowrap">
                         <IdentifierBadge tone="blue">{item.student.studentCode}</IdentifierBadge>
                         {item.student.class && (
-                          <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 truncate">
+                          <span className="table-meta text-type-helper font-normal text-slate-500 dark:text-slate-400 truncate">
                             · {item.student.class.code || item.student.class.name}
                           </span>
                         )}

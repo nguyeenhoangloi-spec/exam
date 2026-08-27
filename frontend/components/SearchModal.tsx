@@ -347,8 +347,26 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
   const listRef = useRef<HTMLDivElement>(null);
 
   const handleSelect = useCallback((href: string) => {
-    router.push(href);
     onClose();
+    if (href === '/profile') {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('open-account-settings', { detail: { tab: 'profile' } }));
+      }
+      return;
+    }
+    if (href === '/settings') {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('open-account-settings', { detail: { tab: 'appearance' } }));
+      }
+      return;
+    }
+    if (href === '/change-password') {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('open-account-settings', { detail: { tab: 'security' } }));
+      }
+      return;
+    }
+    router.push(href);
   }, [router, onClose]);
 
   const userRole = (user?.role || 'ADMIN') as Role;

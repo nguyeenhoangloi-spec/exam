@@ -1,291 +1,270 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
-  Bell,
-  ChevronDown,
-  ChevronUp,
-  ChevronRight,
-  LogOut,
   Menu,
-  User as UserIcon,
-  Settings,
-  Inbox,
-  Search,
-  CheckCheck,
-  Headphones,
   Sun,
   Moon,
+  Bell,
+  Search,
+  CheckCheck,
+  Inbox,
+  LogOut,
+  ChevronDown,
+  ChevronRight,
+  ChevronUp,
+  User as UserIcon,
+  Headphones,
   ArrowUpRight,
-  Eye,
 } from 'lucide-react';
-import { removeAuth } from '../lib/auth';
+import { removeAuth, getAuthUser } from '../lib/auth';
 import { User } from '../types';
 import { DynamicImage } from './ui/DynamicImage';
-import api from '../lib/api';
 import { ConfirmModal } from './ConfirmModal';
 import { SearchModal } from './SearchModal';
+import { AccountSettingsModal, AccountSettingsTab } from './AccountSettingsModal';
 
-interface HeaderProps {
-  user: User | null;
+export interface NotificationItem {
+  id: number;
+  title: string;
+  desc: string;
+  time: string;
+  type: 'info' | 'system' | 'exam';
+  href?: string;
+}
+
+export interface HeaderProps {
+  user?: User;
   title?: string;
-  collapsed: boolean;
+  collapsed?: boolean;
   onToggleSidebar?: () => void;
   onMenuClick?: () => void;
 }
 
-type OpenPanel = 'notifications' | 'account' | null;
-
-interface NotificationItem {
-  id: string;
-  title: string;
-  desc: string;
-  href?: string;
-}
-
-function getSmartMonogram(name?: string): string {
-  if (!name) return 'U';
-  const clean = name.replace(/^(TS\.|ThS\.|PGS\.|GS\.|ThS|TS|PGS|GS|Thầy|Cô|SV\.|SV)\s+/i, '').trim();
-  const words = clean.split(/\s+/).filter(Boolean);
-  if (words.length === 0) return 'U';
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
-  const firstChar = words[0][0];
-  const lastChar = words[words.length - 1][0];
-  return (firstChar + lastChar).toUpperCase();
-}
+const NOTIF_STORAGE_KEY = 'read_notifications_v1';
 
 export const Header: React.FC<HeaderProps> = ({
-  user,
-  collapsed,
+  user: initialUser,
+  collapsed = false,
   onMenuClick,
 }) => {
   const router = useRouter();
-  const pathname = usePathname();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [openPanel, setOpenPanel] = useState<OpenPanel>(null);
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setIsDark(document.documentElement.classList.contains('dark'));
-    }
-  }, []);
-
-  const toggleTheme = useCallback(() => {
-    setIsDark((prev) => {
-      const next = !prev;
-      document.documentElement.classList.toggle('dark', next);
-      localStorage.setItem('theme', next ? 'dark' : 'light');
-      return next;
-    });
-  }, []);
-
-  useEffect(() => {
-    const handleGlobalSearchKey = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setIsSearchOpen((prev) => !prev);
-      }
-    };
-    window.addEventListener('keydown', handleGlobalSearchKey);
-    return () => window.removeEventListener('keydown', handleGlobalSearchKey);
-  }, []);
-
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [openPanel, setOpenPanel] = useState<'notifications' | 'account' | null>(null);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [readNotificationIds, setReadNotificationIds] = useState<number[]>([]);
+  const [expandedNotifIds, setExpandedNotifIds] = useState<number[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-  const [expandedNotifIds, setExpandedNotifIds] = useState<string[]>([]);
-  const [readNotificationIds, setReadNotificationIds] = useState<string[]>(() => {
-    if (typeof window === 'undefined') return [];
-    try {
-      const saved = localStorage.getItem('read_notifications');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [accountModalTab, setAccountModalTab] = useState<AccountSettingsTab | null>(null);
 
-  const effectiveUnreadCount = Math.max(
-    0,
-    notifications.filter((n) => !readNotificationIds.includes(n.id)).length
-  );
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleMarkAllAsRead = async () => {
-    const allIds = notifications.map((n) => n.id);
-    setReadNotificationIds(allIds);
-    try {
-      localStorage.setItem('read_notifications', JSON.stringify(allIds));
-      await api.patch('/notifications/read-all').catch(() => { });
-    } catch { }
-  };
+  // Sync user from local storage
+  const syncUserFromStorage = useCallback(() => {
+    const authUser = getAuthUser();
+    setUser(authUser);
+  }, []);
 
-  const markAsRead = async (item: NotificationItem) => {
-    if (!readNotificationIds.includes(item.id)) {
-      const updated = [...readNotificationIds, item.id];
-      setReadNotificationIds(updated);
-      try {
-        localStorage.setItem('read_notifications', JSON.stringify(updated));
-        if (!isNaN(Number(item.id))) {
-          await api.patch(`/notifications/${item.id}/read`).catch(() => { });
-        }
-      } catch { }
-    }
-  };
-
-  const toggleExpandNotif = (id: string, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    setExpandedNotifIds((prev) =>
-      prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
-    );
-  };
-
-  const handleNotificationClick = async (item: NotificationItem) => {
-    await markAsRead(item);
-    const isLong = (item.desc || '').length > 90 || (item.desc || '').includes('\n');
-    if (isLong) {
-      toggleExpandNotif(item.id);
-    }
-  };
-
-  const handleNavigateDirect = async (item: NotificationItem, e: React.MouseEvent) => {
-    e.stopPropagation();
-    await markAsRead(item);
-    setOpenPanel(null);
-    if (item.href) {
-      router.push(item.href);
-    }
-  };
-
-  const displayName = user?.teacher?.fullName || user?.student?.fullName || user?.username || 'Admin';
-  const avatarUrl = user?.avatarUrl || user?.teacher?.avatarUrl || user?.student?.avatarUrl;
-  const roleCode = user?.role || 'ADMIN';
-  const displayRoleLabel =
-    roleCode === 'ADMIN' ? 'Quản trị viên' : roleCode === 'TEACHER' ? 'Giảng viên' : 'Sinh viên';
-
-  /* ── Load real notifications based on user role ── */
   useEffect(() => {
-    if (!user?.role) {
-      setNotifications([]);
-      return;
-    }
+    syncUserFromStorage();
+    const handleAuthChange = () => syncUserFromStorage();
+    window.addEventListener('auth-change', handleAuthChange);
+    return () => window.removeEventListener('auth-change', handleAuthChange);
+  }, [syncUserFromStorage]);
 
-    let isMounted = true;
-
-    const fetchRealNotifications = async () => {
-      try {
-        const notifList: NotificationItem[] = [];
-
-        // 1. Fetch persistent DB notifications from backend
-        try {
-          const dbNotifRes = await api.get('/notifications?limit=15');
-          const dbItems: any[] = dbNotifRes.data?.items || [];
-          for (const d of dbItems) {
-            notifList.push({
-              id: String(d.id),
-              title: d.title,
-              desc: d.message,
-              href: d.link || (user.role === 'STUDENT' ? '/student/exam-schedule' : user.role === 'TEACHER' ? '/teacher/assignments' : '/exam-schedules'),
-            });
-            if (d.isRead && !readNotificationIds.includes(String(d.id))) {
-              setReadNotificationIds((prev) => [...prev, String(d.id)]);
-            }
-          }
-        } catch {
-          // Fallback if db table empty
-        }
-
-        // 2. Fetch role-specific action notices
-        if (user.role === 'ADMIN') {
-          const res = await api.get('/questions/statistics').catch(() => null);
-          const pending = res?.data?.pendingCount || 0;
-          if (pending > 0) {
-            notifList.push({
-              id: 'pending-questions',
-              title: 'Cần duyệt câu hỏi mới',
-              desc: `Có ${pending} câu hỏi đang chờ duyệt trong ngân hàng.`,
-              href: '/question-bank?status=PENDING',
-            });
-          }
-        } else if (user.role === 'TEACHER') {
-          const res = await api.get('/teachers/my-assignments').catch(() => null);
-          const assignments: any[] = res?.data || [];
-          const unconfirmed = assignments.filter((a: { status: string }) => a.status !== 'CONFIRMED');
-          if (unconfirmed.length > 0) {
-            notifList.push({
-              id: 'unconfirmed-assignments',
-              title: 'Ca coi thi chờ xác nhận',
-              desc: `Thầy/Cô có ${unconfirmed.length} ca coi thi chưa xác nhận nhận ca.`,
-              href: '/teacher/assignments',
-            });
-          }
-        } else if (user.role === 'STUDENT') {
-          if (notifList.length === 0) {
-            const res = await api.get('/students/my-schedule').catch(() => null);
-            const schedules: any[] = res?.data || [];
-            if (schedules.length > 0) {
-              notifList.push({
-                id: 'student-schedule-1',
-                title: 'Lịch thi cá nhân',
-                desc: `Bạn có ${schedules.length} ca thi được sắp xếp trong học kỳ này.`,
-                href: '/student/exam-schedule',
-              });
-            }
-          }
-        }
-
-        if (isMounted) {
-          setNotifications(notifList);
-        }
-      } catch {
-        if (isMounted) {
-          setNotifications([]);
-        }
-      }
+  // Global listener to trigger opening the Unified Account Modal
+  useEffect(() => {
+    const handleOpenAccountSettings = (e: any) => {
+      const tab = e?.detail?.tab || 'profile';
+      setAccountModalTab(tab);
     };
+    window.addEventListener('open-account-settings', handleOpenAccountSettings);
+    return () => window.removeEventListener('open-account-settings', handleOpenAccountSettings);
+  }, []);
 
-    void fetchRealNotifications();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [pathname, readNotificationIds, user?.role]);
-
+  // Theme Sync
   useEffect(() => {
-    setOpenPanel(null);
-  }, [pathname]);
+    const isDarkMode =
+      localStorage.getItem('theme') === 'dark' ||
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    setIsDark(isDarkMode);
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
 
+  const toggleTheme = () => {
+    const newDark = !isDark;
+    setIsDark(newDark);
+    if (newDark) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
+
+  // Close dropdown on click outside or escape
   useEffect(() => {
-    const handlePointerDown = (event: MouseEvent) => {
-      if (!containerRef.current?.contains(event.target as Node)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setOpenPanel(null);
       }
     };
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setOpenPanel(null);
       }
+      if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+        event.preventDefault();
+        setIsSearchOpen(true);
+      }
     };
 
-    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
-  const togglePanel = (panel: Exclude<OpenPanel, null>) => {
+  // Load read notifications
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(NOTIF_STORAGE_KEY);
+      if (stored) {
+        setReadNotificationIds(JSON.parse(stored));
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Dynamic notifications based on role
+  useEffect(() => {
+    if (!user) return;
+    const items: NotificationItem[] = [];
+
+    if (user.role === 'ADMIN') {
+      items.push({
+        id: 101,
+        title: 'Hệ thống sẵn sàng',
+        desc: 'Hệ thống Quản lý Khảo thí đang vận hành ổn định.',
+        time: 'Vừa xong',
+        type: 'info',
+        href: '/dashboard',
+      });
+      items.push({
+        id: 102,
+        title: 'Nhật ký bảo mật',
+        desc: 'Đã hoàn tất rà soát bảo mật định kỳ toàn hệ thống.',
+        time: '10 phút trước',
+        type: 'system',
+        href: '/admin/security-audit',
+      });
+    } else if (user.role === 'TEACHER') {
+      items.push({
+        id: 201,
+        title: 'Lịch coi thi được phân công',
+        desc: 'Bạn có ca coi thi mới cần xác nhận trong tuần này.',
+        time: '15 phút trước',
+        type: 'exam',
+        href: '/teacher/assignments',
+      });
+    } else {
+      items.push({
+        id: 301,
+        title: 'Lịch thi học kỳ mới',
+        desc: 'Lịch thi chính thức đã được công bố. Vui lòng kiểm tra phòng thi.',
+        time: '30 phút trước',
+        type: 'exam',
+        href: '/student/exam-schedule',
+      });
+    }
+
+    setNotifications(items);
+  }, [user]);
+
+  const effectiveUnreadCount = useMemo(() => {
+    return notifications.filter((n) => !readNotificationIds.includes(n.id)).length;
+  }, [notifications, readNotificationIds]);
+
+  const togglePanel = (panel: 'notifications' | 'account') => {
     setOpenPanel((prev) => (prev === panel ? null : panel));
   };
 
+  const handleMarkAllAsRead = () => {
+    const allIds = notifications.map((n) => n.id);
+    setReadNotificationIds(allIds);
+    try {
+      localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(allIds));
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleNotificationClick = (item: NotificationItem) => {
+    if (!readNotificationIds.includes(item.id)) {
+      const updated = [...readNotificationIds, item.id];
+      setReadNotificationIds(updated);
+      try {
+        localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+    }
+    if (item.href) {
+      setOpenPanel(null);
+      router.push(item.href);
+    }
+  };
+
+  const handleNavigateDirect = (item: NotificationItem, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!readNotificationIds.includes(item.id)) {
+      const updated = [...readNotificationIds, item.id];
+      setReadNotificationIds(updated);
+      try {
+        localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+    }
+    if (item.href) {
+      setOpenPanel(null);
+      router.push(item.href);
+    }
+  };
+
+  const toggleExpandNotif = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setExpandedNotifIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
+  };
+
   const handleLogout = () => {
-    void api.post('/auth/logout').finally(() => {
-      removeAuth();
-      router.replace('/login');
-    });
+    removeAuth();
+    setShowLogoutConfirm(false);
+    window.location.href = '/login';
+  };
+
+  const displayName = user?.teacher?.fullName || user?.student?.fullName || user?.username || 'Người dùng';
+  const displayRoleLabel =
+    user?.role === 'ADMIN' ? 'Quản trị viên' : user?.role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên';
+  const avatarUrl = user?.avatarUrl || user?.teacher?.avatarUrl || user?.student?.avatarUrl;
+
+  const getSmartMonogram = (name: string) => {
+    if (!name) return 'U';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
   return (
@@ -408,8 +387,9 @@ export const Header: React.FC<HeaderProps> = ({
                                   handleNotificationClick(item);
                                 }
                               }}
-                              className={`py-3 px-2 transition cursor-pointer space-y-1.5 group rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 ${isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
-                                }`}
+                              className={`py-3 px-2 transition cursor-pointer space-y-1.5 group rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 ${
+                                isUnread ? 'bg-blue-50/40 dark:bg-blue-950/20' : ''
+                              }`}
                             >
                               <div className="flex items-center justify-between gap-1.5">
                                 <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body-sm group-hover:text-blue-600 transition flex items-center gap-2">
@@ -437,9 +417,11 @@ export const Header: React.FC<HeaderProps> = ({
                               {/* Notification Description */}
                               {isLong ? (
                                 <>
-                                  <p className={`text-type-helper text-slate-600 dark:text-slate-300 font-normal leading-relaxed pl-4 break-words ${
-                                    isExpanded ? 'whitespace-pre-line' : 'line-clamp-2'
-                                  }`}>
+                                  <p
+                                    className={`text-type-helper text-slate-600 dark:text-slate-300 font-normal leading-relaxed pl-4 break-words ${
+                                      isExpanded ? 'whitespace-pre-line' : 'line-clamp-2'
+                                    }`}
+                                  >
                                     {item.desc}
                                   </p>
                                   <div className="pl-4 pt-0.5 flex items-center justify-between gap-2">
@@ -498,10 +480,11 @@ export const Header: React.FC<HeaderProps> = ({
                 aria-expanded={openPanel === 'account'}
                 aria-controls="user-account-dropdown"
                 onClick={() => togglePanel('account')}
-                className={`group flex items-center gap-2.5 rounded-xl py-1 px-2 text-left transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${openPanel === 'account'
+                className={`group flex items-center gap-2.5 rounded-xl py-1 px-2 text-left transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                  openPanel === 'account'
                     ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-600'
                     : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/80'
-                  }`}
+                }`}
               >
                 {/* Avatar */}
                 <div className="relative shrink-0">
@@ -531,8 +514,9 @@ export const Header: React.FC<HeaderProps> = ({
 
                 {/* Chevron Arrow */}
                 <ChevronDown
-                  className={`h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-transform duration-200 ${openPanel === 'account' ? 'rotate-180 text-blue-600' : ''
-                    }`}
+                  className={`h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-transform duration-200 ${
+                    openPanel === 'account' ? 'rotate-180 text-blue-600' : ''
+                  }`}
                   strokeWidth={1.5}
                 />
               </button>
@@ -572,34 +556,25 @@ export const Header: React.FC<HeaderProps> = ({
 
                   {/* Navigation Links */}
                   <div className="relative z-20 space-y-0.5">
-                    <Link
-                      href="/profile"
-                      onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-1.5 text-type-body-sm text-slate-700 dark:text-slate-200 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800/70 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150 cursor-pointer group"
+                    {/* Hồ sơ & Cài đặt (Unified Popup Trigger) */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpenPanel(null);
+                        setAccountModalTab('profile');
+                      }}
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-1.5 text-type-body-sm text-slate-700 dark:text-slate-200 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800/70 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150 cursor-pointer group text-left"
                     >
                       <div className="flex items-center gap-2.5">
                         <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-slate-100/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 group-hover:bg-blue-50 dark:group-hover:bg-blue-950/60 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                           <UserIcon className="h-3.5 w-3.5" strokeWidth={1.5} />
                         </div>
-                        <span>Hồ sơ cá nhân</span>
+                        <span>Hồ sơ & Cài đặt</span>
                       </div>
                       <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" strokeWidth={1.5} />
-                    </Link>
+                    </button>
 
-                    <Link
-                      href="/settings"
-                      onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-1.5 text-type-body-sm text-slate-700 dark:text-slate-200 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800/70 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150 cursor-pointer group"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-slate-100/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 group-hover:bg-blue-50 dark:group-hover:bg-blue-950/60 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                          <Settings className="h-3.5 w-3.5" strokeWidth={1.5} />
-                        </div>
-                        <span>Cài đặt hệ thống</span>
-                      </div>
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" strokeWidth={1.5} />
-                    </Link>
-
+                    {/* Trung tâm hỗ trợ */}
                     <Link
                       href="/contact"
                       onClick={() => setOpenPanel(null)}
@@ -643,6 +618,13 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
       </header>
+
+      {/* Global Unified Account & Settings Modal */}
+      <AccountSettingsModal
+        isOpen={!!accountModalTab}
+        onClose={() => setAccountModalTab(null)}
+        initialTab={accountModalTab || 'profile'}
+      />
     </>
   );
 };

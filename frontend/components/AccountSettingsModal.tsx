@@ -1,0 +1,869 @@
+'use client';
+
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import api from '../lib/api';
+import { getAuthUser, getAuthToken, setAuthToken } from '../lib/auth';
+import { User as UserType } from '../types';
+import { Toast } from './Toast';
+import { DynamicImage } from './ui/DynamicImage';
+import { IdentifierBadge } from './ui/IdentifierBadge';
+import {
+  User,
+  Lock,
+  Palette,
+  Bell,
+  X,
+  Camera,
+  Trash2,
+  Eye,
+  EyeOff,
+  CheckCircle2,
+  Sun,
+  Moon,
+  Laptop,
+  Mail,
+  Phone,
+  MapPin,
+  ShieldCheck,
+  Check,
+  Loader2,
+  Calendar,
+  Volume2,
+  KeyRound,
+} from 'lucide-react';
+
+export type AccountSettingsTab = 'profile' | 'security' | 'appearance';
+
+interface AccountSettingsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  initialTab?: AccountSettingsTab;
+}
+
+interface ProfileData {
+  id: number;
+  username: string;
+  role: 'ADMIN' | 'TEACHER' | 'STUDENT';
+  status: string;
+  createdAt: string;
+  email?: string;
+  avatarUrl?: string;
+  student?: any;
+  teacher?: any;
+}
+
+export function AccountSettingsModal({
+  isOpen,
+  onClose,
+  initialTab = 'profile',
+}: AccountSettingsModalProps) {
+  const [mounted, setMounted] = useState(false);
+  const [activeTab, setActiveTab] = useState<AccountSettingsTab>(initialTab);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Profile data state
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+
+  // Form profile state
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+
+  // Password state
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
+
+  // Appearance state
+  const [themeMode, setThemeMode] = useState<'light' | 'dark' | 'system'>('light');
+  const [compactTable, setCompactTable] = useState(false);
+
+  // Sync initial tab when opened
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(initialTab);
+    }
+  }, [isOpen, initialTab]);
+
+  // Load theme preference on mount
+  useEffect(() => {
+    try {
+      const savedTheme = (localStorage.getItem('theme') as 'light' | 'dark' | 'system') || 'light';
+      setThemeMode(savedTheme);
+
+      const savedCompact = localStorage.getItem('table_compact') === 'true';
+      setCompactTable(savedCompact);
+    } catch {
+      // ignore localStorage errors
+    }
+  }, []);
+
+  // Fetch Profile data when modal opens
+  const fetchProfile = useCallback(async () => {
+    try {
+      const res = await api.get('/auth/profile');
+      const data = res.data;
+      setProfile(data);
+
+      const localUser = getAuthUser();
+      const currentAvatar =
+        data.avatarUrl ||
+        data.teacher?.avatarUrl ||
+        data.student?.avatarUrl ||
+        localUser?.avatarUrl ||
+        '';
+      setAvatarUrl(currentAvatar);
+
+      const name = data.teacher?.fullName || data.student?.fullName || data.username || 'Admin';
+      setFullName(name);
+      setEmail(data.email || `${data.username}@exam.edu.vn`);
+      setPhone(data.teacher?.phone || data.student?.phone || '');
+      setAddress(data.teacher?.address || data.student?.address || '');
+    } catch (err: any) {
+      const u = getAuthUser();
+      if (u) {
+        setProfile({
+          id: u.id || 1,
+          username: u.username || 'user',
+          role: u.role || 'ADMIN',
+          status: 'ACTIVE',
+          createdAt: new Date().toISOString(),
+          avatarUrl: u.avatarUrl,
+          student: u.student || null,
+          teacher: u.teacher || null,
+        });
+        setAvatarUrl(u.avatarUrl || u.teacher?.avatarUrl || u.student?.avatarUrl || '');
+        const name = u.teacher?.fullName || u.student?.fullName || u.username || 'Admin';
+        setFullName(name);
+        setEmail(u.email || `${u.username || 'user'}@exam.edu.vn`);
+        setPhone(u.teacher?.phone || u.student?.phone || '');
+        setAddress('');
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchProfile();
+    }
+  }, [isOpen, fetchProfile]);
+
+  // Handle ESC key to close
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  // Auto-Save Profile Function
+  const autoSaveProfile = useCallback(
+    async (updatedFields: { fullName?: string; email?: string; phone?: string; address?: string; avatarUrl?: string }) => {
+      setSaveStatus('saving');
+      try {
+        const payload = {
+          fullName: (updatedFields.fullName !== undefined ? updatedFields.fullName : fullName).trim(),
+          email: (updatedFields.email !== undefined ? updatedFields.email : email).trim(),
+          phone: (updatedFields.phone !== undefined ? updatedFields.phone : phone).trim(),
+          avatarUrl: updatedFields.avatarUrl !== undefined ? updatedFields.avatarUrl : avatarUrl,
+        };
+
+        const res = await api.post('/auth/profile', payload);
+        const updated = res.data;
+        setProfile(updated);
+
+        const token = getAuthToken();
+        if (token && updated) {
+          const current = getAuthUser();
+          setAuthToken(token, {
+            ...(current || {}),
+            ...updated,
+            avatarUrl: payload.avatarUrl || updated.avatarUrl || current?.avatarUrl,
+            teacher: updated.teacher ?? current?.teacher,
+            student: updated.student ?? current?.student,
+          } as UserType);
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('auth-change'));
+          }
+        }
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 2500);
+      } catch (err: any) {
+        setSaveStatus('idle');
+        setToast({ message: err?.response?.data?.message || err.message || 'Tự động lưu thất bại', type: 'error' });
+      }
+    },
+    [fullName, email, phone, avatarUrl]
+  );
+
+  // Avatar Upload Handler
+  const handleAvatarSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setToast({ message: 'Vui lòng chọn file hình ảnh hợp lệ (PNG, JPG, WEBP)!', type: 'error' });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setToast({ message: 'Dung lượng ảnh tối đa là 5MB!', type: 'error' });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      setAvatarUrl(dataUrl);
+      autoSaveProfile({ avatarUrl: dataUrl });
+      setToast({ message: 'Đã cập nhật ảnh đại diện!', type: 'success' });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveAvatar = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setAvatarUrl('');
+    autoSaveProfile({ avatarUrl: '' });
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    setToast({ message: 'Đã gỡ ảnh đại diện!', type: 'success' });
+  };
+
+  // Change Password Handler
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPassword) {
+      setToast({ message: 'Vui lòng nhập mật khẩu hiện tại.', type: 'error' });
+      return;
+    }
+    if (!newPassword || newPassword.length < 6) {
+      setToast({ message: 'Mật khẩu mới phải có tối thiểu 6 ký tự.', type: 'error' });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setToast({ message: 'Mật khẩu xác nhận không trùng khớp.', type: 'error' });
+      return;
+    }
+
+    setChangingPassword(true);
+    try {
+      await api.post('/auth/change-password', {
+        currentPassword,
+        newPassword,
+        confirmPassword,
+      });
+
+      setToast({ message: 'Đổi mật khẩu tài khoản thành công!', type: 'success' });
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err: any) {
+      setToast({ message: err?.response?.data?.message || err.message || 'Đổi mật khẩu thất bại. Vui lòng kiểm tra lại!', type: 'error' });
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
+  // Password Strength Meter
+  const getPasswordStrength = (pass: string) => {
+    if (!pass) return { label: 'Chưa nhập', score: 0, color: 'bg-slate-200 dark:bg-slate-700', text: 'text-slate-400' };
+    let score = 0;
+    if (pass.length >= 6) score += 1;
+    if (pass.length >= 10) score += 1;
+    if (/[A-Z]/.test(pass)) score += 1;
+    if (/[0-9]/.test(pass)) score += 1;
+    if (/[^A-Za-z0-9]/.test(pass)) score += 1;
+
+    if (score <= 2) return { label: 'Yếu', score: 33, color: 'bg-rose-500', text: 'text-rose-600 dark:text-rose-400' };
+    if (score <= 4) return { label: 'Trung bình', score: 66, color: 'bg-amber-500', text: 'text-amber-600 dark:text-amber-400' };
+    return { label: 'Mạnh', score: 100, color: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400' };
+  };
+  const strength = getPasswordStrength(newPassword);
+
+  // Apply Theme
+  const handleApplyTheme = (mode: 'light' | 'dark' | 'system') => {
+    setThemeMode(mode);
+    localStorage.setItem('theme', mode);
+
+    let isDark = false;
+    if (mode === 'dark') {
+      isDark = true;
+    } else if (mode === 'system') {
+      isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+
+    document.documentElement.classList.toggle('dark', isDark);
+    setToast({ message: `Đã áp dụng giao diện: ${mode === 'dark' ? 'Tối' : mode === 'light' ? 'Sáng' : 'Theo hệ thống'}`, type: 'success' });
+  };
+
+  if (!isOpen || !mounted) return null;
+
+  const displayName = profile?.teacher?.fullName || profile?.student?.fullName || profile?.username || 'Người dùng';
+  const roleName = profile?.role === 'ADMIN' ? 'Quản trị viên' : profile?.role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên';
+  const userCode = profile?.teacher?.teacherCode || profile?.student?.studentCode || `ADM-${String(profile?.id || 1).padStart(4, '0')}`;
+  const deptOrClass =
+    profile?.teacher?.department?.departmentName ||
+    profile?.teacher?.department?.name ||
+    profile?.student?.class?.className ||
+    profile?.student?.class?.name ||
+    'Ban Quản trị Khảo thí';
+
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto p-4 sm:p-6 bg-slate-950/60 backdrop-blur-xs animate-in fade-in-0 duration-200">
+      {/* Click Outside Backdrop */}
+      <div className="absolute inset-0" onClick={onClose} />
+
+      {/* ════════════════════ PREMIUM 2026 SETTINGS MODAL ════════════════════ */}
+      <div className="relative z-10 my-auto flex flex-col md:flex-row w-full max-w-[920px] h-[600px] max-h-[92vh] bg-white dark:bg-slate-900 rounded-3xl shadow-[0_25px_70px_-15px_rgba(0,0,0,0.15)] border border-slate-200/90 dark:border-slate-800 overflow-hidden animate-in zoom-in-95 duration-150">
+
+        {/* ── CỘT DỌC BÊN TRÁI: MINIMALIST FLAT SIDEBAR ── */}
+        <aside className="w-full md:w-[270px] shrink-0 h-full bg-slate-50/60 dark:bg-slate-950/40 border-b md:border-b-0 md:border-r border-slate-200/70 dark:border-slate-800/80 flex flex-col justify-between p-6 pt-7 overflow-y-auto">
+          <div className="space-y-5">
+            {/* Header Sidebar: Clean Mini Profile Card */}
+            <div className="flex items-center gap-3.5 px-1">
+              {avatarUrl ? (
+                <DynamicImage
+                  src={avatarUrl}
+                  alt={displayName}
+                  className="h-10 w-10 rounded-xl object-cover ring-1 ring-slate-200 dark:ring-slate-700 shadow-2xs shrink-0"
+                />
+              ) : (
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white font-semibold text-type-body select-none shadow-2xs shrink-0">
+                  {displayName.slice(0, 2).toUpperCase()}
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <h2 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate leading-tight">
+                  {displayName}
+                </h2>
+                <p className="text-type-helper text-slate-500 dark:text-slate-400 truncate">
+                  {roleName} · {userCode}
+                </p>
+              </div>
+            </div>
+
+            {/* Subtle Divider */}
+            <div className="border-t border-slate-200/60 dark:border-slate-800/60" />
+
+            {/* Flat Minimal Navigation (Không Dùng Nút Viên Thuốc Thô) */}
+            <nav className="space-y-1" role="tablist">
+              {/* Tab 1: Thông tin cá nhân */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('profile')}
+                className={`group flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-type-body-sm transition-all text-left cursor-pointer ${activeTab === 'profile'
+                  ? 'bg-blue-50/80 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/40 hover:text-slate-900 dark:hover:text-slate-100 font-medium'
+                  }`}
+              >
+                <User className={`h-4.5 w-4.5 shrink-0 transition-colors ${activeTab === 'profile' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                <span className="truncate">Hồ sơ cá nhân</span>
+              </button>
+
+              {/* Tab 2: Đổi mật khẩu */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('security')}
+                className={`group flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-type-body-sm transition-all text-left cursor-pointer ${activeTab === 'security'
+                  ? 'bg-blue-50/80 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/40 hover:text-slate-900 dark:hover:text-slate-100 font-medium'
+                  }`}
+              >
+                <Lock className={`h-4.5 w-4.5 shrink-0 transition-colors ${activeTab === 'security' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                <span className="truncate">Mật khẩu & bảo mật</span>
+              </button>
+
+              {/* Tab 3: Giao diện */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('appearance')}
+                className={`group flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-type-body-sm transition-all text-left cursor-pointer ${activeTab === 'appearance'
+                  ? 'bg-blue-50/80 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/40 hover:text-slate-900 dark:hover:text-slate-100 font-medium'
+                  }`}
+              >
+                <Palette className={`h-4.5 w-4.5 shrink-0 transition-colors ${activeTab === 'appearance' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                <span className="truncate">Giao diện & hiển thị</span>
+              </button>
+            </nav>
+          </div>
+
+          {/* Footer Sidebar: Status & Shortcut Pill */}
+          <div className="pt-4 mt-auto border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between text-type-helper text-slate-400 dark:text-slate-500 px-1 pb-1">
+            <span className="flex items-center gap-1.5 font-medium">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Tự động lưu
+            </span>
+            <kbd className="px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-2xs font-semibold">ESC</kbd>
+          </div>
+        </aside>
+
+        {/* ── CỘT NỘI DUNG BÊN PHẢI (APPLE BENTO SHEET 2026) ── */}
+        <main className="flex-1 min-w-0 flex flex-col h-full bg-white dark:bg-slate-900 overflow-hidden">
+
+          {/* Header Panel Phải Cố định (Thoáng Đãng, Không Dính Viền Trên) */}
+          <header className="shrink-0 flex items-center justify-between px-8 pt-7 pb-5 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 z-10">
+            <div className="flex items-center gap-3">
+              <div>
+                <h3 className="text-type-title font-semibold text-slate-900 dark:text-slate-100">
+                  {activeTab === 'profile' && 'Hồ sơ cá nhân'}
+                  {activeTab === 'security' && 'Bảo mật & đổi mật khẩu'}
+                  {activeTab === 'appearance' && 'Giao diện & hiển thị'}
+                </h3>
+                <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
+                  {activeTab === 'profile' && 'Thông tin định danh và liên lạc khảo thí'}
+                  {activeTab === 'security' && 'Quản lý mật khẩu đăng nhập an toàn'}
+                  {activeTab === 'appearance' && 'Tùy chỉnh chủ đề sáng tối'}
+                </p>
+              </div>
+
+              {/* Realtime Auto-Save Status Badge */}
+              {activeTab === 'profile' && (
+                <div className="hidden sm:flex items-center gap-1.5 pl-3 shrink-0">
+                  {saveStatus === 'saving' && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/80 text-amber-700 dark:text-amber-300 text-type-helper font-semibold shrink-0 whitespace-nowrap shadow-2xs animate-in fade-in-0 duration-150">
+                      <Loader2 className="h-3 w-3 animate-spin" /> Đang lưu...
+                    </span>
+                  )}
+                  {saveStatus === 'saved' && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/80 text-emerald-700 dark:text-emerald-300 text-type-helper font-semibold shrink-0 whitespace-nowrap shadow-2xs animate-in fade-in-0 duration-200">
+                      <Check className="h-3 w-3" /> Đã lưu
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex h-8.5 w-8.5 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer mr-1"
+              title="Đóng (Esc)"
+            >
+              <X className="h-4.5 w-4.5" />
+            </button>
+          </header>
+
+          {/* Body Panel Phải Cuộn Mượt Mà */}
+          <div className="flex-1 min-h-0 overflow-y-auto px-8 pt-7 pb-8 space-y-6">
+
+            {/* ════════════════════ TAB 1: THÔNG TIN CÁ NHÂN (BENTO PROPERTY CELLS) ════════════════════ */}
+            {activeTab === 'profile' && (
+              <div className="space-y-6 animate-in fade-in-0 duration-150">
+                {/* Hero Profile Banner */}
+                <div className="flex items-center gap-5 p-5 rounded-3xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/60 dark:border-slate-800">
+                  {/* Clickable Avatar with Soft Glow Ring */}
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="relative group shrink-0 cursor-pointer"
+                    title="Nhấp để đổi ảnh đại diện"
+                  >
+                    {avatarUrl ? (
+                      <DynamicImage
+                        src={avatarUrl}
+                        alt={displayName}
+                        className="h-16 w-16 rounded-2xl object-cover ring-2 ring-blue-500/20 shadow-xs group-hover:opacity-85 transition"
+                      />
+                    ) : (
+                      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-title select-none shadow-xs group-hover:bg-blue-700 transition">
+                        {displayName.slice(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                    {/* Subtle Hover Camera Icon */}
+                    <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Camera className="h-5 w-5 text-white" />
+                    </div>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarSelect}
+                      className="hidden"
+                    />
+                  </div>
+
+                  {/* Info Column */}
+                  <div className="flex-1 min-w-0 space-y-1.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h4 className="text-type-title font-semibold text-slate-900 dark:text-slate-100 truncate">
+                        {displayName}
+                      </h4>
+                      <IdentifierBadge tone="neutral">{userCode}</IdentifierBadge>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2 text-type-body-sm text-slate-600 dark:text-slate-300">
+                      <span className="font-semibold text-blue-600 dark:text-blue-400">{roleName}</span>
+                      <span>·</span>
+                      <span className="text-slate-500 dark:text-slate-400 truncate">{deptOrClass}</span>
+                    </div>
+
+                    {/* Clean Action Buttons */}
+                    <div className="flex items-center gap-2.5 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-type-helper font-medium text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 shadow-2xs transition cursor-pointer"
+                      >
+                        <Camera className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+                        <span>Đổi ảnh</span>
+                      </button>
+
+                      {avatarUrl && (
+                        <button
+                          type="button"
+                          onClick={handleRemoveAvatar}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 text-type-helper font-medium text-rose-600 dark:text-rose-400 transition cursor-pointer"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          <span>Gỡ ảnh</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Connected Identity Group Cells (Apple ID Style) */}
+                <div className="rounded-3xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-200/70 dark:border-slate-800 divide-y divide-slate-200/60 dark:divide-slate-800/80 overflow-hidden">
+                  {/* Row 1: Họ và tên */}
+                  <div className="flex flex-col sm:flex-row sm:items-center px-6 py-4 gap-3 sm:gap-4 hover:bg-slate-50/90 dark:hover:bg-slate-800/50 transition">
+                    <div className="flex items-center gap-3 sm:w-44 shrink-0 text-type-body-sm font-medium text-slate-600 dark:text-slate-400">
+                      <User className="h-4 w-4 text-slate-400" />
+                      <span>Họ và tên</span>
+                    </div>
+                    <input
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      onBlur={() => autoSaveProfile({ fullName })}
+                      required
+                      className="flex-1 bg-transparent px-3 py-1.5 rounded-xl text-type-body font-semibold text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition mr-1"
+                      placeholder="Nhập họ và tên"
+                    />
+                  </div>
+
+                  {/* Row 2: Email */}
+                  <div className="flex flex-col sm:flex-row sm:items-center px-6 py-4 gap-3 sm:gap-4 hover:bg-slate-50/90 dark:hover:bg-slate-800/50 transition">
+                    <div className="flex items-center gap-3 sm:w-44 shrink-0 text-type-body-sm font-medium text-slate-600 dark:text-slate-400">
+                      <Mail className="h-4 w-4 text-slate-400" />
+                      <span>Email</span>
+                    </div>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onBlur={() => autoSaveProfile({ email })}
+                      className="flex-1 bg-transparent px-3 py-1.5 rounded-xl text-type-body font-semibold text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition mr-1"
+                      placeholder="ten@exam.edu.vn"
+                    />
+                  </div>
+
+                  {/* Row 3: Số điện thoại */}
+                  <div className="flex flex-col sm:flex-row sm:items-center px-6 py-4 gap-3 sm:gap-4 hover:bg-slate-50/90 dark:hover:bg-slate-800/50 transition">
+                    <div className="flex items-center gap-3 sm:w-44 shrink-0 text-type-body-sm font-medium text-slate-600 dark:text-slate-400">
+                      <Phone className="h-4 w-4 text-slate-400" />
+                      <span>Số điện thoại</span>
+                    </div>
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      onBlur={() => autoSaveProfile({ phone })}
+                      className="flex-1 bg-transparent px-3 py-1.5 rounded-xl text-type-body font-semibold text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition mr-1"
+                      placeholder="0912 345 678"
+                    />
+                  </div>
+
+                  {/* Row 4: Địa chỉ */}
+                  <div className="flex flex-col sm:flex-row sm:items-center px-6 py-4 gap-3 sm:gap-4 hover:bg-slate-50/90 dark:hover:bg-slate-800/50 transition">
+                    <div className="flex items-center gap-3 sm:w-44 shrink-0 text-type-body-sm font-medium text-slate-600 dark:text-slate-400">
+                      <MapPin className="h-4 w-4 text-slate-400" />
+                      <span>Địa chỉ cư trú</span>
+                    </div>
+                    <input
+                      type="text"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      onBlur={() => autoSaveProfile({ address })}
+                      className="flex-1 bg-transparent px-3 py-1.5 rounded-xl text-type-body font-semibold text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition mr-1"
+                      placeholder="Nhập địa chỉ cư trú"
+                    />
+                  </div>
+                </div>
+
+                {/* Footer Meta Details */}
+                <div className="flex items-center justify-between text-type-helper text-slate-500 dark:text-slate-400 px-2 pt-1 pb-4">
+                  <div>Tên đăng nhập: <strong className="font-semibold text-slate-800 dark:text-slate-200">@{profile?.username}</strong></div>
+                  <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold">
+                    <CheckCircle2 className="h-4 w-4" /> Tài khoản đang hoạt động
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ════════════════════ TAB 2: ĐỔI MẬT KHẨU (VAULT SECURITY) ════════════════════ */}
+            {activeTab === 'security' && (
+              <form onSubmit={handleChangePassword} className="space-y-5 animate-in fade-in-0 duration-150">
+                {/* Security Vault Banner */}
+                <div className="flex items-center gap-3.5 p-4 rounded-3xl bg-blue-50/50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 text-type-body-sm text-blue-900 dark:text-blue-200">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-white shrink-0 shadow-2xs">
+                    <ShieldCheck className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100">Bảo mật tài khoản khảo thí</p>
+                    <p className="text-type-helper text-slate-500 dark:text-slate-400">Nên thay đổi mật khẩu định kỳ 90 ngày và không chia sẻ cho người khác.</p>
+                  </div>
+                </div>
+
+                {/* Password Input Group */}
+                <div className="rounded-3xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-200/70 dark:border-slate-800 divide-y divide-slate-200/60 dark:divide-slate-800/80 overflow-hidden">
+                  {/* Mật khẩu hiện tại */}
+                  <div className="flex flex-col sm:flex-row sm:items-center px-5 py-3.5 gap-2 sm:gap-4">
+                    <div className="flex items-center gap-2.5 sm:w-44 shrink-0 text-type-body-sm font-medium text-slate-700 dark:text-slate-300">
+                      <KeyRound className="h-4 w-4 text-slate-400" />
+                      <span>Mật khẩu hiện tại <span className="text-rose-500">*</span></span>
+                    </div>
+                    <div className="relative flex-1 mr-1">
+                      <input
+                        type={showCurrent ? 'text' : 'password'}
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        required
+                        className="w-full bg-transparent px-3 py-1.5 pr-10 rounded-xl text-type-body font-semibold text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition"
+                        placeholder="Nhập mật khẩu hiện tại"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowCurrent(!showCurrent)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 cursor-pointer"
+                      >
+                        {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Mật khẩu mới */}
+                  <div className="flex flex-col sm:flex-row sm:items-center px-5 py-3.5 gap-2 sm:gap-4">
+                    <div className="flex items-center gap-2.5 sm:w-44 shrink-0 text-type-body-sm font-medium text-slate-700 dark:text-slate-300">
+                      <Lock className="h-4 w-4 text-slate-400" />
+                      <span>Mật khẩu mới <span className="text-rose-500">*</span></span>
+                    </div>
+                    <div className="relative flex-1 mr-1">
+                      <input
+                        type={showNew ? 'text' : 'password'}
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        required
+                        className="w-full bg-transparent px-3 py-1.5 pr-10 rounded-xl text-type-body font-semibold text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition"
+                        placeholder="Tối thiểu 6 ký tự"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNew(!showNew)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 cursor-pointer"
+                      >
+                        {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Xác nhận mật khẩu mới */}
+                  <div className="flex flex-col sm:flex-row sm:items-center px-5 py-3.5 gap-2 sm:gap-4">
+                    <div className="flex items-center gap-2.5 sm:w-44 shrink-0 text-type-body-sm font-medium text-slate-700 dark:text-slate-300">
+                      <CheckCircle2 className="h-4 w-4 text-slate-400" />
+                      <span>Xác nhận mật khẩu <span className="text-rose-500">*</span></span>
+                    </div>
+                    <div className="relative flex-1 mr-1">
+                      <input
+                        type={showConfirm ? 'text' : 'password'}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        className="w-full bg-transparent px-3 py-1.5 pr-10 rounded-xl text-type-body font-semibold text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition"
+                        placeholder="Nhập lại mật khẩu mới"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirm(!showConfirm)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 cursor-pointer"
+                      >
+                        {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Password Strength Indicator */}
+                {newPassword && (
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 space-y-2">
+                    <div className="flex items-center justify-between text-type-helper">
+                      <span className="text-slate-500 dark:text-slate-400">Độ an toàn mật khẩu:</span>
+                      <span className={`font-semibold ${strength.text}`}>{strength.label}</span>
+                    </div>
+                    <div className="h-1.5 w-full rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                      <div
+                        className={`h-full ${strength.color} transition-all duration-300`}
+                        style={{ width: `${strength.score}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Submit Action */}
+                <button
+                  type="submit"
+                  disabled={changingPassword || !newPassword}
+                  className="w-full h-11 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-type-body-sm transition shadow-xs disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                >
+                  {changingPassword && <Loader2 className="h-4 w-4 animate-spin" />}
+                  <span>Cập nhật mật khẩu mới</span>
+                </button>
+              </form>
+            )}
+
+            {/* ════════════════════ TAB 3: GIAO DIỆN (MINI WINDOW MOCKUPS) ════════════════════ */}
+            {activeTab === 'appearance' && (
+              <div className="space-y-6 animate-in fade-in-0 duration-150">
+                <div className="space-y-3.5">
+                  <span className="text-type-body font-medium text-slate-900 dark:text-slate-100 block">
+                    Chủ đề không gian làm việc
+                  </span>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                    {/* Light Theme Card */}
+                    <button
+                      type="button"
+                      onClick={() => handleApplyTheme('light')}
+                      className={`group flex flex-col p-4 rounded-3xl border text-left transition-all cursor-pointer ${themeMode === 'light'
+                        ? 'border-blue-600 bg-blue-50/40 dark:bg-blue-950/30 ring-2 ring-blue-600/30 shadow-xs'
+                        : 'border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40'
+                        }`}
+                    >
+                      <div className="h-20 w-full rounded-2xl bg-white border border-slate-200 p-2 space-y-1.5 mb-3 shadow-2xs">
+                        <div className="flex items-center gap-1">
+                          <div className="h-2 w-2 rounded-full bg-rose-400" />
+                          <div className="h-2 w-2 rounded-full bg-amber-400" />
+                          <div className="h-2 w-2 rounded-full bg-emerald-400" />
+                        </div>
+                        <div className="h-2 w-3/4 rounded-sm bg-slate-200" />
+                        <div className="h-2 w-1/2 rounded-sm bg-blue-200" />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">Giao diện Sáng</span>
+                        <Sun className={`h-4 w-4 ${themeMode === 'light' ? 'text-blue-600' : 'text-slate-400'}`} />
+                      </div>
+                    </button>
+
+                    {/* Dark Theme Card */}
+                    <button
+                      type="button"
+                      onClick={() => handleApplyTheme('dark')}
+                      className={`group flex flex-col p-4 rounded-3xl border text-left transition-all cursor-pointer ${themeMode === 'dark'
+                        ? 'border-blue-600 bg-blue-50/40 dark:bg-blue-950/30 ring-2 ring-blue-600/30 shadow-xs'
+                        : 'border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40'
+                        }`}
+                    >
+                      <div className="h-20 w-full rounded-2xl bg-slate-950 border border-slate-800 p-2 space-y-1.5 mb-3 shadow-2xs">
+                        <div className="flex items-center gap-1">
+                          <div className="h-2 w-2 rounded-full bg-rose-500" />
+                          <div className="h-2 w-2 rounded-full bg-amber-500" />
+                          <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                        </div>
+                        <div className="h-2 w-3/4 rounded-sm bg-slate-800" />
+                        <div className="h-2 w-1/2 rounded-sm bg-blue-600" />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">Giao diện Tối</span>
+                        <Moon className={`h-4 w-4 ${themeMode === 'dark' ? 'text-blue-400' : 'text-slate-400'}`} />
+                      </div>
+                    </button>
+
+                    {/* System Theme Card */}
+                    <button
+                      type="button"
+                      onClick={() => handleApplyTheme('system')}
+                      className={`group flex flex-col p-4 rounded-3xl border text-left transition-all cursor-pointer ${themeMode === 'system'
+                        ? 'border-blue-600 bg-blue-50/40 dark:bg-blue-950/30 ring-2 ring-blue-600/30 shadow-xs'
+                        : 'border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40'
+                        }`}
+                    >
+                      <div className="h-20 w-full rounded-2xl bg-gradient-to-r from-white via-slate-200 to-slate-950 border border-slate-300 dark:border-slate-700 p-2 space-y-1.5 mb-3 shadow-2xs">
+                        <div className="flex items-center gap-1">
+                          <div className="h-2 w-2 rounded-full bg-slate-400" />
+                        </div>
+                        <div className="h-2 w-3/4 rounded-sm bg-slate-400/50" />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">Theo hệ thống</span>
+                        <Laptop className={`h-4 w-4 ${themeMode === 'system' ? 'text-blue-600' : 'text-slate-400'}`} />
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Table Density Switch */}
+                <div className="p-5 rounded-3xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-200/70 dark:border-slate-800 flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <p className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
+                      Chế độ bảng thu gọn (Compact View)
+                    </p>
+                    <p className="text-type-helper text-slate-500 dark:text-slate-400">
+                      Tăng mật độ hiển thị nhiều dữ liệu hơn trên cùng một màn hình
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={compactTable}
+                    onClick={() => {
+                      const next = !compactTable;
+                      setCompactTable(next);
+                      localStorage.setItem('table_compact', String(next));
+                      setToast({ message: 'Đã lưu tùy chọn bảng!', type: 'success' });
+                    }}
+                    style={{ minHeight: '24px', height: '24px', width: '44px', minWidth: '44px' }}
+                    className={`relative inline-flex items-center !min-h-0 !h-6 !w-11 shrink-0 cursor-pointer rounded-full p-0.5 border-0 transition-colors duration-200 ease-in-out focus:outline-none ${
+                      compactTable ? 'bg-blue-600' : 'bg-slate-300 dark:bg-slate-700'
+                    }`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      style={{ height: '20px', width: '20px' }}
+                      className={`pointer-events-none inline-block !h-5 !w-5 transform rounded-full bg-white shadow-md ring-0 transition-transform duration-200 ease-in-out ${
+                        compactTable ? 'translate-x-5' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+            )}
+
+          </div>
+        </main>
+      </div>
+
+      {/* Global Toast for Notifications */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+    </div>,
+    document.body
+  );
+}

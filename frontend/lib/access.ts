@@ -46,9 +46,6 @@ const routeAccess: RouteAccessRule[] = [
   { prefix: '/student/results', roles: ['STUDENT'], permission: 'STUDENT_RESULT_VIEW' },
   { prefix: '/student/curriculum', roles: ['STUDENT'], permission: 'STUDENT_CURRICULUM_VIEW' },
   { prefix: '/student/online-exam', roles: ['STUDENT'], permission: 'ONLINE_EXAM_TAKE' },
-  { prefix: '/profile', roles: ['ADMIN', 'TEACHER', 'STUDENT'] },
-  { prefix: '/settings', roles: ['ADMIN', 'TEACHER', 'STUDENT'] },
-  { prefix: '/change-password', roles: ['ADMIN', 'TEACHER', 'STUDENT'] },
 ];
 
 export const canAccessPath = (
@@ -67,12 +64,13 @@ export const canAccessPath = (
 };
 
 const workspaceCandidates: Record<Role, string[]> = {
-  ADMIN: ['/dashboard', '/admin/access-control', '/profile'],
-  TEACHER: ['/teacher/assignments', '/exam-schedules', '/question-bank', '/profile'],
-  STUDENT: ['/student/exam-schedule', '/student/results', '/student/curriculum', '/profile'],
+  ADMIN: ['/dashboard', '/admin/access-control'],
+  TEACHER: ['/teacher/assignments', '/exam-schedules', '/question-bank'],
+  STUDENT: ['/student/exam-schedule', '/student/results', '/student/curriculum'],
 };
 
 export const resolveWorkspaceRoute = (
   role: Role,
   effectivePermissions?: ReadonlySet<string> | null,
-) => workspaceCandidates[role].find((path) => canAccessPath(role, path, effectivePermissions)) || '/profile';
+) => workspaceCandidates[role].find((path) => canAccessPath(role, path, effectivePermissions)) || (role === 'STUDENT' ? '/student/exam-schedule' : role === 'TEACHER' ? '/teacher/assignments' : '/dashboard');
+
