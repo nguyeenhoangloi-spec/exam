@@ -27,6 +27,7 @@ import { getImageUrl } from '../../lib/media-utils';
 import { DynamicImage } from '../ui/DynamicImage';
 import { ImageLightboxModal } from '../ImageLightboxModal';
 import { printExamPaper, getPublishedTemplatesMap } from '../../lib/export-print';
+import { StatusBadge } from '../common/StatusBadge';
 import { FillBlankInlineContent } from '../../lib/fill-blank-helper';
 
 export interface ExamPaperDetailDrawerProps {
@@ -178,24 +179,15 @@ export function ExamPaperDetailDrawer({
                   const variantCount = match ? parseInt(match[1], 10) : ((paper as any).variantCount || 1);
                   const baseNum = parseInt((paper.paperCode || '').replace(/\D/g, ''), 10);
                   const rangeText = !isNaN(baseNum) && variantCount > 1 ? `${baseNum} – ${baseNum + variantCount - 1}` : paper.paperCode;
-                  return <IdentifierBadge tone="blue">Mã: {rangeText}</IdentifierBadge>;
+                  return <IdentifierBadge tone="blue">#{rangeText}</IdentifierBadge>;
                 })()}
-                <span
-                  className={`ui-pill px-2 py-0.5 rounded-full text-type-helper font-medium border ${paper.status === 'PUBLISHED'
-                      ? 'text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700'
-                      : paper.status === 'ARCHIVED'
-                        ? 'text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600'
-                        : 'text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700'
-                    }`}
-                >
-                  {paper.status === 'PUBLISHED' ? 'Đã phát hành' : paper.status === 'ARCHIVED' ? 'Đã lưu trữ' : 'Bản nháp'}
-                </span>
+                <StatusBadge status={paper.status} />
               </div>
 
               <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400 truncate">
-                {periodName} — <strong className="font-semibold text-slate-700 dark:text-slate-300">{questionCount} câu</strong> ({paper.totalScore}đ / {paper.durationMinutes}')
+                {periodName ? `${periodName} · ` : ''}{questionCount} câu · {paper.totalScore}đ · {paper.durationMinutes} phút
                 {((paper as any).mediaMaxPlays || (paper as any).mediaMode) && (
-                  <span> — {(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0 ? 'Media tự do' : `Khảo thí: ${(paper as any).mediaMaxPlays || 2} lượt`}</span>
+                  <span> · {(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0 ? 'Media tự do' : `Khảo thí: ${(paper as any).mediaMaxPlays || 2} lượt`}</span>
                 )}
               </p>
             </div>
