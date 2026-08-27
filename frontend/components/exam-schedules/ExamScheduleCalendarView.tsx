@@ -176,7 +176,7 @@ export function ExamScheduleCalendarView({
             <button
               type="button"
               onClick={handlePrev}
-              className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition cursor-pointer"
               title="Tuần trước"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -184,21 +184,21 @@ export function ExamScheduleCalendarView({
             <button
               type="button"
               onClick={handleToday}
-              className="h-8 px-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition cursor-pointer"
+              className="h-8 px-2.5 text-type-helper font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition cursor-pointer"
             >
               Hôm nay
             </button>
             <button
               type="button"
               onClick={handleNext}
-              className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition cursor-pointer"
               title="Tuần kế tiếp"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400 font-medium">
+          <div className="hidden sm:flex items-center gap-1 text-type-helper text-slate-600 dark:text-slate-400 font-medium">
             <span>Tổng số:</span>
             <span className="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
               {schedules.length}

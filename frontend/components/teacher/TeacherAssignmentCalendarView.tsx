@@ -175,7 +175,7 @@ export function TeacherAssignmentCalendarView({
             <button
               type="button"
               onClick={handlePrev}
-              className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition cursor-pointer"
               title="Tuần trước"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -183,21 +183,21 @@ export function TeacherAssignmentCalendarView({
             <button
               type="button"
               onClick={handleToday}
-              className="h-8 px-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition cursor-pointer"
+              className="h-8 px-2.5 text-type-helper font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition cursor-pointer"
             >
               Hôm nay
             </button>
             <button
               type="button"
               onClick={handleNext}
-              className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition cursor-pointer"
               title="Tuần kế tiếp"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400 font-medium">
+          <div className="hidden sm:flex items-center gap-1 text-type-helper text-slate-600 dark:text-slate-400 font-medium">
             <span>Tổng số:</span>
             <span className="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
               {assignments.length}
@@ -369,7 +369,7 @@ export function TeacherAssignmentCalendarView({
                                     <button
                                       type="button"
                                       onClick={() => onConfirmDuty(item)}
-                                      className="group relative overflow-hidden inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer shadow-2xs shadow-blue-500/25 hover:shadow-blue-500/35 hover:-translate-y-0.5 active:scale-95 leading-none shrink-0"
+                                      className="group relative overflow-hidden inline-flex items-center justify-center px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-type-helper font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer shadow-2xs shadow-blue-500/25 hover:shadow-blue-500/35 hover:-translate-y-0.5 active:scale-95 shrink-0"
                                       title="Xác nhận tham gia ca coi thi"
                                     >
                                       {/* Shimmer / Glass light sweep effect on hover */}

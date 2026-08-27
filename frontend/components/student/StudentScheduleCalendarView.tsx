@@ -174,7 +174,7 @@ export function StudentScheduleCalendarView({
             <button
               type="button"
               onClick={handlePrev}
-              className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition cursor-pointer"
               title="Tuần trước"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -182,21 +182,21 @@ export function StudentScheduleCalendarView({
             <button
               type="button"
               onClick={handleToday}
-              className="h-8 px-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition cursor-pointer"
+              className="h-8 px-2.5 text-type-helper font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition cursor-pointer"
             >
               Hôm nay
             </button>
             <button
               type="button"
               onClick={handleNext}
-              className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition cursor-pointer"
               title="Tuần kế tiếp"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400 font-medium">
+          <div className="hidden sm:flex items-center gap-1 text-type-helper text-slate-600 dark:text-slate-400 font-medium">
             <span>Tổng số:</span>
             <span className="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
               {schedules.length}
@@ -311,7 +311,7 @@ export function StudentScheduleCalendarView({
                                   >
                                     {item.subjectCode}
                                   </span>
-                                  <div className="flex items-center gap-1.5 text-xs font-semibold shrink-0">
+                                  <div className="flex items-center gap-1.5 text-type-helper font-semibold shrink-0">
                                     <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isMock ? 'bg-blue-500' : 'bg-emerald-500'}`} />
                                     <span className={isMock ? 'text-blue-600 dark:text-blue-400' : 'text-emerald-600 dark:text-emerald-400'}>
                                       {isMock ? 'Thi thử' : 'Chính thức'}
@@ -358,7 +358,7 @@ export function StudentScheduleCalendarView({
                                     <button
                                       type="button"
                                       onClick={() => router.push(`/student/online-exam/${(item as any).attempt.id}/result`)}
-                                      className="w-full inline-flex items-center justify-center px-2.5 py-1.5 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-400 text-xs font-semibold whitespace-nowrap transition cursor-pointer leading-none"
+                                      className="w-full inline-flex items-center justify-center px-2.5 py-1.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-400 text-type-helper font-semibold whitespace-nowrap transition cursor-pointer"
                                     >
                                       Điểm thi
                                     </button>
@@ -366,7 +366,7 @@ export function StudentScheduleCalendarView({
                                     <button
                                       type="button"
                                       onClick={() => router.push(`/student/online-exam/${item.examScheduleId || item.scheduleId || item.id}/lobby`)}
-                                      className={`group relative overflow-hidden w-full inline-flex items-center justify-center px-2.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer shadow-2xs leading-none active:scale-95 ${
+                                      className={`group relative overflow-hidden w-full inline-flex items-center justify-center px-2.5 py-1.5 rounded-xl text-type-helper font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer shadow-2xs active:scale-95 ${
                                         isMock
                                           ? 'border border-slate-200 dark:border-slate-700 hover:bg-slate-100 text-slate-700 dark:text-slate-300'
                                           : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/25 hover:shadow-blue-500/35 hover:-translate-y-0.5'

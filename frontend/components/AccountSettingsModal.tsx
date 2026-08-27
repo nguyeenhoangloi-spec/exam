@@ -118,7 +118,7 @@ function AvatarCropperModal({ isOpen, imageSrc, onClose, onApply }: AvatarCroppe
     ctx.fill();
 
     // Guide ring
-    ctx.strokeStyle = '#3b82f6';
+    ctx.strokeStyle = 'rgb(59, 130, 246)';
     ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.arc(size / 2, size / 2, 110, 0, Math.PI * 2);
@@ -201,7 +201,7 @@ function AvatarCropperModal({ isOpen, imageSrc, onClose, onApply }: AvatarCroppe
         {/* Header Tinh gọn với Nút Lưu & Nút Đóng */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
+            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
               <Camera className="h-3.5 w-3.5" strokeWidth={1.75} />
             </div>
             <h3 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
@@ -260,7 +260,7 @@ function AvatarCropperModal({ isOpen, imageSrc, onClose, onApply }: AvatarCroppe
             <button
               type="button"
               onClick={() => setZoom((z) => Math.max(1, +(z - 0.1).toFixed(2)))}
-              className="h-7 w-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0"
+              className="h-7 w-7 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0"
               title="Thu nhỏ"
             >
               <ZoomOut className="h-4 w-4" />
@@ -274,7 +274,7 @@ function AvatarCropperModal({ isOpen, imageSrc, onClose, onApply }: AvatarCroppe
                 step="0.05"
                 value={zoom}
                 onChange={(e) => setZoom(parseFloat(e.target.value))}
-                className="w-full accent-blue-600 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none"
+                className="w-full accent-blue-600 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-700 rounded-xl appearance-none"
               />
               <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 w-9 text-right shrink-0">
                 {Math.round(zoom * 100)}%
@@ -284,7 +284,7 @@ function AvatarCropperModal({ isOpen, imageSrc, onClose, onApply }: AvatarCroppe
             <button
               type="button"
               onClick={() => setZoom((z) => Math.min(3, +(z + 0.1).toFixed(2)))}
-              className="h-7 w-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0"
+              className="h-7 w-7 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0"
               title="Phóng to"
             >
               <ZoomIn className="h-4 w-4" />
@@ -404,8 +404,8 @@ export function AccountSettingsModal({
 
     // Monogram text
     const cleanText = (text || 'AD').trim().slice(0, 2).toUpperCase();
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 105px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillStyle = 'rgb(255, 255, 255)';
+    ctx.font = '600 105px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
@@ -713,7 +713,7 @@ export function AccountSettingsModal({
               <button
                 type="button"
                 onClick={() => setActiveTab('profile')}
-                className={`group flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-type-body-sm transition-all text-left cursor-pointer ${activeTab === 'profile'
+                className={`group flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-type-body-sm transition-all text-left cursor-pointer ${activeTab === 'profile'
                   ? 'bg-blue-50/80 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold'
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/40 hover:text-slate-900 dark:hover:text-slate-100 font-medium'
                   }`}
@@ -726,7 +726,7 @@ export function AccountSettingsModal({
               <button
                 type="button"
                 onClick={() => setActiveTab('security')}
-                className={`group flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-type-body-sm transition-all text-left cursor-pointer ${activeTab === 'security'
+                className={`group flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-type-body-sm transition-all text-left cursor-pointer ${activeTab === 'security'
                   ? 'bg-blue-50/80 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold'
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/40 hover:text-slate-900 dark:hover:text-slate-100 font-medium'
                   }`}
@@ -739,7 +739,7 @@ export function AccountSettingsModal({
               <button
                 type="button"
                 onClick={() => setActiveTab('appearance')}
-                className={`group flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-type-body-sm transition-all text-left cursor-pointer ${activeTab === 'appearance'
+                className={`group flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-type-body-sm transition-all text-left cursor-pointer ${activeTab === 'appearance'
                   ? 'bg-blue-50/80 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold'
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/40 hover:text-slate-900 dark:hover:text-slate-100 font-medium'
                   }`}
@@ -801,7 +801,7 @@ export function AccountSettingsModal({
                           className="h-16 w-16 rounded-2xl object-cover ring-2 ring-blue-500/30 shadow-xs group-hover:opacity-85 transition"
                         />
                       ) : (
-                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 text-white font-bold text-type-title select-none shadow-xs group-hover:opacity-90 transition">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 text-white font-semibold text-type-title select-none shadow-xs group-hover:opacity-90 transition">
                           {displayName.slice(0, 2).toUpperCase()}
                         </div>
                       )}
@@ -862,24 +862,24 @@ export function AccountSettingsModal({
                   <div className="pt-3 border-t border-slate-200/50 dark:border-slate-700/50 space-y-3">
                     {/* Hàng 1: Màu Gradient Chữ Viết Tắt */}
                     <div>
-                      <p className="text-2xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
+                      <p className="text-type-helper font-medium text-slate-500 dark:text-slate-400 mb-2">
                         Tùy chọn màu chữ viết tắt
                       </p>
                       <div className="flex flex-wrap items-center gap-2">
                         {[
-                          { label: 'Xanh Biển (Royal Blue)', from: '#2563eb', to: '#1d4ed8', bg: 'from-blue-600 to-blue-800' },
-                          { label: 'Tím Indigo (Violet)', from: '#7c3aed', to: '#4f46e5', bg: 'from-violet-600 to-indigo-700' },
-                          { label: 'Xanh Ngọc (Emerald)', from: '#059669', to: '#0d9488', bg: 'from-emerald-600 to-teal-700' },
-                          { label: 'Cam Hoàng Hôn (Amber)', from: '#ea580c', to: '#d97706', bg: 'from-orange-600 to-amber-600' },
-                          { label: 'Đỏ Ruby (Rose)', from: '#e11d48', to: '#be123c', bg: 'from-rose-600 to-red-700' },
-                          { label: 'Xám Đá (Slate Dark)', from: '#334155', to: '#0f172a', bg: 'from-slate-700 to-slate-900' },
+                          { label: 'Xanh Biển (Royal Blue)', from: 'rgb(37, 99, 235)', to: 'rgb(29, 78, 216)', bg: 'from-blue-600 to-blue-800' },
+                          { label: 'Xanh Bầu Trời (Sky Blue)', from: 'rgb(2, 132, 199)', to: 'rgb(3, 105, 161)', bg: 'from-sky-600 to-cyan-700' },
+                          { label: 'Xanh Ngọc (Emerald)', from: 'rgb(5, 150, 105)', to: 'rgb(13, 148, 136)', bg: 'from-emerald-600 to-teal-700' },
+                          { label: 'Cam Hoàng Hôn (Amber)', from: 'rgb(234, 88, 12)', to: 'rgb(217, 119, 6)', bg: 'from-orange-600 to-amber-600' },
+                          { label: 'Đỏ Ruby (Rose)', from: 'rgb(225, 29, 72)', to: 'rgb(190, 18, 60)', bg: 'from-rose-600 to-red-700' },
+                          { label: 'Xám Đá (Slate Dark)', from: 'rgb(51, 65, 85)', to: 'rgb(15, 23, 42)', bg: 'from-slate-700 to-slate-900' },
                         ].map((item, idx) => (
                           <button
                             key={idx}
                             type="button"
                             onClick={() => handleApplyCustomAvatar(generateCanvasMonogram(displayName, item.from, item.to), item.label)}
                             title={`Chọn màu: ${item.label}`}
-                            className={`h-8 w-8 rounded-xl bg-gradient-to-br ${item.bg} text-white font-bold text-2xs flex items-center justify-center shadow-2xs hover:scale-110 active:scale-95 transition-transform cursor-pointer border border-white/20`}
+                            className={`h-8 w-8 rounded-xl bg-gradient-to-br ${item.bg} text-white font-semibold text-type-helper flex items-center justify-center shadow-2xs hover:scale-110 active:scale-95 transition-transform cursor-pointer border border-white/20`}
                           >
                             {displayName.slice(0, 1).toUpperCase()}
                           </button>
@@ -889,51 +889,51 @@ export function AccountSettingsModal({
 
                     {/* Hàng 2: Biểu tượng Khảo Thí & Học Thuật */}
                     <div>
-                      <p className="text-2xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
+                      <p className="text-type-helper font-medium text-slate-500 dark:text-slate-400 mb-2">
                         Biểu tượng mẫu khảo thí
                       </p>
                       <div className="flex flex-wrap items-center gap-2">
                         {[
                           {
                             label: 'Mũ tốt nghiệp / Học thuật',
-                            from: '#2563eb',
-                            to: '#4f46e5',
-                            bg: 'from-blue-600 to-indigo-600',
+                            from: 'rgb(37, 99, 235)',
+                            to: 'rgb(29, 78, 216)',
+                            bg: 'from-blue-600 to-blue-800',
                             iconText: '🎓',
                           },
                           {
                             label: 'Công nghệ & Lập trình',
-                            from: '#0284c7',
-                            to: '#0369a1',
+                            from: 'rgb(2, 132, 199)',
+                            to: 'rgb(3, 105, 161)',
                             bg: 'from-sky-600 to-cyan-700',
                             iconText: '💻',
                           },
                           {
                             label: 'Tri thức & Sách vở',
-                            from: '#059669',
-                            to: '#047857',
+                            from: 'rgb(5, 150, 105)',
+                            to: 'rgb(4, 120, 87)',
                             bg: 'from-emerald-600 to-green-700',
                             iconText: '📚',
                           },
                           {
                             label: 'Giám sát & Bảo mật',
-                            from: '#4f46e5',
-                            to: '#4338ca',
-                            bg: 'from-indigo-600 to-blue-800',
+                            from: 'rgb(30, 64, 175)',
+                            to: 'rgb(30, 58, 138)',
+                            bg: 'from-blue-700 to-blue-950',
                             iconText: '🛡️',
                           },
                           {
                             label: 'Thành tích & Xuất sắc',
-                            from: '#d97706',
-                            to: '#b45309',
+                            from: 'rgb(217, 119, 6)',
+                            to: 'rgb(180, 83, 9)',
                             bg: 'from-amber-500 to-orange-600',
                             iconText: '🏆',
                           },
                           {
                             label: 'Sinh viên năng động',
-                            from: '#e11d48',
-                            to: '#9f1239',
-                            bg: 'from-rose-500 to-pink-700',
+                            from: 'rgb(225, 29, 72)',
+                            to: 'rgb(159, 18, 57)',
+                            bg: 'from-rose-500 to-red-700',
                             iconText: '⭐',
                           },
                         ].map((item, idx) => (
@@ -942,7 +942,7 @@ export function AccountSettingsModal({
                             type="button"
                             onClick={() => handleApplyCustomAvatar(generateCanvasIcon(item.iconText, item.from, item.to), item.label)}
                             title={`Áp dụng: ${item.label}`}
-                            className={`h-8 w-8 rounded-xl bg-gradient-to-br ${item.bg} text-white flex items-center justify-center text-sm shadow-2xs hover:scale-110 active:scale-95 transition-transform cursor-pointer border border-white/20`}
+                            className={`h-8 w-8 rounded-xl bg-gradient-to-br ${item.bg} text-white flex items-center justify-center text-type-body-sm shadow-2xs hover:scale-110 active:scale-95 transition-transform cursor-pointer border border-white/20`}
                           >
                             <span>{item.iconText}</span>
                           </button>
@@ -1174,8 +1174,8 @@ export function AccountSettingsModal({
                           <div className="h-2 w-2 rounded-full bg-amber-400" />
                           <div className="h-2 w-2 rounded-full bg-emerald-400" />
                         </div>
-                        <div className="h-2 w-3/4 rounded-sm bg-slate-200" />
-                        <div className="h-2 w-1/2 rounded-sm bg-blue-200" />
+                        <div className="h-2 w-3/4 rounded-md bg-slate-200" />
+                        <div className="h-2 w-1/2 rounded-md bg-blue-200" />
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">Giao diện Sáng</span>
@@ -1198,8 +1198,8 @@ export function AccountSettingsModal({
                           <div className="h-2 w-2 rounded-full bg-amber-500" />
                           <div className="h-2 w-2 rounded-full bg-emerald-500" />
                         </div>
-                        <div className="h-2 w-3/4 rounded-sm bg-slate-800" />
-                        <div className="h-2 w-1/2 rounded-sm bg-blue-600" />
+                        <div className="h-2 w-3/4 rounded-md bg-slate-800" />
+                        <div className="h-2 w-1/2 rounded-md bg-blue-600" />
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">Giao diện Tối</span>
@@ -1220,7 +1220,7 @@ export function AccountSettingsModal({
                         <div className="flex items-center gap-1">
                           <div className="h-2 w-2 rounded-full bg-slate-400" />
                         </div>
-                        <div className="h-2 w-3/4 rounded-sm bg-slate-400/50" />
+                        <div className="h-2 w-3/4 rounded-md bg-slate-400/50" />
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">Theo hệ thống</span>

@@ -426,7 +426,7 @@ export default function StudentExamSchedulePage() {
                       <span className="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
                         {new Date(item.examDate).toLocaleDateString('vi-VN')}
                       </span>
-                      <span className="text-slate-300 dark:text-slate-700 font-light mx-2">|</span>
+                      <span className="text-slate-300 dark:text-slate-700 font-normal mx-2">|</span>
                       <span className="text-blue-600 dark:text-blue-400 font-semibold tabular-nums">
                         {item.startTime} – {item.endTime}
                       </span>
@@ -442,7 +442,7 @@ export default function StudentExamSchedulePage() {
                       <span className="text-slate-900 dark:text-slate-100 font-semibold">
                         {item.examNumber || item.registrationNumber || (item.mode === 'MOCK' ? 'Tự do' : 'Chưa cấp')}
                       </span>
-                      <span className="text-slate-300 dark:text-slate-700 font-light mx-2">|</span>
+                      <span className="text-slate-300 dark:text-slate-700 font-normal mx-2">|</span>
                       <span className="text-slate-600 dark:text-slate-400">
                         Ghế #{item.seatNumber || '---'}
                       </span>
