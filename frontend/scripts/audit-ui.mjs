@@ -614,6 +614,14 @@ if (!/rounded-lg/.test(identifierBadge)
   violations.push('components/ui/IdentifierBadge.tsx: identifier badge phải dùng primitive chung và đủ contract typography/layout');
 }
 
+const examCal = await readFile(join(root, 'components', 'exam-schedules', 'ExamScheduleCalendarView.tsx'), 'utf8');
+const studentCal = await readFile(join(root, 'components', 'student', 'StudentScheduleCalendarView.tsx'), 'utf8');
+const teacherCal = await readFile(join(root, 'components', 'teacher', 'TeacherAssignmentCalendarView.tsx'), 'utf8');
+
+if (!/IdentifierBadge/.test(examCal) || !/IdentifierBadge/.test(studentCal) || !/IdentifierBadge/.test(teacherCal)) {
+  violations.push('CalendarViews: các thẻ lịch thi phải dùng IdentifierBadge đồng bộ cho mã ca/môn học');
+}
+
 if (!/variant === 'pill'/.test(statusBadge)
   || !/categoryStyles/.test(statusBadge)
   || !/dark:/.test(statusBadge)

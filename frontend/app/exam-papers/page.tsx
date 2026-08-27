@@ -1138,9 +1138,10 @@ export default function ExamPapersPage() {
                     </div>
 
                     <div className="flex items-center gap-2 text-type-helper text-slate-500 dark:text-slate-400">
-                      <span className="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">
-                        Mã: #{altQ.id}
+                      <span className="flex items-center gap-1">
+                        Mã: <IdentifierBadge tone="neutral" size="sm">#{altQ.id}</IdentifierBadge>
                       </span>
+                      <span>•</span>
                       <span>Độ khó: {altQ.difficulty || 'Trung bình'}</span>
                     </div>
                   </div>

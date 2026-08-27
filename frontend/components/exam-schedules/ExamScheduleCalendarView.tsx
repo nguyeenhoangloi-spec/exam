@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { ExamScheduleItemExtended, computeScheduleStatus } from './ExamScheduleTable';
 import { StatusBadge } from '../common/StatusBadge';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 
 interface ExamScheduleCalendarViewProps {
   schedules: ExamScheduleItemExtended[];
@@ -302,12 +303,9 @@ export function ExamScheduleCalendarView({
                                 className="group relative rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-850 p-2.5 shadow-2xs hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-500 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer space-y-1.5"
                               >
                                 <div className="flex flex-wrap items-center justify-between gap-1.5 min-w-0">
-                                  <span
-                                    className="inline-block px-1.5 py-0.5 rounded-lg text-type-helper font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0"
-                                    title={codeText}
-                                  >
+                                  <IdentifierBadge tone="neutral" size="sm" title={codeText}>
                                     {codeText}
-                                  </span>
+                                  </IdentifierBadge>
                                   <StatusBadge status={status} />
                                 </div>
                                 <h5
@@ -353,7 +351,7 @@ export function ExamScheduleCalendarView({
                                           <button
                                             type="button"
                                             onClick={() => onDelete(s.id)}
-                                            className="p-1 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                                            className="p-1 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                                             title="Xóa ca thi"
                                           >
                                             <Trash2 className="h-3.5 w-3.5" />

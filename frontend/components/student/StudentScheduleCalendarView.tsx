@@ -14,6 +14,7 @@ import {
   Award,
 } from 'lucide-react';
 import { PersonalScheduleItem } from '../../types';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 
 interface StudentScheduleCalendarViewProps {
   schedules: PersonalScheduleItem[];
@@ -305,12 +306,9 @@ export function StudentScheduleCalendarView({
                               >
                                 {/* Top row: Mã môn và Badge Hình thức gọn */}
                                 <div className="flex items-center justify-between gap-1.5 min-w-0">
-                                  <span
-                                    className="inline-block px-1.5 py-0.5 rounded-lg text-type-helper font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0"
-                                    title={item.subjectCode}
-                                  >
+                                  <IdentifierBadge tone="neutral" size="sm" title={item.subjectCode}>
                                     {item.subjectCode}
-                                  </span>
+                                  </IdentifierBadge>
                                   <div className="flex items-center gap-1.5 text-type-helper font-semibold shrink-0">
                                     <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isMock ? 'bg-blue-500' : 'bg-emerald-500'}`} />
                                     <span className={isMock ? 'text-blue-600 dark:text-blue-400' : 'text-emerald-600 dark:text-emerald-400'}>

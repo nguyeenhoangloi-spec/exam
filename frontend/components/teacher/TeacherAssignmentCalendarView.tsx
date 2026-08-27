@@ -13,6 +13,7 @@ import {
   ArrowLeftRight,
 } from 'lucide-react';
 import { StatusBadge } from '../common/StatusBadge';
+import { IdentifierBadge } from '../ui/IdentifierBadge';
 
 interface TeacherAssignmentCalendarViewProps {
   assignments: any[];
@@ -310,12 +311,9 @@ export function TeacherAssignmentCalendarView({
                               >
                                 {/* Top row: Mã môn và StatusBadge siêu gọn */}
                                 <div className="flex items-center justify-between gap-1.5 min-w-0">
-                                  <span
-                                    className="inline-block px-1.5 py-0.5 rounded-lg text-type-helper font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0"
-                                    title={item.subjectCode}
-                                  >
+                                  <IdentifierBadge tone="neutral" size="sm" title={item.subjectCode}>
                                     {item.subjectCode}
-                                  </span>
+                                  </IdentifierBadge>
                                   <StatusBadge status={statusKey as any} />
                                 </div>
 

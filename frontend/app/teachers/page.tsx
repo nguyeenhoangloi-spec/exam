@@ -15,7 +15,7 @@ import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { getSmartMonogram } from '../../lib/format';
 import { Button } from '../../components/ui/Button';
 import { Teacher, Department, User } from '../../types';
-import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, ChevronDown, FileSpreadsheet, UserCheck } from 'lucide-react';
+import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, ChevronDown, FileSpreadsheet, UserCheck, Info } from 'lucide-react';
 
 import { TeacherHeader } from '../../components/teachers/TeacherHeader';
 import { TeacherKPICards } from '../../components/teachers/TeacherKPICards';
@@ -26,6 +26,7 @@ import { TeacherTable } from '../../components/teachers/TeacherTable';
 import { TeacherPaginationBar } from '../../components/teachers/TeacherPaginationBar';
 import { TeacherBulkAction } from '../../components/teachers/TeacherBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
+import { StatusBadge } from '../../components/common/StatusBadge';
 
 const DEGREE_OPTIONS = ['GS.TS', 'PGS.TS', 'TS', 'ThS'];
 
