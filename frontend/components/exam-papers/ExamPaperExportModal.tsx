@@ -109,7 +109,7 @@ export function ExamPaperExportModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Xuất & In Đề Thi"
+      title="Xuất và in đề thi"
       size="sm"
     >
       <div className="space-y-4 py-1">
@@ -180,7 +180,7 @@ export function ExamPaperExportModal({
               type="checkbox"
               checked={includeAnswerKey}
               onChange={(e) => setIncludeAnswerKey(e.target.checked)}
-              className="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+              className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
             />
             <span className="text-type-body font-medium text-slate-800 dark:text-slate-200">
               Kèm bảng ma trận đáp án ở cuối file
