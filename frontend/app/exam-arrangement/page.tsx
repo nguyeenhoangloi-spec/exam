@@ -16,6 +16,7 @@ import {
   Users,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
   RefreshCw,
   Zap,
   Monitor,
@@ -49,6 +50,7 @@ import { ExamArrangementKPICards } from '../../components/exam-arrangement/ExamA
 import { ExamArrangementHeader } from '../../components/exam-arrangement/ExamArrangementHeader';
 import { ClassSelectorPopover } from '../../components/exam-arrangement/ClassSelectorPopover';
 import { RoomSelectorPopover } from '../../components/exam-arrangement/RoomSelectorPopover';
+import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 
 type RoomAvailability = {
   id: number;
@@ -718,6 +720,11 @@ export default function ExamArrangementPage() {
 
   const availableCount = useMemo(() => rooms.filter((r) => r.isAvailable).length, [rooms]);
 
+  const totalSelectedStudents = useMemo(
+    () => scheduleClasses.filter((c) => selectedClassIds.includes(c.id)).reduce((sum, c) => sum + c.studentCount, 0),
+    [scheduleClasses, selectedClassIds]
+  );
+
   const availableClasses = useMemo(() => {
     if (!result?.details) return [];
     const classes = new Set<string>();
@@ -824,41 +831,24 @@ export default function ExamArrangementPage() {
               </div>
             </div>
 
-            {/* Phải: Cụm bộ chọn Lớp & Phòng + Nút Xếp / Toolbar kết quả */}
+            {/* Phải: Toolbar kết quả (chỉ hiện khi đã có kết quả xếp hoặc đang tải) */}
             <div className="flex items-center gap-2.5 flex-wrap shrink-0">
               {isLoadingSchedule ? (
                 <div className="h-10 w-48 rounded-xl bg-slate-100 dark:bg-slate-800/80 animate-pulse border border-slate-200/50 dark:border-slate-700/50" />
-              ) : !result ? (
-                /* Khi chưa xếp: Bộ chọn Lớp & Phòng + Nút Xếp Tự Động */
+              ) : result ? (
+                /* Khi đã có kết quả: TẤT CẢ NẰM TRÊN 1 HÀNG (Cấu hình lại + Tìm kiếm + Switch View + Lưu) */
                 <>
-                  {scheduleClasses.length > 0 && (
-                    <ClassSelectorPopover
-                      classes={scheduleClasses}
-                      selectedClassIds={selectedClassIds}
-                      onChange={setSelectedClassIds}
-                    />
-                  )}
-
-                  <RoomSelectorPopover
-                    rooms={rooms}
-                    selectedRoomIds={selectedRoomIds}
-                    onChange={setSelectedRoomIds}
-                  />
-
+                  {/* Nút Cấu hình lại */}
                   <Button
                     type="button"
-                    variant="primary"
+                    variant="secondary"
                     size="md"
-                    onClick={runPreview}
-                    disabled={arranging}
-                    isLoading={arranging}
+                    onClick={() => setResult(null)}
+                    leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
                   >
-                    Xếp Tự Động
+                    Cấu hình lại
                   </Button>
-                </>
-              ) : (
-                /* Khi đã có kết quả: TẤT CẢ NẰM TRÊN 1 HÀNG (Tìm kiếm + Switch View + Lưu) */
-                <>
+
                   {/* Ô tìm kiếm sinh viên */}
                   <div className="relative w-48 sm:w-56">
                     <input
@@ -944,7 +934,7 @@ export default function ExamArrangementPage() {
                     </Button>
                   )}
                 </>
-              )}
+              ) : null}
             </div>
           </div>
 
@@ -959,17 +949,264 @@ export default function ExamArrangementPage() {
               </p>
             </div>
           ) : !result ? (
-            <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-16 text-center shadow-2xs flex flex-col items-center justify-center space-y-3">
-              <div className="h-14 w-14 rounded-2xl bg-blue-50 dark:bg-blue-950 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-2xs">
-                <DoorOpen className="h-7 w-7 stroke-[2]" />
+            /* ── HERO SETUP BOARD: Cấu hình phân bổ 2 cột trực quan ── */
+            <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden space-y-0">
+              {/* Board Header */}
+              <div className="p-5 sm:px-6 sm:py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                    <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
+                      Cấu hình phân bổ phòng thi
+                    </h3>
+                  </div>
+                  <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5 ml-3">
+                    Chọn danh sách lớp học phần và các phòng thi trống trước khi xếp chỗ
+                  </p>
+                </div>
+
+                {/* Thống kê icon phẳng, không dùng khung viền hay dấu chấm */}
+                <div className="flex items-center gap-4 text-type-helper text-slate-600 dark:text-slate-300 shrink-0">
+                  <div className="flex items-center gap-1.5">
+                    <Users className="h-4 w-4 text-slate-400 shrink-0" />
+                    <span><strong>{totalSelectedStudents}</strong> sinh viên</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <DoorOpen className="h-4 w-4 text-slate-400 shrink-0" />
+                    <span><strong>{selectedRoomIds.length}</strong> phòng ({selectedCapacity} chỗ)</span>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-1">
-                <h3 className="text-type-body font-semibold text-slate-800 dark:text-slate-200">
-                  Sẵn sàng phân bổ phòng thi
-                </h3>
-                <p className="text-type-helper text-slate-400 max-w-md">
-                  Chọn các lớp học phần và phòng thi khả dụng ở thanh trên, sau đó bấm <strong>&quot;Xếp Tự Động&quot;</strong> để tạo sơ đồ ma trận chỗ ngồi sinh viên.
-                </p>
+
+              {/* Board Body: 2 Columns (Phẳng - Flat Divider First) */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-100 dark:divide-slate-800">
+                {/* CỘT 1: LỚP HỌC PHẦN */}
+                <div className="p-4 sm:p-5 space-y-2 flex flex-col">
+                  <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-slate-600 dark:text-slate-400 shrink-0" />
+                      <span className="text-type-body font-semibold text-slate-900 dark:text-white">
+                        Lớp học phần tham gia
+                      </span>
+                      <span className="text-type-helper text-slate-500 dark:text-slate-400 tabular-nums">
+                        ({selectedClassIds.length}/{scheduleClasses.length})
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-type-helper font-medium">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedClassIds(scheduleClasses.map((c) => c.id))}
+                        className="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                      >
+                        Chọn tất cả
+                      </button>
+                      <span className="text-slate-300 dark:text-slate-700">/</span>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedClassIds([])}
+                        className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 cursor-pointer"
+                      >
+                        Bỏ chọn
+                      </button>
+                    </div>
+                  </div>
+
+                  {scheduleClasses.length === 0 ? (
+                    <div className="py-12 text-center text-type-helper text-slate-400">
+                      Chưa có lớp học phần nào trong ca thi này
+                    </div>
+                  ) : (
+                    <div className="max-h-[380px] overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800/80 pr-1">
+                      {scheduleClasses.map((c) => {
+                        const isChecked = selectedClassIds.includes(c.id);
+                        return (
+                          <label
+                            key={c.id}
+                            className="flex items-center justify-between py-2.5 px-2 hover:bg-slate-50/80 dark:hover:bg-slate-800/40 rounded-xl transition-colors cursor-pointer select-none first:pt-1.5"
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedClassIds([...selectedClassIds, c.id]);
+                                  } else {
+                                    setSelectedClassIds(selectedClassIds.filter((id) => id !== c.id));
+                                  }
+                                }}
+                                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                              />
+                              <div className="min-w-0">
+                                <p className={`text-type-body-sm truncate ${isChecked ? 'font-semibold text-slate-900 dark:text-slate-100' : 'font-normal text-slate-600 dark:text-slate-400'}`}>
+                                  {c.name}
+                                </p>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                  {c.code && (
+                                    <IdentifierBadge tone="neutral" size="sm">
+                                      {c.code}
+                                    </IdentifierBadge>
+                                  )}
+                                  {c.departmentName && (
+                                    <span className="text-type-helper text-slate-400 dark:text-slate-500 truncate">
+                                      {c.departmentName}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-right shrink-0 pl-3">
+                              <span className="text-type-helper font-medium text-slate-600 dark:text-slate-300 tabular-nums">
+                                {c.studentCount} sinh viên
+                              </span>
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* CỘT 2: PHÒNG THI KHẢ DỤNG */}
+                <div className="p-4 sm:p-5 space-y-2 flex flex-col">
+                  <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <DoorOpen className="h-4 w-4 text-slate-600 dark:text-slate-400 shrink-0" />
+                      <span className="text-type-body font-semibold text-slate-900 dark:text-white">
+                        Phòng thi khả dụng
+                      </span>
+                      <span className="text-type-helper text-slate-500 dark:text-slate-400 tabular-nums">
+                        ({selectedRoomIds.length}/{availableCount})
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-type-helper font-medium">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedRoomIds(rooms.filter((r) => r.isAvailable).map((r) => r.id))}
+                        className="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                      >
+                        Tất cả khả dụng
+                      </button>
+                      <span className="text-slate-300 dark:text-slate-700">/</span>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedRoomIds([])}
+                        className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 cursor-pointer"
+                      >
+                        Bỏ chọn
+                      </button>
+                    </div>
+                  </div>
+
+                  {rooms.length === 0 ? (
+                    <div className="py-12 text-center text-type-helper text-slate-400">
+                      Không có phòng thi nào trong hệ thống
+                    </div>
+                  ) : (
+                    <div className="max-h-[380px] overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800/80 pr-1">
+                      {rooms.map((r) => {
+                        const isChecked = selectedRoomIds.includes(r.id);
+                        const isAvail = r.isAvailable;
+                        const roomTypeName =
+                          r.roomType === 'THI_LY_THUYET'
+                            ? 'Thi lý thuyết'
+                            : r.roomType === 'THI_MAY_TINH'
+                            ? 'Thi máy tính'
+                            : r.roomType === 'THUC_HANH'
+                            ? 'Thực hành'
+                            : r.roomType || 'Phòng thi';
+                        return (
+                          <label
+                            key={r.id}
+                            className={`flex items-center justify-between py-2.5 px-2 rounded-xl transition-colors select-none first:pt-1.5 ${
+                              !isAvail
+                                ? 'opacity-50 cursor-not-allowed'
+                                : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/40 cursor-pointer'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <input
+                                type="checkbox"
+                                disabled={!isAvail}
+                                checked={isChecked}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedRoomIds([...selectedRoomIds, r.id]);
+                                  } else {
+                                    setSelectedRoomIds(selectedRoomIds.filter((id) => id !== r.id));
+                                  }
+                                }}
+                                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer disabled:cursor-not-allowed shrink-0"
+                              />
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <p className={`text-type-body-sm truncate ${isChecked ? 'font-semibold text-slate-900 dark:text-slate-100' : 'font-normal text-slate-600 dark:text-slate-400'}`}>
+                                    {r.roomName || r.roomCode}
+                                  </p>
+                                  <span className="text-type-helper text-slate-400 dark:text-slate-500">
+                                    (Tòa {r.building})
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2 mt-0.5 text-type-helper">
+                                  <span className="text-slate-400 dark:text-slate-500">{roomTypeName}</span>
+                                  <span className="text-slate-300 dark:text-slate-700">,</span>
+                                  {isAvail ? (
+                                    <span className="text-slate-500 dark:text-slate-400 font-medium">Trống theo ca</span>
+                                  ) : (
+                                    <span className="text-rose-600 dark:text-rose-400 font-medium truncate max-w-[160px]" title={r.busyReason || 'Đang bận'}>
+                                      Bận: {r.busyReason || 'Trùng lịch'}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-right shrink-0 pl-3">
+                              <span className="text-type-helper font-medium text-slate-600 dark:text-slate-300 tabular-nums">
+                                {r.capacity} chỗ
+                              </span>
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Board Footer: Status & Action CTA */}
+              <div className="p-4 sm:px-6 sm:py-3.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/40 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-2 text-type-body-sm font-medium">
+                  {totalSelectedStudents === 0 ? (
+                    <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                      <AlertTriangle className="h-4 w-4" /> Vui lòng chọn ít nhất 1 lớp học phần
+                    </span>
+                  ) : selectedRoomIds.length === 0 ? (
+                    <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                      <AlertTriangle className="h-4 w-4" /> Vui lòng chọn ít nhất 1 phòng thi khả dụng
+                    </span>
+                  ) : totalSelectedStudents <= selectedCapacity ? (
+                    <span className="text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      Đủ chỗ: <strong>{totalSelectedStudents} sinh viên</strong> phân vào <strong>{selectedCapacity} chỗ ngồi</strong> (dư {selectedCapacity - totalSelectedStudents} chỗ)
+                    </span>
+                  ) : (
+                    <span className="text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
+                      <AlertCircle className="h-4 w-4 shrink-0" />
+                      Thiếu chỗ: Cần <strong>{totalSelectedStudents} chỗ</strong> nhưng mới chọn <strong>{selectedCapacity} chỗ</strong> (thiếu {totalSelectedStudents - selectedCapacity} chỗ)
+                    </span>
+                  )}
+                </div>
+
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  onClick={runPreview}
+                  disabled={arranging || selectedClassIds.length === 0 || selectedRoomIds.length === 0 || totalSelectedStudents > selectedCapacity}
+                  isLoading={arranging}
+                >
+                  Xếp tự động
+                </Button>
               </div>
             </div>
           ) : (
