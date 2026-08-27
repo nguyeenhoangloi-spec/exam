@@ -649,7 +649,7 @@ Với nhãn viết trực tiếp chưa thể dùng `StatusBadge`, phải khai b�
 |---|---|---|
 | Status pill, filter chip, tab count | `rounded-full` | Dùng `ui-pill`, 13px (`text-type-helper`), font-medium (500) |
 | Identifier badge, mã kỹ thuật phẳng | `rounded-lg` | Cột bảng: 15px (`text-type-body`); inline phụ: 13px (`text-type-helper`); `tabular-nums`, Deep Ink |
-| Button, input, select, search, dropdown trigger | `rounded-xl` | Control tương tác, chữ 15px |
+| Button, input, select, search, dropdown trigger, Segmented control | `rounded-xl` | Control tương tác, chữ 15px (Segmented control: rãnh xám + phím trượt trắng 3D) |
 | Card, modal, drawer panel | `rounded-2xl` | Container nội dung |
 
 ### 18.7 Checklist kiểm tra pill
