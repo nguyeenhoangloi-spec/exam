@@ -96,21 +96,22 @@ export function InlineCreateAssignmentPanel({
   const t2 = teachers.find((t) => String(t.id) === String(supervisor2Id));
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
-      {/* ── 1. Header tinh gọn (Giống 100% bản Tự Động) ── */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <h3 className="text-type-helper font-semibold text-slate-800 dark:text-slate-200  tracking-wider">
-          Phân Công Phòng Thi
+    <form onSubmit={handleSubmit} className="p-4 sm:p-5 rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-4">
+      {/* ── 1. Header tinh gọn, phẳng ── */}
+      <div className="flex items-center gap-2 flex-wrap pb-2 border-b border-slate-100 dark:border-slate-800">
+        <span className="h-3.5 w-1 rounded-full bg-blue-600 shrink-0" />
+        <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
+          Phân công phòng thi
         </h3>
         {selectedRoomCap && (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-type-helper font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-            {selectedRoomName} ({selectedRoomCap})
+          <span className="text-type-helper text-slate-500 dark:text-slate-400 font-medium">
+            ({selectedRoomName} - {selectedRoomCap})
           </span>
         )}
       </div>
 
-      {/* ── 2. Nội dung phòng thi (2 Cột Giám Thị Song Song giống hệt bản Tự Động) ── */}
-      <div className="space-y-2.5">
+      {/* ── 2. Nội dung phòng thi (2 Cột Giám Thị Song Song) ── */}
+      <div className="space-y-3">
         {/* Nếu chưa cố định 1 phòng thi thì hiển thị ô chọn phòng */}
         {!isPreselectedSingleRoom && rooms.length > 1 && (
           <div className="space-y-1">
@@ -134,16 +135,16 @@ export function InlineCreateAssignmentPanel({
           </div>
         )}
 
-        {/* 2 Cột Giám Thị Song Song (Giống hệt bản Tự Động) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        {/* 2 Cột Giám Thị Song Song */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Cột 1: Giám thị 1 */}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <label className="text-type-body font-medium text-blue-700 dark:text-blue-300">
+              <label className="text-type-body font-medium text-blue-700 dark:text-blue-400">
                 Giám thị 1 (Chính)
               </label>
               {t1 && (
-                <span className="text-type-helper font-normal text-slate-400">
+                <span className="text-type-helper font-normal text-slate-400 tabular-nums">
                   {t1.teacherCode}
                 </span>
               )}
@@ -168,7 +169,7 @@ export function InlineCreateAssignmentPanel({
                 Giám thị 2 (Phụ)
               </label>
               {t2 && (
-                <span className="text-type-helper font-normal text-slate-400">
+                <span className="text-type-helper font-normal text-slate-400 tabular-nums">
                   {t2.teacherCode}
                 </span>
               )}
@@ -183,14 +184,13 @@ export function InlineCreateAssignmentPanel({
         </div>
       </div>
 
-      {/* ── 3. Footer Hành Động (Giống 100% bản Tự Động) ── */}
-      <div className="flex items-center justify-between pt-1">
-        <span className="text-type-helper font-medium text-slate-500">
+      {/* ── 3. Footer Hành Động ── */}
+      <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
+        <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400">
           Chỉ định cán bộ coi thi cho phòng thi
         </span>
 
         <div className="flex items-center gap-2">
-          {/* Tầng 3: Tertiary / Ghost Button */}
           <Button
             type="button"
             variant="ghost"
@@ -200,7 +200,6 @@ export function InlineCreateAssignmentPanel({
           >
             Hủy bỏ
           </Button>
-          {/* Tầng 1: Primary Solid Button */}
           <Button
             type="submit"
             variant="primary"

@@ -109,18 +109,19 @@ export function InlineAutoProposalPanel({
   };
 
   return (
-    <div className="space-y-3">
-      {/* ── 1. Header tinh gọn (Hoàn toàn không khung) ── */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <h3 className="text-type-helper font-semibold text-slate-800 dark:text-slate-200  tracking-wider">
-          Phương Án Tự Động
+    <div className="p-4 sm:p-5 rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-4">
+      {/* ── 1. Header tinh gọn, phẳng ── */}
+      <div className="flex items-center gap-2 flex-wrap pb-2 border-b border-slate-100 dark:border-slate-800">
+        <span className="h-3.5 w-1 rounded-full bg-blue-600 shrink-0" />
+        <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
+          Phương án tự động
         </h3>
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-type-helper font-semibold bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
-          {totalAssignedCount}/{totalRequired} vị trí ({progressPercent}%)
+        <span className="text-type-helper text-slate-500 dark:text-slate-400 font-medium">
+          ({totalAssignedCount}/{totalRequired} vị trí — {progressPercent}%)
         </span>
       </div>
 
-      {/* ── 2. Loading State hoặc Danh Sách Phòng (Không hộp, không viền) ── */}
+      {/* ── 2. Loading State hoặc Danh Sách Phòng (Divider-First) ── */}
       {loading ? (
         <div className="space-y-2.5 py-1">
           {[1, 2].map((i) => (
@@ -128,14 +129,13 @@ export function InlineAutoProposalPanel({
           ))}
         </div>
       ) : (
-        <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+        <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1 divide-y divide-slate-100 dark:divide-slate-800/80">
           {rooms.map((r, idx) => {
             const roomObj = r.room || r.examRoom;
             const rName = roomObj?.roomName || roomObj?.name || roomObj?.roomCode || `Phòng #${r.id}`;
             const cap = roomObj?.capacity ? `${roomObj.capacity} chỗ` : '';
             const isConflicted = hasConflict(r.id);
             const assign = roomAssignments[r.id] || { supervisor1: '', supervisor2: '' };
-            const isFilledBoth = Boolean(assign.supervisor1 && assign.supervisor2);
 
             const t1 = teachers.find((t) => String(t.id) === String(assign.supervisor1));
             const t2 = teachers.find((t) => String(t.id) === String(assign.supervisor2));
@@ -143,34 +143,32 @@ export function InlineAutoProposalPanel({
             return (
               <div
                 key={r.id}
-                className={`space-y-1.5 ${
-                  idx < rooms.length - 1 ? 'pb-3 border-b border-slate-100 dark:border-slate-800/80' : ''
-                }`}
+                className={`space-y-2 ${idx > 0 ? 'pt-3' : ''}`}
               >
                 {/* Room Info */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">{rName}</span>
+                    <span className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">{rName}</span>
                     {cap && <span className="text-type-helper text-slate-400 font-normal">({cap})</span>}
                   </div>
 
                   {isConflicted && (
-                    <span className="text-type-helper font-semibold text-rose-600 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded">
-                      Trùng cán bộ
+                    <span className="text-type-helper font-medium text-rose-600 dark:text-rose-400">
+                      Trùng cán bộ coi thi
                     </span>
                   )}
                 </div>
 
-                {/* 2 Cột Giám Thị Song Song (Không hộp lồng hộp) */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {/* 2 Cột Giám Thị Song Song */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* Cột 1: Giám thị 1 */}
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <label className="text-type-body font-medium text-blue-700 dark:text-blue-300">
+                      <label className="text-type-body font-medium text-blue-700 dark:text-blue-400">
                         Giám thị 1 (Chính)
                       </label>
                       {t1 && (
-                        <span className="text-type-helper font-normal text-slate-400">
+                        <span className="text-type-helper font-normal text-slate-400 tabular-nums">
                           {t1.teacherCode}
                         </span>
                       )}
@@ -190,7 +188,7 @@ export function InlineAutoProposalPanel({
                         Giám thị 2 (Phụ)
                       </label>
                       {t2 && (
-                        <span className="text-type-helper font-normal text-slate-400">
+                        <span className="text-type-helper font-normal text-slate-400 tabular-nums">
                           {t2.teacherCode}
                         </span>
                       )}
@@ -210,13 +208,12 @@ export function InlineAutoProposalPanel({
       )}
 
       {/* ── 3. Footer Hành Động ── */}
-      <div className="flex items-center justify-between pt-1">
-        <span className="text-type-helper font-medium text-slate-500">
-          Tổng: <strong className="text-blue-600 font-semibold">{totalAssignedCount}</strong>/{totalRequired} vị trí
+      <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
+        <span className="text-type-helper font-normal text-slate-500 dark:text-slate-400">
+          Tổng: <strong className="text-slate-900 dark:text-slate-100 font-semibold tabular-nums">{totalAssignedCount}</strong>/{totalRequired} vị trí
         </span>
 
         <div className="flex items-center gap-2">
-          {/* Tầng 3: Tertiary / Ghost Button */}
           <Button
             type="button"
             variant="ghost"
@@ -226,7 +223,6 @@ export function InlineAutoProposalPanel({
           >
             Hủy bỏ
           </Button>
-          {/* Tầng 1: Primary Solid Button */}
           <Button
             type="button"
             variant="primary"

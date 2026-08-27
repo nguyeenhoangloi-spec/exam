@@ -23,7 +23,6 @@ import { ExamSupervisorTableToolbar } from '../../components/exam-supervisors/Ex
 import { ExamSupervisorTable } from '../../components/exam-supervisors/ExamSupervisorTable';
 import { ExamSupervisorPaginationBar } from '../../components/exam-supervisors/ExamSupervisorPaginationBar';
 import { ExamSupervisorBulkAction } from '../../components/exam-supervisors/ExamSupervisorBulkAction';
-import { InlineCreateAssignmentPanel } from '../../components/exam-supervisors/InlineCreateAssignmentPanel';
 import { InlineAutoProposalPanel } from '../../components/exam-supervisors/InlineAutoProposalPanel';
 import { SchedulePickerModal } from '../../components/exam-supervisors/SchedulePickerModal';
 import { ReviewSupervisorChangeModal } from '../../components/exam-supervisors/ReviewSupervisorChangeModal';
@@ -289,48 +288,6 @@ export default function ExamSupervisorsPage() {
   const confirmedCount = allScheduleSupervisors.filter((s) => s.status === 'CONFIRMED').length;
   const completedCount = allScheduleSupervisors.filter((s) => s.status === 'COMPLETED').length;
 
-  // Handle Add Single / Dual Assignment
-  const handleCreateAssignment = async (data: {
-    examScheduleRoomId: number;
-    supervisor1Id?: number;
-    supervisor2Id?: number;
-    note?: string;
-  }) => {
-    try {
-      const promises: Promise<any>[] = [];
-      if (data.supervisor1Id) {
-        promises.push(
-          api.post('/exam-supervisors/assign', {
-            examScheduleRoomId: data.examScheduleRoomId,
-            teacherId: data.supervisor1Id,
-            role: 'SUPERVISOR_1',
-            note: data.note,
-          })
-        );
-      }
-      if (data.supervisor2Id) {
-        promises.push(
-          api.post('/exam-supervisors/assign', {
-            examScheduleRoomId: data.examScheduleRoomId,
-            teacherId: data.supervisor2Id,
-            role: 'SUPERVISOR_2',
-            note: data.note,
-          })
-        );
-      }
-
-      await Promise.all(promises);
-      setToast({ message: 'Phân công giám thị cho phòng thi thành công!', type: 'success' });
-      setActiveInlinePanel(null);
-      if (selectedSchedule?.id) {
-        await fetchSupervisors(selectedSchedule.id);
-      }
-    } catch (err: any) {
-      setToast({ message: err?.response?.data?.message || err.message || 'Lỗi phân công giám thị', type: 'error' });
-      throw err;
-    }
-  };
-
   // Handle Delete Assignment
   const handleDelete = (id: number, teacherName: string) => {
     setConfirmModal({
@@ -542,28 +499,27 @@ export default function ExamSupervisorsPage() {
           </section>
         )}
 
-        {/* ── 3. Active Schedule Shift Banner & Inline Action Panels ── */}
+        {/* ── 3. Active Schedule Shift Banner & Actions (Gộp chung 1 hàng phẳng) ── */}
         <div>
-          {/* Shift Controls Row */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 py-0.5">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            {/* Trái: Thông tin Ca thi chuẩn mẫu */}
             <div className="flex items-center gap-3.5 min-w-0">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50 shadow-2xs">
                 <GraduationCap className="h-5 w-5 stroke-[2]" />
               </div>
 
               <div className="space-y-0.5 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center px-2 py-0.5 ui-pill rounded-full text-type-helper font-medium ui-pill-solid bg-blue-600 text-white tracking-wide">
+                  <span className="inline-flex items-center px-3 py-0.5 ui-pill rounded-full text-type-helper font-medium ui-pill-solid bg-blue-600 text-white tracking-wide">
                     {selectedSchedule?.type || 'CHÍNH THỨC'}
                   </span>
-                  <h3 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate">
+                  <h3 className="text-type-body font-semibold text-slate-900 dark:text-white truncate">
                     {selectedSchedule?.subject?.subjectName || selectedSchedule?.subjectName || 'Chưa chọn ca thi'}
                   </h3>
-                  <span className="text-type-helper font-medium text-slate-400">
+                  <span className="text-type-helper font-medium text-slate-400 dark:text-slate-500">
                     #{selectedSchedule?.subject?.subjectCode || selectedSchedule?.subjectCode || 'MH'}
                   </span>
 
-                  {/* Nút Đổi Ca thuần icon, không chữ, không khung, không nền */}
                   <button
                     type="button"
                     onClick={() => setShowSchedulePicker(true)}
@@ -575,20 +531,20 @@ export default function ExamSupervisorsPage() {
                   </button>
                 </div>
 
-                <div className="flex items-center gap-2.5 text-type-helper text-slate-500 dark:text-slate-400 flex-wrap min-h-[20px]">
+                <div className="flex items-center gap-3 text-type-helper text-slate-500 dark:text-slate-400 flex-wrap font-normal">
                   {selectedSchedule && (
                     <>
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1.5">
                         <Clock className="h-3.5 w-3.5 text-slate-400" />
                         {selectedSchedule.startTime} - {selectedSchedule.endTime}
                       </span>
                       {selectedSchedule.examDate && (
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center gap-1.5">
                           <Calendar className="h-3.5 w-3.5 text-slate-400" />
                           {new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN')}
                         </span>
                       )}
-                      <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
+                      <span className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
                         <DoorOpen className="h-3.5 w-3.5 text-blue-600" />
                         {currentRooms.length} phòng thi
                       </span>
@@ -598,86 +554,84 @@ export default function ExamSupervisorsPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 flex-wrap shrink-0">
-              <div className="w-40 sm:w-48">
-                <FilterSelect
-                  containerClassName="w-full"
-                  value={selectedScheduleRoomId}
+            {/* Phải: Cụm Thao Tác (Tìm kiếm + Tự động + Phân công) NẰM CHUNG 1 HÀNG */}
+            <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+              {/* Ô Tìm Kiếm tích hợp Filter Popover */}
+              <div className="relative w-52 sm:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Tìm GV, phòng thi..."
+                  value={search}
                   onChange={(e) => {
-                    setSelectedScheduleRoomId(e.target.value);
+                    setSearch(e.target.value);
                     setPage(1);
                   }}
-                  options={[
-                    { value: 'ALL', label: 'Tất cả phòng thi' },
-                    ...currentRooms.map((r: any) => {
-                      const roomObj = r.room || r.examRoom;
-                      const rName = roomObj?.roomName || roomObj?.name || roomObj?.roomCode || `Phòng #${r.id}`;
-                      return {
-                        value: String(r.id),
-                        label: `Phòng: ${rName}`,
-                      };
-                    }),
-                  ]}
+                  className="h-10 w-full rounded-xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 pl-9 pr-14 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
                 />
+
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                  {search && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearch('');
+                        setPage(1);
+                      }}
+                      className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer p-0.5"
+                      title="Xóa tìm kiếm"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+
+                  <ExamSupervisorFilterPopover
+                    statusFilter={statusFilter}
+                    onStatusChange={(val) => {
+                      setStatusFilter(val);
+                      setPage(1);
+                    }}
+                    roleFilter={roleFilter}
+                    onRoleChange={(val) => {
+                      setRoleFilter(val);
+                      setPage(1);
+                    }}
+                    degreeFilter={degreeFilter}
+                    onDegreeChange={(val) => {
+                      setDegreeFilter(val);
+                      setPage(1);
+                    }}
+                    onResetAll={() => {
+                      setStatusFilter('ALL');
+                      setRoleFilter('');
+                      setDegreeFilter('');
+                      setPage(1);
+                    }}
+                  />
+                </div>
               </div>
 
               {currentUser?.role === 'ADMIN' && (
-                <>
-                  {/* Nút 2: Tự động (Soft Blue, Borderless, Không Icon) */}
-                  <Button
-                    type="button"
-                    variant="soft"
-                    size="md"
-                    onClick={previewAutoAssign}
-                    className={
-                      activeInlinePanel === 'auto'
-                        ? '!bg-blue-200/90 dark:!bg-blue-900 !text-blue-800 dark:!text-blue-100 font-semibold'
-                        : ''
-                    }
-                  >
-                    Tự động
-                  </Button>
-
-                  {/* Nút 3: Phân công */}
-                  <Button
-                    type="button"
-                    variant="primary"
-                    size="md"
-                    leftIcon={<Plus className="h-4 w-4" />}
-                    onClick={() => setActiveInlinePanel((p) => (p === 'create' ? null : 'create'))}
-                  >
-                    Phân công
-                  </Button>
-                </>
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  onClick={previewAutoAssign}
+                  disabled={autoLoading}
+                >
+                  Sắp xếp
+                </Button>
               )}
             </div>
           </div>
 
-          {/* Inline Expandable Panels Container */}
-          <div
-            className={`grid transition-all duration-300 ease-out ${
-              activeInlinePanel === 'create'
-                ? 'grid-rows-[1fr] opacity-100 mt-2.5'
-                : 'grid-rows-[0fr] opacity-0 mt-0 pointer-events-none'
-            }`}
-          >
-            <div className="overflow-hidden">
-              <InlineCreateAssignmentPanel
-                isOpen={activeInlinePanel === 'create'}
-                onClose={() => setActiveInlinePanel(null)}
-                onSubmit={handleCreateAssignment}
-                rooms={currentRooms}
-                teachers={teachers}
-                defaultRoomId={selectedScheduleRoomId}
-              />
-            </div>
-          </div>
-
+          {/* Inline Expandable Proposal Panel */}
           <div
             className={`grid transition-all duration-300 ease-out ${
               activeInlinePanel === 'auto'
-                ? 'grid-rows-[1fr] opacity-100 mt-2.5'
-                : 'grid-rows-[0fr] opacity-0 mt-0 pointer-events-none'
+                ? 'grid-rows-[1fr] opacity-100 mt-5'
+                : 'grid-rows-[0fr] opacity-0 pointer-events-none mt-0'
             }`}
           >
             <div className="overflow-hidden">
@@ -694,94 +648,7 @@ export default function ExamSupervisorsPage() {
           </div>
         </div>
 
-        {/* ── 4. Unified Search & Action Toolbar Row ── */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          {/* Left: Unified Search Bar with Embedded SlidersHorizontal Popover */}
-          <div className="relative flex-1 max-w-xl min-w-[240px]">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="Tìm theo mã GV, họ tên, phòng thi..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
-            />
-
-            {/* Embedded actions on right edge of search input */}
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
-              {search ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearch('');
-                    setPage(1);
-                  }}
-                  className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer p-0.5"
-                  title="Xóa tìm kiếm"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              ) : (
-                <kbd
-                  className="hidden sm:inline-flex h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
-                  onClick={() => searchInputRef.current?.focus()}
-                  title="Nhấn phím / để tìm nhanh"
-                >
-                  /
-                </kbd>
-              )}
-
-              <div className="h-3.5 w-px bg-slate-200 dark:bg-slate-700" />
-
-              <ExamSupervisorFilterPopover
-                statusFilter={statusFilter}
-                onStatusChange={(val) => {
-                  setStatusFilter(val);
-                  setPage(1);
-                }}
-                roleFilter={roleFilter}
-                onRoleChange={(val) => {
-                  setRoleFilter(val);
-                  setPage(1);
-                }}
-                degreeFilter={degreeFilter}
-                onDegreeChange={(val) => {
-                  setDegreeFilter(val);
-                  setPage(1);
-                }}
-                onResetAll={() => {
-                  setStatusFilter('ALL');
-                  setRoleFilter('');
-                  setDegreeFilter('');
-                  setPage(1);
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Right: Table Toolbar Controls */}
-          <div className="flex items-center gap-2 self-end sm:self-auto">
-            <ExamSupervisorTableToolbar
-              totalCount={filteredSupervisors.length}
-              sortOrder={sortOrder}
-              onSortChange={(val) => setSortOrder(val)}
-              visibleColumns={visibleColumns}
-              onColumnToggle={handleColumnToggle}
-              onRefresh={async () => {
-                if (selectedSchedule?.id) {
-                  await fetchSupervisors(selectedSchedule.id);
-                }
-              }}
-              loading={loading}
-            />
-          </div>
-        </div>
-
-        {/* ── 6. Main Data Table ── */}
+        {/* ── 4. Main Data Table or Empty State ── */}
         {loading ? (
           <div className="space-y-3 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-900 p-6">
             {[1, 2, 3, 4, 5].map((i) => (
@@ -789,8 +656,16 @@ export default function ExamSupervisorsPage() {
             ))}
           </div>
         ) : !paginatedSupervisors.length ? (
-          <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 text-center text-slate-500 font-semibold shadow-2xs">
-            Không tìm thấy lượt phân công giám thị nào phù hợp.
+          <div className="rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 text-center shadow-2xs space-y-3 flex flex-col items-center justify-center">
+            <div className="h-12 w-12 rounded-2xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400">
+              <ShieldCheck className="h-6 w-6 stroke-[1.5]" />
+            </div>
+            <p className="text-type-body font-medium text-slate-700 dark:text-slate-300">
+              Chưa có lượt phân công cán bộ coi thi nào cho ca thi này
+            </p>
+            <p className="text-type-helper text-slate-400 dark:text-slate-500 max-w-md font-normal">
+              Bấm &ldquo;Sắp xếp&rdquo; để hệ thống tự động phân bổ cán bộ coi thi cho các phòng thi.
+            </p>
           </div>
         ) : (
           <ExamSupervisorTable
