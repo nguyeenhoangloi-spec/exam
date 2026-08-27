@@ -71,7 +71,7 @@ export const Modal: React.FC<ModalProps> = ({
         aria-modal="true"
         aria-label={typeof title === 'string' ? title : 'Modal'}
         onMouseDown={(event) => event.stopPropagation()}
-        className={`relative my-auto flex max-h-[calc(100dvh-1.5rem)] min-w-0 w-full ${widthClass} flex-col overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl shadow-slate-950/20 animate-modal-dialog will-change-transform sm:max-h-[calc(100dvh-2rem)] ${className}`}
+        className={`relative my-auto flex max-h-[calc(100dvh-1.5rem)] min-w-0 w-full ${widthClass} flex-col overflow-hidden rounded-2xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl shadow-slate-950/20 animate-modal-dialog will-change-transform sm:max-h-[calc(100dvh-2rem)] ${className}`}
       >
         {isGradient ? (
           <div className={`bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-4 sm:p-6 text-white shrink-0 shadow-xs ${headerClassName}`}>

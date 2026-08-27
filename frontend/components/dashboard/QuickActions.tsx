@@ -95,7 +95,7 @@ export function QuickActions() {
   const router = useRouter();
 
   return (
-    <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs space-y-3">
+    <div className="rounded-2xl border border-slate-200/60 bg-white p-4 shadow-2xs space-y-3">
       {/* Header */}
       <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
         <span className="flex h-6 w-6 items-center justify-center rounded-md bg-blue-50 text-blue-600">

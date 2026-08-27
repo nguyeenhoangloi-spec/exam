@@ -75,7 +75,7 @@ export function ChangeExamPasswordModal({
       <Modal isOpen={isOpen} onClose={onClose} title="Cấu hình / Đổi mật khẩu ca thi">
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Info card */}
-          <div className="rounded-xl border border-slate-200/90 bg-slate-50/80 p-3.5 space-y-1.5 dark:border-slate-700 dark:bg-slate-800/50">
+          <div className="rounded-xl border border-slate-200/60 bg-slate-50/80 p-3.5 space-y-1.5 dark:border-slate-700 dark:bg-slate-800/50">
             <div className="flex items-center justify-between">
               <IdentifierBadge tone="neutral">{paper.paperCode}</IdentifierBadge>
               <span

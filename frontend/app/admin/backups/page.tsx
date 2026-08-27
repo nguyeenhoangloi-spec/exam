@@ -645,7 +645,7 @@ export default function BackupsPage() {
                         placeholder="Tìm theo Snapshot ID, mã lỗi..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                        className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
                     />
                     {/* Embedded actions on right edge of search input */}
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
@@ -726,7 +726,7 @@ export default function BackupsPage() {
 
             {/* Main Snapshot Table */}
             {loading ? (
-                <div className="space-y-3 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xs">
+                <div className="space-y-3 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xs">
                     <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                         <div className="h-5 w-48 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
                         <div className="h-5 w-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
@@ -736,7 +736,7 @@ export default function BackupsPage() {
                     ))}
                 </div>
             ) : sortedJobs.length === 0 ? (
-                <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 shadow-2xs text-center space-y-5">
+                <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 shadow-2xs text-center space-y-5">
                     <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/40">
                         <DatabaseBackup className="h-8 w-8" />
                     </div>
@@ -762,7 +762,7 @@ export default function BackupsPage() {
                     </div>
                 </div>
             ) : (
-                <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+                <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
                     <table className="ui-table w-full text-left border-collapse text-slate-700 dark:text-slate-300 text-type-body">
                         <thead className="bg-slate-50 dark:bg-slate-800 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
                             <tr>
@@ -940,7 +940,7 @@ export default function BackupsPage() {
                         </p>
                     </div>
 
-                    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+                    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
                         <table className="ui-table w-full text-left border-collapse text-slate-700 dark:text-slate-300 text-type-body">
                             <thead>
                                 <tr className="bg-slate-50 dark:bg-slate-800 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
@@ -1073,11 +1073,11 @@ export default function BackupsPage() {
                     {/* Drawer Container */}
                     <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
                         <div
-                            className={`w-screen max-w-[560px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${drawerVisible ? 'translate-x-0' : 'translate-x-full'
+                            className={`w-screen max-w-[560px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/60 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${drawerVisible ? 'translate-x-0' : 'translate-x-full'
                                 }`}
                         >
                             {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
-                            <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
+                            <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/60 dark:border-slate-800 p-6 shrink-0">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex items-start gap-3.5 min-w-0 flex-1">
                                         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
@@ -1191,7 +1191,7 @@ export default function BackupsPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => handleCopyChecksum(drawerOpenJob.checksum)}
-                                                className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-type-helper font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50"
+                                                className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-type-helper font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50"
                                             >
                                                 {copiedChecksum ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-slate-500" />}
                                                 <span>{copiedChecksum ? 'Đã sao chép!' : 'Sao chép SHA-256'}</span>
@@ -1199,7 +1199,7 @@ export default function BackupsPage() {
                                         )}
                                     </div>
 
-                                    <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850/60 p-4 text-type-helper font-normal leading-relaxed text-slate-800 dark:text-slate-200 tabular-nums break-all">
+                                    <div className="rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850/60 p-4 text-type-helper font-normal leading-relaxed text-slate-800 dark:text-slate-200 tabular-nums break-all">
                                         {drawerOpenJob.checksum || 'Chưa có checksum cho snapshot này'}
                                     </div>
                                 </div>
@@ -1221,7 +1221,7 @@ export default function BackupsPage() {
                             </div>
 
                             {/* Standard Footer */}
-                            <div className="border-t border-slate-200/90 dark:border-slate-800 p-4 bg-slate-50/80 dark:bg-slate-900/80 flex justify-end shrink-0 px-6">
+                            <div className="border-t border-slate-200/60 dark:border-slate-800 p-4 bg-slate-50/80 dark:bg-slate-900/80 flex justify-end shrink-0 px-6">
                                 <Button variant="secondary" size="md" onClick={() => setDetailJob(null)}>
                                     Đóng
                                 </Button>

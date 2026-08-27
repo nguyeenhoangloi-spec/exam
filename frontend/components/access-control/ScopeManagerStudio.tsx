@@ -187,7 +187,7 @@ export function ScopeManagerStudio({
               }}
               className={`relative flex items-center justify-between p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer select-none text-left h-18 ${isActive
                   ? 'bg-blue-50/90 dark:bg-blue-950/60 border-blue-500/80 shadow-xs ring-1 ring-blue-500/20'
-                  : 'bg-white dark:bg-slate-900 border-slate-200/90 dark:border-slate-800 hover:border-slate-300/90 dark:hover:border-slate-700 hover:bg-slate-50/60 dark:hover:bg-slate-800/40'
+                  : 'bg-white dark:bg-slate-900 border-slate-200/60 dark:border-slate-800 hover:border-slate-300/90 dark:hover:border-slate-700 hover:bg-slate-50/60 dark:hover:bg-slate-800/40'
                 }`}
             >
               <div className="flex items-center gap-3 min-w-0">
@@ -230,7 +230,7 @@ export function ScopeManagerStudio({
       </div>
 
       {/* ── 2. Interactive Control Bar (Toolbar tìm kiếm & Thao tác nhanh) ── */}
-      <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-3.5">
+      <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-3.5">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           {/* Search Box */}
           <div className="relative flex-1 max-w-md">
@@ -241,7 +241,7 @@ export function ScopeManagerStudio({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               disabled={disabled}
-              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+              className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-9 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
             />
             {search && (
               <button
@@ -345,7 +345,7 @@ export function ScopeManagerStudio({
                     onClick={() => handleToggle(item.id)}
                     className={`group relative flex items-center justify-between p-3 rounded-2xl border transition-all duration-200 cursor-pointer select-none h-14 ${isSelected
                         ? 'bg-blue-50/90 dark:bg-blue-950/50 border-blue-300 dark:border-blue-800/80 shadow-xs shadow-blue-500/10'
-                        : 'bg-white dark:bg-slate-900 border-slate-200/90 dark:border-slate-800 hover:border-slate-300/90 dark:hover:border-slate-700 hover:bg-slate-50/50 dark:hover:bg-slate-800/30'
+                        : 'bg-white dark:bg-slate-900 border-slate-200/60 dark:border-slate-800 hover:border-slate-300/90 dark:hover:border-slate-700 hover:bg-slate-50/50 dark:hover:bg-slate-800/30'
                       }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0 pr-2">

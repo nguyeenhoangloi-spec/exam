@@ -29,7 +29,7 @@ export function ViewModeSegmentedControl<T extends string = ViewMode>({
 
   return (
     <div
-      className={`relative h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs select-none ${className}`}
+      className={`relative h-10 flex items-center gap-0.5 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-0.5 shadow-2xs select-none ${className}`}
     >
       {/* Sliding Pill Indicator */}
       <div

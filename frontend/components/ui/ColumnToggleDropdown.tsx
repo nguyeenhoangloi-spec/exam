@@ -108,7 +108,7 @@ export function ColumnToggleDropdown({
         className={`ui-pressable h-10 flex items-center gap-1.5 rounded-xl border px-3 text-type-body font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out shadow-2xs cursor-pointer select-none ${
           isOpen
             ? 'border-blue-500 ring-2 ring-blue-500/20 text-slate-900 bg-white dark:bg-slate-900 dark:border-blue-500 dark:ring-blue-500/30 dark:text-slate-100'
-            : 'border-slate-200/90 bg-white text-slate-700 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-600'
+            : 'border-slate-200/60 bg-white text-slate-700 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-600'
         }`}
       >
         <SlidersHorizontal className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0" />
@@ -126,7 +126,7 @@ export function ColumnToggleDropdown({
           <div
             ref={menuRef}
             style={menuStyle}
-            className="w-56 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-2xl animate-popover-in will-change-transform space-y-2"
+            className="w-56 rounded-2xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-2xl animate-popover-in will-change-transform space-y-2"
           >
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
               <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper">{title}</span>

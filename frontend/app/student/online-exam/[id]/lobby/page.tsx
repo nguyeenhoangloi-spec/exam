@@ -899,7 +899,7 @@ export default function StudentExamLobbyPage() {
                     className={`py-2.5 px-1 rounded-xl transition flex flex-col items-center justify-center select-none ${
                       isCurrentCandidate
                         ? 'bg-blue-600 text-white font-semibold shadow-md ring-2 ring-blue-400/40'
-                        : 'bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-300'
+                        : 'bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800/60 text-slate-700 dark:text-slate-300'
                     }`}
                   >
                     <span className="text-type-body-sm font-semibold leading-tight">

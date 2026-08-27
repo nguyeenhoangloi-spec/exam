@@ -6,7 +6,7 @@ export function DashboardSkeleton() {
   return (
     <div className="space-y-6" aria-busy="true" aria-label="Đang tải tổng quan">
       {/* Welcome banner */}
-      <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs">
+      <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-2xs">
         <div className="flex items-center gap-4">
           <Skeleton className="h-12 w-12 rounded-2xl" />
           <div className="flex-1 space-y-2">

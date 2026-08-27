@@ -85,7 +85,7 @@ export function RecentActivityList({ activities }: { activities?: DashboardOverv
       ];
 
   return (
-    <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-3 h-full flex flex-col justify-between">
+    <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs space-y-3 h-full flex flex-col justify-between">
       {/* Header */}
       <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5 min-w-0">
         <h3 className="edu-card-title truncate whitespace-nowrap min-w-0">Hoạt động gần đây</h3>

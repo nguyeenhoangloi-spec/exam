@@ -113,7 +113,7 @@ export function ReviewSupervisorChangeModal({
       <div className="fixed inset-0 bg-slate-950/55 backdrop-blur-[2px] transition-opacity" onClick={onClose} />
 
       {/* Modal Box */}
-      <div className="relative w-full max-w-lg rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-lg rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="shrink-0 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-5 py-3.5 bg-white dark:bg-slate-900">
           <div className="flex items-center gap-2.5">
@@ -175,7 +175,7 @@ export function ReviewSupervisorChangeModal({
           )}
 
           {/* Chi tiết ca thi & Lý do */}
-          <div className="p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-2">
+          <div className="p-3.5 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-2">
             <div className="flex items-center justify-between gap-2">
               <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">
                 Người yêu cầu: <strong className="text-slate-800 dark:text-slate-200">{request.requesterTeacher?.fullName}</strong> ({request.requesterTeacher?.teacherCode})
@@ -230,7 +230,7 @@ export function ReviewSupervisorChangeModal({
                   placeholder="Tìm theo tên, mã giảng viên, bộ môn..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-8 pr-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                  className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-8 pr-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                 />
               </div>
 
@@ -248,7 +248,7 @@ export function ReviewSupervisorChangeModal({
                   </p>
                 </div>
               ) : (
-                <div className="max-h-48 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 custom-scrollbar">
+                <div className="max-h-48 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 custom-scrollbar">
                   {filteredCandidates.map((teacher) => {
                     const isSelected = selectedTeacherId === teacher.id;
                     return (
@@ -297,7 +297,7 @@ export function ReviewSupervisorChangeModal({
                   placeholder="Ví dụ: Đã trao đổi và điều chuyển cho cô Lan..."
                   value={reviewNote}
                   onChange={(e) => setReviewNote(e.target.value)}
-                  className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                  className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                 />
               </div>
             </div>
@@ -320,7 +320,7 @@ export function ReviewSupervisorChangeModal({
                   placeholder="Ví dụ: Đã sát ngày thi, không tìm được người thay thế..."
                   value={reviewNote}
                   onChange={(e) => setReviewNote(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-rose-500 focus:outline-none transition shadow-2xs"
+                  className="w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-rose-500 focus:outline-none transition shadow-2xs"
                 />
               </div>
             </div>

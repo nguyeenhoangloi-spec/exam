@@ -49,7 +49,7 @@ export function NotificationDetailModal({
     >
       <div className="space-y-4 text-type-body">
         {/* Header Icon + Title */}
-        <div className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+        <div className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800/60">
           <div className={`p-2.5 rounded-xl shrink-0 ${
             isCancelled
               ? 'bg-rose-100 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400'
@@ -77,7 +77,7 @@ export function NotificationDetailModal({
         </div>
 
         {/* Message Content */}
-        <div className="p-4 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 space-y-2">
+        <div className="p-4 rounded-xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 space-y-2">
           <label className="ui-label block text-type-body font-medium text-slate-700 dark:text-slate-300">
             Nội dung thông báo
           </label>

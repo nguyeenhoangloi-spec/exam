@@ -451,7 +451,7 @@ export default function DocumentTemplatesPage() {
       {/* 2. Workspace Liền Mạch (2 Cột đồng bộ gap-5) */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[400px_minmax(0,1fr)]">
         {/* Cột Trái: Sidebar Cấu hình có padding chuẩn p-5 */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs dark:border-slate-800 dark:bg-slate-900 space-y-4">
+        <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-2xs dark:border-slate-800 dark:bg-slate-900 space-y-4">
           {/* Segmented Tab Switcher Thuần Túy */}
           <div className="flex rounded-2xl bg-slate-100 p-1 dark:bg-slate-850">
             <button
@@ -686,7 +686,7 @@ export default function DocumentTemplatesPage() {
                             nextCols[index].label = e.target.value;
                             updateConfig({ ...config, columns: nextCols });
                           }}
-                          className="h-9 flex-1 min-w-0 rounded-xl border border-slate-200/90 bg-white px-2.5 text-type-body font-normal text-slate-900 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
+                          className="h-9 flex-1 min-w-0 rounded-xl border border-slate-200/60 bg-white px-2.5 text-type-body font-normal text-slate-900 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
                         />
                         <div className="w-22 shrink-0">
                           <FilterSelect
@@ -760,7 +760,7 @@ export default function DocumentTemplatesPage() {
                               });
                             }}
                             placeholder="Chức danh"
-                            className="h-9 w-full rounded-xl border border-slate-200/90 bg-white px-2.5 text-type-body font-medium text-slate-900 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
+                            className="h-9 w-full rounded-xl border border-slate-200/60 bg-white px-2.5 text-type-body font-medium text-slate-900 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
                           />
                           <input
                             value={signer.subtitle || ''}
@@ -773,7 +773,7 @@ export default function DocumentTemplatesPage() {
                               });
                             }}
                             placeholder="Ghi chú ký"
-                            className="h-9 w-full rounded-xl border border-slate-200/90 bg-white px-2.5 text-type-body font-normal text-slate-700 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-300"
+                            className="h-9 w-full rounded-xl border border-slate-200/60 bg-white px-2.5 text-type-body font-normal text-slate-700 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-300"
                           />
                         </div>
                         {config.footer.signers.length > 1 && (
@@ -811,7 +811,7 @@ export default function DocumentTemplatesPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Tìm theo tên, mã..."
-                  className="h-10 w-full rounded-xl border border-slate-200/90 bg-white pl-9 pr-3 text-type-body font-normal text-slate-900 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
+                  className="h-10 w-full rounded-xl border border-slate-200/60 bg-white pl-9 pr-3 text-type-body font-normal text-slate-900 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
                 />
               </div>
 
@@ -872,7 +872,7 @@ export default function DocumentTemplatesPage() {
         {/* Cột Phải: Canvas A4 Workspace Trực Quan (Tâm Điểm Thị Giác) */}
         <div className="flex flex-col rounded-2xl bg-slate-100/60 p-4 sm:p-8 dark:bg-slate-950/70 border border-slate-200/60 dark:border-slate-850 min-h-[750px]">
           {/* Floating Context Toolbar Mini */}
-          <div className="mx-auto mb-6 flex items-center justify-between gap-3.5 rounded-full border border-slate-200/90 bg-white/90 px-4 py-1.5 shadow-2xs backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/90">
+          <div className="mx-auto mb-6 flex items-center justify-between gap-3.5 rounded-full border border-slate-200/60 bg-white/90 px-4 py-1.5 shadow-2xs backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/90">
             <span className="text-type-helper font-medium text-slate-600 dark:text-slate-300">
               {config?.page.size || 'A4'} {config?.page.orientation === 'landscape' ? 'Ngang' : 'Dọc'} · Lề {config?.page.marginMm || 15}mm
             </span>
@@ -1287,7 +1287,7 @@ function FormInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="h-10 w-full rounded-xl border border-slate-200/90 bg-white px-3 text-type-body font-normal text-slate-900 outline-none transition focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
+        className="h-10 w-full rounded-xl border border-slate-200/60 bg-white px-3 text-type-body font-normal text-slate-900 outline-none transition focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
       />
     </label>
   );

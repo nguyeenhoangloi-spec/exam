@@ -383,7 +383,7 @@ export default function ClassesPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+              className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
             />
 
             {/* Embedded actions on right edge of search input */}
@@ -451,13 +451,13 @@ export default function ClassesPage() {
 
         {/* Full-Width DataGrid Table */}
         {loading ? (
-          <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
+          <div className="space-y-3 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-900 p-6">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />
             ))}
           </div>
         ) : !paginatedClasses.length ? (
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
+          <div className="rounded-2xl border border-slate-200/60 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
             Không tìm thấy lớp học phù hợp.
           </div>
         ) : (

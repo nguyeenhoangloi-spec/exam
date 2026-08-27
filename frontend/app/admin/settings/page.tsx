@@ -91,7 +91,7 @@ const providerName: Record<string, string> = {
 };
 
 const inputClass =
-  'h-9 w-full rounded-xl border border-slate-200/90 bg-white px-3 text-type-body font-normal text-slate-900 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-50';
+  'h-9 w-full rounded-xl border border-slate-200/60 bg-white px-3 text-type-body font-normal text-slate-900 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-50';
 
 export default function SystemSettingsPage() {
   usePageTitle('Cài đặt hệ thống');
@@ -277,7 +277,7 @@ export default function SystemSettingsPage() {
       </div>
 
       {/* 2. DUY NHẤT 1 KHUNG NGUYÊN KHỐI (Monolithic Canvas, Đã xóa toàn bộ nút Lưu con bên trong) */}
-      <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900 overflow-hidden">
+      <div className="rounded-2xl border border-slate-200/60 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900 overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 lg:divide-x divide-slate-100 dark:divide-slate-800">
           
           {/* NỬA TRÁI (Lg: 6/12): Lịch sao lưu + Kho lưu trữ (Phân cách bằng 1 đường kẻ ngang mờ) */}
@@ -633,7 +633,7 @@ export default function SystemSettingsPage() {
                                   ),
                                 )
                               }
-                              className="h-8.5 w-20 text-center rounded-xl border border-slate-200/90 bg-white px-1.5 text-type-body font-normal tabular-nums outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
+                              className="h-8.5 w-20 text-center rounded-xl border border-slate-200/60 bg-white px-1.5 text-type-body font-normal tabular-nums outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
                             />
                           </td>
                         ))}

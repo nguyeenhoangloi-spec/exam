@@ -101,7 +101,7 @@ export function SecurityHealthScoreCard({
   }, [permissions, users]);
 
   return (
-    <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs">
+    <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs">
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
         {/* Left: Score Gauge & Health Verdict */}
         <div className="flex items-center gap-4.5">

@@ -297,7 +297,7 @@ export function QuestionAIWizard({
             value={form.prompt}
             onChange={(e) => set('prompt', e.target.value)}
             placeholder="Ví dụ: Tập trung vào Chương 2 - Thuật toán sắp xếp nhanh (QuickSort), yêu cầu có câu hỏi phân tích độ phức tạp thời gian O(n log n)..."
-            className="w-full h-9 rounded-xl border border-slate-200/90 bg-white dark:bg-slate-900 p-2.5 text-type-body font-medium text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 outline-none transition"
+            className="w-full h-9 rounded-xl border border-slate-200/60 bg-white dark:bg-slate-900 p-2.5 text-type-body font-medium text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-500/15 outline-none transition"
           />
         </div>
 
@@ -346,11 +346,11 @@ export function QuestionAIWizard({
                     onChange={(e) =>
                       setItems(items.map((x, j) => (j === i ? { ...x, content: e.target.value } : x)))
                     }
-                    className="w-full h-9 rounded-xl border border-slate-200/90 bg-white dark:bg-slate-900 p-2 text-type-body font-medium text-slate-900 focus:bg-white focus:border-blue-500 transition"
+                    className="w-full h-9 rounded-xl border border-slate-200/60 bg-white dark:bg-slate-900 p-2 text-type-body font-medium text-slate-900 focus:bg-white focus:border-blue-500 transition"
                   />
 
                   {q.sourceImages?.length > 0 && (
-                    <div className="flex flex-wrap gap-2 h-9 rounded-xl border border-slate-200/90 bg-white dark:bg-slate-900 p-2">
+                    <div className="flex flex-wrap gap-2 h-9 rounded-xl border border-slate-200/60 bg-white dark:bg-slate-900 p-2">
                       {q.sourceImages.map((image: any, imageIdx: number) => (
                         <DynamicImage
                           key={imageIdx}

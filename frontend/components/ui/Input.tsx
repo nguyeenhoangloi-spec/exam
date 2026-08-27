@@ -5,7 +5,7 @@ import { Eye, EyeOff, Search } from 'lucide-react';
 import { FilterSelect } from './FilterSelect';
 
 export const controlClassName =
-  'w-full h-10 rounded-xl border border-slate-200/90 bg-white dark:bg-slate-900 dark:border-slate-700 px-3.5 text-type-body text-slate-900 dark:text-slate-100 font-normal transition-[background-color,border-color,box-shadow,color,opacity] duration-150 ease-out focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300 dark:hover:border-slate-600 disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:cursor-not-allowed';
+  'w-full h-10 rounded-xl border border-slate-200/60 bg-white dark:bg-slate-900 dark:border-slate-700 px-3.5 text-type-body text-slate-900 dark:text-slate-100 font-normal transition-[background-color,border-color,box-shadow,color,opacity] duration-150 ease-out focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300 dark:hover:border-slate-600 disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:cursor-not-allowed';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -43,7 +43,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             className={`w-full h-10 rounded-xl border bg-white dark:bg-slate-900 px-3.5 text-type-body text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 font-normal transition-[background-color,border-color,box-shadow,color,opacity] duration-150 ease-out focus:outline-none disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:cursor-not-allowed ${leftIcon ? 'pl-10' : ''
               } ${rightIcon ? 'pr-10' : ''} ${error
                 ? 'border-danger-600 focus:border-danger-600 focus:ring-2 focus:ring-red-500/20'
-                : 'border-slate-200/90 dark:border-slate-700 focus:border-primary-600 focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300 dark:hover:border-slate-600'
+                : 'border-slate-200/60 dark:border-slate-700 focus:border-primary-600 focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300 dark:hover:border-slate-600'
               } ${className}`}
             {...props}
           />
@@ -119,7 +119,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           containerClassName="w-full"
           className={`w-full h-10 rounded-xl border bg-white dark:bg-slate-900 px-3.5 text-type-body text-slate-900 dark:text-slate-100 font-normal transition-[background-color,border-color,box-shadow,color,opacity] duration-150 ease-out focus:outline-none disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:cursor-not-allowed cursor-pointer ${error
               ? 'border-danger-600 focus:border-danger-600 focus:ring-2 focus:ring-red-500/20'
-              : 'border-slate-200/90 dark:border-slate-700 focus:border-primary-600 focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300 dark:hover:border-slate-600'
+              : 'border-slate-200/60 dark:border-slate-700 focus:border-primary-600 focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300 dark:hover:border-slate-600'
             } ${className}`}
           {...props}
         >
@@ -169,7 +169,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={textareaId}
           className={`w-full rounded-xl border bg-white dark:bg-slate-900 p-3.5 text-type-body text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 font-normal transition-[background-color,border-color,box-shadow,color,opacity] duration-150 ease-out focus:outline-none disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:cursor-not-allowed ${error
               ? 'border-danger-600 focus:border-danger-600 focus:ring-2 focus:ring-red-500/20'
-              : 'border-slate-200/90 dark:border-slate-700 focus:border-primary-600 focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300 dark:hover:border-slate-600'
+              : 'border-slate-200/60 dark:border-slate-700 focus:border-primary-600 focus:ring-2 focus:ring-blue-500/20 hover:border-slate-300 dark:hover:border-slate-600'
             } ${className}`}
           {...props}
         />

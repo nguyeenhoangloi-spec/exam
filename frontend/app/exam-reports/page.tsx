@@ -921,7 +921,7 @@ export default function ExamReportsPage() {
                             }}
                             className={`w-full text-left p-3 rounded-xl border transition cursor-pointer flex flex-col gap-1.5 ${isActive
                               ? 'bg-blue-50/50 dark:bg-blue-950/40 border-blue-500 border-l-4 shadow-2xs'
-                              : 'bg-white dark:bg-slate-900 border-slate-200/90 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50/60 dark:hover:bg-slate-800/60'
+                              : 'bg-white dark:bg-slate-900 border-slate-200/60 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50/60 dark:hover:bg-slate-800/60'
                               }`}
                           >
                             <div className="flex items-center justify-between gap-2">
@@ -984,7 +984,7 @@ export default function ExamReportsPage() {
                     setSearch(e.target.value);
                     setPage(1);
                   }}
-                  className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                  className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                 />
 
                 {/* Embedded actions on right edge of search input */}
@@ -1050,13 +1050,13 @@ export default function ExamReportsPage() {
 
             {/* Full-Width DataGrid Table */}
             {loadingReport ? (
-              <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
+              <div className="space-y-3 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-900 p-6">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />
                 ))}
               </div>
             ) : !paginatedCandidates.length ? (
-              <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
+              <div className="rounded-2xl border border-slate-200/60 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
                 Không tìm thấy thí sinh phù hợp trong ca thi này.
               </div>
             ) : (

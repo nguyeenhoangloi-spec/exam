@@ -42,7 +42,7 @@ export function ClassBulkAction({
 
   return (
     <div className="fixed bottom-7 left-0 right-0 md:left-[252px] [html.sidebar-collapsed_&]:md:left-[72px] flex justify-center z-50 pointer-events-none px-4 transition-[left] duration-300">
-      <div className="pointer-events-auto max-w-full bg-white/95 dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800 shadow-[0_20px_50px_-12px_rgba(15,23,42,0.2)] dark:shadow-[0_24px_60px_-12px_rgba(0,0,0,0.6)] rounded-2xl p-2 px-4 sm:px-5 backdrop-blur-xl ring-1 ring-slate-900/5 dark:ring-white/10 flex flex-wrap items-center justify-center gap-3 sm:gap-4 animate-in slide-in-from-bottom-5 duration-300">
+      <div className="pointer-events-auto max-w-full bg-white/95 dark:bg-slate-900/95 border border-slate-200/60 dark:border-slate-800 shadow-[0_20px_50px_-12px_rgba(15,23,42,0.2)] dark:shadow-[0_24px_60px_-12px_rgba(0,0,0,0.6)] rounded-2xl p-2 px-4 sm:px-5 backdrop-blur-xl ring-1 ring-slate-900/5 dark:ring-white/10 flex flex-wrap items-center justify-center gap-3 sm:gap-4 animate-in slide-in-from-bottom-5 duration-300">
         
         {/* Khối bên trái: Số lượng tương tác + Thanh tiến độ mini + Chuyển đổi nhanh */}
         <div className="flex items-center gap-2.5 pr-3.5 border-r border-slate-200 dark:border-slate-800 shrink-0">

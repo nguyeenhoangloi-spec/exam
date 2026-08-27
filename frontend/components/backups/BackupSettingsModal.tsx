@@ -169,7 +169,7 @@ export function BackupSettingsModal({
                   type="time"
                   value={backupTime}
                   onChange={(e) => setBackupTime(e.target.value)}
-                  className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-type-body text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                  className="w-full h-10 rounded-xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-type-body text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
                 />
               </div>
             </div>
@@ -238,7 +238,7 @@ export function BackupSettingsModal({
               </span>
               <code
                 title={initialSettings?.primaryPath || 'backup-runtime'}
-                className="text-type-helper px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/80 font-medium truncate max-w-[240px] sm:max-w-[280px]"
+                className="text-type-helper px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/60 font-medium truncate max-w-[240px] sm:max-w-[280px]"
               >
                 {formatPathDisplay(initialSettings?.primaryPath, 'backup-runtime')}
               </code>
@@ -252,7 +252,7 @@ export function BackupSettingsModal({
                 </span>
                 <code
                   title={secondaryPath || 'backup-runtime/mirror_backup'}
-                  className="text-type-helper px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/80 font-medium truncate max-w-[240px] sm:max-w-[280px]"
+                  className="text-type-helper px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/60 font-medium truncate max-w-[240px] sm:max-w-[280px]"
                 >
                   {formatPathDisplay(secondaryPath, 'backup-runtime/mirror_backup')}
                 </code>

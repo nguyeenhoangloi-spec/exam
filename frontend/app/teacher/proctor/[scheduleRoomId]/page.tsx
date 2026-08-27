@@ -445,7 +445,7 @@ export default function ProctorDashboardPage() {
   if (error || !data) {
     return (
       <main className="w-full px-6 py-6 min-h-screen bg-slate-50/50 flex items-center justify-center">
-        <div className="bg-white border border-slate-200/90 p-8 rounded-2xl max-w-md w-full text-center shadow-2xs space-y-4">
+        <div className="bg-white border border-slate-200/60 p-8 rounded-2xl max-w-md w-full text-center shadow-2xs space-y-4">
           <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto">
             <AlertTriangle className="w-6 h-6 text-rose-600" />
           </div>
@@ -636,7 +636,7 @@ export default function ProctorDashboardPage() {
         {KPI_CARDS.map(({ label, value, subtext, progressPercent, icon: Icon }) => (
           <div
             key={label}
-            className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer"
+            className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1 min-w-0">
@@ -687,7 +687,7 @@ export default function ProctorDashboardPage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+            className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
           />
 
           {/* Embedded actions on right edge of search input */}
@@ -795,7 +795,7 @@ export default function ProctorDashboardPage() {
 
       {/* ── 5. Main Content (Standard List View Mode) ── */}
       {totalItems === 0 ? (
-        <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
+        <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
           <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
             <Users className="w-7 h-7 text-slate-400" />
           </div>
@@ -806,7 +806,7 @@ export default function ProctorDashboardPage() {
         </div>
       ) : (
         /* ── 5.1 Standard List View Mode (Default Table) ── */
-        <div className="ui-table-wrap w-full max-w-full overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
+        <div className="ui-table-wrap w-full max-w-full overflow-x-auto rounded-2xl border border-slate-200/60 bg-white shadow-2xs">
           <table className="ui-table w-full min-w-[750px] text-left text-type-body text-slate-700 border-collapse">
             <thead className="bg-slate-50 text-type-body-sm font-medium tracking-wider text-slate-600 border-b border-slate-200">
               <tr>
@@ -1084,7 +1084,7 @@ export default function ProctorDashboardPage() {
         const MetaIcon = meta.icon;
         return (
           <div role="dialog" aria-modal="true" aria-label={meta.title} className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop">
-            <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800 animate-modal-dialog will-change-transform">
+            <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/60 dark:border-slate-800 animate-modal-dialog will-change-transform">
               {/* Modal header */}
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
                 <div className="flex items-center gap-3">
@@ -1149,7 +1149,7 @@ export default function ProctorDashboardPage() {
                           onClick={() => setExtraMinutes(m)}
                           className={`py-2.5 rounded-xl border text-type-body-sm font-semibold transition cursor-pointer select-none ${extraMinutes === m
                               ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
-                              : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
+                              : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
                             }`}
                         >
                           +{m}p
@@ -1169,7 +1169,7 @@ export default function ProctorDashboardPage() {
                       <FilterSelect
                         value={resolutionDecision}
                         onChange={(e) => setResolutionDecision(e.target.value as any)}
-                        className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 text-type-body font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
+                        className="w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 text-type-body font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
                       >
                         <option value="REOPEN">Cho phép mở lại phiên thi để làm tiếp</option>
                         <option value="PENALTY">Giữ nguyên bài thi & Áp dụng trừ điểm</option>
@@ -1189,7 +1189,7 @@ export default function ProctorDashboardPage() {
                           step="0.5"
                           value={penaltyPoints}
                           onChange={(e) => setPenaltyPoints(Number(e.target.value))}
-                          className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500 shadow-2xs"
+                          className="w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500 shadow-2xs"
                         />
                       </div>
                     )}
@@ -1214,7 +1214,7 @@ export default function ProctorDashboardPage() {
                           onClick={() => setIncidentDecision(opt.value)}
                           className={`p-2.5 rounded-xl border text-left transition cursor-pointer select-none ${incidentDecision === opt.value
                               ? 'border-rose-500 bg-rose-50/90 dark:bg-rose-950/60 ring-1 ring-rose-500/50'
-                              : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-rose-300 dark:hover:border-rose-800 hover:bg-rose-50/30 dark:hover:bg-rose-950/30'
+                              : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-rose-300 dark:hover:border-rose-800 hover:bg-rose-50/30 dark:hover:bg-rose-950/30'
                             }`}
                         >
                           <div className={`text-type-helper font-semibold ${incidentDecision === opt.value ? 'text-rose-700 dark:text-rose-300' : 'text-slate-900 dark:text-slate-100'
@@ -1283,7 +1283,7 @@ export default function ProctorDashboardPage() {
                         handleAction();
                       }
                     }}
-                    className={`w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition resize-none shadow-2xs ${actionType === 'FLAG' ? 'focus:border-rose-500' : 'focus:border-blue-500'
+                    className={`w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition resize-none shadow-2xs ${actionType === 'FLAG' ? 'focus:border-rose-500' : 'focus:border-blue-500'
                       }`}
                   />
 
@@ -1338,7 +1338,7 @@ export default function ProctorDashboardPage() {
       {/* ═══════ MULTI-STUDENT EXTEND MODAL ═══════ */}
       {mounted && showMultiExtendModal && typeof document !== 'undefined' && createPortal(
         <div role="dialog" aria-modal="true" aria-label="Gia hạn nhóm thí sinh" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop">
-          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800 animate-modal-dialog will-change-transform">
+          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/60 dark:border-slate-800 animate-modal-dialog will-change-transform">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
               <div className="flex items-center gap-3">
@@ -1381,7 +1381,7 @@ export default function ProctorDashboardPage() {
                       onClick={() => setMultiMinutes(m)}
                       className={`py-2.5 rounded-xl border text-type-body-sm font-semibold transition cursor-pointer select-none ${multiMinutes === m
                           ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
-                          : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
+                          : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
                         }`}
                     >
                       +{m}p
@@ -1406,7 +1406,7 @@ export default function ProctorDashboardPage() {
                     }
                   }}
                   placeholder="Nhập lý do gia hạn cho nhóm thí sinh..."
-                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
+                  className="w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
                 />
 
                 <div className="flex items-center justify-between text-type-helper text-slate-400 dark:text-slate-500 select-none pt-0.5">
@@ -1450,7 +1450,7 @@ export default function ProctorDashboardPage() {
       {/* ═══════ BROADCAST ANNOUNCEMENT MODAL ═══════ */}
       {mounted && showBroadcastModal && typeof document !== 'undefined' && createPortal(
         <div role="dialog" aria-modal="true" aria-label="Phát loa thông báo" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop">
-          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800 animate-modal-dialog will-change-transform">
+          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/60 dark:border-slate-800 animate-modal-dialog will-change-transform">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
               <div className="flex items-center gap-3">
@@ -1535,7 +1535,7 @@ export default function ProctorDashboardPage() {
                         onClick={() => setBroadcastMessage(preset.text)}
                         className={`group flex items-start gap-2.5 p-2.5 rounded-xl border text-left transition cursor-pointer select-none ${isSelected
                             ? 'border-blue-500 bg-blue-50/90 dark:bg-blue-950/60 ring-1 ring-blue-500/50'
-                            : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/30 dark:hover:bg-blue-950/30'
+                            : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/30 dark:hover:bg-blue-950/30'
                           }`}
                       >
                         <span
@@ -1589,7 +1589,7 @@ export default function ProctorDashboardPage() {
                     }
                   }}
                   placeholder="Nhập nội dung cần phát đến thí sinh..."
-                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
+                  className="w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
                 />
 
                 {/* Helper & Counter */}
@@ -1637,7 +1637,7 @@ export default function ProctorDashboardPage() {
       {/* ═══════ BULK EXTEND MODAL ═══════ */}
       {mounted && showBulkModal && typeof document !== 'undefined' && createPortal(
         <div role="dialog" aria-modal="true" aria-label="Bù giờ toàn phòng thi" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop">
-          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800 animate-modal-dialog will-change-transform">
+          <div className="relative w-full max-w-lg my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/60 dark:border-slate-800 animate-modal-dialog will-change-transform">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
               <div className="flex items-center gap-3">
@@ -1688,7 +1688,7 @@ export default function ProctorDashboardPage() {
                       onClick={() => setBulkMinutes(m)}
                       className={`py-2.5 rounded-xl border text-type-body-sm font-semibold transition cursor-pointer select-none ${bulkMinutes === m
                           ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
-                          : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
+                          : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
                         }`}
                     >
                       +{m}p
@@ -1737,7 +1737,7 @@ export default function ProctorDashboardPage() {
                     }
                   }}
                   placeholder="Nhập chi tiết lý do bù giờ..."
-                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
+                  className="w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-blue-500 transition resize-none shadow-2xs"
                 />
 
                 {/* Helper & Counter */}
@@ -1782,7 +1782,7 @@ export default function ProctorDashboardPage() {
       {/* ═══════ REOPEN ENTRY MODAL ═══════ */}
       {mounted && showReopenEntryModal && typeof document !== 'undefined' && createPortal(
         <div role="dialog" aria-modal="true" aria-label="Mở giờ cho vào thi muộn" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop">
-          <div className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800 animate-modal-dialog will-change-transform">
+          <div className="relative w-full max-w-md my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/60 dark:border-slate-800 animate-modal-dialog will-change-transform">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 px-6 py-4">
               <div className="flex items-center gap-3">
@@ -1822,7 +1822,7 @@ export default function ProctorDashboardPage() {
                       onClick={() => setLateWindowMinutes(m)}
                       className={`py-2.5 rounded-xl border text-type-body-sm font-semibold transition cursor-pointer select-none ${lateWindowMinutes === m
                           ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/25 ring-1 ring-blue-500/50'
-                          : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
+                          : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-300 dark:hover:border-blue-800 hover:bg-blue-50/40 dark:hover:bg-blue-950/40'
                         }`}
                     >
                       +{m}p

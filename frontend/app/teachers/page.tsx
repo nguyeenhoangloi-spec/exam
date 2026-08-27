@@ -410,7 +410,7 @@ export default function TeachersPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+              className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
             />
 
             {/* Embedded actions on right edge of search input */}
@@ -484,13 +484,13 @@ export default function TeachersPage() {
 
         {/* Full-Width DataGrid Table */}
         {loading ? (
-          <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
+          <div className="space-y-3 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-900 p-6">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />
             ))}
           </div>
         ) : !paginatedTeachers.length ? (
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
+          <div className="rounded-2xl border border-slate-200/60 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
             Không tìm thấy Giảng viên phù hợp.
           </div>
         ) : (
@@ -786,11 +786,11 @@ export default function TeachersPage() {
 
           <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
             <div
-              className={`w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${drawerVisible ? 'translate-x-0' : 'translate-x-full'
+              className={`w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/60 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${drawerVisible ? 'translate-x-0' : 'translate-x-full'
                 }`}
             >
               {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
-              <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
+              <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/60 dark:border-slate-800 p-6 shrink-0">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3.5 min-w-0 flex-1">
                     {/* Avatar thương hiệu */}
@@ -831,7 +831,7 @@ export default function TeachersPage() {
                 </div>
               </div>
 
-              <div className="flex border-b border-slate-200/90 dark:border-slate-800 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
+              <div className="flex border-b border-slate-200/60 dark:border-slate-800 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
                 {[
                   { id: 'info', label: 'Hồ sơ', icon: UserIcon },
                   { id: 'assignments', label: 'Lịch coi thi', icon: GraduationCap },
@@ -985,7 +985,7 @@ export default function TeachersPage() {
               </div>
 
               {/* Footer — Nút 40px chuẩn Design token */}
-              <div className="border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex items-center justify-end shrink-0">
+              <div className="border-t border-slate-200/60 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex items-center justify-end shrink-0">
                 <Button
                   type="button"
                   variant="secondary"

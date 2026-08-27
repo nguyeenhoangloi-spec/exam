@@ -196,7 +196,7 @@ export const FilterSelect = React.forwardRef<HTMLSelectElement, FilterSelectProp
   const variantClasses =
     variant === 'ghost'
       ? 'border-none bg-transparent text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 shadow-none'
-      : 'border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 shadow-2xs';
+      : 'border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 shadow-2xs';
 
   const isFullWidth = fullWidth || Boolean(containerClassName && containerClassName.includes('w-full')) || Boolean(className && className.includes('w-full'));
 
@@ -241,7 +241,7 @@ export const FilterSelect = React.forwardRef<HTMLSelectElement, FilterSelectProp
             ref={menuRef}
             style={menuStyle}
             role="listbox"
-            className="w-max rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-2xl animate-popover-in will-change-transform"
+            className="w-max rounded-2xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-2xl animate-popover-in will-change-transform"
           >
             <div className="space-y-1 max-h-60 overflow-y-auto custom-scrollbar">
               {parsedOptions.map((opt) => {

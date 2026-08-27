@@ -695,7 +695,7 @@ export default function ForgotPasswordPage() {
                       className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-type-body outline-none transition ${
                         isDark
                           ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                          : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                          : 'border-slate-200/60 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                       }`}
                     />
                   </div>
@@ -764,7 +764,7 @@ export default function ForgotPasswordPage() {
                                 ? 'border-blue-600 dark:border-blue-500 bg-blue-50/30 dark:bg-blue-950/30 text-slate-900 dark:text-white shadow-xs'
                                 : isDark
                                 ? 'border-slate-700 bg-slate-800/80 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                                : 'border-slate-200/90 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15 focus:bg-white'
+                                : 'border-slate-200/60 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15 focus:bg-white'
                             }`}
                           />
                         );
@@ -801,7 +801,7 @@ export default function ForgotPasswordPage() {
                                 ? 'border-blue-600 dark:border-blue-500 bg-blue-50/30 dark:bg-blue-950/30 text-slate-900 dark:text-white shadow-xs'
                                 : isDark
                                 ? 'border-slate-700 bg-slate-800/80 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                                : 'border-slate-200/90 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15 focus:bg-white'
+                                : 'border-slate-200/60 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15 focus:bg-white'
                             }`}
                           />
                         );
@@ -914,7 +914,7 @@ export default function ForgotPasswordPage() {
                       className={`w-full h-[44px] rounded-2xl border pl-12 pr-11 text-type-body outline-none transition ${
                         isDark
                           ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                          : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                          : 'border-slate-200/60 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                       }`}
                     />
                     <button
@@ -948,7 +948,7 @@ export default function ForgotPasswordPage() {
                       className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-type-body outline-none transition ${
                         isDark
                           ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                          : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                          : 'border-slate-200/60 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                       }`}
                     />
                   </div>

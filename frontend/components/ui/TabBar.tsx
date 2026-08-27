@@ -95,7 +95,7 @@ export function TabBar<T extends string = string>({
       >
         {/* Sliding Background Indicator Pill */}
         <div
-          className="absolute top-1 bottom-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700/80 shadow-xs shadow-slate-900/5 dark:shadow-black/20 pointer-events-none will-change-[transform,width]"
+          className="absolute top-1 bottom-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 shadow-xs shadow-slate-900/5 dark:shadow-black/20 pointer-events-none will-change-[transform,width]"
           style={{
             transform: `translateX(${indicatorStyle.left}px)`,
             width: `${indicatorStyle.width}px`,

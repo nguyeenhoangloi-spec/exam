@@ -549,7 +549,7 @@ export default function LoginPage() {
               className={`group relative flex h-[50px] w-full items-center justify-center gap-3 rounded-2xl px-5 text-type-body font-semibold transition-all duration-200 cursor-pointer overflow-hidden ${
                 isDark
                   ? 'border border-slate-700/80 bg-slate-850 text-slate-100 shadow-[0_4px_16px_rgba(0,0,0,0.45),0_1px_2px_rgba(0,0,0,0.3)] hover:border-blue-500/70 hover:bg-slate-800 hover:shadow-[0_12px_28px_-4px_rgba(66,133,244,0.3)]'
-                  : 'border border-slate-200/90 bg-white text-slate-900 shadow-[0_4px_14px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.03)] hover:border-blue-300 hover:bg-slate-50/80 hover:text-blue-700 hover:shadow-[0_14px_30px_-4px_rgba(66,133,244,0.22),0_4px_10px_-2px_rgba(0,0,0,0.04)]'
+                  : 'border border-slate-200/60 bg-white text-slate-900 shadow-[0_4px_14px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.03)] hover:border-blue-300 hover:bg-slate-50/80 hover:text-blue-700 hover:shadow-[0_14px_30px_-4px_rgba(66,133,244,0.22),0_4px_10px_-2px_rgba(0,0,0,0.04)]'
               } hover:-translate-y-0.5 active:translate-y-0.5 active:scale-[0.985] active:shadow-xs focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/25 disabled:cursor-not-allowed disabled:opacity-80 disabled:transform-none disabled:shadow-none`}
             >
               {/* Subtle Ambient Light Sheen on Hover */}
@@ -644,7 +644,7 @@ export default function LoginPage() {
                           className={`w-full h-12 rounded-xl border pl-12 pr-4 text-type-body outline-none transition ${
                             isDark
                               ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                            : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                            : 'border-slate-200/60 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                           }`}
                         />
                       </div>
@@ -668,7 +668,7 @@ export default function LoginPage() {
                           className={`w-full h-12 rounded-xl border pl-12 pr-12 text-type-body outline-none transition ${
                             isDark
                               ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                            : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                            : 'border-slate-200/60 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                           }`}
                         />
                         <button

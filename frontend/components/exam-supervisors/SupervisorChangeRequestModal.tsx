@@ -85,7 +85,7 @@ export function SupervisorChangeRequestModal({
       <div className="fixed inset-0 bg-slate-950/55 backdrop-blur-[2px] transition-opacity" onClick={onClose} />
 
       {/* Modal Box */}
-      <div className="relative w-full max-w-lg rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-lg rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="shrink-0 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-5 py-4 bg-white dark:bg-slate-900">
           <div className="flex items-center gap-3">
@@ -121,7 +121,7 @@ export function SupervisorChangeRequestModal({
           )}
 
           {/* Thông tin ca thi */}
-          <div className="p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-2">
+          <div className="p-3.5 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-2">
             <div className="flex items-center justify-between gap-2">
               <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">
                 Ca thi cần đổi
@@ -165,7 +165,7 @@ export function SupervisorChangeRequestModal({
                   className={`px-3 py-1.5 rounded-xl border text-type-helper transition cursor-pointer ${
                     reason === r
                       ? 'border-amber-500 bg-amber-50 text-amber-800 font-semibold dark:border-amber-600 dark:bg-amber-950/40 dark:text-amber-300'
-                      : 'border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-slate-300'
+                      : 'border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-slate-300'
                   }`}
                 >
                   <span>{r}</span>
@@ -189,7 +189,7 @@ export function SupervisorChangeRequestModal({
               placeholder="Vui lòng nêu rõ lý do xin đổi ca..."
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none transition shadow-2xs"
+              className="w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none transition shadow-2xs"
               required
             />
           </div>

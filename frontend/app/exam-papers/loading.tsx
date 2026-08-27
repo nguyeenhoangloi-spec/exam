@@ -18,7 +18,7 @@ export default function ExamPapersLoading() {
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
-            className="h-28 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-3"
+            className="h-28 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-3"
           >
             <div className="flex items-center justify-between">
               <div className="h-3.5 w-20 bg-slate-200 dark:bg-slate-800 rounded" />
@@ -30,10 +30,10 @@ export default function ExamPapersLoading() {
       </div>
 
       {/* Matrix Form Skeleton */}
-      <div className="h-80 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-4" />
+      <div className="h-80 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-4" />
 
       {/* Table Skeleton */}
-      <div className="h-96 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4" />
+      <div className="h-96 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4" />
     </div>
   );
 }

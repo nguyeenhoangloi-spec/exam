@@ -35,7 +35,7 @@ export function RegradeTable({
 }: RegradeTableProps) {
   if (loading) {
     return (
-      <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-12 text-center text-slate-500 dark:text-slate-400 shadow-2xs font-normal">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-12 text-center text-slate-500 dark:text-slate-400 shadow-2xs font-normal">
         <RefreshCw className="h-5 w-5 animate-spin mx-auto mb-2 text-blue-600" />
         Đang tải danh sách đơn phúc khảo...
       </div>
@@ -44,7 +44,7 @@ export function RegradeTable({
 
   if (appeals.length === 0) {
     return (
-      <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-12 text-center text-slate-500 dark:text-slate-400 font-normal shadow-2xs">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-12 text-center text-slate-500 dark:text-slate-400 font-normal shadow-2xs">
         Không tìm thấy đơn phúc khảo nào phù hợp.
       </div>
     );
@@ -54,9 +54,9 @@ export function RegradeTable({
 
   // Default List View Mode (Table)
   return (
-    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
       <table className="ui-table w-full text-left text-type-body leading-[22px] text-slate-700 dark:text-slate-300 border-collapse">
-        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800 select-none">
+        <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200/60 dark:border-slate-800 select-none">
           <tr>
             <th scope="col" className="py-3 px-4 w-12 text-center">
               <input

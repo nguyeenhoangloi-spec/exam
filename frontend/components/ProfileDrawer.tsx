@@ -79,12 +79,12 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
         <div
-          className={`w-screen ${maxWidth === 'md' ? 'max-w-md' : 'max-w-[540px]'} bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
+          className={`w-screen ${maxWidth === 'md' ? 'max-w-md' : 'max-w-[540px]'} bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/60 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
             isVisible ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
           {/* Header — Tương phản cao, Phân cấp chuẩn mực học thuật */}
-          <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
+          <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/60 dark:border-slate-800 p-6 shrink-0">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3.5 min-w-0 flex-1">
                 {/* Avatar / Icon Badge thương hiệu */}
@@ -218,7 +218,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
           </div>
 
           {/* Footer — Cố định ở đáy, Nút 40px chuẩn design token */}
-          <div className="border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex items-center justify-end shrink-0">
+          <div className="border-t border-slate-200/60 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex items-center justify-end shrink-0">
             <Button
               type="button"
               variant="secondary"

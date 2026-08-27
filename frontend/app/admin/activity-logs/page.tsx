@@ -748,7 +748,7 @@ function ActivityLogsContent() {
                                 setSecPage(1);
                             }
                         }}
-                        className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                        className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                     />
 
                     {/* Embedded actions on right edge of search input */}
@@ -826,7 +826,7 @@ function ActivityLogsContent() {
             ========================================================================= */}
             {activeTab === 'activity' && (
                 <div className="space-y-4">
-                    <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+                    <div className="ui-table-wrap rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
                         {loading && logs.length === 0 ? (
                             <div className="py-24 text-center">
                                 <div className="inline-block h-7 w-7 animate-spin rounded-full border-2 border-blue-600 border-t-transparent mb-2" />
@@ -944,7 +944,7 @@ function ActivityLogsContent() {
             ========================================================================= */}
             {activeTab === 'security' && (
                 <div className="space-y-4">
-                    <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+                    <div className="ui-table-wrap rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
                         {secLoading && secEvents.length === 0 ? (
                             <div className="py-24 text-center">
                                 <div className="inline-block h-7 w-7 animate-spin rounded-full border-2 border-blue-600 border-t-transparent mb-2" />

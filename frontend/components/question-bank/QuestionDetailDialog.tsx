@@ -129,12 +129,12 @@ export function QuestionDetailDialog({
       {/* Right Drawer Container */}
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
         <div
-          className={`w-screen max-w-[620px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
+          className={`w-screen max-w-[620px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/60 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
             visible ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
           {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
-          <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
+          <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/60 dark:border-slate-800 p-6 shrink-0">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3.5 min-w-0 flex-1">
                 {/* Icon Squircle Thương hiệu */}
@@ -486,7 +486,7 @@ export function QuestionDetailDialog({
           </div>
 
           {/* Standard Footer with Primary Action */}
-          <div className="border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex items-center justify-end gap-2.5 shrink-0">
+          <div className="border-t border-slate-200/60 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex items-center justify-end gap-2.5 shrink-0">
             <Button
               variant="secondary"
               size="md"

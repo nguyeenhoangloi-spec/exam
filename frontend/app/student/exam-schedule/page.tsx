@@ -252,7 +252,7 @@ export default function StudentExamSchedulePage() {
           {KPI.map(({ label, value, subtext, progressPercent, icon: Icon }) => (
             <div
               key={label}
-              className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer"
+              className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1 min-w-0">
@@ -361,12 +361,12 @@ export default function StudentExamSchedulePage() {
 
         {/* Schedule Content (Calendar View hoặc List Table View) */}
         {loading ? (
-          <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3">
+          <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
             <p className="text-type-body-sm font-semibold text-slate-500 dark:text-slate-400">Đang tra cứu lịch thi cá nhân...</p>
           </div>
         ) : filteredSchedules.length === 0 ? (
-          <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
+          <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
             <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center">
               <BookMarked className="w-7 h-7 text-blue-600 dark:text-blue-400" />
             </div>
@@ -383,9 +383,9 @@ export default function StudentExamSchedulePage() {
           />
         ) : (
           /* ── 2. Chế độ Xem Bảng Danh Sách (Table) ── */
-          <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+          <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
             <table className="ui-table w-full text-left text-type-body leading-[22px] text-slate-700 dark:text-slate-300 border-collapse">
-              <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800 select-none">
+              <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200/60 dark:border-slate-800 select-none">
                 <tr>
                   <th scope="col" className="p-3.5 pl-4 font-medium whitespace-nowrap text-center w-12">STT</th>
                   <th scope="col" className="p-3.5 font-medium min-w-[220px]">Học phần</th>

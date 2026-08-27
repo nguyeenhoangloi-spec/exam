@@ -79,7 +79,7 @@ export function PaginationBar({
             type="button"
             disabled={page <= 1}
             onClick={() => onPage(page - 1)}
-            className="ui-pressable flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/90 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition-colors duration-150 disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer disabled:cursor-not-allowed shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="ui-pressable flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/60 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition-colors duration-150 disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer disabled:cursor-not-allowed shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             title="Trang trước"
             aria-label="Trang trước"
           >
@@ -106,7 +106,7 @@ export function PaginationBar({
                 className={`ui-pressable flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-type-body-sm transition-all duration-150 cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                   isCurrent
                     ? 'bg-blue-600 text-white shadow-xs font-semibold dark:bg-blue-600'
-                    : 'border border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 font-medium'
+                    : 'border border-slate-200/60 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 font-medium'
                 }`}
                 aria-current={isCurrent ? 'page' : undefined}
               >
@@ -119,7 +119,7 @@ export function PaginationBar({
             type="button"
             disabled={page >= safeTotalPages}
             onClick={() => onPage(page + 1)}
-            className="ui-pressable flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/90 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition-colors duration-150 disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer disabled:cursor-not-allowed shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="ui-pressable flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/60 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition-colors duration-150 disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer disabled:cursor-not-allowed shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             title="Trang sau"
             aria-label="Trang sau"
           >
@@ -132,7 +132,7 @@ export function PaginationBar({
           <button
             type="button"
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex h-9 items-center justify-between gap-2 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-3 pr-2.5 text-type-body-sm font-medium text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer shadow-2xs select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="flex h-9 items-center justify-between gap-2 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-3 pr-2.5 text-type-body-sm font-medium text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer shadow-2xs select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             title="Chọn số mục hiển thị trên mỗi trang"
             aria-expanded={dropdownOpen}
             aria-haspopup="listbox"
@@ -144,7 +144,7 @@ export function PaginationBar({
           {dropdownOpen && (
             <div
               role="listbox"
-              className="absolute right-0 bottom-full mb-1.5 min-w-[125px] rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-1.5 shadow-xl z-50 animate-popover-in"
+              className="absolute right-0 bottom-full mb-1.5 min-w-[125px] rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-1.5 shadow-xl z-50 animate-popover-in"
             >
               <div className="space-y-0.5">
                 {limitOptions.map((opt) => {

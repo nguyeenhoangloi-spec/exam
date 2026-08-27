@@ -58,7 +58,7 @@ export function SummaryScheduleDrawer({
 
       {/* Drawer Container */}
       <div
-        className="relative z-[101] w-full max-w-lg bg-white dark:bg-slate-900 h-full shadow-2xl flex flex-col justify-between border-l border-slate-200/90 dark:border-slate-800 animate-in slide-in-from-right duration-300 overflow-hidden"
+        className="relative z-[101] w-full max-w-lg bg-white dark:bg-slate-900 h-full shadow-2xl flex flex-col justify-between border-l border-slate-200/60 dark:border-slate-800 animate-in slide-in-from-right duration-300 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* ── 1. Header ── */}
@@ -103,7 +103,7 @@ export function SummaryScheduleDrawer({
           {/* KPI 4 Cards Grid */}
           <div className="grid grid-cols-2 gap-3">
             {/* Card 1: Số sinh viên */}
-            <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-4 space-y-1">
+            <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-4 space-y-1">
               <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                 <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 <span>Số SV dự thi</span>
@@ -117,7 +117,7 @@ export function SummaryScheduleDrawer({
             </div>
 
             {/* Card 2: Điểm trung bình */}
-            <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-4 space-y-1">
+            <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-4 space-y-1">
               <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                 <GraduationCap className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 <span>Điểm trung bình</span>
@@ -131,7 +131,7 @@ export function SummaryScheduleDrawer({
             </div>
 
             {/* Card 3: Tỷ lệ đạt */}
-            <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-4 space-y-1">
+            <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-4 space-y-1">
               <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                 <Award className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 <span>Tỷ lệ đạt</span>
@@ -145,7 +145,7 @@ export function SummaryScheduleDrawer({
             </div>
 
             {/* Card 4: Tình trạng chấm */}
-            <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-4 space-y-1">
+            <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-4 space-y-1">
               <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 <span>Đã chấm</span>
@@ -175,7 +175,7 @@ export function SummaryScheduleDrawer({
           )}
 
           {/* Progress overview */}
-          <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-3">
+          <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-3">
             <h3 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
               Tỷ lệ hoàn thành môn thi
             </h3>
@@ -208,7 +208,7 @@ export function SummaryScheduleDrawer({
         </div>
 
         {/* ── 3. Footer Action Buttons ── */}
-        <div className="p-4 border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 flex flex-wrap items-center justify-between gap-2.5">
+        <div className="p-4 border-t border-slate-200/60 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 flex flex-wrap items-center justify-between gap-2.5">
           <div className="flex items-center gap-2">
             {onExportSingleExcel && (
               <Button

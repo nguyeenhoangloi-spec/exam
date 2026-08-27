@@ -46,7 +46,7 @@ const providers: Array<{ value: StorageProvider; label: string; hint: string }> 
   { value: 'GOOGLE_DRIVE', label: 'Google Drive', hint: 'Kết nối bằng tài khoản Google' },
 ];
 
-const fieldClass = 'h-10 w-full rounded-xl border border-slate-200/90 bg-white px-3 text-type-body font-medium text-slate-900 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-50';
+const fieldClass = 'h-10 w-full rounded-xl border border-slate-200/60 bg-white px-3 text-type-body font-medium text-slate-900 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-50';
 const labelClass = 'space-y-1.5 text-type-body font-medium text-slate-900 dark:text-slate-100';
 
 function defaults(provider: StorageProvider): StorageTargetPayload['config'] {
@@ -134,7 +134,7 @@ export function StorageTargetModal({
               fullWidth
             />
           </div>
-          <div className="flex h-10 items-center justify-between self-end rounded-xl border border-slate-200/90 px-3.5 bg-white dark:border-slate-700 dark:bg-slate-900">
+          <div className="flex h-10 items-center justify-between self-end rounded-xl border border-slate-200/60 px-3.5 bg-white dark:border-slate-700 dark:bg-slate-900">
             <span className="text-type-body font-medium text-slate-900 dark:text-slate-100">Kích hoạt kết nối</span>
             <button
               type="button"

@@ -866,7 +866,7 @@ export default function ExamArrangementPage() {
                       value={studentSearchQuery}
                       onChange={(e) => setStudentSearchQuery(e.target.value)}
                       placeholder="Tìm kiếm SV..."
-                      className="h-10 w-full pl-9 pr-8 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60 text-type-body text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition"
+                      className="h-10 w-full pl-9 pr-8 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60 text-type-body text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition"
                     />
                     <Search className="h-4 w-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     {studentSearchQuery && (
@@ -950,7 +950,7 @@ export default function ExamArrangementPage() {
 
           {/* ── KHU VỰC SƠ ĐỒ / KẾT QUẢ ── */}
           {isLoadingSchedule ? (
-            <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-16 text-center shadow-2xs flex flex-col items-center justify-center space-y-3">
+            <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-16 text-center shadow-2xs flex flex-col items-center justify-center space-y-3">
               <div className="h-12 w-12 rounded-2xl bg-blue-50 dark:bg-blue-950 flex items-center justify-center text-blue-600 dark:text-blue-400">
                 <Loader2 className="h-6 w-6 animate-spin" />
               </div>
@@ -959,7 +959,7 @@ export default function ExamArrangementPage() {
               </p>
             </div>
           ) : !result ? (
-            <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-16 text-center shadow-2xs flex flex-col items-center justify-center space-y-3">
+            <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-16 text-center shadow-2xs flex flex-col items-center justify-center space-y-3">
               <div className="h-14 w-14 rounded-2xl bg-blue-50 dark:bg-blue-950 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-2xs">
                 <DoorOpen className="h-7 w-7 stroke-[2]" />
               </div>
@@ -996,7 +996,7 @@ export default function ExamArrangementPage() {
                       return (
                         <div
                           key={room.roomCode}
-                          className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden"
+                          className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden"
                         >
                           {/* Header của phòng thi tinh gọn & sang trọng */}
                           <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-800/30">
@@ -1059,7 +1059,7 @@ export default function ExamArrangementPage() {
                                     key={seatNum}
                                     onClick={() => student && setDrawerStudentDetail(student)}
                                     className={`rounded-xl border p-2.5 transition text-left space-y-1.5 min-h-[76px] flex flex-col justify-between ${student
-                                        ? 'bg-white dark:bg-slate-900 border-slate-200/90 dark:border-slate-800 shadow-2xs hover:border-blue-500 hover:bg-blue-50/20 cursor-pointer select-none'
+                                        ? 'bg-white dark:bg-slate-900 border-slate-200/60 dark:border-slate-800 shadow-2xs hover:border-blue-500 hover:bg-blue-50/20 cursor-pointer select-none'
                                         : 'bg-slate-50/40 dark:bg-slate-800/20 border-dashed border-slate-200 dark:border-slate-800 text-slate-300 select-none'
                                       }`}
                                   >
@@ -1121,7 +1121,7 @@ export default function ExamArrangementPage() {
 
               {/* ── View 2: Bảng Danh Sách Sinh Viên ── */}
               {viewMode === 'table' && (
-                <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+                <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
                   <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
                     <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200/80 dark:border-slate-700">
                       <tr>

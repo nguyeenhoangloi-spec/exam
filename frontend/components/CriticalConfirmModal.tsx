@@ -167,7 +167,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
       aria-label={title}
       className="fixed inset-0 z-[9999] flex min-h-dvh items-center justify-center bg-slate-950/60 p-3 overscroll-contain backdrop-blur-sm animate-modal-backdrop sm:p-4"
     >
-      <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/90 dark:border-slate-800 flex flex-col max-h-[calc(100dvh-1.5rem)] animate-modal-dialog will-change-transform sm:max-h-[calc(100dvh-2rem)]">
+      <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/60 dark:border-slate-800 flex flex-col max-h-[calc(100dvh-1.5rem)] animate-modal-dialog will-change-transform sm:max-h-[calc(100dvh-2rem)]">
         {/* Clean Security Header */}
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 flex items-start justify-between shrink-0">
           <div className="flex items-start gap-3.5 min-w-0">

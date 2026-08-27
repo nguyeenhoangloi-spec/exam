@@ -328,7 +328,7 @@ export function ExamReportSummaryTab({
                   className={`h-9 inline-flex items-center gap-1.5 px-3 rounded-xl border text-type-body-sm font-medium transition-colors cursor-pointer ${
                     openTemplateMenu
                       ? 'border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-500 dark:bg-blue-950/60 dark:text-blue-400'
-                      : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-850'
+                      : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-850'
                   }`}
                 >
                   <span>Mẫu báo cáo</span>
@@ -341,7 +341,7 @@ export function ExamReportSummaryTab({
 
                 {/* Menu Popover */}
                 {openTemplateMenu && (
-                  <div className="absolute right-0 mt-1.5 w-72 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl p-1.5 z-30 divide-y divide-slate-100 dark:divide-slate-800/80 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="absolute right-0 mt-1.5 w-72 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl p-1.5 z-30 divide-y divide-slate-100 dark:divide-slate-800/80 animate-in fade-in zoom-in-95 duration-150">
                     <div className="px-3 py-2">
                       <p className="text-type-body-sm font-semibold text-slate-900 dark:text-white">
                         Chọn mẫu báo cáo
@@ -382,14 +382,14 @@ export function ExamReportSummaryTab({
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Tìm mã môn, tên môn..."
-                  className="h-9 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-9 pr-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition"
+                  className="h-9 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-9 pr-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition"
                 />
               </div>
             </div>
           </div>
 
           {/* Bảng Ca thi gần đây (Khung Bảng Duy Nhất, phẳng và liền mạch) */}
-          <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+          <div className="ui-table-wrap rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
             <table className="ui-table w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/50 text-type-body-sm font-medium text-slate-600 dark:text-slate-400">
@@ -458,7 +458,7 @@ export function ExamReportSummaryTab({
                 : 'w-full xl:w-[360px] xl:opacity-100'
             }`}
           >
-            <div className="w-full xl:w-[360px] space-y-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs">
+            <div className="w-full xl:w-[360px] space-y-4 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs">
               <div>
                 <h2 className="text-type-section font-semibold text-slate-900 dark:text-white">
                   Cấu hình báo cáo
@@ -488,7 +488,7 @@ export function ExamReportSummaryTab({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder={catalog.find((i) => i.type === type)?.name}
-                  className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:border-blue-500 transition shadow-2xs"
+                  className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:border-blue-500 transition shadow-2xs"
                 />
               </label>
 
@@ -549,7 +549,7 @@ export function ExamReportSummaryTab({
           </aside>
 
           {/* Cột phải: Bảng xem trước */}
-          <div className="flex-1 min-w-0 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+          <div className="flex-1 min-w-0 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
             <div className="flex flex-wrap justify-between items-center gap-3 border-b border-slate-100 dark:border-slate-800 p-4 bg-slate-50/60 dark:bg-slate-850/50">
               <div className="flex items-center gap-2.5 min-w-0">
                 <button
@@ -675,7 +675,7 @@ export function ExamReportSummaryTab({
 
       {/* ── TAB 3: LỊCH SỬ XUẤT BÁO CÁO ── */}
       {tab === 'history' && (
-        <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs space-y-4">
+        <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs space-y-4">
           <div>
             <h2 className="text-type-section font-semibold text-slate-900 dark:text-white">
               Lịch sử xuất báo cáo trên thiết bị
@@ -736,7 +736,7 @@ function Select({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-900 dark:text-slate-100 outline-none focus:border-blue-500 transition shadow-2xs cursor-pointer"
+        className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-900 dark:text-slate-100 outline-none focus:border-blue-500 transition shadow-2xs cursor-pointer"
       >
         {all && <option value="ALL">Tất cả</option>}
         {options.map((o) => (
@@ -767,7 +767,7 @@ function DateInput({
         type="date"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-900 dark:text-slate-100 outline-none focus:border-blue-500 transition shadow-2xs"
+        className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-900 dark:text-slate-100 outline-none focus:border-blue-500 transition shadow-2xs"
       />
     </label>
   );

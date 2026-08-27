@@ -110,7 +110,7 @@ export default function StudentExamResultPage() {
         {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
         {/* ── Seamless Single White Card (Full-Bleed Header) ── */}
-        <div className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-xl overflow-hidden">
+        <div className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-700 shadow-xl overflow-hidden">
           
           {/* Full-Bleed Header Banner: Primary Vivid Blue Gradient */}
           <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-6 sm:p-7 text-white shrink-0 shadow-xs">
@@ -206,7 +206,7 @@ export default function StudentExamResultPage() {
         {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
         {/* ── Seamless Single White Card Architecture (Full-Bleed Header) ── */}
-        <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-xl overflow-hidden">
+        <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-700 shadow-xl overflow-hidden">
 
           {/* Full-Bleed Header Banner: Primary Vivid Blue Gradient */}
           <div className={`bg-gradient-to-r ${isUnderReview ? 'from-amber-600 via-amber-700 to-orange-700' : 'from-blue-600 via-blue-700 to-blue-800'} p-6 sm:p-7 text-white shrink-0 shadow-xs`}>

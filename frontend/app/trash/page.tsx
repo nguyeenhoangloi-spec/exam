@@ -394,7 +394,7 @@ function TrashPageContent() {
               }}
               className={`group relative flex flex-col justify-between p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer shadow-2xs hover:-translate-y-0.5 hover:shadow-md ${isSelected
                   ? 'bg-blue-50/40 dark:bg-blue-950/30 border-blue-500 ring-2 ring-blue-500/20'
-                  : 'bg-white dark:bg-slate-900 border-slate-200/90 dark:border-slate-800 hover:border-slate-300/90 dark:hover:border-slate-700'
+                  : 'bg-white dark:bg-slate-900 border-slate-200/60 dark:border-slate-800 hover:border-slate-300/90 dark:hover:border-slate-700'
                 }`}
             >
               <div className="flex items-start justify-between gap-3 w-full">
@@ -448,7 +448,7 @@ function TrashPageContent() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Tìm mục đã xóa..."
-            className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+            className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
           />
 
           {/* Embedded actions on right edge of search input */}

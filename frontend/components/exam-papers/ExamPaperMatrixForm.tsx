@@ -181,7 +181,7 @@ export function ExamPaperMatrixForm({
   };
 
   return (
-    <form onSubmit={onSubmit} className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+    <form onSubmit={onSubmit} className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
 
       {/* ── HEADER (Thuần túy, không khung, không nền, không icon) ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-6 py-4 border-b border-slate-100 dark:border-slate-800">
@@ -755,7 +755,7 @@ export function ExamPaperMatrixForm({
                             <div
                               ref={customMenuRef}
                               style={customMenuStyle}
-                              className="w-52 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl p-3 z-[99999] animate-popover-in will-change-transform"
+                              className="w-52 rounded-2xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl p-3 z-[99999] animate-popover-in will-change-transform"
                             >
                               <div className="text-type-body font-semibold text-slate-800 dark:text-slate-200 px-1 pb-1.5">
                                 Chọn số lượt phát

@@ -93,7 +93,7 @@ export function RolePresetsModal({
       <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
 
       <div
-        className="relative z-[101] w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/90 dark:border-slate-800 overflow-hidden flex flex-col max-h-[calc(100dvh-1.5rem)] animate-in zoom-in-95 duration-200 sm:max-h-[calc(100dvh-2rem)]"
+        className="relative z-[101] w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/60 dark:border-slate-800 overflow-hidden flex flex-col max-h-[calc(100dvh-1.5rem)] animate-in zoom-in-95 duration-200 sm:max-h-[calc(100dvh-2rem)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -172,7 +172,7 @@ export function RolePresetsModal({
           </div>
 
           {/* User Selection Form */}
-          <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-4 space-y-2.5">
+          <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-4 space-y-2.5">
             <label className="text-type-body font-medium text-slate-900 dark:text-slate-100 block">
               Chọn tài khoản áp dụng mẫu [{currentPreset.name}]
             </label>
@@ -192,7 +192,7 @@ export function RolePresetsModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 flex items-center justify-between">
+        <div className="p-4 border-t border-slate-200/60 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 flex items-center justify-between">
           <Button variant="ghost" size="md" onClick={onClose} disabled={saving}>
             Hủy
           </Button>

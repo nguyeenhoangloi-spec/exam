@@ -145,7 +145,7 @@ export function AutoProposalModal({
                 key={r.id}
                 className={`rounded-2xl border p-4 transition ${isConflicted
                     ? 'border-rose-300 bg-rose-50/30'
-                    : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900'
+                    : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900'
                   }`}
               >
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5 mb-3">

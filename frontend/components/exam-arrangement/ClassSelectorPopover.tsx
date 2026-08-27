@@ -152,7 +152,7 @@ export function ClassSelectorPopover({
         className={`h-10 px-3.5 rounded-xl border transition-all duration-150 flex items-center gap-1.5 cursor-pointer select-none text-type-helper font-medium ${
           isOpen
             ? 'border-blue-500 bg-blue-50/70 dark:bg-blue-950/60 text-blue-900 dark:text-blue-200 ring-2 ring-blue-500/20 shadow-2xs'
-            : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50/80 shadow-2xs'
+            : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50/80 shadow-2xs'
         }`}
         title="Chọn các lớp học phần tham gia thi"
       >
@@ -172,7 +172,7 @@ export function ClassSelectorPopover({
           <div
             ref={popoverRef}
             style={popoverStyle}
-            className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl animate-in fade-in-50 zoom-in-95 duration-150 flex flex-col overflow-hidden text-left"
+            className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl animate-in fade-in-50 zoom-in-95 duration-150 flex flex-col overflow-hidden text-left"
           >
             {/* Header */}
             <div className="shrink-0 flex items-center justify-between px-3.5 py-2.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40">

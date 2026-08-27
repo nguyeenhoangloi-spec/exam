@@ -164,7 +164,7 @@ export function ExamPaperDetailDrawer({
         onClick={onClose}
       />
       <div
-        className={`fixed inset-y-0 right-0 z-[101] w-full max-w-3xl bg-white dark:bg-slate-900 border-l border-slate-200/90 dark:border-slate-800 shadow-2xl flex flex-col transform transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform pointer-events-auto ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`fixed inset-y-0 right-0 z-[101] w-full max-w-3xl bg-white dark:bg-slate-900 border-l border-slate-200/60 dark:border-slate-800 shadow-2xl flex flex-col transform transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform pointer-events-auto ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
         <div className="px-6 py-3.5 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
           <div className="flex items-center justify-between gap-4">
@@ -255,7 +255,7 @@ export function ExamPaperDetailDrawer({
               return (
                 <div
                   key={detail.id || originalIndex}
-                  className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs space-y-4 transition-colors hover:border-slate-300 dark:hover:border-slate-700"
+                  className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs space-y-4 transition-colors hover:border-slate-300 dark:hover:border-slate-700"
                 >
                   {/* Question Header */}
                   <div className="flex items-start justify-between gap-3">

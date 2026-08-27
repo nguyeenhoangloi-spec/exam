@@ -137,12 +137,12 @@ export function RegradeReviewDrawer({
         {/* Drawer Container */}
         <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
           <div
-            className={`w-screen max-w-[600px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
+            className={`w-screen max-w-[600px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/60 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
               visible ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
             {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
-            <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 p-6 shrink-0">
+            <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/60 dark:border-slate-800 p-6 shrink-0">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3.5 min-w-0 flex-1">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
@@ -268,7 +268,7 @@ export function RegradeReviewDrawer({
                 <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
                   Lý do &amp; Nguyện vọng xin phúc khảo
                 </h3>
-                <div className="rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/90 dark:border-slate-800 p-3.5 text-slate-800 dark:text-slate-200 leading-relaxed font-normal text-type-body-sm flex items-start gap-2.5 shadow-2xs">
+                <div className="rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/60 dark:border-slate-800 p-3.5 text-slate-800 dark:text-slate-200 leading-relaxed font-normal text-type-body-sm flex items-start gap-2.5 shadow-2xs">
                   <MessageSquareQuote className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
                   <span className="flex-1 break-words">{selectedAppeal.reason}</span>
                 </div>
@@ -322,7 +322,7 @@ export function RegradeReviewDrawer({
                         max="10"
                         value={revisedScore}
                         onChange={(e) => setRevisedScore(e.target.value)}
-                        className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 pr-14 text-type-body font-semibold text-emerald-600 dark:text-emerald-400 focus:border-emerald-500 focus:outline-none transition shadow-2xs"
+                        className="w-full h-10 rounded-xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 pr-14 text-type-body font-semibold text-emerald-600 dark:text-emerald-400 focus:border-emerald-500 focus:outline-none transition shadow-2xs"
                         placeholder="Nhập điểm mới..."
                       />
                       <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-type-helper font-semibold text-slate-400 pointer-events-none">
@@ -340,7 +340,7 @@ export function RegradeReviewDrawer({
                     rows={3}
                     value={reviewerNote}
                     onChange={(e) => setReviewerNote(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-type-body font-normal text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-blue-600 focus:outline-none transition shadow-2xs"
+                    className="w-full rounded-xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-type-body font-normal text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-blue-600 focus:outline-none transition shadow-2xs"
                     placeholder="Nhập lý do chấp nhận / từ chối hoặc giải trình điểm chấm lại..."
                   />
                 </div>
@@ -348,7 +348,7 @@ export function RegradeReviewDrawer({
             </div>
 
             {/* Standard Footer Action Bar */}
-            <div className="border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex items-center justify-end gap-3 shrink-0">
+            <div className="border-t border-slate-200/60 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex items-center justify-end gap-3 shrink-0">
               <Button type="button" variant="secondary" size="md" onClick={handleClose}>
                 Hủy bỏ
               </Button>

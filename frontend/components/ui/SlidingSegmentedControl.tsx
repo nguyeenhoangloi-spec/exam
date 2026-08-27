@@ -86,7 +86,7 @@ export function SlidingSegmentedControl<T extends string = string>({
   const shapePillClass = isPill ? 'rounded-full' : 'rounded-xl';
 
   const containerBgClass = isDock
-    ? 'bg-white/95 dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-700/80 backdrop-blur-2xl shadow-[0_20px_50px_-12px_rgba(15,23,42,0.25)] ring-1 ring-white/80 dark:ring-white/10'
+    ? 'bg-white/95 dark:bg-slate-900/95 border border-slate-200/60 dark:border-slate-800/60 backdrop-blur-2xl shadow-[0_20px_50px_-12px_rgba(15,23,42,0.25)] ring-1 ring-white/80 dark:ring-white/10'
     : 'bg-slate-100/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/70';
 
   const containerWidthClass = fullWidth ? 'w-full flex' : 'inline-flex w-fit max-w-full';
@@ -103,8 +103,8 @@ export function SlidingSegmentedControl<T extends string = string>({
           isPrimary
             ? 'bg-blue-600 shadow-[0_4px_14px_rgba(37,99,235,0.4)] ring-1 ring-white/20'
             : isDock
-            ? 'bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-xs'
-            : 'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700/90 shadow-sm'
+            ? 'bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 shadow-xs'
+            : 'bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/90 shadow-sm'
         }`}
         style={{
           transform: `translateX(${indicatorStyle.left}px)`,

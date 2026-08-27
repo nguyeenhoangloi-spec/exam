@@ -115,7 +115,7 @@ export function PermissionCompareModal({
       <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
 
       <div
-        className="relative z-[101] w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/90 dark:border-slate-800 overflow-hidden flex flex-col max-h-[calc(100dvh-1.5rem)] animate-in zoom-in-95 duration-200 sm:max-h-[calc(100dvh-2rem)]"
+        className="relative z-[101] w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/60 dark:border-slate-800 overflow-hidden flex flex-col max-h-[calc(100dvh-1.5rem)] animate-in zoom-in-95 duration-200 sm:max-h-[calc(100dvh-2rem)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -226,7 +226,7 @@ export function PermissionCompareModal({
               </div>
 
               {/* Comparison Table */}
-              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
+              <div className="overflow-hidden rounded-2xl border border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-900 shadow-2xs dark:border-slate-800 dark:bg-slate-900">
                 <div className="ui-table-wrap overflow-x-auto max-h-[400px]">
                   <table className="ui-table min-w-[700px] w-full text-left">
                     <thead className="bg-slate-50 text-type-helper font-medium text-slate-700 dark:bg-slate-800/60 dark:text-slate-200 sticky top-0 z-10">
@@ -312,7 +312,7 @@ export function PermissionCompareModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 flex justify-end">
+        <div className="p-4 border-t border-slate-200/60 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 flex justify-end">
           <Button variant="secondary" size="md" onClick={onClose}>
             Đóng bảng so sánh
           </Button>

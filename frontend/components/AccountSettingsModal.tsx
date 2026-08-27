@@ -676,7 +676,7 @@ export function AccountSettingsModal({
       <div className="absolute inset-0" onClick={onClose} />
 
       {/* ════════════════════ PREMIUM 2026 SETTINGS MODAL ════════════════════ */}
-      <div className="relative z-10 my-auto flex flex-col md:flex-row w-full max-w-[920px] h-[600px] max-h-[92vh] bg-white dark:bg-slate-900 rounded-3xl shadow-[0_25px_70px_-15px_rgba(0,0,0,0.15)] border border-slate-200/90 dark:border-slate-800 overflow-hidden animate-in zoom-in-95 duration-150">
+      <div className="relative z-10 my-auto flex flex-col md:flex-row w-full max-w-[920px] h-[600px] max-h-[92vh] bg-white dark:bg-slate-900 rounded-3xl shadow-[0_25px_70px_-15px_rgba(0,0,0,0.15)] border border-slate-200/60 dark:border-slate-800 overflow-hidden animate-in zoom-in-95 duration-150">
 
         {/* ── CỘT DỌC BÊN TRÁI: MINIMALIST FLAT SIDEBAR ── */}
         <aside className="w-full md:w-[270px] shrink-0 h-full bg-slate-50/60 dark:bg-slate-950/40 border-b md:border-b-0 md:border-r border-slate-200/70 dark:border-slate-800/80 flex flex-col justify-between p-6 pt-7 overflow-y-auto">

@@ -152,7 +152,7 @@ export function ExamScheduleCalendarView({
   const todayKey = formatDateKey(new Date());
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+    <div className="overflow-hidden rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
       {/* ── 1. Weekly Timetable Header Toolbar ── */}
       <div className="flex flex-col gap-3.5 border-b border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
@@ -299,7 +299,7 @@ export function ExamScheduleCalendarView({
                               <div
                                 key={s.id}
                                 onClick={() => onDetail(s)}
-                                className="group relative rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white dark:bg-slate-850 p-2.5 shadow-2xs hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-500 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer space-y-1.5"
+                                className="group relative rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-850 p-2.5 shadow-2xs hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-500 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer space-y-1.5"
                               >
                                 <div className="flex flex-wrap items-center justify-between gap-1.5 min-w-0">
                                   <span

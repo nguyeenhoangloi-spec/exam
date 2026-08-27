@@ -58,7 +58,7 @@ export function FillBlankQuestionRenderer({
 
             if (readOnly) {
               return (
-                <span key={idx} className="inline-flex items-center gap-1.5 mx-1 px-2.5 py-0.5 h-9 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 font-semibold text-slate-900 dark:text-slate-100">
+                <span key={idx} className="inline-flex items-center gap-1.5 mx-1 px-2.5 py-0.5 h-9 rounded-xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 font-semibold text-slate-900 dark:text-slate-100">
                   <span className="text-type-helper text-slate-400">[{blankIndex}]</span>
                   <span>{currentVal || '____'}</span>
                   {showCorrect && correctObj && (
