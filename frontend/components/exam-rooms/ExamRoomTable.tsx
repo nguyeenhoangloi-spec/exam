@@ -104,7 +104,7 @@ export function ExamRoomTable({
                     <button
                       type="button"
                       onClick={() => onDetail(r)}
-                      className="cursor-pointer"
+                      className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
                     >
                       <IdentifierBadge tone="neutral">{codeText}</IdentifierBadge>
                     </button>

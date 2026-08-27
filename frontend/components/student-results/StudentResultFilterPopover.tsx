@@ -9,7 +9,6 @@ import {
   RotateCcw,
   Check,
   Zap,
-  CheckCheck,
   Calendar,
   Layers,
   CheckCircle2,
@@ -332,21 +331,23 @@ export function StudentResultFilterPopover({
                       type="button"
                       onClick={() => onFilterStatusChange('PASSED')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterStatus === 'PASSED'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${filterStatus === 'PASSED' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Các môn thi đã Đạt
                         </div>
-                        <div className={`text-type-helper truncate ${filterStatus === 'PASSED' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Điểm tổng kết từ 5.0 trở lên
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'PASSED' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'PASSED'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.passed}
                         </span>
@@ -358,21 +359,23 @@ export function StudentResultFilterPopover({
                       type="button"
                       onClick={() => onFilterStatusChange('FAILED')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterStatus === 'FAILED'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${filterStatus === 'FAILED' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Các môn thi Chưa đạt (Cần thi lại)
                         </div>
-                        <div className={`text-type-helper truncate ${filterStatus === 'FAILED' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Điểm tổng kết dưới 5.0
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'FAILED' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'FAILED'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.failed}
                         </span>
@@ -385,21 +388,23 @@ export function StudentResultFilterPopover({
                         type="button"
                         onClick={() => onFilterYearChange(academicYears[0])}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterYear === academicYears[0]
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-type-helper font-semibold ${filterYear === academicYears[0] ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                             Năm học {academicYears[0]}
                           </div>
-                          <div className={`text-type-helper truncate ${filterYear === academicYears[0] ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                             Năm học gần nhất
                           </div>
                         </div>
 
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterYear === academicYears[0] ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
+                          <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterYear === academicYears[0]
+                              ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                              : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                             }`}>
                             {counts.yearCounts[academicYears[0]] || 0}
                           </span>
@@ -417,20 +422,22 @@ export function StudentResultFilterPopover({
                       type="button"
                       onClick={() => onFilterYearChange('ALL')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterYear === 'ALL'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${filterYear === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Tất cả các năm học
                         </div>
-                        <div className={`text-type-helper truncate ${filterYear === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Toàn bộ quá trình đào tạo
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterYear === 'ALL' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterYear === 'ALL'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.all}
                         </span>
@@ -447,20 +454,22 @@ export function StudentResultFilterPopover({
                           type="button"
                           onClick={() => onFilterYearChange(year)}
                           className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
-                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                            ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                             }`}
                         >
                           <div className="min-w-0 pr-2">
-                            <div className={`text-type-helper font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                            <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                               Năm học {year}
                             </div>
-                            <div className={`text-type-helper truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                               Khóa đào tạo {year}
                             </div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
+                                ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                                : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {c}
                             </span>
@@ -479,20 +488,22 @@ export function StudentResultFilterPopover({
                       type="button"
                       onClick={() => onFilterSemesterChange('ALL')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterSemester === 'ALL'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${filterSemester === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Tất cả các học kỳ
                         </div>
-                        <div className={`text-type-helper truncate ${filterSemester === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Toàn bộ học kỳ
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterSemester === 'ALL' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterSemester === 'ALL'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.all}
                         </span>
@@ -509,20 +520,22 @@ export function StudentResultFilterPopover({
                           type="button"
                           onClick={() => onFilterSemesterChange(sem)}
                           className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
-                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                            ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                             }`}
                         >
                           <div className="min-w-0 pr-2">
-                            <div className={`text-type-helper font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                            <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                               {sem}
                             </div>
-                            <div className={`text-type-helper truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                               Đợt học phần chính khóa
                             </div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
+                            <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
+                                ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                                : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {c}
                             </span>
@@ -541,20 +554,22 @@ export function StudentResultFilterPopover({
                       type="button"
                       onClick={() => onFilterStatusChange('ALL')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterStatus === 'ALL'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${filterStatus === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Tất cả kết quả
                         </div>
-                        <div className={`text-type-helper truncate ${filterStatus === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Toàn bộ các môn học
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'ALL' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'ALL'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.all}
                         </span>
@@ -566,20 +581,22 @@ export function StudentResultFilterPopover({
                       type="button"
                       onClick={() => onFilterStatusChange('PASSED')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterStatus === 'PASSED'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${filterStatus === 'PASSED' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Đạt (Qua môn)
                         </div>
-                        <div className={`text-type-helper truncate ${filterStatus === 'PASSED' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Điểm tổng kết &ge; 5.0
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'PASSED' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'PASSED'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.passed}
                         </span>
@@ -591,20 +608,22 @@ export function StudentResultFilterPopover({
                       type="button"
                       onClick={() => onFilterStatusChange('FAILED')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterStatus === 'FAILED'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${filterStatus === 'FAILED' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Chưa đạt (Học lại / Thi lại)
                         </div>
-                        <div className={`text-type-helper truncate ${filterStatus === 'FAILED' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Điểm tổng kết &lt; 5.0
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'FAILED' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'FAILED'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.failed}
                         </span>
@@ -616,20 +635,22 @@ export function StudentResultFilterPopover({
                       type="button"
                       onClick={() => onFilterStatusChange('GRADING')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filterStatus === 'GRADING'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${filterStatus === 'GRADING' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Đang chấm thi
                         </div>
-                        <div className={`text-type-helper truncate ${filterStatus === 'GRADING' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Giảng viên đang chấm tự luận / tổng hợp
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'GRADING' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
+                        <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filterStatus === 'GRADING'
+                          ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                          : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.grading}
                         </span>
@@ -641,8 +662,8 @@ export function StudentResultFilterPopover({
               </div>
             </div>
 
-            {/* 3. Footer */}
-            <div className="shrink-0 flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+            {/* 3. Footer tinh gọn & thanh lịch */}
+            <div className="shrink-0 flex items-center justify-between px-4 py-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
               <div className="text-type-helper font-medium text-slate-600 dark:text-slate-300">
                 {activeFilterCount > 0 ? (
                   <>Đang áp dụng <strong className="font-semibold text-blue-600 dark:text-blue-400">{activeFilterCount}</strong> tiêu chí lọc</>
@@ -651,14 +672,9 @@ export function StudentResultFilterPopover({
                 )}
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-type-helper font-semibold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
-              >
-                <CheckCheck className="h-3.5 w-3.5" />
-                <span>Xem kết quả</span>
-              </button>
+              <span className="text-type-helper text-slate-400 dark:text-slate-500 text-xs">
+                Nhấn Esc hoặc click ra ngoài để đóng
+              </span>
             </div>
           </div>,
           document.body

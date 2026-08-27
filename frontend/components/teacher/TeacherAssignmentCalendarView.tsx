@@ -7,20 +7,18 @@ import {
   Calendar as CalendarIcon,
   Clock,
   Building,
-  Users,
+  ShieldCheck,
   Eye,
-  Edit,
-  Trash2,
+  Check,
+  ArrowLeftRight,
 } from 'lucide-react';
-import { ExamScheduleItemExtended, computeScheduleStatus } from './ExamScheduleTable';
 import { StatusBadge } from '../common/StatusBadge';
 
-interface ExamScheduleCalendarViewProps {
-  schedules: ExamScheduleItemExtended[];
-  onDetail: (s: ExamScheduleItemExtended) => void;
-  onEdit?: (s: ExamScheduleItemExtended) => void;
-  onDelete?: (id: number) => void;
-  isAdmin?: boolean;
+interface TeacherAssignmentCalendarViewProps {
+  assignments: any[];
+  onDetail: (assignment: any) => void;
+  onConfirmDuty?: (assignment: any) => void;
+  onRequestChange?: (assignment: any) => void;
 }
 
 interface ShiftDef {
@@ -57,49 +55,55 @@ function formatDateKey(d: Date): string {
 function getMondayOfCurrentWeek(d: Date): Date {
   const date = new Date(d);
   const day = date.getDay();
-  // day 0 is Sunday, so if Sunday (0), offset by -6 to get Monday
   const diff = date.getDate() - day + (day === 0 ? -6 : 1);
   const monday = new Date(date.setDate(diff));
   monday.setHours(0, 0, 0, 0);
   return monday;
 }
 
-function getShiftIdFromSchedule(s: ExamScheduleItemExtended): number {
-  if (s.shiftName) {
-    if (s.shiftName.includes('1')) return 1;
-    if (s.shiftName.includes('2')) return 2;
-    if (s.shiftName.includes('3')) return 3;
-    if (s.shiftName.includes('4')) return 4;
-    if (s.shiftName.includes('5')) return 5;
+function getShiftIdFromAssignment(item: any): number {
+  if (item.periodName) {
+    if (item.periodName.includes('Ca 1')) return 1;
+    if (item.periodName.includes('Ca 2')) return 2;
+    if (item.periodName.includes('Ca 3')) return 3;
+    if (item.periodName.includes('Ca 4')) return 4;
+    if (item.periodName.includes('Ca 5')) return 5;
   }
 
-  if (s.startTime) {
-    const [h, m] = s.startTime.split(':').map(Number);
+  if (item.startTime) {
+    const [h, m] = item.startTime.split(':').map(Number);
     const totalMinutes = (h || 0) * 60 + (m || 0);
 
-    if (totalMinutes < 9 * 60 + 35) return 1; // < 09:35 -> Ca 1
-    if (totalMinutes < 12 * 60 + 30) return 2; // < 12:30 -> Ca 2
-    if (totalMinutes < 15 * 60 + 35) return 3; // < 15:35 -> Ca 3
-    if (totalMinutes < 17 * 60 + 50) return 4; // < 17:50 -> Ca 4
-    return 5; // >= 17:50 -> Ca 5
+    if (totalMinutes < 9 * 60 + 35) return 1;
+    if (totalMinutes < 12 * 60 + 30) return 2;
+    if (totalMinutes < 15 * 60 + 35) return 3;
+    if (totalMinutes < 17 * 60 + 50) return 4;
+    return 5;
   }
 
   return 1;
 }
 
-export function ExamScheduleCalendarView({
-  schedules,
+export function TeacherAssignmentCalendarView({
+  assignments,
   onDetail,
-  onEdit,
-  onDelete,
-  isAdmin = false,
-}: ExamScheduleCalendarViewProps) {
-  const [currentDate, setCurrentDate] = useState<Date>(() => new Date());
+  onConfirmDuty,
+  onRequestChange,
+}: TeacherAssignmentCalendarViewProps) {
+  const initialMonday = useMemo(() => {
+    if (assignments.length > 0) {
+      const firstDate = new Date(assignments[0].examDate);
+      if (!isNaN(firstDate.getTime())) {
+        return getMondayOfCurrentWeek(firstDate);
+      }
+    }
+    return getMondayOfCurrentWeek(new Date());
+  }, [assignments]);
 
-  // Find Monday of the current week
+  const [currentDate, setCurrentDate] = useState<Date>(initialMonday);
+
   const weekMonday = useMemo(() => getMondayOfCurrentWeek(currentDate), [currentDate]);
 
-  // 7 days of current week
   const weekDays = useMemo(() => {
     return Array.from({ length: 7 }, (_, i) => {
       const d = new Date(weekMonday);
@@ -108,7 +112,6 @@ export function ExamScheduleCalendarView({
     });
   }, [weekMonday]);
 
-  // Week range string
   const weekRangeLabel = useMemo(() => {
     const sunday = weekDays[6];
     const formatDayMonth = (d: Date) =>
@@ -116,23 +119,21 @@ export function ExamScheduleCalendarView({
     return `${formatDayMonth(weekMonday)} – ${formatDayMonth(sunday)}`;
   }, [weekDays, weekMonday]);
 
-  // Schedule lookup map by date key: dateKey -> schedule[]
-  const scheduleMap = useMemo(() => {
-    const map = new Map<string, ExamScheduleItemExtended[]>();
-    for (const s of schedules) {
-      if (!s.examDate) continue;
-      let dateKey = s.examDate;
+  const assignmentMap = useMemo(() => {
+    const map = new Map<string, any[]>();
+    for (const a of assignments) {
+      if (!a.examDate) continue;
+      let dateKey = a.examDate;
       if (dateKey.includes('T')) {
         dateKey = dateKey.split('T')[0];
       }
       const existing = map.get(dateKey) || [];
-      existing.push(s);
+      existing.push(a);
       map.set(dateKey, existing);
     }
     return map;
-  }, [schedules]);
+  }, [assignments]);
 
-  // Navigation handlers
   const handlePrev = () => {
     const next = new Date(currentDate);
     next.setDate(next.getDate() - 7);
@@ -153,20 +154,18 @@ export function ExamScheduleCalendarView({
 
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-      {/* ── 1. Weekly Timetable Header Toolbar ── */}
+      {/* ── 1. Header Toolbar ── */}
       <div className="flex flex-col gap-3.5 border-b border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60 shadow-2xs">
             <CalendarIcon className="h-5 w-5 stroke-[2.2]" />
           </div>
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h2 className="text-type-card font-semibold text-slate-900 dark:text-white">
-                {weekRangeLabel}
-              </h2>
-            </div>
+            <h2 className="text-type-card font-semibold text-slate-900 dark:text-white">
+              {weekRangeLabel}
+            </h2>
             <p className="text-type-helper font-normal text-slate-400 dark:text-slate-500">
-              Thời khóa biểu lịch thi theo tuần
+              Thời khóa biểu lịch phân công coi thi theo tuần
             </p>
           </div>
         </div>
@@ -201,9 +200,9 @@ export function ExamScheduleCalendarView({
           <div className="hidden sm:flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400 font-medium">
             <span>Tổng số:</span>
             <span className="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
-              {schedules.length}
+              {assignments.length}
             </span>
-            <span>ca thi</span>
+            <span>ca coi thi</span>
           </div>
         </div>
       </div>
@@ -211,6 +210,7 @@ export function ExamScheduleCalendarView({
       {/* ── 2. Time Grid Table Container ── */}
       <div className="overflow-x-auto custom-scrollbar">
         <div className="min-w-[1160px]">
+          {/* Header Row: Ngày trong tuần */}
           <div className="grid grid-cols-[140px_repeat(7,minmax(145px,1fr))] border-b border-slate-200/80 dark:border-slate-800 bg-slate-50/75 dark:bg-slate-800/60">
             <div className="p-3.5 text-center text-type-helper font-semibold text-slate-500 dark:text-slate-400 border-r border-slate-200/80 dark:border-slate-800 flex items-center justify-center">
               Ca thi / Ngày
@@ -218,7 +218,7 @@ export function ExamScheduleCalendarView({
             {weekDays.map((d, index) => {
               const dateKey = formatDateKey(d);
               const isToday = dateKey === todayKey;
-              const count = (scheduleMap.get(dateKey) || []).length;
+              const count = (assignmentMap.get(dateKey) || []).length;
               return (
                 <div
                   key={dateKey}
@@ -256,12 +256,14 @@ export function ExamScheduleCalendarView({
             })}
           </div>
 
+          {/* Grid Rows: 5 Ca thi */}
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {SHIFT_DEFINITIONS.map((shift) => (
               <div
                 key={shift.id}
                 className="grid grid-cols-[140px_repeat(7,minmax(145px,1fr))] transition-colors hover:bg-slate-50/40 dark:hover:bg-slate-800/20"
               >
+                {/* Cột trái: Thông tin Ca */}
                 <div className="border-r border-slate-200/80 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/30 p-3 flex flex-col justify-center">
                   <div className="text-type-body font-semibold text-slate-900 dark:text-white truncate">
                     {shift.name}
@@ -272,11 +274,13 @@ export function ExamScheduleCalendarView({
                   </div>
                 </div>
 
+                {/* 7 Cột ngày */}
                 {weekDays.map((d) => {
                   const dateKey = formatDateKey(d);
                   const isToday = dateKey === todayKey;
-                  const daySchedules = scheduleMap.get(dateKey) || [];
-                  const cellSchedules = daySchedules.filter((s) => getShiftIdFromSchedule(s) === shift.id);
+                  const dayAssignments = assignmentMap.get(dateKey) || [];
+                  const cellAssignments = dayAssignments.filter((a) => getShiftIdFromAssignment(a) === shift.id);
+
                   return (
                     <div
                       key={dateKey}
@@ -284,85 +288,96 @@ export function ExamScheduleCalendarView({
                         isToday ? 'bg-blue-50/20 dark:bg-blue-950/10' : ''
                       }`}
                     >
-                      {cellSchedules.length === 0 ? (
+                      {cellAssignments.length === 0 ? (
                         <div className="h-full min-h-[90px] flex items-center justify-center rounded-xl border border-dashed border-slate-200/60 dark:border-slate-800/80 text-type-body text-slate-400 dark:text-slate-600 font-normal select-none">
                           —
                         </div>
                       ) : (
                         <div className="space-y-2">
-                          {cellSchedules.map((s) => {
-                            const codeText = s.code || `LCT${String(s.id + 120).padStart(6, '0')}`;
-                            const roomName = s.roomName || 'Chưa xếp phòng';
-                            const studentCount = s.studentCount || 45;
-                            const status = computeScheduleStatus(s);
+                          {cellAssignments.map((item) => {
+                            const isConfirmed = item.status === 'CONFIRMED' || item.isConfirmed;
+                            const isChangeRequested = item.status === 'CHANGE_REQUESTED';
+                            const isPending = !isConfirmed && !isChangeRequested && item.status !== 'EXPIRED';
+
+                            const statusKey = isConfirmed ? 'CONFIRMED' : isChangeRequested ? 'CHANGE_REQUESTED' : 'PENDING';
+                            const roleText = item.role === 'SUPERVISOR_1' ? 'Giám thị 1 (Chính)' : item.role === 'SUPERVISOR_2' ? 'Giám thị 2' : (item.role || 'Cán bộ coi thi');
+
                             return (
                               <div
-                                key={s.id}
-                                onClick={() => onDetail(s)}
+                                key={item.id}
+                                onClick={() => onDetail(item)}
                                 className="group relative rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white dark:bg-slate-850 p-2.5 shadow-2xs hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-500 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer space-y-1.5"
                               >
-                                <div className="flex flex-wrap items-center justify-between gap-1.5 min-w-0">
+                                {/* Top row: Mã môn và StatusBadge siêu gọn */}
+                                <div className="flex items-center justify-between gap-1.5 min-w-0">
                                   <span
                                     className="inline-block px-1.5 py-0.5 rounded-lg text-type-helper font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0"
-                                    title={codeText}
+                                    title={item.subjectCode}
                                   >
-                                    {codeText}
+                                    {item.subjectCode}
                                   </span>
-                                  <StatusBadge status={status} />
+                                  <StatusBadge status={statusKey as any} />
                                 </div>
+
+                                {/* Subject Title */}
                                 <h5
-                                  className="text-type-body font-semibold text-slate-900 dark:text-slate-100 break-words line-clamp-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-150 leading-snug"
-                                  title={s.subjectName || s.subject?.name || `Môn học #${s.subjectId || s.id}`}
+                                  className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 break-words line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-150 leading-snug"
+                                  title={item.subjectName}
                                 >
-                                  {s.subjectName || s.subject?.name || `Môn học #${s.subjectId || s.id}`}
+                                  {item.subjectName}
                                 </h5>
+
+                                {/* Room */}
                                 <div
                                   className="flex items-start gap-1.5 text-type-helper text-slate-700 dark:text-slate-300 font-medium break-words leading-tight"
-                                  title={roomName}
+                                  title={item.roomName || item.roomCode}
                                 >
                                   <Building className="h-3.5 w-3.5 shrink-0 text-slate-400 mt-0.5" />
-                                  <span className="break-words">{roomName}</span>
+                                  <span className="break-words truncate">{item.roomName || item.roomCode || 'Phòng thi'}</span>
                                 </div>
-                                <div className="flex flex-wrap items-center justify-between gap-1 text-type-helper text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100/80 dark:border-slate-800/80">
-                                  <span className="flex items-center gap-1 font-medium">
-                                    <Users className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-                                    <span>{studentCount} TS</span>
+
+                                {/* Role & Time */}
+                                <div className="flex items-center justify-between gap-1 text-type-helper text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100/80 dark:border-slate-800/80">
+                                  <span className="flex items-center gap-1 font-medium truncate max-w-[90px]" title={roleText}>
+                                    <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                                    <span className="truncate">{roleText}</span>
                                   </span>
-                                  <span className="tabular-nums font-medium text-slate-600 dark:text-slate-300">
-                                    {s.startTime || '07:30'}
+                                  <span className="tabular-nums font-medium text-slate-600 dark:text-slate-300 shrink-0">
+                                    {item.startTime || '07:30'}
                                   </span>
                                 </div>
-                                {isAdmin && (
-                                  <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out">
-                                    <div className="overflow-hidden">
-                                      <div
-                                        className="flex items-center justify-end gap-1 pt-1.5 border-t border-slate-100 dark:border-slate-800 mt-1"
-                                        onClick={(e) => e.stopPropagation()}
+
+                                {/* Action Buttons: Nút Xác nhận và Đổi ca, click vào card để xem chi tiết */}
+                                <div
+                                  className="flex items-center justify-between gap-1.5 pt-1.5 border-t border-slate-100 dark:border-slate-800"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <div>
+                                    {!isConfirmed && onRequestChange && (
+                                      <button
+                                        type="button"
+                                        onClick={() => onRequestChange(item)}
+                                        className="p-1 text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition cursor-pointer"
+                                        title="Xin đổi ca coi thi"
                                       >
-                                        {onEdit && status === 'UPCOMING' && (
-                                          <button
-                                            type="button"
-                                            onClick={() => onEdit(s)}
-                                            className="p-1 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                                            title="Chỉnh sửa ca thi"
-                                          >
-                                            <Edit className="h-3.5 w-3.5" />
-                                          </button>
-                                        )}
-                                        {onDelete && (
-                                          <button
-                                            type="button"
-                                            onClick={() => onDelete(s.id)}
-                                            className="p-1 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
-                                            title="Xóa ca thi"
-                                          >
-                                            <Trash2 className="h-3.5 w-3.5" />
-                                          </button>
-                                        )}
-                                      </div>
-                                    </div>
+                                        <ArrowLeftRight className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
                                   </div>
-                                )}
+
+                                  {isPending && onConfirmDuty && (
+                                    <button
+                                      type="button"
+                                      onClick={() => onConfirmDuty(item)}
+                                      className="group relative overflow-hidden inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer shadow-2xs shadow-blue-500/25 hover:shadow-blue-500/35 hover:-translate-y-0.5 active:scale-95 leading-none shrink-0"
+                                      title="Xác nhận tham gia ca coi thi"
+                                    >
+                                      {/* Shimmer / Glass light sweep effect on hover */}
+                                      <span className="absolute inset-0 w-1/2 h-full bg-white/25 transform -skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-700 ease-out pointer-events-none" />
+                                      <span className="relative z-10">Xác nhận</span>
+                                    </button>
+                                  )}
+                                </div>
                               </div>
                             );
                           })}

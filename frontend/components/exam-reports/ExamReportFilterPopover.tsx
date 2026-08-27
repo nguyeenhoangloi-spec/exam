@@ -13,7 +13,6 @@ import {
   Building2,
   GraduationCap,
   Zap,
-  CheckCheck,
 } from 'lucide-react';
 
 interface ExamReportFilterPopoverProps {
@@ -312,15 +311,15 @@ export function ExamReportFilterPopover({
                           setSummaryFilters((f) => ({ ...f, examPeriodId: String(summaryOptions.periods![0].id) }));
                         }}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${summaryFilters.examPeriodId === String(summaryOptions.periods[0].id)
-                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                            ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-type-helper font-semibold ${summaryFilters.examPeriodId === String(summaryOptions.periods[0].id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                             Kỳ thi {summaryOptions.periods[0].name}
                           </div>
-                          <div className={`text-type-helper truncate ${summaryFilters.examPeriodId === String(summaryOptions.periods[0].id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                             Đợt thi gần nhất trong hệ thống
                           </div>
                         </div>
@@ -338,15 +337,15 @@ export function ExamReportFilterPopover({
                           setSummaryFilters((f) => ({ ...f, departmentId: String(summaryOptions.departments![0].id) }));
                         }}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${summaryFilters.departmentId === String(summaryOptions.departments[0].id)
-                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                            ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-type-helper font-semibold ${summaryFilters.departmentId === String(summaryOptions.departments[0].id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                             Khoa {summaryOptions.departments[0].name}
                           </div>
-                          <div className={`text-type-helper truncate ${summaryFilters.departmentId === String(summaryOptions.departments[0].id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                             Thống kê toàn khoa chuyên môn
                           </div>
                         </div>
@@ -366,15 +365,15 @@ export function ExamReportFilterPopover({
                       type="button"
                       onClick={() => setSummaryFilters((f) => ({ ...f, examPeriodId: 'ALL' }))}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${summaryFilters.examPeriodId === 'ALL'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${summaryFilters.examPeriodId === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Tất cả các kỳ thi
                         </div>
-                        <div className={`text-type-helper truncate ${summaryFilters.examPeriodId === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Toàn bộ các đợt thi trong hệ thống
                         </div>
                       </div>
@@ -387,15 +386,15 @@ export function ExamReportFilterPopover({
                         type="button"
                         onClick={() => setSummaryFilters((f) => ({ ...f, examPeriodId: String(item.id) }))}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${summaryFilters.examPeriodId === String(item.id)
-                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                            ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-type-helper font-semibold ${summaryFilters.examPeriodId === String(item.id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                             {item.name}
                           </div>
-                          <div className={`text-type-helper truncate ${summaryFilters.examPeriodId === String(item.id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                             Đợt thi #{item.id}
                           </div>
                         </div>
@@ -412,15 +411,15 @@ export function ExamReportFilterPopover({
                       type="button"
                       onClick={() => setSummaryFilters((f) => ({ ...f, subjectId: 'ALL' }))}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${summaryFilters.subjectId === 'ALL'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${summaryFilters.subjectId === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Tất cả các môn
                         </div>
-                        <div className={`text-type-helper truncate ${summaryFilters.subjectId === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Toàn bộ danh mục môn thi
                         </div>
                       </div>
@@ -433,15 +432,15 @@ export function ExamReportFilterPopover({
                         type="button"
                         onClick={() => setSummaryFilters((f) => ({ ...f, subjectId: String(item.id) }))}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${summaryFilters.subjectId === String(item.id)
-                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                            ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-type-helper font-semibold ${summaryFilters.subjectId === String(item.id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                             {item.name}
                           </div>
-                          <div className={`text-type-helper truncate ${summaryFilters.subjectId === String(item.id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                             Mã môn: {item.code}
                           </div>
                         </div>
@@ -458,15 +457,15 @@ export function ExamReportFilterPopover({
                       type="button"
                       onClick={() => setSummaryFilters((f) => ({ ...f, departmentId: 'ALL' }))}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${summaryFilters.departmentId === 'ALL'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${summaryFilters.departmentId === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Tất cả các khoa
                         </div>
-                        <div className={`text-type-helper truncate ${summaryFilters.departmentId === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Toàn bộ đơn vị chuyên môn
                         </div>
                       </div>
@@ -479,15 +478,15 @@ export function ExamReportFilterPopover({
                         type="button"
                         onClick={() => setSummaryFilters((f) => ({ ...f, departmentId: String(item.id) }))}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${summaryFilters.departmentId === String(item.id)
-                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                            ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-type-helper font-semibold ${summaryFilters.departmentId === String(item.id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                             {item.name}
                           </div>
-                          <div className={`text-type-helper truncate ${summaryFilters.departmentId === String(item.id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                             Khoa quản lý chuyên ngành #{item.id}
                           </div>
                         </div>
@@ -504,15 +503,15 @@ export function ExamReportFilterPopover({
                       type="button"
                       onClick={() => setSummaryFilters((f) => ({ ...f, classId: 'ALL' }))}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${summaryFilters.classId === 'ALL'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${summaryFilters.classId === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Tất cả các lớp
                         </div>
-                        <div className={`text-type-helper truncate ${summaryFilters.classId === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Toàn bộ sinh viên các lớp
                         </div>
                       </div>
@@ -525,15 +524,15 @@ export function ExamReportFilterPopover({
                         type="button"
                         onClick={() => setSummaryFilters((f) => ({ ...f, classId: String(item.id) }))}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${summaryFilters.classId === String(item.id)
-                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                            : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                            ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-type-helper font-semibold ${summaryFilters.classId === String(item.id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                             {item.name}
                           </div>
-                          <div className={`text-type-helper truncate ${summaryFilters.classId === String(item.id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                             Lớp sinh viên khóa đào tạo #{item.id}
                           </div>
                         </div>
@@ -545,8 +544,8 @@ export function ExamReportFilterPopover({
               </div>
             </div>
 
-            {/* 3. Footer */}
-            <div className="shrink-0 flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+            {/* 3. Footer tinh gọn & thanh lịch */}
+            <div className="shrink-0 flex items-center justify-between px-4 py-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
               <div className="text-type-helper font-medium text-slate-600 dark:text-slate-300">
                 {activeFilterCount > 0 ? (
                   <>Đang áp dụng <strong className="font-semibold text-blue-600 dark:text-blue-400">{activeFilterCount}</strong> tiêu chí lọc</>
@@ -555,14 +554,9 @@ export function ExamReportFilterPopover({
                 )}
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-type-helper font-semibold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
-              >
-                <CheckCheck className="h-3.5 w-3.5" />
-                <span>Xem kết quả</span>
-              </button>
+              <span className="text-type-helper text-slate-400 dark:text-slate-500 text-xs">
+                Nhấn Esc hoặc click ra ngoài để đóng
+              </span>
             </div>
           </div>,
           document.body

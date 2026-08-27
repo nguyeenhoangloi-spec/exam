@@ -11,7 +11,6 @@ import {
   Building2,
   Users,
   Zap,
-  CheckCheck,
   School,
 } from 'lucide-react';
 import { ClassItem, Department } from '../../types';
@@ -330,15 +329,15 @@ export function ClassFilterPopover({
                       onClick={() => applyPreset('OVER40')}
                       className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
                         selectedSizeRange === 'over40'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                          : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                       }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${selectedSizeRange === 'over40' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Lớp đông sinh viên (&gt; 40 SV)
                         </div>
-                        <div className={`text-type-helper truncate ${selectedSizeRange === 'over40' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Lớp có quy mô sinh viên lớn cần phòng thi rộng
                         </div>
                       </div>
@@ -346,12 +345,12 @@ export function ClassFilterPopover({
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           selectedSizeRange === 'over40'
-                            ? 'ui-pill-solid bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {optionCounts.over40}
                         </span>
-                        {selectedSizeRange === 'over40' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                        {selectedSizeRange === 'over40' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                       </div>
                     </button>
 
@@ -360,15 +359,15 @@ export function ClassFilterPopover({
                       onClick={() => applyPreset('20TO40')}
                       className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
                         selectedSizeRange === '20to40'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                          : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                       }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${selectedSizeRange === '20to40' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Quy mô vừa (20 - 40 SV)
                         </div>
-                        <div className={`text-type-helper truncate ${selectedSizeRange === '20to40' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Quy mô lớp học phần phổ biến
                         </div>
                       </div>
@@ -376,12 +375,12 @@ export function ClassFilterPopover({
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           selectedSizeRange === '20to40'
-                            ? 'ui-pill-solid bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {optionCounts.from20to40}
                         </span>
-                        {selectedSizeRange === '20to40' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                        {selectedSizeRange === '20to40' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                       </div>
                     </button>
 
@@ -391,15 +390,15 @@ export function ClassFilterPopover({
                         onClick={() => applyPreset('FIRST_DEPT')}
                         className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
                           selectedDeptId === String(departments[0].id)
-                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                            : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                            ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-type-helper font-semibold truncate ${selectedDeptId === String(departments[0].id) ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className="text-type-helper font-semibold truncate text-slate-900 dark:text-slate-100">
                             {departments[0].name}
                           </div>
-                          <div className={`text-type-helper truncate ${selectedDeptId === String(departments[0].id) ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                          <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                             Các lớp thuộc {departments[0].name}
                           </div>
                         </div>
@@ -407,12 +406,12 @@ export function ClassFilterPopover({
                         <div className="flex items-center gap-2 shrink-0">
                           <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                             selectedDeptId === String(departments[0].id)
-                              ? 'ui-pill-solid bg-blue-600 text-white'
-                              : 'bg-slate-100 text-slate-600 dark:text-slate-300'
+                              ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                              : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                             {optionCounts.deptCounts[String(departments[0].id)] || 0}
                           </span>
-                          {selectedDeptId === String(departments[0].id) && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                          {selectedDeptId === String(departments[0].id) && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                         </div>
                       </button>
                     )}
@@ -427,15 +426,15 @@ export function ClassFilterPopover({
                       onClick={() => onDeptChange('')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
                         selectedDeptId === ''
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                       }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${selectedDeptId === '' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Tất cả các khoa / viện
                         </div>
-                        <div className={`text-type-helper truncate ${selectedDeptId === '' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Toàn bộ lớp học trong hệ thống
                         </div>
                       </div>
@@ -443,12 +442,12 @@ export function ClassFilterPopover({
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                           selectedDeptId === ''
-                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
                             : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {optionCounts.total}
                         </span>
-                        {selectedDeptId === '' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                        {selectedDeptId === '' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                       </div>
                     </button>
 
@@ -463,15 +462,15 @@ export function ClassFilterPopover({
                           onClick={() => onDeptChange(String(d.id))}
                           className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
                             isSelected
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                              : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                              ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                              : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                           }`}
                         >
                           <div className="min-w-0 pr-2">
-                            <div className={`text-type-helper font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                            <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                               {d.name}
                             </div>
-                            <div className={`text-type-helper truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                               Mã khoa: {d.code || `KHOA${d.id}`}
                             </div>
                           </div>
@@ -479,12 +478,12 @@ export function ClassFilterPopover({
                           <div className="flex items-center gap-2 shrink-0">
                             <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                               isSelected
-                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
                                 : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                             }`}>
                               {count}
                             </span>
-                            {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                            {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                           </div>
                         </button>
                       );
@@ -504,15 +503,15 @@ export function ClassFilterPopover({
                           onClick={() => onSizeRangeChange?.(item.value)}
                           className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
                             isSelected
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                              : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                              ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                              : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                           }`}
                         >
                           <div className="min-w-0 pr-2">
-                            <div className={`text-type-helper font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                            <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                               {item.label}
                             </div>
-                            <div className={`text-type-helper truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                               {item.desc}
                             </div>
                           </div>
@@ -520,12 +519,12 @@ export function ClassFilterPopover({
                           <div className="flex items-center gap-2 shrink-0">
                             <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
                               isSelected
-                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
                                 : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                             }`}>
                               {item.count}
                             </span>
-                            {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                            {isSelected && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                           </div>
                         </button>
                       );
@@ -535,9 +534,9 @@ export function ClassFilterPopover({
               </div>
             </div>
 
-            {/* 3. Footer tinh gọn & thanh lịch theo sắc xanh hệ thống */}
-            <div className="shrink-0 flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
-              <div className="space-y-1">
+            {/* 3. Footer tinh gọn & thanh lịch */}
+            <div className="shrink-0 flex items-center justify-between px-4 py-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+              <div className="space-y-0.5">
                 <div className="text-type-helper font-medium text-slate-600 dark:text-slate-300">
                   {totalFilteredCount !== undefined ? (
                     <>
@@ -560,14 +559,9 @@ export function ClassFilterPopover({
                 )}
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-type-helper font-semibold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
-              >
-                <CheckCheck className="h-3.5 w-3.5" />
-                <span>Xem kết quả</span>
-              </button>
+              <span className="text-type-helper text-slate-400 dark:text-slate-500 text-xs">
+                Nhấn Esc hoặc click ra ngoài để đóng
+              </span>
             </div>
           </div>,
           document.body

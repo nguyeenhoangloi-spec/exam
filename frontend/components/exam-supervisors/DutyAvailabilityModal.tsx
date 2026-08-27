@@ -289,12 +289,12 @@ export function DutyAvailabilityModal({ isOpen, onClose, onSuccess }: DutyAvaila
                 <label className="text-type-body font-medium text-slate-700 dark:text-slate-300 block">
                   Ghi chú / Nguyện vọng
                 </label>
-                <input
-                  type="text"
-                  placeholder="Ví dụ: Ưu tiên tòa A, có việc sau 17h..."
+                <textarea
+                  rows={3}
+                  placeholder="Ví dụ: Ưu tiên coi thi tòa A, có việc bận sau 17h..."
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs resize-none"
                 />
               </div>
 

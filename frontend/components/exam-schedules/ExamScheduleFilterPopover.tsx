@@ -13,7 +13,6 @@ import {
   Sparkles,
   Clock,
   Zap,
-  CheckCheck,
   CalendarDays,
   GraduationCap,
   DoorOpen,
@@ -421,22 +420,22 @@ export function ExamScheduleFilterPopover({
                       type="button"
                       onClick={() => applyPreset('ONGOING_NOW')}
                       className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${filters.status === 'ONGOING'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                          : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${filters.status === 'ONGOING' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Ca thi đang diễn ra
                         </div>
-                        <div className={`text-type-helper truncate ${filters.status === 'ONGOING' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Các phòng thi đang mở hôm nay
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filters.status === 'ONGOING'
-                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
                             : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {optionCounts.ongoing}
@@ -449,22 +448,22 @@ export function ExamScheduleFilterPopover({
                       type="button"
                       onClick={() => applyPreset('UPCOMING_SOON')}
                       className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${filters.status === 'UPCOMING'
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                          : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${filters.status === 'UPCOMING' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Lịch thi sắp tới
                         </div>
-                        <div className={`text-type-helper truncate ${filters.status === 'UPCOMING' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Chuẩn bị tổ chức theo kế hoạch
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filters.status === 'UPCOMING'
-                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
                             : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                           }`}>
                           {optionCounts.upcoming}
@@ -478,22 +477,22 @@ export function ExamScheduleFilterPopover({
                         type="button"
                         onClick={() => applyPreset('LATEST_PERIOD')}
                         className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${filters.examPeriodId === String(periods[0].id)
-                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                            : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                            ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-type-helper font-semibold truncate ${filters.examPeriodId === String(periods[0].id) ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100 truncate">
                             {periods[0].name}
                           </div>
-                          <div className={`text-type-helper truncate ${filters.examPeriodId === String(periods[0].id) ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                          <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                             Kỳ thi hiện hành mới nhất
                           </div>
                         </div>
 
                         <div className="flex items-center gap-2 shrink-0">
                           <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filters.examPeriodId === String(periods[0].id)
-                              ? 'ui-pill-solid bg-blue-600 text-white'
+                              ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
                               : 'bg-slate-100 text-slate-600 dark:text-slate-300'
                             }`}>
                             {optionCounts.periodCounts[String(periods[0].id)] || optionCounts.total}
@@ -512,22 +511,22 @@ export function ExamScheduleFilterPopover({
                       type="button"
                       onClick={() => onChange({ ...filters, examPeriodId: '' })}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filters.examPeriodId === ''
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${filters.examPeriodId === '' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Tất cả kỳ thi
                         </div>
-                        <div className={`text-type-helper truncate ${filters.examPeriodId === '' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Mọi đợt thi trong hệ thống
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filters.examPeriodId === ''
-                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
                             : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {optionCounts.total}
@@ -546,22 +545,22 @@ export function ExamScheduleFilterPopover({
                           type="button"
                           onClick={() => onChange({ ...filters, examPeriodId: String(p.id) })}
                           className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                              : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                              ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                              : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                             }`}
                         >
                           <div className="min-w-0 pr-2">
-                            <div className={`text-type-helper font-semibold truncate ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                            <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100 truncate">
                               {p.name}
                             </div>
-                            <div className={`text-type-helper truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                               {p.semester} • {p.schoolYear}
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
                             <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
-                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
                                 : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {count}
@@ -585,22 +584,22 @@ export function ExamScheduleFilterPopover({
                           type="button"
                           onClick={() => onChange({ ...filters, status: item.value })}
                           className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                              : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                              ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                              : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                             }`}
                         >
                           <div className="min-w-0 pr-2">
-                            <div className={`text-type-helper font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                            <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                               {item.label}
                             </div>
-                            <div className={`text-type-helper truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                               {item.desc}
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
                             <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
-                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
                                 : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {item.count}
@@ -620,22 +619,22 @@ export function ExamScheduleFilterPopover({
                       type="button"
                       onClick={() => onChange({ ...filters, roomId: '' })}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filters.roomId === ''
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${filters.roomId === '' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Tất cả phòng thi
                         </div>
-                        <div className={`text-type-helper truncate ${filters.roomId === '' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Mọi phòng thi được cấu hình
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filters.roomId === ''
-                            ? 'ui-pill-solid bg-blue-600 text-white'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
                             : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {optionCounts.total}
@@ -654,22 +653,22 @@ export function ExamScheduleFilterPopover({
                           type="button"
                           onClick={() => onChange({ ...filters, roomId: String(r.id) })}
                           className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                              : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                              ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                              : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                             }`}
                         >
                           <div className="min-w-0 pr-2">
-                            <div className={`text-type-helper font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                            <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                               {r.roomCode || r.code || r.name}
                             </div>
-                            <div className={`text-type-helper truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                               Sức chứa: {r.capacity || 40} chỗ
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
                             <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected
-                                ? 'ui-pill-solid bg-blue-600 text-white'
+                                ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
                                 : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                               }`}>
                               {count}
@@ -693,15 +692,15 @@ export function ExamScheduleFilterPopover({
                           type="button"
                           onClick={() => onChange({ ...filters, shift: item.value })}
                           className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                              : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                              ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                              : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                             }`}
                         >
                           <div className="min-w-0 pr-2">
-                            <div className={`text-type-helper font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                            <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                               {item.label}
                             </div>
-                            <div className={`text-type-helper truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                            <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                               {item.desc}
                             </div>
                           </div>
@@ -717,9 +716,9 @@ export function ExamScheduleFilterPopover({
               </div>
             </div>
 
-            {/* 3. Footer chuẩn mực */}
-            <div className="shrink-0 flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
-              <div className="space-y-1">
+            {/* 3. Footer tinh gọn & thanh lịch */}
+            <div className="shrink-0 flex items-center justify-between px-4 py-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+              <div className="space-y-0.5">
                 <div className="text-type-helper font-medium text-slate-600 dark:text-slate-300">
                   {totalFilteredCount !== undefined ? (
                     <>
@@ -742,14 +741,9 @@ export function ExamScheduleFilterPopover({
                 )}
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-type-helper font-semibold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
-              >
-                <CheckCheck className="h-3.5 w-3.5" />
-                <span>Xem kết quả</span>
-              </button>
+              <span className="text-type-helper text-slate-400 dark:text-slate-500 text-xs">
+                Nhấn Esc hoặc click ra ngoài để đóng
+              </span>
             </div>
           </div>,
           document.body

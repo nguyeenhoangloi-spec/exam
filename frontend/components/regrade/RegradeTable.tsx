@@ -104,11 +104,11 @@ export function RegradeTable({
                       <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body leading-[22px] truncate">
                         {item.student.fullName}
                       </p>
-                      <div className="mt-1 flex items-center gap-1.5 whitespace-nowrap">
+                      <div className="mt-0.5 flex items-center gap-1.5 whitespace-nowrap">
                         <IdentifierBadge tone="blue">{item.student.studentCode}</IdentifierBadge>
                         {item.student.class && (
-                          <span className="table-badge text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full border border-slate-200/80 dark:border-slate-700 shrink-0">
-                            {item.student.class.code || item.student.class.name}
+                          <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 truncate">
+                            · {item.student.class.code || item.student.class.name}
                           </span>
                         )}
                       </div>

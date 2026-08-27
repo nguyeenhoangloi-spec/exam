@@ -10,18 +10,18 @@ type IdentifierBadgeProps = {
 };
 
 const toneClasses: Record<IdentifierBadgeTone, string> = {
-  blue: 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800/80 dark:bg-blue-950/40 dark:text-blue-300',
-  neutral: 'border-slate-200 bg-slate-100 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300',
-  inverse: 'border-white/25 bg-white/20 text-white backdrop-blur-md',
+  blue: 'text-blue-600 dark:text-blue-400',
+  neutral: 'text-slate-900 dark:text-slate-100',
+  inverse: 'text-white',
 };
 
-/** Shared visual treatment for short technical identifiers in the Web UI. */
-export function IdentifierBadge({ children, tone = 'blue', className = '', title }: IdentifierBadgeProps) {
+/** Shared visual treatment for short technical identifiers in the Web UI (Clean Deep Ink style). */
+export function IdentifierBadge({ children, tone = 'neutral', className = '', title }: IdentifierBadgeProps) {
   return (
     <span
       title={title}
       className={[
-        'inline-flex min-w-0 max-w-full items-center rounded-lg border px-2 py-0.5 text-type-helper font-medium leading-5 tabular-nums whitespace-nowrap',
+        'inline-flex min-w-0 max-w-full items-center font-mono text-type-body-sm font-semibold tabular-nums tracking-tight whitespace-nowrap select-all',
         toneClasses[tone],
         className,
       ].join(' ')}
@@ -30,3 +30,4 @@ export function IdentifierBadge({ children, tone = 'blue', className = '', title
     </span>
   );
 }
+

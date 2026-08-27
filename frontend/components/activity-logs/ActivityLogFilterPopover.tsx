@@ -9,7 +9,6 @@ import {
   RotateCcw,
   Check,
   Zap,
-  CheckCheck,
   Layers,
   Activity,
   LogIn,
@@ -315,12 +314,12 @@ export function ActivityLogFilterPopover({
                         onEntityFilterChange('');
                       }}
                       className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${actionFilter === 'LOGIN' && !entityFilter
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                        : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${actionFilter === 'LOGIN' && !entityFilter ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Nhật ký đăng nhập
                         </div>
                         <div className="text-type-helper text-slate-500 dark:text-slate-400 truncate">
@@ -329,8 +328,8 @@ export function ActivityLogFilterPopover({
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${actionFilter === 'LOGIN' && !entityFilter
-                          ? 'ui-pill-solid bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-600 dark:text-slate-300'
+                          ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                          : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.loginCount}
                         </span>
@@ -345,12 +344,12 @@ export function ActivityLogFilterPopover({
                         onActionFilterChange?.('');
                       }}
                       className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${entityFilter === 'GradeAppeal'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                        : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${entityFilter === 'GradeAppeal' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Nhật ký phúc khảo điểm
                         </div>
                         <div className="text-type-helper text-slate-500 dark:text-slate-400 truncate">
@@ -359,8 +358,8 @@ export function ActivityLogFilterPopover({
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${entityFilter === 'GradeAppeal'
-                          ? 'ui-pill-solid bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-600 dark:text-slate-300'
+                          ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                          : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.gradeAppealCount}
                         </span>
@@ -375,12 +374,12 @@ export function ActivityLogFilterPopover({
                         onActionFilterChange?.('');
                       }}
                       className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${entityFilter === 'BackupJob'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                        : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${entityFilter === 'BackupJob' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Sao lưu & Khôi phục CSDL
                         </div>
                         <div className="text-type-helper text-slate-500 dark:text-slate-400 truncate">
@@ -389,8 +388,8 @@ export function ActivityLogFilterPopover({
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${entityFilter === 'BackupJob'
-                          ? 'ui-pill-solid bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-600 dark:text-slate-300'
+                          ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                          : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.backupCount}
                         </span>
@@ -407,22 +406,22 @@ export function ActivityLogFilterPopover({
                       type="button"
                       onClick={() => onEntityFilterChange('')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${entityFilter === ''
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${entityFilter === '' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Tất cả các thực thể
                         </div>
-                        <div className={`text-type-helper truncate ${entityFilter === '' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Toàn bộ danh mục hoạt động
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${entityFilter === ''
-                          ? 'ui-pill-solid bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-600 dark:text-slate-300'
+                          ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                          : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.total}
                         </span>
@@ -436,22 +435,22 @@ export function ActivityLogFilterPopover({
                         type="button"
                         onClick={() => onEntityFilterChange(et)}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${entityFilter === et
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-type-helper font-semibold ${entityFilter === et ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                             {et}
                           </div>
-                          <div className={`text-type-helper truncate ${entityFilter === et ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                          <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                             Thực thể dữ liệu {et}
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${entityFilter === et
-                            ? 'ui-pill-solid bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                             }`}>
                             {counts.entityCounts[et] || 0}
                           </span>
@@ -478,22 +477,22 @@ export function ActivityLogFilterPopover({
                         type="button"
                         onClick={() => onActionFilterChange?.(item.key)}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${actionFilter === item.key
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-type-helper font-semibold ${actionFilter === item.key ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                             {item.label}
                           </div>
-                          <div className={`text-type-helper truncate ${actionFilter === item.key ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                          <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                             {item.desc}
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${actionFilter === item.key
-                            ? 'ui-pill-solid bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600 dark:text-slate-300'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                            : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                             }`}>
                             {item.count}
                           </span>
@@ -506,9 +505,9 @@ export function ActivityLogFilterPopover({
               </div>
             </div>
 
-            {/* 3. Footer */}
-            <div className="shrink-0 flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
-              <div className="space-y-1">
+            {/* 3. Footer tinh gọn & thanh lịch */}
+            <div className="shrink-0 flex items-center justify-between px-4 py-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+              <div className="space-y-0.5">
                 <div className="text-type-helper font-medium text-slate-600 dark:text-slate-300">
                   {totalFilteredCount !== undefined ? (
                     <>
@@ -531,14 +530,9 @@ export function ActivityLogFilterPopover({
                 )}
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-type-helper font-semibold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
-              >
-                <CheckCheck className="h-3.5 w-3.5" />
-                <span>Xem kết quả</span>
-              </button>
+              <span className="text-type-helper text-slate-400 dark:text-slate-500 text-xs">
+                Nhấn Esc hoặc click ra ngoài để đóng
+              </span>
             </div>
           </div>,
           document.body

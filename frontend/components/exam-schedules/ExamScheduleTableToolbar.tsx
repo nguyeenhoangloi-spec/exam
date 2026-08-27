@@ -75,11 +75,11 @@ export function ExamScheduleTableToolbar({
           />
         )}
 
-        {/* View Mode Segmented Control: Bảng, Lưới, Lịch */}
+        {/* View Mode Segmented Control: Bảng [ ☰ ] & Lịch [ 📅 ] (Ưu tiên Bảng trước) */}
         <ViewModeSegmentedControl
           viewMode={viewMode}
           onChange={(mode) => onViewModeChange?.(mode)}
-          supportedModes={['list', 'grid', 'calendar']}
+          supportedModes={['list', 'calendar']}
         />
       </div>
     </div>

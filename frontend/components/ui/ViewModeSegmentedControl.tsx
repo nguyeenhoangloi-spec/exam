@@ -5,25 +5,26 @@ import { List, LayoutGrid, CalendarDays } from 'lucide-react';
 
 export type ViewMode = 'list' | 'grid' | 'calendar';
 
-interface ViewModeSegmentedControlProps<T extends ViewMode = ViewMode> {
+export interface ViewModeSegmentedControlProps<T extends string = ViewMode> {
   viewMode: T;
   onChange: (mode: T) => void;
   className?: string;
-  supportedModes?: T[];
+  supportedModes?: readonly T[] | T[];
 }
 
-export function ViewModeSegmentedControl<T extends ViewMode = ViewMode>({
+export function ViewModeSegmentedControl<T extends string = ViewMode>({
   viewMode,
   onChange,
   className = '',
-  supportedModes = ['list', 'grid', 'calendar'] as T[],
+  supportedModes,
 }: ViewModeSegmentedControlProps<T>) {
-  const activeIndex = supportedModes.indexOf(viewMode) >= 0 ? supportedModes.indexOf(viewMode) : 0;
+  const modes = (supportedModes || ['list', 'grid', 'calendar']) as readonly T[];
+  const activeIndex = modes.indexOf(viewMode) >= 0 ? modes.indexOf(viewMode) : 0;
 
-  const modeConfig: Record<ViewMode, { label: string; icon: React.ElementType }> = {
-    list: { label: 'Dạng danh sách', icon: List },
-    grid: { label: 'Dạng thẻ', icon: LayoutGrid },
-    calendar: { label: 'Dạng lịch / Thời khóa biểu', icon: CalendarDays },
+  const modeConfig: Record<string, { label: string; icon: React.ElementType }> = {
+    list: { label: 'Dạng bảng danh sách', icon: List },
+    grid: { label: 'Dạng lưới thẻ', icon: LayoutGrid },
+    calendar: { label: 'Dạng lịch tuần', icon: CalendarDays },
   };
 
   return (
@@ -38,7 +39,7 @@ export function ViewModeSegmentedControl<T extends ViewMode = ViewMode>({
         }}
       />
 
-      {supportedModes.map((mode) => {
+      {modes.map((mode) => {
         const item = modeConfig[mode];
         if (!item) return null;
         const { label, icon: Icon } = item;

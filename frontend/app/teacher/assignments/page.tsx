@@ -24,6 +24,8 @@ import {
 import { TeacherAssignmentBulkAction } from '../../../components/exam-supervisors/TeacherAssignmentBulkAction';
 import { DutyAvailabilityModal } from '../../../components/exam-supervisors/DutyAvailabilityModal';
 import { SupervisorChangeRequestModal } from '../../../components/exam-supervisors/SupervisorChangeRequestModal';
+import { ViewModeSegmentedControl } from '../../../components/ui/ViewModeSegmentedControl';
+import { TeacherAssignmentCalendarView } from '../../../components/teacher/TeacherAssignmentCalendarView';
 import {
   ShieldCheck,
   Calendar,
@@ -87,6 +89,7 @@ export default function TeacherAssignmentsPage() {
 
   // Toolbar Controls State
   const [sortOrder, setSortOrder] = useState<string>('newest');
+  const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     subject: true,
     time: true,
@@ -526,18 +529,27 @@ export default function TeacherAssignmentsPage() {
               ]}
             />
 
-            {/* Column Selector */}
-            <ColumnToggleDropdown
-              columns={[
-                { key: 'subject', label: 'Môn thi & Mã HP' },
-                { key: 'time', label: 'Thời gian & Ca thi' },
-                { key: 'room', label: 'Phòng thi / Tòa nhà' },
-                { key: 'role', label: 'Vai trò' },
-                { key: 'status', label: 'Trạng thái ca' },
-                { key: 'actions', label: 'Thao tác' },
-              ]}
-              visibleColumns={visibleColumns}
-              onToggle={(key) => setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }))}
+            {/* Column Selector - Chỉ hiển thị khi ở chế độ Bảng */}
+            {viewMode === 'list' && (
+              <ColumnToggleDropdown
+                columns={[
+                  { key: 'subject', label: 'Môn thi & Mã HP' },
+                  { key: 'time', label: 'Thời gian & Ca thi' },
+                  { key: 'room', label: 'Phòng thi / Tòa nhà' },
+                  { key: 'role', label: 'Vai trò' },
+                  { key: 'status', label: 'Trạng thái ca' },
+                  { key: 'actions', label: 'Thao tác' },
+                ]}
+                visibleColumns={visibleColumns}
+                onToggle={(key) => setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }))}
+              />
+            )}
+
+            {/* View Mode Switcher: Lịch [ 📅 ] & Bảng [ ☰ ] (Ưu tiên Lịch trước) */}
+            <ViewModeSegmentedControl
+              viewMode={viewMode}
+              onChange={(m) => setViewMode(m as 'calendar' | 'list')}
+              supportedModes={['calendar', 'list']}
             />
           </div>
         </div>
@@ -558,7 +570,7 @@ export default function TeacherAssignmentsPage() {
           }}
         />
 
-        {/* ── 5. Assignments Content (List / Grid / Compact) ── */}
+        {/* ── 5. Assignments Content (Calendar View hoặc List Table View) ── */}
         {loading ? (
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
@@ -574,8 +586,16 @@ export default function TeacherAssignmentsPage() {
               Không có ca phân công coi thi nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
             </p>
           </div>
+        ) : viewMode === 'calendar' ? (
+          /* ── 5.1 Calendar View Mode (Mặc định mở sẵn Lịch tuần) ── */
+          <TeacherAssignmentCalendarView
+            assignments={filteredAssignments}
+            onDetail={setDrawerDuty}
+            onConfirmDuty={(item) => handleUpdateStatus(item.id, 'CONFIRMED')}
+            onRequestChange={setChangeRequestAssignment}
+          />
         ) : (
-          /* ── 5.1 List View Mode (Dạng bảng danh sách) ── */
+          /* ── 5.2 List View Mode (Dạng bảng danh sách chi tiết) ── */
           <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
@@ -607,10 +627,12 @@ export default function TeacherAssignmentsPage() {
                         </td>
                         {visibleColumns.subject !== false && (
                           <td className="py-3.5 px-4">
-                            <div onClick={() => setDrawerDuty(item)} className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-type-body">
-                              {item.subjectName}
+                            <div className="flex items-center gap-2">
+                              <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
+                              <div onClick={() => setDrawerDuty(item)} className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-type-body leading-snug truncate" title={item.subjectName}>
+                                {item.subjectName}
+                              </div>
                             </div>
-                            <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
                           </td>
                         )}
                         {visibleColumns.time !== false && (
@@ -662,16 +684,13 @@ export default function TeacherAssignmentsPage() {
                                   <Button variant="primary" size="xs" disabled={busyId === item.id} isLoading={busyId === item.id} onClick={() => handleUpdateStatus(item.id, 'CONFIRMED')}>
                                     Xác nhận
                                   </Button>
-                                  <button type="button" onClick={() => handleRequestChange(item)} className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none" title="Xin đổi ca">
+                                  <button type="button" onClick={() => handleRequestChange(item)} className="p-1.5 text-slate-500 hover:text-amber-600 transition cursor-pointer select-none" title="Xin đổi ca">
                                     <ArrowLeftRight className="w-4 h-4" />
                                   </button>
                                 </>
                               )}
-                              <button type="button" onClick={() => handlePrintAttendance(item)} className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none" title="Điểm danh A4">
+                              <button type="button" onClick={() => handlePrintAttendance(item)} className="p-1.5 text-slate-500 hover:text-blue-600 transition cursor-pointer select-none" title="Điểm danh A4">
                                 <Printer className="w-4 h-4" />
-                              </button>
-                              <button type="button" onClick={() => setDrawerDuty(item)} className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none" title="Xem chi tiết">
-                                <Eye className="w-4 h-4" />
                               </button>
                             </div>
                           </td>

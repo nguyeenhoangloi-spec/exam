@@ -9,7 +9,6 @@ import {
   RotateCcw,
   Check,
   Zap,
-  CheckCheck,
   Clock,
   CheckCircle2,
   XCircle,
@@ -290,12 +289,12 @@ export function RegradeFilterPopover({
                         onSubjectFilterChange('ALL');
                       }}
                       className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${statusTab === 'PENDING'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                        : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${statusTab === 'PENDING' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Đơn chờ thẩm định
                         </div>
                         <div className="text-type-helper text-slate-500 dark:text-slate-400 truncate">
@@ -305,12 +304,12 @@ export function RegradeFilterPopover({
 
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${statusTab === 'PENDING'
-                          ? 'ui-pill-solid bg-blue-600 text-white'
-                          : 'bg-amber-100 text-amber-800 dark:text-amber-300'
+                          ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                          : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.pending}
                         </span>
-                        {statusTab === 'PENDING' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                        {statusTab === 'PENDING' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                       </div>
                     </button>
 
@@ -321,12 +320,12 @@ export function RegradeFilterPopover({
                         onSubjectFilterChange('ALL');
                       }}
                       className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${statusTab === 'APPROVED_REGRADE'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                        : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${statusTab === 'APPROVED_REGRADE' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Đã duyệt & Đổi điểm
                         </div>
                         <div className="text-type-helper text-slate-500 dark:text-slate-400 truncate">
@@ -336,12 +335,12 @@ export function RegradeFilterPopover({
 
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${statusTab === 'APPROVED_REGRADE'
-                          ? 'ui-pill-solid bg-blue-600 text-white'
-                          : 'bg-emerald-100 text-emerald-800 dark:text-emerald-300'
+                          ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                          : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.approved}
                         </span>
-                        {statusTab === 'APPROVED_REGRADE' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                        {statusTab === 'APPROVED_REGRADE' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                       </div>
                     </button>
 
@@ -352,12 +351,12 @@ export function RegradeFilterPopover({
                         onSubjectFilterChange('ALL');
                       }}
                       className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${statusTab === 'REJECTED'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                        : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${statusTab === 'REJECTED' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Đơn bị từ chối
                         </div>
                         <div className="text-type-helper text-slate-500 dark:text-slate-400 truncate">
@@ -367,12 +366,12 @@ export function RegradeFilterPopover({
 
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${statusTab === 'REJECTED'
-                          ? 'ui-pill-solid bg-blue-600 text-white'
-                          : 'bg-rose-100 text-rose-800 dark:text-rose-300'
+                          ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                          : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>
                           {counts.rejected}
                         </span>
-                        {statusTab === 'REJECTED' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                        {statusTab === 'REJECTED' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                       </div>
                     </button>
                   </div>
@@ -385,25 +384,25 @@ export function RegradeFilterPopover({
                       type="button"
                       onClick={() => onStatusTabChange('ALL')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${statusTab === 'ALL'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${statusTab === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Tất cả trạng thái
                         </div>
-                        <div className={`text-type-helper truncate ${statusTab === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Toàn bộ đơn khiếu nại & phúc khảo
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
-                          statusTab === 'ALL' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
+                          statusTab === 'ALL' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {counts.all}
                         </span>
-                        {statusTab === 'ALL' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                        {statusTab === 'ALL' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                       </div>
                     </button>
 
@@ -411,25 +410,25 @@ export function RegradeFilterPopover({
                       type="button"
                       onClick={() => onStatusTabChange('PENDING')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${statusTab === 'PENDING'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${statusTab === 'PENDING' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Chờ thẩm định
                         </div>
-                        <div className={`text-type-helper truncate ${statusTab === 'PENDING' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Đơn mới gửi cần giảng viên xử lý
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
-                          statusTab === 'PENDING' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-amber-100 text-amber-800 dark:text-amber-300'
+                          statusTab === 'PENDING' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {counts.pending}
                         </span>
-                        {statusTab === 'PENDING' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                        {statusTab === 'PENDING' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                       </div>
                     </button>
 
@@ -437,25 +436,25 @@ export function RegradeFilterPopover({
                       type="button"
                       onClick={() => onStatusTabChange('APPROVED_REGRADE')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${statusTab === 'APPROVED_REGRADE'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${statusTab === 'APPROVED_REGRADE' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Đã duyệt & Đổi điểm
                         </div>
-                        <div className={`text-type-helper truncate ${statusTab === 'APPROVED_REGRADE' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Đơn đã được chấp thuận cập nhật điểm
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
-                          statusTab === 'APPROVED_REGRADE' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-emerald-100 text-emerald-800 dark:text-emerald-300'
+                          statusTab === 'APPROVED_REGRADE' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {counts.approved}
                         </span>
-                        {statusTab === 'APPROVED_REGRADE' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                        {statusTab === 'APPROVED_REGRADE' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                       </div>
                     </button>
 
@@ -463,25 +462,25 @@ export function RegradeFilterPopover({
                       type="button"
                       onClick={() => onStatusTabChange('REJECTED')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${statusTab === 'REJECTED'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${statusTab === 'REJECTED' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Bị từ chối
                         </div>
-                        <div className={`text-type-helper truncate ${statusTab === 'REJECTED' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Đơn không đủ điều kiện thay đổi điểm
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
-                          statusTab === 'REJECTED' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-rose-100 text-rose-800 dark:text-rose-300'
+                          statusTab === 'REJECTED' ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                         }`}>
                           {counts.rejected}
                         </span>
-                        {statusTab === 'REJECTED' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                        {statusTab === 'REJECTED' && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
                       </div>
                     </button>
                   </div>
@@ -494,15 +493,15 @@ export function RegradeFilterPopover({
                       type="button"
                       onClick={() => onSubjectFilterChange('ALL')}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${subjectFilter === 'ALL'
-                        ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                        : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                         }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className={`text-type-helper font-semibold ${subjectFilter === 'ALL' ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                        <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                           Tất cả môn học
                         </div>
-                        <div className={`text-type-helper truncate ${subjectFilter === 'ALL' ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                        <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                           Mọi môn thi có đơn phúc khảo
                         </div>
                       </div>
@@ -515,15 +514,15 @@ export function RegradeFilterPopover({
                         type="button"
                         onClick={() => onSubjectFilterChange(String(id))}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${subjectFilter === String(id)
-                          ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
-                          : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                          ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                          : 'border-slate-200/70 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-900'
                           }`}
                       >
                         <div className="min-w-0 pr-2">
-                          <div className={`text-type-helper font-semibold ${subjectFilter === String(id) ? 'text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
                             {name}
                           </div>
-                          <div className={`text-type-helper truncate ${subjectFilter === String(id) ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-400 dark:text-slate-500'}`}>
+                          <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
                             Lọc các đơn phúc khảo thuộc môn này
                           </div>
                         </div>
@@ -535,8 +534,8 @@ export function RegradeFilterPopover({
               </div>
             </div>
 
-            {/* 3. Footer */}
-            <div className="shrink-0 flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+            {/* 3. Footer tinh gọn & thanh lịch */}
+            <div className="shrink-0 flex items-center justify-between px-4 py-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
               <div className="text-type-helper font-medium text-slate-600 dark:text-slate-300">
                 {activeFilterCount > 0 ? (
                   <>Đang áp dụng <strong className="font-semibold text-blue-600 dark:text-blue-400">{activeFilterCount}</strong> tiêu chí lọc</>
@@ -545,14 +544,9 @@ export function RegradeFilterPopover({
                 )}
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-type-helper font-semibold transition-all duration-150 cursor-pointer shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-1.5"
-              >
-                <CheckCheck className="h-3.5 w-3.5" />
-                <span>Xem kết quả</span>
-              </button>
+              <span className="text-type-helper text-slate-400 dark:text-slate-500 text-xs">
+                Nhấn Esc hoặc click ra ngoài để đóng
+              </span>
             </div>
           </div>,
           document.body

@@ -221,8 +221,8 @@ export function PermissionFilterPopover({
                   onClick={() => onOnlySensitiveChange(!onlySensitive)}
                   className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition cursor-pointer ${
                     onlySensitive
-                      ? 'border-blue-500/80 bg-blue-50/30 dark:border-blue-700 dark:bg-blue-950/20'
-                      : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
+                      ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                      : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
@@ -245,7 +245,11 @@ export function PermissionFilterPopover({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="ui-pill rounded-full border border-slate-200 dark:border-slate-700 bg-transparent px-2 py-0.5 text-type-helper font-medium text-slate-600 dark:text-slate-300 tabular-nums">
+                    <span className={`ui-pill rounded-full px-2 py-0.5 text-type-helper font-medium tabular-nums ${
+                      onlySensitive
+                        ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                        : 'border border-slate-200 dark:border-slate-700 bg-transparent text-slate-600 dark:text-slate-300'
+                    }`}>
                       {sensitiveCount}
                     </span>
                     <div
@@ -271,17 +275,21 @@ export function PermissionFilterPopover({
                   <button
                     type="button"
                     onClick={() => onModuleFilterChange('ALL')}
-                    className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition cursor-pointer ${
+                    className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition cursor-pointer border ${
                       moduleFilter === 'ALL'
-                        ? 'bg-blue-50/60 text-blue-700 font-semibold dark:bg-blue-950/40 dark:text-blue-300'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60 font-normal'
+                        ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                        : 'border-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
                       <LayoutGrid className={`h-4 w-4 ${moduleFilter === 'ALL' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'}`} />
-                      <span className="text-type-body">Tất cả nhóm</span>
+                      <span className={`text-type-body ${moduleFilter === 'ALL' ? 'text-slate-900 dark:text-slate-100 font-semibold' : 'text-slate-700 dark:text-slate-300'}`}>Tất cả nhóm</span>
                     </div>
-                    <span className="ui-pill rounded-full border border-slate-200 dark:border-slate-700 bg-transparent px-2 py-0.5 text-type-helper font-medium text-slate-600 dark:text-slate-300 tabular-nums">
+                    <span className={`ui-pill rounded-full px-2 py-0.5 text-type-helper font-medium tabular-nums ${
+                      moduleFilter === 'ALL'
+                        ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                        : 'border border-slate-200 dark:border-slate-700 bg-transparent text-slate-600 dark:text-slate-300'
+                    }`}>
                       {totalCount}
                     </span>
                   </button>
@@ -296,17 +304,21 @@ export function PermissionFilterPopover({
                         key={m}
                         type="button"
                         onClick={() => onModuleFilterChange(m)}
-                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition cursor-pointer ${
+                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition cursor-pointer border ${
                           isSelected
-                            ? 'bg-blue-50/60 text-blue-700 font-semibold dark:bg-blue-950/40 dark:text-blue-300'
-                            : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60 font-normal'
+                            ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
+                            : 'border-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <Icon className={`h-4 w-4 ${isSelected ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'}`} />
-                          <span className="text-type-body">{m}</span>
+                          <span className={`text-type-body ${isSelected ? 'text-slate-900 dark:text-slate-100 font-semibold' : 'text-slate-700 dark:text-slate-300'}`}>{m}</span>
                         </div>
-                        <span className="ui-pill rounded-full border border-slate-200 dark:border-slate-700 bg-transparent px-2 py-0.5 text-type-helper font-medium text-slate-600 dark:text-slate-300 tabular-nums">
+                        <span className={`ui-pill rounded-full px-2 py-0.5 text-type-helper font-medium tabular-nums ${
+                          isSelected
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold'
+                            : 'border border-slate-200 dark:border-slate-700 bg-transparent text-slate-600 dark:text-slate-300'
+                        }`}>
                           {count}
                         </span>
                       </button>

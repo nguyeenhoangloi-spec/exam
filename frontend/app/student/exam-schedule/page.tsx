@@ -32,6 +32,9 @@ import {
   Search,
   X,
 } from 'lucide-react';
+import { ViewModeSegmentedControl } from '../../../components/ui/ViewModeSegmentedControl';
+import { StudentScheduleCalendarView } from '../../../components/student/StudentScheduleCalendarView';
+import { StatusBadge } from '../../../components/common/StatusBadge';
 import { PersonalScheduleItem } from '../../../types';
 
 export default function StudentExamSchedulePage() {
@@ -46,6 +49,7 @@ export default function StudentExamSchedulePage() {
   const [modeFilter, setModeFilter] = useState<string>('ALL');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
 
   useEffect(() => {
     const u = getAuthUser();
@@ -345,10 +349,17 @@ export default function StudentExamSchedulePage() {
                 <span>Xóa lọc</span>
               </button>
             )}
+
+            {/* View Mode Switcher: Lịch [ 📅 ] & Bảng [ ☰ ] (Ưu tiên Lịch trước) */}
+            <ViewModeSegmentedControl
+              viewMode={viewMode}
+              onChange={(m) => setViewMode(m as 'calendar' | 'list')}
+              supportedModes={['calendar', 'list']}
+            />
           </div>
         </div>
 
-        {/* Schedule List / Grid */}
+        {/* Schedule Content (Calendar View hoặc List Table View) */}
         {loading ? (
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
@@ -364,179 +375,115 @@ export default function StudentExamSchedulePage() {
               Không có ca thi nào phù hợp với bộ lọc hiện tại.
             </p>
           </div>
+        ) : viewMode === 'calendar' ? (
+          /* ── 1. Chế độ Xem Lịch Tuần (Mặc định mở sẵn) ── */
+          <StudentScheduleCalendarView
+            schedules={filteredSchedules}
+            onDetail={setDrawerSchedule}
+          />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredSchedules.map((item) => (
-              <div
-                key={item.id}
-                className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-5 flex flex-col justify-between hover:shadow-md hover:border-slate-300/90 dark:hover:border-slate-700 transition duration-200 relative overflow-hidden group"
-              >
-                <div className="space-y-3.5">
-                  {/* Card top badges */}
-                  <div className="flex items-center justify-between gap-2">
-                    <IdentifierBadge>{item.subjectCode}</IdentifierBadge>
-                    <div className="flex items-center gap-2">
-                      <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 truncate max-w-[140px] sm:max-w-[180px]" title={item.periodName}>
-                        {item.periodName}
-                      </span>
-                      {item.mode === 'MOCK' ? (
-                        <span className="text-type-helper font-semibold text-blue-600 dark:text-blue-400 shrink-0">
-                          Thi thử
-                        </span>
-                      ) : (
-                        <span className="text-type-helper font-semibold text-slate-700 dark:text-slate-300 shrink-0">
-                          Chính thức
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Title */}
-                  <h3
-                    onClick={() => setDrawerSchedule(item)}
-                    className="text-type-body font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition line-clamp-1 cursor-pointer"
-                    title="Xem chi tiết ca thi"
+          /* ── 2. Chế độ Xem Bảng Danh Sách (Table) ── */
+          <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+            <table className="ui-table w-full text-left text-type-body leading-[22px] text-slate-700 dark:text-slate-300 border-collapse">
+              <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800 select-none">
+                <tr>
+                  <th scope="col" className="p-3.5 pl-4 font-medium whitespace-nowrap text-center w-12">STT</th>
+                  <th scope="col" className="p-3.5 font-medium min-w-[220px]">Học phần</th>
+                  <th scope="col" className="p-3.5 font-medium whitespace-nowrap">Thời gian thi</th>
+                  <th scope="col" className="p-3.5 font-medium whitespace-nowrap">Phòng thi</th>
+                  <th scope="col" className="p-3.5 font-medium whitespace-nowrap">SBD / Ghế</th>
+                  <th scope="col" className="p-3.5 font-medium whitespace-nowrap text-center">Hình thức</th>
+                  <th scope="col" className="p-3.5 pr-4 font-medium text-right whitespace-nowrap">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-normal">
+                {filteredSchedules.map((item, idx) => (
+                  <tr
+                    key={item.id}
+                    className="hover:bg-slate-50/60 dark:hover:bg-slate-800/50 transition-colors"
                   >
-                    {item.subjectName}
-                  </h3>
+                    <td className="p-3.5 pl-4 text-center tabular-nums text-slate-400 font-medium">
+                      {idx + 1}
+                    </td>
 
-                  {/* Reschedule / Cancellation Banner */}
-                  {item.status === 'CANCELLED' ? (
-                    <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 text-type-helper flex items-start gap-2">
-                      <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="font-semibold block text-rose-700 dark:text-rose-400">Ca thi này đã bị HỦY</strong>
-                        <span className="text-slate-600 dark:text-slate-300 text-type-helper leading-tight block mt-0.5">
-                          {(item as any).note?.includes('[Hủy ca thi:') ? (item as any).note.split('[Hủy ca thi:')[1]?.replace(']', '').trim() : 'Vui lòng chờ thông báo ca thi bù mới.'}
-                        </span>
+                    {/* 1. Học phần: Mã môn + Tên môn trên 1 hàng */}
+                    <td className="p-3.5 min-w-[220px]">
+                      <div className="flex items-center gap-2">
+                        <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
+                        <button
+                          type="button"
+                          onClick={() => setDrawerSchedule(item)}
+                          className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 transition text-left leading-snug truncate"
+                          title={item.subjectName}
+                        >
+                          {item.subjectName}
+                        </button>
                       </div>
-                    </div>
-                  ) : (item as any).note?.includes('[Dời lịch:') ? (
-                    <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-type-helper flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="font-semibold block text-emerald-700 dark:text-emerald-400">Đã cập nhật dời lịch thi</strong>
-                        <span className="text-slate-600 dark:text-slate-300 text-type-helper leading-tight block mt-0.5">
-                          {(item as any).note.split('[Dời lịch:')[1]?.split(']')[0]?.trim()}
-                        </span>
-                      </div>
-                    </div>
-                  ) : null}
+                    </td>
 
-                  {/* Details grid */}
-                  <div className="space-y-2 text-type-helper text-slate-600 dark:text-slate-300 font-medium bg-slate-50/70 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                        <Calendar className="w-3.5 h-3.5 text-blue-600" />
-                        Ngày thi:
-                      </span>
-                      <strong className="text-slate-800 dark:text-slate-200 font-semibold">
+                    {/* 2. Thời gian thi: Ngày + Giờ */}
+                    <td className="p-3.5 whitespace-nowrap">
+                      <span className="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
                         {new Date(item.examDate).toLocaleDateString('vi-VN')}
-                      </strong>
-                    </div>
+                      </span>
+                      <span className="text-slate-300 dark:text-slate-700 font-light mx-2">|</span>
+                      <span className="text-blue-600 dark:text-blue-400 font-semibold tabular-nums">
+                        {item.startTime} – {item.endTime}
+                      </span>
+                    </td>
 
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                        <Clock className="w-3.5 h-3.5 text-blue-600" />
-                        Khung giờ:
-                      </span>
-                      <strong className="text-blue-600 dark:text-blue-400 font-semibold">
-                        {item.startTime} - {item.endTime}
-                      </strong>
-                    </div>
+                    {/* 3. Phòng thi */}
+                    <td className="p-3.5 whitespace-nowrap font-medium text-slate-800 dark:text-slate-200">
+                      {item.roomName || item.roomCode || 'Tự do'} {item.building ? `(${item.building})` : ''}
+                    </td>
 
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                        <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                        Phòng thi:
+                    {/* 4. SBD / Ghế */}
+                    <td className="p-3.5 whitespace-nowrap tabular-nums font-medium text-slate-800 dark:text-slate-200">
+                      <span className="text-slate-900 dark:text-slate-100 font-semibold">
+                        {item.examNumber || item.registrationNumber || (item.mode === 'MOCK' ? 'Tự do' : 'Chưa cấp')}
                       </span>
-                      <strong className="text-slate-700 dark:text-slate-300 font-semibold">
-                        {item.roomName || (item.roomCode ? <IdentifierBadge tone="neutral">{item.roomCode}</IdentifierBadge> : 'Tự do')} {item.building ? `(${item.building})` : ''}
-                      </strong>
-                    </div>
+                      <span className="text-slate-300 dark:text-slate-700 font-light mx-2">|</span>
+                      <span className="text-slate-600 dark:text-slate-400">
+                        Ghế #{item.seatNumber || '---'}
+                      </span>
+                    </td>
 
-                    <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-slate-700">
-                      <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                        <Ticket className="w-3.5 h-3.5 text-blue-600" />
-                        SBD / Ghế:
-                      </span>
-                      <span className="tabular-nums font-medium text-slate-800 dark:text-slate-200">
-                        <strong className="text-blue-600 dark:text-blue-400">{item.examNumber || item.registrationNumber || (item.mode === 'MOCK' ? 'Tự do' : 'Chưa cấp')}</strong>
-                        <span className="text-slate-400 mx-1">·</span>
-                        Ghế #{item.seatNumber || 'Chưa xếp'}
-                      </span>
-                    </div>
-                    {(item as any).attempt?.hasPublishedResult && (
-                      <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-slate-700">
-                        <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-semibold">
-                          <Award className="w-3.5 h-3.5 text-blue-600" />
-                          Điểm công bố:
-                        </span>
-                        <span className="tabular-nums font-medium text-type-helper text-blue-600 dark:text-blue-400">
-                          {(item as any).attempt.totalScore !== null &&
-                            (item as any).attempt.totalScore !== undefined &&
-                            (item as any).attempt.totalScore !== ''
-                            ? `${(item as any).attempt.totalScore}đ`
-                            : 'Chưa có điểm'}{' '}
-                          {(item as any).attempt.penaltyReason ? `(${(item as any).attempt.penaltyReason})` : ''}
-                        </span>
+                    {/* 5. Hình thức: StatusBadge chuẩn quy định */}
+                    <td className="p-3.5 whitespace-nowrap text-center">
+                      <StatusBadge
+                        status={item.mode === 'MOCK' ? 'SCHEDULED' : 'CONFIRMED'}
+                        customLabel={item.mode === 'MOCK' ? 'Thi thử' : 'Chính thức'}
+                      />
+                    </td>
+
+                    {/* 6. Thao tác */}
+                    <td className="p-3.5 pr-4 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-1.5">
+                        {(item as any).attempt?.hasPublishedResult ? (
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => router.push(`/student/online-exam/${(item as any).attempt.id}/result`)}
+                            leftIcon={<Award className="w-3.5 h-3.5 text-blue-600" />}
+                          >
+                            Điểm thi
+                          </Button>
+                        ) : (
+                          <Button
+                            variant={item.mode === 'MOCK' ? 'secondary' : 'primary'}
+                            size="sm"
+                            onClick={() => router.push(`/student/online-exam/${item.examScheduleId || item.scheduleId || item.id}/lobby`)}
+                            rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+                          >
+                            {item.mode === 'MOCK' ? 'Vào thi thử' : 'Vào thi'}
+                          </Button>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Footer actions */}
-                <div className="pt-4 mt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-                  {(item as any).attempt?.hasPublishedResult ? (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => router.push(`/student/online-exam/${(item as any).attempt.id}/result`)}
-                      leftIcon={<Award className="w-3.5 h-3.5 text-blue-600" />}
-                    >
-                      Xem Kết Quả & Điểm Thi
-                    </Button>
-                  ) : ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED', 'UNDER_REVIEW'].includes((item as any).attempt?.status) ? (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => router.push(`/student/online-exam/${(item as any).attempt.id}/result`)}
-                      leftIcon={<CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />}
-                    >
-                      Xem Bài Nộp
-                    </Button>
-                  ) : ['IN_PROGRESS', 'DISCONNECTED', 'DEVICE_CHECK', 'READY'].includes((item as any).attempt?.status) ? (
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => router.push(`/student/online-exam/${item.examScheduleId || item.scheduleId || item.id}/lobby`)}
-                      rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
-                    >
-                      Tiếp tục làm bài
-                    </Button>
-                  ) : (
-                    <Button
-                      variant={item.mode === 'MOCK' ? 'secondary' : 'primary'}
-                      size="sm"
-                      onClick={() => router.push(`/student/online-exam/${item.examScheduleId || item.scheduleId || item.id}/lobby`)}
-                      rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
-                    >
-                      {item.mode === 'MOCK' ? 'Vào thi thử' : 'Vào phòng thi online'}
-                    </Button>
-                  )}
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setDrawerSchedule(item)}
-                    leftIcon={<Eye className="w-3.5 h-3.5 text-slate-400" />}
-                    className="ml-auto"
-                  >
-                    Chi tiết
-                  </Button>
-                </div>
-              </div>
-            ))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </main>
