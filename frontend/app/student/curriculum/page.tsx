@@ -112,7 +112,7 @@ export default function StudentCurriculumPage() {
   // Selection & Pagination
   const [selected, setSelected] = useState<number[]>([]);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(8);
+  const [limit, setLimit] = useState(10);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 

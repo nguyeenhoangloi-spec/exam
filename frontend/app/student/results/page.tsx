@@ -129,7 +129,7 @@ export default function StudentResultsPage() {
   // Selection & Pagination
   const [selected, setSelected] = useState<string[]>([]);
   const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(8);
+  const [limit, setLimit] = useState<number>(10);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -848,7 +848,7 @@ export default function StudentResultsPage() {
             unit="kết quả thi"
             onPage={(p) => setPage(p)}
             onLimit={(l) => { setLimit(l); setPage(1); }}
-            limitOptions={[8, 15, 25, 50]}
+            limitOptions={[10, 20, 50, 100]}
           />
         )}
 

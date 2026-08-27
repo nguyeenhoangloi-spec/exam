@@ -57,7 +57,7 @@ export default function TeachersPage() {
   }, []);
 
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(8);
+  const [limit, setLimit] = useState(10);
   const [sortOrder, setSortOrder] = useState('newest');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     teacherCode: true,

@@ -73,7 +73,7 @@ export default function TeacherAssignmentsPage() {
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [selected, setSelected] = useState<number[]>([]);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(8);
+  const [limit, setLimit] = useState(10);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {

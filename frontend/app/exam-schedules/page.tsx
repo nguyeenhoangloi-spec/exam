@@ -68,7 +68,7 @@ export default function ExamSchedulesPage() {
   });
 
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(8);
+  const [limit, setLimit] = useState(10);
   const [sortOrder, setSortOrder] = useState('newest');
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
