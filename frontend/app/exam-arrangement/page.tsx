@@ -780,19 +780,19 @@ export default function ExamArrangementPage() {
         <div className="space-y-4">
           {/* ── THANH ĐIỀU KHIỂN & THAO TÁC PHẲNG 1 DÒNG DUY NHẤT ── */}
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 min-h-[44px]">
-            {/* Trái: Thông tin Ca thi chuẩn 100% theo mẫu */}
+            {/* Trái: Thông tin Ca thi chuẩn mẫu */}
             <div className="flex items-center gap-3 min-w-0">
               <div className="h-11 w-11 rounded-2xl bg-blue-50 dark:bg-blue-950/70 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0 border border-blue-100 dark:border-blue-900/50 shadow-2xs">
                 <GraduationCap className="h-5 w-5 stroke-[2]" />
               </div>
 
               <div className="min-w-0">
-                {/* Hàng 1: Badge CHÍNH THỨC + Tên Môn + #Mã Môn + Icon ⇄ */}
+                {/* Hàng 1: Badge Trạng thái nổi bật + Tên Môn + #Mã Môn + Icon ⇄ */}
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="px-3 py-0.5 ui-pill ui-pill-solid rounded-full text-type-helper font-medium bg-blue-600 text-white tracking-wider">
                     {result?.preview ? 'XEM TRƯỚC' : 'CHÍNH THỨC'}
                   </span>
-                  <h2 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate">
+                  <h2 className="text-type-body font-semibold text-slate-900 dark:text-white truncate">
                     {currentSchedule?.subject?.subjectName || 'Chưa chọn ca thi'}
                   </h2>
                   <span className="text-type-helper font-medium text-slate-400 dark:text-slate-500">
@@ -831,32 +831,21 @@ export default function ExamArrangementPage() {
               </div>
             </div>
 
-            {/* Phải: Toolbar kết quả (chỉ hiện khi đã có kết quả xếp hoặc đang tải) */}
-            <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+            {/* Phải: Toolbar điều khiển chính (nằm nhất quán trên cùng) */}
+            <div className="flex items-center gap-2 flex-wrap shrink-0">
               {isLoadingSchedule ? (
                 <div className="h-10 w-48 rounded-xl bg-slate-100 dark:bg-slate-800/80 animate-pulse border border-slate-200/50 dark:border-slate-700/50" />
               ) : result ? (
-                /* Khi đã có kết quả: TẤT CẢ NẰM TRÊN 1 HÀNG (Cấu hình lại + Tìm kiếm + Switch View + Lưu) */
+                /* Khi đã có kết quả: Tìm kiếm + Switch View + Cấu hình lại + Lưu */
                 <>
-                  {/* Nút Cấu hình lại */}
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="md"
-                    onClick={() => setResult(null)}
-                    leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
-                  >
-                    Cấu hình lại
-                  </Button>
-
                   {/* Ô tìm kiếm sinh viên */}
-                  <div className="relative w-48 sm:w-56">
+                  <div className="relative w-44 sm:w-52">
                     <input
                       type="text"
                       value={studentSearchQuery}
                       onChange={(e) => setStudentSearchQuery(e.target.value)}
                       placeholder="Tìm kiếm SV..."
-                      className="h-10 w-full pl-9 pr-8 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60 text-type-body text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition"
+                      className="h-10 w-full pl-9 pr-8 rounded-xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 text-type-body text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                     />
                     <Search className="h-4 w-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     {studentSearchQuery && (
@@ -870,30 +859,16 @@ export default function ExamArrangementPage() {
                     )}
                   </div>
 
-                  {roomSummaries.length > 1 && (
-                    <FilterSelect
-                      value={filterRoomCode}
-                      onChange={(e) => setFilterRoomCode(e.target.value)}
-                      containerClassName="w-32"
-                      options={[
-                        { value: 'ALL', label: `Tất cả (${roomSummaries.length} phòng)` },
-                        ...roomSummaries.map((rm) => ({
-                          value: rm.roomCode,
-                          label: rm.roomName || rm.roomCode,
-                        })),
-                      ]}
-                    />
-                  )}
-
                   {/* Icon Toggle Sơ Đồ / Bảng */}
-                  <div className="h-10 inline-flex items-center bg-slate-100/90 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/70">
+                  <div className="h-10 inline-flex items-center bg-slate-100/90 dark:bg-slate-800/80 p-0.5 rounded-xl border border-slate-200/80 dark:border-slate-700/70">
                     <button
                       type="button"
                       onClick={() => setViewMode('matrix')}
-                      className={`h-8 w-8 rounded-xl flex items-center justify-center transition cursor-pointer ${viewMode === 'matrix'
-                          ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
+                      className={`h-9 w-9 rounded-xl flex items-center justify-center transition cursor-pointer ${
+                        viewMode === 'matrix'
+                          ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs font-semibold'
                           : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                        }`}
+                      }`}
                       title="Xem sơ đồ ma trận chỗ ngồi"
                       aria-label="Xem sơ đồ"
                     >
@@ -903,16 +878,28 @@ export default function ExamArrangementPage() {
                     <button
                       type="button"
                       onClick={() => setViewMode('table')}
-                      className={`h-8 w-8 rounded-xl flex items-center justify-center transition cursor-pointer ${viewMode === 'table'
-                          ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
+                      className={`h-9 w-9 rounded-xl flex items-center justify-center transition cursor-pointer ${
+                        viewMode === 'table'
+                          ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs font-semibold'
                           : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                        }`}
+                      }`}
                       title="Xem bảng danh sách sinh viên"
                       aria-label="Xem danh sách"
                     >
                       <List className="h-4 w-4" />
                     </button>
                   </div>
+
+                  {/* Nút Cấu hình lại (Ghost button) */}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="md"
+                    onClick={() => setResult(null)}
+                    leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
+                  >
+                    Cấu hình lại
+                  </Button>
 
                   {/* Nút Lưu Phân Bổ */}
                   {result.preview && (
@@ -930,11 +917,23 @@ export default function ExamArrangementPage() {
                         })
                       }
                     >
-                      Lưu Phân Bổ
+                      Lưu phân bổ
                     </Button>
                   )}
                 </>
-              ) : null}
+              ) : (
+                /* Khi chưa xếp: Nút CTA [ Xếp tự động ] ở góc trên bên phải */
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  onClick={runPreview}
+                  disabled={arranging || selectedClassIds.length === 0 || selectedRoomIds.length === 0 || totalSelectedStudents > selectedCapacity}
+                  isLoading={arranging}
+                >
+                  Xếp tự động
+                </Button>
+              )}
             </div>
           </div>
 
@@ -965,16 +964,27 @@ export default function ExamArrangementPage() {
                   </p>
                 </div>
 
-                {/* Thống kê icon phẳng, không dùng khung viền hay dấu chấm */}
-                <div className="flex items-center gap-4 text-type-helper text-slate-600 dark:text-slate-300 shrink-0">
-                  <div className="flex items-center gap-1.5">
-                    <Users className="h-4 w-4 text-slate-400 shrink-0" />
-                    <span><strong>{totalSelectedStudents}</strong> sinh viên</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <DoorOpen className="h-4 w-4 text-slate-400 shrink-0" />
-                    <span><strong>{selectedRoomIds.length}</strong> phòng ({selectedCapacity} chỗ)</span>
-                  </div>
+                {/* Trạng thái kiểm tra sức chứa thời gian thực */}
+                <div className="flex items-center gap-4 text-type-helper flex-wrap shrink-0">
+                  {totalSelectedStudents === 0 ? (
+                    <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1.5 font-medium">
+                      <AlertTriangle className="h-4 w-4 shrink-0" /> Vui lòng chọn lớp học phần
+                    </span>
+                  ) : selectedRoomIds.length === 0 ? (
+                    <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1.5 font-medium">
+                      <AlertTriangle className="h-4 w-4 shrink-0" /> Vui lòng chọn phòng thi
+                    </span>
+                  ) : totalSelectedStudents <= selectedCapacity ? (
+                    <span className="text-slate-700 dark:text-slate-300 flex items-center gap-1.5 font-medium">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      Đủ chỗ: <strong>{totalSelectedStudents} sinh viên</strong> ({selectedCapacity} chỗ ngồi)
+                    </span>
+                  ) : (
+                    <span className="text-rose-600 dark:text-rose-400 flex items-center gap-1.5 font-medium">
+                      <AlertCircle className="h-4 w-4 shrink-0" />
+                      Thiếu chỗ: Cần <strong>{totalSelectedStudents} chỗ</strong>, đã chọn <strong>{selectedCapacity} chỗ</strong>
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -1172,48 +1182,12 @@ export default function ExamArrangementPage() {
                   )}
                 </div>
               </div>
-
-              {/* Board Footer: Status & Action CTA */}
-              <div className="p-4 sm:px-6 sm:py-3.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/40 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-2 text-type-body-sm font-medium">
-                  {totalSelectedStudents === 0 ? (
-                    <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
-                      <AlertTriangle className="h-4 w-4" /> Vui lòng chọn ít nhất 1 lớp học phần
-                    </span>
-                  ) : selectedRoomIds.length === 0 ? (
-                    <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
-                      <AlertTriangle className="h-4 w-4" /> Vui lòng chọn ít nhất 1 phòng thi khả dụng
-                    </span>
-                  ) : totalSelectedStudents <= selectedCapacity ? (
-                    <span className="text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      Đủ chỗ: <strong>{totalSelectedStudents} sinh viên</strong> phân vào <strong>{selectedCapacity} chỗ ngồi</strong> (dư {selectedCapacity - totalSelectedStudents} chỗ)
-                    </span>
-                  ) : (
-                    <span className="text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
-                      <AlertCircle className="h-4 w-4 shrink-0" />
-                      Thiếu chỗ: Cần <strong>{totalSelectedStudents} chỗ</strong> nhưng mới chọn <strong>{selectedCapacity} chỗ</strong> (thiếu {totalSelectedStudents - selectedCapacity} chỗ)
-                    </span>
-                  )}
-                </div>
-
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="md"
-                  onClick={runPreview}
-                  disabled={arranging || selectedClassIds.length === 0 || selectedRoomIds.length === 0 || totalSelectedStudents > selectedCapacity}
-                  isLoading={arranging}
-                >
-                  Xếp tự động
-                </Button>
-              </div>
             </div>
           ) : (
             <div className="space-y-4">
               {/* ── View 1: Sơ Đồ Phòng Máy Trực Quan (Live Lab Floor Plan) ── */}
               {viewMode === 'matrix' && (
-                <div className="space-y-5">
+                <div className="space-y-4">
                   {roomSummaries
                     .filter((rm) => filterRoomCode === 'ALL' || rm.roomCode === filterRoomCode)
                     .map((room) => {
@@ -1233,59 +1207,43 @@ export default function ExamArrangementPage() {
                       return (
                         <div
                           key={room.roomCode}
-                          className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden"
+                          className="rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden"
                         >
-                          {/* Header của phòng thi tinh gọn & sang trọng */}
-                          <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-800/30">
-                            <div className="flex items-center gap-3">
-                              <div className="h-10 w-10 rounded-xl bg-blue-50 dark:bg-blue-950/70 border border-blue-100 dark:border-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-semibold text-type-body-sm shadow-2xs">
-                                <DoorOpen className="h-5 w-5 stroke-[2]" />
-                              </div>
-                              <div>
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
-                                    {room.roomName || `Phòng ${room.roomCode}`}
-                                  </h4>
-                                  <span className="text-type-helper font-medium text-slate-400 dark:text-slate-500">
-                                    #{room.roomCode}
-                                  </span>
-                                  {room.building && (
-                                    <span className="px-2 py-0.5 ui-pill rounded-full text-type-helper text-slate-500 font-medium">
-                                      {room.building}
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
-                                  Đã xếp {studentsInRoom.length}/{capacity} chỗ ({percentFilled}%) — Ghép {classBreakdowns.length} lớp học phần
-                                </p>
-                              </div>
+                          {/* Header của phòng thi phẳng & sang trọng */}
+                          <div className="p-3.5 sm:px-5 sm:py-3 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-slate-50/40 dark:bg-slate-850/40">
+                            <div className="flex items-center gap-2.5 flex-wrap">
+                              <span className="h-3.5 w-1 rounded-full bg-blue-600 shrink-0" />
+                              <h4 className="text-type-body font-semibold text-slate-900 dark:text-white">
+                                {room.roomName || `Phòng ${room.roomCode}`}
+                              </h4>
+                              <span className="text-type-helper text-slate-400 dark:text-slate-500">
+                                (Mã: {room.roomCode}{room.building ? `, Tòa ${room.building}` : ''})
+                              </span>
+                              <span className="text-slate-300 dark:text-slate-600">•</span>
+                              <span className="text-type-helper text-slate-500 dark:text-slate-400">
+                                Ghép {classBreakdowns.length} lớp học phần
+                              </span>
                             </div>
 
-                            {/* Progress bar mỏng & Số ghế bên phải */}
-                            <div className="flex items-center gap-3 shrink-0">
-                              <div className="w-28 bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                                <div
-                                  className="bg-blue-600 h-full rounded-full transition-all duration-300"
-                                  style={{ width: `${percentFilled}%` }}
-                                />
-                              </div>
-                              <span className="text-type-helper font-medium text-blue-700 dark:text-blue-300 px-2.5 py-0.5 ui-pill rounded-full">
-                                {studentsInRoom.length}/{capacity} Ghế
-                              </span>
+                            {/* Thống kê số chỗ ngồi phẳng */}
+                            <div className="flex items-center gap-1.5 text-type-helper text-slate-600 dark:text-slate-300 font-medium tabular-nums shrink-0">
+                              <span>Đã xếp <strong>{studentsInRoom.length}/{capacity}</strong> chỗ ({percentFilled}%)</span>
                             </div>
                           </div>
 
                           {/* Sơ đồ ma trận chỗ ngồi (Live Seat Matrix) */}
-                          <div className="p-5 sm:p-6">
-                            {/* Dải Bục Giảng mỏng trải rộng */}
-                            <div className="w-full py-1.5 px-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 mb-4">
-                              <Monitor className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
-                              <span className="text-type-helper font-medium tracking-wide text-slate-600 dark:text-slate-300">
-                                Bục Giảng &amp; Hướng Nhìn Cán Bộ Coi Thi
+                          <div className="p-4 sm:p-5">
+                            {/* Dải Bục Giảng nét đứt trang nhã */}
+                            <div className="relative flex py-2 items-center justify-center mb-3">
+                              <div className="flex-grow border-t border-dashed border-slate-200 dark:border-slate-800" />
+                              <span className="flex-shrink mx-3 text-type-helper font-medium text-slate-400 dark:text-slate-500 flex items-center gap-1.5 select-none">
+                                <Monitor className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                                Bục giảng &amp; Hướng nhìn cán bộ coi thi
                               </span>
+                              <div className="flex-grow border-t border-dashed border-slate-200 dark:border-slate-800" />
                             </div>
 
-                            {/* Lưới Ghế Ngồi 6 Cột Đều Đặn & Thoáng Đãng */}
+                            {/* Lưới Ghế Ngồi Phẳng & Tinh Gọn */}
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5">
                               {Array.from({ length: capacity }).map((_, idx) => {
                                 const seatNum = idx + 1;
@@ -1295,24 +1253,26 @@ export default function ExamArrangementPage() {
                                   <div
                                     key={seatNum}
                                     onClick={() => student && setDrawerStudentDetail(student)}
-                                    className={`rounded-xl border p-2.5 transition text-left space-y-1.5 min-h-[76px] flex flex-col justify-between ${student
-                                        ? 'bg-white dark:bg-slate-900 border-slate-200/60 dark:border-slate-800 shadow-2xs hover:border-blue-500 hover:bg-blue-50/20 cursor-pointer select-none'
-                                        : 'bg-slate-50/40 dark:bg-slate-800/20 border-dashed border-slate-200 dark:border-slate-800 text-slate-300 select-none'
-                                      }`}
+                                    className={`rounded-xl border p-2.5 transition text-left flex flex-col justify-between min-h-[72px] ${
+                                      student
+                                        ? 'bg-white dark:bg-slate-900 border-slate-200/70 dark:border-slate-800 hover:border-blue-500/80 hover:bg-slate-50/50 dark:hover:bg-slate-850 cursor-pointer select-none'
+                                        : 'bg-slate-50/30 dark:bg-slate-850/20 border-dashed border-slate-200/60 dark:border-slate-800/60 select-none'
+                                    }`}
                                   >
                                     {/* Hàng 1: Số ghế + Lớp học phần */}
                                     <div className="flex items-center justify-between gap-1.5 text-type-helper min-w-0">
                                       <span
-                                        className={`px-1.5 py-0.5 ui-pill rounded-full text-type-helper font-medium shrink-0 ${student
-                                            ? 'text-blue-700 bg-blue-50 dark:text-blue-300 dark:bg-blue-950/60'
-                                            : 'text-slate-400 bg-slate-100 dark:bg-slate-800'
-                                          }`}
+                                        className={`text-type-helper font-semibold tabular-nums shrink-0 ${
+                                          student
+                                            ? 'text-slate-600 dark:text-slate-300'
+                                            : 'text-slate-300 dark:text-slate-600'
+                                        }`}
                                       >
                                         #{seatNum}
                                       </span>
                                       {student && (
                                         <span
-                                          className="text-type-helper text-slate-500 dark:text-slate-400 font-normal truncate min-w-0 flex-1 text-right"
+                                          className="text-type-helper text-slate-400 dark:text-slate-500 font-normal truncate min-w-0 flex-1 text-right"
                                           title={student.className}
                                         >
                                           {student.className}
@@ -1323,7 +1283,7 @@ export default function ExamArrangementPage() {
                                     {/* Hàng 2: Họ tên sinh viên */}
                                     {student ? (
                                       <p
-                                        className="text-type-helper font-medium text-slate-900 dark:text-slate-100 truncate leading-tight"
+                                        className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate leading-tight py-0.5"
                                         title={student.fullName}
                                       >
                                         {student.fullName}
@@ -1334,13 +1294,13 @@ export default function ExamArrangementPage() {
                                       </div>
                                     )}
 
-                                    {/* Hàng 3: MSSV + SBD */}
+                                    {/* Hàng 3: MSSV + SBD (Phẳng, không hộp màu) */}
                                     {student && (
                                       <div className="flex items-center justify-between text-type-helper pt-1 border-t border-slate-100 dark:border-slate-800">
-                                        <span className="text-slate-500 dark:text-slate-400 font-normal">
+                                        <span className="text-slate-500 dark:text-slate-400 font-normal tabular-nums">
                                           {student.studentCode}
                                         </span>
-                                        <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 font-medium">
+                                        <span className="font-semibold text-slate-800 dark:text-slate-200 tabular-nums">
                                           {student.examNumber}
                                         </span>
                                       </div>
