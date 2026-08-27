@@ -47,3 +47,38 @@ export const removeAuth = (notify = true) => {
     if (notify) window.dispatchEvent(new Event('auth-change'));
   }
 };
+
+const getAvatarStorageKey = (user?: Partial<User> | null) => {
+  if (!user) return 'exam_user_avatar_current';
+  return `exam_user_avatar_${user.id || user.username || 'current'}`;
+};
+
+export const getUserAvatar = (user?: Partial<User> | null): string => {
+  if (typeof window === 'undefined') return '';
+  const current = user || getAuthUser();
+  const localAvatar = localStorage.getItem(getAvatarStorageKey(current)) || localStorage.getItem('exam_user_avatar_current');
+  if (localAvatar) return localAvatar;
+  return current?.avatarUrl || (current as any)?.teacher?.avatarUrl || (current as any)?.student?.avatarUrl || '';
+};
+
+export const setUserAvatar = (avatarUrl: string, user?: Partial<User> | null) => {
+  if (typeof window !== 'undefined') {
+    const current = user || getAuthUser();
+    const key = getAvatarStorageKey(current);
+    if (avatarUrl) {
+      localStorage.setItem(key, avatarUrl);
+      localStorage.setItem('exam_user_avatar_current', avatarUrl);
+    } else {
+      localStorage.removeItem(key);
+      localStorage.removeItem('exam_user_avatar_current');
+    }
+    // Update auth user record in localStorage as well
+    if (current) {
+      const authUser = getAuthUser();
+      const updatedUser = { ...(authUser || {}), ...current, avatarUrl };
+      localStorage.setItem(USER_KEY, JSON.stringify(updatedUser));
+    }
+    window.dispatchEvent(new Event('auth-change'));
+    window.dispatchEvent(new CustomEvent('user-avatar-change', { detail: { avatarUrl } }));
+  }
+};

@@ -19,7 +19,7 @@ import {
   Headphones,
   ArrowUpRight,
 } from 'lucide-react';
-import { removeAuth, getAuthUser } from '../lib/auth';
+import { removeAuth, getAuthUser, getUserAvatar } from '../lib/auth';
 import { User } from '../types';
 import { DynamicImage } from './ui/DynamicImage';
 import { ConfirmModal } from './ConfirmModal';
@@ -46,12 +46,15 @@ export interface HeaderProps {
 const NOTIF_STORAGE_KEY = 'read_notifications_v1';
 
 export const Header: React.FC<HeaderProps> = ({
-  user: initialUser,
-  collapsed = false,
+  user: propUser,
+  title,
+  collapsed,
+  onToggleSidebar,
   onMenuClick,
 }) => {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(propUser || null);
+  const [avatarSrc, setAvatarSrc] = useState<string>('');
   const [isDark, setIsDark] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [openPanel, setOpenPanel] = useState<'notifications' | 'account' | null>(null);
@@ -63,17 +66,26 @@ export const Header: React.FC<HeaderProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Sync user from local storage
+  // Sync user and avatar from local storage
   const syncUserFromStorage = useCallback(() => {
     const authUser = getAuthUser();
     setUser(authUser);
+    setAvatarSrc(getUserAvatar(authUser));
   }, []);
 
   useEffect(() => {
     syncUserFromStorage();
     const handleAuthChange = () => syncUserFromStorage();
+    const handleAvatarChange = (e: any) => {
+      const url = e?.detail?.avatarUrl !== undefined ? e.detail.avatarUrl : getUserAvatar();
+      setAvatarSrc(url);
+    };
     window.addEventListener('auth-change', handleAuthChange);
-    return () => window.removeEventListener('auth-change', handleAuthChange);
+    window.addEventListener('user-avatar-change', handleAvatarChange);
+    return () => {
+      window.removeEventListener('auth-change', handleAuthChange);
+      window.removeEventListener('user-avatar-change', handleAvatarChange);
+    };
   }, [syncUserFromStorage]);
 
   // Global listener to trigger opening the Unified Account Modal
@@ -258,7 +270,7 @@ export const Header: React.FC<HeaderProps> = ({
   const displayName = user?.teacher?.fullName || user?.student?.fullName || user?.username || 'Người dùng';
   const displayRoleLabel =
     user?.role === 'ADMIN' ? 'Quản trị viên' : user?.role === 'TEACHER' ? 'Giảng viên' : 'Sinh viên';
-  const avatarUrl = user?.avatarUrl || user?.teacher?.avatarUrl || user?.student?.avatarUrl;
+  const avatarUrl = avatarSrc || user?.avatarUrl || user?.teacher?.avatarUrl || user?.student?.avatarUrl;
 
   const getSmartMonogram = (name: string) => {
     if (!name) return 'U';
@@ -349,7 +361,7 @@ export const Header: React.FC<HeaderProps> = ({
 
               {/* Notifications Dropdown Panel */}
               {openPanel === 'notifications' && (
-                <div className="absolute right-0 top-[calc(100%+10px)] w-[min(24rem,calc(100vw-1rem))] sm:w-[24rem] max-w-[calc(100vw-1rem)] rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl shadow-slate-200/60 dark:shadow-slate-950/60 text-type-body z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div className="absolute right-0 top-[calc(100%+8px)] w-[min(24rem,calc(100vw-1.5rem))] sm:w-[24rem] rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-4 shadow-[0_16px_48px_-8px_rgba(0,0,0,0.16)] dark:shadow-[0_16px_48px_-8px_rgba(0,0,0,0.65)] text-type-body z-50 animate-in fade-in-0 zoom-in-[0.96] slide-in-from-top-2 duration-200 ease-out">
                   <div className="mb-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-2.5">
                     <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body flex items-center gap-1.5">
                       <Bell className="w-4 h-4 text-blue-600" strokeWidth={1.5} />
@@ -521,79 +533,63 @@ export const Header: React.FC<HeaderProps> = ({
                 />
               </button>
 
-              {/* Clean Minimalist User Account Dropdown (White + Blue EDU) */}
+              {/* Clean Minimalist User Account Dropdown (Pure Flat & Unified Typography) */}
               {openPanel === 'account' && (
                 <div
                   id="user-account-dropdown"
                   role="menu"
                   aria-orientation="vertical"
-                  className="absolute right-0 top-[calc(100%+8px)] w-[min(16rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] origin-top-right rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-1.5 shadow-2xl shadow-slate-950/15 dark:shadow-slate-950/70 text-type-helper z-50 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-150 ease-out"
+                  className="absolute right-0 top-[calc(100%+8px)] w-[min(17rem,calc(100vw-1.5rem))] origin-top-right rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-1.5 shadow-xl shadow-slate-950/10 dark:shadow-slate-950/60 z-50 animate-in fade-in-0 zoom-in-[0.96] slide-in-from-top-2 duration-200 ease-out"
                 >
                   {/* Subtle Top Pointer Tip */}
                   <div className="absolute -top-1.5 right-6 h-3 w-3 rotate-45 border-l border-t border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 z-10" />
 
-                  {/* Account Header: Clean Profile Identity with Soft Secondary Email */}
-                  <div className="group/email relative px-2.5 py-2 mb-1 border-b border-slate-100 dark:border-slate-800">
-                    <p className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
+                  {/* Account Header: Clean Flat Identity */}
+                  <div className="px-3 pt-2.5 pb-2.5 border-b border-slate-100 dark:border-slate-800">
+                    <p className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate leading-snug">
                       {displayName}
                     </p>
-                    <div className="relative mt-0.5">
-                      <p
-                        className="text-type-helper font-normal text-slate-500 dark:text-slate-400 truncate cursor-default select-text"
-                        title={user?.email || ''}
-                      >
-                        {user?.email || (user?.username ? `@${user.username}` : displayRoleLabel)}
-                      </p>
-
-                      {/* Instant Floating Hover Tooltip (Full Email View on Hover) */}
-                      {user?.email && (
-                        <div className="absolute left-0 top-[calc(100%+4px)] z-50 hidden group-hover/email:block max-w-[280px] rounded-xl bg-slate-900/95 dark:bg-slate-800/95 border border-slate-700/80 px-2.5 py-1.5 text-type-helper font-medium text-white shadow-xl backdrop-blur-xs break-all animate-in fade-in-0 zoom-in-95 duration-150 pointer-events-none">
-                          <span className="select-all">{user.email}</span>
-                        </div>
-                      )}
-                    </div>
+                    <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400 truncate mt-0.5 select-text">
+                      {user?.email || (user?.username ? `@${user.username}` : displayRoleLabel)}
+                    </p>
                   </div>
 
-                  {/* Navigation Links */}
-                  <div className="relative z-20 space-y-0.5">
-                    {/* Hồ sơ & Cài đặt (Unified Popup Trigger) */}
+                  {/* Navigation Links (Đồng bộ 100% Cỡ chữ 15px & Font Weight 500) */}
+                  <div className="relative z-20 pt-1 space-y-0.5">
+                    {/* Hồ sơ & Cài đặt */}
                     <button
                       type="button"
                       onClick={() => {
                         setOpenPanel(null);
                         setAccountModalTab('profile');
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-1.5 text-type-body-sm text-slate-700 dark:text-slate-200 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800/70 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150 cursor-pointer group text-left"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body font-medium !font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 cursor-pointer group text-left !min-h-0"
                     >
                       <div className="flex items-center gap-2.5">
-                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-slate-100/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 group-hover:bg-blue-50 dark:group-hover:bg-blue-950/60 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                          <UserIcon className="h-3.5 w-3.5" strokeWidth={1.5} />
-                        </div>
+                        <UserIcon className="h-4 w-4 text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors shrink-0" strokeWidth={1.5} />
                         <span>Hồ sơ & Cài đặt</span>
                       </div>
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" strokeWidth={1.5} />
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 group-hover:translate-x-0.5 transition-all duration-150" strokeWidth={1.5} />
                     </button>
 
                     {/* Trung tâm hỗ trợ */}
                     <Link
                       href="/contact"
                       onClick={() => setOpenPanel(null)}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-1.5 text-type-body-sm text-slate-700 dark:text-slate-200 font-medium hover:bg-slate-100/80 dark:hover:bg-slate-800/70 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150 cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body font-medium !font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 cursor-pointer group !min-h-0"
                     >
                       <div className="flex items-center gap-2.5">
-                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-slate-100/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 group-hover:bg-blue-50 dark:group-hover:bg-blue-950/60 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                          <Headphones className="h-3.5 w-3.5" strokeWidth={1.5} />
-                        </div>
+                        <Headphones className="h-4 w-4 text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors shrink-0" strokeWidth={1.5} />
                         <span>Trung tâm hỗ trợ</span>
                       </div>
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" strokeWidth={1.5} />
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 group-hover:translate-x-0.5 transition-all duration-150" strokeWidth={1.5} />
                     </Link>
                   </div>
 
                   {/* Divider */}
                   <div className="relative z-20 my-1 border-t border-slate-100 dark:border-slate-800" />
 
-                  {/* Logout Action */}
+                  {/* Logout Action (Đồng bộ màu sắc & cỡ chữ với các nút trên, không đỏ rực) */}
                   <div className="relative z-20">
                     <button
                       type="button"
@@ -602,12 +598,10 @@ export const Header: React.FC<HeaderProps> = ({
                         setOpenPanel(null);
                         setShowLogoutConfirm(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-1.5 text-type-body-sm text-rose-600 dark:text-rose-400 font-medium hover:bg-rose-50/70 dark:hover:bg-rose-950/30 transition-colors duration-150 cursor-pointer group"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body font-medium !font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 cursor-pointer group !min-h-0"
                     >
                       <div className="flex items-center gap-2.5">
-                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 group-hover:bg-rose-600 group-hover:text-white transition-colors">
-                          <LogOut className="h-3.5 w-3.5" strokeWidth={1.5} />
-                        </div>
+                        <LogOut className="h-4 w-4 text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors shrink-0" strokeWidth={1.5} />
                         <span>Đăng xuất</span>
                       </div>
                     </button>

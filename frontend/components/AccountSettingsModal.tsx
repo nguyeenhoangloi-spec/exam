@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import api from '../lib/api';
-import { getAuthUser, getAuthToken, setAuthToken } from '../lib/auth';
+import { getAuthUser, getAuthToken, setAuthToken, getUserAvatar, setUserAvatar } from '../lib/auth';
 import { User as UserType } from '../types';
 import { Toast } from './Toast';
 import { DynamicImage } from './ui/DynamicImage';
@@ -31,6 +31,9 @@ import {
   Calendar,
   Volume2,
   KeyRound,
+  ZoomIn,
+  ZoomOut,
+  RotateCw,
 } from 'lucide-react';
 
 export type AccountSettingsTab = 'profile' | 'security' | 'appearance';
@@ -53,6 +56,272 @@ interface ProfileData {
   teacher?: any;
 }
 
+// ── COMPONENT CĂN CHỈNH & THU PHÓNG ẢNH ĐẠI DIỆN (AVATAR CROPPER STUDIO) ──
+interface AvatarCropperModalProps {
+  isOpen: boolean;
+  imageSrc: string;
+  onClose: () => void;
+  onApply: (croppedDataUrl: string) => void;
+}
+
+function AvatarCropperModal({ isOpen, imageSrc, onClose, onApply }: AvatarCropperModalProps) {
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [rotation, setRotation] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartRef = useRef({ x: 0, y: 0 });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    if (!imageSrc) return;
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      imgRef.current = img;
+      setZoom(1);
+      setPan({ x: 0, y: 0 });
+      setRotation(0);
+      draw();
+    };
+    img.src = imageSrc;
+  }, [imageSrc]);
+
+  const draw = useCallback(() => {
+    const canvas = canvasRef.current;
+    const img = imgRef.current;
+    if (!canvas || !img) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const size = canvas.width; // 280
+    ctx.clearRect(0, 0, size, size);
+
+    ctx.save();
+    ctx.translate(size / 2, size / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.scale(zoom, zoom);
+    ctx.translate(pan.x, pan.y);
+
+    const scale = Math.max(220 / img.width, 220 / img.height);
+    const w = img.width * scale;
+    const h = img.height * scale;
+    ctx.drawImage(img, -w / 2, -h / 2, w, h);
+    ctx.restore();
+
+    // Dark circular mask overlay
+    ctx.save();
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.55)';
+    ctx.beginPath();
+    ctx.rect(0, 0, size, size);
+    ctx.arc(size / 2, size / 2, 110, 0, Math.PI * 2, true);
+    ctx.fill();
+
+    // Guide ring
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, 110, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.restore();
+  }, [zoom, pan, rotation]);
+
+  useEffect(() => {
+    draw();
+  }, [draw]);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    dragStartRef.current = { x: e.clientX - pan.x, y: e.clientY - pan.y };
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    setPan({
+      x: e.clientX - dragStartRef.current.x,
+      y: e.clientY - dragStartRef.current.y,
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      dragStartRef.current = { x: e.touches[0].clientX - pan.x, y: e.touches[0].clientY - pan.y };
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    setPan({
+      x: e.touches[0].clientX - dragStartRef.current.x,
+      y: e.touches[0].clientY - dragStartRef.current.y,
+    });
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
+  const handleApplyCrop = () => {
+    const img = imgRef.current;
+    if (!img) return;
+
+    const outCanvas = document.createElement('canvas');
+    const outSize = 256;
+    outCanvas.width = outSize;
+    outCanvas.height = outSize;
+    const ctx = outCanvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.translate(outSize / 2, outSize / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    const outputScaleFactor = outSize / 220;
+    ctx.scale(zoom * outputScaleFactor, zoom * outputScaleFactor);
+    ctx.translate(pan.x, pan.y);
+
+    const scale = Math.max(220 / img.width, 220 / img.height);
+    const w = img.width * scale;
+    const h = img.height * scale;
+    ctx.drawImage(img, -w / 2, -h / 2, w, h);
+
+    const croppedUrl = outCanvas.toDataURL('image/webp', 0.9);
+    onApply(croppedUrl);
+  };
+
+  if (!isOpen) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in-0 duration-150">
+      <div className="w-full max-w-[360px] sm:max-w-[380px] rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+        {/* Header Tinh gọn với Nút Lưu & Nút Đóng */}
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
+              <Camera className="h-3.5 w-3.5" strokeWidth={1.75} />
+            </div>
+            <h3 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
+              Căn chỉnh ảnh
+            </h3>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Nút Lưu đặt ngay tại Header chuẩn Apple Editor */}
+            <button
+              type="button"
+              onClick={handleApplyCrop}
+              className="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-type-body-sm font-semibold shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <Check className="h-3.5 w-3.5" strokeWidth={2} />
+              <span>Lưu</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="h-8 w-8 rounded-xl flex items-center justify-center text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer"
+              title="Đóng"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Canvas Interactive Crop Viewport */}
+        <div className="p-5 flex flex-col items-center bg-slate-50/40 dark:bg-slate-950/40 select-none">
+          <div
+            className="relative rounded-2xl overflow-hidden shadow-inner border border-slate-200/80 dark:border-slate-800 touch-none"
+            style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <canvas ref={canvasRef} width={260} height={260} className="block" />
+          </div>
+
+          <p className="text-type-helper text-slate-400 dark:text-slate-500 mt-2 flex items-center gap-1.5 font-medium">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+            Kéo để di chuyển góc ảnh mong muốn
+          </p>
+        </div>
+
+        {/* Controls: Zoom & Rotate (Tinh gọn 1 khối liền mạch) */}
+        <div className="px-5 py-3.5 space-y-3 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+          {/* Zoom Slider */}
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setZoom((z) => Math.max(1, +(z - 0.1).toFixed(2)))}
+              className="h-7 w-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0"
+              title="Thu nhỏ"
+            >
+              <ZoomOut className="h-4 w-4" />
+            </button>
+
+            <div className="flex-1 flex items-center gap-2">
+              <input
+                type="range"
+                min="1"
+                max="3"
+                step="0.05"
+                value={zoom}
+                onChange={(e) => setZoom(parseFloat(e.target.value))}
+                className="w-full accent-blue-600 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none"
+              />
+              <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 w-9 text-right shrink-0">
+                {Math.round(zoom * 100)}%
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setZoom((z) => Math.min(3, +(z + 0.1).toFixed(2)))}
+              className="h-7 w-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0"
+              title="Phóng to"
+            >
+              <ZoomIn className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Utility Buttons: Rotate & Reset */}
+          <div className="flex items-center justify-center gap-4 pt-0.5">
+            <button
+              type="button"
+              onClick={() => setRotation((r) => (r + 90) % 360)}
+              title="Xoay ảnh 90°"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 text-type-helper font-medium transition cursor-pointer"
+            >
+              <RotateCw className="h-3.5 w-3.5" />
+              <span>Xoay 90°</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setZoom(1);
+                setPan({ x: 0, y: 0 });
+                setRotation(0);
+              }}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-type-helper font-medium transition cursor-pointer"
+            >
+              <span>Đặt lại</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 export function AccountSettingsModal({
   isOpen,
   onClose,
@@ -70,6 +339,10 @@ export function AccountSettingsModal({
   // Profile data state
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+
+  // Avatar Crop State
+  const [cropImageSrc, setCropImageSrc] = useState<string>('');
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
 
   // Form profile state
   const [avatarUrl, setAvatarUrl] = useState('');
@@ -111,6 +384,67 @@ export function AccountSettingsModal({
     }
   }, []);
 
+  // Helper: Tạo PNG Canvas avatar chữ viết tắt theo màu gradient (Sắc nét 100%, không bị lỗi hiển thị)
+  const generateCanvasMonogram = (text: string, fromColor: string, toColor: string): string => {
+    if (typeof document === 'undefined') return '';
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return '';
+
+    // Gradient background
+    const grad = ctx.createLinearGradient(0, 0, 256, 256);
+    grad.addColorStop(0, fromColor);
+    grad.addColorStop(1, toColor);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(0, 0, 256, 256, 56);
+    ctx.fill();
+
+    // Monogram text
+    const cleanText = (text || 'AD').trim().slice(0, 2).toUpperCase();
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 105px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetY = 4;
+    ctx.fillText(cleanText, 128, 134);
+
+    return canvas.toDataURL('image/png');
+  };
+
+  // Helper: Tạo PNG Canvas avatar biểu tượng theo chủ đề (Hiển thị icon to đẹp, không bị trơn màu)
+  const generateCanvasIcon = (emojiOrText: string, fromColor: string, toColor: string): string => {
+    if (typeof document === 'undefined') return '';
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return '';
+
+    const grad = ctx.createLinearGradient(0, 0, 256, 256);
+    grad.addColorStop(0, fromColor);
+    grad.addColorStop(1, toColor);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(0, 0, 256, 256, 56);
+    ctx.fill();
+
+    // Draw Emoji icon
+    ctx.font = '105px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+    ctx.shadowBlur = 14;
+    ctx.shadowOffsetY = 6;
+    ctx.fillText(emojiOrText, 128, 138);
+
+    return canvas.toDataURL('image/png');
+  };
+
   // Fetch Profile data when modal opens
   const fetchProfile = useCallback(async () => {
     try {
@@ -118,13 +452,7 @@ export function AccountSettingsModal({
       const data = res.data;
       setProfile(data);
 
-      const localUser = getAuthUser();
-      const currentAvatar =
-        data.avatarUrl ||
-        data.teacher?.avatarUrl ||
-        data.student?.avatarUrl ||
-        localUser?.avatarUrl ||
-        '';
+      const currentAvatar = getUserAvatar(data) || data.avatarUrl || data.teacher?.avatarUrl || data.student?.avatarUrl || '';
       setAvatarUrl(currentAvatar);
 
       const name = data.teacher?.fullName || data.student?.fullName || data.username || 'Admin';
@@ -145,7 +473,8 @@ export function AccountSettingsModal({
           student: u.student || null,
           teacher: u.teacher || null,
         });
-        setAvatarUrl(u.avatarUrl || u.teacher?.avatarUrl || u.student?.avatarUrl || '');
+        const currentAvatar = getUserAvatar(u) || u.avatarUrl || '';
+        setAvatarUrl(currentAvatar);
         const name = u.teacher?.fullName || u.student?.fullName || u.username || 'Admin';
         setFullName(name);
         setEmail(u.email || `${u.username || 'user'}@exam.edu.vn`);
@@ -164,13 +493,13 @@ export function AccountSettingsModal({
   // Handle ESC key to close
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape' && isOpen && !isCropperOpen) {
         onClose();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, isCropperOpen]);
 
   // Auto-Save Profile Function
   const autoSaveProfile = useCallback(
@@ -183,6 +512,10 @@ export function AccountSettingsModal({
           phone: (updatedFields.phone !== undefined ? updatedFields.phone : phone).trim(),
           avatarUrl: updatedFields.avatarUrl !== undefined ? updatedFields.avatarUrl : avatarUrl,
         };
+
+        if (updatedFields.avatarUrl !== undefined) {
+          setUserAvatar(updatedFields.avatarUrl, profile);
+        }
 
         const res = await api.post('/auth/profile', payload);
         const updated = res.data;
@@ -198,9 +531,6 @@ export function AccountSettingsModal({
             teacher: updated.teacher ?? current?.teacher,
             student: updated.student ?? current?.student,
           } as UserType);
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new Event('auth-change'));
-          }
         }
         setSaveStatus('saved');
         setTimeout(() => setSaveStatus('idle'), 2500);
@@ -209,10 +539,10 @@ export function AccountSettingsModal({
         setToast({ message: err?.response?.data?.message || err.message || 'Tự động lưu thất bại', type: 'error' });
       }
     },
-    [fullName, email, phone, avatarUrl]
+    [fullName, email, phone, avatarUrl, profile]
   );
 
-  // Avatar Upload Handler
+  // Avatar Upload Handler: Mở Cropper Studio để người dùng tự do zoom và căn chỉnh
   const handleAvatarSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -221,27 +551,44 @@ export function AccountSettingsModal({
       setToast({ message: 'Vui lòng chọn file hình ảnh hợp lệ (PNG, JPG, WEBP)!', type: 'error' });
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      setToast({ message: 'Dung lượng ảnh tối đa là 5MB!', type: 'error' });
+    if (file.size > 12 * 1024 * 1024) {
+      setToast({ message: 'Dung lượng ảnh tối đa là 12MB!', type: 'error' });
       return;
     }
 
     const reader = new FileReader();
     reader.onload = (event) => {
       const dataUrl = event.target?.result as string;
-      setAvatarUrl(dataUrl);
-      autoSaveProfile({ avatarUrl: dataUrl });
-      setToast({ message: 'Đã cập nhật ảnh đại diện!', type: 'success' });
+      setCropImageSrc(dataUrl);
+      setIsCropperOpen(true);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     };
     reader.readAsDataURL(file);
+  };
+
+  // Áp dụng ảnh đã qua cắt & căn chỉnh
+  const handleCropperApply = (croppedDataUrl: string) => {
+    setIsCropperOpen(false);
+    setAvatarUrl(croppedDataUrl);
+    setUserAvatar(croppedDataUrl, profile);
+    autoSaveProfile({ avatarUrl: croppedDataUrl });
+    setToast({ message: 'Đã lưu ảnh đại diện đã căn chỉnh!', type: 'success' });
+  };
+
+  const handleApplyCustomAvatar = (dataUri: string, label: string) => {
+    setAvatarUrl(dataUri);
+    setUserAvatar(dataUri, profile);
+    autoSaveProfile({ avatarUrl: dataUri });
+    setToast({ message: `Đã áp dụng ảnh đại diện: ${label}`, type: 'success' });
   };
 
   const handleRemoveAvatar = (e: React.MouseEvent) => {
     e.stopPropagation();
     setAvatarUrl('');
+    setUserAvatar('', profile);
     autoSaveProfile({ avatarUrl: '' });
     if (fileInputRef.current) fileInputRef.current.value = '';
-    setToast({ message: 'Đã gỡ ảnh đại diện!', type: 'success' });
+    setToast({ message: 'Đã gỡ ảnh đại diện về mặc định!', type: 'success' });
   };
 
   // Change Password Handler
@@ -402,50 +749,24 @@ export function AccountSettingsModal({
               </button>
             </nav>
           </div>
-
-          {/* Footer Sidebar: Status & Shortcut Pill */}
-          <div className="pt-4 mt-auto border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between text-type-helper text-slate-400 dark:text-slate-500 px-1 pb-1">
-            <span className="flex items-center gap-1.5 font-medium">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Tự động lưu
-            </span>
-            <kbd className="px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-2xs font-semibold">ESC</kbd>
-          </div>
         </aside>
 
         {/* ── CỘT NỘI DUNG BÊN PHẢI (APPLE BENTO SHEET 2026) ── */}
         <main className="flex-1 min-w-0 flex flex-col h-full bg-white dark:bg-slate-900 overflow-hidden">
 
-          {/* Header Panel Phải Cố định (Thoáng Đãng, Không Dính Viền Trên) */}
+          {/* Header Panel Phải Cố định (Thoáng Đãng, Không Dính Viền Trên, Không Badge Đã Lưu) */}
           <header className="shrink-0 flex items-center justify-between px-8 pt-7 pb-5 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 z-10">
-            <div className="flex items-center gap-3">
-              <div>
-                <h3 className="text-type-title font-semibold text-slate-900 dark:text-slate-100">
-                  {activeTab === 'profile' && 'Hồ sơ cá nhân'}
-                  {activeTab === 'security' && 'Bảo mật & đổi mật khẩu'}
-                  {activeTab === 'appearance' && 'Giao diện & hiển thị'}
-                </h3>
-                <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
-                  {activeTab === 'profile' && 'Thông tin định danh và liên lạc khảo thí'}
-                  {activeTab === 'security' && 'Quản lý mật khẩu đăng nhập an toàn'}
-                  {activeTab === 'appearance' && 'Tùy chỉnh chủ đề sáng tối'}
-                </p>
-              </div>
-
-              {/* Realtime Auto-Save Status Badge */}
-              {activeTab === 'profile' && (
-                <div className="hidden sm:flex items-center gap-1.5 pl-3 shrink-0">
-                  {saveStatus === 'saving' && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/80 text-amber-700 dark:text-amber-300 text-type-helper font-semibold shrink-0 whitespace-nowrap shadow-2xs animate-in fade-in-0 duration-150">
-                      <Loader2 className="h-3 w-3 animate-spin" /> Đang lưu...
-                    </span>
-                  )}
-                  {saveStatus === 'saved' && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/80 text-emerald-700 dark:text-emerald-300 text-type-helper font-semibold shrink-0 whitespace-nowrap shadow-2xs animate-in fade-in-0 duration-200">
-                      <Check className="h-3 w-3" /> Đã lưu
-                    </span>
-                  )}
-                </div>
-              )}
+            <div>
+              <h3 className="text-type-title font-semibold text-slate-900 dark:text-slate-100">
+                {activeTab === 'profile' && 'Hồ sơ cá nhân'}
+                {activeTab === 'security' && 'Bảo mật & đổi mật khẩu'}
+                {activeTab === 'appearance' && 'Giao diện & hiển thị'}
+              </h3>
+              <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
+                {activeTab === 'profile' && 'Thông tin định danh và liên lạc khảo thí'}
+                {activeTab === 'security' && 'Quản lý mật khẩu đăng nhập an toàn'}
+                {activeTab === 'appearance' && 'Tùy chỉnh chủ đề sáng tối'}
+              </p>
             </div>
 
             <button
@@ -464,74 +785,169 @@ export function AccountSettingsModal({
             {/* ════════════════════ TAB 1: THÔNG TIN CÁ NHÂN (BENTO PROPERTY CELLS) ════════════════════ */}
             {activeTab === 'profile' && (
               <div className="space-y-6 animate-in fade-in-0 duration-150">
-                {/* Hero Profile Banner */}
-                <div className="flex items-center gap-5 p-5 rounded-3xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/60 dark:border-slate-800">
-                  {/* Clickable Avatar with Soft Glow Ring */}
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className="relative group shrink-0 cursor-pointer"
-                    title="Nhấp để đổi ảnh đại diện"
-                  >
-                    {avatarUrl ? (
-                      <DynamicImage
-                        src={avatarUrl}
-                        alt={displayName}
-                        className="h-16 w-16 rounded-2xl object-cover ring-2 ring-blue-500/20 shadow-xs group-hover:opacity-85 transition"
-                      />
-                    ) : (
-                      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-title select-none shadow-xs group-hover:bg-blue-700 transition">
-                        {displayName.slice(0, 2).toUpperCase()}
+                {/* Hero Profile Banner & Avatar Studio */}
+                <div className="space-y-4 p-5 rounded-3xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/60 dark:border-slate-800">
+                  <div className="flex items-center gap-5">
+                    {/* Clickable Avatar with Soft Glow Ring */}
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      className="relative group shrink-0 cursor-pointer"
+                      title="Nhấp để tải & căn chỉnh ảnh đại diện"
+                    >
+                      {avatarUrl ? (
+                        <DynamicImage
+                          src={avatarUrl}
+                          alt={displayName}
+                          className="h-16 w-16 rounded-2xl object-cover ring-2 ring-blue-500/30 shadow-xs group-hover:opacity-85 transition"
+                        />
+                      ) : (
+                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 text-white font-bold text-type-title select-none shadow-xs group-hover:opacity-90 transition">
+                          {displayName.slice(0, 2).toUpperCase()}
+                        </div>
+                      )}
+                      {/* Subtle Hover Camera Icon */}
+                      <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Camera className="h-5 w-5 text-white" />
                       </div>
-                    )}
-                    {/* Subtle Hover Camera Icon */}
-                    <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Camera className="h-5 w-5 text-white" />
-                    </div>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleAvatarSelect}
-                      className="hidden"
-                    />
-                  </div>
-
-                  {/* Info Column */}
-                  <div className="flex-1 min-w-0 space-y-1.5">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h4 className="text-type-title font-semibold text-slate-900 dark:text-slate-100 truncate">
-                        {displayName}
-                      </h4>
-                      <IdentifierBadge tone="neutral">{userCode}</IdentifierBadge>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarSelect}
+                        className="hidden"
+                      />
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2 text-type-body-sm text-slate-600 dark:text-slate-300">
-                      <span className="font-semibold text-blue-600 dark:text-blue-400">{roleName}</span>
-                      <span>·</span>
-                      <span className="text-slate-500 dark:text-slate-400 truncate">{deptOrClass}</span>
-                    </div>
+                    {/* Info Column */}
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h4 className="text-type-title font-semibold text-slate-900 dark:text-slate-100 truncate">
+                          {displayName}
+                        </h4>
+                        <IdentifierBadge tone="neutral">{userCode}</IdentifierBadge>
+                      </div>
 
-                    {/* Clean Action Buttons */}
-                    <div className="flex items-center gap-2.5 pt-1">
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-type-helper font-medium text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 shadow-2xs transition cursor-pointer"
-                      >
-                        <Camera className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-                        <span>Đổi ảnh</span>
-                      </button>
+                      <div className="flex flex-wrap items-center gap-2 text-type-body-sm text-slate-600 dark:text-slate-300">
+                        <span className="font-semibold text-blue-600 dark:text-blue-400">{roleName}</span>
+                        <span>·</span>
+                        <span className="text-slate-500 dark:text-slate-400 truncate">{deptOrClass}</span>
+                      </div>
 
-                      {avatarUrl && (
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-2 pt-1">
                         <button
                           type="button"
-                          onClick={handleRemoveAvatar}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 text-type-helper font-medium text-rose-600 dark:text-rose-400 transition cursor-pointer"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-type-helper font-semibold text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 shadow-2xs transition cursor-pointer"
                         >
-                          <Trash2 className="h-3.5 w-3.5" />
-                          <span>Gỡ ảnh</span>
+                          <Camera className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                          <span>Tải ảnh lên</span>
                         </button>
-                      )}
+
+                        {avatarUrl && (
+                          <button
+                            type="button"
+                            onClick={handleRemoveAvatar}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 text-type-helper font-medium text-rose-600 dark:text-rose-400 transition cursor-pointer"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            <span>Gỡ ảnh</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ── TÙY CHỈNH AVATAR (MONOGRAM GRADIENTS & PRESETS) ── */}
+                  <div className="pt-3 border-t border-slate-200/50 dark:border-slate-700/50 space-y-3">
+                    {/* Hàng 1: Màu Gradient Chữ Viết Tắt */}
+                    <div>
+                      <p className="text-2xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
+                        Tùy chọn màu chữ viết tắt
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {[
+                          { label: 'Xanh Biển (Royal Blue)', from: '#2563eb', to: '#1d4ed8', bg: 'from-blue-600 to-blue-800' },
+                          { label: 'Tím Indigo (Violet)', from: '#7c3aed', to: '#4f46e5', bg: 'from-violet-600 to-indigo-700' },
+                          { label: 'Xanh Ngọc (Emerald)', from: '#059669', to: '#0d9488', bg: 'from-emerald-600 to-teal-700' },
+                          { label: 'Cam Hoàng Hôn (Amber)', from: '#ea580c', to: '#d97706', bg: 'from-orange-600 to-amber-600' },
+                          { label: 'Đỏ Ruby (Rose)', from: '#e11d48', to: '#be123c', bg: 'from-rose-600 to-red-700' },
+                          { label: 'Xám Đá (Slate Dark)', from: '#334155', to: '#0f172a', bg: 'from-slate-700 to-slate-900' },
+                        ].map((item, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => handleApplyCustomAvatar(generateCanvasMonogram(displayName, item.from, item.to), item.label)}
+                            title={`Chọn màu: ${item.label}`}
+                            className={`h-8 w-8 rounded-xl bg-gradient-to-br ${item.bg} text-white font-bold text-2xs flex items-center justify-center shadow-2xs hover:scale-110 active:scale-95 transition-transform cursor-pointer border border-white/20`}
+                          >
+                            {displayName.slice(0, 1).toUpperCase()}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Hàng 2: Biểu tượng Khảo Thí & Học Thuật */}
+                    <div>
+                      <p className="text-2xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
+                        Biểu tượng mẫu khảo thí
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {[
+                          {
+                            label: 'Mũ tốt nghiệp / Học thuật',
+                            from: '#2563eb',
+                            to: '#4f46e5',
+                            bg: 'from-blue-600 to-indigo-600',
+                            iconText: '🎓',
+                          },
+                          {
+                            label: 'Công nghệ & Lập trình',
+                            from: '#0284c7',
+                            to: '#0369a1',
+                            bg: 'from-sky-600 to-cyan-700',
+                            iconText: '💻',
+                          },
+                          {
+                            label: 'Tri thức & Sách vở',
+                            from: '#059669',
+                            to: '#047857',
+                            bg: 'from-emerald-600 to-green-700',
+                            iconText: '📚',
+                          },
+                          {
+                            label: 'Giám sát & Bảo mật',
+                            from: '#4f46e5',
+                            to: '#4338ca',
+                            bg: 'from-indigo-600 to-blue-800',
+                            iconText: '🛡️',
+                          },
+                          {
+                            label: 'Thành tích & Xuất sắc',
+                            from: '#d97706',
+                            to: '#b45309',
+                            bg: 'from-amber-500 to-orange-600',
+                            iconText: '🏆',
+                          },
+                          {
+                            label: 'Sinh viên năng động',
+                            from: '#e11d48',
+                            to: '#9f1239',
+                            bg: 'from-rose-500 to-pink-700',
+                            iconText: '⭐',
+                          },
+                        ].map((item, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => handleApplyCustomAvatar(generateCanvasIcon(item.iconText, item.from, item.to), item.label)}
+                            title={`Áp dụng: ${item.label}`}
+                            className={`h-8 w-8 rounded-xl bg-gradient-to-br ${item.bg} text-white flex items-center justify-center text-sm shadow-2xs hover:scale-110 active:scale-95 transition-transform cursor-pointer border border-white/20`}
+                          >
+                            <span>{item.iconText}</span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -863,6 +1279,14 @@ export function AccountSettingsModal({
           onClose={() => setToast(null)}
         />
       )}
+
+      {/* Avatar Cropper Studio Modal (Phóng to, Thu nhỏ, Di chuyển, Xoay) */}
+      <AvatarCropperModal
+        isOpen={isCropperOpen}
+        imageSrc={cropImageSrc}
+        onClose={() => setIsCropperOpen(false)}
+        onApply={handleCropperApply}
+      />
     </div>,
     document.body
   );
