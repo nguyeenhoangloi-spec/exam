@@ -55,7 +55,6 @@ export default function SubjectsPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
   const [sortOrder, setSortOrder] = useState('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     subjectCode: true,
     subjectName: true,
@@ -333,56 +332,62 @@ export default function SubjectsPage() {
     }
   };
 
-  const exportExcel = () => {
-    exportToFormattedExcel({
+  const prepareSubjectExportData = () => {
+    const columns = [
+      { header: 'STT', width: 6, align: 'center' as const },
+      { header: 'Mã môn học', width: 14, align: 'center' as const },
+      { header: 'Tên môn học', width: 32, align: 'left' as const },
+      { header: 'Số tín chỉ', width: 12, align: 'center' as const },
+      { header: 'Khoa đào tạo', width: 24, align: 'left' as const },
+      { header: 'Số SV đăng ký', width: 15, align: 'center' as const },
+    ];
+
+    const rows = filteredSubjects.map((s: any, idx) => [
+      idx + 1,
+      s.subjectCode,
+      s.subjectName,
+      `${s.credits} TC`,
+      s.department?.name || '---',
+      s._count?.studentSubjects || 0,
+    ]);
+
+    const metaInfo = [
+      { label: 'Tổng số môn học', value: String(subjects.length) },
+      { label: 'Tổng số tín chỉ', value: `${kpiData.totalCredits} TC` },
+      { label: 'Môn đang lọc', value: String(filteredSubjects.length) },
+    ];
+
+    return { columns, rows, metaInfo };
+  };
+
+  const exportExcel = async () => {
+    const { columns, rows, metaInfo } = prepareSubjectExportData();
+
+    await exportToFormattedExcel({
       filename: 'Danh_sach_mon_hoc.xls',
-      title: 'DANH SÁCH MÔN HỌC HỆ THỐNG',
-      subtitle: 'Trích xuất dữ liệu danh mục môn học',
-      columns: [
-        { header: 'STT', width: 8, align: 'center' as const },
-        { header: 'Mã môn học', width: 15 },
-        { header: 'Tên môn học', width: 35 },
-        { header: 'Số tín chỉ', width: 12, align: 'center' as const },
-        { header: 'Khoa đào tạo', width: 25 },
-        { header: 'Số SV đăng ký', width: 15, align: 'center' as const },
-      ],
-      rows: filteredSubjects.map((s: any, idx) => [
-        idx + 1, s.subjectCode, s.subjectName, s.credits,
-        s.department?.name || '', s._count?.studentSubjects || 0,
-      ]),
+      templateCode: 'SUBJECT_DIRECTORY',
+      title: 'DANH SÁCH MÔN HỌC',
+      subtitle: 'Danh mục môn học và phân bổ tín chỉ đào tạo',
+      columns,
+      rows,
+      metaInfo,
     });
   };
 
   const handlePrintReport = () => {
+    const { columns, rows, metaInfo } = prepareSubjectExportData();
+
     printReport({
-      title: 'BÁO CÁO DANH SÁCH MÔN HỌC',
-      subtitle: 'Danh sách môn học và phân bổ tín chỉ',
-      facultyName: 'PHÒNG QUẢN LÝ ĐÀO TẠO & KHẢO THÍ',
-      metaInfo: [
-        { label: 'Tổng số môn học', value: String(subjects.length) },
-        { label: 'Tổng số tín chỉ', value: `${kpiData.totalCredits} TC` },
-      ],
-      columns: [
-        { header: 'STT', width: '40px' },
-        { header: 'Mã Môn', width: '90px' },
-        { header: 'Tên Môn học', width: '220px' },
-        { header: 'Số TC', width: '70px', align: 'center' },
-        { header: 'Khoa đào tạo', width: '180px' },
-        { header: 'Số SV', width: '70px', align: 'center' },
-      ],
-      rows: filteredSubjects.map((s: any, idx) => [
-        idx + 1,
-        s.subjectCode,
-        s.subjectName,
-        `${s.credits} TC`,
-        s.department?.name || '',
-        s._count?.studentSubjects || 0,
-      ]),
-      signers: [
-        { title: 'NGƯỜI LẬP DANH MỤC', subtitle: '(Ký, ghi rõ họ tên)' },
-        { title: 'TRƯỞNG PHÒNG ĐÀO TẠO', subtitle: '(Ký, đóng dấu)' },
-      ],
       templateCode: 'SUBJECT_DIRECTORY',
+      title: 'DANH SÁCH MÔN HỌC',
+      subtitle: 'Danh mục môn học và phân bổ tín chỉ đào tạo',
+      metaInfo,
+      columns: columns.map((c) => ({
+        header: c.header,
+        width: typeof c.width === 'number' ? `${c.width * 10}px` : c.width,
+        align: c.align,
+      })),
+      rows,
     });
   };
 
@@ -498,8 +503,6 @@ export default function SubjectsPage() {
               totalCount={filteredSubjects.length}
               sortOrder={sortOrder}
               onSortChange={setSortOrder}
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
               onRefresh={handleRefresh}
@@ -520,7 +523,6 @@ export default function SubjectsPage() {
           <SubjectTable
             subjects={paginatedSubjects}
             selected={selected}
-            viewMode={viewMode}
             visibleColumns={visibleColumns}
             onSelect={(id, checked) => setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))}
             onSelectAll={(checked) => setSelected(checked ? paginatedSubjects.map((s) => s.id) : [])}

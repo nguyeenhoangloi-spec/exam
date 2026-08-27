@@ -38,7 +38,6 @@ import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
 import { TabBar } from '@/components/ui/TabBar';
 import { SortDropdown } from '@/components/ui/SortDropdown';
 import { ColumnToggleDropdown } from '@/components/ui/ColumnToggleDropdown';
-import { ViewModeSegmentedControl } from '@/components/ui/ViewModeSegmentedControl';
 import { Button } from '@/components/ui/Button';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { ConfirmModal } from '@/components/ConfirmModal';
@@ -92,7 +91,6 @@ export default function ProctorDashboardPage() {
 
   // Toolbar & View state
   const [sortOrder, setSortOrder] = useState('seat_asc');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [openColumnMenu, setOpenColumnMenu] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     seat: true,
@@ -771,22 +769,6 @@ export default function ProctorDashboardPage() {
                 visibleColumns={visibleColumns}
                 onToggle={handleColumnToggle}
               />
-
-              {/* View Mode Segmented Control */}
-              <ViewModeSegmentedControl
-                viewMode={viewMode}
-                onChange={(mode) => setViewMode(mode)}
-              />
-
-              {/* Refresh button */}
-              <button
-                type="button"
-                onClick={() => loadDashboard(false)}
-                className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
-                title="Làm mới dữ liệu giám thị"
-              >
-                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin text-blue-600' : ''}`} />
-              </button>
             </div>
           </div>
         </div>
@@ -811,7 +793,7 @@ export default function ProctorDashboardPage() {
         />
       </div>
 
-      {/* ── 5. Main Content (List / Grid Seating / Compact) ── */}
+      {/* ── 5. Main Content (Standard List View Mode) ── */}
       {totalItems === 0 ? (
         <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
           <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
@@ -822,293 +804,8 @@ export default function ProctorDashboardPage() {
             Không có thí sinh nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
           </p>
         </div>
-      ) : viewMode === 'grid' ? (
-        /* ── 5.1 Creative Smart Seating Grid View Mode ── */
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-          {currentStudents.map((s: any) => {
-            const att = s.attempt;
-            const riskScore = att?.riskScore || 0;
-            const { label: statusLabel } = statusMeta(att);
-            const { cls: riskCls, level: riskLevel } = riskMeta(riskScore);
-            const hasFlagged = att?.isFlagged;
-            const isChecked = selectedIds.includes(s.student.id);
-
-            return (
-              <div
-                key={s.student.id}
-                className={`group relative rounded-2xl border bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between ${isChecked
-                    ? 'border-blue-500 ring-2 ring-blue-500/20 bg-blue-50/10 dark:border-blue-500'
-                    : hasFlagged
-                      ? 'border-rose-300 dark:border-rose-800 bg-rose-50/10'
-                      : 'border-slate-200/90 dark:border-slate-800'
-                  }`}
-              >
-                <div>
-                  {/* Card Header: Checkbox + Seat Badge + StatusBadge */}
-                  <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
-                        className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                      />
-                      <span className="text-type-helper font-medium text-slate-800 dark:text-slate-200 px-2 py-0.5 ui-pill rounded-full border border-slate-200/80 dark:border-slate-700">
-                        Ghế {s.seatNumber}
-                      </span>
-                    </div>
-
-                    <StatusBadge
-                      status={att?.status || 'NOT_STARTED'}
-                      customLabel={`${statusLabel}${att?.extraMinutes > 0 ? ` (+${att.extraMinutes}p)` : ''}`}
-                    />
-                  </div>
-
-                  {/* Card Body: Student Details */}
-                  <div className="py-3 space-y-2.5">
-                    <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate flex items-center justify-between gap-1.5" title={s.student.fullName}>
-                      <button
-                        type="button"
-                        onClick={() => setInspectStudent(s)}
-                        className="truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
-                      >
-                        {s.student.fullName}
-                      </button>
-                      {hasFlagged && (
-                        <span title="Có biên bản vi phạm">
-                          <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0" />
-                        </span>
-                      )}
-                    </h4>
-
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <IdentifierBadge tone="blue">{s.student.studentCode}</IdentifierBadge>
-                      <span className="text-type-helper text-slate-500 dark:text-slate-400 font-medium tabular-nums">
-                        SBD: {s.examNumber}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between text-type-helper pt-1 border-t border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-400">
-                      <span>Mức cảnh báo:</span>
-                      <span className={`font-semibold ${riskCls}`}>
-                        {riskScore}đ ({riskLevel})
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card Footer: Action Buttons */}
-                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-1">
-                  {att && ['IN_PROGRESS', 'DISCONNECTED'].includes(att.status) && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActionError(null);
-                        setSelectedStudent(s);
-                        setActionType('EXTEND');
-                      }}
-                      title="Gia hạn thời gian làm bài"
-                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-blue-950/50 transition active:scale-95 cursor-pointer select-none"
-                    >
-                      <Clock className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Gia hạn</span>
-                    </button>
-                  )}
-
-                  {att && ['DISCONNECTED', 'UNDER_REVIEW'].includes(att.status) && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActionError(null);
-                        setSelectedStudent(s);
-                        setActionType('REOPEN');
-                      }}
-                      title="Mở lại phiên thi khi có sự cố"
-                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/80 dark:hover:bg-amber-950/50 transition active:scale-95 cursor-pointer select-none"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Mở lại</span>
-                    </button>
-                  )}
-
-                  {att?.isFlagged ? (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActionError(null);
-                        setSelectedStudent(s);
-                        setActionType('RESOLVE');
-                      }}
-                      title="Xử lý biên bản vi phạm"
-                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold bg-rose-50 dark:bg-rose-950/50 border border-rose-200/80 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition active:scale-95 cursor-pointer select-none shadow-2xs"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
-                      <span>Xử lý</span>
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActionError(null);
-                        setSelectedStudent(s);
-                        setActionType('FLAG');
-                      }}
-                      title="Lập biên bản sự cố vi phạm"
-                      className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50/80 dark:hover:bg-rose-950/50 transition active:scale-95 cursor-pointer select-none"
-                    >
-                      <Flag className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Biên bản</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : viewMode === 'compact' ? (
-        /* ── 5.2 Compact View Mode (Dạng thẻ thanh ngang thu gọn như exam-papers) ── */
-        <div className="space-y-2.5">
-          {currentStudents.map((s: any) => {
-            const att = s.attempt;
-            const riskScore = att?.riskScore || 0;
-            const { label: statusLabel } = statusMeta(att);
-            const { cls: riskCls, level: riskLevel } = riskMeta(riskScore);
-            const hasFlagged = att?.isFlagged;
-            const isChecked = selectedIds.includes(s.student.id);
-
-            return (
-              <div
-                key={s.student.id}
-                className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3.5 shadow-2xs hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-xs transition duration-200 gap-3.5 ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                  }`}
-              >
-                {/* Left: Checkbox + Seat Badge + Info */}
-                <div className="flex items-center gap-3.5 min-w-0">
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
-                    className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
-                  />
-                  <span className="ui-pill inline-flex items-center text-type-helper font-medium text-blue-700 dark:text-blue-400 px-2.5 py-1 rounded-full border border-blue-100 dark:border-blue-900 shrink-0">
-                    Ghế {s.seatNumber}
-                  </span>
-
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <button
-                        type="button"
-                        onClick={() => setInspectStudent(s)}
-                        className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
-                        title="Xem chi tiết thí sinh"
-                      >
-                        {s.student.fullName}
-                      </button>
-                      {hasFlagged && <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0" />}
-                      <IdentifierBadge tone="blue">{s.student.studentCode}</IdentifierBadge>
-                      <span className="text-type-helper font-semibold text-slate-500 tabular-nums">
-                        SBD: {s.examNumber}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-3 text-type-helper text-slate-500 mt-1 flex-wrap font-normal">
-                      <span>Mức cảnh báo: <strong className={riskCls}>{riskScore}đ ({riskLevel})</strong></span>
-                      {att?.connectedIp && (
-                        <span className="text-slate-400">IP: {att.connectedIp}</span>
-                      )}
-                      {att?.startedAt && (
-                        <span className="text-slate-400">Bắt đầu: {new Date(att.startedAt).toLocaleTimeString('vi-VN')}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right: StatusBadge + Action Buttons */}
-                <div className="flex items-center gap-3 shrink-0">
-                  <StatusBadge
-                    status={att?.status || 'NOT_STARTED'}
-                    customLabel={`${statusLabel}${att?.extraMinutes > 0 ? ` (+${att.extraMinutes}p)` : ''}`}
-                  />
-
-                  <div className="inline-flex items-center gap-1 pl-2 border-l border-slate-100 dark:border-slate-800">
-                    <button
-                      type="button"
-                      onClick={() => setInspectStudent(s)}
-                      title="Xem chi tiết thí sinh"
-                      className="h-8 w-8 inline-flex items-center justify-center rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </button>
-
-                    {att && ['IN_PROGRESS', 'DISCONNECTED'].includes(att.status) && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setActionError(null);
-                          setSelectedStudent(s);
-                          setActionType('EXTEND');
-                        }}
-                        title="Gia hạn thời gian làm bài"
-                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-blue-950/50 transition active:scale-95 cursor-pointer select-none"
-                      >
-                        <Clock className="w-3.5 h-3.5 text-slate-400" />
-                        <span>Gia hạn</span>
-                      </button>
-                    )}
-
-                    {att && ['DISCONNECTED', 'UNDER_REVIEW'].includes(att.status) && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setActionError(null);
-                          setSelectedStudent(s);
-                          setActionType('REOPEN');
-                        }}
-                        title="Mở lại phiên thi khi có sự cố"
-                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/80 dark:hover:bg-amber-950/50 transition active:scale-95 cursor-pointer select-none"
-                      >
-                        <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
-                        <span>Mở lại</span>
-                      </button>
-                    )}
-
-                    {att?.isFlagged ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setActionError(null);
-                          setSelectedStudent(s);
-                          setActionType('RESOLVE');
-                        }}
-                        title="Xử lý biên bản vi phạm"
-                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold bg-rose-50 dark:bg-rose-950/50 border border-rose-200/80 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition active:scale-95 cursor-pointer select-none shadow-2xs"
-                      >
-                        <CheckCircle2 className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
-                        <span>Xử lý</span>
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setActionError(null);
-                          setSelectedStudent(s);
-                          setActionType('FLAG');
-                        }}
-                        title="Lập biên bản sự cố vi phạm"
-                        className="h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-helper font-semibold text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50/80 dark:hover:bg-rose-950/50 transition active:scale-95 cursor-pointer select-none"
-                      >
-                        <Flag className="w-3.5 h-3.5 text-slate-400" />
-                        <span>Biên bản</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
       ) : (
-        /* ── 5.3 Standard List View Mode (Default Table) ── */
+        /* ── 5.1 Standard List View Mode (Default Table) ── */
         <div className="ui-table-wrap w-full max-w-full overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
           <table className="ui-table w-full min-w-[750px] text-left text-type-body text-slate-700 border-collapse">
             <thead className="bg-slate-50 text-type-body-sm font-medium tracking-wider text-slate-600 border-b border-slate-200">

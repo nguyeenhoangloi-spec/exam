@@ -221,11 +221,10 @@ export function AccessHistoryFilterPopover({
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         onClick={() => setIsOpen(!isOpen)}
-        className={`group relative flex h-7 w-7 items-center justify-center rounded-xl transition-colors cursor-pointer select-none ${
-          isOpen || activeFilterCount > 0
+        className={`group relative flex h-7 w-7 items-center justify-center rounded-xl transition-colors cursor-pointer select-none ${isOpen || activeFilterCount > 0
             ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60'
             : 'text-slate-400 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400'
-        }`}
+          }`}
         title="Bộ lọc nhật ký phân quyền"
       >
         <SlidersHorizontal className="h-4 w-4 shrink-0 transition-transform duration-150 group-hover:scale-110" />
@@ -306,17 +305,15 @@ export function AccessHistoryFilterPopover({
                       key={cat.id}
                       type="button"
                       onClick={() => setActiveTab(cat.id)}
-                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-type-helper font-medium transition-all duration-150 cursor-pointer border ${
-                        isActive
+                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-type-helper font-medium transition-all duration-150 cursor-pointer border ${isActive
                           ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold shadow-2xs'
                           : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <IconComp
-                          className={`h-3.5 w-3.5 shrink-0 ${
-                            isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'
-                          }`}
+                          className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'
+                            }`}
                         />
                         <span className="truncate">{cat.label}</span>
                       </div>
@@ -327,9 +324,8 @@ export function AccessHistoryFilterPopover({
                         </span>
                       ) : (
                         <span
-                          className={`text-type-helper font-normal ${
-                            isActive ? 'text-blue-400 dark:text-blue-500' : 'text-slate-300 dark:text-slate-600'
-                          }`}
+                          className={`text-type-helper font-normal ${isActive ? 'text-blue-400 dark:text-blue-500' : 'text-slate-300 dark:text-slate-600'
+                            }`}
                         >
                           {cat.shortcut}
                         </span>
@@ -381,36 +377,32 @@ export function AccessHistoryFilterPopover({
                           key={item.key}
                           type="button"
                           onClick={() => onFilterChange({ ...filters, actionCategory: item.key })}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                            isSelected
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
                               ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
                               : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                          }`}
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className="flex items-center gap-2">
                               <Icon className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
                               <span
-                                className={`text-type-helper font-semibold ${
-                                  isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'
-                                }`}
+                                className={`text-type-helper font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'
+                                  }`}
                               >
                                 {item.label}
                               </span>
                             </div>
                             <div
-                              className={`text-type-helper truncate pl-5.5 mt-0.5 ${
-                                isSelected ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'
-                              }`}
+                              className={`text-type-helper truncate pl-5.5 mt-0.5 ${isSelected ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'
+                                }`}
                             >
                               {item.desc}
                             </div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             <span
-                              className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
-                                isSelected ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 dark:text-slate-300'
-                              }`}
+                              className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 dark:text-slate-300'
+                                }`}
                             >
                               {item.count}
                             </span>
@@ -428,33 +420,29 @@ export function AccessHistoryFilterPopover({
                     <button
                       type="button"
                       onClick={() => onFilterChange({ ...filters, actor: 'ALL' })}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                        filters.actor === 'ALL'
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${filters.actor === 'ALL'
                           ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
                           : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
+                        }`}
                     >
                       <div className="min-w-0 pr-2">
                         <div
-                          className={`text-type-helper font-semibold ${
-                            filters.actor === 'ALL' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'
-                          }`}
+                          className={`text-type-helper font-semibold ${filters.actor === 'ALL' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'
+                            }`}
                         >
                           Tất cả người thực hiện
                         </div>
                         <div
-                          className={`text-type-helper truncate ${
-                            filters.actor === 'ALL' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'
-                          }`}
+                          className={`text-type-helper truncate ${filters.actor === 'ALL' ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'
+                            }`}
                         >
                           Mọi quản trị viên & tiến trình hệ thống
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span
-                          className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
-                            filters.actor === 'ALL' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 dark:text-slate-300'
-                          }`}
+                          className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${filters.actor === 'ALL' ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 dark:text-slate-300'
+                            }`}
                         >
                           {historyItems.length}
                         </span>
@@ -469,33 +457,29 @@ export function AccessHistoryFilterPopover({
                           key={actor.name}
                           type="button"
                           onClick={() => onFilterChange({ ...filters, actor: actor.name })}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                            isSelected
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
                               ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
                               : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                          }`}
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div
-                              className={`text-type-helper font-semibold ${
-                                isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'
-                              }`}
+                              className={`text-type-helper font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'
+                                }`}
                             >
                               {actor.name}
                             </div>
                             <div
-                              className={`text-type-helper truncate ${
-                                isSelected ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'
-                              }`}
+                              className={`text-type-helper truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'
+                                }`}
                             >
                               Tài khoản quản trị viên
                             </div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             <span
-                              className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
-                                isSelected ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 dark:text-slate-300'
-                              }`}
+                              className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 dark:text-slate-300'
+                                }`}
                             >
                               {actor.count}
                             </span>
@@ -522,33 +506,29 @@ export function AccessHistoryFilterPopover({
                           key={tf.key}
                           type="button"
                           onClick={() => onFilterChange({ ...filters, timeframe: tf.key })}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${
-                            isSelected
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-150 cursor-pointer border ${isSelected
                               ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 dark:border-blue-500 shadow-2xs'
                               : 'border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                          }`}
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div
-                              className={`text-type-helper font-semibold ${
-                                isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'
-                              }`}
+                              className={`text-type-helper font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-slate-800 dark:text-slate-200'
+                                }`}
                             >
                               {tf.label}
                             </div>
                             <div
-                              className={`text-type-helper truncate ${
-                                isSelected ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'
-                              }`}
+                              className={`text-type-helper truncate ${isSelected ? 'text-blue-600/80 dark:text-blue-300/80' : 'text-slate-500 dark:text-slate-400'
+                                }`}
                             >
                               {tf.desc}
                             </div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             <span
-                              className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${
-                                isSelected ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 dark:text-slate-300'
-                              }`}
+                              className={`ui-pill rounded-full px-1.5 py-0.5 text-type-helper font-medium ${isSelected ? 'ui-pill-solid bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 dark:text-slate-300'
+                                }`}
                             >
                               {tf.count}
                             </span>

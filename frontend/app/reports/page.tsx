@@ -106,17 +106,6 @@ export default function ReportsPage() {
         </div>
 
         <div className="flex items-center gap-2.5 shrink-0">
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            onClick={() => load(false)}
-            isLoading={isRefreshing}
-            leftIcon={<RefreshCw className="h-4 w-4 text-slate-500" />}
-          >
-            Làm mới
-          </Button>
-
           <DataActionsDropdown
             onPrintReport={handlePrint}
             printLabel="In / Xuất báo cáo PDF"

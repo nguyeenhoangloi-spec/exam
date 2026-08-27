@@ -1,46 +1,40 @@
 'use client';
 
-import { useCallback, useEffect, useState, useRef, startTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
-import api, { getCachedData } from '../../lib/api';
-import { cachedGet, invalidateCache } from '../../lib/api-cache';
+import api from '../../lib/api';
+import { invalidateCache } from '../../lib/api-cache';
 import { getAuthUser } from '../../lib/auth';
-import { usePageTitle } from '../../components/PageTitleContext';
-import { exportToFormattedExcel } from '../../lib/export-excel';
-import { Toast } from '../../components/Toast';
-import { ConfirmModal } from '../../components/ConfirmModal';
-import { Question, Subject } from '../../types';
-import { QuestionAIWizard } from '../../components/question-bank/QuestionAIWizard';
-import { QuestionBulkAction } from '../../components/question-bank/QuestionBulkAction';
-import { QuestionDetailDialog } from '../../components/question-bank/QuestionDetailDialog';
-import { QuestionFormDialog } from '../../components/question-bank/QuestionFormDialog';
-import { QuestionImportWizard } from '../../components/question-bank/QuestionImportWizard';
-
-// Newly Designed SaaS 2026 Components
+import { Question } from '../../types';
 import { QuestionBankHeader } from '../../components/question-bank/QuestionBankHeader';
 import { QuestionBankTopCharts } from '../../components/question-bank/QuestionBankTopCharts';
 import { QuestionBankFilterPopover } from '../../components/question-bank/QuestionBankFilterPopover';
-import { QuestionBankFilterValues } from '../../components/question-bank/QuestionBankFiltersCard';
-import { TabBar } from '../../components/ui/TabBar';
 import { QuestionBankTableToolbar } from '../../components/question-bank/QuestionBankTableToolbar';
+import { TabBar } from '../../components/ui/TabBar';
+import { QuestionBulkAction } from '../../components/question-bank/QuestionBulkAction';
 import { QuestionBankTable } from '../../components/question-bank/QuestionBankTable';
 import { QuestionBankPaginationBar } from '../../components/question-bank/QuestionBankPaginationBar';
+import { QuestionFormDialog } from '../../components/question-bank/QuestionFormDialog';
+import { QuestionDetailDialog } from '../../components/question-bank/QuestionDetailDialog';
+import { QuestionImportWizard } from '../../components/question-bank/QuestionImportWizard';
+import { QuestionAIWizard } from '../../components/question-bank/QuestionAIWizard';
+import { ConfirmModal } from '../../components/ConfirmModal';
+import { Toast } from '../../components/Toast';
+import { exportToFormattedExcel } from '../../lib/export-excel';
+
+const _cache = (typeof window !== 'undefined' && (window as any).__QB_CACHE__) || null;
 
 export default function QuestionBankPage() {
-  usePageTitle('Ngân hàng câu hỏi');
-  const router = useRouter();
-
-  const cachedQRes = typeof window !== 'undefined' ? getCachedData<any>('/questions?page=1&limit=20') : null;
-  const cachedSubs = typeof window !== 'undefined' ? getCachedData<Subject[]>('/subjects') : null;
-  const initialQList = cachedQRes?.data || [];
-
   const [user, setUser] = useState<any>(null);
+  useEffect(() => {
+    setUser(getAuthUser());
+  }, []);
+  const initialQList = _cache?.questions || [];
   const [questions, setQuestions] = useState<Question[]>(initialQList);
-  const [subjects, setSubjects] = useState<Subject[]>(cachedSubs || []);
-  const [counts, setCounts] = useState<Record<string, number>>({});
+  const [subjects, setSubjects] = useState<any[]>(_cache?.subjects || []);
+  const [counts, setCounts] = useState<any>(_cache?.counts || { total: 0, DRAFT: 0, PENDING: 0, APPROVED: 0, REJECTED: 0 });
 
-  const [filterValues, setFilterValues] = useState<QuestionBankFilterValues>({
+  const [filterValues, setFilterValues] = useState({
     search: '',
     subjectId: '',
     chapterId: '',
@@ -57,7 +51,6 @@ export default function QuestionBankPage() {
   const [limit, setLimit] = useState(20);
   const [totalPages, setTotalPages] = useState(1);
   const [sortOrder, setSortOrder] = useState('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     code: true,
     content: true,
@@ -117,183 +110,80 @@ export default function QuestionBankPage() {
     onConfirm: () => { },
   });
 
-  useEffect(() => {
-    const auth = getAuthUser();
-    if (!auth) return void router.push('/login');
-    if (!['ADMIN', 'TEACHER'].includes(auth.role)) return void router.push('/dashboard');
-    setUser(auth);
+  const closeConfirm = () => {
+    setConfirmConfig((prev) => ({ ...prev, isOpen: false }));
+  };
 
-    const p = new URLSearchParams(window.location.search);
-    setPage(Number(p.get('page') || 1));
-    setLimit(Number(p.get('limit') || 20));
-
-    setFilterValues({
-      search: p.get('search') || '',
-      subjectId: p.get('subjectId') || '',
-      chapterId: p.get('chapterId') || '',
-      topic: p.get('topic') || '',
-      difficulty: p.get('difficulty') || '',
-      status: p.get('status') || '',
-      creator: p.get('creator') || '',
-      dateRange: p.get('dateRange') || '',
-      type: p.get('type') || '',
-      bloomLevel: p.get('bloomLevel') || '',
-    });
-
-    if (p.get('action') === 'create') setFormOpen(true);
-    if (p.get('action') === 'import') setImportOpen(true);
-
-    const questionId = p.get('questionId');
-    if (questionId) {
-      api.get(`/questions/${questionId}`)
-        .then(response => setDetail(response.data))
-        .catch(err => setToast({ message: err.message || 'Không thể tải chi tiết câu hỏi.', type: 'error' }));
-    }
-
-    Promise.all([api.get('/questions/filter-options'), api.get('/questions/statistics')])
-      .then(([options, stats]) => {
-        setSubjects(options.data.subjects);
-        setCounts(stats.data);
-      })
-      .catch(e => setError(e.message || 'Không tải được dữ liệu lọc câu hỏi.'));
-  }, [router]);
-
-  const load = useCallback(async () => {
-    if (!user) return;
-    setLoading(true);
-    setError('');
-
-    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
-    if (filterValues.search) params.set('search', filterValues.search);
-    if (filterValues.subjectId) params.set('subjectId', filterValues.subjectId);
-    if (filterValues.chapterId) params.set('chapterId', filterValues.chapterId);
-    if (filterValues.difficulty) params.set('difficulty', filterValues.difficulty);
-    if (filterValues.status) params.set('status', filterValues.status);
-    if (filterValues.type) params.set('type', filterValues.type);
-
-    const statsParams = new URLSearchParams(params);
-    statsParams.delete('status');
-    statsParams.delete('page');
-    statsParams.delete('limit');
-
-    router.replace(`/question-bank?${params}`, { scroll: false });
-
+  const load = async () => {
     try {
-      const [list, stats] = await Promise.all([
-        cachedGet(`/questions?${params}`),
-        cachedGet(`/questions/statistics?${statsParams}`),
+      setLoading(true);
+      setError('');
+      const params: any = {
+        page,
+        limit,
+        sort: sortOrder,
+        search: filterValues.search || undefined,
+        subjectId: filterValues.subjectId || undefined,
+        chapterId: filterValues.chapterId || undefined,
+        topic: filterValues.topic || undefined,
+        difficulty: filterValues.difficulty || undefined,
+        status: filterValues.status || undefined,
+        type: filterValues.type || undefined,
+        bloomLevel: filterValues.bloomLevel || undefined,
+      };
+
+      const [qRes, sRes, cRes] = await Promise.all([
+        api.get('/questions', { params }),
+        api.get('/subjects'),
+        api.get('/questions/counts').catch(() => ({ data: {} })),
       ]);
-      setQuestions(list.data.data);
-      setTotalPages(list.data.totalPages);
-      setCounts(stats.data);
-      setSelected([]);
+
+      const qData = qRes.data?.data || qRes.data || [];
+      const total = qRes.data?.total || qData.length;
+      setQuestions(qData);
+      setTotalPages(Math.ceil(total / limit) || 1);
+      setSubjects(sRes.data?.data || sRes.data || []);
+      setCounts(cRes.data || { total, DRAFT: 0, PENDING: 0, APPROVED: 0, REJECTED: 0 });
+
+      if (typeof window !== 'undefined') {
+        (window as any).__QB_CACHE__ = {
+          questions: qData,
+          subjects: sRes.data?.data || sRes.data || [],
+          counts: cRes.data || {},
+        };
+      }
     } catch (e: any) {
-      setError(e.message || 'Không tải được dữ liệu.');
+      setError(e.message || 'Không thể tải danh sách câu hỏi.');
     } finally {
       setLoading(false);
     }
-  }, [user, page, limit, filterValues, router]);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  const handleRefresh = async () => {
-    invalidateCache('/questions');
-    await load();
-    setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
   };
 
-  const closeConfirm = () => setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+  useEffect(() => {
+    void load();
+  }, [page, limit, sortOrder, filterValues]);
+
+  const handleRefresh = () => {
+    invalidateCache('/questions');
+    void load();
+  };
 
   const action = async (q: Question, name: string) => {
     if (name === 'edit') {
-      try {
-        setEditing((await api.get(`/questions/${q.id}`)).data);
-        setFormOpen(true);
-      } catch (e: any) {
-        setToast({ message: e.message || 'Không thể tải câu hỏi để chỉnh sửa.', type: 'error' });
-      }
-      return;
-    }
-
-    if (name === 'submit') {
-      try {
-        await api.post(`/questions/${q.id}/submit`);
-        invalidateCache('/questions');
-        setToast({ message: `Đã gửi duyệt câu hỏi ${q.code || `QH${q.id}`} thành công.`, type: 'success' });
-        load();
-      } catch (e: any) {
-        setToast({ message: e.message || 'Không thể gửi duyệt câu hỏi.', type: 'error' });
-      }
-      return;
-    }
-
-    if (name === 'duplicate') {
-      try {
-        const res = await api.post(`/questions/${q.id}/duplicate`);
-        invalidateCache('/questions');
-        setToast({ message: `Đã nhân bản câu hỏi thành công (Mã mới: ${res.data?.code || ''})!`, type: 'success' });
-        load();
-      } catch (e: any) {
-        setToast({ message: e.message || 'Không thể nhân bản câu hỏi.', type: 'error' });
-      }
-      return;
-    }
-
-    if (name === 'archive') {
-      setConfirmConfig({
-        isOpen: true,
-        title: 'Lưu trữ câu hỏi',
-        message: `Bạn có chắc chắn muốn chuyển câu hỏi mã ${q.code || `QH${q.id}`} vào kho lưu trữ?`,
-        type: 'warning',
-        confirmText: 'Lưu trữ câu hỏi',
-        onConfirm: async () => {
-          closeConfirm();
-          try {
-            await api.post(`/questions/${q.id}/archive`);
-            invalidateCache('/questions');
-            setToast({ message: `Đã chuyển câu hỏi ${q.code || `QH${q.id}`} sang trạng thái lưu trữ.`, type: 'success' });
-            load();
-          } catch (e: any) {
-            setToast({ message: e.message || 'Không thể lưu trữ câu hỏi.', type: 'error' });
-          }
-        },
-      });
-      return;
-    }
-
-    if (name === 'restore') {
-      try {
-        await api.post(`/questions/${q.id}/restore`);
-        invalidateCache('/questions');
-        setToast({ message: `Đã khôi phục câu hỏi ${q.code || `QH${q.id}`} thành công.`, type: 'success' });
-        load();
-      } catch (e: any) {
-        setToast({ message: e.message || 'Không thể khôi phục câu hỏi.', type: 'error' });
-      }
+      setEditing(q);
+      setFormOpen(true);
       return;
     }
 
     if (name === 'approve') {
-      setConfirmConfig({
-        isOpen: true,
-        title: 'Phê duyệt câu hỏi',
-        message: `Bạn có chắc chắn muốn phê duyệt câu hỏi mã ${q.code || `QH${q.id}`}?`,
-        type: 'success',
-        confirmText: 'Duyệt câu hỏi',
-        onConfirm: async () => {
-          closeConfirm();
-          try {
-            await api.post(`/questions/${q.id}/approve`);
-            invalidateCache('/questions');
-            setToast({ message: `Đã duyệt câu hỏi thành công.`, type: 'success' });
-            load();
-          } catch (e: any) {
-            setToast({ message: e.message || 'Không thể duyệt câu hỏi.', type: 'error' });
-          }
-        },
-      });
+      try {
+        await api.post(`/questions/${q.id}/approve`);
+        invalidateCache('/questions');
+        setToast({ message: 'Đã duyệt câu hỏi thành công!', type: 'success' });
+        load();
+      } catch (e: any) {
+        setToast({ message: e.message || 'Không thể duyệt câu hỏi.', type: 'error' });
+      }
       return;
     }
 
@@ -301,7 +191,7 @@ export default function QuestionBankPage() {
       setConfirmConfig({
         isOpen: true,
         title: 'Từ chối duyệt câu hỏi',
-        message: `Nhập lý do từ chối câu hỏi mã ${q.code || `QH${q.id}`}:`,
+        message: `Nhập lý do từ chối câu hỏi mã ${q.code || ('QH' + q.id)}:`,
         type: 'danger',
         requireReason: true,
         reasonPlaceholder: 'Lý do từ chối (tối thiểu 3 ký tự)...',
@@ -311,7 +201,7 @@ export default function QuestionBankPage() {
           try {
             await api.post(`/questions/${q.id}/reject`, { reason });
             invalidateCache('/questions');
-            setToast({ message: `Đã từ chối câu hỏi.`, type: 'success' });
+            setToast({ message: 'Đã từ chối câu hỏi.', type: 'success' });
             load();
           } catch (e: any) {
             setToast({ message: e.message || 'Không thể từ chối câu hỏi.', type: 'error' });
@@ -325,7 +215,7 @@ export default function QuestionBankPage() {
       setConfirmConfig({
         isOpen: true,
         title: 'Xóa câu hỏi?',
-        message: `Bạn có chắc chắn muốn xóa câu hỏi mã ${q.code || `QH${q.id}`}? Dữ liệu sẽ được chuyển vào thùng rác.`,
+        message: `Bạn có chắc chắn muốn xóa câu hỏi mã ${q.code || ('QH' + q.id)}? Dữ liệu sẽ được chuyển vào thùng rác.`,
         type: 'danger',
         confirmText: 'Xóa câu hỏi',
         onConfirm: async () => {
@@ -333,7 +223,7 @@ export default function QuestionBankPage() {
           try {
             await api.delete(`/questions/${q.id}`);
             invalidateCache('/questions');
-            setToast({ message: `Đã chuyển câu hỏi vào thùng rác thành công!`, type: 'success' });
+            setToast({ message: 'Đã chuyển câu hỏi vào thùng rác thành công!', type: 'success' });
             load();
           } catch (e: any) {
             setToast({ message: e.message || 'Không thể xóa câu hỏi.', type: 'error' });
@@ -356,8 +246,8 @@ export default function QuestionBankPage() {
     const isReject = name === 'REJECT';
     const isDelete = name === 'DELETE';
     const actionLabel = name === 'APPROVE' ? 'duyệt' : name === 'REJECT' ? 'từ chối' : name === 'DELETE' ? 'xóa' : 'thực hiện';
-    const selectedQuestions = questions.filter(q => selected.includes(q.id));
-    const actionIds = selectedQuestions.map(q => q.id);
+    const selectedQuestions = questions.filter((q) => selected.includes(q.id));
+    const actionIds = selectedQuestions.map((q) => q.id);
 
     setConfirmConfig({
       isOpen: true,
@@ -386,31 +276,30 @@ export default function QuestionBankPage() {
 
   const exportCsv = async () => {
     try {
-      const selectedSubject = subjects.find(s => String(s.id) === String(filterValues.subjectId));
-      const rows = questions.map((q, idx) => [
-        idx + 1,
-        q.code || `QH${q.id}`,
-        q.subject?.subjectName || 'Chưa gán',
-        q.content,
-        q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'MEDIUM' ? 'Trung bình' : 'Khó',
-        q.status === 'APPROVED' ? 'Đã duyệt' : q.status === 'PENDING' ? 'Chờ duyệt' : q.status === 'DRAFT' ? 'Nháp' : q.status,
-        q.createdByName || q.createdBy?.fullName || '—',
-      ]);
-
-      exportToFormattedExcel({
-        filename: `Ngân_hang_cau_hoi_${new Date().toISOString().slice(0, 10)}.xls`,
-        title: 'BÁO CÁO NGÂN HÀNG CÂU HỎI KHẢO THÍ',
+      const selectedSubject = subjects.find((s) => String(s.id) === String(filterValues.subjectId));
+      await exportToFormattedExcel({
+        filename: `Ngan_hang_cau_hoi_${new Date().toISOString().slice(0, 10)}.xls`,
+        templateCode: 'QUESTION_BANK_DIRECTORY',
+        title: 'NGÂN HÀNG CÂU HỎI THI',
         subtitle: `Số lượng: ${questions.length} câu hỏi | Môn học: ${selectedSubject?.subjectName || 'Tất cả môn'}`,
         columns: [
-          { header: 'STT', align: 'center', width: 8 },
-          { header: 'Mã câu hỏi', align: 'center', width: 16 },
-          { header: 'Môn học', align: 'left', width: 25 },
-          { header: 'Nội dung câu hỏi', align: 'left', width: 45 },
-          { header: 'Độ khó', align: 'center', width: 14 },
+          { header: 'STT', align: 'center', width: 6 },
+          { header: 'Mã câu hỏi', align: 'center', width: 14 },
+          { header: 'Môn học', align: 'left', width: 24 },
+          { header: 'Nội dung câu hỏi', align: 'left', width: 40 },
+          { header: 'Độ khó', align: 'center', width: 12 },
           { header: 'Trạng thái', align: 'center', width: 14 },
-          { header: 'Người tạo', align: 'left', width: 20 },
+          { header: 'Người biên soạn', align: 'left', width: 20 },
         ],
-        rows,
+        rows: questions.map((q, idx) => [
+          idx + 1,
+          q.code || ('QH' + q.id),
+          q.subject?.subjectName || 'Chưa gán',
+          q.content,
+          q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'MEDIUM' ? 'Trung bình' : 'Khó',
+          q.status === 'APPROVED' ? 'Đã duyệt' : q.status === 'PENDING' ? 'Chờ duyệt' : 'Bản nháp',
+          q.createdByName || q.createdBy?.fullName || '---',
+        ]),
       });
       setToast({ message: 'Đã xuất file Excel tự động định dạng thành công!', type: 'success' });
     } catch (e: any) {
@@ -525,8 +414,6 @@ export default function QuestionBankPage() {
               totalCount={counts.total || questions.length}
               sortOrder={sortOrder}
               onSortChange={setSortOrder}
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
               onRefresh={handleRefresh}
@@ -604,7 +491,6 @@ export default function QuestionBankPage() {
           <QuestionBankTable
             questions={questions}
             selected={selected}
-            viewMode={viewMode}
             visibleColumns={visibleColumns}
             onSelect={(id, checked) =>
               setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))
@@ -668,7 +554,7 @@ export default function QuestionBankPage() {
         onClose={() => setImportOpen(false)}
         onDone={(count) => {
           invalidateCache('/questions');
-          setToast({ message: typeof count === 'number' ? `Đã nhập thành công ${count} câu hỏi vào ngân hàng dữ liệu!` : (count || 'Đã nhập dữ liệu câu hỏi thành công!'), type: 'success' });
+          setToast({ message: typeof count === 'number' ? ('Đã nhập thành công ' + count + ' câu hỏi vào ngân hàng dữ liệu!') : (count || 'Đã nhập dữ liệu câu hỏi thành công!'), type: 'success' });
           load();
         }}
       />

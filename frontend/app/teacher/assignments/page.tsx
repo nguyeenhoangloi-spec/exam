@@ -19,10 +19,11 @@ import {
   PaginationBar,
   SortDropdown,
   ColumnToggleDropdown,
-  ViewModeSegmentedControl,
   StatusBadge,
 } from '../../../components/ui';
 import { TeacherAssignmentBulkAction } from '../../../components/exam-supervisors/TeacherAssignmentBulkAction';
+import { DutyAvailabilityModal } from '../../../components/exam-supervisors/DutyAvailabilityModal';
+import { SupervisorChangeRequestModal } from '../../../components/exam-supervisors/SupervisorChangeRequestModal';
 import {
   ShieldCheck,
   Calendar,
@@ -61,6 +62,10 @@ export default function TeacherAssignmentsPage() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [drawerDuty, setDrawerDuty] = useState<any | null>(null);
 
+  // Modal States
+  const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
+  const [changeRequestAssignment, setChangeRequestAssignment] = useState<any | null>(null);
+
   // Filters, Search, Selection & Pagination State
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('ALL');
@@ -81,16 +86,7 @@ export default function TeacherAssignmentsPage() {
   }, []);
 
   // Toolbar Controls State
-  const [isSpinning, setIsSpinning] = useState(false);
-
-  const handleRefreshClick = async () => {
-    setIsSpinning(true);
-    await fetchMyAssignments();
-    setTimeout(() => setIsSpinning(false), 500);
-  };
-
   const [sortOrder, setSortOrder] = useState<string>('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     subject: true,
     time: true,
@@ -166,46 +162,11 @@ export default function TeacherAssignmentsPage() {
   };
 
   const handleRequestChange = (item: any) => {
-    const reason = window.prompt(`Lý do xin đổi ca môn ${item.subjectName} (tối thiểu 10 ký tự):`);
-    if (reason === null) return;
-    if (reason.trim().length < 10) {
-      setToast({ message: 'Vui lòng nhập lý do đổi ca tối thiểu 10 ký tự.', type: 'error' });
-      return;
-    }
-    setConfirmModal({
-      isOpen: true,
-      title: 'Gửi yêu cầu đổi ca?',
-      message: 'Yêu cầu sẽ được quản trị viên duyệt. Phân công hiện tại vẫn có hiệu lực cho đến khi có giảng viên thay thế hợp lệ.',
-      type: 'warning',
-      onConfirm: async () => {
-        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
-        setBusyId(item.id);
-        try {
-          await api.post(`/teachers/my-assignments/${item.id}/change-requests`, { reason: reason.trim() });
-          setToast({ message: 'Đã gửi yêu cầu đổi ca; hệ thống sẽ thông báo khi có kết quả duyệt.', type: 'success' });
-          await fetchMyAssignments();
-        } catch (err: any) {
-          setToast({ message: err?.response?.data?.message || err.message || 'Không thể gửi yêu cầu đổi ca.', type: 'error' });
-        } finally {
-          setBusyId(null);
-        }
-      },
-    });
+    setChangeRequestAssignment(item);
   };
 
-  const handleRegisterAvailability = async () => {
-    const examDate = window.prompt('Ngày có thể/không thể coi thi (YYYY-MM-DD):');
-    if (!examDate) return;
-    const startTime = window.prompt('Giờ bắt đầu (HH:mm):');
-    const endTime = window.prompt('Giờ kết thúc (HH:mm):');
-    const unavailable = window.confirm('Chọn OK nếu KHÔNG THỂ coi thi trong khung giờ này. Chọn Cancel nếu sẵn sàng coi thi.');
-    if (!startTime || !endTime) return;
-    try {
-      await api.patch('/teachers/my-duty-availability', { examDate, startTime, endTime, status: unavailable ? 'UNAVAILABLE' : 'AVAILABLE' });
-      setToast({ message: unavailable ? 'Đã ghi nhận thời gian không thể coi thi.' : 'Đã đăng ký sẵn sàng coi thi.', type: 'success' });
-    } catch (err: any) {
-      setToast({ message: err?.response?.data?.message || err.message || 'Không thể cập nhật khả năng coi thi.', type: 'error' });
-    }
+  const handleRegisterAvailability = () => {
+    setIsAvailabilityModalOpen(true);
   };
 
   const handlePrintAttendance = async (item: any) => {
@@ -256,27 +217,28 @@ export default function TeacherAssignmentsPage() {
     }
   };
 
-  const exportExcel = () => {
-    exportToFormattedExcel({
+  const exportExcel = async () => {
+    await exportToFormattedExcel({
       filename: `Lich_coi_thi_${currentUser?.teacher?.teacherCode || currentUser?.username || 'giang_vien'}`,
-      title: 'LỊCH PHÂN CÔNG COI THI GIẢNG VIÊN',
-      subtitle: `Giảng viên: ${currentUser?.fullName || currentUser?.teacher?.fullName || currentUser?.username || ''} · Mã: ${currentUser?.teacher?.teacherCode || currentUser?.teacherCode || currentUser?.username || ''}`,
+      templateCode: 'SUPERVISOR_ASSIGNMENT',
+      title: 'LỊCH PHÂN CÔNG COI THI',
+      subtitle: `Giảng viên: ${currentUser?.fullName || currentUser?.teacher?.fullName || currentUser?.username || ''} · Mã GV: ${currentUser?.teacher?.teacherCode || currentUser?.teacherCode || currentUser?.username || ''}`,
       columns: [
-        { header: 'STT', width: 8, align: 'center' },
+        { header: 'STT', width: 6, align: 'center' },
         { header: 'Mã môn', width: 14, align: 'center' },
-        { header: 'Tên môn thi', width: 35, align: 'left' },
-        { header: 'Vai trò', width: 18, align: 'center' },
-        { header: 'Trạng thái', width: 18, align: 'center' },
+        { header: 'Tên môn thi', width: 30, align: 'left' },
+        { header: 'Vai trò', width: 16, align: 'center' },
+        { header: 'Trạng thái', width: 16, align: 'center' },
         { header: 'Ngày thi', width: 14, align: 'center' },
         { header: 'Thời gian', width: 18, align: 'center' },
-        { header: 'Phòng thi', width: 16, align: 'center' },
+        { header: 'Phòng thi', width: 14, align: 'center' },
         { header: 'Địa điểm', width: 16, align: 'left' },
       ],
       rows: filteredAssignments.map((a, idx) => [
         idx + 1,
         a.subjectCode,
         a.subjectName,
-        a.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
+        a.role === 'SUPERVISOR_1' ? 'Cán bộ coi thi 1' : a.role === 'SUPERVISOR_2' ? 'Cán bộ coi thi 2' : 'Giám sát',
         a.status === 'CONFIRMED' ? 'Đã xác nhận' : a.status === 'CHANGE_REQUESTED' ? 'Xin đổi ca' : 'Chờ xác nhận',
         new Date(a.examDate).toLocaleDateString('vi-VN'),
         `${a.startTime} - ${a.endTime}`,
@@ -290,6 +252,7 @@ export default function TeacherAssignmentsPage() {
     printReport({
       title: 'LỊCH PHÂN CÔNG COI THI GIẢNG VIÊN',
       subtitle: `Giảng viên: ${currentUser?.fullName || currentUser?.teacher?.fullName || currentUser?.username || ''} - Mã CB: ${currentUser?.teacher?.teacherCode || currentUser?.teacherCode || currentUser?.username || ''}`,
+      templateCode: 'SUPERVISOR_ASSIGNMENT',
       facultyName: 'HỘI ĐỒNG KHẢO THÍ & ĐẢM BẢO CHẤT LƯỢNG',
       metaInfo: [
         { label: 'Tổng ca coi thi', value: `${assignments.length} ca` },
@@ -321,7 +284,6 @@ export default function TeacherAssignmentsPage() {
         { title: 'GIẢNG VIÊN COI THI', subtitle: '(Ký, ghi rõ họ tên)' },
         { title: 'TRƯỞNG PHÒNG KHẢO THÍ', subtitle: '(Ký tên, đóng dấu)' },
       ],
-      templateCode: 'SUPERVISOR_ASSIGNMENT',
     });
   };
 
@@ -456,6 +418,16 @@ export default function TeacherAssignmentsPage() {
               onPrint={handlePrintReport}
               printLabel="In lịch coi thi"
             />
+
+            <Button
+              type="button"
+              variant="primary"
+              size="md"
+              onClick={handleRegisterAvailability}
+              leftIcon={<Calendar className="h-4 w-4" />}
+            >
+              Đăng ký lịch coi thi
+            </Button>
           </div>
         </div>
 
@@ -567,26 +539,6 @@ export default function TeacherAssignmentsPage() {
               visibleColumns={visibleColumns}
               onToggle={(key) => setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }))}
             />
-
-            {/* View Mode Segmented Control */}
-            <ViewModeSegmentedControl
-              viewMode={viewMode}
-              onChange={(mode) => setViewMode(mode)}
-            />
-
-            <Button type="button" variant="secondary" size="md" onClick={handleRegisterAvailability} leftIcon={<Calendar className="h-4 w-4" />}>
-              Đăng ký coi thi
-            </Button>
-
-            {/* Refresh */}
-            <button
-              type="button"
-              onClick={handleRefreshClick}
-              className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0"
-              title="Làm mới dữ liệu"
-            >
-              <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
-            </button>
           </div>
         </div>
 
@@ -622,245 +574,15 @@ export default function TeacherAssignmentsPage() {
               Không có ca phân công coi thi nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
             </p>
           </div>
-        ) : viewMode === 'compact' ? (
-          /* ── 5.1 Compact View Mode (Dạng thu gọn 1 dòng per item) ── */
-          <div className="space-y-2.5">
-            {currentItems.map((item) => {
-              const isChecked = selected.includes(item.id);
-              const examTime = new Date(item.examDate).getTime();
-              const todayTime = new Date().setHours(0, 0, 0, 0);
-              const isExpired = examTime < todayTime;
-              const isLocked = item.status === 'CONFIRMED' || item.status === 'CHANGE_REQUESTED' || isExpired;
-
-              return (
-                <div
-                  key={item.id}
-                  className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                    }`}
-                >
-                  {/* Left: Checkbox + CodeBadge + Name + Meta Chips */}
-                  <div className="flex items-center gap-3 min-w-0">
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() => setDrawerDuty(item)}
-                      className="shrink-0"
-                    >
-                      <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
-                    </button>
-
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <button
-                          type="button"
-                          onClick={() => setDrawerDuty(item)}
-                          className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
-                        >
-                          {item.subjectName}
-                        </button>
-                        <span className="text-type-helper font-medium text-blue-700 dark:text-blue-300 px-2 py-0.5 ui-pill rounded-full border border-blue-100 dark:border-blue-900/50">
-                          {item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
-                        <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
-                          <Calendar className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                          <span>{new Date(item.examDate).toLocaleDateString('vi-VN')}</span>
-                        </span>
-                        <span className="flex items-center gap-1 font-medium text-blue-600 dark:text-blue-400">
-                          <Clock className="w-3.5 h-3.5 shrink-0" />
-                          <span>{item.startTime} - {item.endTime}</span>
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                          <span>{item.roomName || item.roomCode} {item.building ? `(${item.building})` : ''}</span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right: Status & Actions */}
-                  <div className="flex items-center gap-2 shrink-0">
-                    <StatusBadge
-                      status={isExpired ? 'CANCELLED' : item.status === 'CONFIRMED' ? 'CONFIRMED' : item.status === 'CHANGE_REQUESTED' ? 'CHANGE_REQUESTED' : 'PENDING'}
-                      customLabel={isExpired ? 'Quá hạn ca' : item.status === 'CONFIRMED' ? 'Đã xác nhận' : item.status === 'CHANGE_REQUESTED' ? 'Xin đổi ca' : 'Chờ xác nhận'}
-                    />
-
-                    <Button
-                      variant={item.status === 'CONFIRMED' ? 'success' : 'primary'}
-                      size="xs"
-                      disabled={busyId === item.id || isLocked}
-                      isLoading={busyId === item.id}
-                      onClick={() => handleUpdateStatus(item.id, 'CONFIRMED')}
-                    >
-                      {item.status === 'CONFIRMED' ? 'Đã khóa' : 'Xác nhận'}
-                    </Button>
-
-                    <button
-                      type="button"
-                      onClick={() => handlePrintAttendance(item)}
-                      className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
-                      title="Điểm danh A4"
-                    >
-                      <Printer className="w-4 h-4" />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setDrawerDuty(item)}
-                      className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
-                      title="Xem chi tiết"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : viewMode === 'grid' ? (
-          /* ── 5.2 Grid View Mode ── */
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {currentItems.map((item) => {
-              const isChecked = selected.includes(item.id);
-              const examTime = new Date(item.examDate).getTime();
-              const todayTime = new Date().setHours(0, 0, 0, 0);
-              const isExpired = examTime < todayTime;
-              const isLocked = item.status === 'CONFIRMED' || item.status === 'CHANGE_REQUESTED' || isExpired;
-
-              return (
-                <div
-                  key={item.id}
-                  className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                    }`}
-                >
-                  <div className="space-y-3">
-                    {/* Card top badges */}
-                    <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                          className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setDrawerDuty(item)}
-                          className="tabular-nums font-medium text-type-helper text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer shrink-0"
-                        >
-                          <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
-                        </button>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <span className="text-type-helper font-medium text-blue-700 dark:text-blue-300 px-2 py-0.5 ui-pill rounded-full border border-blue-100 dark:border-blue-900/50">
-                          {item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2'}
-                        </span>
-                        <StatusBadge
-                          status={isExpired ? 'CANCELLED' : item.status === 'CONFIRMED' ? 'CONFIRMED' : item.status === 'CHANGE_REQUESTED' ? 'CHANGE_REQUESTED' : 'PENDING'}
-                          customLabel={isExpired ? 'Quá hạn' : item.status === 'CONFIRMED' ? 'Đã xác nhận' : item.status === 'CHANGE_REQUESTED' ? 'Xin đổi' : 'Chờ xác nhận'}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Subject name */}
-                    <div>
-                      <h3
-                        onClick={() => setDrawerDuty(item)}
-                        className="text-type-body font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition line-clamp-1"
-                      >
-                        {item.subjectName}
-                      </h3>
-                    </div>
-
-                    {/* Details grid box */}
-                    <div className="grid grid-cols-2 gap-2 text-type-helper text-slate-600 dark:text-slate-400 font-normal pt-1 border-t border-slate-100/70 dark:border-slate-800/70">
-                      <div>
-                        <span className="text-slate-400 text-type-helper block">Ngày thi</span>
-                        <strong className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper block">
-                          {new Date(item.examDate).toLocaleDateString('vi-VN')}
-                        </strong>
-                      </div>
-
-                      <div>
-                        <span className="text-slate-400 text-type-helper block">Khung giờ</span>
-                        <span className="font-semibold text-blue-600 dark:text-blue-400 text-type-helper block">
-                          {item.startTime} - {item.endTime}
-                        </span>
-                      </div>
-
-                      <div className="col-span-2">
-                        <span className="text-slate-400 text-type-helper block">Phòng thi & Địa điểm</span>
-                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper block truncate">
-                          {item.roomName || item.roomCode} {item.building ? `(${item.building})` : ''}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Footer Area */}
-                  <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-type-helper">
-                    <button
-                      type="button"
-                      onClick={() => setDrawerDuty(item)}
-                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-type-body-sm font-medium transition cursor-pointer"
-                    >
-                      <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-                      <span>Xem chi tiết</span>
-                    </button>
-
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => handlePrintAttendance(item)}
-                        className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
-                        title="Điểm danh A4"
-                      >
-                        <Printer className="w-4 h-4" />
-                      </button>
-
-                      <Button
-                        variant={item.status === 'CONFIRMED' ? 'success' : 'primary'}
-                        size="xs"
-                        disabled={busyId === item.id || isLocked}
-                        isLoading={busyId === item.id}
-                        onClick={() => handleUpdateStatus(item.id, 'CONFIRMED')}
-                      >
-                        {item.status === 'CONFIRMED' ? 'Đã khóa' : 'Xác nhận'}
-                      </Button>
-                      {item.status === 'CONFIRMED' && !isExpired && (
-                        <Button variant="secondary" size="xs" disabled={busyId === item.id} onClick={() => handleRequestChange(item)} leftIcon={<ArrowLeftRight className="h-3.5 w-3.5" />}>
-                          Xin đổi ca
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         ) : (
-          /* ── 5.3 List View Mode (Dạng bảng danh sách) ── */
+          /* ── 5.1 List View Mode (Dạng bảng danh sách) ── */
           <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
                 <thead>
                   <tr className="border-b border-slate-200/90 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 text-type-body-sm font-medium text-slate-600 dark:text-slate-400 select-none">
                     <th className="py-3 px-4 w-12 text-center">
-                      <input
-                        type="checkbox"
-                        checked={allSelected}
-                        onChange={(e) => handleSelectAll(e.target.checked)}
-                        className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                      />
+                      <input type="checkbox" checked={allSelected} onChange={(e) => handleSelectAll(e.target.checked)} className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer" />
                     </th>
                     {visibleColumns.subject !== false && <th className="py-3.5 px-4 font-medium min-w-[200px] whitespace-nowrap">Môn thi & Mã HP</th>}
                     {visibleColumns.time !== false && <th className="py-3.5 px-4 font-medium whitespace-nowrap">Thời gian & Ca thi</th>}
@@ -876,28 +598,16 @@ export default function TeacherAssignmentsPage() {
                     const examTime = new Date(item.examDate).getTime();
                     const todayTime = new Date().setHours(0, 0, 0, 0);
                     const isExpired = examTime < todayTime;
-                    const isLocked = item.status === 'CONFIRMED' || item.status === 'CHANGE_REQUESTED' || isExpired;
+                    const canAction = item.status !== 'CONFIRMED' && item.status !== 'CHANGE_REQUESTED' && !isExpired;
 
                     return (
-                      <tr
-                        key={item.id}
-                        className={`hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors ${isChecked ? 'bg-blue-50/20' : ''
-                          }`}
-                      >
+                      <tr key={item.id} className={`hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors ${isChecked ? 'bg-blue-50/20' : ''}`}>
                         <td className="py-3.5 px-4 text-center">
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                            className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                          />
+                          <input type="checkbox" checked={isChecked} onChange={(e) => handleSelectOne(item.id, e.target.checked)} className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer" />
                         </td>
                         {visibleColumns.subject !== false && (
                           <td className="py-3.5 px-4">
-                            <div
-                              onClick={() => setDrawerDuty(item)}
-                              className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-type-body"
-                            >
+                            <div onClick={() => setDrawerDuty(item)} className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 cursor-pointer transition text-type-body">
                               {item.subjectName}
                             </div>
                             <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
@@ -947,34 +657,20 @@ export default function TeacherAssignmentsPage() {
                         {visibleColumns.actions !== false && (
                           <td className="py-3.5 pr-4 text-right whitespace-nowrap">
                             <div className="flex items-center justify-end gap-1.5">
-                              <Button
-                                variant={item.status === 'CONFIRMED' ? 'success' : 'primary'}
-                                size="xs"
-                                disabled={busyId === item.id || isLocked}
-                                isLoading={busyId === item.id}
-                                onClick={() => handleUpdateStatus(item.id, 'CONFIRMED')}
-                              >
-                                {item.status === 'CONFIRMED' ? 'Đã khóa' : 'Xác nhận'}
-                              </Button>
-                              {item.status === 'CONFIRMED' && !isExpired && (
-                                <button type="button" onClick={() => handleRequestChange(item)} className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition" title="Xin đổi ca">
-                                  <ArrowLeftRight className="w-4 h-4" />
-                                </button>
+                              {canAction && (
+                                <>
+                                  <Button variant="primary" size="xs" disabled={busyId === item.id} isLoading={busyId === item.id} onClick={() => handleUpdateStatus(item.id, 'CONFIRMED')}>
+                                    Xác nhận
+                                  </Button>
+                                  <button type="button" onClick={() => handleRequestChange(item)} className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none" title="Xin đổi ca">
+                                    <ArrowLeftRight className="w-4 h-4" />
+                                  </button>
+                                </>
                               )}
-                              <button
-                                type="button"
-                                onClick={() => handlePrintAttendance(item)}
-                                className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
-                                title="Điểm danh A4"
-                              >
+                              <button type="button" onClick={() => handlePrintAttendance(item)} className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none" title="Điểm danh A4">
                                 <Printer className="w-4 h-4" />
                               </button>
-                              <button
-                                type="button"
-                                onClick={() => setDrawerDuty(item)}
-                                className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
-                                title="Xem chi tiết"
-                              >
+                              <button type="button" onClick={() => setDrawerDuty(item)} className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none" title="Xem chi tiết">
                                 <Eye className="w-4 h-4" />
                               </button>
                             </div>
@@ -1122,21 +818,57 @@ export default function TeacherAssignmentsPage() {
         ]}
         extraSections={[
           {
-            title: 'Xử lý vi phạm & Giám sát trực tuyến',
+            title: 'Hành động ca coi thi',
             content: (
-              <Button
-                variant="primary"
-                size="md"
-                onClick={() => drawerDuty?.examScheduleRoomId && router.push(`/teacher/proctor/${drawerDuty.examScheduleRoomId}`)}
-                disabled={!drawerDuty?.examScheduleRoomId}
-                leftIcon={<ExternalLink className="w-4 h-4" />}
-                className="w-full"
-              >
-                Mở bảng giám thị Realtime phòng thi này
-              </Button>
+              <div className="space-y-2">
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={() => drawerDuty?.examScheduleRoomId && router.push(`/teacher/proctor/${drawerDuty.examScheduleRoomId}`)}
+                  disabled={!drawerDuty?.examScheduleRoomId}
+                  leftIcon={<ExternalLink className="w-4 h-4" />}
+                  className="w-full"
+                >
+                  Mở bảng giám thị Realtime phòng thi này
+                </Button>
+
+                {drawerDuty && !drawerIsExpired && drawerDuty.status !== 'CONFIRMED' && drawerDuty.status !== 'CHANGE_REQUESTED' && (
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    onClick={() => {
+                      const item = drawerDuty;
+                      setDrawerDuty(null);
+                      handleRequestChange(item);
+                    }}
+                    leftIcon={<ArrowLeftRight className="w-4 h-4" />}
+                    className="w-full"
+                  >
+                    Gửi yêu cầu xin đổi ca coi thi này
+                  </Button>
+                )}
+              </div>
             ),
           },
         ]}
+      />
+
+      {/* Duty Availability Modal (Đăng ký lịch rảnh / bận) */}
+      <DutyAvailabilityModal
+        isOpen={isAvailabilityModalOpen}
+        onClose={() => setIsAvailabilityModalOpen(false)}
+        onSuccess={(msg) => setToast({ message: msg, type: 'success' })}
+      />
+
+      {/* Supervisor Change Request Modal (Xin đổi ca coi thi) */}
+      <SupervisorChangeRequestModal
+        isOpen={Boolean(changeRequestAssignment)}
+        assignment={changeRequestAssignment}
+        onClose={() => setChangeRequestAssignment(null)}
+        onSuccess={async (msg) => {
+          setToast({ message: msg, type: 'success' });
+          await fetchMyAssignments();
+        }}
       />
 
       {/* Confirm Modal */}

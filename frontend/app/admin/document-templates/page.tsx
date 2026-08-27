@@ -155,55 +155,52 @@ const sampleRowsByCode: Record<string, Array<Record<string, any>>> = {
     { index: 5, item: '5. Tổng số tờ giấy thi nộp lại', quantity: '76 tờ', status: 'Đã kiểm đếm đủ' },
     { index: 6, item: '6. Tình hình trật tự kỷ luật phòng thi', quantity: '00 trường hợp vi phạm', status: 'Nghiêm túc, an toàn' },
   ],
-  EXAM_BAG_LABEL: [
-    { index: 1, label: 'Kỳ thi / Học kỳ', value: 'Kỳ thi Kết thúc Học kỳ 1 (Năm học 2025 - 2026)' },
-    { index: 2, label: 'Môn thi / Học phần', value: 'Lập trình Web Nâng cao (Mã HP: IT4409)' },
-    { index: 3, label: 'Phòng thi / Địa điểm', value: 'Phòng 402 - Tòa nhà A1' },
-    { index: 4, label: 'Ngày thi / Giờ thi', value: '15/12/2025 | 07:30 - 09:00 (90 phút)' },
-    { index: 5, label: 'Số lượng bài thi trong túi', value: '38 bài (Tổng cộng 76 tờ giấy thi)' },
-    { index: 6, label: 'Cán bộ coi thi niêm phong', value: 'TS. Trần Hải & ThS. Lê Thu Hà' },
-  ],
   GRADE_REPORT: sampleRowsBySource.GRADE_REPORT,
   EXAM_SUMMARY_REPORT: [
     { index: 1, subject: 'Lập trình Web Nâng cao (IT4409)', totalStudents: 180, attended: 176, absent: 4, passRate: '94.3%', avgScore: '7.8' },
     { index: 2, subject: 'Mạng máy tính cơ bản (IT3080)', totalStudents: 150, attended: 148, absent: 2, passRate: '91.2%', avgScore: '7.2' },
     { index: 3, subject: 'Cấu trúc dữ liệu & GT (IT2000)', totalStudents: 210, attended: 205, absent: 5, passRate: '88.5%', avgScore: '6.9' },
   ],
-  GRADE_DISTRIBUTION_REPORT: [
-    { index: 1, gradeBand: 'Điểm A (8.5 - 10.0)', studentCount: '45 sinh viên', ratio: '25.0%', note: 'Xuất sắc & Giỏi' },
-    { index: 2, gradeBand: 'Điểm B / B+ (7.0 - 8.4)', studentCount: '82 sinh viên', ratio: '45.6%', note: 'Khá' },
-    { index: 3, gradeBand: 'Điểm C / C+ (5.5 - 6.9)', studentCount: '41 sinh viên', ratio: '22.8%', note: 'Trung bình khá' },
-    { index: 4, gradeBand: 'Điểm D / D+ (4.0 - 5.4)', studentCount: '8 sinh viên', ratio: '4.4%', note: 'Trung bình' },
-    { index: 5, gradeBand: 'Điểm F (< 4.0)', studentCount: '4 sinh viên', ratio: '2.2%', note: 'Không đạt (Học lại)' },
-  ],
   GRADE_APPEAL_MINUTES: [
-    { index: 1, appealCode: 'PK-2026-001', student: 'Nguyễn Văn An (SV20260001)', subject: 'Lập trình Web', originalScore: '6.5', reviewedScore: '7.5', result: 'Tăng 1.0 điểm', reviewer: 'TS. Trần Hải' },
-    { index: 2, appealCode: 'PK-2026-002', student: 'Lê Hoàng Cường (SV20260003)', subject: 'Mạng máy tính', originalScore: '4.5', reviewedScore: '4.5', result: 'Giữ nguyên', reviewer: 'ThS. Lê Thu Hà' },
+    { index: 1, studentCode: 'SV20260001', student: 'Nguyễn Văn An', subject: 'Lập trình Web', oldScore: '6.5', newScore: '7.5', delta: '+1.0', conclusion: 'Tăng điểm' },
+    { index: 2, studentCode: 'SV20260003', student: 'Lê Hoàng Cường', subject: 'Mạng máy tính', oldScore: '4.5', newScore: '4.5', delta: '0.0', conclusion: 'Giữ nguyên' },
   ],
   STUDENT_EXAM_PASS: [
-    { index: 1, examNumber: 'SBD-001', studentCode: 'SV20260001', student: 'Nguyễn Văn An', subject: 'Lập trình Web Nâng cao', date: '15/12/2025 07:30', room: 'P.301 (Ghế 01)', note: 'Đủ điều kiện dự thi' },
-    { index: 2, examNumber: 'SBD-001', studentCode: 'SV20260001', student: 'Nguyễn Văn An', subject: 'Mạng máy tính', date: '16/12/2025 09:30', room: 'P.405 (Ghế 12)', note: 'Đủ điều kiện dự thi' },
+    { index: 1, subject: 'Lập trình Web Nâng cao', subjectCode: 'IT4409', date: '15/12/2025', time: '07:30', room: 'P.301', examNumber: 'SBD-001' },
+    { index: 2, subject: 'Mạng máy tính', subjectCode: 'IT3080', date: '16/12/2025', time: '09:30', room: 'P.405', examNumber: 'SBD-001' },
   ],
   SUBJECT_DIRECTORY: [
-    { index: 1, code: 'IT4409', name: 'Lập trình Web Nâng cao', credits: '3 TC', department: 'Khoa Công nghệ Thông tin', examType: 'Tự luận + Trắc nghiệm' },
-    { index: 2, code: 'IT3080', name: 'Mạng máy tính', credits: '3 TC', department: 'Khoa Công nghệ Thông tin', examType: 'Trắc nghiệm máy' },
-    { index: 3, code: 'IT2000', name: 'Cấu trúc dữ liệu & Giải thuật', credits: '4 TC', department: 'Khoa Công nghệ Thông tin', examType: 'Tự luận' },
-  ],
-  DEPARTMENT_DIRECTORY: [
-    { index: 1, code: 'CNTT', name: 'Khoa Công nghệ Thông tin', head: 'PGS.TS Nguyễn Văn A', phone: '024.3869.1234', email: 'cntt@sis.edu.vn' },
-    { index: 2, code: 'DTVT', name: 'Khoa Điện tử Viễn thông', head: 'TS. Trần Văn B', phone: '024.3869.5678', email: 'dtvt@sis.edu.vn' },
-  ],
-  CLASS_DIRECTORY: [
-    { index: 1, code: 'CNTT-K68A', name: 'Lớp CNTT Khóa 68 A', count: '45 sinh viên', teacher: 'TS. Trần Hải', department: 'Khoa CNTT' },
-    { index: 2, code: 'CNTT-K68B', name: 'Lớp CNTT Khóa 68 B', count: '42 sinh viên', teacher: 'ThS. Lê Thu Hà', department: 'Khoa CNTT' },
+    { index: 1, subjectCode: 'IT4409', subjectName: 'Lập trình Web Nâng cao', credits: '3 TC', department: 'Khoa Công nghệ Thông tin', examFormat: 'Tự luận + Trắc nghiệm' },
+    { index: 2, subjectCode: 'IT3080', subjectName: 'Mạng máy tính', credits: '3 TC', department: 'Khoa Công nghệ Thông tin', examFormat: 'Trắc nghiệm máy' },
+    { index: 3, subjectCode: 'IT2000', subjectName: 'Cấu trúc dữ liệu & Giải thuật', credits: '4 TC', department: 'Khoa Công nghệ Thông tin', examFormat: 'Tự luận' },
   ],
   EXAM_ROOM_DIRECTORY: [
-    { index: 1, code: 'P.301-B1', building: 'Tòa nhà B1', capacity: '40 chỗ', type: 'Phòng thi tiêu chuẩn', status: 'Sẵn sàng' },
-    { index: 2, code: 'P.405-D3', building: 'Tòa nhà D3', capacity: '50 chỗ', type: 'Phòng thi máy tính', status: 'Sẵn sàng' },
+    { index: 1, roomCode: 'P.301-B1', roomName: 'Phòng 301 - Tòa B1', building: 'Tòa B1', capacity: '40 chỗ', maxCapacity: '45 chỗ' },
+    { index: 2, roomCode: 'P.405-D3', roomName: 'Phòng 405 - Tòa D3', building: 'Tòa D3', capacity: '50 chỗ', maxCapacity: '55 chỗ' },
+  ],
+  DEPARTMENT_DIRECTORY: [
+    { index: 1, code: 'CNTT', name: 'Khoa Công nghệ Thông tin', classesCount: '18 lớp', teachersCount: '34 giảng viên' },
+    { index: 2, code: 'KTTV', name: 'Khoa Kinh tế & Quản trị', classesCount: '24 lớp', teachersCount: '42 giảng viên' },
+    { index: 3, code: 'LUAT', name: 'Khoa Luật học', classesCount: '12 lớp', teachersCount: '20 giảng viên' },
+  ],
+  QUESTION_BANK_DIRECTORY: [
+    { index: 1, code: 'Q-IT01', subject: 'Lập trình Web', content: 'Trình bày mô hình MVC trong NestJS?', type: 'Tự luận', difficulty: 'Trung bình' },
+    { index: 2, code: 'Q-IT02', subject: 'Mạng máy tính', content: 'Giao thức TCP hoạt động ở tầng nào của OSI?', type: 'Trắc nghiệm', difficulty: 'Dễ' },
+    { index: 3, code: 'Q-IT03', subject: 'Cấu trúc dữ liệu', content: 'Độ phức tạp thuật toán QuickSort trường hợp xấu nhất?', type: 'Trắc nghiệm', difficulty: 'Khó' },
   ],
   EXAM_PERIOD_DIRECTORY: [
-    { index: 1, name: 'Học kỳ 1 (2025 - 2026)', startDate: '01/12/2025', endDate: '30/12/2025', state: 'Đang diễn ra', note: 'Kỳ thi chính thức' },
-    { index: 2, name: 'Học kỳ 2 (2025 - 2026)', startDate: '01/05/2026', endDate: '30/05/2026', state: 'Dự kiến', note: 'Kế hoạch năm' },
+    { index: 1, name: 'Kỳ thi Kết thúc Học kỳ 1 (2025-2026)', semester: 'Học kỳ 1', schoolYear: '2025-2026', startDate: '15/12/2025', endDate: '30/12/2025' },
+    { index: 2, name: 'Kỳ thi Phụ & Đánh giá Bổ sung HK1', semester: 'Học kỳ 1', schoolYear: '2025-2026', startDate: '10/01/2026', endDate: '18/01/2026' },
+  ],
+  EXAM_SCORE_TRANSCRIPT: [
+    { index: 1, subjectCode: 'IT4409', subjectName: 'Lập trình Web Nâng cao', periodName: 'Học kỳ 1 (2025-2026)', examDate: '15/12/2025', examType: 'Trắc nghiệm', score: '9.0', status: 'Đạt' },
+    { index: 2, subjectCode: 'IT3080', subjectName: 'Mạng máy tính cơ bản', periodName: 'Học kỳ 1 (2025-2026)', examDate: '16/12/2025', examType: 'Tự luận', score: '8.0', status: 'Đạt' },
+    { index: 3, subjectCode: 'IT2000', subjectName: 'Cấu trúc dữ liệu & GT', periodName: 'Học kỳ 1 (2025-2026)', examDate: '18/12/2025', examType: 'Hỗn hợp', score: '6.5', status: 'Đạt' },
+  ],
+  SYSTEM_AUDIT_LOG: [
+    { index: 1, time: '27/08/2026 08:30:15', actor: 'admin_sys', action: 'EXPORT_DATA', target: 'DOCUMENT_TEMPLATE', status: 'Thành công' },
+    { index: 2, time: '27/08/2026 08:15:22', actor: 'gv_hai', action: 'GRADE_SUBMIT', target: 'EXAM_ATTEMPT', status: 'Thành công' },
+    { index: 3, time: '27/08/2026 07:45:00', actor: 'system_cron', action: 'AUTO_BACKUP', target: 'DATABASE_SNAPSHOT', status: 'Thành công' },
   ],
 };
 
@@ -222,7 +219,6 @@ export default function DocumentTemplatesPage() {
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [zoomScale, setZoomScale] = useState<number>(95);
   const [activeTab, setActiveTab] = useState<'settings' | 'templates'>('settings');
-  const [categoryFilter, setCategoryFilter] = useState<'ALL' | 'EXAM' | 'GRADES' | 'ACADEMIC' | 'USERS'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
 
   const loadTemplates = useCallback(async () => {
@@ -289,83 +285,6 @@ export default function DocumentTemplatesPage() {
         [field]: value,
       },
     });
-  };
-
-  const applyPreset = (preset: 'DAI_HOC' | 'THPT' | 'HOC_VIEN' | 'TRUNG_TAM') => {
-    if (!config) return;
-    if (preset === 'DAI_HOC') {
-      updateConfig({
-        ...config,
-        header: {
-          ...config.header,
-          institutionName: 'BỘ GIÁO DỤC VÀ ĐÀO TẠO',
-          facultyName: 'TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN',
-          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
-        },
-        footer: {
-          ...config.footer,
-          signers: [
-            { title: 'TRƯỞNG KHOA', subtitle: '(Ký, ghi rõ họ tên)' },
-            { title: 'CÁN BỘ COI THI 1', subtitle: '(Ký, ghi rõ họ tên)' },
-          ],
-        },
-      });
-      setToast({ type: 'success', message: 'Đã áp dụng mẫu Đại học.' });
-    } else if (preset === 'THPT') {
-      updateConfig({
-        ...config,
-        header: {
-          ...config.header,
-          institutionName: 'SỞ GIÁO DỤC VÀ ĐÀO TẠO',
-          facultyName: 'TRƯỜNG THPT CHUYÊN NGUYỄN HUỆ',
-          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
-        },
-        footer: {
-          ...config.footer,
-          signers: [
-            { title: 'HIỆU TRƯỞNG', subtitle: '(Ký, đóng dấu)' },
-            { title: 'GIÁM THỊ PHÒNG THI', subtitle: '(Ký, ghi rõ họ tên)' },
-          ],
-        },
-      });
-      setToast({ type: 'success', message: 'Đã áp dụng mẫu THPT.' });
-    } else if (preset === 'HOC_VIEN') {
-      updateConfig({
-        ...config,
-        header: {
-          ...config.header,
-          institutionName: 'HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG',
-          facultyName: 'KHOA CÔNG NGHỆ THÔNG TIN 1',
-          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
-        },
-        footer: {
-          ...config.footer,
-          signers: [
-            { title: 'GIÁM ĐỐC HỌC VIỆN', subtitle: '(Ký, đóng dấu)' },
-            { title: 'TRƯỞNG PHÒNG ĐÀO TẠO', subtitle: '(Ký, ghi rõ họ tên)' },
-          ],
-        },
-      });
-      setToast({ type: 'success', message: 'Đã áp dụng mẫu Học viện.' });
-    } else {
-      updateConfig({
-        ...config,
-        header: {
-          ...config.header,
-          institutionName: 'TRUNG TÂM KHẢO THÍ & ĐÁNH GIÁ CHẤT LƯỢNG',
-          facultyName: 'PHÒNG ĐIỀU HÀNH THI & XẾP LỊCH',
-          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
-        },
-        footer: {
-          ...config.footer,
-          signers: [
-            { title: 'GIÁM ĐỐC TRUNG TÂM', subtitle: '(Ký, đóng dấu)' },
-            { title: 'CÁN BỘ COI THI', subtitle: '(Ký, ghi rõ họ tên)' },
-          ],
-        },
-      });
-      setToast({ type: 'success', message: 'Đã áp dụng mẫu Khảo thí.' });
-    }
   };
 
   const handleSaveAndApply = async () => {
@@ -484,53 +403,15 @@ export default function DocumentTemplatesPage() {
 
   const filteredTemplates = useMemo(() => {
     return templates.filter((item) => {
-      const matchSearch =
-        !searchQuery ||
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.code.toLowerCase().includes(searchQuery.toLowerCase());
-
-      if (!matchSearch) return false;
-
-      if (categoryFilter === 'ALL') return true;
-      if (categoryFilter === 'EXAM') {
-        return (
-          ['EXAM_PAPER_OFFICIAL', 'EXAM_SCHEDULE_LIST', 'ROOM_DOOR_LIST', 'ROOM_ATTENDANCE_SHEET', 'SUPERVISOR_ASSIGNMENT', 'EXAM_ROOM_MINUTES', 'EXAM_BAG_LABEL'].includes(item.code) ||
-          item.name.toLowerCase().includes('đề thi') ||
-          item.name.toLowerCase().includes('phòng thi') ||
-          item.name.toLowerCase().includes('lịch thi') ||
-          item.name.toLowerCase().includes('túi bài')
-        );
-      }
-      if (categoryFilter === 'GRADES') {
-        return (
-          ['GRADE_REPORT', 'EXAM_SUMMARY_REPORT', 'GRADE_DISTRIBUTION_REPORT', 'GRADE_APPEAL_MINUTES'].includes(item.code) ||
-          item.name.toLowerCase().includes('điểm') ||
-          item.name.toLowerCase().includes('phúc khảo') ||
-          item.name.toLowerCase().includes('báo cáo')
-        );
-      }
-      if (categoryFilter === 'ACADEMIC') {
-        return (
-          ['SUBJECT_DIRECTORY', 'DEPARTMENT_DIRECTORY', 'CLASS_DIRECTORY', 'EXAM_ROOM_DIRECTORY', 'EXAM_PERIOD_DIRECTORY'].includes(item.code) ||
-          item.name.toLowerCase().includes('danh mục') ||
-          item.name.toLowerCase().includes('môn học') ||
-          item.name.toLowerCase().includes('khoa') ||
-          item.name.toLowerCase().includes('lớp') ||
-          item.name.toLowerCase().includes('học kỳ')
-        );
-      }
-      if (categoryFilter === 'USERS') {
-        return (
-          ['STUDENT_DIRECTORY', 'STUDENT_EXAM_PASS', 'TEACHER_DIRECTORY'].includes(item.code) ||
-          item.name.toLowerCase().includes('sinh viên') ||
-          item.name.toLowerCase().includes('giảng viên') ||
-          item.name.toLowerCase().includes('thí sinh') ||
-          item.name.toLowerCase().includes('thẻ dự thi')
-        );
-      }
-      return true;
+      if (!searchQuery.trim()) return true;
+      const q = searchQuery.toLowerCase().trim();
+      return (
+        item.name.toLowerCase().includes(q) ||
+        item.code.toLowerCase().includes(q) ||
+        (item.description && item.description.toLowerCase().includes(q))
+      );
     });
-  }, [templates, categoryFilter, searchQuery]);
+  }, [templates, searchQuery]);
 
   if (loading) {
     return (
@@ -598,47 +479,8 @@ export default function DocumentTemplatesPage() {
           {/* Tab 1: Cấu hình In ấn */}
           {activeTab === 'settings' && draft && config && (
             <div className="space-y-5 divide-y divide-slate-100 dark:divide-slate-800">
-              {/* Presets 4 nấc thuần text */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">
-                    Mẫu cơ quan nhanh
-                  </span>
-                </div>
-                <div className="grid grid-cols-4 gap-1 rounded-2xl bg-slate-100/80 p-1 dark:bg-slate-850">
-                  <button
-                    type="button"
-                    onClick={() => applyPreset('DAI_HOC')}
-                    className="rounded-xl py-1.5 text-type-helper font-medium text-slate-700 hover:bg-white hover:text-slate-900 hover:shadow-2xs dark:text-slate-300 dark:hover:bg-slate-800 transition cursor-pointer"
-                  >
-                    Đại học
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyPreset('THPT')}
-                    className="rounded-xl py-1.5 text-type-helper font-medium text-slate-700 hover:bg-white hover:text-slate-900 hover:shadow-2xs dark:text-slate-300 dark:hover:bg-slate-800 transition cursor-pointer"
-                  >
-                    THPT
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyPreset('HOC_VIEN')}
-                    className="rounded-xl py-1.5 text-type-helper font-medium text-slate-700 hover:bg-white hover:text-slate-900 hover:shadow-2xs dark:text-slate-300 dark:hover:bg-slate-800 transition cursor-pointer"
-                  >
-                    Học viện
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyPreset('TRUNG_TAM')}
-                    className="rounded-xl py-1.5 text-type-helper font-medium text-slate-700 hover:bg-white hover:text-slate-900 hover:shadow-2xs dark:text-slate-300 dark:hover:bg-slate-800 transition cursor-pointer"
-                  >
-                    Khảo thí
-                  </button>
-                </div>
-              </div>
-
               {/* Đơn vị & Tiêu đề */}
-              <div className="pt-4 space-y-3">
+              <div className="space-y-3">
                 <span className="block text-type-body font-semibold text-slate-900 dark:text-slate-100">
                   Đơn vị & Tiêu đề
                 </span>
@@ -650,13 +492,13 @@ export default function DocumentTemplatesPage() {
                     placeholder="Tên biểu mẫu..."
                   />
                   <FormInput
-                    label="Cơ quan / Đơn vị chủ quản"
+                    label="Tên Trường / Cơ quan"
                     value={config.header.institutionName}
                     onChange={(v) => setHeader('institutionName', v)}
-                    placeholder="BỘ GIÁO DỤC VÀ ĐÀO TẠO..."
+                    placeholder="TRƯỜNG ĐẠI HỌC NAM CẦN THƠ..."
                   />
                   <FormInput
-                    label="Khoa / Bộ môn"
+                    label="Khoa / Đơn vị tổ chức"
                     value={config.header.facultyName || ''}
                     onChange={(v) => setHeader('facultyName', v)}
                     placeholder="KHOA CÔNG NGHỆ THÔNG TIN..."
@@ -973,31 +815,6 @@ export default function DocumentTemplatesPage() {
                 />
               </div>
 
-              {/* Filter Pills */}
-              <div className="flex flex-wrap gap-1">
-                {(
-                  [
-                    ['ALL', 'Tất cả'],
-                    ['EXAM', 'Khảo thí'],
-                    ['GRADES', 'Điểm'],
-                    ['ACADEMIC', 'Đào tạo'],
-                    ['USERS', 'Hồ sơ'],
-                  ] as const
-                ).map(([key, label]) => (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => setCategoryFilter(key)}
-                    className={`rounded-xl px-2.5 py-1 text-type-helper font-medium transition cursor-pointer ${categoryFilter === key
-                        ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300'
-                      }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-
               {/* Template Items */}
               <div className="space-y-1 divide-y divide-slate-100 dark:divide-slate-800 pt-1">
                 {filteredTemplates.map((item) => {
@@ -1026,12 +843,12 @@ export default function DocumentTemplatesPage() {
                       </div>
 
                       <div className="shrink-0 flex items-center gap-1">
-                        {(item.code.startsWith('CUSTOM_') || item.code.includes('_COPY_') || !item.isDefault) && (
+                        {item.code.startsWith('CUSTOM_') && !item.isDefault && (
                           <button
                             type="button"
                             onClick={(e) => handleDeleteTemplate(item.id, e)}
                             className="p-1 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition cursor-pointer"
-                            title="Xóa biểu mẫu này"
+                            title="Xóa biểu mẫu tùy biến này"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -1116,13 +933,14 @@ export default function DocumentTemplatesPage() {
                     padding: `${config.page.marginMm}mm`,
                     width: config.page.orientation === 'landscape' ? '297mm' : '210mm',
                     minHeight: config.page.orientation === 'landscape' ? '210mm' : '297mm',
+                    fontFamily: "'Times New Roman', Times, serif",
                   }}
                   className="bg-white text-slate-900 shadow-xl rounded-sm border border-slate-300 dark:border-slate-700"
                 >
                   {/* Paper Content: Exam Paper vs Tabular Report */}
                   {config.templateType === 'EXAM_PAPER' ? (
                     /* EXAM PAPER FORMAT */
-                    <div className="space-y-3 text-type-body leading-relaxed">
+                    <div className="space-y-2.5 text-type-body leading-relaxed">
                       {/* Header 2 Columns */}
                       <div className="grid grid-cols-2 gap-4 text-center">
                         <div>
@@ -1145,8 +963,13 @@ export default function DocumentTemplatesPage() {
                         </div>
                       </div>
 
+                      {/* Huy Hiệu Mã Đề Thi */}
+                      <div className="text-right text-type-body pt-1">
+                        MÃ ĐỀ THI: <span className="font-semibold">{draft.code || 'EXAM_PAPER_OFFICIAL'}</span>
+                      </div>
+
                       {/* Main Paper Title */}
-                      <div className="text-center pt-2">
+                      <div className="text-center pt-0.5">
                         <h2 className="text-type-page font-semibold">
                           {config.header.title || 'ĐỀ THI KẾT THÚC HỌC PHẦN'}
                         </h2>
@@ -1157,38 +980,81 @@ export default function DocumentTemplatesPage() {
                         )}
                       </div>
 
-                      {/* Subject & Meta Box */}
-                      <div className="rounded-xl border border-slate-300 bg-slate-50/50 p-2 text-center text-type-body">
-                        <span className="font-semibold">Môn học:</span>{' '}
-                        {config.examInfo?.subjectName || 'Lập trình Web Nâng cao'} &nbsp;|&nbsp;{' '}
-                        <span className="font-semibold">Mã HP:</span>{' '}
-                        {config.examInfo?.subjectCode || 'IT4409'} &nbsp;|&nbsp;{' '}
-                        <span className="font-semibold">Thời gian:</span>{' '}
-                        {config.examInfo?.durationMinutes || 60} phút
+                      {/* Khung Thông Tin Học Phần (Chuẩn Khảo Thí 2 Cột x 2 Hàng kèm Lời Dặn) */}
+                      <div className="border border-slate-700 p-2 my-2 text-type-body bg-slate-50">
+                        <table className="w-full border-collapse border-none text-type-body">
+                          <tbody>
+                            <tr>
+                              <td className="w-1/2 border-none py-0.5"><span className="font-semibold">Môn học:</span> {config.examInfo?.subjectName || 'Lập trình Web Nâng cao'}</td>
+                              <td className="w-1/2 border-none py-0.5"><span className="font-semibold">Mã học phần:</span> {config.examInfo?.subjectCode || 'IT4409'}</td>
+                            </tr>
+                            <tr>
+                              <td className="w-1/2 border-none py-0.5"><span className="font-semibold">Thời gian làm bài:</span> {config.examInfo?.durationMinutes || 60} phút</td>
+                              <td className="w-1/2 border-none py-0.5"><span className="font-semibold">Thang điểm:</span> {config.examInfo?.totalScore || 10} điểm</td>
+                            </tr>
+                            {config.examInfo?.showInstructions !== false && (
+                              <tr>
+                                <td colSpan={2} className="border-none text-center italic text-type-helper border-t border-dashed border-slate-300 pt-1 mt-1 text-slate-700">
+                                  {config.examInfo?.instructionText || '(Thí sinh không được sử dụng tài liệu. Cán bộ coi thi không giải thích gì thêm.)'}
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
                       </div>
 
-                      {/* Instructions */}
-                      {config.examInfo?.showInstructions !== false && (
-                        <div className="text-center italic text-type-helper text-slate-700">
-                          {config.examInfo?.instructionText ||
-                            '(Thí sinh không được sử dụng tài liệu. Cán bộ coi thi không giải thích gì thêm.)'}
-                        </div>
-                      )}
+                      {/* Khung Thông Tin Thí Sinh (Chuẩn Khảo Thí) */}
+                      <table className="w-full border-collapse border border-slate-700 text-type-helper">
+                        <tbody>
+                          <tr>
+                            <td colSpan={2} className="border border-slate-700 p-1.5 w-[65%]">
+                              <span className="font-semibold">Họ và tên thí sinh:</span> ............................................................................................
+                            </td>
+                            <td className="border border-slate-700 p-1.5 w-[35%]">
+                              <span className="font-semibold">MSSV:</span> ....................................
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="border border-slate-700 p-1.5 w-[35%]">
+                              <span className="font-semibold">Lớp học phần:</span> ............................
+                            </td>
+                            <td className="border border-slate-700 p-1.5 w-[30%]">
+                              <span className="font-semibold">Phòng thi số:</span> ............
+                            </td>
+                            <td className="border border-slate-700 p-1.5 w-[35%]">
+                              <span className="font-semibold">Số báo danh (SBD):</span> ............
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="border border-slate-700 p-1.5 w-[35%]">
+                              <span className="font-semibold">Ngày thi:</span> ......./......./202...
+                            </td>
+                            <td className="border border-slate-700 p-1.5 w-[30%]">
+                              <span className="font-semibold">Ca thi:</span> ............
+                            </td>
+                            <td className="border border-slate-700 p-1.5 w-[35%]">
+                              <span className="font-semibold">Chữ ký thí sinh:</span> ....................
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
 
-                      {/* Score Box */}
+                      {/* Khung Giám Thị & Chấm Điểm (4 Ô Cân Đối) */}
                       {config.examInfo?.showScoreBox !== false && (
-                        <div className="rounded-xl border border-slate-400 overflow-hidden">
-                          <div className="grid grid-cols-4 bg-slate-100 font-semibold text-center text-type-helper border-b border-slate-400 p-1.5">
-                            <div>Điểm bằng số</div>
-                            <div>Điểm bằng chữ</div>
-                            <div>Chữ ký CB chấm 1</div>
-                            <div>Chữ ký CB chấm 2</div>
+                        <div className="border border-slate-700 overflow-hidden">
+                          <div className="grid grid-cols-4 bg-slate-100 font-semibold text-center text-type-helper border-b border-slate-700 p-1.5">
+                            <div>Cán bộ coi thi 1</div>
+                            <div>Cán bộ coi thi 2</div>
+                            <div>Điểm bài thi (Số)</div>
+                            <div>Điểm (Chữ) &amp; Cán bộ chấm</div>
                           </div>
-                          <div className="grid grid-cols-4 h-12 text-center">
-                            <div className="border-r border-slate-400" />
-                            <div className="border-r border-slate-400" />
-                            <div className="border-r border-slate-400" />
-                            <div />
+                          <div className="grid grid-cols-4 h-12 text-center text-type-helper">
+                            <div className="border-r border-slate-700 pt-1 italic text-slate-500 text-type-badge">(Ký, ghi rõ họ tên)</div>
+                            <div className="border-r border-slate-700 pt-1 italic text-slate-500 text-type-badge">(Ký, ghi rõ họ tên)</div>
+                            <div className="border-r border-slate-700 flex items-center justify-center font-semibold text-type-card" />
+                            <div className="p-1 text-left italic text-slate-500 text-type-badge leading-tight">
+                              Điểm chữ: ..................<br />CB Chấm: ..................
+                            </div>
                           </div>
                         </div>
                       )}
@@ -1209,12 +1075,18 @@ export default function DocumentTemplatesPage() {
                           <div className="font-semibold">
                             Câu 2 (3.0 điểm): Cho biết đặc điểm của kiến trúc Microservices so với Monolith.
                           </div>
-                          <div className="grid grid-cols-2 gap-2 pl-4 pt-1.5 text-type-body">
-                            <div><strong>A.</strong> Dễ mở rộng độc lập từng module</div>
-                            <div><strong>B.</strong> Triển khai phức tạp hơn qua mạng</div>
-                            <div><strong>C.</strong> Độc lập về công nghệ và CSDL</div>
-                            <div><strong>D.</strong> Tất cả các phương án trên</div>
-                          </div>
+                          <table className="w-full border-collapse border-none mt-1 pl-4 text-type-body">
+                            <tbody>
+                              <tr>
+                                <td className="w-1/2 border-none py-0.5 pr-2"><span className="font-semibold">A.</span> Dễ mở rộng độc lập từng module</td>
+                                <td className="w-1/2 border-none py-0.5 pl-2"><span className="font-semibold">B.</span> Triển khai phức tạp hơn qua mạng</td>
+                              </tr>
+                              <tr>
+                                <td className="w-1/2 border-none py-0.5 pr-2"><span className="font-semibold">C.</span> Độc lập về công nghệ và CSDL</td>
+                                <td className="w-1/2 border-none py-0.5 pl-2"><span className="font-semibold">D.</span> Tất cả các phương án trên</td>
+                              </tr>
+                            </tbody>
+                          </table>
                         </div>
 
                         <div>

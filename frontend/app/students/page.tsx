@@ -57,7 +57,6 @@ export default function StudentsPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
   const [sortOrder, setSortOrder] = useState('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     studentCode: true,
     fullName: true,
@@ -358,66 +357,65 @@ export default function StudentsPage() {
     });
   };
 
-  const exportExcel = () => {
-    exportToFormattedExcel({
+  const prepareStudentExportData = () => {
+    const columns = [
+      { header: 'STT', align: 'center' as const, width: 6 },
+      { header: 'Mã SV', align: 'center' as const, width: 14 },
+      { header: 'Họ và tên', align: 'left' as const, width: 24 },
+      { header: 'Giới tính', align: 'center' as const, width: 10 },
+      { header: 'Ngày sinh', align: 'center' as const, width: 14 },
+      { header: 'Lớp sinh hoạt', align: 'left' as const, width: 16 },
+      { header: 'Email trường', align: 'left' as const, width: 26 },
+      { header: 'Số điện thoại', align: 'center' as const, width: 14 },
+    ];
+
+    const rows = filteredStudents.map((s, idx) => [
+      idx + 1,
+      s.studentCode,
+      s.fullName,
+      s.gender || 'Nam',
+      s.dateOfBirth ? new Date(s.dateOfBirth).toLocaleDateString('vi-VN') : '---',
+      s.class?.name || '---',
+      s.email,
+      s.phone || '---',
+    ]);
+
+    const metaInfo = [
+      { label: 'Tổng số sinh viên', value: String(students.length) },
+      { label: 'Sinh viên đang lọc', value: String(filteredStudents.length) },
+    ];
+
+    return { columns, rows, metaInfo };
+  };
+
+  const exportExcel = async () => {
+    const { columns, rows, metaInfo } = prepareStudentExportData();
+
+    await exportToFormattedExcel({
       filename: `Danh_sach_sinh_vien_${new Date().toISOString().slice(0, 10)}.xls`,
-      title: 'DANH SÁCH SINH VIÊN CHÍNH QUY',
-      subtitle: `Tổng số: ${filteredStudents.length} sinh viên`,
-      columns: [
-        { header: 'STT', align: 'center', width: 8 },
-        { header: 'Mã SV', align: 'center', width: 16 },
-        { header: 'Họ và tên', align: 'left', width: 25 },
-        { header: 'Giới tính', align: 'center', width: 12 },
-        { header: 'Ngày sinh', align: 'center', width: 14 },
-        { header: 'Email', align: 'left', width: 28 },
-        { header: 'Số điện thoại', align: 'center', width: 16 },
-        { header: 'Lớp sinh hoạt', align: 'left', width: 20 },
-      ],
-      rows: filteredStudents.map((s, idx) => [
-        idx + 1,
-        s.studentCode,
-        s.fullName,
-        s.gender || 'Nam',
-        s.dateOfBirth ? new Date(s.dateOfBirth).toLocaleDateString('vi-VN') : '',
-        s.email,
-        s.phone || '',
-        s.class?.name || '',
-      ]),
+      templateCode: 'STUDENT_DIRECTORY',
+      title: 'DANH SÁCH SINH VIÊN',
+      subtitle: 'Danh sách sinh viên trong cơ sở dữ liệu đào tạo',
+      columns,
+      rows,
+      metaInfo,
     });
   };
 
   const handlePrintReport = () => {
+    const { columns, rows, metaInfo } = prepareStudentExportData();
+
     printReport({
-      title: 'BÁO CÁO DANH SÁCH SINH VIÊN',
-      subtitle: 'Danh sách sinh viên trong cơ sở dữ liệu đào tạo',
-      facultyName: 'PHÒNG ĐÀO TẠO & CÔNG TÁC SINH VIÊN',
-      metaInfo: [
-        { label: 'Tổng số sinh viên', value: String(students.length) },
-        { label: 'Sinh viên đang lọc', value: String(filteredStudents.length) },
-      ],
-      columns: [
-        { header: 'STT', width: '40px' },
-        { header: 'Mã SV', width: '100px', align: 'center' },
-        { header: 'Họ và Tên', width: '180px' },
-        { header: 'Giới tính', width: '70px', align: 'center' },
-        { header: 'Ngày sinh', width: '100px', align: 'center' },
-        { header: 'Lớp sinh hoạt', width: '110px', align: 'center' },
-        { header: 'Email trường', width: '180px' },
-      ],
-      rows: filteredStudents.map((s, idx) => [
-        idx + 1,
-        s.studentCode,
-        s.fullName,
-        s.gender || 'Nam',
-        s.dateOfBirth ? new Date(s.dateOfBirth).toLocaleDateString('vi-VN') : '---',
-        s.class?.name || '---',
-        s.email,
-      ]),
-      signers: [
-        { title: 'NGƯỜI LẬP DANH SÁCH', subtitle: '(Ký, ghi rõ họ tên)' },
-        { title: 'TRƯỞNG PHÒNG ĐÀO TẠO & CTSV', subtitle: '(Ký, đóng dấu)' },
-      ],
       templateCode: 'STUDENT_DIRECTORY',
+      title: 'DANH SÁCH SINH VIÊN',
+      subtitle: 'Danh sách sinh viên trong cơ sở dữ liệu đào tạo',
+      metaInfo,
+      columns: columns.map((c) => ({
+        header: c.header,
+        width: typeof c.width === 'number' ? `${c.width * 10}px` : c.width,
+        align: c.align,
+      })),
+      rows,
     });
   };
 
@@ -518,8 +516,6 @@ export default function StudentsPage() {
               totalCount={filteredStudents.length}
               sortOrder={sortOrder}
               onSortChange={setSortOrder}
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
               onRefresh={handleRefresh}
@@ -543,7 +539,6 @@ export default function StudentsPage() {
           <StudentTable
             students={paginatedStudents}
             selected={selected}
-            viewMode={viewMode}
             visibleColumns={visibleColumns}
             onSelect={(id, checked) =>
               setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))

@@ -427,9 +427,10 @@ function ActivityLogsContent() {
             l.entityId || '',
             l.description,
         ]);
-        exportToFormattedExcel({
+        await exportToFormattedExcel({
             filename: `Nhat_ky_he_thong_${new Date().toISOString().split('T')[0]}.xls`,
-            title: 'BÁO CÁO NHẬT KÝ HOẠT ĐỘNG HỆ THỐNG',
+            templateCode: 'SYSTEM_AUDIT_LOG',
+            title: 'NHẬT KÝ HOẠT ĐỘNG HỆ THỐNG',
             subtitle: `Bộ lọc: ${filterDesc} (Tổng số: ${allData.length} thao tác)`,
             columns,
             rows,
@@ -591,8 +592,9 @@ function ActivityLogsContent() {
             e.route || '—',
             e.legalHold ? 'Đã khóa' : 'Không',
         ]);
-        exportToFormattedExcel({
+        await exportToFormattedExcel({
             filename: `Kiem_toan_an_ninh_${new Date().toISOString().split('T')[0]}.xls`,
+            templateCode: 'SYSTEM_AUDIT_LOG',
             title: 'BÁO CÁO KIỂM TOÁN AN NINH HỆ THỐNG',
             subtitle: `Bộ lọc: ${filterDesc} (Tổng số: ${allData.length} sự kiện | Chuỗi toàn vẹn: ${secIntegrity?.valid ? 'Hợp lệ' : 'Đang xác thực'})`,
             columns,

@@ -26,6 +26,7 @@ import { ExamSupervisorBulkAction } from '../../components/exam-supervisors/Exam
 import { InlineCreateAssignmentPanel } from '../../components/exam-supervisors/InlineCreateAssignmentPanel';
 import { InlineAutoProposalPanel } from '../../components/exam-supervisors/InlineAutoProposalPanel';
 import { SchedulePickerModal } from '../../components/exam-supervisors/SchedulePickerModal';
+import { ReviewSupervisorChangeModal } from '../../components/exam-supervisors/ReviewSupervisorChangeModal';
 
 function getTeacherInitials(fullName?: string): string {
   if (!fullName) return 'GV';
@@ -56,6 +57,7 @@ export default function ExamSupervisorsPage() {
 
   const [allScheduleSupervisors, setAllScheduleSupervisors] = useState<any[]>(_cache?.supervisors ?? []);
   const [changeRequests, setChangeRequests] = useState<any[]>([]);
+  const [reviewModalRequest, setReviewModalRequest] = useState<any | null>(null);
   const [drawerSupervisor, setDrawerSupervisor] = useState<any | null>(null);
 
   // Search & Filter State
@@ -68,7 +70,6 @@ export default function ExamSupervisorsPage() {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [sortOrder, setSortOrder] = useState<string>('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     code: true,
     name: true,
@@ -427,27 +428,30 @@ export default function ExamSupervisorsPage() {
 
     await exportToFormattedExcel({
       filename: `Phan_Cong_Giam_Thi_${selectedSchedule?.subject?.subjectCode || 'CaThi'}_${new Date().toISOString().slice(0, 10)}.xlsx`,
+      templateCode: 'SUPERVISOR_ASSIGNMENT',
       title: 'DANH SÁCH PHÂN CÔNG CÁN BỘ COI THI',
       subtitle: `Ca thi: ${selectedSchedule?.subject?.subjectName || ''} (${selectedSchedule?.subject?.subjectCode || ''}) - Ngày thi: ${selectedSchedule?.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : '---'} - Khung giờ: ${selectedSchedule?.startTime || ''} - ${selectedSchedule?.endTime || ''}`,
       columns: [
-        { header: 'Mã Cán Bộ', width: 14 },
-        { header: 'Họ và Tên Giảng Viên', width: 26 },
-        { header: 'Học Vị', width: 12 },
-        { header: 'Phòng Thi', width: 18 },
-        { header: 'Nhiệm Vụ', width: 18 },
-        { header: 'Trạng Thái Xác Nhận', width: 20 },
-        { header: 'Ghi Chú', width: 24 },
+        { header: 'STT', align: 'center', width: 6 },
+        { header: 'Mã Cán Bộ', align: 'center', width: 14 },
+        { header: 'Họ và Tên Giảng Viên', width: 24 },
+        { header: 'Học Vị', align: 'center', width: 10 },
+        { header: 'Phòng Thi', align: 'center', width: 16 },
+        { header: 'Nhiệm Vụ', align: 'center', width: 18 },
+        { header: 'Trạng Thái', align: 'center', width: 16 },
+        { header: 'Ghi Chú', width: 20 },
       ],
-      rows: filteredSupervisors.map((s) => {
+      rows: filteredSupervisors.map((s, idx) => {
         const roomObj = s.examScheduleRoom?.room || s.examScheduleRoom?.examRoom;
         const rName = roomObj?.roomName || roomObj?.name || roomObj?.roomCode || `Phòng #${s.examScheduleRoomId}`;
         const statusLabel = ({ CONFIRMED: 'Đã xác nhận', CHANGE_REQUESTED: 'Xin đổi ca', COMPLETED: 'Hoàn thành', ABSENT: 'Vắng mặt', PENDING: 'Chờ phản hồi', REJECTED: 'Đã từ chối' } as Record<string, string>)[s.status || 'PENDING'] || 'Chờ phản hồi';
         return [
+          idx + 1,
           s.teacher?.teacherCode || '',
           s.teacher?.fullName || '',
-          s.teacher?.degree || 'TS',
+          s.teacher?.degree || 'ThS',
           rName,
-          s.role === 'SUPERVISOR_1' ? 'Giám thị 1 (Chính)' : 'Giám thị 2 (Phụ)',
+          s.role === 'SUPERVISOR_1' ? 'Cán bộ coi thi 1' : 'Cán bộ coi thi 2',
           statusLabel,
           s.note || '',
         ];
@@ -528,8 +532,9 @@ export default function ExamSupervisorsPage() {
                     <p className="text-type-helper text-slate-700 dark:text-slate-300">Phòng {request.examSupervisor?.examScheduleRoom?.room?.roomCode} — Lý do: {request.reason}</p>
                   </div>
                   <div className="flex shrink-0 gap-2">
-                    <Button variant="secondary" size="sm" onClick={() => reviewChangeRequest(request, false)}>Từ chối</Button>
-                    <Button variant="primary" size="sm" onClick={() => reviewChangeRequest(request, true)}>Chọn người thay</Button>
+                    <Button variant="primary" size="sm" onClick={() => setReviewModalRequest(request)} leftIcon={<ArrowLeftRight className="h-3.5 w-3.5" />}>
+                      Xử lý yêu cầu
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -764,8 +769,6 @@ export default function ExamSupervisorsPage() {
               totalCount={filteredSupervisors.length}
               sortOrder={sortOrder}
               onSortChange={(val) => setSortOrder(val)}
-              viewMode={viewMode}
-              onViewModeChange={(m) => setViewMode(m)}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
               onRefresh={async () => {
@@ -778,7 +781,7 @@ export default function ExamSupervisorsPage() {
           </div>
         </div>
 
-        {/* ── 6. Main Data Table / Grid / Compact ── */}
+        {/* ── 6. Main Data Table ── */}
         {loading ? (
           <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6">
             {[1, 2, 3, 4, 5].map((i) => (
@@ -793,7 +796,6 @@ export default function ExamSupervisorsPage() {
           <ExamSupervisorTable
             supervisors={paginatedSupervisors}
             selected={selected}
-            viewMode={viewMode}
             visibleColumns={visibleColumns}
             onSelect={(id, checked) =>
               setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))
@@ -902,6 +904,17 @@ export default function ExamSupervisorsPage() {
           { label: 'Khung giờ thi', value: `${drawerSupervisor?.examScheduleRoom?.examSchedule?.startTime || selectedSchedule?.startTime || ''} - ${drawerSupervisor?.examScheduleRoom?.examSchedule?.endTime || selectedSchedule?.endTime || ''}`, icon: Clock },
           { label: 'Trạng thái', value: drawerSupervisor?.status === 'CONFIRMED' ? 'Đã xác nhận' : drawerSupervisor?.status === 'CHANGE_REQUESTED' ? 'Đề nghị thay đổi' : 'Đã phân công', icon: ShieldCheck },
         ]}
+      />
+
+      {/* ── Review Supervisor Change Request Modal ── */}
+      <ReviewSupervisorChangeModal
+        isOpen={Boolean(reviewModalRequest)}
+        request={reviewModalRequest}
+        onClose={() => setReviewModalRequest(null)}
+        onSuccess={(msg) => {
+          setToast({ message: msg, type: 'success' });
+          void fetchData(true);
+        }}
       />
     </>
   );

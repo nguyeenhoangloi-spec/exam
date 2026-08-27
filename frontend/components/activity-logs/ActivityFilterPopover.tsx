@@ -162,11 +162,10 @@ export function ActivityFilterPopover({
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         onClick={() => setIsOpen(!isOpen)}
-        className={`group relative flex h-7 w-7 items-center justify-center rounded-xl transition-colors cursor-pointer select-none ${
-          isOpen || activeFilterCount > 0
-            ? 'text-blue-600 dark:text-blue-400'
-            : 'text-slate-400 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400'
-        }`}
+        className={`group relative flex h-7 w-7 items-center justify-center rounded-xl transition-colors cursor-pointer select-none ${isOpen || activeFilterCount > 0
+          ? 'text-blue-600 dark:text-blue-400'
+          : 'text-slate-400 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400'
+          }`}
         title="Bộ lọc nâng cao"
       >
         <SlidersHorizontal className="h-4 w-4 shrink-0 transition-transform duration-150 group-hover:scale-110" />
@@ -247,11 +246,10 @@ export function ActivityFilterPopover({
                       key={cat.id}
                       type="button"
                       onClick={() => setActiveCategory(cat.id)}
-                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-type-body-sm font-medium transition-all duration-150 cursor-pointer border ${
-                        isActive
-                          ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold shadow-2xs'
-                          : 'border-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2.5 text-type-body-sm font-medium transition-all duration-150 cursor-pointer border ${isActive
+                        ? 'border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold shadow-2xs'
+                        : 'border-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
+                        }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <IconComp className={`h-4 w-4 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`} />
@@ -297,11 +295,10 @@ export function ActivityFilterPopover({
                           onClick={() => {
                             onEntityFilterChange('');
                           }}
-                          className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                            !entityFilter
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                              : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30'
-                          }`}
+                          className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${!entityFilter
+                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30'
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-type-body-sm font-semibold ${!entityFilter ? 'text-blue-700 dark:text-blue-300' : 'text-slate-900 dark:text-slate-100'}`}>
@@ -319,11 +316,10 @@ export function ActivityFilterPopover({
                           onClick={() => {
                             onEntityFilterChange('BACKUP');
                           }}
-                          className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                            entityFilter === 'BACKUP'
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                              : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30'
-                          }`}
+                          className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${entityFilter === 'BACKUP'
+                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30'
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-type-body-sm font-semibold ${entityFilter === 'BACKUP' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-900 dark:text-slate-100'}`}>
@@ -341,11 +337,10 @@ export function ActivityFilterPopover({
                           onClick={() => {
                             onEntityFilterChange('ACCESS_CONTROL');
                           }}
-                          className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                            entityFilter === 'ACCESS_CONTROL'
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                              : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30'
-                          }`}
+                          className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${entityFilter === 'ACCESS_CONTROL'
+                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30'
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-type-body-sm font-semibold ${entityFilter === 'ACCESS_CONTROL' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-900 dark:text-slate-100'}`}>
@@ -366,11 +361,10 @@ export function ActivityFilterPopover({
                             onSecCategoryChange('');
                             onSecOutcomeChange('');
                           }}
-                          className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                            !secCategory && !secOutcome
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                              : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 hover:bg-blue-50/30'
-                          }`}
+                          className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${!secCategory && !secOutcome
+                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 hover:bg-blue-50/30'
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-type-body-sm font-semibold ${!secCategory && !secOutcome ? 'text-blue-700 dark:text-blue-300' : 'text-slate-900 dark:text-slate-100'}`}>
@@ -389,11 +383,10 @@ export function ActivityFilterPopover({
                             onSecCategoryChange('');
                             onSecOutcomeChange('DENIED');
                           }}
-                          className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${
-                            secOutcome === 'DENIED'
-                              ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
-                              : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 hover:bg-blue-50/30'
-                          }`}
+                          className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition-all duration-150 cursor-pointer ${secOutcome === 'DENIED'
+                            ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-900 dark:text-blue-100 shadow-2xs'
+                            : 'border-slate-200/70 dark:border-slate-800 hover:border-blue-200 hover:bg-blue-50/30'
+                            }`}
                         >
                           <div className="min-w-0 pr-2">
                             <div className={`text-type-body-sm font-semibold ${secOutcome === 'DENIED' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-900 dark:text-slate-100'}`}>
@@ -420,11 +413,10 @@ export function ActivityFilterPopover({
                     <button
                       type="button"
                       onClick={() => onEntityFilterChange('')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body-sm font-medium transition cursor-pointer text-left ${
-                        !entityFilter
-                          ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200/60'
-                          : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body-sm font-medium transition cursor-pointer text-left ${!entityFilter
+                        ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200/60'
+                        : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                        }`}
                     >
                       <span>Tất cả thực thể</span>
                       {!entityFilter && <Check className="h-3.5 w-3.5 text-blue-600 shrink-0" />}
@@ -437,11 +429,10 @@ export function ActivityFilterPopover({
                           key={ent}
                           type="button"
                           onClick={() => onEntityFilterChange(ent)}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body-sm font-medium transition cursor-pointer text-left ${
-                            isSelected
-                              ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200/60'
-                              : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
-                          }`}
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body-sm font-medium transition cursor-pointer text-left ${isSelected
+                            ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200/60'
+                            : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                            }`}
                         >
                           <span className="truncate">{getEntityLabel(ent)}</span>
                           {isSelected && <Check className="h-3.5 w-3.5 text-blue-600 shrink-0" />}
@@ -461,11 +452,10 @@ export function ActivityFilterPopover({
                     <button
                       type="button"
                       onClick={() => onSecCategoryChange('')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body-sm font-medium transition cursor-pointer text-left ${
-                        !secCategory
-                          ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200/60'
-                          : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body-sm font-medium transition cursor-pointer text-left ${!secCategory
+                        ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200/60'
+                        : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                        }`}
                     >
                       <span>Tất cả nhóm an ninh</span>
                       {!secCategory && <Check className="h-3.5 w-3.5 text-blue-600 shrink-0" />}
@@ -478,11 +468,10 @@ export function ActivityFilterPopover({
                           key={key}
                           type="button"
                           onClick={() => onSecCategoryChange(key)}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body-sm font-medium transition cursor-pointer text-left ${
-                            isSelected
-                              ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200/60'
-                              : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
-                          }`}
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body-sm font-medium transition cursor-pointer text-left ${isSelected
+                            ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200/60'
+                            : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                            }`}
                         >
                           <span className="truncate">{label}</span>
                           {isSelected && <Check className="h-3.5 w-3.5 text-blue-600 shrink-0" />}
@@ -502,11 +491,10 @@ export function ActivityFilterPopover({
                     <button
                       type="button"
                       onClick={() => onSecOutcomeChange('')}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body-sm font-medium transition cursor-pointer text-left ${
-                        !secOutcome
-                          ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200/60'
-                          : 'hover:bg-slate-100 text-slate-700 dark:text-slate-300'
-                      }`}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body-sm font-medium transition cursor-pointer text-left ${!secOutcome
+                        ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200/60'
+                        : 'hover:bg-slate-100 text-slate-700 dark:text-slate-300'
+                        }`}
                     >
                       <span>Mọi kết quả</span>
                       {!secOutcome && <Check className="h-3.5 w-3.5 text-blue-600 shrink-0" />}
@@ -519,11 +507,10 @@ export function ActivityFilterPopover({
                           key={key}
                           type="button"
                           onClick={() => onSecOutcomeChange(key)}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body-sm font-medium transition cursor-pointer text-left ${
-                            isSelected
-                              ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 font-semibold border border-blue-200/60'
-                              : 'hover:bg-slate-100 text-slate-700 dark:text-slate-300'
-                          }`}
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-type-body-sm font-medium transition cursor-pointer text-left ${isSelected
+                            ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 font-semibold border border-blue-200/60'
+                            : 'hover:bg-slate-100 text-slate-700 dark:text-slate-300'
+                            }`}
                         >
                           <span>{label}</span>
                           {isSelected && <Check className="h-3.5 w-3.5 text-blue-600 shrink-0" />}

@@ -41,7 +41,6 @@ export default function ExamPeriodsPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
   const [sortOrder, setSortOrder] = useState('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     name: true,
     semester: true,
@@ -239,15 +238,15 @@ export default function ExamPeriodsPage() {
     });
   };
 
-  const exportExcel = () => {
+  const preparePeriodExportData = () => {
     const columns = [
-      { header: 'STT', width: 8, align: 'center' as const },
-      { header: 'Tên kỳ thi', width: 30 },
+      { header: 'STT', width: 6, align: 'center' as const },
+      { header: 'Tên Kỳ thi', width: 28, align: 'left' as const },
       { header: 'Học kỳ', width: 12, align: 'center' as const },
-      { header: 'Năm học', width: 15, align: 'center' as const },
-      { header: 'Ngày bắt đầu', width: 15, align: 'center' as const },
-      { header: 'Ngày kết thúc', width: 15, align: 'center' as const },
-      { header: 'Trạng thái', width: 15, align: 'center' as const },
+      { header: 'Năm học', width: 14, align: 'center' as const },
+      { header: 'Ngày bắt đầu', width: 14, align: 'center' as const },
+      { header: 'Ngày kết thúc', width: 14, align: 'center' as const },
+      { header: 'Trạng thái', width: 16, align: 'center' as const },
     ];
 
     const rows = filteredPeriods.map((p, idx) => [
@@ -255,50 +254,48 @@ export default function ExamPeriodsPage() {
       p.name,
       p.semester,
       p.schoolYear,
-      p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : '',
-      p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : '',
+      p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : '---',
+      p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : '---',
       p.status === 'COMPLETED' ? 'Đã hoàn thành' : p.status === 'ONGOING' ? 'Đang diễn ra' : 'Sắp diễn ra',
     ]);
 
-    exportToFormattedExcel({
+    const metaInfo = [
+      { label: 'Tổng số kỳ thi', value: String(periods.length) },
+      { label: 'Sắp diễn ra', value: String(kpiData.upcoming) },
+      { label: 'Kỳ thi đang lọc', value: String(filteredPeriods.length) },
+    ];
+
+    return { columns, rows, metaInfo };
+  };
+
+  const exportExcel = async () => {
+    const { columns, rows, metaInfo } = preparePeriodExportData();
+
+    await exportToFormattedExcel({
       filename: 'Danh_sach_ky_thi.xls',
-      title: 'DANH SÁCH KỲ THI HỆ THỐNG',
-      subtitle: 'Trích xuất dữ liệu danh mục kỳ thi',
+      templateCode: 'EXAM_PERIOD_DIRECTORY',
+      title: 'DANH SÁCH KỲ THI',
+      subtitle: 'Danh sách tổng hợp các kỳ thi học kỳ',
       columns,
       rows,
+      metaInfo,
     });
   };
 
   const handlePrintReport = () => {
+    const { columns, rows, metaInfo } = preparePeriodExportData();
+
     printReport({
-      title: 'BÁO CÁO DANH SÁCH KỲ THI',
-      subtitle: 'Danh sách tổng hợp các kỳ thi',
-      facultyName: 'HỘI ĐỒNG THI & ĐẢM BẢO CHẤT LƯỢNG',
-      metaInfo: [
-        { label: 'Tổng số kỳ thi', value: String(periods.length) },
-        { label: 'Sắp diễn ra', value: String(kpiData.upcoming) },
-      ],
-      columns: [
-        { header: 'STT', width: '40px' },
-        { header: 'Tên Kỳ thi', width: '220px' },
-        { header: 'Học kỳ', width: '80px', align: 'center' },
-        { header: 'Năm học', width: '100px', align: 'center' },
-        { header: 'Thời gian', width: '160px', align: 'center' },
-        { header: 'Trạng thái', width: '110px', align: 'center' },
-      ],
-      rows: filteredPeriods.map((p, idx) => [
-        idx + 1,
-        p.name,
-        p.semester,
-        p.schoolYear,
-        `${p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : ''} - ${p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : ''}`,
-        p.status === 'COMPLETED' ? 'Đã hoàn thành' : 'Sắp diễn ra',
-      ]),
-      signers: [
-        { title: 'THƯ KÝ HỘI ĐỒNG THI', subtitle: '(Ký, ghi rõ họ tên)' },
-        { title: 'CHỦ TỊCH HỘI ĐỒNG THI', subtitle: '(Ký, đóng dấu)' },
-      ],
       templateCode: 'EXAM_PERIOD_DIRECTORY',
+      title: 'DANH SÁCH KỲ THI',
+      subtitle: 'Danh sách tổng hợp các kỳ thi học kỳ',
+      metaInfo,
+      columns: columns.map((c) => ({
+        header: c.header,
+        width: typeof c.width === 'number' ? `${c.width * 10}px` : c.width,
+        align: c.align,
+      })),
+      rows,
     });
   };
 
@@ -400,8 +397,6 @@ export default function ExamPeriodsPage() {
               totalCount={filteredPeriods.length}
               sortOrder={sortOrder}
               onSortChange={setSortOrder}
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
               onRefresh={fetchData}
@@ -425,7 +420,6 @@ export default function ExamPeriodsPage() {
           <ExamPeriodTable
             periods={paginatedPeriods}
             selected={selected}
-            viewMode={viewMode}
             visibleColumns={visibleColumns}
             onSelect={(id, checked) =>
               setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))

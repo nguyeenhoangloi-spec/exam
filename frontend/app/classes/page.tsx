@@ -54,7 +54,6 @@ export default function ClassesPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
   const [sortOrder, setSortOrder] = useState('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     code: true,
     name: true,
@@ -442,8 +441,6 @@ export default function ClassesPage() {
               totalCount={filteredClasses.length}
               sortOrder={sortOrder}
               onSortChange={setSortOrder}
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
               onRefresh={handleRefresh}
@@ -467,7 +464,6 @@ export default function ClassesPage() {
           <ClassTable
             classes={paginatedClasses}
             selected={selected}
-            viewMode={viewMode}
             visibleColumns={visibleColumns}
             onSelect={(id, checked) =>
               setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))

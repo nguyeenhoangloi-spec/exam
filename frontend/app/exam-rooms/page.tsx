@@ -53,7 +53,6 @@ export default function ExamRoomsPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
   const [sortOrder, setSortOrder] = useState('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     code: true,
     name: true,
@@ -266,15 +265,15 @@ export default function ExamRoomsPage() {
     });
   };
 
-  const exportExcel = () => {
+  const prepareRoomExportData = () => {
     const columns = [
-      { header: 'STT', width: 8, align: 'center' as const },
-      { header: 'Mã phòng', width: 15 },
-      { header: 'Tên phòng thi', width: 25 },
+      { header: 'STT', width: 6, align: 'center' as const },
+      { header: 'Mã phòng', width: 14, align: 'center' as const },
+      { header: 'Tên phòng thi', width: 24, align: 'left' as const },
       { header: 'Sức chứa', width: 12, align: 'center' as const },
-      { header: 'Vị trí / Tòa nhà', width: 20 },
-      { header: 'Loại phòng', width: 20, align: 'center' as const },
-      { header: 'Trạng thái', width: 15, align: 'center' as const },
+      { header: 'Tòa nhà', width: 16, align: 'center' as const },
+      { header: 'Loại phòng', width: 18, align: 'center' as const },
+      { header: 'Trạng thái', width: 14, align: 'center' as const },
     ];
 
     const rows = filteredRooms.map((r, idx) => [
@@ -287,45 +286,43 @@ export default function ExamRoomsPage() {
       r.status === 'MAINTENANCE' ? 'Bảo trì' : 'Sẵn sàng',
     ]);
 
-    exportToFormattedExcel({
+    const metaInfo = [
+      { label: 'Tổng số phòng', value: String(rooms.length) },
+      { label: 'Tổng sức chứa', value: `${kpiData.totalCapacity} chỗ` },
+      { label: 'Phòng đang lọc', value: String(filteredRooms.length) },
+    ];
+
+    return { columns, rows, metaInfo };
+  };
+
+  const exportExcel = async () => {
+    const { columns, rows, metaInfo } = prepareRoomExportData();
+
+    await exportToFormattedExcel({
       filename: 'Danh_sach_phong_thi.xls',
+      templateCode: 'EXAM_ROOM_DIRECTORY',
       title: 'DANH SÁCH PHÒNG THI',
-      subtitle: 'Trích xuất dữ liệu danh mục phòng thi',
+      subtitle: 'Danh mục phòng thi và sức chứa tiêu chuẩn',
       columns,
       rows,
+      metaInfo,
     });
   };
 
   const handlePrintReport = () => {
+    const { columns, rows, metaInfo } = prepareRoomExportData();
+
     printReport({
-      title: 'BÁO CÁO DANH SÁCH PHÒNG THI',
-      subtitle: 'Danh sách phòng thi và sức chứa máy tính',
-      facultyName: 'HỘI ĐỒNG KHẢO THÍ & ĐẢM BẢO CHẤT LƯỢNG',
-      metaInfo: [
-        { label: 'Tổng số phòng', value: String(rooms.length) },
-        { label: 'Tổng sức chứa', value: `${kpiData.totalCapacity} chỗ` },
-      ],
-      columns: [
-        { header: 'STT', width: '40px' },
-        { header: 'Mã Phòng', width: '100px' },
-        { header: 'Tên phòng thi', width: '200px' },
-        { header: 'Sức chứa', width: '90px', align: 'center' },
-        { header: 'Tòa nhà', width: '100px', align: 'center' },
-        { header: 'Loại phòng', width: '120px', align: 'center' },
-      ],
-      rows: filteredRooms.map((r, idx) => [
-        idx + 1,
-        r.roomCode || r.code || '',
-        r.roomName || r.name || '',
-        `${r.capacity ?? 0} chỗ`,
-        r.building || r.location || '',
-        r.roomType === 'COMPUTER_LAB' ? 'Phòng máy' : 'Phòng lý thuyết',
-      ]),
-      signers: [
-        { title: 'CÁN BỘ QUẢN LÝ PHÒNG THI', subtitle: '(Ký, ghi rõ họ tên)' },
-        { title: 'TRƯỞNG BAN KHẢO THÍ', subtitle: '(Ký, đóng dấu)' },
-      ],
       templateCode: 'EXAM_ROOM_DIRECTORY',
+      title: 'DANH SÁCH PHÒNG THI',
+      subtitle: 'Danh mục phòng thi và sức chứa tiêu chuẩn',
+      metaInfo,
+      columns: columns.map((c) => ({
+        header: c.header,
+        width: typeof c.width === 'number' ? `${c.width * 10}px` : c.width,
+        align: c.align,
+      })),
+      rows,
     });
   };
 
@@ -427,8 +424,6 @@ export default function ExamRoomsPage() {
               totalCount={filteredRooms.length}
               sortOrder={sortOrder}
               onSortChange={setSortOrder}
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
               onRefresh={handleRefresh}
@@ -452,7 +447,6 @@ export default function ExamRoomsPage() {
           <ExamRoomTable
             rooms={paginatedRooms}
             selected={selected}
-            viewMode={viewMode}
             visibleColumns={visibleColumns}
             onSelect={(id, checked) =>
               setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))

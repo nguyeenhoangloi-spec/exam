@@ -103,11 +103,16 @@ function computeScheduleStatus(s: {
     if (parts.length < 3) return (rawStatus as any) || 'UPCOMING';
     const [y, m, d] = parts;
 
-    const [startH, startM] = (s.startTime || '00:00').split(':').map(Number);
-    const [endH, endM] = (s.endTime || '23:59').split(':').map(Number);
+    const startParts = (s.startTime || '00:00').split(':').map((v) => parseInt(v, 10));
+    const endParts = (s.endTime || '23:59').split(':').map((v) => parseInt(v, 10));
 
-    const startDateTime = new Date(y, m - 1, d, startH || 0, startM || 0);
-    const endDateTime = new Date(y, m - 1, d, endH || 23, endM || 59);
+    const startH = Number.isFinite(startParts[0]) ? startParts[0] : 0;
+    const startM = Number.isFinite(startParts[1]) ? startParts[1] : 0;
+    const endH = Number.isFinite(endParts[0]) ? endParts[0] : 23;
+    const endM = Number.isFinite(endParts[1]) ? endParts[1] : 59;
+
+    const startDateTime = new Date(y, m - 1, d, startH, startM, 0, 0);
+    const endDateTime = new Date(y, m - 1, d, endH, endM, 0, 0);
 
     if (now < startDateTime) {
       return 'UPCOMING';
@@ -372,7 +377,6 @@ export default function ExamReportsPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [sortOrder, setSortOrder] = useState('score_desc');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     studentCode: true,
     fullName: true,
@@ -582,28 +586,29 @@ export default function ExamReportsPage() {
     setToast({ message: 'Đã xuất file Bảng điểm CSV thành công!', type: 'success' });
   };
 
-  const exportSummaryExcel = () => {
+  const exportSummaryExcel = async () => {
     if (!summary) {
       setToast({ message: 'Chưa có dữ liệu tổng hợp để xuất.', type: 'error' });
       return;
     }
-    exportToFormattedExcel({
-      filename: `Bao_Cao_Tong_Hop_${new Date().toISOString().slice(0, 10)}.xls`,
-      title: 'BÁO CÁO THỐNG KÊ KẾT QUẢ THI',
-      subtitle: `Kỳ thi: ${summary.stats.totalExams} · Ca thi: ${summary.stats.totalSchedules}`,
+    await exportToFormattedExcel({
+      filename: `Bao_Cao_Tong_Ket_Khao_Thi_${new Date().toISOString().slice(0, 10)}.xls`,
+      templateCode: 'EXAM_SUMMARY_REPORT',
+      title: 'BÁO CÁO TỔNG KẾT KHẢO THÍ',
+      subtitle: `Kỳ thi Học kỳ 1 - Năm học 2025 - 2026 · Tổng số ca thi: ${summary.stats.totalSchedules}`,
       columns: [
-        { header: 'STT', align: 'center', width: 8 },
-        { header: 'Kỳ thi', width: 28 },
+        { header: 'STT', align: 'center', width: 6 },
+        { header: 'Kỳ thi', width: 22 },
         { header: 'Mã môn', width: 14 },
-        { header: 'Môn học', width: 28 },
-        { header: 'Khoa', width: 24 },
+        { header: 'Môn học', width: 24 },
+        { header: 'Khoa', width: 20 },
         { header: 'Ngày thi', align: 'center', width: 14 },
-        { header: 'Được gán', align: 'center', width: 14 },
-        { header: 'Đã nộp', align: 'center', width: 14 },
-        { header: 'Vắng', align: 'center', width: 14 },
-        { header: 'Chưa chấm', align: 'center', width: 14 },
-        { header: 'Bất thường', align: 'center', width: 14 },
-        { header: 'Điểm TB', align: 'center', width: 14 },
+        { header: 'Được gán', align: 'center', width: 12 },
+        { header: 'Đã nộp', align: 'center', width: 12 },
+        { header: 'Vắng', align: 'center', width: 10 },
+        { header: 'Chưa chấm', align: 'center', width: 12 },
+        { header: 'Bất thường', align: 'center', width: 12 },
+        { header: 'Điểm TB', align: 'center', width: 12 },
       ],
       rows: summary.schedules.map((row, index) => [
         index + 1, row.periodName, row.subjectCode, row.subjectName, row.departmentName,
@@ -1017,13 +1022,11 @@ export default function ExamReportsPage() {
                 </div>
               </div>
 
-              {/* Right: Sort, Columns, ViewMode, Refresh */}
+              {/* Right: Sort, Columns, Refresh */}
               <ExamReportTableToolbar
                 totalCount={filteredCandidates.length}
                 sortOrder={sortOrder}
                 onSortChange={setSortOrder}
-                viewMode={viewMode}
-                onViewModeChange={setViewMode}
                 visibleColumns={visibleColumns}
                 onColumnToggle={handleColumnToggle}
                 onRefresh={handleRefresh}
@@ -1060,7 +1063,6 @@ export default function ExamReportsPage() {
               <ExamReportTable
                 candidates={paginatedCandidates}
                 selected={selected}
-                viewMode={viewMode}
                 visibleColumns={visibleColumns}
                 onSelect={(id, checked) =>
                   setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))

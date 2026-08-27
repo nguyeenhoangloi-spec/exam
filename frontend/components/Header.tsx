@@ -250,7 +250,7 @@ export const Header: React.FC<HeaderProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [user?.role, pathname]);
+  }, [pathname, readNotificationIds, user?.role]);
 
   useEffect(() => {
     setOpenPanel(null);

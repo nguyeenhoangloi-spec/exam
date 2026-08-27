@@ -17,12 +17,17 @@ export class ExamArrangementController {
   @Post('auto-arrange')
   autoArrange(@Request() req: any, @Body() body: AutoArrangeDto) {
     if (body.confirm !== true) throw new BadRequestException('Phải xem trước và xác nhận phương án trước khi lưu.');
-    return this.examArrangementService.autoArrange(req.user, body.examScheduleId, body.roomIds);
+    return this.examArrangementService.autoArrange(req.user, body.examScheduleId, body.roomIds, true, body.classIds);
   }
 
   @Post('preview')
   preview(@Request() req: any, @Body() body: AutoArrangeDto) {
-    return this.examArrangementService.preview(req.user, body.examScheduleId, body.roomIds);
+    return this.examArrangementService.preview(req.user, body.examScheduleId, body.roomIds, body.classIds);
+  }
+
+  @Get('classes')
+  getScheduleClasses(@Query('examScheduleId', ParseIntPipe) examScheduleId: number) {
+    return this.examArrangementService.getScheduleClasses(examScheduleId);
   }
 
   @Get('result')

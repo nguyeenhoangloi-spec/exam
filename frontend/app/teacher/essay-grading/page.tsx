@@ -89,7 +89,6 @@ function TeacherEssayGradingContent() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
   const [sortOrder, setSortOrder] = useState<string>('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [openColumnMenu, setOpenColumnMenu] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     student: true,
@@ -742,30 +741,24 @@ function TeacherEssayGradingContent() {
                     </span>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (statusFilter !== 'ALL' || subjectFilter !== 'ALL' || dateFilter !== 'ALL' || scheduleFilter !== 'ALL' || searchQuery) {
-                        setStatusFilter('ALL');
-                        setSubjectFilter('ALL');
-                        setDateFilter('ALL');
-                        setScheduleFilter('ALL');
-                        setSearchQuery('');
-                      } else {
-                        loadAssignments();
-                      }
-                    }}
-                    disabled={loading}
-                    className="p-1 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
-                    title={
-                      statusFilter !== 'ALL' || subjectFilter !== 'ALL' || dateFilter !== 'ALL' || scheduleFilter !== 'ALL' || searchQuery
-                        ? 'Đặt lại bộ lọc'
-                        : 'Làm mới danh sách bài thi'
-                    }
-                  >
-                    <RotateCcw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
-                  </button>
-                </div>
+                    {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || dateFilter !== 'ALL' || scheduleFilter !== 'ALL' || searchQuery) && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStatusFilter('ALL');
+                          setSubjectFilter('ALL');
+                          setDateFilter('ALL');
+                          setScheduleFilter('ALL');
+                          setSearchQuery('');
+                        }}
+                        disabled={loading}
+                        className="p-1 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                        title="Đặt lại bộ lọc"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
 
                 {/* Search Bar */}
                 <div className="relative w-full">

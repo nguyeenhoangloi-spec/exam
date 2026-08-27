@@ -35,6 +35,36 @@ export class ExamSchedulesService {
       });
   }
 
+  private getEffectiveScheduleStatus(schedule: { examDate: Date; startTime: string; endTime: string; status?: string }): 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED' {
+    if (schedule.status === 'CANCELLED' || schedule.status === 'REJECTED') {
+      return 'CANCELLED';
+    }
+    if (schedule.status === 'COMPLETED') {
+      return 'COMPLETED';
+    }
+    const now = new Date();
+    const dateStr = schedule.examDate.toISOString().slice(0, 10);
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const startParts = (schedule.startTime || '00:00').split(':').map((v) => parseInt(v, 10));
+    const endParts = (schedule.endTime || '23:59').split(':').map((v) => parseInt(v, 10));
+
+    const startH = Number.isFinite(startParts[0]) ? startParts[0] : 0;
+    const startM = Number.isFinite(startParts[1]) ? startParts[1] : 0;
+    const endH = Number.isFinite(endParts[0]) ? endParts[0] : 23;
+    const endM = Number.isFinite(endParts[1]) ? endParts[1] : 59;
+
+    const startDateTime = new Date(y, m - 1, d, startH, startM, 0, 0);
+    const endDateTime = new Date(y, m - 1, d, endH, endM, 0, 0);
+
+    if (now < startDateTime) {
+      return 'UPCOMING';
+    } else if (now >= startDateTime && now <= endDateTime) {
+      return 'ONGOING';
+    } else {
+      return 'COMPLETED';
+    }
+  }
+
   /** Read-only validation report used before any bulk scheduling/arrangement action. */
   async conflicts(examPeriodId?: number) {
     const schedules = await this.prisma.examSchedule.findMany({
@@ -412,6 +442,13 @@ export class ExamSchedulesService {
 
   async update(actor: Actor, id: number, data: UpdateExamScheduleDto, allowUnlock = false) {
     const existing = await this.findOne(actor, id);
+    const effStatus = this.getEffectiveScheduleStatus(existing);
+    if (effStatus === 'COMPLETED') {
+      throw new BadRequestException('Không thể chỉnh sửa ca thi đã hoàn thành.');
+    }
+    if (effStatus === 'ONGOING') {
+      throw new BadRequestException('Không thể chỉnh sửa thông tin ca thi đang diễn ra.');
+    }
     if (actor.role === 'TEACHER' && data.mode && data.mode !== 'MOCK') {
       throw new ForbiddenException('Giảng viên không được chuyển lịch thi thử thành lịch thi chính thức.');
     }
@@ -608,7 +645,10 @@ export class ExamSchedulesService {
       },
     });
     if (!existing) throw new NotFoundException('Không tìm thấy lịch thi.');
-    if (existing.status === 'CANCELLED') throw new BadRequestException('Không thể kiểm tra lịch thi đã hủy.');
+    const effStatus = this.getEffectiveScheduleStatus(existing);
+    if (effStatus === 'CANCELLED') throw new BadRequestException('Không thể kiểm tra lịch thi đã hủy.');
+    if (effStatus === 'COMPLETED') throw new BadRequestException('Không thể dời lịch ca thi đã hoàn thành.');
+    if (effStatus === 'ONGOING') throw new BadRequestException('Không thể dời lịch ca thi đang diễn ra.');
 
     const conflicts: string[] = [];
     const warnings: string[] = [];
@@ -822,7 +862,10 @@ export class ExamSchedulesService {
       },
     });
     if (!existing) throw new NotFoundException('Không tìm thấy lịch thi.');
-    if (existing.status === 'CANCELLED') throw new BadRequestException('Lịch thi này đã ở trạng thái hủy.');
+    const effStatus = this.getEffectiveScheduleStatus(existing);
+    if (effStatus === 'CANCELLED') throw new BadRequestException('Lịch thi này đã ở trạng thái hủy.');
+    if (effStatus === 'COMPLETED') throw new BadRequestException('Không thể hủy ca thi đã hoàn thành.');
+    if (effStatus === 'ONGOING') throw new BadRequestException('Không thể hủy ca thi đang diễn ra.');
 
     const examDateStr = existing.examDate.toISOString().slice(0, 10);
     const timeStr = `${existing.startTime} - ${existing.endTime}`;

@@ -379,7 +379,8 @@ export class ExamPapersService {
         }
       }
       const paperCode = data.paperCode.trim();
-      const title = data.title?.trim() || `Đề thi môn ${schedule.subject.subjectName} - Mã đề ${paperCode}`;
+      const variantCount = Math.max(1, Math.min(data.variantCount || 1, 10));
+      const title = data.title?.trim() || `Đề thi môn ${schedule.subject.subjectName} - Mã đề ${paperCode}${variantCount > 1 ? ` (Bộ ${variantCount} mã đảo)` : ''}`;
 
       if (!persist) {
         return {
@@ -394,69 +395,59 @@ export class ExamPapersService {
         };
       }
 
-      const count = Math.min(Math.max(data.variantCount || 1, 1), 10);
-      const createdPapers: any[] = [];
-
-      for (let v = 1; v <= count; v++) {
-        const baseVCode = count > 1 ? `${paperCode}-${100 + v}` : paperCode;
-        let finalVCode = baseVCode;
-        let vSuffix = 1;
-        while (await tx.examPaper.findFirst({
-          where: { examScheduleId: data.examScheduleId, paperCode: finalVCode },
-          select: { id: true },
-        })) {
-          finalVCode = `${baseVCode}_${vSuffix}`;
-          vSuffix++;
-        }
-
-        const vTitle = count > 1 ? `${title} (Mã đề ${100 + v})` : title;
-        const shuffledQuestions = count > 1 ? [...selectedQuestions].sort(() => Math.random() - 0.5) : selectedQuestions;
-
-        const examPaper = await tx.examPaper.create({
-          data: {
-            examScheduleId: data.examScheduleId,
-            paperCode: finalVCode,
-            title: vTitle,
-            durationMinutes: data.durationMinutes,
-            totalScore,
-            status: ExamPaperStatus.DRAFT,
-            createdById: actor.id,
-            questions: {
-              create: shuffledQuestions.map((question, index) => ({
-                questionId: question.id,
-                questionOrder: index + 1,
-                score: question.assignedScore,
-              })),
-            },
-          },
-          include: paperDetailInclude,
-        });
-
-        for (const question of selectedQuestions) {
-          await tx.questionStatistic.upsert({
-            where: { questionId: question.id },
-            create: { questionId: question.id, usedCount: 1, lastUsedAt: new Date() },
-            update: { usedCount: { increment: 1 }, lastUsedAt: new Date() },
-          });
-        }
-
-        await this.audit.write({
-          actorId: actor.id,
-          action: 'CREATE',
-          entityType: 'EXAM_PAPER',
-          entityId: examPaper.id,
-          description: `Đã tạo đề thi ${examPaper.paperCode}`,
-          metadata: {
-            paperCode: examPaper.paperCode,
-            examScheduleId: data.examScheduleId,
-            questionCount: selectedQuestions.length,
-          },
-        }, tx);
-
-        createdPapers.push(examPaper);
+      let finalCode = paperCode;
+      let vSuffix = 1;
+      while (await tx.examPaper.findFirst({
+        where: { examScheduleId: data.examScheduleId, paperCode: finalCode },
+        select: { id: true },
+      })) {
+        finalCode = `${paperCode}_${vSuffix}`;
+        vSuffix++;
       }
 
-      return count === 1 ? createdPapers[0] : createdPapers;
+      const examPaper = await tx.examPaper.create({
+        data: {
+          examScheduleId: data.examScheduleId,
+          paperCode: finalCode,
+          title,
+          durationMinutes: data.durationMinutes,
+          totalScore,
+          status: ExamPaperStatus.DRAFT,
+          createdById: actor.id,
+          questions: {
+            create: selectedQuestions.map((question, index) => ({
+              questionId: question.id,
+              questionOrder: index + 1,
+              score: question.assignedScore,
+            })),
+          },
+        },
+        include: paperDetailInclude,
+      });
+
+      for (const question of selectedQuestions) {
+        await tx.questionStatistic.upsert({
+          where: { questionId: question.id },
+          create: { questionId: question.id, usedCount: 1, lastUsedAt: new Date() },
+          update: { usedCount: { increment: 1 }, lastUsedAt: new Date() },
+        });
+      }
+
+      await this.audit.write({
+        actorId: actor.id,
+        action: 'CREATE',
+        entityType: 'EXAM_PAPER',
+        entityId: examPaper.id,
+        description: `Đã tạo đề thi ${examPaper.paperCode}`,
+        metadata: {
+          paperCode: examPaper.paperCode,
+          examScheduleId: data.examScheduleId,
+          questionCount: selectedQuestions.length,
+          variantCount: data.variantCount || 4,
+        },
+      }, tx);
+
+      return examPaper;
     });
   }
 

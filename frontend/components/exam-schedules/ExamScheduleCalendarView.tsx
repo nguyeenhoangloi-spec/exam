@@ -339,15 +339,7 @@ export function ExamScheduleCalendarView({
                                         className="flex items-center justify-end gap-1 pt-1.5 border-t border-slate-100 dark:border-slate-800 mt-1"
                                         onClick={(e) => e.stopPropagation()}
                                       >
-                                        <button
-                                          type="button"
-                                          onClick={() => onDetail(s)}
-                                          className="p-1 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                                          title="Xem chi tiết"
-                                        >
-                                          <Eye className="h-3.5 w-3.5" />
-                                        </button>
-                                        {onEdit && (
+                                        {onEdit && status === 'UPCOMING' && (
                                           <button
                                             type="button"
                                             onClick={() => onEdit(s)}

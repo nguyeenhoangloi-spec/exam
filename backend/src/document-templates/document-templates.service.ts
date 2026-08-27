@@ -110,87 +110,91 @@ const templateCodeColumns: Record<string, TemplateColumn[]> = {
     { key: 'index', label: 'STT', align: 'center', width: '6%' },
     { key: 'teacherCode', label: 'Mã GV', width: '14%' },
     { key: 'teacher', label: 'Họ và tên', width: '26%' },
-    { key: 'degree', label: 'Học hàm/Học vị', align: 'center', width: '16%' },
+    { key: 'degree', label: 'Học vị', align: 'center', width: '16%' },
     { key: 'department', label: 'Khoa / Bộ môn', width: '22%' },
     { key: 'email', label: 'Email công vụ', width: '16%' },
   ],
   SUBJECT_DIRECTORY: [
     { key: 'index', label: 'STT', align: 'center', width: '6%' },
     { key: 'subjectCode', label: 'Mã môn', width: '14%' },
-    { key: 'subjectName', label: 'Tên môn học / Học phần', width: '32%' },
+    { key: 'subjectName', label: 'Tên môn học', width: '32%' },
     { key: 'credits', label: 'Số TC', align: 'center', width: '10%' },
     { key: 'department', label: 'Khoa phụ trách', width: '24%' },
     { key: 'examFormat', label: 'Hình thức thi', align: 'center', width: '14%' },
-  ],
-  DEPARTMENT_DIRECTORY: [
-    { key: 'index', label: 'STT', align: 'center', width: '6%' },
-    { key: 'deptCode', label: 'Mã khoa', width: '14%' },
-    { key: 'deptName', label: 'Tên Khoa / Đơn vị đào tạo', width: '34%' },
-    { key: 'headName', label: 'Trưởng đơn vị', width: '22%' },
-    { key: 'phone', label: 'Điện thoại', align: 'center', width: '12%' },
-    { key: 'email', label: 'Email liên hệ', width: '12%' },
-  ],
-  CLASS_DIRECTORY: [
-    { key: 'index', label: 'STT', align: 'center', width: '6%' },
-    { key: 'classCode', label: 'Mã lớp', width: '16%' },
-    { key: 'className', label: 'Tên lớp sinh viên', width: '26%' },
-    { key: 'department', label: 'Khoa', width: '22%' },
-    { key: 'advisor', label: 'Cố vấn học tập', width: '20%' },
-    { key: 'studentCount', label: 'Sĩ số', align: 'center', width: '10%' },
   ],
   EXAM_ROOM_DIRECTORY: [
     { key: 'index', label: 'STT', align: 'center', width: '6%' },
     { key: 'roomCode', label: 'Mã phòng', width: '16%' },
     { key: 'roomName', label: 'Tên phòng thi', width: '26%' },
-    { key: 'building', label: 'Tòa nhà / Vị trí', width: '20%' },
-    { key: 'capacity', label: 'Sức chứa chuẩn', align: 'center', width: '16%' },
+    { key: 'building', label: 'Tòa nhà', width: '20%' },
+    { key: 'capacity', label: 'Sức chứa', align: 'center', width: '16%' },
     { key: 'maxCapacity', label: 'Tối đa', align: 'center', width: '16%' },
-  ],
-  EXAM_PERIOD_DIRECTORY: [
-    { key: 'index', label: 'STT', align: 'center', width: '6%' },
-    { key: 'periodCode', label: 'Mã kỳ thi', width: '14%' },
-    { key: 'periodName', label: 'Tên kỳ thi / Đợt khảo thí', width: '34%' },
-    { key: 'academicYear', label: 'Năm học', align: 'center', width: '14%' },
-    { key: 'semester', label: 'Học kỳ', align: 'center', width: '10%' },
-    { key: 'startDate', label: 'Bắt đầu', align: 'center', width: '11%' },
-    { key: 'endDate', label: 'Kết thúc', align: 'center', width: '11%' },
   ],
   EXAM_SUMMARY_REPORT: [
     { key: 'index', label: 'STT', align: 'center', width: '6%' },
-    { key: 'subject', label: 'Môn thi / Học phần', width: '30%' },
+    { key: 'subject', label: 'Môn thi', width: '30%' },
     { key: 'totalStudents', label: 'Tổng thí sinh', align: 'center', width: '13%' },
     { key: 'attended', label: 'Dự thi', align: 'center', width: '11%' },
     { key: 'absent', label: 'Vắng', align: 'center', width: '10%' },
     { key: 'passRate', label: 'Tỷ lệ đạt (%)', align: 'center', width: '15%' },
     { key: 'avgScore', label: 'Điểm TB', align: 'center', width: '15%' },
   ],
-  GRADE_DISTRIBUTION_REPORT: [
-    { key: 'index', label: 'STT', align: 'center', width: '8%' },
-    { key: 'scoreRange', label: 'Phân khúc thang điểm', width: '34%' },
-    { key: 'studentCount', label: 'Số lượng sinh viên', align: 'center', width: '18%' },
-    { key: 'percentage', label: 'Tỷ lệ phần trăm (%)', align: 'center', width: '20%' },
-    { key: 'rating', label: 'Xếp loại học lực', align: 'center', width: '20%' },
-  ],
   EXAM_ROOM_MINUTES: [
     { key: 'index', label: 'STT', align: 'center', width: '8%' },
     { key: 'item', label: 'Nội dung biên bản bàn giao', width: '52%' },
-    { key: 'quantity', label: 'Số lượng / Chi tiết', align: 'center', width: '20%' },
-    { key: 'status', label: 'Tình trạng niêm phong', align: 'center', width: '20%' },
-  ],
-  EXAM_BAG_LABEL: [
-    { key: 'index', label: 'STT', align: 'center', width: '10%' },
-    { key: 'label', label: 'Thông tin niêm phong túi bài thi', width: '45%' },
-    { key: 'value', label: 'Nội dung chi tiết', width: '45%' },
+    { key: 'quantity', label: 'Số lượng', align: 'center', width: '20%' },
+    { key: 'status', label: 'Tình trạng', align: 'center', width: '20%' },
   ],
   GRADE_APPEAL_MINUTES: [
     { key: 'index', label: 'STT', align: 'center', width: '6%' },
     { key: 'studentCode', label: 'MSSV', width: '14%' },
     { key: 'student', label: 'Họ và tên thí sinh', width: '24%' },
-    { key: 'subject', label: 'Môn xin phúc khảo', width: '20%' },
+    { key: 'subject', label: 'Môn phúc khảo', width: '20%' },
     { key: 'oldScore', label: 'Điểm cũ', align: 'center', width: '9%' },
     { key: 'newScore', label: 'Điểm mới', align: 'center', width: '9%' },
     { key: 'delta', label: 'Lệch', align: 'center', width: '8%' },
     { key: 'conclusion', label: 'Kết luận', align: 'center', width: '10%' },
+  ],
+  EXAM_SCORE_TRANSCRIPT: [
+    { key: 'index', label: 'STT', align: 'center', width: '6%' },
+    { key: 'subjectCode', label: 'Mã môn', align: 'center', width: '14%' },
+    { key: 'subjectName', label: 'Tên môn học', width: '30%' },
+    { key: 'periodName', label: 'Kỳ thi', width: '20%' },
+    { key: 'examDate', label: 'Ngày thi', align: 'center', width: '14%' },
+    { key: 'examType', label: 'Hình thức', align: 'center', width: '16%' },
+    { key: 'score', label: 'Điểm số', align: 'center', width: '12%' },
+    { key: 'status', label: 'Kết quả', align: 'center', width: '14%' },
+  ],
+  DEPARTMENT_DIRECTORY: [
+    { key: 'index', label: 'STT', align: 'center', width: '6%' },
+    { key: 'code', label: 'Mã khoa', width: '16%' },
+    { key: 'name', label: 'Tên Khoa / Đơn vị đào tạo', width: '40%' },
+    { key: 'classesCount', label: 'Số lớp sinh hoạt', align: 'center', width: '18%' },
+    { key: 'teachersCount', label: 'Số giảng viên', align: 'center', width: '20%' },
+  ],
+  QUESTION_BANK_DIRECTORY: [
+    { key: 'index', label: 'STT', align: 'center', width: '5%' },
+    { key: 'code', label: 'Mã câu hỏi', width: '14%' },
+    { key: 'subject', label: 'Môn học', width: '22%' },
+    { key: 'content', label: 'Nội dung câu hỏi', width: '35%' },
+    { key: 'type', label: 'Loại câu', align: 'center', width: '12%' },
+    { key: 'difficulty', label: 'Mức độ', align: 'center', width: '12%' },
+  ],
+  EXAM_PERIOD_DIRECTORY: [
+    { key: 'index', label: 'STT', align: 'center', width: '6%' },
+    { key: 'name', label: 'Tên kỳ thi học kỳ', width: '32%' },
+    { key: 'semester', label: 'Học kỳ', align: 'center', width: '14%' },
+    { key: 'schoolYear', label: 'Năm học', align: 'center', width: '16%' },
+    { key: 'startDate', label: 'Ngày bắt đầu', align: 'center', width: '16%' },
+    { key: 'endDate', label: 'Ngày kết thúc', align: 'center', width: '16%' },
+  ],
+  SYSTEM_AUDIT_LOG: [
+    { key: 'index', label: 'STT', align: 'center', width: '6%' },
+    { key: 'time', label: 'Thời gian ghi nhận', align: 'center', width: '18%' },
+    { key: 'actor', label: 'Tài khoản', width: '18%' },
+    { key: 'action', label: 'Hành động', width: '20%' },
+    { key: 'target', label: 'Đối tượng tác động', width: '18%' },
+    { key: 'status', label: 'Trạng thái', align: 'center', width: '20%' },
   ],
   GENERIC_REPORT: [
     { key: 'index', label: 'STT', align: 'center', width: '10%' },
@@ -215,121 +219,121 @@ const defaults: Array<{ code: string; name: string; dataSource: DocumentTemplate
     code: 'EXAM_PAPER_OFFICIAL',
     name: 'Đề thi chính thức',
     dataSource: 'GENERIC_REPORT',
-    description: 'Mẫu in đề thi chuẩn học thuật gồm quốc hiệu, khung thông tin môn thi, khung điểm, lời dặn và chữ ký duyệt đề.',
+    description: 'Mẫu in đề thi chính thức kèm khung điểm, lời dặn quy chế và chữ ký duyệt đề.',
   },
   {
     code: 'EXAM_SCHEDULE_LIST',
-    name: 'Danh sách lịch thi theo ca',
+    name: 'Lịch thi theo ca',
     dataSource: 'EXAM_SCHEDULE_LIST',
-    description: 'Bảng tổng hợp lịch thi chi tiết theo ngày, ca thi, môn học và phòng thi cho toàn trường.',
+    description: 'Bảng tổng hợp lịch thi chi tiết theo ngày, ca thi, môn học và phòng thi.',
   },
   {
     code: 'ROOM_DOOR_LIST',
-    name: 'Danh sách thí sinh dán cửa phòng thi',
+    name: 'Danh sách dán cửa phòng',
     dataSource: 'ROOM_DOOR_LIST',
     description: 'Bảng niêm phong dán tại cửa phòng để thí sinh tra cứu số báo danh, số ghế và phòng thi.',
   },
   {
     code: 'ROOM_ATTENDANCE_SHEET',
-    name: 'Danh sách ký nộp bài thi & Điểm danh',
+    name: 'Danh sách ký nộp bài thi',
     dataSource: 'ROOM_DOOR_LIST',
-    description: 'Biểu mẫu chính thức phát cho 2 Giám thị trong phòng để thí sinh ký tên nộp bài và ghi số tờ giấy thi.',
+    description: 'Biểu mẫu phát cho giám thị để thí sinh ký tên nộp bài thi và điểm danh.',
   },
   {
     code: 'SUPERVISOR_ASSIGNMENT',
-    name: 'Phân công cán bộ coi thi',
+    name: 'Lịch phân công coi thi',
     dataSource: 'SUPERVISOR_ASSIGNMENT',
-    description: 'Lịch phân công cán bộ coi thi 1, cán bộ coi thi 2 và giám sát hành lang theo từng ca thi.',
+    description: 'Lịch phân công cán bộ coi thi 1, cán bộ coi thi 2 và giám sát theo từng ca thi.',
   },
   {
     code: 'EXAM_ROOM_MINUTES',
-    name: 'Biên bản coi thi & Bàn giao túi bài thi',
+    name: 'Biên bản phòng thi',
     dataSource: 'GENERIC_REPORT',
-    description: 'Biên bản phòng thi ghi nhận thí sinh vắng, số bài thi thu được, số tờ giấy thi bàn giao cho Thư ký.',
+    description: 'Biên bản phòng thi ghi nhận thí sinh vắng, số bài thi thu được và bàn giao bài thi.',
   },
   {
-    code: 'EXAM_BAG_LABEL',
-    name: 'Nhãn niêm phong túi đề & bài thi (A5)',
+    code: 'QUESTION_BANK_DIRECTORY',
+    name: 'Ngân hàng câu hỏi thi',
     dataSource: 'GENERIC_REPORT',
-    description: 'Nhãn chuẩn khổ A5 dán ngoài bìa túi đựng đề thi bí mật hoặc túi đựng bài thi gốc sau ca thi.',
-  },
-
-  // ── Nhóm 2: Điểm & Báo cáo Khảo thí ──
-  {
-    code: 'GRADE_REPORT',
-    name: 'Bảng điểm ca thi kết thúc môn',
-    dataSource: 'GRADE_REPORT',
-    description: 'Bảng điểm thi học phần kèm điểm quá trình, điểm thi, điểm tổng kết hệ 10/hệ 4 và chữ ký cán bộ chấm.',
-  },
-  {
-    code: 'EXAM_SUMMARY_REPORT',
-    name: 'Báo cáo tổng kết khảo thí kỳ thi',
-    dataSource: 'GENERIC_REPORT',
-    description: 'Báo cáo tổng hợp số lượng thí sinh dự thi, tỷ lệ vắng, tỷ lệ đạt, điểm trung bình các học phần.',
-  },
-  {
-    code: 'GRADE_DISTRIBUTION_REPORT',
-    name: 'Báo cáo phổ điểm & Phân tích chất lượng',
-    dataSource: 'GENERIC_REPORT',
-    description: 'Bảng phân tích phổ điểm thi theo phân khúc giỏi, khá, trung bình, yếu kèm biểu đồ phân bố.',
-  },
-  {
-    code: 'GRADE_APPEAL_MINUTES',
-    name: 'Biên bản hội đồng chấm phúc khảo',
-    dataSource: 'GENERIC_REPORT',
-    description: 'Biên bản làm việc của Hội đồng phúc khảo ghi nhận điểm gốc, điểm chấm lại, lý do và quyết định điều chỉnh.',
-  },
-
-  // ── Nhóm 3: Danh mục Quản lý Đào tạo ──
-  {
-    code: 'SUBJECT_DIRECTORY',
-    name: 'Danh mục môn học & Chương trình đào tạo',
-    dataSource: 'GENERIC_REPORT',
-    description: 'Bảng in danh mục tất cả môn học, mã học phần, số tín chỉ, khoa quản lý và hình thức thi (Trang /subjects).',
-  },
-  {
-    code: 'DEPARTMENT_DIRECTORY',
-    name: 'Danh mục khoa & Bộ môn trực thuộc',
-    dataSource: 'GENERIC_REPORT',
-    description: 'Bảng in danh mục các Khoa, Viện, Bộ môn trực thuộc và thông tin cán bộ phụ trách (Trang /departments).',
-  },
-  {
-    code: 'CLASS_DIRECTORY',
-    name: 'Danh sách lớp sinh viên & Cố vấn học tập',
-    dataSource: 'GENERIC_REPORT',
-    description: 'Bảng in danh sách các lớp sinh viên, khoa trực thuộc, khóa học và cố vấn học tập (Trang /classes).',
-  },
-  {
-    code: 'EXAM_ROOM_DIRECTORY',
-    name: 'Danh mục phòng thi & Sức chứa tiêu chuẩn',
-    dataSource: 'GENERIC_REPORT',
-    description: 'Bảng in danh mục cơ sở vật chất phòng thi, tòa nhà, sức chứa chuẩn và tối đa (Trang /exam-rooms).',
+    description: 'Bảng tổng hợp danh mục câu hỏi trắc nghiệm và tự luận phân theo môn học và độ khó.',
   },
   {
     code: 'EXAM_PERIOD_DIRECTORY',
-    name: 'Kế hoạch & Tiến độ tổ chức kỳ thi',
+    name: 'Danh sách kỳ thi học kỳ',
     dataSource: 'GENERIC_REPORT',
-    description: 'Bảng in kế hoạch tổ chức kỳ thi, học kỳ, năm học, mốc thời gian bắt đầu và kết thúc (Trang /exam-periods).',
+    description: 'Danh mục các đợt thi học kỳ, kế hoạch thời gian bắt đầu và kết thúc kỳ thi.',
   },
 
-  // ── Nhóm 4: Sinh viên, Giảng viên & Thẻ dự thi ──
+  // ── Nhóm 2: Điểm & Phúc khảo ──
+  {
+    code: 'GRADE_REPORT',
+    name: 'Bảng điểm thi học phần',
+    dataSource: 'GRADE_REPORT',
+    description: 'Bảng điểm thi học phần kèm điểm quá trình, điểm thi, điểm tổng kết và chữ ký cán bộ chấm.',
+  },
+  {
+    code: 'GRADE_APPEAL_MINUTES',
+    name: 'Biên bản chấm phúc khảo',
+    dataSource: 'GENERIC_REPORT',
+    description: 'Biên bản làm việc của Hội đồng phúc khảo ghi nhận điểm gốc, điểm chấm lại và kết luận.',
+  },
+  {
+    code: 'STUDENT_EXAM_PASS',
+    name: 'Giấy báo dự thi',
+    dataSource: 'STUDENT_DIRECTORY',
+    description: 'Giấy báo dự thi cá nhân của sinh viên gồm lịch thi, ca thi, phòng thi và số báo danh.',
+  },
+  {
+    code: 'EXAM_SCORE_TRANSCRIPT',
+    name: 'Phiếu điểm học tập & thi học phần',
+    dataSource: 'GRADE_REPORT',
+    description: 'Phiếu điểm tổng hợp kết quả thi và tình trạng hoàn thành môn học của sinh viên.',
+  },
+  {
+    code: 'EXAM_SUMMARY_REPORT',
+    name: 'Báo cáo tổng kết khảo thí',
+    dataSource: 'GENERIC_REPORT',
+    description: 'Báo cáo tổng hợp số lượng thí sinh dự thi, tỷ lệ vắng, tỷ lệ đạt và điểm trung bình.',
+  },
+
+  // ── Nhóm 3: Danh bạ Khảo thí & Cơ sở đào tạo ──
   {
     code: 'STUDENT_DIRECTORY',
     name: 'Danh sách sinh viên',
     dataSource: 'STUDENT_DIRECTORY',
-    description: 'Bảng in danh sách sinh viên theo lớp, ngành học hoặc toàn khoa (Trang /students).',
-  },
-  {
-    code: 'STUDENT_EXAM_PASS',
-    name: 'Thẻ dự thi / Giấy báo dự thi sinh viên',
-    dataSource: 'STUDENT_DIRECTORY',
-    description: 'Giấy báo dự thi cá nhân của sinh viên gồm danh sách môn thi, ca thi, phòng thi, số báo danh và quy chế.',
+    description: 'Bảng in danh sách sinh viên theo lớp, ngành học hoặc toàn khoa.',
   },
   {
     code: 'TEACHER_DIRECTORY',
-    name: 'Danh sách cán bộ giảng viên',
+    name: 'Danh sách giảng viên',
     dataSource: 'TEACHER_DIRECTORY',
-    description: 'Bảng in danh bạ cán bộ giảng viên theo khoa, học hàm học vị và email liên hệ (Trang /teachers).',
+    description: 'Bảng in danh sách cán bộ giảng viên theo khoa và học vị.',
+  },
+  {
+    code: 'DEPARTMENT_DIRECTORY',
+    name: 'Danh sách khoa đào tạo',
+    dataSource: 'GENERIC_REPORT',
+    description: 'Bảng danh mục các khoa đào tạo, viện và bộ môn chuyên ngành trực thuộc trường.',
+  },
+  {
+    code: 'SUBJECT_DIRECTORY',
+    name: 'Danh sách môn học',
+    dataSource: 'GENERIC_REPORT',
+    description: 'Bảng in danh mục môn học, mã học phần, số tín chỉ và khoa phụ trách.',
+  },
+  {
+    code: 'EXAM_ROOM_DIRECTORY',
+    name: 'Danh sách phòng thi',
+    dataSource: 'GENERIC_REPORT',
+    description: 'Bảng in danh mục phòng thi, tòa nhà và sức chứa máy tính.',
+  },
+
+  // ── Nhóm 4: Quản trị & An ninh hệ thống ──
+  {
+    code: 'SYSTEM_AUDIT_LOG',
+    name: 'Nhật ký hệ thống & An ninh',
+    dataSource: 'GENERIC_REPORT',
+    description: 'Báo cáo trích xuất nhật ký hoạt động, kiểm toán an ninh và danh sách bản sao lưu hệ thống.',
   },
 ];
 
@@ -584,9 +588,21 @@ export class DocumentTemplatesService {
   }
 
   private async ensureDefaults() {
+    const validCodes = new Set(defaults.map((d) => d.code));
+
+    // 1. Cập nhật hoặc tạo mới 14 mẫu cốt lõi chuẩn
     for (const item of defaults) {
       const existing = await this.prisma.documentTemplate.findUnique({ where: { code: item.code } });
-      if (existing) continue;
+      if (existing) {
+        // Cập nhật lại tên và mô tả ngắn gọn nếu đã có trong DB
+        if (existing.name !== item.name || existing.description !== item.description) {
+          await this.prisma.documentTemplate.update({
+            where: { id: existing.id },
+            data: { name: item.name, description: item.description },
+          });
+        }
+        continue;
+      }
       const config = this.defaultConfig(item.dataSource, item.name, item.code);
       await this.prisma.documentTemplate.create({
         data: {
@@ -603,6 +619,19 @@ export class DocumentTemplatesService {
         },
       });
     }
+
+    // 2. Dọn dẹp các mẫu mặc định cũ không còn trong danh sách chuẩn
+    const obsoleteTemplates = await this.prisma.documentTemplate.findMany({
+      where: {
+        isDefault: true,
+        code: { notIn: Array.from(validCodes) },
+      },
+    });
+
+    for (const obsolete of obsoleteTemplates) {
+      await this.prisma.documentTemplateVersion.deleteMany({ where: { templateId: obsolete.id } });
+      await this.prisma.documentTemplate.delete({ where: { id: obsolete.id } });
+    }
   }
 
   private defaultConfig(dataSource: DocumentTemplateDataSource, name: string, code?: string): Required<TemplateConfig> {
@@ -613,8 +642,8 @@ export class DocumentTemplatesService {
         templateType: 'EXAM_PAPER',
         page: { size: 'A4', orientation: 'portrait', marginMm: 15 },
         header: {
-          institutionName: 'BỘ GIÁO DỤC VÀ ĐÀO TẠO',
-          facultyName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ - KHOA CÔNG NGHỆ THÔNG TIN',
+          institutionName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ',
+          facultyName: 'KHOA CÔNG NGHỆ THÔNG TIN',
           title: 'ĐỀ THI KẾT THÚC HỌC PHẦN',
           subtitle: 'Học kỳ 1 - Năm học 2025 - 2026',
           motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
@@ -732,6 +761,121 @@ export class DocumentTemplatesService {
           signers: [
             { title: 'THÍ SINH XÁC NHẬN', subtitle: '(Ký và ghi rõ họ tên)' },
             { title: 'TRƯỞNG PHÒNG ĐÀO TẠO', subtitle: '(Ký, đóng dấu)' },
+          ],
+        },
+      };
+    }
+
+    if (code === 'EXAM_SCORE_TRANSCRIPT') {
+      return {
+        templateType: 'TABLE',
+        page: { size: 'A4', orientation: 'portrait', marginMm: 15 },
+        header: {
+          institutionName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ',
+          facultyName: 'PHÒNG ĐÀO TẠO & KHẢO THÍ',
+          title: 'PHIẾU ĐIỂM HỌC TẬP & THI HỌC PHẦN',
+          subtitle: 'Sinh viên: Nguyễn Văn An (SV20260001) · Lớp: CNTT-K68A · Khoa: Công nghệ Thông tin',
+          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+        },
+        examInfo: {},
+        columns: availableCols,
+        footer: {
+          note: 'Bảng điểm có giá trị xác nhận kết quả học tập và thi kết thúc học phần của sinh viên.',
+          signers: [
+            { title: 'SINH VIÊN XÁC NHẬN', subtitle: '(Ký và ghi rõ họ tên)' },
+            { title: 'TRƯỞNG PHÒNG ĐÀO TẠO', subtitle: '(Ký, đóng dấu)' },
+          ],
+        },
+      };
+    }
+
+    if (code === 'DEPARTMENT_DIRECTORY') {
+      return {
+        templateType: 'TABLE',
+        page: { size: 'A4', orientation: 'portrait', marginMm: 15 },
+        header: {
+          institutionName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ',
+          facultyName: 'PHÒNG TỔ CHỨC CÁN BỘ & ĐÀO TẠO',
+          title: 'DANH SÁCH KHOA ĐÀO TẠO & VIỆN CHUYÊN NGÀNH',
+          subtitle: 'Năm học 2025 - 2026',
+          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+        },
+        examInfo: {},
+        columns: availableCols,
+        footer: {
+          note: 'Danh mục đơn vị đào tạo chính thức được ban hành theo quyết định của Ban Giám hiệu.',
+          signers: [
+            { title: 'NGƯỜI LẬP BẢNG', subtitle: '(Ký, ghi rõ họ tên)' },
+            { title: 'TRƯỞNG PHÒNG TỔ CHỨC CÁN BỘ', subtitle: '(Ký, đóng dấu)' },
+          ],
+        },
+      };
+    }
+
+    if (code === 'QUESTION_BANK_DIRECTORY') {
+      return {
+        templateType: 'TABLE',
+        page: { size: 'A4', orientation: 'portrait', marginMm: 15 },
+        header: {
+          institutionName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ',
+          facultyName: 'HỘI ĐỒNG KHẢO THÍ & ĐBCL',
+          title: 'NGÂN HÀNG CÂU HỎI THI KẾT THÚC HỌC PHẦN',
+          subtitle: 'Kho lưu trữ đề thi và câu hỏi chuẩn hóa',
+          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+        },
+        examInfo: {},
+        columns: availableCols,
+        footer: {
+          note: 'Tài liệu mật phục vụ công tác khảo thí. Nghiêm cấm sao chép và phát tán ra ngoài.',
+          signers: [
+            { title: 'CÁN BỘ QUẢN LÝ NGÂN HÀNG', subtitle: '(Ký, ghi rõ họ tên)' },
+            { title: 'CHỦ TỊCH HỘI ĐỒNG KHẢO THÍ', subtitle: '(Ký, đóng dấu)' },
+          ],
+        },
+      };
+    }
+
+    if (code === 'EXAM_PERIOD_DIRECTORY') {
+      return {
+        templateType: 'TABLE',
+        page: { size: 'A4', orientation: 'portrait', marginMm: 15 },
+        header: {
+          institutionName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ',
+          facultyName: 'PHÒNG ĐÀO TẠO & KHẢO THÍ',
+          title: 'KẾ HOẠCH TỔ CHỨC CÁC KỲ THI HỌC KỲ',
+          subtitle: 'Năm học 2025 - 2026',
+          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+        },
+        examInfo: {},
+        columns: availableCols,
+        footer: {
+          note: 'Kế hoạch kỳ thi là căn cứ để các Khoa và Bộ môn triển khai ra đề và chuẩn bị thi.',
+          signers: [
+            { title: 'NGƯỜI LẬP KẾ HOẠCH', subtitle: '(Ký, ghi rõ họ tên)' },
+            { title: 'TRƯỞNG PHÒNG ĐÀO TẠO', subtitle: '(Ký, đóng dấu)' },
+          ],
+        },
+      };
+    }
+
+    if (code === 'SYSTEM_AUDIT_LOG') {
+      return {
+        templateType: 'TABLE',
+        page: { size: 'A4', orientation: 'portrait', marginMm: 15 },
+        header: {
+          institutionName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ',
+          facultyName: 'TRUNG TÂM CÔNG NGHỆ THÔNG TIN',
+          title: 'BÁO CÁO KIỂM TOÁN VÀ NHẬT KÝ HỆ THỐNG',
+          subtitle: 'Hệ thống Quản lý Khảo thí & Khóa an toàn',
+          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+        },
+        examInfo: {},
+        columns: availableCols,
+        footer: {
+          note: 'Nhật ký được ký số và xác thực chuỗi toàn vẹn mật mã SHA-256.',
+          signers: [
+            { title: 'QUẢN TRỊ VIÊN HỆ THỐNG', subtitle: '(Ký, ghi rõ họ tên)' },
+            { title: 'GIÁM ĐỐC TRUNG TÂM CNTT', subtitle: '(Ký, đóng dấu)' },
           ],
         },
       };

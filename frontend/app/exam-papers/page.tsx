@@ -22,18 +22,24 @@ import { ExamPaperKPICards } from '../../components/exam-papers/ExamPaperKPICard
 import { ExamPaperMatrixForm, ExamPaperMatrixFormData } from '../../components/exam-papers/ExamPaperMatrixForm';
 import { ExamPaperFilterPopover } from '../../components/exam-papers/ExamPaperFilterPopover';
 import { ExamPaperTableToolbar } from '../../components/exam-papers/ExamPaperTableToolbar';
-import { ExamPaperTable } from '../../components/exam-papers/ExamPaperTable';
+import { ExamPaperTable, getPaperCodeRange } from '../../components/exam-papers/ExamPaperTable';
 import { ChangeExamPasswordModal } from '../../components/exam-papers/ChangeExamPasswordModal';
 import { RubricDialog } from '../../components/question-bank/RubricDialog';
 import { TabBar } from '../../components/ui/TabBar';
 import { ExamPaperPaginationBar } from '../../components/exam-papers/ExamPaperPaginationBar';
 import { ExamPaperBulkAction } from '../../components/exam-papers/ExamPaperBulkAction';
 import { ExamPaperDetailDrawer } from '../../components/exam-papers/ExamPaperDetailDrawer';
+import { ExamPaperExportModal } from '../../components/exam-papers/ExamPaperExportModal';
+import { ExamPaperExportData } from '../../lib/export-docx';
 
 function formatPaperForExport(paper: any) {
   const details = paper.details || paper.questions || paper.paperDetails || [];
   const subjectName = paper.subjectName || paper.examSchedule?.subjectName || paper.examSchedule?.subject?.subjectName || 'Môn thi';
   const subjectCode = paper.subjectCode || paper.examSchedule?.subjectCode || paper.examSchedule?.subject?.subjectCode || 'MH';
+
+  // Trích xuất số mã đảo từ tiêu đề (VD: Bộ 3 mã đảo) hoặc thuộc tính variantCount
+  const match = (paper.title || '').match(/Bộ\s*(\d+)\s*mã/i);
+  const variantCount = match ? parseInt(match[1], 10) : ((paper as any).variantCount || 3);
 
   return {
     paperCode: paper.paperCode,
@@ -41,6 +47,7 @@ function formatPaperForExport(paper: any) {
     subjectName,
     subjectCode,
     durationMinutes: paper.durationMinutes,
+    variantCount,
     examType: paper.examSchedule?.examType || (paper as any).examType || 'TRAC_NGHIEM',
     totalScore: paper.totalScore,
     questions: details.map((d: any, idx: number) => {
@@ -57,6 +64,9 @@ function formatPaperForExport(paper: any) {
         code: q.code || `Q${idx + 1}`,
         content: q.content || '',
         score: d.score || 0.25,
+        type: q.type || 'SINGLE_CHOICE',
+        fillBlankAnswers: q.fillBlankAnswers || (q as any).answers || [],
+        correctAnswer: q.correctAnswer || q.sampleAnswer || q.answer || '',
         options: choices,
         explanation: q.explanation || '',
       };
@@ -148,6 +158,7 @@ export default function ExamPapersPage() {
   const [loading, setLoading] = useState(!_papersCache);
   const [creating, setCreating] = useState(false);
   const [busyId, setBusyId] = useState<number | null>(null);
+  const [exportModalPaper, setExportModalPaper] = useState<ExamPaperExportData | null>(null);
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -170,7 +181,6 @@ export default function ExamPapersPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
   const [sortOrder, setSortOrder] = useState('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     paperCode: true,
     subjectName: true,
@@ -525,8 +535,8 @@ export default function ExamPapersPage() {
 
       setConfirmModal({
         isOpen: true,
-        title: variantCount > 1 ? `Tạo ${variantCount} mã đề thi đảo câu` : 'Xác nhận tạo đề thi',
-        message: `Hệ thống sẽ sinh ${variantCount > 1 ? `${variantCount} mã đề thi khác nhau` : `1 đề thi mã số ${paperCode}`} gồm ${questionCount} câu hỏi (${totalScore} điểm). Bạn có muốn tạo không?`,
+        title: 'Xác nhận tạo đề thi',
+        message: `Hệ thống sẽ sinh 1 đề thi mã số ${paperCode} gồm ${questionCount} câu hỏi (${totalScore} điểm). Bạn có muốn tạo không?`,
         type: 'info',
         onConfirm: async () => {
           setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -541,13 +551,13 @@ export default function ExamPapersPage() {
             setSelectedPaper(createdPaper);
             setShowAnswers(false);
             setToast({
-              message: variantCount > 1 ? `Đã tạo ${variantCount} mã đề đảo câu.` : `Đã tạo đề ${createdPaper.paperCode} (bản nháp).`,
+              message: `Đã tạo đề ${createdPaper.paperCode} (bản nháp).`,
               type: 'success',
             });
 
             setFormData((previous) => ({
               ...previous,
-              paperCode: String(Number(previous.paperCode) + variantCount).padStart(3, '0'),
+              paperCode: String(Number(previous.paperCode) + 1).padStart(3, '0'),
             }));
             await fetchData();
           } catch (error: any) {
@@ -579,14 +589,15 @@ export default function ExamPapersPage() {
     }
   };
 
-  const exportPaper = async (paper: ExamPaper, includeAnswerKey = showAnswers) => {
+  const exportPaper = async (paper: ExamPaper) => {
     try {
       const response = await api.get<ExamPaper>(`/exam-papers/${paper.id}`);
       await api.post(`/exam-papers/${paper.id}/export-audit`, {
         format: 'WORD',
-        includeAnswerKey,
+        includeAnswerKey: true,
       });
-      exportExamPaperToWord(formatPaperForExport(response.data), includeAnswerKey);
+      const formatted = formatPaperForExport(response.data);
+      setExportModalPaper(formatted);
     } catch (error: any) {
       setToast({ message: error.message || 'Không thể tải đầy đủ nội dung đề thi.', type: 'error' });
     }
@@ -709,33 +720,46 @@ export default function ExamPapersPage() {
     return filteredPapers.slice(start, start + limit);
   }, [filteredPapers, page, limit]);
 
-  const exportExcel = () => {
+  const prepareExamPaperExportData = () => {
     const columns = [
-      { header: 'STT', width: 8, align: 'center' as const },
-      { header: 'Mã Đề', width: 15 },
-      { header: 'Môn học', width: 35 },
-      { header: 'Trạng thái', width: 18 },
-      { header: 'Số câu', width: 12, align: 'center' as const },
-      { header: 'Thời gian', width: 15, align: 'center' as const },
+      { header: 'STT', width: 6, align: 'center' as const },
+      { header: 'Mã Đề', width: 14, align: 'center' as const },
+      { header: 'Môn học', width: 32, align: 'left' as const },
+      { header: 'Trạng thái', width: 16, align: 'center' as const },
+      { header: 'Số câu', width: 10, align: 'center' as const },
+      { header: 'Thời gian', width: 14, align: 'center' as const },
       { header: 'Tổng điểm', width: 12, align: 'center' as const },
     ];
 
     const rows = filteredPapers.map((p: any, idx) => [
       idx + 1,
-      p.paperCode,
-      p.subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '',
-      p.status,
+      getPaperCodeRange(p).rangeText,
+      p.subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '---',
+      p.status === 'PUBLISHED' ? 'Đã phát hành' : p.status === 'DRAFT' ? 'Bản nháp' : p.status === 'ARCHIVED' ? 'Đã lưu trữ' : p.status === 'CANCELLED' ? 'Đã hủy' : 'Chưa xác định',
       p.questionCount ?? p.questions?.length ?? 0,
       `${p.durationMinutes} phút`,
-      `${p.totalScore} đ`,
+      `${p.totalScore || 10} đ`,
     ]);
 
-    exportToFormattedExcel({
+    const metaInfo = [
+      { label: 'Tổng số đề thi', value: String(papers.length) },
+      { label: 'Đề thi đang lọc', value: String(filteredPapers.length) },
+    ];
+
+    return { columns, rows, metaInfo };
+  };
+
+  const exportExcel = async () => {
+    const { columns, rows, metaInfo } = prepareExamPaperExportData();
+
+    await exportToFormattedExcel({
       filename: 'Danh_sach_de_thi.xls',
-      title: 'DANH SÁCH ĐỀ THI HỆ THỐNG',
-      subtitle: 'Trích xuất dữ liệu danh mục đề thi ngẫu nhiên',
+      templateCode: 'EXAM_PAPER_OFFICIAL',
+      title: 'DANH SÁCH ĐỀ THI HỌC PHẦN',
+      subtitle: 'Học kỳ 1 - Năm học 2025 - 2026',
       columns,
       rows,
+      metaInfo,
     });
   };
 
@@ -750,33 +774,22 @@ export default function ExamPapersPage() {
 
     const header = tplConfig.header || {};
     const footer = tplConfig.footer || {};
+    const { columns, rows, metaInfo } = prepareExamPaperExportData();
 
     printReport({
-      title: header.title || 'BÁO CÁO DANH SÁCH ĐỀ THI',
-      subtitle: header.subtitle || 'Danh sách đề thi và phân bổ ma trận câu hỏi',
+      title: header.title || 'DANH SÁCH ĐỀ THI HỌC PHẦN',
+      subtitle: header.subtitle || 'Học kỳ 1 - Năm học 2025 - 2026',
       institutionName: header.institutionName,
       facultyName: header.facultyName,
       signers: footer.signers,
       footerNotes: footer.note,
-      metaInfo: [
-        { label: 'Tổng số đề thi', value: String(papers.length) },
-        { label: 'Đề thi đang lọc', value: String(filteredPapers.length) },
-      ],
-      columns: [
-        { header: 'STT', width: '40px' },
-        { header: 'Mã Đề', width: '90px', align: 'center' },
-        { header: 'Môn học', width: '220px' },
-        { header: 'Trạng thái', width: '110px', align: 'center' },
-        { header: 'Số câu', width: '70px', align: 'center' },
-        { header: 'Thời gian', width: '90px', align: 'center' },
-      ],
-      rows: filteredPapers.map((p: any, idx) => [
-        idx + 1,
-        p.paperCode,
-        p.subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '---',
-        p.status === 'PUBLISHED' ? 'Đã phát hành' : p.status === 'DRAFT' ? 'Bản nháp' : p.status === 'ARCHIVED' ? 'Đã lưu trữ' : p.status === 'CANCELLED' ? 'Đã hủy' : 'Chưa xác định',
-        `${p.durationMinutes} phút`,
-      ]),
+      metaInfo,
+      columns: columns.map((c) => ({
+        header: c.header,
+        width: typeof c.width === 'number' ? `${c.width * 10}px` : c.width,
+        align: c.align,
+      })),
+      rows,
     });
   };
 
@@ -892,8 +905,6 @@ export default function ExamPapersPage() {
               totalCount={filteredPapers.length}
               sortOrder={sortOrder}
               onSortChange={setSortOrder}
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
               onRefresh={handleRefresh}
@@ -916,7 +927,6 @@ export default function ExamPapersPage() {
           <ExamPaperTable
             papers={paginatedPapers}
             selected={selected}
-            viewMode={viewMode}
             visibleColumns={visibleColumns}
             onSelect={(id, checked) =>
               setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))
@@ -1057,7 +1067,7 @@ export default function ExamPapersPage() {
         onClose={() => setSelectedPaper(null)}
         showAnswers={showAnswers}
         onToggleShowAnswers={() => setShowAnswers(!showAnswers)}
-        onExportWord={(p, showAns) => void exportPaper(p, showAns)}
+        onExportWord={(p) => void exportPaper(p)}
         onSwapQuestion={(index, q) => openSwapModal(index, q)}
         onRubric={(rubricData) => setRubricQuestion(rubricData)}
         onPublish={currentUser?.role === 'ADMIN' || (currentUser?.role === 'TEACHER' && (drawerOpenPaper as any)?.examSchedule?.mode === 'MOCK')
@@ -1191,6 +1201,12 @@ export default function ExamPapersPage() {
         paper={changePasswordModal.paper}
         onClose={() => setChangePasswordModal({ isOpen: false, paper: null })}
         onSubmit={handleChangePasswordSubmit}
+      />
+
+      <ExamPaperExportModal
+        isOpen={Boolean(exportModalPaper)}
+        onClose={() => setExportModalPaper(null)}
+        basePaper={exportModalPaper}
       />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}

@@ -16,6 +16,12 @@ export class AutoArrangeDto {
   roomIds: number[];
 
   @IsOptional()
+  @IsArray()
+  @Type(() => Number)
+  @IsInt({ each: true })
+  classIds?: number[];
+
+  @IsOptional()
   @IsBoolean()
   confirm?: boolean;
 }

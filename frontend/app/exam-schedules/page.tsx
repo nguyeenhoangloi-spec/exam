@@ -393,7 +393,7 @@ export default function ExamSchedulesPage() {
     });
   };
 
-  const exportExcel = () => {
+  const exportExcel = async () => {
     const columns = [
       { header: 'STT', width: 8, align: 'center' as const },
       { header: 'Mã lịch thi', width: 15 },
@@ -422,10 +422,11 @@ export default function ExamSchedulesPage() {
       s.statusBadge === 'UPCOMING' ? 'Sắp diễn ra' : s.statusBadge === 'ONGOING' ? 'Đang diễn ra' : 'Đã diễn ra',
     ]);
 
-    exportToFormattedExcel({
-      filename: 'Xep_lich_thi.xls',
-      title: 'DANH SÁCH XẾP LỊCH THI HỆ THỐNG',
-      subtitle: 'Trích xuất dữ liệu điều phối ca thi',
+    await exportToFormattedExcel({
+      filename: 'Lich_thi_theo_ca.xls',
+      templateCode: 'EXAM_SCHEDULE_LIST',
+      title: 'LỊCH THI THEO CA',
+      subtitle: 'Kỳ thi Học kỳ 1 - Năm học 2025 - 2026',
       columns,
       rows,
     });

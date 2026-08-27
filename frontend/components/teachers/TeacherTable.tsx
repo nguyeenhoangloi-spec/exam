@@ -18,7 +18,6 @@ const DEGREE_BADGE: Record<string, string> = {
 interface TeacherTableProps {
   teachers: Teacher[];
   selected: number[];
-  viewMode?: 'list' | 'grid' | 'compact';
   visibleColumns?: Record<string, boolean>;
   onSelect: (id: number, checked: boolean) => void;
   onSelectAll: (checked: boolean) => void;
@@ -32,7 +31,6 @@ interface TeacherTableProps {
 export function TeacherTable({
   teachers,
   selected,
-  viewMode = 'list',
   visibleColumns = {
     teacherCode: true,
     fullName: true,
@@ -52,234 +50,6 @@ export function TeacherTable({
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
   const allSelected = teachers.length > 0 && selected.length === teachers.length;
 
-  // 1. Dạng Lưới (Grid View Mode)
-  if (viewMode === 'grid') {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {teachers.map((t) => {
-          const isChecked = selected.includes(t.id);
-          const isLocked = t.user?.status === 'LOCKED';
-
-          return (
-            <div
-              key={t.id}
-              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-              }`}
-            >
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={(e) => onSelect(t.id, e.target.checked)}
-                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => onDetail(t)}
-                      className="tabular-nums text-type-body leading-[22px] font-medium text-slate-900 hover:text-primary-600 transition cursor-pointer"
-                    >
-                      <IdentifierBadge>{t.teacherCode}</IdentifierBadge>
-                    </button>
-                  </div>
-
-                  <div className="flex items-center gap-1.5">
-                    {isLocked && <StatusBadge status="LOCKED" customLabel="Đã khóa" />}
-                    <Badge tone="blue" leftIcon={<GraduationCap className="h-3.5 w-3.5" />}>
-                      {t.degree || 'TS'}
-                    </Badge>
-                  </div>
-                </div>
-
-                <div>
-                  <h4
-                    onClick={() => onDetail(t)}
-                    className="text-type-card font-semibold text-slate-900 leading-snug cursor-pointer hover:text-primary-600 transition"
-                  >
-                    {t.fullName}
-                  </h4>
-                </div>
-
-                <div className="space-y-1.5 text-type-body-sm text-slate-600 font-normal pt-1">
-                  <div className="flex items-center gap-1.5">
-                    <Building2 className="h-4 w-4 text-slate-400 shrink-0" />
-                    <span className="truncate">{t.department?.name || '---'}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Mail className="h-4 w-4 text-slate-400 shrink-0" />
-                    <span className="truncate text-slate-500">{t.email}</span>
-                  </div>
-                  {t.phone && (
-                    <div className="flex items-center gap-1.5">
-                      <Phone className="h-4 w-4 text-slate-400 shrink-0" />
-                      <span>{t.phone}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-type-body-sm font-medium">
-                <button
-                  type="button"
-                  onClick={() => onDetail(t)}
-                  className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition cursor-pointer"
-                >
-                  <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-                  <span>Xem chi tiết</span>
-                </button>
-
-                {isAdmin && (
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => onEdit(t)}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer"
-                      title="Chỉnh sửa"
-                    >
-                      <Edit className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onDelete(t.id)}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition cursor-pointer"
-                      title="Xóa"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-
-  // 2. Dạng Thẻ Thanh Ngang Thu Gọn (Compact Card Row Mode)
-  if (viewMode === 'compact') {
-    return (
-      <div className="space-y-2.5">
-        {teachers.map((t) => {
-          const isChecked = selected.includes(t.id);
-          const isLocked = t.user?.status === 'LOCKED';
-
-          return (
-            <div
-              key={t.id}
-              className={`flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white px-4 py-3 shadow-2xs hover:border-slate-300 hover:shadow-xs transition duration-200 gap-3.5 ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-              }`}
-            >
-              {/* Left: Checkbox + Identifier Code Badge */}
-              <div className="flex items-center gap-3 min-w-0">
-                <input
-                  type="checkbox"
-                  checked={isChecked}
-                  onChange={(e) => onSelect(t.id, e.target.checked)}
-                  className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
-                />
-                <button
-                  type="button"
-                  onClick={() => onDetail(t)}
-                  className="tabular-nums text-type-helper font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
-                >
-                  <IdentifierBadge tone="blue">{t.teacherCode}</IdentifierBadge>
-                </button>
-
-                {/* Middle: Name + Degree + Meta chips */}
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h4
-                      onClick={() => onDetail(t)}
-                      className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
-                    >
-                      {t.fullName}
-                    </h4>
-                    {t.degree && (
-                      <Badge tone="blue" leftIcon={<GraduationCap className="h-3 w-3" />}>
-                        {t.degree}
-                      </Badge>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
-                    <span className="flex items-center gap-1">
-                      <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="text-slate-700 dark:text-slate-300 font-medium">{t.department?.name || 'Chưa phân khoa'}</span>
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="text-slate-500 truncate max-w-[200px]">{t.email}</span>
-                    </span>
-                    {t.phone && (
-                      <span className="flex items-center gap-1">
-                        <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span className="text-slate-600 dark:text-slate-400">{t.phone}</span>
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Right: Status Badge & Action Buttons */}
-              <div className="flex items-center gap-1.5 shrink-0">
-                {isLocked && <StatusBadge status="LOCKED" customLabel="Đã khóa" />}
-
-                <button
-                  type="button"
-                  onClick={() => onDetail(t)}
-                  className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
-                  title="Xem hồ sơ"
-                >
-                  <Eye className="h-4 w-4" />
-                </button>
-
-                {isAdmin && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => onEdit(t)}
-                      className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
-                      title="Chỉnh sửa"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    {onToggleLock && (
-                      <button
-                        type="button"
-                        onClick={() => onToggleLock(t)}
-                        className={`p-1.5 rounded-xl transition cursor-pointer ${
-                          t.user?.status === 'LOCKED'
-                            ? 'text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
-                            : 'text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40'
-                        }`}
-                        title={t.user?.status === 'LOCKED' ? 'Mở khóa tài khoản' : 'Khóa tài khoản'}
-                      >
-                        {t.user?.status === 'LOCKED' ? <Unlock className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => onDelete(t.id)}
-                      className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
-                      title="Xóa giảng viên"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-
-  // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
   return (
     <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-2xs">
       <table className="ui-table w-full text-left text-type-body text-slate-700 border-collapse">
@@ -379,69 +149,60 @@ export function TeacherTable({
 
                 <td className="p-3.5 pr-4 text-right whitespace-nowrap relative">
                   <div className="flex items-center justify-end gap-1">
-                    <button
-                      type="button"
-                      onClick={() => onDetail(t)}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
-                      title="Xem hồ sơ"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-
-                    {isAdmin && (
-                      <ActionDropdownPortal>
-                        {(closeMenu) => (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() => { closeMenu(); onDetail(t); }}
-                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
-                            >
-                              <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                              <span>Xem chi tiết</span>
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => { closeMenu(); onEdit(t); }}
-                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
-                            >
-                              <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                              <span>Chỉnh sửa</span>
-                            </button>
-                            {onToggleLock && (
+                    <ActionDropdownPortal>
+                      {(closeMenu) => (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => { closeMenu(); onDetail(t); }}
+                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
+                          >
+                            <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                            <span>Xem chi tiết</span>
+                          </button>
+                          {isAdmin && (
+                            <>
                               <button
                                 type="button"
-                                onClick={() => { closeMenu(); onToggleLock(t); }}
-                                className={`flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-type-body font-medium transition cursor-pointer select-none ${
-                                  t.user?.status === 'LOCKED' ? 'hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400' : 'hover:bg-amber-50 dark:hover:bg-amber-950/40 text-amber-600 dark:text-amber-400'
-                                }`}
+                                onClick={() => { closeMenu(); onEdit(t); }}
+                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
                               >
-                                {t.user?.status === 'LOCKED' ? (
-                                  <>
-                                    <Unlock className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                                    <span>Mở khóa tài khoản</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Lock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                                    <span>Khóa tài khoản</span>
-                                  </>
-                                )}
+                                <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                                <span>Chỉnh sửa</span>
                               </button>
-                            )}
-                            <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
-                            <button
-                              type="button"
-                              onClick={() => { closeMenu(); onDelete(t.id); }}
-                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-type-body font-medium transition cursor-pointer select-none"
-                            >
-                              <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400" />
-                              <span>Xóa</span>
-                            </button>
-                          </>
-                        )}
-                      </ActionDropdownPortal>
-                    )}
+                              {onToggleLock && (
+                                <button
+                                  type="button"
+                                  onClick={() => { closeMenu(); onToggleLock(t); }}
+                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-type-body font-medium transition cursor-pointer select-none hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200"
+                                >
+                                  {t.user?.status === 'LOCKED' ? (
+                                    <>
+                                      <Unlock className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                                      <span>Mở khóa tài khoản</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Lock className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                                      <span>Khóa tài khoản</span>
+                                    </>
+                                  )}
+                                </button>
+                              )}
+                              <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
+                              <button
+                                type="button"
+                                onClick={() => { closeMenu(); onDelete(t.id); }}
+                                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-type-body font-medium transition cursor-pointer select-none"
+                              >
+                                <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+                                <span>Xóa</span>
+                              </button>
+                            </>
+                          )}
+                        </>
+                      )}
+                    </ActionDropdownPortal>
                   </div>
                 </td>
               </tr>

@@ -249,12 +249,12 @@ export function ExamPaperMatrixForm({
                   : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                   }`}
               >
-                Điền lỗ
+                ĐK
               </button>
               <button
                 type="button"
                 onClick={() => switchType('TU_LUAN')}
-                className={`flex h-10 items-center justify-center gap-1 rounded-xl text-type-helper font-semibold border transition cursor-pointer ${examType === 'TU_LUAN'
+                className={`flex h-10 items-center justify-center gap-1 rounded-xl text-type-helper font-semibold border transition cursor-pointer ${isEssay
                   ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
                   : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                   }`}
@@ -267,7 +267,7 @@ export function ExamPaperMatrixForm({
             </p>
           </div>
 
-          {/* 2. Mã đề gốc */}
+          {/* 2. Mã đề thi gốc */}
           <div className="space-y-1.5">
             <label className="block text-type-body font-medium text-slate-900 dark:text-slate-100">
               Mã đề gốc
@@ -280,6 +280,9 @@ export function ExamPaperMatrixForm({
               placeholder="101"
               className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition"
             />
+            <p className="text-type-helper text-slate-400 dark:text-slate-500 font-medium">
+              Mã bắt đầu (VD: 101)
+            </p>
           </div>
 
           {/* 3. Số mã đảo */}
@@ -291,10 +294,14 @@ export function ExamPaperMatrixForm({
               type="number"
               min={1}
               max={10}
-              value={formData.variantCount}
-              onChange={(e) => setFormData((p: any) => ({ ...p, variantCount: e.target.value }))}
+              value={formData.variantCount || 4}
+              onChange={(e) => setFormData((p: any) => ({ ...p, variantCount: parseInt(e.target.value, 10) || 1 }))}
+              placeholder="4"
               className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition"
             />
+            <p className="text-type-helper text-slate-400 dark:text-slate-500 font-medium">
+              Bộ gồm {formData.variantCount || 4} mã ({formData.paperCode || '101'} - {parseInt((formData.paperCode || '101').replace(/\D/g, '') || '101', 10) + (Number(formData.variantCount) || 4) - 1})
+            </p>
           </div>
 
           {/* 4. Thời gian */}
@@ -310,11 +317,9 @@ export function ExamPaperMatrixForm({
               onChange={(e) => handleDurationChange(e.target.value)}
               className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition"
             />
-            {scheduleDuration > 0 && (
-              <p className="text-type-helper text-slate-400 dark:text-slate-500 font-medium">
-                Tối đa: {scheduleDuration} phút
-              </p>
-            )}
+            <p className="text-type-helper text-slate-400 dark:text-slate-500 font-medium">
+              {scheduleDuration > 0 ? `Tối đa: ${scheduleDuration} phút` : 'Thời lượng thi'}
+            </p>
           </div>
         </div>
 

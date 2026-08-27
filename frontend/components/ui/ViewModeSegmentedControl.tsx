@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { List, LayoutGrid, Layers, CalendarDays } from 'lucide-react';
+import { List, LayoutGrid, CalendarDays } from 'lucide-react';
 
-export type ViewMode = 'list' | 'grid' | 'compact' | 'calendar';
+export type ViewMode = 'list' | 'grid' | 'calendar';
 
 interface ViewModeSegmentedControlProps<T extends ViewMode = ViewMode> {
   viewMode: T;
@@ -16,14 +16,13 @@ export function ViewModeSegmentedControl<T extends ViewMode = ViewMode>({
   viewMode,
   onChange,
   className = '',
-  supportedModes = ['list', 'grid', 'compact'] as T[],
+  supportedModes = ['list', 'grid', 'calendar'] as T[],
 }: ViewModeSegmentedControlProps<T>) {
   const activeIndex = supportedModes.indexOf(viewMode) >= 0 ? supportedModes.indexOf(viewMode) : 0;
 
   const modeConfig: Record<ViewMode, { label: string; icon: React.ElementType }> = {
     list: { label: 'Dạng danh sách', icon: List },
     grid: { label: 'Dạng thẻ', icon: LayoutGrid },
-    compact: { label: 'Dạng thu gọn', icon: Layers },
     calendar: { label: 'Dạng lịch / Thời khóa biểu', icon: CalendarDays },
   };
 

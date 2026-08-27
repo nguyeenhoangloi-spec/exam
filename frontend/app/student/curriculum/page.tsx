@@ -15,7 +15,6 @@ import {
   PaginationBar,
   SortDropdown,
   ColumnToggleDropdown,
-  ViewModeSegmentedControl,
   TabBar,
 } from '../../../components/ui';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
@@ -100,7 +99,6 @@ export default function StudentCurriculumPage() {
 
   // Toolbar & View state
   const [sortOrder, setSortOrder] = useState('semester_asc');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [openColumnMenu, setOpenColumnMenu] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     code: true,
@@ -324,20 +322,21 @@ export default function StudentCurriculumPage() {
     });
   };
 
-  const handleExportExcel = () => {
-    exportToFormattedExcel({
+  const handleExportExcel = async () => {
+    await exportToFormattedExcel({
       filename: `Khung_chuong_trinh_${studentInfo?.studentCode || 'sinh_vien'}`,
-      title: 'KHUNG CHƯƠNG TRÌNH ĐÀO TẠO CÁ NHÂN',
+      templateCode: 'SUBJECT_DIRECTORY',
+      title: 'KHUNG CHƯƠNG TRÌNH ĐÀO TẠO',
       subtitle: `Sinh viên: ${studentInfo?.fullName} (${studentInfo?.studentCode}) · Lớp: ${studentInfo?.className} · Khoa: ${studentInfo?.departmentName}`,
       columns: [
-        { header: 'STT', width: 8, align: 'center' },
-        { header: 'Học kỳ', width: 14, align: 'center' },
+        { header: 'STT', width: 6, align: 'center' },
+        { header: 'Học kỳ', width: 12, align: 'center' },
         { header: 'Mã môn học', width: 14, align: 'center' },
-        { header: 'Tên môn học', width: 35, align: 'left' },
+        { header: 'Tên môn học', width: 30, align: 'left' },
         { header: 'Số tín chỉ', width: 12, align: 'center' },
-        { header: 'Loại môn', width: 16, align: 'center' },
-        { header: 'Trạng thái', width: 16, align: 'center' },
-        { header: 'Ghi chú', width: 25, align: 'left' },
+        { header: 'Loại môn', width: 14, align: 'center' },
+        { header: 'Trạng thái', width: 14, align: 'center' },
+        { header: 'Ghi chú', width: 20, align: 'left' },
       ],
       rows: filteredList.map((item, idx) => [
         idx + 1,
@@ -556,22 +555,6 @@ export default function StudentCurriculumPage() {
               visibleColumns={visibleColumns}
               onToggle={handleColumnToggle}
             />
-
-            {/* View Mode Segmented Control */}
-            <ViewModeSegmentedControl
-              viewMode={viewMode}
-              onChange={(mode) => setViewMode(mode)}
-            />
-
-            {/* Refresh Button */}
-            <button
-              type="button"
-              onClick={handleManualRefresh}
-              className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
-              title="Làm mới dữ liệu"
-            >
-              <RefreshCw className={`h-4 w-4 ${loading || isRefreshing ? 'animate-spin text-blue-600' : ''}`} />
-            </button>
           </div>
         </div>
 
@@ -605,174 +588,8 @@ export default function StudentCurriculumPage() {
               Không có môn học nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
             </p>
           </div>
-        ) : viewMode === 'grid' ? (
-          /* ── 5.1 Grid View Mode ── */
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {currentItems.map((item) => {
-              const isChecked = selected.includes(item.id);
-              return (
-                <div
-                  key={item.id}
-                  className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                    }`}
-                >
-                  <div className="space-y-2.5">
-                    <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                          className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setDetailItem(item)}
-                          className="tabular-nums font-medium text-type-helper text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer shrink-0"
-                        >
-                          <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
-                        </button>
-                      </div>
-
-                      <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full tabular-nums border border-slate-200 dark:border-slate-700">
-                        HK {item.recommendedSemester}
-                      </span>
-                    </div>
-
-                    <div>
-                      <h4
-                        onClick={() => setDetailItem(item)}
-                        className="text-type-body font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition line-clamp-1"
-                      >
-                        {item.subjectName}
-                      </h4>
-                      {item.note && <p className="text-type-helper text-slate-400 font-normal mt-0.5 italic truncate">{item.note}</p>}
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2 text-type-helper text-slate-600 dark:text-slate-400 font-normal pt-1 border-t border-slate-100/70 dark:border-slate-800/70">
-                      <div>
-                        <span className="text-slate-400 text-type-helper block">Số tín chỉ</span>
-                        <strong className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper block">{item.credits} TC</strong>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 text-type-helper block">Học kỳ</span>
-                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper block">Học kỳ {item.recommendedSemester}</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 text-type-helper block">Loại môn</span>
-                        <span className="font-semibold text-blue-600 dark:text-blue-400 text-type-helper block">
-                          {item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 text-type-helper block">Trạng thái</span>
-                        <span className="font-semibold text-type-helper block">
-                          {item.isCompleted ? (
-                            <span className="text-emerald-700 dark:text-emerald-400">Đã học</span>
-                          ) : (
-                            <span className="text-slate-400">Chưa tích lũy</span>
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-type-helper">
-                    <button
-                      type="button"
-                      onClick={() => setDetailItem(item)}
-                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-type-body-sm font-medium transition cursor-pointer"
-                    >
-                      <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-                      <span>Xem chi tiết</span>
-                    </button>
-                    <div>
-                      {item.isCompleted ? (
-                        <StatusBadge status="COMPLETED" customLabel="Đã học" />
-                      ) : (
-                        <StatusBadge status="NOT_STARTED" customLabel="Chưa tích lũy" />
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : viewMode === 'compact' ? (
-          /* ── 5.2 Compact View Mode (Dạng Thẻ Thanh Ngang Thu Gọn) ── */
-          <div className="space-y-2.5">
-            {currentItems.map((item) => {
-              const isChecked = selected.includes(item.id);
-              return (
-                <div
-                  key={item.id}
-                  className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                    }`}
-                >
-                  {/* Left: Checkbox + CodeBadge + Name + Meta Chips */}
-                  <div className="flex items-center gap-3 min-w-0">
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() => setDetailItem(item)}
-                      className="shrink-0"
-                    >
-                      <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
-                    </button>
-
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <button
-                          type="button"
-                          onClick={() => setDetailItem(item)}
-                          className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
-                        >
-                          {item.subjectName}
-                        </button>
-                        <span className="text-type-helper font-medium text-blue-600 dark:text-blue-400 px-2 py-0.5 ui-pill rounded-full">
-                          {item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
-                        <span className="text-slate-800 dark:text-slate-200 font-medium">Học kỳ {item.recommendedSemester}</span>
-                        <span className="text-slate-600 dark:text-slate-400 font-medium">{item.credits} tín chỉ</span>
-                        {item.note && <span className="text-slate-400 italic truncate max-w-xs">{item.note}</span>}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right: Status & Action */}
-                  <div className="flex items-center gap-3 shrink-0">
-                    <div>
-                      {item.isCompleted ? (
-                        <StatusBadge status="COMPLETED" customLabel="Đã học" />
-                      ) : (
-                        <StatusBadge status="NOT_STARTED" customLabel="Chưa tích lũy" />
-                      )}
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => setDetailItem(item)}
-                      className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
-                      title="Xem chi tiết"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         ) : (
-          /* ── 5.3 Standard List View Mode (Default Table) ── */
+          /* ── 5.1 Standard List View Mode (Default Table) ── */
           <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">

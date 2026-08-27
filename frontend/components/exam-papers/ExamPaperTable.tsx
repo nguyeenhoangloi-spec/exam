@@ -8,10 +8,20 @@ import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { formatExamType } from '../../lib/enum-labels';
 import { ExamPaper } from '../../types';
 
+export function getPaperCodeRange(paper: any): { rangeText: string; isVariant: boolean; variantCount: number } {
+  const match = (paper.title || '').match(/Bộ\s*(\d+)\s*mã/i);
+  const variantCount = match ? parseInt(match[1], 10) : (paper.variantCount || 1);
+  const baseNum = parseInt((paper.paperCode || '').replace(/\D/g, ''), 10);
+  if (!isNaN(baseNum) && variantCount > 1) {
+    const endNum = baseNum + variantCount - 1;
+    return { rangeText: `${baseNum} – ${endNum}`, isVariant: true, variantCount };
+  }
+  return { rangeText: paper.paperCode, isVariant: false, variantCount: 1 };
+}
+
 interface ExamPaperTableProps {
   papers: ExamPaper[];
   selected: number[];
-  viewMode?: 'list' | 'grid' | 'compact';
   visibleColumns?: Record<string, boolean>;
   onSelect: (id: number, checked: boolean) => void;
   onSelectAll: (checked: boolean) => void;
@@ -27,7 +37,6 @@ interface ExamPaperTableProps {
 export function ExamPaperTable({
   papers,
   selected,
-  viewMode = 'list',
   visibleColumns = {
     paperCode: true,
     subjectName: true,
@@ -51,244 +60,6 @@ export function ExamPaperTable({
   const canPublishPaper = (paper: ExamPaper) => isAdmin || (
     canPublishMock && (paper as any).examSchedule?.mode === 'MOCK'
   );
-
-  // 1. Dạng Lưới (Grid View Mode)
-  if (viewMode === 'grid') {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {papers.map((p) => {
-          const isChecked = selected.includes(p.id);
-          const sched = (p as any).examSchedule || {};
-          const subCode = (p as any).subjectCode || sched.subjectCode || sched.subject?.subjectCode || '';
-          const subName = (p as any).subjectName || sched.subjectName || sched.subject?.subjectName || 'Môn thi';
-          const periodName = sched.periodName || sched.examPeriod?.name || sched.period?.name || '';
-          const dateStr = sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : null;
-          const timeStr = sched.startTime && sched.endTime ? `${sched.startTime} – ${sched.endTime}` : null;
-          const qCount = (p as any)._count?.questions ?? (p as any).questionCount ?? p.questions?.length ?? (p as any).details?.length ?? 0;
-
-          return (
-            <div
-              key={p.id}
-              className={`rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-              }`}
-            >
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={(e) => onSelect(p.id, e.target.checked)}
-                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => onDetail(p.id)}
-                      className="tabular-nums text-type-helper font-semibold text-slate-900 hover:text-blue-600 transition cursor-pointer"
-                    >
-                      <IdentifierBadge>{p.paperCode}</IdentifierBadge>
-                    </button>
-                  </div>
-
-                  <StatusBadge status={p.status} />
-                </div>
-
-                <div>
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    {subCode && (
-                      <span className="text-type-helper font-semibold text-slate-600 tabular-nums">
-                        {subCode}
-                      </span>
-                    )}
-                    <h4
-                      onClick={() => onDetail(p.id)}
-                      className="text-type-body font-semibold text-slate-900 leading-snug cursor-pointer hover:text-blue-600 transition truncate"
-                    >
-                      {subName}
-                    </h4>
-                  </div>
-                  {periodName && (
-                    <p className="text-type-helper font-normal text-slate-500 mt-0.5 truncate">
-                      {periodName}
-                    </p>
-                  )}
-
-                  <div className="mt-2 space-y-0.5 text-type-body-sm font-normal text-slate-600">
-                    <span className="flex items-center gap-1 text-slate-700">
-                      <Clock className="h-4 w-4 text-blue-600 shrink-0" />
-                      {dateStr ? `${dateStr} (${timeStr || 'Chưa có giờ'})` : 'Chưa xếp lịch thi'}
-                    </span>
-                    <span className="text-type-helper text-slate-500 font-normal block pl-5">
-                      Thời gian làm bài: {p.durationMinutes} phút
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-type-helper font-semibold text-slate-600 pt-1">
-                  <div className="flex items-center gap-[6px] text-type-helper text-slate-600">
-                    <HelpCircle className="h-3.5 w-3.5 text-blue-600 shrink-0" />
-                    <span>{qCount} câu hỏi</span>
-                  </div>
-                  <div className="flex items-center gap-[6px] text-type-helper text-slate-600">
-                    <Award className="h-3.5 w-3.5 text-blue-600 shrink-0" />
-                    <span>{p.totalScore} điểm</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-type-helper font-semibold">
-                <button
-                  type="button"
-                  onClick={() => onDetail(p.id)}
-                  disabled={busyId === p.id}
-                  className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition cursor-pointer"
-                >
-                  <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-                  <span>{busyId === p.id ? 'Đang mở...' : 'Xem chi tiết'}</span>
-                </button>
-
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => onExportWord(p)}
-                    className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
-                    title="Xuất Word (.doc)"
-                  >
-                    <Download className="h-3.5 w-3.5" />
-                  </button>
-
-                  {p.status === 'DRAFT' && canPublishPaper(p) && (
-                    <button
-                      type="button"
-                      onClick={() => onAction(p, 'publish')}
-                      className="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 rounded-xl transition cursor-pointer"
-                      title="Phát hành đề thi"
-                    >
-                      <Send className="h-3.5 w-3.5" />
-                    </button>
-                  )}
-
-                  {isAdmin && (
-                    <button
-                      type="button"
-                      onClick={() => onAction(p, 'delete')}
-                      className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
-                      title="Xóa đề thi"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-
-  // 2. Dạng Thẻ Thanh Ngang Thu Gọn (Compact Card Row Mode)
-  if (viewMode === 'compact') {
-    return (
-      <div className="space-y-2.5">
-        {papers.map((p) => {
-          const isChecked = selected.includes(p.id);
-          const sched = (p as any).examSchedule || {};
-          const subCode = (p as any).subjectCode || sched.subjectCode || sched.subject?.subjectCode || '';
-          const subName = (p as any).subjectName || sched.subjectName || sched.subject?.subjectName || '---';
-          const qCount = (p as any)._count?.questions ?? (p as any).questionCount ?? p.questions?.length ?? (p as any).details?.length ?? 0;
-          const title = p.title || (subName ? `Đề thi môn ${subName}` : `Đề thi ${p.paperCode}`);
-
-          return (
-            <div
-              key={p.id}
-              className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-xs transition duration-200 gap-3.5 ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-              }`}
-            >
-              {/* Left: Checkbox + Avatar Code Badge */}
-              <div className="flex items-center gap-3 min-w-0">
-                <input
-                  type="checkbox"
-                  checked={isChecked}
-                  onChange={(e) => onSelect(p.id, e.target.checked)}
-                  className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
-                />
-                <button
-                  type="button"
-                  onClick={() => onDetail(p.id)}
-                  className="tabular-nums text-type-helper font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shrink-0"
-                >
-                  <IdentifierBadge tone="blue">{p.paperCode}</IdentifierBadge>
-                </button>
-                <div className="min-w-0">
-                  <h4
-                    onClick={() => onDetail(p.id)}
-                    className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition truncate"
-                  >
-                    {title}
-                  </h4>
-                  <div className="flex items-center gap-2 mt-0.5 text-type-helper text-slate-400">
-                    {subCode && <span className="font-medium text-slate-500 dark:text-slate-400">#{subCode}</span>}
-                    <span>• {qCount} câu hỏi</span>
-                    <span>• {p.durationMinutes} phút</span>
-                    <span>• {p.totalScore} điểm</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right: Status & Actions */}
-              <div className="flex items-center gap-3 shrink-0">
-                <StatusBadge status={p.status} />
-
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => onDetail(p.id)}
-                    className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
-                    title="Xem chi tiết"
-                  >
-                    <Eye className="h-4 w-4" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => onExportWord(p)}
-                    className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
-                    title="Xuất Word (.doc)"
-                  >
-                    <Download className="h-4 w-4" />
-                  </button>
-
-                  {p.status === 'DRAFT' && canPublishPaper(p) && (
-                    <button
-                      type="button"
-                      onClick={() => onAction(p, 'publish')}
-                      className="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 rounded-xl transition cursor-pointer"
-                      title="Phát hành đề thi"
-                    >
-                      <Send className="h-4 w-4" />
-                    </button>
-                  )}
-
-                  {isAdmin && (
-                    <button
-                      type="button"
-                      onClick={() => onAction(p, 'delete')}
-                      className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
-                      title="Xóa đề thi"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
 
   // 3. Dạng Danh Sách Chuẩn (List View Mode - Default)
   return (
@@ -347,7 +118,7 @@ export function ExamPaperTable({
                         onClick={() => onDetail(p.id)}
                         className="tabular-nums text-type-body leading-[22px] font-medium text-slate-900 hover:text-blue-600 transition cursor-pointer"
                       >
-                        <IdentifierBadge>{p.paperCode}</IdentifierBadge>
+                        <IdentifierBadge tone="blue">{getPaperCodeRange(p).rangeText}</IdentifierBadge>
                       </button>
                       <p className="text-type-body leading-[22px] font-medium text-slate-400">
                         {formatExamType(examType)}
@@ -422,16 +193,6 @@ export function ExamPaperTable({
 
                 <td className="p-3.5 pr-4 text-right whitespace-nowrap relative">
                   <div className="flex items-center justify-end gap-1">
-                    <button
-                      type="button"
-                      onClick={() => onDetail(p.id)}
-                      disabled={busyId === p.id}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
-                      title="Xem chi tiết đề"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-
                     <button
                       type="button"
                       onClick={() => onExportWord(p)}

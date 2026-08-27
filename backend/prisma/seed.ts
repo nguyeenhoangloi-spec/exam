@@ -262,14 +262,14 @@ async function main() {
   // 9. EXAM ROOMS
   console.log(' └─ 8 Exam Rooms...');
   const roomsData = [
-    { code: 'P101', name: 'Phòng 101 - A2', building: 'Nhà A2', capacity: 40 },
-    { code: 'P102', name: 'Phòng 102 - A2', building: 'Nhà A2', capacity: 40 },
-    { code: 'P201', name: 'Phòng 201 - A2', building: 'Nhà A2', capacity: 45 },
-    { code: 'P202', name: 'Phòng 202 - A2', building: 'Nhà A2', capacity: 45 },
-    { code: 'PM201', name: 'Phòng Máy 201 - B1', building: 'Nhà B1', capacity: 35 },
-    { code: 'PM202', name: 'Phòng Máy 202 - B1', building: 'Nhà B1', capacity: 35 },
-    { code: 'HOD101', name: 'Hội trường 101 - C1', building: 'Nhà C1', capacity: 100 },
-    { code: 'HOD102', name: 'Hội trường 102 - C1', building: 'Nhà C1', capacity: 100 },
+    { code: 'P101', name: 'Phòng 101 - A2', building: 'Nhà A2', capacity: 15 },
+    { code: 'P102', name: 'Phòng 102 - A2', building: 'Nhà A2', capacity: 15 },
+    { code: 'P201', name: 'Phòng 201 - A2', building: 'Nhà A2', capacity: 15 },
+    { code: 'P202', name: 'Phòng 202 - A2', building: 'Nhà A2', capacity: 15 },
+    { code: 'PM201', name: 'Phòng Máy 201 - B1', building: 'Nhà B1', capacity: 15 },
+    { code: 'PM202', name: 'Phòng Máy 202 - B1', building: 'Nhà B1', capacity: 15 },
+    { code: 'HOD101', name: 'Hội trường 101 - C1', building: 'Nhà C1', capacity: 15 },
+    { code: 'HOD102', name: 'Hội trường 102 - C1', building: 'Nhà C1', capacity: 15 },
   ];
   const roomMap: Record<string, number> = {};
   for (const r of roomsData) {

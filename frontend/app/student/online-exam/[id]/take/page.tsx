@@ -521,7 +521,10 @@ export default function StudentExamTakePage() {
             <span className="font-semibold text-white text-type-body-sm sm:text-type-body tracking-tight block truncate max-w-xs sm:max-w-md group-hover:text-blue-200 transition">
               {attemptData.paperTitle}
             </span>
-            <div className="flex items-center gap-2 mt-0.5">
+            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+              <span className="ui-pill ui-pill-solid inline-flex items-center px-2.5 py-0.5 bg-amber-400/20 border border-amber-300/40 text-amber-200 text-type-helper font-medium rounded-full">
+                <FileText className="w-3.5 h-3.5 mr-1 text-amber-300" /> Mã đề: {attemptData.paperCode || '101'}
+              </span>
               <span className="ui-pill ui-pill-solid inline-flex items-center px-2.5 py-0.5 bg-white/15 border border-white/20 text-blue-100 text-type-helper font-medium rounded-full">
                 <Shield className="w-3.5 h-3.5 mr-1 text-emerald-300" /> Giám sát trực tuyến kích hoạt
               </span>

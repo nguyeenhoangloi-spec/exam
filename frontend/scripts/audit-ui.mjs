@@ -11,6 +11,7 @@ const printExportFiles = new Set([
   'app/exam-arrangement/page.tsx',
   'app/exam-reports/page.tsx',
   'app/teacher/assignments/page.tsx',
+  'lib/exam-paper-template.ts',
   'lib/export-docx.ts',
   'lib/export-excel.ts',
   'lib/export-print.ts',

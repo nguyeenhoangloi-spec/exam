@@ -1,15 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
-import { RefreshCw } from 'lucide-react';
-import { SortDropdown, ColumnToggleDropdown, ViewModeSegmentedControl } from '../ui';
+import React from 'react';
+import { SortDropdown, ColumnToggleDropdown } from '../ui';
 
 interface QuestionBankTableToolbarProps {
   totalCount: number;
   sortOrder?: string;
   onSortChange?: (sort: string) => void;
-  viewMode?: 'list' | 'grid' | 'compact';
-  onViewModeChange?: (mode: 'list' | 'grid' | 'compact') => void;
   visibleColumns?: Record<string, boolean>;
   onColumnToggle?: (columnKey: string) => void;
   onRefresh?: () => void;
@@ -20,8 +17,6 @@ export function QuestionBankTableToolbar({
   totalCount,
   sortOrder = 'newest',
   onSortChange,
-  viewMode = 'list',
-  onViewModeChange,
   visibleColumns = {
     code: true,
     content: true,
@@ -30,23 +25,7 @@ export function QuestionBankTableToolbar({
     status: true,
   },
   onColumnToggle,
-  onRefresh,
-  loading = false,
 }: QuestionBankTableToolbarProps) {
-  const [isSpinning, setIsSpinning] = useState(false);
-
-  const handleRefreshClick = async () => {
-    if (!onRefresh) return;
-    setIsSpinning(true);
-    try {
-      await onRefresh();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setTimeout(() => setIsSpinning(false), 600);
-    }
-  };
-
   const columnsList = [
     { key: 'code', label: 'Mã câu hỏi' },
     { key: 'content', label: 'Nội dung câu hỏi' },
@@ -75,22 +54,6 @@ export function QuestionBankTableToolbar({
           visibleColumns={visibleColumns}
           onToggle={(key) => onColumnToggle?.(key)}
         />
-
-        {/* View Mode Segmented Control */}
-        <ViewModeSegmentedControl
-          viewMode={viewMode}
-          onChange={(mode) => onViewModeChange?.(mode)}
-        />
-
-        {/* Refresh button (borderless) */}
-        <button
-          type="button"
-          onClick={handleRefreshClick}
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
-          title="Làm mới dữ liệu"
-        >
-          <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
-        </button>
       </div>
     </div>
   );

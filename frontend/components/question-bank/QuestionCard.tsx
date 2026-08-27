@@ -7,6 +7,7 @@ import { ImageLightboxModal } from '../ImageLightboxModal';
 import { DynamicImage } from '../ui/DynamicImage';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { QuestionMediaPlayer } from '../exam/QuestionMediaPlayer';
+import { FillBlankInlineContent } from '../../lib/fill-blank-helper';
 
 export function QuestionCard({
   question: q,
@@ -161,7 +162,7 @@ export function QuestionCard({
           {q.contentRich && typeof q.contentRich === 'object' && 'html' in q.contentRich ? (
             <div dangerouslySetInnerHTML={{ __html: fixHtmlImageUrls(String((q.contentRich as { html?: string }).html || '')) }} />
           ) : (
-            q.content
+            <FillBlankInlineContent content={q.content} fillBlankAnswers={q.fillBlankAnswers} showAnswers={false} />
           )}
         </div>
 

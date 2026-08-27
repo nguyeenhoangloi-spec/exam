@@ -615,15 +615,6 @@ function AdminEssayReviewContent() {
                   </div>
 
                   <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={loadAssignments}
-                      disabled={loading}
-                      className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer select-none disabled:opacity-50"
-                      title="Làm mới danh sách"
-                    >
-                      <RotateCcw className={`h-3.5 w-3.5 ${loading ? 'animate-spin text-blue-600' : ''}`} />
-                    </button>
                     {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || dateFilter !== 'ALL' || scheduleFilter !== 'ALL' || searchQuery) && (
                       <button
                         type="button"

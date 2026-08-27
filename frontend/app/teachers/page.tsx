@@ -59,7 +59,6 @@ export default function TeachersPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
   const [sortOrder, setSortOrder] = useState('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     teacherCode: true,
     fullName: true,
@@ -318,64 +317,63 @@ export default function TeachersPage() {
     });
   };
 
-  const exportExcel = () => {
-    exportToFormattedExcel({
+  const prepareTeacherExportData = () => {
+    const columns = [
+      { header: 'STT', align: 'center' as const, width: 6 },
+      { header: 'Mã GV', align: 'center' as const, width: 14 },
+      { header: 'Họ và tên', align: 'left' as const, width: 24 },
+      { header: 'Học vị', align: 'center' as const, width: 14 },
+      { header: 'Email', align: 'left' as const, width: 26 },
+      { header: 'Số điện thoại', align: 'center' as const, width: 16 },
+      { header: 'Khoa trực thuộc', align: 'left' as const, width: 22 },
+    ];
+
+    const rows = filteredTeachers.map((t, idx) => [
+      idx + 1,
+      t.teacherCode,
+      t.fullName,
+      t.degree || 'ThS',
+      t.email,
+      t.phone || '---',
+      t.department?.name || '---',
+    ]);
+
+    const metaInfo = [
+      { label: 'Tổng số giảng viên', value: String(teachers.length) },
+      { label: 'Giảng viên đang lọc', value: String(filteredTeachers.length) },
+    ];
+
+    return { columns, rows, metaInfo };
+  };
+
+  const exportExcel = async () => {
+    const { columns, rows, metaInfo } = prepareTeacherExportData();
+
+    await exportToFormattedExcel({
       filename: `Danh_sach_giang_vien_${new Date().toISOString().slice(0, 10)}.xls`,
-      title: 'DANH SÁCH GIẢNG VIÊN ĐÀO TẠO KHẢO THÍ',
-      subtitle: `Tổng số: ${filteredTeachers.length} giảng viên`,
-      columns: [
-        { header: 'STT', align: 'center', width: 8 },
-        { header: 'Mã GV', align: 'center', width: 16 },
-        { header: 'Họ và tên', align: 'left', width: 25 },
-        { header: 'Học vị', align: 'center', width: 14 },
-        { header: 'Email', align: 'left', width: 28 },
-        { header: 'Số điện thoại', align: 'center', width: 16 },
-        { header: 'Khoa trực thuộc', align: 'left', width: 24 },
-      ],
-      rows: filteredTeachers.map((t, idx) => [
-        idx + 1,
-        t.teacherCode,
-        t.fullName,
-        t.degree || 'TS',
-        t.email,
-        t.phone || '',
-        t.department?.name || '',
-      ]),
+      templateCode: 'TEACHER_DIRECTORY',
+      title: 'DANH SÁCH GIẢNG VIÊN',
+      subtitle: 'Hồ sơ đội ngũ cán bộ giảng viên và phân khoa trực thuộc',
+      columns,
+      rows,
+      metaInfo,
     });
   };
 
   const handlePrintReport = () => {
+    const { columns, rows, metaInfo } = prepareTeacherExportData();
+
     printReport({
-      title: 'DANH SÁCH GIẢNG VIÊN ĐÀO TẠO KHẢO THÍ',
-      subtitle: 'Hồ sơ đội ngũ giảng viên và phân khoa trực thuộc',
-      facultyName: 'PHÒNG TỔ CHỨC CÁN BỘ & ĐÀO TẠO',
-      metaInfo: [
-        { label: 'Tổng số giảng viên', value: String(teachers.length) },
-        { label: 'Giảng viên đang lọc', value: String(filteredTeachers.length) },
-      ],
-      columns: [
-        { header: 'STT', width: '40px' },
-        { header: 'Mã GV', width: '90px', align: 'center' },
-        { header: 'Họ và Tên', width: '180px' },
-        { header: 'Học vị', width: '80px', align: 'center' },
-        { header: 'Khoa trực thuộc', width: '150px' },
-        { header: 'Email công vụ', width: '180px' },
-        { header: 'Số điện thoại', width: '100px', align: 'center' },
-      ],
-      rows: filteredTeachers.map((t, idx) => [
-        idx + 1,
-        t.teacherCode,
-        t.fullName,
-        t.degree || 'TS',
-        t.department?.name || '---',
-        t.email,
-        t.phone || '---',
-      ]),
-      signers: [
-        { title: 'NGƯỜI LẬP DANH SÁCH', subtitle: '(Ký, ghi rõ họ tên)' },
-        { title: 'TRƯỞNG PHÒNG TỔ CHỨC CÁN BỘ', subtitle: '(Ký, đóng dấu)' },
-      ],
       templateCode: 'TEACHER_DIRECTORY',
+      title: 'DANH SÁCH GIẢNG VIÊN',
+      subtitle: 'Hồ sơ đội ngũ cán bộ giảng viên và phân khoa trực thuộc',
+      metaInfo,
+      columns: columns.map((c) => ({
+        header: c.header,
+        width: typeof c.width === 'number' ? `${c.width * 10}px` : c.width,
+        align: c.align,
+      })),
+      rows,
     });
   };
 
@@ -476,8 +474,6 @@ export default function TeachersPage() {
               totalCount={filteredTeachers.length}
               sortOrder={sortOrder}
               onSortChange={setSortOrder}
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
               onRefresh={handleRefresh}
@@ -501,7 +497,6 @@ export default function TeachersPage() {
           <TeacherTable
             teachers={paginatedTeachers}
             selected={selected}
-            viewMode={viewMode}
             visibleColumns={visibleColumns}
             onSelect={(id, checked) =>
               setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))

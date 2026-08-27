@@ -142,18 +142,25 @@ export function PermissionFilterPopover({
       <button
         ref={buttonRef}
         type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
-        aria-label="Mở bộ lọc quyền"
-        className={`relative inline-flex h-7 w-7 items-center justify-center rounded-xl transition-colors cursor-pointer ${
+        onClick={() => setIsOpen(!isOpen)}
+        className={`group relative flex h-7 w-7 items-center justify-center rounded-xl transition-colors cursor-pointer select-none ${
           isOpen || activeFilterCount > 0
-            ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300'
-            : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100'
+            ? 'text-blue-600 dark:text-blue-400'
+            : 'text-slate-400 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400'
         }`}
         title="Lọc nhóm chức năng & mức độ bảo mật"
       >
-        <SlidersHorizontal className="h-4 w-4" />
+        <SlidersHorizontal className="h-4 w-4 shrink-0 transition-transform duration-150 group-hover:scale-110" />
+
         {activeFilterCount > 0 && (
-          <span className="ui-pill ui-pill-solid absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-type-helper font-medium text-white shadow-xs">
+          <span
+            onClick={(e) => {
+              e.stopPropagation();
+              onResetAll();
+            }}
+            title="Nhấn để xóa nhanh toàn bộ lọc (1-Click Reset)"
+            className="table-badge absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-type-helper font-semibold text-white hover:bg-rose-500 transition-colors shadow-2xs"
+          >
             {activeFilterCount}
           </span>
         )}
@@ -168,14 +175,14 @@ export function PermissionFilterPopover({
             className="flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/10 dark:shadow-slate-950/50 animate-in fade-in zoom-in-95 duration-150"
           >
             {/* Popover Header */}
-            <div className="shrink-0 flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40">
+            <div className="shrink-0 flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
                   Bộ lọc quyền
                 </span>
                 {activeFilterCount > 0 && (
-                  <span className="ui-pill rounded-full bg-blue-100 px-2 py-0.5 text-type-helper font-medium text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                  <span className="ui-pill inline-flex items-center rounded-full border border-blue-300 dark:border-blue-700 bg-transparent px-2 py-0.5 text-type-helper font-medium text-blue-700 dark:text-blue-400 select-none">
                     {activeFilterCount} đang bật
                   </span>
                 )}
@@ -186,7 +193,7 @@ export function PermissionFilterPopover({
                   <button
                     type="button"
                     onClick={onResetAll}
-                    className="inline-flex items-center gap-1 rounded-xl px-2 py-1 text-type-helper font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 cursor-pointer"
+                    className="inline-flex items-center gap-1 rounded-xl px-2 py-1 text-type-helper font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 transition cursor-pointer"
                   >
                     <RotateCcw className="h-3 w-3" />
                     Đặt lại
@@ -195,7 +202,7 @@ export function PermissionFilterPopover({
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="rounded-xl p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300 cursor-pointer"
+                  className="rounded-xl p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300 transition cursor-pointer"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -214,39 +221,41 @@ export function PermissionFilterPopover({
                   onClick={() => onOnlySensitiveChange(!onlySensitive)}
                   className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition cursor-pointer ${
                     onlySensitive
-                      ? 'border-amber-400 bg-amber-50/80 text-amber-900 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-200'
-                      : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
+                      ? 'border-blue-500/80 bg-blue-50/30 dark:border-blue-700 dark:bg-blue-950/20'
+                      : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <div
-                      className={`flex h-7 w-7 items-center justify-center rounded-lg ${
+                      className={`flex h-8 w-8 items-center justify-center rounded-lg border transition ${
                         onlySensitive
-                          ? 'bg-amber-200/80 text-amber-800 dark:bg-amber-900 dark:text-amber-300'
-                          : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                          ? 'border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-300'
+                          : 'border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400'
                       }`}
                     >
                       <LockKeyhole className="h-4 w-4" />
                     </div>
                     <div>
-                      <div className="text-type-body font-semibold">Chỉ quyền nhạy cảm</div>
-                      <div className="text-type-helper text-slate-400 font-normal">
+                      <div className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
+                        Chỉ quyền nhạy cảm
+                      </div>
+                      <div className="text-type-helper text-slate-500 dark:text-slate-400 font-normal">
                         Các quyền can thiệp hệ thống, duyệt đề, điểm thi
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="ui-pill rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-type-helper font-medium text-slate-600 dark:text-slate-300">
+                    <span className="ui-pill rounded-full border border-slate-200 dark:border-slate-700 bg-transparent px-2 py-0.5 text-type-helper font-medium text-slate-600 dark:text-slate-300 tabular-nums">
                       {sensitiveCount}
                     </span>
                     <div
-                      className={`flex h-4 w-4 items-center justify-center rounded border ${
+                      className={`flex h-5 w-5 items-center justify-center rounded-md border transition shadow-2xs ${
                         onlySensitive
-                          ? 'border-amber-600 bg-amber-600 text-white'
-                          : 'border-slate-300 dark:border-slate-600'
+                          ? 'border-blue-600 bg-blue-600 text-white'
+                          : 'border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900'
                       }`}
                     >
-                      {onlySensitive && <Check className="h-3 w-3 stroke-[3]" />}
+                      {onlySensitive && <Check className="h-3.5 w-3.5 stroke-[3]" />}
                     </div>
                   </div>
                 </button>
@@ -264,15 +273,15 @@ export function PermissionFilterPopover({
                     onClick={() => onModuleFilterChange('ALL')}
                     className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition cursor-pointer ${
                       moduleFilter === 'ALL'
-                        ? 'bg-blue-50 text-blue-900 font-semibold dark:bg-blue-950/60 dark:text-blue-200'
+                        ? 'bg-blue-50/60 text-blue-700 font-semibold dark:bg-blue-950/40 dark:text-blue-300'
                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60 font-normal'
                     }`}
                   >
-                    <div className="flex items-center gap-2">
-                      <LayoutGrid className="h-4 w-4 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                    <div className="flex items-center gap-2.5">
+                      <LayoutGrid className={`h-4 w-4 ${moduleFilter === 'ALL' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'}`} />
                       <span className="text-type-body">Tất cả nhóm</span>
                     </div>
-                    <span className="ui-pill rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-type-helper font-medium text-slate-500">
+                    <span className="ui-pill rounded-full border border-slate-200 dark:border-slate-700 bg-transparent px-2 py-0.5 text-type-helper font-medium text-slate-600 dark:text-slate-300 tabular-nums">
                       {totalCount}
                     </span>
                   </button>
@@ -289,15 +298,15 @@ export function PermissionFilterPopover({
                         onClick={() => onModuleFilterChange(m)}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition cursor-pointer ${
                           isSelected
-                            ? 'bg-blue-50 text-blue-900 font-semibold dark:bg-blue-950/60 dark:text-blue-200'
+                            ? 'bg-blue-50/60 text-blue-700 font-semibold dark:bg-blue-950/40 dark:text-blue-300'
                             : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60 font-normal'
                         }`}
                       >
-                        <div className="flex items-center gap-2">
-                          <Icon className="h-4 w-4 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                        <div className="flex items-center gap-2.5">
+                          <Icon className={`h-4 w-4 ${isSelected ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'}`} />
                           <span className="text-type-body">{m}</span>
                         </div>
-                        <span className="ui-pill rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-type-helper font-medium text-slate-500">
+                        <span className="ui-pill rounded-full border border-slate-200 dark:border-slate-700 bg-transparent px-2 py-0.5 text-type-helper font-medium text-slate-600 dark:text-slate-300 tabular-nums">
                           {count}
                         </span>
                       </button>

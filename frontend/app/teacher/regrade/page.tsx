@@ -32,7 +32,6 @@ export default function RegradeManagementPage() {
 
   // Multi-view & Toolbar State
   const [sortOrder, setSortOrder] = useState<string>('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     student: true,
     subject: true,
@@ -229,32 +228,33 @@ export default function RegradeManagementPage() {
   }, [filteredAppeals, page, limit]);
 
   // Export Excel & Print Report handlers
-  const exportExcel = () => {
-    exportToFormattedExcel({
+  const exportExcel = async () => {
+    await exportToFormattedExcel({
       filename: `Danh_sach_don_phuc_khao_${new Date().toISOString().slice(0, 10)}.xls`,
-      title: 'DANH SÁCH ĐƠN PHÚC KHẢO & KHIẾU NẠI ĐIỂM',
-      subtitle: `Tổng số: ${filteredAppeals.length} đơn`,
+      templateCode: 'GRADE_APPEAL_MINUTES',
+      title: 'BIÊN BẢN CHẤM PHÚC KHẢO',
+      subtitle: 'Học kỳ 1 - Năm học 2025 - 2026',
       columns: [
-        { header: 'STT', align: 'center', width: 8 },
-        { header: 'Mã SV', align: 'center', width: 16 },
-        { header: 'Họ và tên', align: 'left', width: 25 },
-        { header: 'Lớp', align: 'center', width: 15 },
-        { header: 'Môn thi', align: 'left', width: 25 },
-        { header: 'Điểm cũ', align: 'center', width: 12 },
-        { header: 'Điểm sau phúc khảo', align: 'center', width: 16 },
-        { header: 'Trạng thái', align: 'center', width: 18 },
-        { header: 'Lý do xin phúc khảo', align: 'left', width: 35 },
+        { header: 'STT', align: 'center', width: 6 },
+        { header: 'Mã SV', align: 'center', width: 14 },
+        { header: 'Họ và tên', align: 'left', width: 24 },
+        { header: 'Lớp', align: 'center', width: 14 },
+        { header: 'Môn thi', align: 'left', width: 24 },
+        { header: 'Điểm cũ', align: 'center', width: 10 },
+        { header: 'Điểm mới', align: 'center', width: 10 },
+        { header: 'Trạng thái', align: 'center', width: 16 },
+        { header: 'Lý do xin phúc khảo', align: 'left', width: 30 },
       ],
       rows: filteredAppeals.map((item, idx) => [
         idx + 1,
         item.student.studentCode,
         item.student.fullName,
-        item.student.class?.code || '',
-        item.attempt?.onlineExamConfig?.examSchedule?.subject?.subjectName || '',
+        item.student.class?.code || '---',
+        item.attempt?.onlineExamConfig?.examSchedule?.subject?.subjectName || '---',
         item.originalScore.toFixed(1),
-        item.status === 'APPROVED_REGRADE' && item.revisedScore !== null ? item.revisedScore.toFixed(1) : '--',
-        item.status === 'APPROVED_REGRADE' ? 'Đã duyệt & Đổi điểm' : item.status === 'REJECTED' ? 'Bị từ chối' : 'Chờ thẩm định',
-        item.reason,
+        item.status === 'APPROVED_REGRADE' && item.revisedScore !== null ? item.revisedScore.toFixed(1) : '---',
+        item.status === 'APPROVED_REGRADE' ? 'Đã duyệt' : item.status === 'REJECTED' ? 'Từ chối' : 'Chờ xử lý',
+        item.reason || '',
       ]),
     });
   };
@@ -387,8 +387,6 @@ export default function RegradeManagementPage() {
               totalCount={filteredAppeals.length}
               sortOrder={sortOrder}
               onSortChange={setSortOrder}
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
               onRefresh={handleRefresh}
@@ -408,7 +406,6 @@ export default function RegradeManagementPage() {
           <RegradeTable
             appeals={paginatedAppeals}
             loading={loading}
-            viewMode={viewMode}
             visibleColumns={visibleColumns}
             onReview={openReviewDrawer}
             selected={selected}

@@ -57,7 +57,6 @@ export default function DepartmentsPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
   const [sortOrder, setSortOrder] = useState('newest');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     code: true,
     name: true,
@@ -338,15 +337,14 @@ export default function DepartmentsPage() {
     }
   };
 
-  // Export Excel Function
-  const exportExcel = () => {
+  const prepareDepartmentExportData = () => {
     const columns = [
-      { header: 'STT', width: 8, align: 'center' as const },
-      { header: 'Mã Khoa', width: 15 },
-      { header: 'Tên Khoa đào tạo', width: 35 },
-      { header: 'Số môn học', width: 15, align: 'center' as const },
-      { header: 'Số lớp học', width: 15, align: 'center' as const },
-      { header: 'Số giảng viên', width: 15, align: 'center' as const },
+      { header: 'STT', width: 6, align: 'center' as const },
+      { header: 'Mã Khoa', width: 14, align: 'center' as const },
+      { header: 'Tên Khoa đào tạo', width: 30, align: 'left' as const },
+      { header: 'Số môn học', width: 14, align: 'center' as const },
+      { header: 'Số lớp học', width: 14, align: 'center' as const },
+      { header: 'Số giảng viên', width: 14, align: 'center' as const },
     ];
 
     const rows = filteredDepartments.map((d: any, idx) => [
@@ -358,46 +356,44 @@ export default function DepartmentsPage() {
       d.teachersCount ?? d._count?.teachers ?? d.teachers?.length ?? 0,
     ]);
 
-    exportToFormattedExcel({
+    const metaInfo = [
+      { label: 'Tổng số Khoa', value: String(departments.length) },
+      { label: 'Tổng số môn học', value: String(kpiData.totalSubjects) },
+      { label: 'Khoa đang lọc', value: String(filteredDepartments.length) },
+    ];
+
+    return { columns, rows, metaInfo };
+  };
+
+  const exportExcel = async () => {
+    const { columns, rows, metaInfo } = prepareDepartmentExportData();
+
+    await exportToFormattedExcel({
       filename: 'Danh_sach_khoa_dao_tao.xls',
-      title: 'DANH SÁCH KHOA ĐÀO TẠO & VIỆN CHUYÊN NGÀNH',
-      subtitle: 'Trích xuất dữ liệu danh mục khoa và cơ cấu trực thuộc',
+      templateCode: 'DEPARTMENT_DIRECTORY',
+      title: 'DANH SÁCH KHOA ĐÀO TẠO',
+      subtitle: 'Danh mục Khoa đào tạo và quy mô trực thuộc',
       columns,
       rows,
+      metaInfo,
     });
   };
 
   // Print Report
   const handlePrintReport = () => {
+    const { columns, rows, metaInfo } = prepareDepartmentExportData();
+
     printReport({
-      title: 'BÁO CÁO DANH SÁCH KHOA ĐÀO TẠO',
-      subtitle: 'Danh mục Khoa / Viện và tổng hợp quy mô trực thuộc',
-      facultyName: 'VĂN PHÒNG BAN GIÁM HIỆU',
-      metaInfo: [
-        { label: 'Tổng số Khoa', value: String(departments.length) },
-        { label: 'Tổng số môn học', value: String(kpiData.totalSubjects) },
-      ],
-      columns: [
-        { header: 'STT', width: '40px' },
-        { header: 'Mã Khoa', width: '90px' },
-        { header: 'Tên Khoa đào tạo', width: '220px' },
-        { header: 'Môn học', width: '90px', align: 'center' },
-        { header: 'Lớp học', width: '90px', align: 'center' },
-        { header: 'Giảng viên', width: '100px', align: 'center' },
-      ],
-      rows: filteredDepartments.map((d: any, idx) => [
-        idx + 1,
-        d.code,
-        d.name,
-        Math.max(d.subjectsCount || 0, d._count?.majorSubjects || 0, d._count?.subjects || 0, d.subjects?.length || 0),
-        d.classesCount ?? d._count?.classes ?? d.classes?.length ?? 0,
-        d.teachersCount ?? d._count?.teachers ?? d.teachers?.length ?? 0,
-      ]),
-      signers: [
-        { title: 'NGƯỜI LẬP DANH MỤC', subtitle: '(Ký, ghi rõ họ tên)' },
-        { title: 'BAN GIÁM HIỆU / HIỆU TRƯỞNG', subtitle: '(Ký, đóng dấu)' },
-      ],
       templateCode: 'DEPARTMENT_DIRECTORY',
+      title: 'DANH SÁCH KHOA ĐÀO TẠO',
+      subtitle: 'Danh mục Khoa đào tạo và quy mô trực thuộc',
+      metaInfo,
+      columns: columns.map((c) => ({
+        header: c.header,
+        width: typeof c.width === 'number' ? `${c.width * 10}px` : c.width,
+        align: c.align,
+      })),
+      rows,
     });
   };
 
@@ -499,8 +495,6 @@ export default function DepartmentsPage() {
               totalCount={filteredDepartments.length}
               sortOrder={sortOrder}
               onSortChange={setSortOrder}
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
               onRefresh={handleRefresh}
@@ -524,7 +518,6 @@ export default function DepartmentsPage() {
           <DepartmentTable
             departments={paginatedDepartments}
             selected={selected}
-            viewMode={viewMode}
             visibleColumns={visibleColumns}
             onSelect={(id, checked) =>
               setSelected(checked ? [...selected, id] : selected.filter((x) => x !== id))

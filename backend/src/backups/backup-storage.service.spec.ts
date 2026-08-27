@@ -19,7 +19,7 @@ describe('Backup storage configuration', () => {
     const service = new BackupConfigService();
     const now = new Date().toISOString();
     const target: BackupStorageTarget = {
-      id: 'r2', name: 'R2', provider: 'R2', role: 'PRIMARY', enabled: true,
+      id: 'r2', name: 'R2', provider: 'R2', role: 'PRIMARY', priority: 1, enabled: true,
       config: { accountId: 'account', bucket: 'bucket', accessKeyId: 'key', secretAccessKey: 'super-secret' },
       createdAt: now, updatedAt: now,
     };
@@ -39,8 +39,8 @@ describe('Backup storage configuration', () => {
       const mirror = join(root, 'mirror');
       const now = new Date().toISOString();
       const targets: BackupStorageTarget[] = [
-        { id: 'primary', name: 'Chính', provider: 'LOCAL', role: 'PRIMARY', enabled: true, config: { path: primary, prefix: 'exam-system' }, createdAt: now, updatedAt: now },
-        { id: 'mirror', name: 'Phụ', provider: 'LOCAL', role: 'MIRROR', enabled: true, config: { path: mirror, prefix: 'exam-system' }, createdAt: now, updatedAt: now },
+        { id: 'primary', name: 'Chính', provider: 'LOCAL', role: 'PRIMARY', priority: 1, enabled: true, config: { path: primary, prefix: 'exam-system' }, createdAt: now, updatedAt: now },
+        { id: 'mirror', name: 'Phụ', provider: 'LOCAL', role: 'MIRROR', priority: 2, enabled: true, config: { path: mirror, prefix: 'exam-system' }, createdAt: now, updatedAt: now },
       ];
       const storage = new BackupStorageService();
       storage.setTargets(targets);
@@ -74,7 +74,7 @@ describe('Backup storage configuration', () => {
     try {
       const now = new Date().toISOString();
       const adapter = new GoogleDriveBackupStorageAdapter({
-        id: 'drive', name: 'Drive', provider: 'GOOGLE_DRIVE', role: 'MIRROR', enabled: true,
+        id: 'drive', name: 'Drive', provider: 'GOOGLE_DRIVE', role: 'MIRROR', priority: 2, enabled: true,
         config: { clientId: 'client', clientSecret: 'secret', refreshToken: 'refresh', folderId: 'root' },
         createdAt: now, updatedAt: now,
       });

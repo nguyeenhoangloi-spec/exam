@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
-import { RefreshCw } from 'lucide-react';
+import React from 'react';
 import { SortDropdown } from '../ui/SortDropdown';
 import { ColumnToggleDropdown } from '../ui/ColumnToggleDropdown';
 import { ViewMode, ViewModeSegmentedControl } from '../ui/ViewModeSegmentedControl';
@@ -36,23 +35,7 @@ export function ExamScheduleTableToolbar({
     status: true,
   },
   onColumnToggle,
-  onRefresh,
-  loading = false,
 }: ExamScheduleTableToolbarProps) {
-  const [isSpinning, setIsSpinning] = useState(false);
-
-  const handleRefreshClick = async () => {
-    if (!onRefresh) return;
-    setIsSpinning(true);
-    try {
-      await onRefresh();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setTimeout(() => setIsSpinning(false), 600);
-    }
-  };
-
   const columnsList = [
     { key: 'code', label: 'Mã lịch thi' },
     { key: 'subject', label: 'Môn học' },
@@ -83,29 +66,21 @@ export function ExamScheduleTableToolbar({
           ]}
         />
 
-        {/* Column Selector */}
-        <ColumnToggleDropdown
-          columns={columnsList}
-          visibleColumns={visibleColumns}
-          onToggle={(key) => onColumnToggle?.(key)}
-        />
+        {/* Column Selector - Chỉ hiển thị khi ở chế độ xem Bảng (List) */}
+        {viewMode === 'list' && (
+          <ColumnToggleDropdown
+            columns={columnsList}
+            visibleColumns={visibleColumns}
+            onToggle={(key) => onColumnToggle?.(key)}
+          />
+        )}
 
-        {/* View Mode Segmented Control */}
+        {/* View Mode Segmented Control: Bảng, Lưới, Lịch */}
         <ViewModeSegmentedControl
           viewMode={viewMode}
           onChange={(mode) => onViewModeChange?.(mode)}
-          supportedModes={['list', 'grid', 'compact', 'calendar']}
+          supportedModes={['list', 'grid', 'calendar']}
         />
-
-        {/* Refresh */}
-        <button
-          type="button"
-          onClick={handleRefreshClick}
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0"
-          title="Làm mới dữ liệu"
-        >
-          <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
-        </button>
       </div>
     </div>
   );

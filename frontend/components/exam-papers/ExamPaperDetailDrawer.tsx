@@ -16,6 +16,8 @@ import {
   FileText,
   Volume2,
   Maximize2,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { ExamPaper } from '../../types';
 import { Button } from '../ui/Button';
@@ -25,6 +27,7 @@ import { getImageUrl } from '../../lib/media-utils';
 import { DynamicImage } from '../ui/DynamicImage';
 import { ImageLightboxModal } from '../ImageLightboxModal';
 import { printExamPaper, getPublishedTemplatesMap } from '../../lib/export-print';
+import { FillBlankInlineContent } from '../../lib/fill-blank-helper';
 
 export interface ExamPaperDetailDrawerProps {
   paper: ExamPaper | null;
@@ -107,12 +110,14 @@ export function ExamPaperDetailDrawer({
   busyId,
 }: ExamPaperDetailDrawerProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<'ALL' | 'EASY' | 'MEDIUM' | 'HARD'>('ALL');
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       setSearchTerm('');
+      setIsSearchOpen(false);
       setActiveFilter('ALL');
       setLightboxUrl(null);
     }
@@ -125,7 +130,18 @@ export function ExamPaperDetailDrawer({
 
   const questionCount = rawQuestions.length;
 
-  // Lọc câu hỏi theo từ khóa và độ khó
+  const difficultyCount = useMemo(() => {
+    let easy = 0, medium = 0, hard = 0;
+    rawQuestions.forEach((item) => {
+      const q = item.question || item;
+      const diff = q.difficulty?.toUpperCase();
+      if (diff === 'EASY') easy++;
+      else if (diff === 'HARD') hard++;
+      else medium++;
+    });
+    return { easy, medium, hard };
+  }, [rawQuestions]);
+
   const filteredQuestions = useMemo(() => {
     return rawQuestions.map((item, originalIndex) => ({ detail: item, originalIndex })).filter(({ detail }) => {
       const q = detail.question || detail;
@@ -141,256 +157,94 @@ export function ExamPaperDetailDrawer({
   const periodName = (paper.examSchedule as any)?.periodName || (paper.examSchedule as any)?.examPeriod?.name || 'Kỳ thi chính thức';
   const isBusy = busyId === Number(paper.id);
 
-  const handlePrintPaper = async () => {
-    if (!paper) return;
-    try {
-      const templateMap = await getPublishedTemplatesMap();
-      const officialTpl = templateMap['EXAM_PAPER_OFFICIAL'] || {};
-      const header = officialTpl.header || {};
-      const examInfo = officialTpl.examInfo || {};
-      const footer = officialTpl.footer || {};
-
-      const questionsList = rawQuestions.map((item: any, idx: number) => {
-        const q = item.question || item;
-        const opts = questionChoices(q);
-        return {
-          index: idx + 1,
-          content: q.content || q.questionText || '',
-          score: item.score || q.score || 1,
-          type: q.type,
-          options: opts.map((opt) => ({
-            key: opt.label,
-            text: opt.text,
-            isCorrect: opt.isCorrect,
-          })),
-          answerExplanation: q.answerExplanation || q.explanation,
-        };
-      });
-
-      printExamPaper({
-        institutionName: header.institutionName,
-        facultyName: header.facultyName,
-        motto: header.motto,
-        paperTitle: header.title || 'ĐỀ THI KẾT THÚC HỌC PHẦN',
-        subtitle: header.subtitle || (periodName ? `Kỳ thi: ${periodName}` : undefined),
-        subjectName: subjectName || 'Môn thi',
-        subjectCode: (paper.examSchedule?.subject as any)?.subjectCode || paper.paperCode || 'HP101',
-        paperCode: paper.paperCode,
-        durationMinutes: paper.durationMinutes || 60,
-        totalScore: paper.totalScore || 10,
-        showScoreBox: examInfo.showScoreBox !== false,
-        showInstructions: examInfo.showInstructions !== false,
-        instructionText: examInfo.instructionText,
-        questions: questionsList,
-        showAnswers: showAnswers,
-        signers: footer.signers,
-        footerNotes: footer.note,
-      });
-    } catch {
-      // Fallback
-    }
-  };
-
   return (
     <div role="dialog" aria-modal="true" aria-label="Chi tiết đề thi" className={`fixed inset-0 z-[100] overflow-hidden ${isOpen ? '' : 'pointer-events-none'}`}>
-      {/* ── Overlay Backdrop ── */}
       <div
-        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity duration-300 ease-out ${
-          isOpen ? 'opacity-100' : 'opacity-0'
-        }`}
+        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity duration-300 ease-out ${isOpen ? 'opacity-100' : 'opacity-0'}`}
         onClick={onClose}
       />
-
-      {/* ── Sliding Drawer Panel ── */}
       <div
-        className={`fixed inset-y-0 right-0 z-[101] w-full max-w-3xl bg-white dark:bg-slate-900 border-l border-slate-200/90 dark:border-slate-800 shadow-2xl flex flex-col transform transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform pointer-events-auto ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+        className={`fixed inset-y-0 right-0 z-[101] w-full max-w-3xl bg-white dark:bg-slate-900 border-l border-slate-200/90 dark:border-slate-800 shadow-2xl flex flex-col transform transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform pointer-events-auto ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
-        {/* ── 1. Modern Header ── */}
-        <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
-          <div className="flex items-start justify-between gap-4">
-            <div className="space-y-2 min-w-0 flex-1">
-              <div className="flex items-center gap-2.5 flex-wrap">
+        <div className="px-6 py-3.5 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-0.5 min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-type-card font-semibold text-slate-900 dark:text-white leading-tight truncate">
                   {subjectName}
                 </h2>
-                <IdentifierBadge tone="blue">{paper.paperCode}</IdentifierBadge>
+                {(() => {
+                  const match = (paper.title || '').match(/Bộ\s*(\d+)\s*mã/i);
+                  const variantCount = match ? parseInt(match[1], 10) : ((paper as any).variantCount || 1);
+                  const baseNum = parseInt((paper.paperCode || '').replace(/\D/g, ''), 10);
+                  const rangeText = !isNaN(baseNum) && variantCount > 1 ? `${baseNum} – ${baseNum + variantCount - 1}` : paper.paperCode;
+                  return <IdentifierBadge tone="blue">Mã: {rangeText}</IdentifierBadge>;
+                })()}
                 <span
-                  className={`ui-pill px-2.5 py-0.5 rounded-full text-type-helper font-medium border ${
-                    paper.status === 'PUBLISHED'
+                  className={`ui-pill px-2 py-0.5 rounded-full text-type-helper font-medium border ${paper.status === 'PUBLISHED'
                       ? 'text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700'
                       : paper.status === 'ARCHIVED'
                         ? 'text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600'
                         : 'text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700'
-                  }`}
+                    }`}
                 >
                   {paper.status === 'PUBLISHED' ? 'Đã phát hành' : paper.status === 'ARCHIVED' ? 'Đã lưu trữ' : 'Bản nháp'}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 text-type-helper font-normal text-slate-500 dark:text-slate-400 truncate">
-                <CalendarDays className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                <span>Kỳ thi: <strong className="font-semibold text-slate-700 dark:text-slate-300">{periodName}</strong></span>
-              </div>
+              <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400 truncate">
+                {periodName} — <strong className="font-semibold text-slate-700 dark:text-slate-300">{questionCount} câu</strong> ({paper.totalScore}đ / {paper.durationMinutes}')
+                {((paper as any).mediaMaxPlays || (paper as any).mediaMode) && (
+                  <span> — {(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0 ? 'Media tự do' : `Khảo thí: ${(paper as any).mediaMaxPlays || 2} lượt`}</span>
+                )}
+              </p>
             </div>
 
-            {/* Nút Đóng */}
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0"
-              title="Đóng cửa sổ chi tiết"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* ── 2. Quick Metrics & Interactive Toolbar ── */}
-        <div className="px-6 py-3.5 bg-slate-50/80 dark:bg-slate-850/70 border-b border-slate-100 dark:border-slate-800 space-y-3 shrink-0">
-          {/* Hàng 1: Single-Row Streamlined Info & Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-2.5">
-            {/* Thông số kỹ thuật đề thi (Gọn gàng 1 dải) */}
-            <div className="flex items-center gap-2 text-type-helper text-slate-600 dark:text-slate-300 font-medium flex-wrap">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs">
-                <HelpCircle className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-                <span><strong className="font-semibold text-slate-800 dark:text-slate-100">{questionCount}</strong> câu hỏi</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs">
-                <Award className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span><strong className="font-semibold text-slate-800 dark:text-slate-100">{paper.totalScore}</strong> điểm</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs">
-                <Clock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
-                <span><strong className="font-semibold text-slate-800 dark:text-slate-100">{paper.durationMinutes}</strong> phút</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs">
-                <Volume2 className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-                <span className="text-slate-700 dark:text-slate-200 font-medium">
-                  {(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0
-                    ? 'Media tự do'
-                    : `Khảo thí: ${(paper as any).mediaMaxPlays || 2} lượt`}
-                </span>
-              </span>
-            </div>
-
-            {/* Nhóm nút thao tác (Hiện đáp án / Xuất Word) */}
-            <div className="flex items-center gap-2 shrink-0 ml-auto">
-              <Button
+            <div className="flex items-center gap-1 shrink-0">
+              <button
                 type="button"
-                variant={showAnswers ? 'primary' : 'secondary'}
-                size="sm"
                 onClick={onToggleShowAnswers}
-                leftIcon={<KeyRound className="h-3.5 w-3.5" />}
+                className={`inline-flex items-center gap-1.5 px-2 py-1.5 rounded-xl text-type-helper font-semibold transition cursor-pointer ${
+                  showAnswers
+                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50/60 dark:bg-blue-950/40'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+                title={showAnswers ? 'Ẩn đáp án' : 'Hiện đáp án'}
               >
-                {showAnswers ? 'Ẩn đáp án' : 'Hiện đáp án'}
-              </Button>
+                {showAnswers ? <Eye className="h-4 w-4 text-blue-600 dark:text-blue-400" /> : <EyeOff className="h-4 w-4" />}
+                <span>Đáp án</span>
+              </button>
 
-              <Button
+              <button
                 type="button"
-                variant="ghost"
-                size="sm"
                 onClick={() => onExportWord(paper, showAnswers)}
-                leftIcon={<Download className="h-3.5 w-3.5 text-slate-500" />}
+                className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                title="Tải file Word / In đề thi"
               >
-                Xuất Word
-              </Button>
-
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={handlePrintPaper}
-                leftIcon={<Printer className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />}
-              >
-                In đề thi
-              </Button>
-            </div>
-          </div>
-
-          {/* Hàng 2: Search & Filter Tabs */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-0.5">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-              <input
-                type="text"
-                placeholder="Tìm nội dung câu hỏi trong đề..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 pl-10 pr-9 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
-              />
-              {searchTerm && (
-                <button
-                  type="button"
-                  onClick={() => setSearchTerm('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-
-            {/* Filter by Difficulty */}
-            <div className="inline-flex rounded-xl bg-slate-200/70 dark:bg-slate-800 p-1 shrink-0 text-type-helper font-semibold gap-0.5">
-              <button
-                type="button"
-                onClick={() => setActiveFilter('ALL')}
-                className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
-                  activeFilter === 'ALL'
-                    ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Tất cả ({questionCount})
+                <Download className="h-4 w-4" />
               </button>
+
               <button
                 type="button"
-                onClick={() => setActiveFilter('EASY')}
-                className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
-                  activeFilter === 'EASY'
-                    ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-2xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
+                onClick={onClose}
+                className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                title="Đóng cửa sổ"
               >
-                Dễ
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveFilter('MEDIUM')}
-                className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
-                  activeFilter === 'MEDIUM'
-                    ? 'bg-white dark:bg-slate-900 text-amber-600 dark:text-amber-400 shadow-2xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                TB
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveFilter('HARD')}
-                className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
-                  activeFilter === 'HARD'
-                    ? 'bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 shadow-2xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Khó
+                <X className="h-4 w-4" />
               </button>
             </div>
           </div>
         </div>
 
-        {/* ── 3. Question Body List ── */}
+        {/* ── 2. Question Body List (Hiển thị thẳng danh sách câu hỏi) ── */}
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4 bg-slate-50/40 dark:bg-slate-950/40">
-          {filteredQuestions.length === 0 ? (
+          {rawQuestions.length === 0 ? (
             <div className="py-16 text-center space-y-2">
               <FileText className="h-10 w-10 text-slate-300 dark:text-slate-600 mx-auto" />
-              <p className="text-type-body-sm font-semibold text-slate-700 dark:text-slate-300">Không tìm thấy câu hỏi phù hợp</p>
-              <p className="text-type-helper text-slate-400">Thử thay đổi từ khóa tìm kiếm hoặc chọn lọc độ khó khác</p>
+              <p className="text-type-body-sm font-semibold text-slate-700 dark:text-slate-300">Đề thi chưa có câu hỏi nào</p>
             </div>
           ) : (
-            filteredQuestions.map(({ detail, originalIndex }) => {
+            rawQuestions.map((detail, originalIndex) => {
               const q = detail.question || detail;
               const choices = questionChoices(q);
               const diffBadge = getDifficultyLabel(q.difficulty);
@@ -458,7 +312,11 @@ export function ExamPaperDetailDrawer({
 
                   {/* Question Content */}
                   <div className="text-type-body font-medium text-slate-900 dark:text-slate-100 leading-relaxed break-words pl-0.5">
-                    {q.content}
+                    <FillBlankInlineContent
+                      content={q.content}
+                      fillBlankAnswers={q.fillBlankAnswers || (q as any).answers}
+                      showAnswers={showAnswers}
+                    />
                   </div>
 
                   {/* Media đính kèm (Ảnh / Video / Audio) */}
@@ -522,18 +380,16 @@ export function ExamPaperDetailDrawer({
                         return (
                           <div
                             key={c.label}
-                            className={`rounded-xl p-3 px-3.5 transition flex items-start gap-3 border ${
-                              isHighlighted
+                            className={`rounded-xl p-3 px-3.5 transition flex items-start gap-3 border ${isHighlighted
                                 ? 'border-emerald-400 bg-emerald-50/90 dark:bg-emerald-950/50 text-emerald-950 dark:text-emerald-100 shadow-2xs font-semibold'
                                 : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 text-slate-800 dark:text-slate-200 font-medium'
-                            }`}
+                              }`}
                           >
                             <span
-                              className={`flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-xl text-type-helper font-semibold ${
-                                isHighlighted
+                              className={`flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-xl text-type-helper font-semibold ${isHighlighted
                                   ? 'bg-emerald-600 text-white'
                                   : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600'
-                              }`}
+                                }`}
                             >
                               {c.label}
                             </span>
@@ -608,23 +464,18 @@ export function ExamPaperDetailDrawer({
           <div className="flex items-center gap-2">
             <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">Trạng thái:</span>
             <span
-              className={`px-2.5 py-0.5 rounded-xl text-type-helper font-semibold border ${
-                paper.status === 'PUBLISHED'
+              className={`px-2.5 py-0.5 rounded-xl text-type-helper font-semibold border ${paper.status === 'PUBLISHED'
                   ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60'
                   : paper.status === 'ARCHIVED'
                     ? 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                     : 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200/80 dark:border-amber-800/60'
-              }`}
+                }`}
             >
               {paper.status === 'PUBLISHED' ? 'Đã phát hành' : paper.status === 'ARCHIVED' ? 'Lưu trữ' : 'Bản nháp'}
             </span>
           </div>
 
           <div className="flex items-center gap-2.5 shrink-0">
-            <Button variant="secondary" size="md" onClick={onClose} disabled={isBusy}>
-              Đóng
-            </Button>
-
             {paper.status === 'DRAFT' && (currentUserRole === 'ADMIN' || currentUserRole === 'TEACHER') && onPublish && (
               <Button
                 variant="primary"

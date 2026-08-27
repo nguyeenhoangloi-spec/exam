@@ -440,6 +440,22 @@ export class OnlineExamsService {
       }
     }
 
+    // Xác định mã đề cho sinh viên: Dựa trên số ghế trong phòng thi hoặc ngẫu nhiên
+    let assignedPaperCode = paper.paperCode;
+    const baseCodeNum = parseInt(paper.paperCode.replace(/\D/g, ''), 10);
+    if (!isNaN(baseCodeNum)) {
+      const roomStudent = await this.prisma.examRoomStudent.findFirst({
+        where: {
+          studentId: student.id,
+          examScheduleRoom: { examScheduleId: schedule.id },
+        },
+      });
+      const variantOffset = roomStudent?.seatNumber
+        ? (roomStudent.seatNumber - 1) % 4
+        : Math.floor(Math.random() * 4);
+      assignedPaperCode = String(baseCodeNum + variantOffset);
+    }
+
     const attemptToken = crypto.randomUUID();
 
     // Tạo Attempt và ExamSnapshot trong DB Transaction
@@ -465,7 +481,7 @@ export class OnlineExamsService {
       await tx.examSnapshot.create({
         data: {
           attemptId: newAttempt.id,
-          paperTitle: paper.title,
+          paperTitle: `${paper.title} (Mã đề: ${assignedPaperCode})`,
           duration: paper.durationMinutes,
           questionCount: snapshotData.length,
           snapshotData: snapshotData as any,
@@ -543,9 +559,13 @@ export class OnlineExamsService {
     // BỌC AN TOÀN BẢO MẬT: Lọc sạch thuộc tính isCorrect trước khi gửi cho Client!
     const clientQuestions = this.examCore.sanitizeQuestions(rawQuestions, mediaFlags);
 
+    const titleMatch = (attempt.snapshot?.paperTitle || '').match(/Mã đề:\s*([^\)]+)/i);
+    const paperCode = titleMatch ? titleMatch[1].trim() : '101';
+
     return {
       attemptId: attempt.id,
       status: attempt.status,
+      paperCode,
       paperTitle: attempt.snapshot?.paperTitle || 'Bài thi trắc nghiệm',
       durationMinutes: attempt.snapshot?.duration || 60,
       remainingSeconds,

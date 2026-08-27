@@ -185,11 +185,10 @@ export function ActivityLogFilterPopover({
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         onClick={() => setIsOpen(!isOpen)}
-        className={`group relative flex h-7 w-7 items-center justify-center rounded-xl transition-colors cursor-pointer select-none ${
-          activeFilterCount > 0
+        className={`group relative flex h-7 w-7 items-center justify-center rounded-xl transition-colors cursor-pointer select-none ${activeFilterCount > 0
             ? 'text-blue-600 dark:text-blue-400'
             : 'text-slate-400 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400'
-        }`}
+          }`}
         title="Bộ lọc nhật ký hoạt động"
       >
         <SlidersHorizontal className="h-4 w-4 shrink-0 transition-transform duration-150 group-hover:scale-110" />

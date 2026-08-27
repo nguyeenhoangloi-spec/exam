@@ -80,11 +80,16 @@ export function computeScheduleStatus(s: {
     if (parts.length < 3) return (rawStatus as any) || 'UPCOMING';
     const [y, m, d] = parts;
 
-    const [startH, startM] = (s.startTime || '00:00').split(':').map(Number);
-    const [endH, endM] = (s.endTime || '23:59').split(':').map(Number);
+    const startParts = (s.startTime || '00:00').split(':').map((v) => parseInt(v, 10));
+    const endParts = (s.endTime || '23:59').split(':').map((v) => parseInt(v, 10));
 
-    const startDateTime = new Date(y, m - 1, d, startH || 0, startM || 0);
-    const endDateTime = new Date(y, m - 1, d, endH || 23, endM || 59);
+    const startH = Number.isFinite(startParts[0]) ? startParts[0] : 0;
+    const startM = Number.isFinite(startParts[1]) ? startParts[1] : 0;
+    const endH = Number.isFinite(endParts[0]) ? endParts[0] : 23;
+    const endM = Number.isFinite(endParts[1]) ? endParts[1] : 59;
+
+    const startDateTime = new Date(y, m - 1, d, startH, startM, 0, 0);
+    const endDateTime = new Date(y, m - 1, d, endH, endM, 0, 0);
 
     if (now < startDateTime) {
       return 'UPCOMING';
@@ -258,169 +263,117 @@ export function ExamScheduleTable({
                 <button
                   type="button"
                   onClick={() => onDetail(s)}
-                  className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition cursor-pointer"
+                  className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 font-semibold transition cursor-pointer select-none"
                 >
-                  <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-                  <span>Xem chi tiết</span>
+                  Xem chi tiết
                 </button>
 
-                {isAdmin && (
-                  <div className="flex items-center gap-1">
-                    {onReschedule && (
-                      <button
-                        type="button"
-                        onClick={() => onReschedule(s)}
-                        className="p-1.5 text-slate-500 hover:text-amber-600 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-950/40 transition cursor-pointer"
-                        title="Dời lịch thi"
-                      >
-                        <CalendarClock className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                    {onCancel && s.status !== 'CANCELLED' && (
-                      <button
-                        type="button"
-                        onClick={() => onCancel(s)}
-                        className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
-                        title="Hủy ca thi"
-                      >
-                        <Ban className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => onEdit(s)}
-                      className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
-                      title="Sửa"
-                    >
-                      <Edit className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onDelete(s.id)}
-                      className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
-                      title="Xóa"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-
-  // 2. Dạng Thẻ Thanh Ngang Thu Gọn (Compact Card Row Mode)
-  if (viewMode === 'compact') {
-    return (
-      <div className="space-y-2.5">
-        {schedules.map((s) => {
-          const isChecked = selected.includes(s.id);
-          const codeText = s.code || `LCT${String(s.id + 120).padStart(6, '0')}`;
-          const periodName = s.periodName || s.examPeriod?.name || 'Thi học kỳ';
-          const shiftName = computeShiftName(s.startTime, s.shiftName);
-          const roomName = s.roomName || 'P.101';
-          const studentCount = s.studentCount || 45;
-          const supervisorCount = s.supervisorCount || '2/2';
-
-          return (
-            <div
-              key={s.id}
-              className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs transition duration-200 gap-3.5 ${
-                isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20 dark:bg-blue-950/20' : ''
-              }`}
-            >
-              {/* Left: Checkbox + Code + Subject Title */}
-              <div className="flex items-center gap-3 min-w-0">
-                <input
-                  type="checkbox"
-                  checked={isChecked}
-                  onChange={(e) => onSelect(s.id, e.target.checked)}
-                  className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                />
-                <button
-                  type="button"
-                  onClick={() => onDetail(s)}
-                  className="tabular-nums text-type-helper font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition shrink-0"
-                >
-                  <IdentifierBadge tone="neutral">{codeText}</IdentifierBadge>
-                </button>
-                <div className="min-w-0">
-                  <h4
-                    onClick={() => onDetail(s)}
-                    className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition truncate"
-                  >
-                    {s.subjectName || s.subject?.name || `Môn học #${s.subjectId || s.id}`}
-                  </h4>
-                  <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400 truncate">
-                    {periodName} • {roomName} • {shiftName}
-                  </p>
-                </div>
-              </div>
-
-              {/* Middle: Date + Time */}
-              <div className="hidden lg:flex items-center gap-4 text-type-helper font-medium text-slate-600 dark:text-slate-400 shrink-0">
-                <span>{formatDate(s.examDate)}</span>
-                <span>{s.startTime || '07:00'} - {s.endTime || '09:00'}</span>
-                <span>{studentCount} TS</span>
-              </div>
-
-              {/* Right: Status & Actions */}
-              <div className="flex items-center gap-3 shrink-0">
-                {getStatusBadge(s.statusBadge || s.status, s)}
-
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => onDetail(s)}
-                    className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
-                    title="Xem chi tiết"
-                  >
-                    <Eye className="h-4 w-4" />
-                  </button>
-                  {isAdmin && (
-                    <>
-                      {onReschedule && (
+                <ActionDropdownPortal>
+                  {(closeMenu) => {
+                    const effectiveStatus = computeScheduleStatus(s);
+                    return (
+                      <>
                         <button
                           type="button"
-                          onClick={() => onReschedule(s)}
-                          className="p-1.5 text-slate-500 hover:text-amber-600 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-950/40 transition cursor-pointer"
-                          title="Dời lịch thi"
+                          onClick={() => {
+                            closeMenu();
+                            onDetail(s);
+                          }}
+                          className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
                         >
-                          <CalendarClock className="h-4 w-4" />
+                          <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                          <span>Xem chi tiết</span>
                         </button>
-                      )}
-                      {onCancel && s.status !== 'CANCELLED' && (
-                        <button
-                          type="button"
-                          onClick={() => onCancel(s)}
-                          className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
-                          title="Hủy ca thi"
-                        >
-                          <Ban className="h-4 w-4" />
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => onEdit(s)}
-                        className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
-                        title="Chỉnh sửa"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => onDelete(s.id)}
-                        className="p-1.5 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
-                        title="Xóa"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </>
-                  )}
-                </div>
+
+                        {isAdmin && (
+                          <>
+                            {isTrash ? (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    closeMenu();
+                                    onRestore?.(s.id);
+                                  }}
+                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-blue-600 dark:text-blue-400 cursor-pointer text-type-body font-medium transition select-none"
+                                >
+                                  <RotateCcw className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                                  <span>Khôi phục</span>
+                                </button>
+                                <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    closeMenu();
+                                    onHardDelete?.(s.id);
+                                  }}
+                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-type-body font-medium transition select-none"
+                                >
+                                  <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+                                  <span>Xóa vĩnh viễn</span>
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                {onReschedule && effectiveStatus === 'UPCOMING' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      closeMenu();
+                                      onReschedule(s);
+                                    }}
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-type-body font-medium transition select-none"
+                                  >
+                                    <CalendarClock className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                                    <span>Dời lịch thi</span>
+                                  </button>
+                                )}
+                                {onCancel && effectiveStatus === 'UPCOMING' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      closeMenu();
+                                      onCancel(s);
+                                    }}
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-type-body font-medium transition select-none"
+                                  >
+                                    <Ban className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                                    <span>Hủy ca thi</span>
+                                  </button>
+                                )}
+                                {effectiveStatus === 'UPCOMING' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      closeMenu();
+                                      onEdit(s);
+                                    }}
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-type-body font-medium transition select-none"
+                                  >
+                                    <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                                    <span>Chỉnh sửa</span>
+                                  </button>
+                                )}
+                                <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    closeMenu();
+                                    onDelete(s.id);
+                                  }}
+                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-950/40 cursor-pointer text-type-body font-medium transition select-none"
+                                >
+                                  <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+                                  <span>Xóa</span>
+                                </button>
+                              </>
+                            )}
+                          </>
+                        )}
+                      </>
+                    );
+                  }}
+                </ActionDropdownPortal>
               </div>
             </div>
           );
@@ -464,6 +417,8 @@ export function ExamScheduleTable({
             const roomName = s.roomName || 'P.101';
             const studentCount = s.studentCount || 45;
             const supervisorCount = s.supervisorCount || '2/2';
+
+            const effectiveStatus = computeScheduleStatus(s);
 
             return (
               <tr
@@ -560,22 +515,13 @@ export function ExamScheduleTable({
                 {/* Trạng thái */}
                 {visibleColumns.status !== false && (
                   <td className="p-3.5 whitespace-nowrap">
-                    {getStatusBadge(s.statusBadge || s.status, s)}
+                    {getStatusBadge(effectiveStatus, s)}
                   </td>
                 )}
 
                 {/* Thao tác */}
                 <td className="p-3.5 pr-4 text-right whitespace-nowrap relative">
                   <div className="flex items-center justify-end gap-1">
-                    <button
-                      type="button"
-                      onClick={() => onDetail(s)}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/60 dark:hover:text-blue-400 transition cursor-pointer"
-                      title="Xem chi tiết"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-
                     <ActionDropdownPortal>
                       {(closeMenu) => (
                         <>
@@ -621,43 +567,45 @@ export function ExamScheduleTable({
                                 </>
                               ) : (
                                 <>
-                                  {onReschedule && (
+                                  {onReschedule && effectiveStatus === 'UPCOMING' && (
                                     <button
                                       type="button"
                                       onClick={() => {
                                         closeMenu();
                                         onReschedule(s);
                                       }}
-                                      className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-amber-700 dark:text-amber-300 cursor-pointer text-type-body font-medium transition select-none"
+                                      className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-type-body font-medium transition select-none"
                                     >
-                                      <CalendarClock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                                      <CalendarClock className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                                       <span>Dời lịch thi</span>
                                     </button>
                                   )}
-                                  {onCancel && s.status !== 'CANCELLED' && (
+                                  {onCancel && effectiveStatus === 'UPCOMING' && (
                                     <button
                                       type="button"
                                       onClick={() => {
                                         closeMenu();
                                         onCancel(s);
                                       }}
-                                      className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-700 dark:text-rose-300 cursor-pointer text-type-body font-medium transition select-none"
+                                      className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-type-body font-medium transition select-none"
                                     >
-                                      <Ban className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+                                      <Ban className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                                       <span>Hủy ca thi</span>
                                     </button>
                                   )}
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      closeMenu();
-                                      onEdit(s);
-                                    }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-type-body font-medium transition select-none"
-                                  >
-                                    <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                                    <span>Chỉnh sửa</span>
-                                  </button>
+                                  {effectiveStatus === 'UPCOMING' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        closeMenu();
+                                        onEdit(s);
+                                      }}
+                                      className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-type-body font-medium transition select-none"
+                                    >
+                                      <Edit className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                                      <span>Chỉnh sửa</span>
+                                    </button>
+                                  )}
                                   <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
                                   <button
                                     type="button"

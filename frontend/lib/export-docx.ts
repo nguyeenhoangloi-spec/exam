@@ -1,3 +1,8 @@
+import {
+  generateUnifiedExamPaperHtml,
+  ExamPaperExportModel,
+} from './exam-paper-template';
+
 export interface ExamPaperExportData {
   paperCode: string;
   title: string;
@@ -5,6 +10,7 @@ export interface ExamPaperExportData {
   subjectCode: string;
   durationMinutes: number;
   totalScore: number;
+  variantCount?: number;
   examType?: string;
   schoolName?: string;
   departmentName?: string;
@@ -13,38 +19,124 @@ export interface ExamPaperExportData {
     code?: string;
     content: string;
     score: number;
+    type?: string;
+    fillBlankAnswers?: Array<{ blankIndex?: number; answer?: string; score?: number }>;
+    correctAnswer?: string;
+    sampleAnswer?: string;
     options: Array<{ label: string; content: string; isCorrect: boolean }>;
     explanation?: string;
   }>;
 }
 
-const escapeHtml = (value: unknown) => String(value ?? '')
-  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-  .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+function shuffleArray<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
 
-/** Xuất Word-compatible HTML (.doc), giữ đúng cấu trúc trắc nghiệm/tự luận. */
+/** Tự động sinh N mã đề đảo ngẫu nhiên từ 1 đề gốc */
+export function generateShuffledPaperVariants(
+  basePaper: ExamPaperExportData,
+  count = 4,
+  startCode = 101,
+): ExamPaperExportData[] {
+  const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
+  const variants: ExamPaperExportData[] = [];
+
+  for (let v = 0; v < count; v++) {
+    const variantCode = String(startCode + v);
+    // Xáo trộn thứ tự câu hỏi
+    const shuffledQuestions = shuffleArray(basePaper.questions);
+
+    const formattedQuestions = shuffledQuestions.map((q, qIdx) => {
+      // Xáo trộn thứ tự các phương án A, B, C, D
+      const shuffledOptions = q.options && q.options.length > 0 ? shuffleArray(q.options) : [];
+      const relabeledOptions = shuffledOptions.map((opt, oIdx) => ({
+        label: optionLetters[oIdx] || String(oIdx + 1),
+        content: opt.content,
+        isCorrect: opt.isCorrect,
+      }));
+
+      return {
+        order: qIdx + 1,
+        code: q.code,
+        content: q.content,
+        score: q.score,
+        type: q.type,
+        fillBlankAnswers: q.fillBlankAnswers,
+        correctAnswer: q.correctAnswer,
+        sampleAnswer: q.sampleAnswer,
+        options: relabeledOptions,
+        explanation: q.explanation,
+      };
+    });
+
+    variants.push({
+      ...basePaper,
+      paperCode: variantCode,
+      title: `${basePaper.title} (Mã đề ${variantCode})`,
+      questions: formattedQuestions,
+    });
+  }
+
+  return variants;
+}
+
+/** Xuất 1 mã đề thi ra file Word (.doc) */
 export function exportExamPaperToWord(data: ExamPaperExportData, includeAnswerKey = true) {
-  const isEssay = data.examType === 'TU_LUAN';
-  const school = data.schoolName || 'TRƯỜNG ĐẠI HỌC KHẢO THÍ HỆ THỐNG';
-  const department = data.departmentName || 'KHOA CÔNG NGHỆ THÔNG TIN';
-  const questions = data.questions.map((q, i) => {
-    const options = isEssay
-      ? '<div class="answer-space">Bài làm:</div>'
-      : q.options.map((o) => `<div class="option"><strong>${escapeHtml(o.label)}.</strong> ${escapeHtml(o.content)}${includeAnswerKey && o.isCorrect ? ' <em>(Đáp án đúng)</em>' : ''}</div>`).join('');
-    const explanation = !isEssay && includeAnswerKey && q.explanation
-      ? `<p class="explanation">Lời giải chi tiết: ${escapeHtml(q.explanation)}</p>`
-      : '';
-    return `<div class="question"><p><strong>Câu ${i + 1} (${q.score} điểm):</strong> ${escapeHtml(q.content)}</p>${options}${explanation}</div>`;
-  }).join('');
-  const answerKey = !isEssay && includeAnswerKey
-    ? `<div class="answer-key"><h3>BẢNG ĐÁP ÁN - MÃ ĐỀ: ${escapeHtml(data.paperCode)}</h3><table>${data.questions.map((q) => `<tr><th>C${q.order}</th><td>${escapeHtml(q.options.find((o) => o.isCorrect)?.label || '-')}</td></tr>`).join('')}</table></div>`
-    : '';
-  const examLabel = isEssay ? 'KỲ THI TỰ LUẬN' : 'KỲ THI TRẮC NGHIỆM TỰ ĐỘNG';
-  const html = `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(data.title)}</title><style>body{font-family:'Times New Roman',serif;font-size:13pt;line-height:1.3;margin:20px}.header{width:100%;border-collapse:collapse}.header td{width:50%;text-align:center;vertical-align:top}.exam-title{text-align:center;border-top:1px solid #000;border-bottom:1px solid #000;padding:8px;margin:18px 0}.question{page-break-inside:avoid;margin-bottom:16px}.option{margin-left:20px;margin-bottom:4px}.answer-space{min-height:130px;border-bottom:1px solid #9ca3af;margin:10px 0 24px;padding:8px 0;color:#4b5563}.explanation{margin-left:20px;font-size:11pt;font-style:italic;color:#4b5563}.answer-key{page-break-before:always}.answer-key h3{text-align:center}.answer-key table{border-collapse:collapse;width:100%}.answer-key th,.answer-key td{border:1px solid #000;padding:6px;text-align:center}</style></head><body><table class="header"><tr><td><strong>${escapeHtml(school)}</strong><br><strong>${escapeHtml(department)}</strong><br>------------------------</td><td><strong>${examLabel}</strong><br><strong>Môn thi: ${escapeHtml(data.subjectName)} (${escapeHtml(data.subjectCode)})</strong><br><em>Thời gian làm bài: ${data.durationMinutes} phút</em></td></tr></table><div class="exam-title"><h2>ĐỀ THI MÃ SỐ: ${escapeHtml(data.paperCode)}</h2><em>(Thí sinh không được sử dụng tài liệu. Cán bộ coi thi không giải thích gì thêm)</em></div>${questions}${answerKey}</body></html>`;
+  exportBulkExamPapersToWord([data], includeAnswerKey, data.subjectCode);
+}
+
+/** Xuất trọn bộ N mã đề thi và Bảng đáp án ma trận tổng hợp ra 1 file Word (.doc) duy nhất */
+export function exportBulkExamPapersToWord(
+  papers: ExamPaperExportData[],
+  includeAnswerKey = true,
+  customFileName?: string,
+) {
+  if (!papers || papers.length === 0) return;
+
+  const mappedPapers: ExamPaperExportModel[] = papers.map((p) => ({
+    paperCode: p.paperCode,
+    title: p.title,
+    subjectName: p.subjectName,
+    subjectCode: p.subjectCode,
+    durationMinutes: p.durationMinutes,
+    totalScore: p.totalScore || 10,
+    examType: p.examType,
+    departmentName: p.departmentName,
+    schoolName: p.schoolName,
+    questions: p.questions.map((q) => ({
+      order: q.order,
+      code: q.code,
+      content: q.content,
+      score: q.score,
+      type: q.type,
+      options: q.options?.map((opt) => ({
+        label: opt.label,
+        content: opt.content,
+        isCorrect: opt.isCorrect,
+      })),
+      fillBlankAnswers: q.fillBlankAnswers,
+      correctAnswer: q.correctAnswer,
+      sampleAnswer: q.sampleAnswer,
+      explanation: q.explanation,
+    })),
+  }));
+
+  // Dùng chung 100% template HTML với bản In/PDF
+  const html = generateUnifiedExamPaperHtml(mappedPapers, includeAnswerKey);
+
   const blob = new Blob(['\ufeff' + html], { type: 'application/msword;charset=utf-8' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `De_Thi_${data.subjectCode}_Ma_${data.paperCode}.doc`;
+  const firstPaper = papers[0];
+  const fileName = papers.length > 1
+    ? `Bo_${papers.length}_De_Thi_${customFileName || firstPaper.subjectCode}_Ma_${papers.map((p) => p.paperCode).join('_')}.doc`
+    : `De_Thi_${customFileName || firstPaper.subjectCode}_Ma_${firstPaper.paperCode}.doc`;
+  link.download = fileName;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

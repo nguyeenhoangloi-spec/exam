@@ -15,7 +15,6 @@ import {
   PaginationBar,
   SortDropdown,
   ColumnToggleDropdown,
-  ViewModeSegmentedControl,
   TabBar,
 } from '../../../components/ui';
 import { StudentResultFilterPopover } from '../../../components/student-results/StudentResultFilterPopover';
@@ -116,7 +115,6 @@ export default function StudentResultsPage() {
 
   // Toolbar & View state
   const [sortOrder, setSortOrder] = useState<string>('date_desc');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'compact'>('list');
   const [openColumnMenu, setOpenColumnMenu] = useState<boolean>(false);
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     code: true,
@@ -203,20 +201,6 @@ export default function StudentResultsPage() {
     fetchData();
     fetchMyAppeals();
   }, [fetchData, fetchMyAppeals]);
-
-  const [isSpinning, setIsSpinning] = useState<boolean>(false);
-
-  const handleRefresh = async () => {
-    setIsSpinning(true);
-    try {
-      await Promise.all([fetchData(), fetchMyAppeals()]);
-      setToast({ message: 'Đã cập nhật và làm mới dữ liệu mới nhất!', type: 'success' });
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setTimeout(() => setIsSpinning(false), 600);
-    }
-  };
 
   const handleSubmitAppeal = async () => {
     const target = selectedExamForAppeal || detailItem;
@@ -372,20 +356,21 @@ export default function StudentResultsPage() {
     },
   ];
 
-  const handleExportExcel = () => {
-    exportToFormattedExcel({
-      filename: `Ket_qua_thi_${studentInfo?.studentCode || 'sinh_vien'}`,
-      title: 'BÁO CÁO KẾT QUẢ THI SINH VIÊN',
+  const handleExportExcel = async () => {
+    await exportToFormattedExcel({
+      filename: `Bang_diem_${studentInfo?.studentCode || 'sinh_vien'}`,
+      templateCode: 'EXAM_SCORE_TRANSCRIPT',
+      title: 'PHIẾU ĐIỂM HỌC TẬP & THI HỌC PHẦN',
       subtitle: `Sinh viên: ${studentInfo?.fullName || ''} (${studentInfo?.studentCode || ''}) · Lớp: ${studentInfo?.className || ''} · Khoa: ${studentInfo?.departmentName || ''}`,
       columns: [
-        { header: 'STT', width: 8, align: 'center' },
+        { header: 'STT', width: 6, align: 'center' },
         { header: 'Mã môn', width: 14, align: 'center' },
-        { header: 'Tên môn học', width: 35, align: 'left' },
-        { header: 'Kỳ thi', width: 25, align: 'left' },
+        { header: 'Tên môn học', width: 30, align: 'left' },
+        { header: 'Kỳ thi', width: 20, align: 'left' },
         { header: 'Ngày thi', width: 14, align: 'center' },
-        { header: 'Hình thức', width: 18, align: 'center' },
+        { header: 'Hình thức', width: 16, align: 'center' },
         { header: 'Điểm số', width: 12, align: 'center' },
-        { header: 'Kết quả', width: 16, align: 'center' },
+        { header: 'Kết quả', width: 14, align: 'center' },
       ],
       rows: filteredList.map((r, idx) => [
         idx + 1,
@@ -682,22 +667,6 @@ export default function StudentResultsPage() {
               visibleColumns={visibleColumns}
               onToggle={handleColumnToggle}
             />
-
-            {/* View Mode Segmented Control */}
-            <ViewModeSegmentedControl
-              viewMode={viewMode}
-              onChange={(mode) => setViewMode(mode)}
-            />
-
-            {/* Refresh Button */}
-            <button
-              type="button"
-              onClick={handleRefresh}
-              className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 shrink-0 select-none"
-              title="Làm mới dữ liệu"
-            >
-              <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
-            </button>
           </div>
         </div>
 
@@ -733,178 +702,8 @@ export default function StudentResultsPage() {
               Không có kết quả thi nào phù hợp với từ khóa tìm kiếm hoặc bộ lọc hiện tại.
             </p>
           </div>
-        ) : viewMode === 'grid' ? (
-          /* ── 5.1 Grid View Mode ── */
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {currentItems.map((item) => {
-              const isChecked = selected.includes(item.id);
-              return (
-                <div
-                  key={item.id}
-                  className={`rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:shadow-md transition-all duration-200 space-y-3 flex flex-col justify-between ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                    }`}
-                >
-                  <div className="space-y-2.5">
-                    <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                          className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setDetailItem(item)}
-                          className="tabular-nums font-medium text-type-helper text-slate-600 dark:text-slate-400 hover:text-blue-600 transition cursor-pointer shrink-0"
-                        >
-                          <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
-                        </button>
-                      </div>
-
-                      <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full tabular-nums border border-slate-200 dark:border-slate-700">
-                        {item.schoolYear}
-                      </span>
-                    </div>
-
-                    <div>
-                      <h4
-                        onClick={() => setDetailItem(item)}
-                        className="text-type-body font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition"
-                      >
-                        {item.subjectName}
-                      </h4>
-                      <p className="text-type-helper text-slate-400 font-normal mt-0.5 truncate">{item.periodName}</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2 text-type-helper text-slate-600 dark:text-slate-400 font-normal pt-1 border-t border-slate-100/70 dark:border-slate-800/70">
-                      <div>
-                        <span className="text-slate-400 text-type-helper block">Hình thức</span>
-                        <strong className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper block truncate">{formatExamType(item.examType)}</strong>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 text-type-helper block">Ngày thi</span>
-                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper block">{new Date(item.examDate).toLocaleDateString('vi-VN')}</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 text-type-helper block">Số tín chỉ</span>
-                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper block">{item.credits} tín chỉ</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 text-type-helper block">Điểm số</span>
-                        <span className={`font-semibold text-type-helper block ${item.score !== null && item.score >= 4.0 ? 'text-slate-900 dark:text-slate-100' : item.score !== null ? 'text-rose-600' : 'text-slate-400'}`}>
-                          {item.score !== null ? `${item.score.toFixed(1)} / 10` : '---'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-type-helper">
-                    <button
-                      type="button"
-                      onClick={() => setDetailItem(item)}
-                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-type-body-sm font-medium transition cursor-pointer"
-                    >
-                      <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-                      <span>Xem chi tiết</span>
-                    </button>
-                    <div>
-                      {renderInlineStatus(item.status)}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : viewMode === 'compact' ? (
-          /* ── 5.2 Compact View Mode (Dạng Thẻ Thanh Ngang Thu Gọn) ── */
-          <div className="space-y-2.5">
-            {currentItems.map((item) => {
-              const isChecked = selected.includes(item.id);
-              return (
-                <div
-                  key={item.id}
-                  className={`flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-2xs hover:border-blue-300 hover:shadow-xs transition duration-200 gap-3.5 ${isChecked ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''
-                    }`}
-                >
-                  {/* Left: Checkbox + CodeBadge + Name + Meta Chips */}
-                  <div className="flex items-center gap-3 min-w-0">
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={(e) => handleSelectOne(item.id, e.target.checked)}
-                      className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() => setDetailItem(item)}
-                      className="shrink-0"
-                    >
-                      <IdentifierBadge tone="blue">{item.subjectCode}</IdentifierBadge>
-                    </button>
-
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <button
-                          type="button"
-                          onClick={() => setDetailItem(item)}
-                          className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer text-left"
-                        >
-                          {item.subjectName}
-                        </button>
-                        <span className="text-type-helper font-medium text-slate-600 dark:text-slate-400 px-2 py-0.5 ui-pill rounded-full">
-                          {formatExamType(item.examType)}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-3.5 text-type-helper text-slate-500 dark:text-slate-400 mt-1 flex-wrap font-normal">
-                        <span className="text-slate-800 dark:text-slate-200 font-medium">{item.periodName}</span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                          <span>{new Date(item.examDate).toLocaleDateString('vi-VN')}</span>
-                        </span>
-                        {item.roomName && (
-                          <span className="text-slate-500 dark:text-slate-400">
-                            Phòng: <strong className="text-slate-700 dark:text-slate-300 font-medium">{item.roomName}</strong>
-                          </span>
-                        )}
-                        <span className="text-slate-600 dark:text-slate-400 font-medium">
-                          {item.credits} tín chỉ
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right: Score, Status & Action */}
-                  <div className="flex items-center gap-3 shrink-0">
-                    {item.score !== null && (
-                      <span className={`text-type-helper font-medium px-2.5 py-1 ui-pill rounded-full border tabular-nums ${item.score >= 4.0
-                        ? 'bg-slate-100 text-slate-800 border-slate-200 dark:text-slate-200 dark:border-slate-700'
-                        : 'bg-rose-50 text-rose-700 border-rose-200/80 dark:text-rose-300'
-                        }`}>
-                        {item.score.toFixed(1)} điểm
-                      </span>
-                    )}
-                    <div>
-                      {renderInlineStatus(item.status)}
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => setDetailItem(item)}
-                      className="p-1.5 text-slate-500 hover:text-blue-600 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
-                      title="Xem chi tiết kết quả thi"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         ) : (
-          /* ── 5.3 Standard List View Mode (Default Table) ── */
+          /* ── 5. Standard List View Mode (Default Table) ── */
           <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
             <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
               <thead className="bg-slate-50 dark:bg-slate-800 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">

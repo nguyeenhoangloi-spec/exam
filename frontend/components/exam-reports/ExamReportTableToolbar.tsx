@@ -1,17 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
-import { RefreshCw } from 'lucide-react';
+import React from 'react';
 import { SortDropdown } from '../ui/SortDropdown';
 import { ColumnToggleDropdown } from '../ui/ColumnToggleDropdown';
-import { ViewModeSegmentedControl } from '../ui/ViewModeSegmentedControl';
 
 interface ExamReportTableToolbarProps {
   totalCount: number;
   sortOrder?: string;
   onSortChange?: (sort: string) => void;
-  viewMode?: 'list' | 'grid' | 'compact';
-  onViewModeChange?: (mode: 'list' | 'grid' | 'compact') => void;
   visibleColumns?: Record<string, boolean>;
   onColumnToggle?: (columnKey: string) => void;
   onRefresh?: () => void;
@@ -22,8 +18,6 @@ export function ExamReportTableToolbar({
   totalCount,
   sortOrder = 'score_desc',
   onSortChange,
-  viewMode = 'list',
-  onViewModeChange,
   visibleColumns = {
     student: true,
     examPeriod: true,
@@ -34,23 +28,7 @@ export function ExamReportTableToolbar({
     status: true,
   },
   onColumnToggle,
-  onRefresh,
-  loading = false,
 }: ExamReportTableToolbarProps) {
-  const [isSpinning, setIsSpinning] = useState(false);
-
-  const handleRefreshClick = async () => {
-    if (!onRefresh) return;
-    setIsSpinning(true);
-    try {
-      await onRefresh();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setTimeout(() => setIsSpinning(false), 600);
-    }
-  };
-
   const columnsList = [
     { key: 'student', label: 'Mã & Họ tên thí sinh' },
     { key: 'examPeriod', label: 'Đợt / Kỳ thi' },
@@ -81,25 +59,6 @@ export function ExamReportTableToolbar({
         visibleColumns={visibleColumns}
         onToggle={(key) => onColumnToggle?.(key)}
       />
-
-      {/* View Mode Segmented Control */}
-      <ViewModeSegmentedControl
-        viewMode={viewMode}
-        onChange={(mode) => onViewModeChange?.(mode)}
-      />
-
-      {/* Refresh button */}
-      {onRefresh && (
-        <button
-          type="button"
-          onClick={handleRefreshClick}
-          disabled={loading || isSpinning}
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-blue-400 dark:hover:bg-slate-800 transition-all cursor-pointer active:scale-95 disabled:opacity-50 shrink-0"
-          title="Làm mới dữ liệu"
-        >
-          <RefreshCw className={`h-4 w-4 ${loading || isSpinning ? 'animate-spin text-blue-600' : ''}`} />
-        </button>
-      )}
     </div>
   );
 }
