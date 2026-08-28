@@ -88,7 +88,7 @@ export function DataActionsDropdown({
       top: `${top}px`,
       left: `${left}px`,
       minWidth: `${minWidth}px`,
-      maxWidth: '240px',
+      maxWidth: '280px',
       zIndex: 99999,
     });
   }, []);

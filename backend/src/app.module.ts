@@ -36,6 +36,7 @@ import { AccessControlModule } from './access-control/access-control.module';
 import { DocumentTemplatesModule } from './document-templates/document-templates.module';
 import { SecurityAuditModule } from './security-audit/security-audit.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { ExamArchivesModule } from './exam-archives/exam-archives.module';
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     BackupsModule,
     AccessControlModule,
     DocumentTemplatesModule,
+    ExamArchivesModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },

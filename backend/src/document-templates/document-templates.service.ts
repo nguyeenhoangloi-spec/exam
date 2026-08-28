@@ -232,6 +232,21 @@ const templateCodeColumns: Record<string, TemplateColumn[]> = {
     { key: 'receivedQty', label: 'Số lượng thu hồi', align: 'center', width: '16%' },
     { key: 'sealStatus', label: 'Tình trạng niêm phong', align: 'center', width: '18%' },
   ],
+  EXAM_ARCHIVE_LIST: [
+    { key: 'index', label: 'STT', align: 'center', width: '6%' },
+    { key: 'studentCode', label: 'MSSV', align: 'center', width: '14%' },
+    { key: 'fullName', label: 'Họ và tên thí sinh', width: '28%' },
+    { key: 'className', label: 'Lớp', align: 'center', width: '14%' },
+    { key: 'totalScore', label: 'Điểm', align: 'center', width: '10%' },
+    { key: 'sealShort', label: 'Mã niêm phong', align: 'center', width: '14%' },
+    { key: 'approvedBy', label: 'Cán bộ duyệt', width: '14%' },
+  ],
+  EXAM_ARCHIVE_DOSSIER: [
+    { key: 'index', label: 'STT', align: 'center', width: '8%' },
+    { key: 'item', label: 'Hạng mục hồ sơ lưu trữ', width: '36%' },
+    { key: 'value', label: 'Chi tiết trích lục', width: '42%' },
+    { key: 'note', label: 'Trạng thái kiểm định', align: 'center', width: '14%' },
+  ],
   GENERIC_REPORT: [
     { key: 'index', label: 'STT', align: 'center', width: '10%' },
     { key: 'label', label: 'Nội dung', width: '60%' },
@@ -400,6 +415,19 @@ const defaults: Array<{ code: string; name: string; dataSource: DocumentTemplate
     name: 'Nhật ký hệ thống & An ninh',
     dataSource: 'GENERIC_REPORT',
     description: 'Báo cáo trích xuất nhật ký hoạt động, kiểm toán an ninh và danh sách bản sao lưu hệ thống.',
+  },
+  // ── Nhóm 5: Kho lưu trữ & Trích lục bài thi ──
+  {
+    code: 'EXAM_ARCHIVE_LIST',
+    name: 'Danh sách bài thi lưu trữ niêm phong',
+    dataSource: 'GRADE_REPORT',
+    description: 'Bảng danh sách bài thi lưu trữ kèm mã băm niêm phong số SHA-256 sau khi công bố kết quả.',
+  },
+  {
+    code: 'EXAM_ARCHIVE_DOSSIER',
+    name: 'Hồ sơ trích lục bài thi lưu trữ',
+    dataSource: 'GENERIC_REPORT',
+    description: 'Biểu mẫu in trích lục hồ sơ bài thi đã niêm phong phục vụ kiểm định chất lượng và giải quyết phúc khảo.',
   },
 ];
 
@@ -942,6 +970,52 @@ export class DocumentTemplatesService {
           signers: [
             { title: 'QUẢN TRỊ VIÊN HỆ THỐNG', subtitle: '(Ký, ghi rõ họ tên)' },
             { title: 'GIÁM ĐỐC TRUNG TÂM CNTT', subtitle: '(Ký, đóng dấu)' },
+          ],
+        },
+      };
+    }
+
+    if (code === 'EXAM_ARCHIVE_LIST') {
+      return {
+        templateType: 'TABLE',
+        page: { size: 'A4', orientation: 'portrait', marginMm: 12 },
+        header: {
+          institutionName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ',
+          facultyName: 'PHÒNG KHẢO THÍ & ĐBCL',
+          title: 'DANH SÁCH BÀI THI LƯU TRỮ ĐÃ NIÊM PHONG',
+          subtitle: 'Kỳ thi Kết thúc học phần · Lưu trữ đào tạo chính quy',
+          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+        },
+        examInfo: {},
+        columns: availableCols,
+        footer: {
+          note: 'Danh sách bài thi đã được chốt điểm chính thức và niêm phong số bằng thuật toán SHA-256 theo quy chế Bộ GD&ĐT.',
+          signers: [
+            { title: 'CÁN BỘ CHẤM THI', subtitle: '(Ký và ghi rõ họ tên)' },
+            { title: 'TRƯỞNG PHÒNG KHẢO THÍ', subtitle: '(Ký, đóng dấu xác nhận)' },
+          ],
+        },
+      };
+    }
+
+    if (code === 'EXAM_ARCHIVE_DOSSIER') {
+      return {
+        templateType: 'TABLE',
+        page: { size: 'A4', orientation: 'portrait', marginMm: 12 },
+        header: {
+          institutionName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ',
+          facultyName: 'PHÒNG KHẢO THÍ & ĐBCL',
+          title: 'HỒ SƠ LƯU TRỮ BÀI THI KẾT THÚC HỌC PHẦN',
+          subtitle: '(Bản trích lục niêm phong lưu trữ đào tạo)',
+          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+        },
+        examInfo: {},
+        columns: availableCols,
+        footer: {
+          note: 'Hồ sơ lưu trữ điện tử chính quy. Bất kỳ sự thay đổi dữ liệu nào đều sẽ làm sai lệch mã băm niêm phong số.',
+          signers: [
+            { title: 'CÁN BỘ CHẤM THI', subtitle: '(Ký và ghi rõ họ tên)' },
+            { title: 'TRƯỞNG PHÒNG KHẢO THÍ & ĐBCL', subtitle: '(Ký, đóng dấu lưu trữ)' },
           ],
         },
       };

@@ -16,7 +16,7 @@ let isWarmedUp = false;
 let refreshPromise: Promise<string> | null = null;
 let restoreSessionPromise: Promise<boolean> | null = null;
 
-const shouldNeverCache = (url?: string) => /profile|attempt|exam-paper|question|result|report|appeal|proctor|essay|student|teacher|user|dashboard/i.test(url || '');
+const shouldNeverCache = (url?: string) => /profile|attempt|exam-paper|question|result|report|appeal|proctor|essay|student|teacher|user|dashboard|archive/i.test(url || '');
 
 export function clearApiCache() {
   cache.clear();

@@ -32,6 +32,7 @@ import {
   FileCog,
   ShieldAlert,
   Settings,
+  Archive,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Role, User } from '../types';
@@ -163,6 +164,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         group: 'Chấm thi & Kết quả',
         items: [
           { name: 'Bảng điểm ca thi', href: '/exam-reports?view=schedule', icon: ClipboardList },
+          { name: 'Kho lưu trữ bài thi', href: '/admin/exam-archives', icon: Archive },
           { name: 'Duyệt bài tự luận', href: '/admin/essay-review', icon: FileCheck },
           { name: 'Xử lý phúc khảo', href: '/admin/grade-appeals', icon: Award },
         ],
@@ -207,6 +209,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     ],
     []
   );
+
   // 2. TEACHER Navigation Groups
   const teacherGroups: NavGroup[] = useMemo(
     () => [
@@ -217,6 +220,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           { name: 'Chấm thi tự luận', href: '/teacher/essay-grading', icon: FileCheck },
           { name: 'Thẩm định phúc khảo', href: '/teacher/regrade', icon: Award },
           { name: 'Bảng điểm ca thi', href: '/exam-reports?view=schedule', icon: ClipboardList },
+          { name: 'Kho lưu trữ bài thi', href: '/admin/exam-archives', icon: Archive },
         ],
       },
       {

@@ -28,6 +28,7 @@ const routeAccess: RouteAccessRule[] = [
   { prefix: '/question-bank', roles: ['ADMIN', 'TEACHER'], permission: 'QUESTION_MANAGE' },
   { prefix: '/exam-papers', roles: ['ADMIN', 'TEACHER'], permission: 'EXAM_PAPER_MANAGE' },
   { prefix: '/exam-reports', roles: ['ADMIN', 'TEACHER'], permission: 'EXAM_REPORT_VIEW' },
+  { prefix: '/admin/exam-archives', roles: ['ADMIN', 'TEACHER'], permission: 'EXAM_REPORT_VIEW' },
   { prefix: '/trash', roles: ['ADMIN'], permission: 'TRASH_MANAGE' },
   { prefix: '/admin/backups', roles: ['ADMIN'], permission: 'BACKUP_MANAGE' },
   { prefix: '/admin/settings/google-drive/callback', roles: ['ADMIN'], permission: 'BACKUP_MANAGE' },

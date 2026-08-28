@@ -232,6 +232,17 @@ const sampleRowsByCode: Record<string, Array<Record<string, any>>> = {
     { index: 2, time: '27/08/2026 08:15:22', actor: 'gv_hai', action: 'GRADE_SUBMIT', target: 'EXAM_ATTEMPT', status: 'Thành công' },
     { index: 3, time: '27/08/2026 07:45:00', actor: 'system_cron', action: 'AUTO_BACKUP', target: 'DATABASE_SNAPSHOT', status: 'Thành công' },
   ],
+  EXAM_ARCHIVE_LIST: [
+    { index: 1, studentCode: 'SV20260001', fullName: 'Nguyễn Văn An', className: 'CNTT-K68A', totalScore: '9.0', sealShort: 'A1B2C3D4', approvedBy: 'Hội đồng Khảo thí' },
+    { index: 2, studentCode: 'SV20260002', fullName: 'Trần Thị Bình', className: 'CNTT-K68A', totalScore: '8.0', sealShort: 'E5F6G7H8', approvedBy: 'Hội đồng Khảo thí' },
+    { index: 3, studentCode: 'SV20260003', fullName: 'Lê Hoàng Cường', className: 'CNTT-K68B', totalScore: '6.5', sealShort: 'J9K0L1M2', approvedBy: 'Hội đồng Khảo thí' },
+  ],
+  EXAM_ARCHIVE_DOSSIER: [
+    { index: 1, item: '1. Thông tin thí sinh & Học phần', value: 'Nguyễn Văn An (SV20260001) · Môn: Lập trình Web Nâng cao (IT4409)', note: 'Khớp danh sách' },
+    { index: 2, item: '2. Mã niêm phong số (SHA-256)', value: '7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069', note: 'Toàn vẹn 100%' },
+    { index: 3, item: '3. Điểm số chính thức & Cán bộ chấm', value: '9.0 / 10.0 đ · Chấm bởi: TS. Trần Hải · Duyệt bởi: Hội đồng Khảo thí', note: 'Đã công bố' },
+    { index: 4, item: '4. Tình trạng lưu trữ đào tạo', value: 'Bản trích lục niêm phong thời hạn 5 năm theo quy chế Bộ GD&ĐT', note: 'Đạt chuẩn lưu trữ' },
+  ],
 };
 
 function clone<T>(val: T): T {

@@ -60,6 +60,12 @@ type AuditArchiveStatus = {
   archived: number;
 };
 
+type ExamArchiveConfig = {
+  retentionYears: number;
+  updatedAt?: string;
+  updatedBy?: string;
+};
+
 const auditCategoryLabel: Record<string, string> = {
   AUTHENTICATION: 'Xác thực',
   AUTHORIZATION: 'Phân quyền',
@@ -99,6 +105,7 @@ export default function SystemSettingsPage() {
   const [storage, setStorage] = useState<StorageStatus>({});
   const [auditPolicies, setAuditPolicies] = useState<AuditRetentionPolicy[]>([]);
   const [archiveStatus, setArchiveStatus] = useState<AuditArchiveStatus | null>(null);
+  const [archiveConfig, setArchiveConfig] = useState<ExamArchiveConfig>({ retentionYears: 2 });
   const [loading, setLoading] = useState(true);
   const [savingAll, setSavingAll] = useState(false);
   const [busyId, setBusyId] = useState('');
@@ -114,9 +121,10 @@ export default function SystemSettingsPage() {
         api.get<BackupSettings>('/backups/settings', { params: { noCache: true } }),
         api.get<{ storage?: StorageStatus }>('/backups/overview', { params: { noCache: true } }),
       ]);
-      const [policiesResult, archiveResult] = await Promise.allSettled([
+      const [policiesResult, archiveResult, archiveConfigResult] = await Promise.allSettled([
         api.get<AuditRetentionPolicy[]>('/security-audit/policies', { params: { noCache: true } }),
         api.get<AuditArchiveStatus>('/security-audit/archive-status', { params: { noCache: true } }),
+        api.get<ExamArchiveConfig>('/exam-archives/config', { params: { noCache: true } }),
       ]);
       setSettings({
         ...defaults,
@@ -126,6 +134,9 @@ export default function SystemSettingsPage() {
       setStorage(overviewResponse.data.storage || {});
       setAuditPolicies(policiesResult.status === 'fulfilled' ? policiesResult.value.data || [] : []);
       setArchiveStatus(archiveResult.status === 'fulfilled' ? archiveResult.value.data || null : null);
+      if (archiveConfigResult.status === 'fulfilled' && archiveConfigResult.value.data) {
+        setArchiveConfig(archiveConfigResult.value.data);
+      }
     } catch (error: any) {
       setToast({ message: error?.message || 'Không thể tải cài đặt hệ thống.', type: 'error' });
     } finally {
@@ -156,6 +167,13 @@ export default function SystemSettingsPage() {
     setSettings((current) => ({ ...current, [key]: value }));
 
   const saveAllSettings = async () => {
+    if (archiveConfig.retentionYears < 2) {
+      setToast({
+        message: 'Niên hạn lưu trữ bài thi tối thiểu là 02 năm theo Điều 10 Thông tư 08/2021/TT-BGDĐT.',
+        type: 'error',
+      });
+      return;
+    }
     setSavingAll(true);
     try {
       await Promise.all([
@@ -165,6 +183,9 @@ export default function SystemSettingsPage() {
           backupTime: settings.backupTime,
           maxRetentionCount: settings.maxRetentionCount,
           dualStorageEnabled: settings.dualStorageEnabled,
+        }),
+        api.put('/exam-archives/config', {
+          retentionYears: Number(archiveConfig.retentionYears),
         }),
         ...auditPolicies.map((policy) =>
           api.patch(`/security-audit/policies/${policy.category}`, {
@@ -579,8 +600,9 @@ export default function SystemSettingsPage() {
           </div>
         </div>
 
-        {/* NỬA PHẢI (Lg: 6/12): Lưu giữ nhật ký kiểm toán (Gọn gàng, không có nút Lưu con) */}
-        <div className="lg:col-span-6 flex flex-col justify-between">
+        {/* NỬA PHẢI (Lg: 6/12): Lưu giữ nhật ký kiểm toán + Niên hạn lưu trữ bài thi */}
+        <div className="lg:col-span-6 flex flex-col divide-y divide-slate-100 dark:divide-slate-800">
+            {/* Phần 1: Lưu giữ nhật ký kiểm toán */}
             <div className="p-5 sm:p-6 space-y-4">
               <div className="pb-3 border-b border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-2">
@@ -648,14 +670,63 @@ export default function SystemSettingsPage() {
                   </p>
                 )}
               </div>
+              <p className="pt-2 text-type-helper text-slate-400 dark:border-slate-800 font-normal">
+                * Log kiểm toán bắt buộc lưu tối thiểu 5 năm (1825 ngày) theo quy định an toàn hệ thống.
+              </p>
             </div>
 
-            <p className="border-t border-slate-100 px-5 sm:px-6 py-3 text-type-helper text-slate-400 dark:border-slate-800 font-normal">
-              * Log kiểm toán bắt buộc lưu tối thiểu 5 năm (1825 ngày) theo quy định an toàn hệ thống.
-            </p>
-          </div>
+            {/* Phần 2: Niên hạn lưu trữ bài thi (Khảo thí & Đảm bảo chất lượng) */}
+            <div className="p-5 sm:p-6 space-y-4">
+              <div className="pb-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                  <h2 className="text-type-section font-semibold text-slate-900 dark:text-slate-100">
+                    Niên hạn lưu trữ bài thi
+                  </h2>
+                  <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal">
+                    Thời hạn lưu trữ tối thiểu bài thi và kết quả đánh giá theo Thông tư 08/2021/TT-BGDĐT.
+                  </p>
+                </div>
+                <span className="table-badge table-badge-info">
+                  {archiveConfig.retentionYears} năm
+                </span>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2 pt-1 items-center">
+                <label className="space-y-1.5 block">
+                  <span className="text-type-helper font-medium text-slate-700 dark:text-slate-300">
+                    Thời hạn lưu trữ bài thi (năm)
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min={2}
+                      max={10}
+                      value={archiveConfig.retentionYears}
+                      onChange={(e) => {
+                        const val = Math.max(1, Number(e.target.value) || 1);
+                        setArchiveConfig((prev) => ({ ...prev, retentionYears: val }));
+                      }}
+                      className={inputClass}
+                    />
+                    <span className="text-type-body font-medium text-slate-500 shrink-0">năm</span>
+                  </div>
+                </label>
+
+                <div className="rounded-xl border border-slate-200/60 bg-slate-50/50 p-3 text-type-helper text-slate-600 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300">
+                  <div className="font-semibold text-slate-900 dark:text-slate-100 mb-0.5">Sàn bảo vệ pháp lý:</div>
+                  Tối thiểu <strong>02 năm</strong> theo Điều 10 TT 08/2021/TT-BGDĐT. Trường có thể nâng lên 3 – 10 năm theo Quy chế đào tạo nội bộ.
+                </div>
+              </div>
+
+              {archiveConfig.retentionYears < 2 && (
+                <p className="text-type-helper text-rose-600 font-semibold">
+                  ⚠️ Niên hạn lưu trữ không được nhỏ hơn 2 năm theo quy định của Bộ GD&ĐT.
+                </p>
+              )}
+            </div>
         </div>
       </div>
+    </div>
 
       {/* Modals */}
       <StorageTargetModal
