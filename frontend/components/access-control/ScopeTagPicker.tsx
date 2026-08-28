@@ -5,9 +5,10 @@ import { Search, X, CheckSquare, Square } from 'lucide-react';
 
 interface ScopeOption {
   id: number;
-  name: string;
+  name?: string;
   code?: string;
   subjectCode?: string;
+  subjectName?: string;
 }
 
 interface ScopeTagPickerProps {
@@ -34,7 +35,7 @@ export function ScopeTagPicker({
     const q = search.toLowerCase().trim();
     return options.filter((item) => {
       const code = (item.code || item.subjectCode || '').toLowerCase();
-      const name = item.name.toLowerCase();
+      const name = (item.name || item.subjectName || '').toLowerCase();
       return code.includes(q) || name.includes(q);
     });
   }, [options, search]);
@@ -109,7 +110,7 @@ export function ScopeTagPicker({
             <button
               type="button"
               onClick={() => setSearch('')}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer p-0.5"
+              className="min-h-0 min-w-0 p-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
               title="Xóa tìm kiếm"
             >
               <X className="h-3 w-3" />
@@ -131,6 +132,7 @@ export function ScopeTagPicker({
           filteredOptions.map((item) => {
             const isChecked = selectedIds.includes(item.id);
             const code = item.code || item.subjectCode;
+            const name = item.name || item.subjectName || code || '';
             return (
               <div
                 key={item.id}
@@ -152,7 +154,7 @@ export function ScopeTagPicker({
                       [{code}]
                     </span>
                   )}
-                  <span className="truncate">{item.name}</span>
+                  <span className="truncate">{name}</span>
                 </div>
               </div>
             );

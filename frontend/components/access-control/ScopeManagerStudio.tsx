@@ -6,9 +6,10 @@ import { SlidingSegmentedControl } from '../ui/SlidingSegmentedControl';
 
 export interface ScopeOption {
   id: number;
-  name: string;
+  name?: string;
   code?: string;
   subjectCode?: string;
+  subjectName?: string;
 }
 
 export type ScopeType = 'DEPARTMENT' | 'CLASS' | 'SUBJECT';
@@ -60,7 +61,7 @@ export function ScopeManagerStudio({
     const q = search.toLowerCase();
     return currentOptions.filter((item) => {
       const code = (item.code || item.subjectCode || '').toLowerCase();
-      const name = item.name.toLowerCase();
+      const name = (item.name || item.subjectName || '').toLowerCase();
       return name.includes(q) || code.includes(q);
     });
   }, [currentOptions, search]);
@@ -166,7 +167,7 @@ export function ScopeManagerStudio({
               <button
                 type="button"
                 onClick={() => setSearch('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer p-0.5"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 min-h-0 min-w-0 p-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
                 title="Xóa tìm kiếm"
               >
                 <X className="h-3.5 w-3.5" />
@@ -211,6 +212,7 @@ export function ScopeManagerStudio({
           {filteredOptions.map((item) => {
             const isSelected = selectedIds.includes(item.id);
             const code = item.code || item.subjectCode;
+            const name = item.name || item.subjectName || code || '';
 
             return (
               <div
@@ -220,7 +222,7 @@ export function ScopeManagerStudio({
                   ? 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 shadow-xs ring-1 ring-slate-400/20 dark:ring-slate-600/30'
                   : 'border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/70 text-slate-800 dark:text-slate-200'
                   } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-                title={item.name}
+                title={name}
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   {code && (
@@ -229,7 +231,7 @@ export function ScopeManagerStudio({
                     </span>
                   )}
                   <span className="truncate font-semibold text-slate-900 dark:text-white">
-                    {item.name}
+                    {name}
                   </span>
                 </div>
 

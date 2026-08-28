@@ -143,11 +143,19 @@ export class AccessControlService {
   }
 
   async getScopeOptions() {
-    const [departments, classes, subjects] = await Promise.all([
+    const [departments, classes, rawSubjects] = await Promise.all([
       this.prisma.department.findMany({ select: { id: true, code: true, name: true }, orderBy: { name: 'asc' } }),
       this.prisma.class.findMany({ select: { id: true, code: true, name: true, departmentId: true }, orderBy: { name: 'asc' } }),
       this.prisma.subject.findMany({ select: { id: true, subjectCode: true, subjectName: true, departmentId: true }, orderBy: { subjectName: 'asc' } }),
     ]);
+    const subjects = rawSubjects.map((s) => ({
+      id: s.id,
+      code: s.subjectCode,
+      name: s.subjectName,
+      subjectCode: s.subjectCode,
+      subjectName: s.subjectName,
+      departmentId: s.departmentId,
+    }));
     return { departments, classes, subjects };
   }
 
