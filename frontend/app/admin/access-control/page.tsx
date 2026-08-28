@@ -1367,13 +1367,13 @@ export default function AccessControlPage() {
                           </div>
                         </div>
 
-                        {/* Sub-Tab Navigation Bar - Dùng TabBar dạng segmented (Capsule trượt nền xám) để phân cấp rõ ràng với Tab cấp 1 */}
+                        {/* Sub-Tab Navigation Bar - Dùng TabBar dạng line phẳng, thanh lịch, chuẩn Anti-Bloat */}
                         {selectedUser.role === 'TEACHER' && (
                           <div className="pt-1">
                             <TabBar<'scopes' | 'overrides' | 'effective'>
                               active={userStudioTab}
                               onChange={(key) => setUserStudioTab(key)}
-                              variant="segmented"
+                              variant="line"
                               tabs={[
                                 {
                                   key: 'scopes',

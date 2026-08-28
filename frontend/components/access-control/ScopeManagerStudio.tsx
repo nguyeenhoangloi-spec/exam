@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo } from 'react';
 import { Search, X, Check } from 'lucide-react';
-import { SlidingSegmentedControl } from '../ui/SlidingSegmentedControl';
 
 export interface ScopeOption {
   id: number;
@@ -132,22 +131,38 @@ export function ScopeManagerStudio({
     <div className="space-y-3.5">
       {/* ── 1. Toolbar phẳng: Tab phân hệ + Tìm kiếm + Chọn tất cả ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-100 dark:border-slate-800">
-        {/* Phân hệ danh mục: SlidingSegmentedControl trượt mượt mà, BỎ HOÀN TOÀN ICON */}
-        <SlidingSegmentedControl<ScopeType>
-          value={activeScopeType}
-          onChange={(val) => {
-            setActiveScopeType(val);
-            setSearch('');
-          }}
-          size="sm"
-          pillShape="rounded"
-          className="shadow-2xs"
-          options={scopeTabs.map((tab) => ({
-            value: tab.type,
-            label: tab.label,
-            count: tab.count,
-          }))}
-        />
+        {/* Phân hệ danh mục: Capsule Filter Chips phẳng, hiện đại và thanh thoát */}
+        <div className="inline-flex items-center gap-1 p-0.5 rounded-full bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 shadow-2xs">
+          {scopeTabs.map((tab) => {
+            const isActive = activeScopeType === tab.type;
+            return (
+              <button
+                key={tab.type}
+                type="button"
+                onClick={() => {
+                  setActiveScopeType(tab.type);
+                  setSearch('');
+                }}
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-type-body-sm transition-all duration-150 cursor-pointer select-none ${
+                  isActive
+                    ? 'bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 font-semibold shadow-2xs border border-slate-200/80 dark:border-slate-700'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium hover:bg-white/40 dark:hover:bg-slate-800/40 border border-transparent'
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span
+                  className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-xs font-semibold tabular-nums transition-colors ${
+                    isActive
+                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
+                      : 'bg-slate-200/70 text-slate-600 dark:bg-slate-700 dark:text-slate-300'
+                  }`}
+                >
+                  {tab.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
         {/* Cụm công cụ tìm kiếm & Chọn tất cả */}
         <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
