@@ -141,7 +141,7 @@ export default function AccessControlPage() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [confirm, setConfirm] = useState<{
     title: string;
-    message: string;
+    message: React.ReactNode;
     type?: 'danger' | 'success' | 'warning' | 'info';
     requireReason?: boolean;
     reasonPlaceholder?: string;
@@ -564,8 +564,17 @@ export default function AccessControlPage() {
     const isAllow = effect === 'ALLOW';
 
     setConfirm({
-      title: isAllow ? 'Xác nhận cấp thêm quyền riêng?' : 'Xác nhận chặn quyền riêng?',
-      message: `Bạn có chắc chắn muốn ${isAllow ? 'cấp thêm quyền' : 'chặn quyền'} “${permName}” cho tài khoản ${displayName(selectedUser)} (${selectedUser.username})? Cấu hình này sẽ ghi đè quyền mặc định của vai trò.`,
+      title: isAllow ? 'Cấp quyền riêng cho tài khoản?' : 'Chặn quyền riêng cho tài khoản?',
+      message: (
+        <div className="space-y-1">
+          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+            {isAllow ? 'Cấp quyền' : 'Chặn quyền'}: <span className="font-semibold text-slate-950 dark:text-white">“{permName}”</span>
+          </p>
+          <p className="text-type-helper text-slate-500 dark:text-slate-400">
+            Tài khoản: <span className="font-medium text-slate-800 dark:text-slate-200">{displayName(selectedUser)}</span> ({selectedUser.username}). Cấu hình này sẽ ghi đè quyền mặc định của vai trò.
+          </p>
+        </div>
+      ),
       onConfirm: () =>
         mutate(
           () =>
@@ -591,7 +600,16 @@ export default function AccessControlPage() {
 
     setConfirm({
       title: 'Gỡ ngoại lệ quyền riêng?',
-      message: `Bạn có chắc chắn muốn gỡ ngoại lệ của quyền “${permName}” khỏi tài khoản ${displayName(selectedUser)}? Quyền sẽ tự động quay về theo vai trò mặc định.`,
+      message: (
+        <div className="space-y-1">
+          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+            Gỡ ngoại lệ: <span className="font-semibold text-slate-950 dark:text-white">“{permName}”</span>
+          </p>
+          <p className="text-type-helper text-slate-500 dark:text-slate-400">
+            Tài khoản: <span className="font-medium text-slate-800 dark:text-slate-200">{displayName(selectedUser)}</span>. Quyền sẽ tự động quay về theo vai trò mặc định.
+          </p>
+        </div>
+      ),
       onConfirm: () =>
         mutate(
           () =>
@@ -610,8 +628,17 @@ export default function AccessControlPage() {
       return;
     }
     setConfirm({
-      title: 'Lưu cấu hình phạm vi truy cập?',
-      message: `Bạn có chắc chắn muốn cập nhật ${draftScopes.length} phạm vi truy cập dữ liệu cho tài khoản ${displayName(selectedUser)}?`,
+      title: 'Lưu phạm vi truy cập?',
+      message: (
+        <div className="space-y-1">
+          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+            Cập nhật <span className="font-semibold text-slate-950 dark:text-white">{draftScopes.length} phạm vi truy cập</span>
+          </p>
+          <p className="text-type-helper text-slate-500 dark:text-slate-400">
+            Áp dụng cho tài khoản <span className="font-medium text-slate-800 dark:text-slate-200">{displayName(selectedUser)}</span>.
+          </p>
+        </div>
+      ),
       onConfirm: () =>
         mutate(
           () =>

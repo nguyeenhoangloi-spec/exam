@@ -105,7 +105,7 @@ function TrashPageContent() {
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     title: string;
-    message: string;
+    message: React.ReactNode;
     type: 'danger' | 'warning' | 'info' | 'success';
     onConfirm: () => void;
   }>({
@@ -194,7 +194,16 @@ function TrashPageContent() {
     setConfirmModal({
       isOpen: true,
       title: 'Khôi phục dữ liệu?',
-      message: `Bạn có chắc chắn muốn khôi phục "${item.title}" trở lại hệ thống?`,
+      message: (
+        <div className="space-y-1">
+          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+            Khôi phục: <span className="font-semibold text-slate-950 dark:text-white">"{item.title}"</span>
+          </p>
+          <p className="text-type-helper text-slate-500 dark:text-slate-400">
+            Dữ liệu sẽ được hoàn tác về trạng thái hoạt động bình thường trong hệ thống.
+          </p>
+        </div>
+      ),
       type: 'info',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -214,7 +223,16 @@ function TrashPageContent() {
     setConfirmModal({
       isOpen: true,
       title: 'Xóa vĩnh viễn dữ liệu?',
-      message: `CẢNH BÁO: Thao tác này sẽ XÓA VĨNH VIỄN "${item.title}" khỏi Database và KHÔNG THỂ KHÔI PHỤC! Bạn có chắc chắn muốn thực hiện?`,
+      message: (
+        <div className="space-y-1">
+          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+            Xóa vĩnh viễn: <span className="font-semibold text-slate-950 dark:text-white">"{item.title}"</span>
+          </p>
+          <p className="text-type-helper text-rose-600 dark:text-rose-400 font-medium">
+            Thao tác này sẽ xóa hoàn toàn khỏi cơ sở dữ liệu và không thể hoàn tác.
+          </p>
+        </div>
+      ),
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -252,7 +270,16 @@ function TrashPageContent() {
     setConfirmModal({
       isOpen: true,
       title: 'Khôi phục hàng loạt?',
-      message: `Bạn có chắc chắn muốn khôi phục ${count} bản ghi đã chọn trở lại hệ thống?`,
+      message: (
+        <div className="space-y-1">
+          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+            Khôi phục: <span className="font-semibold text-slate-950 dark:text-white">{count} bản ghi</span> đã chọn
+          </p>
+          <p className="text-type-helper text-slate-500 dark:text-slate-400">
+            Tất cả các mục được chọn sẽ được khôi phục trở lại hệ thống khảo thí.
+          </p>
+        </div>
+      ),
       type: 'info',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -277,7 +304,16 @@ function TrashPageContent() {
     setConfirmModal({
       isOpen: true,
       title: 'Xóa vĩnh viễn hàng loạt?',
-      message: `CẢNH BÁO: Thao tác này sẽ XÓA VĨNH VIỄN ${count} bản ghi đã chọn khỏi Database và KHÔNG THỂ KHÔI PHỤC! Bạn có chắc chắn muốn thực hiện?`,
+      message: (
+        <div className="space-y-1">
+          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+            Xóa vĩnh viễn: <span className="font-semibold text-slate-950 dark:text-white">{count} bản ghi</span> đã chọn
+          </p>
+          <p className="text-type-helper text-rose-600 dark:text-rose-400 font-medium">
+            Dữ liệu sẽ bị xóa hoàn toàn khỏi cơ sở dữ liệu và không thể hoàn tác.
+          </p>
+        </div>
+      ),
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));

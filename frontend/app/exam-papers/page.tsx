@@ -272,9 +272,20 @@ export default function ExamPapersPage() {
 
     setConfirmModal({
       isOpen: true,
-      title: 'Xác nhận đổi câu hỏi',
-      message: `Bạn có chắc chắn muốn thay thế Câu #${qIndex + 1} bằng câu hỏi mới chọn từ Ngân hàng đề không?`,
+      title: 'Đổi câu hỏi trong đề?',
+      message: (
+        <div className="space-y-1">
+          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+            Thay thế: <span className="font-semibold text-slate-950 dark:text-white">Câu #{qIndex + 1}</span> bằng câu hỏi mới từ ngân hàng.
+          </p>
+          <p className="text-type-helper text-slate-500 dark:text-slate-400">
+            Câu hỏi hiện tại trong đề sẽ được cập nhật sang nội dung mới.
+          </p>
+        </div>
+      ),
       type: 'info',
+      confirmText: 'Đổi câu hỏi',
+      cancelText: 'Hủy bỏ',
       onConfirm: () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
         const updatedPaper = { ...selectedPaper };
@@ -302,7 +313,7 @@ export default function ExamPapersPage() {
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     title: string;
-    message: string;
+    message: React.ReactNode;
     type: 'danger' | 'warning' | 'info' | 'success';
     confirmText?: string;
     cancelText?: string;
@@ -535,9 +546,20 @@ export default function ExamPapersPage() {
 
       setConfirmModal({
         isOpen: true,
-        title: 'Xác nhận tạo đề thi',
-        message: `Hệ thống sẽ sinh 1 đề thi mã số ${paperCode} gồm ${questionCount} câu hỏi (${totalScore} điểm). Bạn có muốn tạo không?`,
+        title: 'Tạo đề thi mới?',
+        message: (
+          <div className="space-y-1">
+            <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+              Sinh đề thi: <span className="font-semibold text-slate-950 dark:text-white">#{paperCode}</span> ({questionCount} câu hỏi · {totalScore} điểm)
+            </p>
+            <p className="text-type-helper text-slate-500 dark:text-slate-400">
+              Đề thi sẽ được lưu ở trạng thái bản nháp để bạn có thể xem lại trước khi phát hành.
+            </p>
+          </div>
+        ),
         type: 'info',
+        confirmText: 'Tạo đề thi',
+        cancelText: 'Hủy bỏ',
         onConfirm: async () => {
           setConfirmModal((prev) => ({ ...prev, isOpen: false }));
           setCreating(true);
@@ -618,13 +640,40 @@ export default function ExamPapersPage() {
     const titles = {
       archive: 'Lưu trữ đề thi?',
       restore: 'Khôi phục đề thi?',
-      delete: 'Xóa đề thi?',
+      delete: 'Chuyển đề thi vào thùng rác?',
     };
 
     const messages = {
-      archive: `Bạn có chắc chắn muốn chuyển đề thi ${paper.paperCode} vào kho lưu trữ?`,
-      restore: `Khôi phục đề thi ${paper.paperCode} về bản nháp để tiếp tục chỉnh sửa?`,
-      delete: `Bạn có chắc chắn muốn xóa đề thi ${paper.paperCode}? Dữ liệu sẽ được chuyển vào thùng rác.`,
+      archive: (
+        <div className="space-y-1">
+          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+            Lưu trữ đề thi: <span className="font-semibold text-slate-950 dark:text-white">#{paper.paperCode}</span>
+          </p>
+          <p className="text-type-helper text-slate-500 dark:text-slate-400">
+            Đề thi sẽ được chuyển vào kho lưu trữ và ẩn khỏi danh sách đang hoạt động.
+          </p>
+        </div>
+      ),
+      restore: (
+        <div className="space-y-1">
+          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+            Khôi phục đề thi: <span className="font-semibold text-slate-950 dark:text-white">#{paper.paperCode}</span>
+          </p>
+          <p className="text-type-helper text-slate-500 dark:text-slate-400">
+            Đề thi sẽ được chuyển về trạng thái bản nháp để bạn tiếp tục chỉnh sửa.
+          </p>
+        </div>
+      ),
+      delete: (
+        <div className="space-y-1">
+          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+            Xóa đề thi: <span className="font-semibold text-slate-950 dark:text-white">#{paper.paperCode}</span>
+          </p>
+          <p className="text-type-helper text-slate-500 dark:text-slate-400">
+            Đề thi sẽ được chuyển vào thùng rác và có thể khôi phục lại khi cần.
+          </p>
+        </div>
+      ),
     };
 
     setConfirmModal({
@@ -632,6 +681,8 @@ export default function ExamPapersPage() {
       title: titles[action] || 'Xác nhận thao tác?',
       message: messages[action] || 'Xác nhận thực hiện thao tác?',
       type: action === 'delete' ? 'danger' : 'warning',
+      confirmText: action === 'delete' ? 'Xóa đề' : action === 'archive' ? 'Lưu trữ' : 'Khôi phục',
+      cancelText: 'Hủy bỏ',
       onConfirm: async () => {
         setConfirmModal((previous) => ({ ...previous, isOpen: false }));
         try {

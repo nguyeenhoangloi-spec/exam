@@ -1226,12 +1226,21 @@ function ActivityLogsContent() {
                     isOpen={Boolean(legalHoldModalEvent)}
                     onClose={() => setLegalHoldModalEvent(null)}
                     onConfirm={handleConfirmLegalHold}
-                    title="Khóa lưu giữ sự kiện kiểm toán"
-                    message={`Bạn đang thực hiện khóa lưu giữ điều tra pháp lý cho sự kiện "${secActionLabel[legalHoldModalEvent.action] || getActionLabel(legalHoldModalEvent.action)}" (Mã sự kiện: ${legalHoldModalEvent.id}). Sự kiện này sẽ được bảo vệ tuyệt đối và miễn trừ khỏi chính sách xóa định kỳ.`}
+                    title="Khóa sự kiện kiểm toán"
+                    message={
+                        <div className="space-y-1.5">
+                            <p className="text-type-body-sm text-slate-800 dark:text-slate-200 font-medium">
+                                Khóa lưu giữ cho sự kiện: <span className="font-semibold text-slate-950 dark:text-white">"{secActionLabel[legalHoldModalEvent.action] || getActionLabel(legalHoldModalEvent.action)}"</span>
+                            </p>
+                            <p className="text-type-helper text-slate-500 dark:text-slate-400">
+                                Sự kiện này sẽ được bảo vệ và miễn trừ khỏi chính sách xóa tự động định kỳ.
+                            </p>
+                        </div>
+                    }
                     type="info"
                     confirmVariant="primary"
                     requireReason={true}
-                    reasonPlaceholder="Nhập lý do khóa lưu giữ điều tra pháp lý..."
+                    reasonPlaceholder="Nhập lý do khóa sự kiện..."
                     confirmText="Xác nhận khóa"
                     cancelText="Hủy bỏ"
                     isLoading={legalHoldLoading}

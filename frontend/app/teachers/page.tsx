@@ -132,7 +132,7 @@ export default function TeachersPage() {
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     title: string;
-    message: string;
+    message: React.ReactNode;
     type: 'danger' | 'warning' | 'info' | 'success';
     onConfirm: () => void;
   }>({
@@ -277,8 +277,17 @@ export default function TeachersPage() {
     const t = teachers.find((item) => item.id === id);
     setConfirmModal({
       isOpen: true,
-      title: 'Xóa giảng viên?',
-      message: `Bạn có chắc chắn muốn xóa giảng viên ${t?.fullName || ''} (${t?.teacherCode || ''})? Dữ liệu sẽ được chuyển vào thùng rác.`,
+      title: 'Chuyển giảng viên vào thùng rác?',
+      message: (
+        <div className="space-y-1">
+          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+            Xóa giảng viên: <span className="font-semibold text-slate-950 dark:text-white">"{t?.fullName}"</span> (#{t?.teacherCode})
+          </p>
+          <p className="text-type-helper text-slate-500 dark:text-slate-400">
+            Dữ liệu giảng viên sẽ được chuyển vào thùng rác và có thể khôi phục lại khi cần.
+          </p>
+        </div>
+      ),
       type: 'danger',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -299,9 +308,25 @@ export default function TeachersPage() {
     setConfirmModal({
       isOpen: true,
       title: isLocked ? 'Mở khóa tài khoản giảng viên?' : 'Khóa tài khoản giảng viên?',
-      message: isLocked
-        ? `Bạn có chắc chắn muốn MỞ KHÓA tài khoản cho giảng viên "${t.fullName}" (${t.teacherCode})? Giảng viên sẽ có thể đăng nhập lại hệ thống.`
-        : `Bạn có chắc chắn muốn KHÓA ĐĂNG NHẬP tài khoản giảng viên "${t.fullName}" (${t.teacherCode})? Giảng viên sẽ KHÔNG THỂ ĐĂNG NHẬP vào hệ thống nữa!`,
+      message: isLocked ? (
+        <div className="space-y-1">
+          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+            Mở khóa tài khoản: <span className="font-semibold text-slate-950 dark:text-white">"{t.fullName}"</span> (#{t.teacherCode})
+          </p>
+          <p className="text-type-helper text-slate-500 dark:text-slate-400">
+            Giảng viên sẽ có thể đăng nhập lại vào hệ thống khảo thí bình thường.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-1">
+          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+            Khóa tài khoản: <span className="font-semibold text-slate-950 dark:text-white">"{t.fullName}"</span> (#{t.teacherCode})
+          </p>
+          <p className="text-type-helper text-slate-500 dark:text-slate-400">
+            Giảng viên sẽ tạm thời không thể đăng nhập vào hệ thống cho đến khi được mở khóa.
+          </p>
+        </div>
+      ),
       type: isLocked ? 'info' : 'warning',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
