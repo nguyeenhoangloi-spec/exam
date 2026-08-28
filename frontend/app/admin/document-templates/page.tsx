@@ -241,7 +241,7 @@ const sampleRowsByCode: Record<string, Array<Record<string, any>>> = {
     { index: 1, item: '1. Thông tin thí sinh & Học phần', value: 'Nguyễn Văn An (SV20260001) · Môn: Lập trình Web Nâng cao (IT4409)', note: 'Khớp danh sách' },
     { index: 2, item: '2. Mã niêm phong số (SHA-256)', value: '7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069', note: 'Toàn vẹn 100%' },
     { index: 3, item: '3. Điểm số chính thức & Cán bộ chấm', value: '9.0 / 10.0 đ · Chấm bởi: TS. Trần Hải · Duyệt bởi: Hội đồng Khảo thí', note: 'Đã công bố' },
-    { index: 4, item: '4. Tình trạng lưu trữ đào tạo', value: 'Bản trích lục niêm phong thời hạn 5 năm theo quy chế Bộ GD&ĐT', note: 'Đạt chuẩn lưu trữ' },
+    { index: 4, item: '4. Tình trạng lưu trữ đào tạo', value: 'Bản trích lục niêm phong lưu trữ đào tạo chính quy', note: 'Đạt chuẩn lưu trữ' },
   ],
 };
 

@@ -625,7 +625,7 @@ export function printBatchArchivedDossier(data: any): boolean {
         <tr>
           <td><strong>Niên hạn lưu trữ:</strong></td>
           <td colspan="3">
-            Thời hạn <strong>${schedule.retentionYears ? `${schedule.retentionYears} năm` : '02 năm'}</strong> (tối thiểu 02 năm theo Thông tư 08/2021/TT-BGDĐT) · Hết hạn vào ngày: 
+            Thời hạn <strong>${schedule.retentionYears ? `${schedule.retentionYears} năm` : '02 năm'}</strong> · Hết hạn vào ngày: 
             <strong>${schedule.retentionUntil ? new Date(schedule.retentionUntil).toLocaleDateString('vi-VN') : 'Đang tính toán'}</strong> 
             (${escapeHtml(schedule.remainingTimeText || '')})
           </td>
@@ -769,7 +769,7 @@ export function printDisposalProposal(data: any): boolean {
 
       <div class="title">
         <h1>BIÊN BẢN ĐỀ XUẤT TIÊU HỦY BÀI THI KẾT THÚC HỌC PHẦN</h1>
-        <p>(Theo niên hạn lưu trữ ${data.schedule?.retentionYears ? `${data.schedule.retentionYears} năm` : '02 năm'} - Căn cứ Thông tư 08/2021/TT-BGDĐT)</p>
+        <p>(Theo niên hạn lưu trữ ${data.schedule?.retentionYears ? `${data.schedule.retentionYears} năm` : '02 năm'})</p>
       </div>
 
       <div style="margin-bottom: 12px;">
