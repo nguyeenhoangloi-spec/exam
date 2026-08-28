@@ -156,7 +156,7 @@ export function SlidingSegmentedControl<T extends string = string>({
 
             {typeof option.count === 'number' && (
               <span
-                className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-xs font-semibold tabular-nums transition-colors duration-200 ${isActive
+                className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-type-helper font-semibold tabular-nums transition-colors duration-200 ${isActive
                     ? isPrimary
                       ? 'bg-white/20 text-white'
                       : 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60'

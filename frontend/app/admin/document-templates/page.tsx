@@ -198,6 +198,35 @@ const sampleRowsByCode: Record<string, Array<Record<string, any>>> = {
     { index: 2, subjectCode: 'IT3080', subjectName: 'Mạng máy tính cơ bản', periodName: 'Học kỳ 1 (2025-2026)', examDate: '16/12/2025', examType: 'Tự luận', score: '8.0', status: 'Đạt' },
     { index: 3, subjectCode: 'IT2000', subjectName: 'Cấu trúc dữ liệu & GT', periodName: 'Học kỳ 1 (2025-2026)', examDate: '18/12/2025', examType: 'Hỗn hợp', score: '6.5', status: 'Đạt' },
   ],
+  CLASS_DIRECTORY: [
+    { index: 1, code: 'CNTT-K68A', name: 'Công nghệ Thông tin K68A', department: 'Khoa Công nghệ Thông tin', studentsCount: '45 SV' },
+    { index: 2, code: 'CNTT-K68B', name: 'Công nghệ Thông tin K68B', department: 'Khoa Công nghệ Thông tin', studentsCount: '42 SV' },
+    { index: 3, code: 'KTPM-K68', name: 'Kỹ thuật Phần mềm K68', department: 'Khoa Công nghệ Thông tin', studentsCount: '38 SV' },
+    { index: 4, code: 'HTTT-K68', name: 'Hệ thống Thông tin K68', department: 'Khoa Công nghệ Thông tin', studentsCount: '40 SV' },
+  ],
+  STUDENT_CURRICULUM_REPORT: [
+    { index: 1, semester: 'Học kỳ 1', subjectCode: 'IT4409', subjectName: 'Lập trình Web Nâng cao', credits: '3 TC', type: 'Chuyên ngành', status: 'Đã hoàn thành' },
+    { index: 2, semester: 'Học kỳ 1', subjectCode: 'IT3080', subjectName: 'Mạng máy tính', credits: '3 TC', type: 'Cơ sở ngành', status: 'Đã hoàn thành' },
+    { index: 3, semester: 'Học kỳ 2', subjectCode: 'IT2000', subjectName: 'Cấu trúc dữ liệu & GT', credits: '4 TC', type: 'Cơ sở ngành', status: 'Đang học' },
+    { index: 4, semester: 'Học kỳ 2', subjectCode: 'IT4999', subjectName: 'Khóa luận tốt nghiệp', credits: '10 TC', type: 'Tốt nghiệp', status: 'Chưa học' },
+  ],
+  EXAM_BAG_LABEL: [
+    { index: 1, infoLabel: 'Kỳ thi & Học kỳ', infoValue: 'Kỳ thi Kết thúc Học kỳ 1 (2025-2026)' },
+    { index: 2, infoLabel: 'Học phần / Môn thi', infoValue: 'Lập trình Web Nâng cao (IT4409)' },
+    { index: 3, infoLabel: 'Phòng thi / Ca thi', infoValue: 'P.301 - Tòa B1 | Ca: 07:30 - 09:00' },
+    { index: 4, infoLabel: 'Số bài thi / Số tờ', infoValue: '38 bài thi / 76 tờ giấy thi' },
+    { index: 5, infoLabel: 'Cán bộ coi thi 1 & 2', infoValue: 'TS. Trần Hải (CB1) - ThS. Lê Thu Hà (CB2)' },
+  ],
+  EXAM_INCIDENT_REPORT: [
+    { index: 1, studentCode: 'SV20260012', student: 'Vũ Quốc Hùng', class: 'CNTT-K68A', violation: 'Mang điện thoại vào phòng thi', evidence: '01 iPhone 13 Pro Max (Đã niêm phong)' },
+    { index: 2, studentCode: 'SV20260045', student: 'Đặng Thanh Tâm', class: 'CNTT-K68B', violation: 'Sử dụng tài liệu photo thu nhỏ', evidence: '02 mảnh phao giấy A6 (Đã bấm ghim bài)' },
+  ],
+  EXAM_SUPERVISOR_HANDOVER: [
+    { index: 1, item: '1. Túi đề thi chính thức niêm phong (P.301)', expectedQty: '01 túi (45 bản)', receivedQty: '01 túi (Đã mở tại phòng)', sealStatus: 'Nguyên vẹn trước thi' },
+    { index: 2, item: '2. Danh sách thí sinh & Phiếu điểm danh', expectedQty: '02 bản in', receivedQty: '02 bản (Đủ chữ ký SV)', sealStatus: 'Hợp lệ 100%' },
+    { index: 3, item: '3. Giấy thi, giấy nháp đã đóng dấu tròn', expectedQty: '100 tờ thi / 50 nháp', receivedQty: '76 tờ bài / 24 tờ thừa', sealStatus: 'Đã kiểm đếm khớp' },
+    { index: 4, item: '4. Túi bài thi niêm phong có chữ ký CBCT', expectedQty: '01 túi', receivedQty: '01 túi (38 bài thi)', sealStatus: 'Đã dán tem niêm phong' },
+  ],
   SYSTEM_AUDIT_LOG: [
     { index: 1, time: '27/08/2026 08:30:15', actor: 'admin_sys', action: 'EXPORT_DATA', target: 'DOCUMENT_TEMPLATE', status: 'Thành công' },
     { index: 2, time: '27/08/2026 08:15:22', actor: 'gv_hai', action: 'GRADE_SUBMIT', target: 'EXAM_ATTEMPT', status: 'Thành công' },

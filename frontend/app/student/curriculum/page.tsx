@@ -318,14 +318,14 @@ export default function StudentCurriculumPage() {
         { title: 'SINH VIÊN', subtitle: '(Ký và ghi rõ họ tên)' },
         { title: 'PHÒNG ĐÀO TẠO & KHẢO THÍ', subtitle: '(Ký tên, đóng dấu)' },
       ],
-      templateCode: 'SUBJECT_DIRECTORY',
+      templateCode: 'STUDENT_CURRICULUM_REPORT',
     });
   };
 
   const handleExportExcel = async () => {
     await exportToFormattedExcel({
       filename: `Khung_chuong_trinh_${studentInfo?.studentCode || 'sinh_vien'}`,
-      templateCode: 'SUBJECT_DIRECTORY',
+      templateCode: 'STUDENT_CURRICULUM_REPORT',
       title: 'KHUNG CHƯƠNG TRÌNH ĐÀO TẠO',
       subtitle: `Sinh viên: ${studentInfo?.fullName} (${studentInfo?.studentCode}) · Lớp: ${studentInfo?.className} · Khoa: ${studentInfo?.departmentName}`,
       columns: [

@@ -6,7 +6,7 @@ const period = {
   semester: 'HK1',
   schoolYear: '2026-2027',
   startDate: new Date('2026-08-01T00:00:00.000Z'),
-  endDate: new Date('2026-08-31T00:00:00.000Z'),
+  endDate: new Date('2026-12-31T00:00:00.000Z'),
 };
 
 const createService = (overlaps: any[] = [], enrollmentConflict: any = null) => {
@@ -123,7 +123,7 @@ describe('ExamSchedulesService conflict rules', () => {
       id: 12,
       examPeriodId: 1,
       subjectId: 1,
-      examDate: new Date('2026-08-15T00:00:00.000Z'),
+      examDate: new Date('2026-12-15T00:00:00.000Z'),
       startTime: '08:00',
       endTime: '09:30',
       status: 'SCHEDULED',
@@ -135,7 +135,7 @@ describe('ExamSchedulesService conflict rules', () => {
     };
     const tx: any = {
       examSchedule: {
-        update: jest.fn().mockResolvedValue({ ...existingSched, examDate: new Date('2026-08-20T00:00:00.000Z') }),
+        update: jest.fn().mockResolvedValue({ ...existingSched, examDate: new Date('2026-12-20T00:00:00.000Z') }),
       },
     };
     const prisma: any = {
@@ -153,7 +153,7 @@ describe('ExamSchedulesService conflict rules', () => {
     const service = new ExamSchedulesService(prisma, audit, undefined, notifs);
 
     const result = await service.reschedule({ id: 1, role: 'ADMIN' }, 12, {
-      newExamDate: '2026-08-20',
+      newExamDate: '2026-12-20',
       newStartTime: '10:00',
       newEndTime: '11:30',
       reason: 'Bảo trì phòng máy',
@@ -167,7 +167,7 @@ describe('ExamSchedulesService conflict rules', () => {
   it('hủy ca thi thành công và kích hoạt gửi thông báo hủy', async () => {
     const existingSched = {
       id: 15,
-      examDate: new Date('2026-08-15T00:00:00.000Z'),
+      examDate: new Date('2026-12-15T00:00:00.000Z'),
       startTime: '08:00',
       endTime: '09:30',
       status: 'SCHEDULED',
