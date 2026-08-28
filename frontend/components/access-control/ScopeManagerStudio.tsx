@@ -141,6 +141,8 @@ export function ScopeManagerStudio({
           }}
           size="sm"
           pillShape="pill"
+          equalWidth
+          className="shrink-0"
           options={scopeTabs.map((tab) => ({
             value: tab.type,
             label: tab.label,
@@ -149,8 +151,8 @@ export function ScopeManagerStudio({
         />
 
         {/* Cụm công cụ tìm kiếm & Chọn tất cả */}
-        <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
-          <div className="relative flex-1 min-w-0 max-w-xs">
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="relative w-48 sm:w-60 shrink-0">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
@@ -172,24 +174,24 @@ export function ScopeManagerStudio({
             )}
           </div>
 
-          {/* Nút Chọn tất cả phẳng với checkbox */}
+          {/* Nút Chọn tất cả phẳng hoàn toàn trong suốt - Cố định kích thước 100% chống xô lệch */}
           <button
             type="button"
             onClick={isAllSelected ? handleClearAll : handleSelectAll}
             disabled={disabled || currentOptions.length === 0}
-            className="shrink-0 whitespace-nowrap h-9 px-2.5 rounded-xl text-type-helper font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer inline-flex items-center gap-2 select-none"
+            className="shrink-0 whitespace-nowrap h-9 px-1 w-[110px] bg-transparent text-type-body-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer inline-flex items-center gap-2 select-none"
             title={isAllSelected ? 'Bỏ chọn toàn bộ' : 'Chọn toàn bộ'}
           >
             <div
-              className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-md border transition ${isAllSelected
+              className={`flex h-[18px] w-[18px] min-w-[18px] min-h-[18px] shrink-0 items-center justify-center rounded-md border transition ${isAllSelected
+                ? 'border-blue-600 bg-blue-600 text-white'
+                : selectedIds.length > 0
                   ? 'border-blue-600 bg-blue-600 text-white'
-                  : selectedIds.length > 0
-                    ? 'border-blue-600 bg-blue-600 text-white'
-                    : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900'
+                  : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900'
                 }`}
             >
               {isAllSelected ? (
-                <Check className="h-3 w-3 stroke-[3]" />
+                <Check className="h-3.5 w-3.5 stroke-[3]" />
               ) : selectedIds.length > 0 ? (
                 <div className="h-1.5 w-1.5 rounded-xs bg-white" />
               ) : null}
@@ -214,9 +216,9 @@ export function ScopeManagerStudio({
               <div
                 key={item.id}
                 onClick={() => !disabled && handleToggle(item.id)}
-                className={`rounded-xl p-3.5 text-type-body min-h-[48px] flex items-center justify-between gap-3 shadow-2xs border transition-all duration-150 cursor-pointer select-none ${isSelected
-                    ? 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 shadow-xs ring-1 ring-slate-400/20 dark:ring-slate-600/30'
-                    : 'bg-slate-50/60 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-800 hover:bg-slate-100/70 dark:hover:bg-slate-800/70 hover:border-slate-300 dark:hover:border-slate-700 text-slate-800 dark:text-slate-200'
+                className={`rounded-xl px-3.5 py-2.5 text-type-body h-[52px] flex items-center justify-between gap-3 shadow-2xs border transition-all duration-150 cursor-pointer select-none ${isSelected
+                  ? 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 shadow-xs ring-1 ring-slate-400/20 dark:ring-slate-600/30'
+                  : 'bg-slate-50/60 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-800 hover:bg-slate-100/70 dark:hover:bg-slate-800/70 hover:border-slate-300 dark:hover:border-slate-700 text-slate-800 dark:text-slate-200'
                   } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                 title={item.name}
               >
@@ -232,9 +234,9 @@ export function ScopeManagerStudio({
                 </div>
 
                 <div
-                  className={`flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md border transition-colors ${isSelected
-                      ? 'border-blue-600 bg-blue-600 text-white'
-                      : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900'
+                  className={`flex h-[18px] w-[18px] min-w-[18px] min-h-[18px] shrink-0 items-center justify-center rounded-md border transition-colors ${isSelected
+                    ? 'border-blue-600 bg-blue-600 text-white'
+                    : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900'
                     }`}
                 >
                   {isSelected && <Check className="h-3.5 w-3.5 stroke-[3]" />}

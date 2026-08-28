@@ -18,6 +18,7 @@ interface SlidingSegmentedControlProps<T extends string = string> {
   variant?: 'default' | 'primary' | 'dock';
   pillShape?: 'rounded' | 'pill';
   fullWidth?: boolean;
+  equalWidth?: boolean;
 }
 
 export function SlidingSegmentedControl<T extends string = string>({
@@ -29,6 +30,7 @@ export function SlidingSegmentedControl<T extends string = string>({
   variant = 'default',
   pillShape = 'pill',
   fullWidth = false,
+  equalWidth = false,
 }: SlidingSegmentedControlProps<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -99,13 +101,12 @@ export function SlidingSegmentedControl<T extends string = string>({
     >
       {/* Sliding Background Indicator Pill - Chuẩn Apple HIG / Linear: Viên trượt trắng tinh khiết nổi 3D nhẹ */}
       <div
-        className={`absolute top-0.5 bottom-0.5 left-0 ${shapePillClass} pointer-events-none will-change-[transform,width] ${
-          isPrimary
+        className={`absolute top-0.5 bottom-0.5 left-0 ${shapePillClass} pointer-events-none will-change-[transform,width] ${isPrimary
             ? 'bg-blue-600 shadow-[0_4px_14px_rgba(37,99,235,0.4)] ring-1 ring-white/20'
             : isDock
-            ? 'bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 shadow-xs'
-            : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80 shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.4)]'
-        }`}
+              ? 'bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 shadow-xs'
+              : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80 shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.4)]'
+          }`}
         style={{
           transform: `translateX(${indicatorStyle.left}px)`,
           width: `${indicatorStyle.width}px`,
@@ -131,25 +132,22 @@ export function SlidingSegmentedControl<T extends string = string>({
             role="tab"
             aria-selected={isActive}
             onClick={() => onChange(option.value)}
-            className={`relative z-10 flex items-center justify-center gap-2 ${shapePillClass} ${
-              fullWidth ? 'flex-1 min-w-0' : 'flex-initial shrink-0'
-            } transition-colors duration-150 cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 active:scale-[0.98] ${paddingClass} ${
-              isActive
+            className={`relative z-10 flex items-center justify-center gap-2 ${shapePillClass} ${fullWidth ? 'flex-1 min-w-0' : equalWidth ? 'w-[145px] shrink-0' : 'flex-initial shrink-0'
+              } transition-colors duration-150 cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 active:scale-[0.98] ${paddingClass} ${isActive
                 ? isPrimary
                   ? 'text-white font-semibold'
                   : 'text-blue-700 dark:text-blue-400 font-semibold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
-            }`}
+              }`}
           >
             {Icon && (
               <Icon
-                className={`${iconSizeClass} shrink-0 transition-transform duration-200 ${
-                  isActive
+                className={`${iconSizeClass} shrink-0 transition-transform duration-200 ${isActive
                     ? isPrimary
                       ? 'scale-105 stroke-[2] text-white'
                       : 'scale-105 stroke-[2] text-blue-600 dark:text-blue-400'
                     : 'opacity-70 stroke-[1.8]'
-                }`}
+                  }`}
               />
             )}
             <span className="whitespace-nowrap tracking-tight">
@@ -158,13 +156,12 @@ export function SlidingSegmentedControl<T extends string = string>({
 
             {typeof option.count === 'number' && (
               <span
-                className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-xs font-semibold tabular-nums transition-colors duration-200 ${
-                  isActive
+                className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-xs font-semibold tabular-nums transition-colors duration-200 ${isActive
                     ? isPrimary
                       ? 'bg-white/20 text-white'
                       : 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60'
                     : 'bg-slate-200/70 text-slate-600 dark:bg-slate-700/60 dark:text-slate-400'
-                }`}
+                  }`}
               >
                 {option.count.toLocaleString('vi-VN')}
               </span>
