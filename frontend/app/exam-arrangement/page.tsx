@@ -131,6 +131,8 @@ let _arrangementCache: {
   selectedScheduleId: string;
   rooms: RoomAvailability[];
   selectedRoomIds: number[];
+  scheduleClasses: ScheduleClass[];
+  selectedClassIds: number[];
   result: ArrangementResult | null;
 } | null = null;
 
@@ -144,10 +146,10 @@ export default function ExamArrangementPage() {
 
   const [selectedScheduleId, setSelectedScheduleId] = useState<string>(_arrangementCache?.selectedScheduleId ?? '');
   const [selectedRoomIds, setSelectedRoomIds] = useState<number[]>(_arrangementCache?.selectedRoomIds ?? []);
-  const [scheduleClasses, setScheduleClasses] = useState<ScheduleClass[]>([]);
-  const [selectedClassIds, setSelectedClassIds] = useState<number[]>([]);
+  const [scheduleClasses, setScheduleClasses] = useState<ScheduleClass[]>(_arrangementCache?.scheduleClasses ?? []);
+  const [selectedClassIds, setSelectedClassIds] = useState<number[]>(_arrangementCache?.selectedClassIds ?? []);
   const [arranging, setArranging] = useState(false);
-  const [isLoadingSchedule, setIsLoadingSchedule] = useState(false);
+  const [isLoadingSchedule, setIsLoadingSchedule] = useState(!_arrangementCache || !_arrangementCache.schedules.length);
   const [result, setResult] = useState<ArrangementResult | null>(_arrangementCache?.result ?? null);
 
   const [viewMode, setViewMode] = useState<'matrix' | 'table'>('matrix');
@@ -180,10 +182,19 @@ export default function ExamArrangementPage() {
       const res = await api.get(`/exam-arrangement/classes?examScheduleId=${scheduleId}`);
       const clsList: ScheduleClass[] = res.data?.classes || [];
       setScheduleClasses(clsList);
-      setSelectedClassIds(clsList.map((c) => c.id));
+      const clsIds = clsList.map((c) => c.id);
+      setSelectedClassIds(clsIds);
+      if (_arrangementCache) {
+        _arrangementCache.scheduleClasses = clsList;
+        _arrangementCache.selectedClassIds = clsIds;
+      }
     } catch {
       setScheduleClasses([]);
       setSelectedClassIds([]);
+      if (_arrangementCache) {
+        _arrangementCache.scheduleClasses = [];
+        _arrangementCache.selectedClassIds = [];
+      }
     }
   }, []);
 
@@ -206,6 +217,7 @@ export default function ExamArrangementPage() {
   const fetchExistingResults = useCallback(async (scheduleId: string, customScheduleList?: any[]) => {
     if (!scheduleId) {
       setResult(null);
+      if (_arrangementCache) _arrangementCache.result = null;
       return;
     }
     try {
@@ -246,7 +258,7 @@ export default function ExamArrangementPage() {
           const sTime = currentSched?.startTime || fallbackSched?.startTime || '';
           const eTime = currentSched?.endTime || fallbackSched?.endTime || '';
 
-          setResult({
+          const arrangementData: ArrangementResult = {
             message: 'Dữ liệu phân bổ chỗ ngồi hiện tại',
             preview: false,
             summary: {
@@ -258,23 +270,38 @@ export default function ExamArrangementPage() {
               timeSlot: `${sTime} - ${eTime}`,
             },
             details,
-          });
+          };
+
+          setResult(arrangementData);
           setShowRoomGrid(false);
+          if (_arrangementCache) {
+            _arrangementCache.result = arrangementData;
+          }
         } else {
           setResult(null);
           setShowRoomGrid(true);
+          if (_arrangementCache) {
+            _arrangementCache.result = null;
+          }
         }
       } else {
         setResult(null);
         setShowRoomGrid(true);
+        if (_arrangementCache) {
+          _arrangementCache.result = null;
+        }
       }
     } catch {
       setResult(null);
       setShowRoomGrid(true);
+      if (_arrangementCache) {
+        _arrangementCache.result = null;
+      }
     }
   }, []);
 
   const fetchSchedules = useCallback(async (periodId: string) => {
+    setIsLoadingSchedule(true);
     try {
       const url = periodId ? `/exam-schedules?examPeriodId=${periodId}` : '/exam-schedules';
       const res = await api.get(url);
@@ -295,24 +322,42 @@ export default function ExamArrangementPage() {
 
         const targetSchedId = targetSched.id.toString();
         setSelectedScheduleId(targetSchedId);
-        await fetchRoomAvailability(targetSchedId);
-        await fetchScheduleClasses(targetSchedId);
-        await fetchExistingResults(targetSchedId, sortedSchedules);
 
         _arrangementCache = {
           schedules: sortedSchedules,
           selectedScheduleId: targetSchedId,
-          rooms: [],
-          selectedRoomIds: [],
-          result: null,
+          rooms: _arrangementCache?.rooms ?? [],
+          selectedRoomIds: _arrangementCache?.selectedRoomIds ?? [],
+          scheduleClasses: _arrangementCache?.scheduleClasses ?? [],
+          selectedClassIds: _arrangementCache?.selectedClassIds ?? [],
+          result: _arrangementCache?.result ?? null,
         };
+
+        await Promise.all([
+          fetchRoomAvailability(targetSchedId),
+          fetchScheduleClasses(targetSchedId),
+          fetchExistingResults(targetSchedId, sortedSchedules),
+        ]);
       } else {
         setSelectedScheduleId('');
         setRooms([]);
+        setScheduleClasses([]);
+        setSelectedClassIds([]);
         setResult(null);
+        _arrangementCache = {
+          schedules: [],
+          selectedScheduleId: '',
+          rooms: [],
+          selectedRoomIds: [],
+          scheduleClasses: [],
+          selectedClassIds: [],
+          result: null,
+        };
       }
     } catch (err: any) {
       setToast({ message: err.message || 'Lỗi tải danh sách ca thi', type: 'error' });
+    } finally {
+      setIsLoadingSchedule(false);
     }
   }, [fetchExistingResults, fetchRoomAvailability, fetchScheduleClasses]);
 
@@ -337,6 +382,9 @@ export default function ExamArrangementPage() {
   const handleScheduleChange = async (scheduleId: string) => {
     if (!scheduleId || scheduleId === selectedScheduleId) return;
     setSelectedScheduleId(scheduleId);
+    if (_arrangementCache) {
+      _arrangementCache.selectedScheduleId = scheduleId;
+    }
     setIsLoadingSchedule(true);
     setFilterClass('ALL');
     setStudentSearchQuery('');
@@ -400,6 +448,7 @@ export default function ExamArrangementPage() {
         classIds: selectedClassIds.length === scheduleClasses.length ? undefined : selectedClassIds,
       });
       setResult(res.data);
+      if (_arrangementCache) _arrangementCache.result = res.data;
       if (res.data.effectiveRoomIds?.length) setSelectedRoomIds(res.data.effectiveRoomIds);
       setToast({ message: 'Đã tính toán phương án chỗ ngồi dồn lớp. Bấm "Lưu Phân Bổ" để ghi dữ liệu.', type: 'success' });
       setTimeout(() => {
@@ -428,6 +477,7 @@ export default function ExamArrangementPage() {
         confirm: true,
       });
       setResult(res.data);
+      if (_arrangementCache) _arrangementCache.result = res.data;
       setToast({ message: res.data.message || 'Đã lưu phương án xếp phòng thành công!', type: 'success' });
       await fetchExistingResults(selectedScheduleId);
     } catch (err: any) {
@@ -465,10 +515,12 @@ export default function ExamArrangementPage() {
       });
     });
 
-    setResult({
+    const updatedResult = {
       ...result,
       details: shuffledDetails,
-    });
+    };
+    setResult(updatedResult);
+    if (_arrangementCache) _arrangementCache.result = updatedResult;
 
     setToast({
       message: 'Đã xáo trộn ngẫu nhiên chỗ ngồi và đánh lại SBD.',
@@ -688,6 +740,7 @@ export default function ExamArrangementPage() {
           await api.delete(`/exam-arrangement/reset/${selectedScheduleId}`);
           setToast({ message: 'Đã hủy xếp phòng cho ca thi thành công!', type: 'success' });
           setResult(null);
+          if (_arrangementCache) _arrangementCache.result = null;
           setShowRoomGrid(true);
           await fetchRoomAvailability(selectedScheduleId);
         } catch (err: any) {
@@ -886,7 +939,10 @@ export default function ExamArrangementPage() {
                     type="button"
                     variant="ghost"
                     size="md"
-                    onClick={() => setResult(null)}
+                    onClick={() => {
+                      setResult(null);
+                      if (_arrangementCache) _arrangementCache.result = null;
+                    }}
                     leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
                   >
                     Cấu hình lại

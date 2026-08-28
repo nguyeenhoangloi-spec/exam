@@ -1230,7 +1230,7 @@ function ActivityLogsContent() {
                     message={
                         <div className="space-y-1.5">
                             <p className="text-type-body-sm text-slate-800 dark:text-slate-200 font-medium">
-                                Khóa lưu giữ cho sự kiện: <span className="font-semibold text-slate-950 dark:text-white">"{secActionLabel[legalHoldModalEvent.action] || getActionLabel(legalHoldModalEvent.action)}"</span>
+                                Khóa lưu giữ cho sự kiện: <span className="font-semibold text-slate-950 dark:text-white">&ldquo;{secActionLabel[legalHoldModalEvent.action] || getActionLabel(legalHoldModalEvent.action)}&rdquo;</span>
                             </p>
                             <p className="text-type-helper text-slate-500 dark:text-slate-400">
                                 Sự kiện này sẽ được bảo vệ và miễn trừ khỏi chính sách xóa tự động định kỳ.

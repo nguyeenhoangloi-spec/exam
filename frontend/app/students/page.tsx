@@ -321,7 +321,7 @@ export default function StudentsPage() {
       message: (
         <div className="space-y-1">
           <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
-            Xóa sinh viên: <span className="font-semibold text-slate-950 dark:text-white">"{s?.fullName}"</span> (#{s?.studentCode})
+            Xóa sinh viên: <span className="font-semibold text-slate-950 dark:text-white">&ldquo;{s?.fullName}&rdquo;</span> (#{s?.studentCode})
           </p>
           <p className="text-type-helper text-slate-500 dark:text-slate-400">
             Dữ liệu sinh viên sẽ được chuyển vào thùng rác và có thể khôi phục lại khi cần.
@@ -351,7 +351,7 @@ export default function StudentsPage() {
       message: isLocked ? (
         <div className="space-y-1">
           <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
-            Mở khóa tài khoản: <span className="font-semibold text-slate-950 dark:text-white">"{s.fullName}"</span> (#{s.studentCode})
+            Mở khóa tài khoản: <span className="font-semibold text-slate-950 dark:text-white">&ldquo;{s.fullName}&rdquo;</span> (#{s.studentCode})
           </p>
           <p className="text-type-helper text-slate-500 dark:text-slate-400">
             Sinh viên sẽ có thể đăng nhập lại vào hệ thống khảo thí bình thường.
@@ -360,7 +360,7 @@ export default function StudentsPage() {
       ) : (
         <div className="space-y-1">
           <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
-            Khóa tài khoản: <span className="font-semibold text-slate-950 dark:text-white">"{s.fullName}"</span> (#{s.studentCode})
+            Khóa tài khoản: <span className="font-semibold text-slate-950 dark:text-white">&ldquo;{s.fullName}&rdquo;</span> (#{s.studentCode})
           </p>
           <p className="text-type-helper text-slate-500 dark:text-slate-400">
             Sinh viên sẽ tạm thời không thể đăng nhập vào hệ thống cho đến khi được mở khóa.

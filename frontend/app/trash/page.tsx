@@ -197,7 +197,7 @@ function TrashPageContent() {
       message: (
         <div className="space-y-1">
           <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
-            Khôi phục: <span className="font-semibold text-slate-950 dark:text-white">"{item.title}"</span>
+            Khôi phục: <span className="font-semibold text-slate-950 dark:text-white">&ldquo;{item.title}&rdquo;</span>
           </p>
           <p className="text-type-helper text-slate-500 dark:text-slate-400">
             Dữ liệu sẽ được hoàn tác về trạng thái hoạt động bình thường trong hệ thống.
@@ -226,7 +226,7 @@ function TrashPageContent() {
       message: (
         <div className="space-y-1">
           <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
-            Xóa vĩnh viễn: <span className="font-semibold text-slate-950 dark:text-white">"{item.title}"</span>
+            Xóa vĩnh viễn: <span className="font-semibold text-slate-950 dark:text-white">&ldquo;{item.title}&rdquo;</span>
           </p>
           <p className="text-type-helper text-rose-600 dark:text-rose-400 font-medium">
             Thao tác này sẽ xóa hoàn toàn khỏi cơ sở dữ liệu và không thể hoàn tác.
