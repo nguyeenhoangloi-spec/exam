@@ -101,18 +101,18 @@ export async function exportToFormattedExcel({
   const headerSection = `
     <!-- Header: Left Unit & Right Motto -->
     <tr style="height:24px;">
-      <td colspan="${leftSpan}" style="font-family:'Times New Roman', Times, serif; font-size:11pt; font-weight:bold; text-align:center; vertical-align:middle; color:#0F172A;">
+      <td colspan="${leftSpan}" style="font-family:'Times New Roman', Times, serif; font-size:11pt; font-weight:bold; text-align:center; vertical-align:middle; color:#000000;">
         ${escapeHtml(finalInstitution.toUpperCase())}
       </td>
-      <td colspan="${rightSpan}" style="font-family:'Times New Roman', Times, serif; font-size:11pt; font-weight:bold; text-align:center; vertical-align:middle; color:#0F172A;">
+      <td colspan="${rightSpan}" style="font-family:'Times New Roman', Times, serif; font-size:11pt; font-weight:bold; text-align:center; vertical-align:middle; color:#000000;">
         ${escapeHtml(mottoLine1.toUpperCase())}
       </td>
     </tr>
     <tr style="height:24px;">
-      <td colspan="${leftSpan}" style="font-family:'Times New Roman', Times, serif; font-size:10.5pt; font-weight:bold; text-decoration:underline; text-align:center; vertical-align:middle; color:#0F172A;">
+      <td colspan="${leftSpan}" style="font-family:'Times New Roman', Times, serif; font-size:10.5pt; font-weight:bold; text-decoration:underline; text-align:center; vertical-align:middle; color:#000000;">
         ${escapeHtml(finalFaculty ? finalFaculty.toUpperCase() : '')}
       </td>
-      <td colspan="${rightSpan}" style="font-family:'Times New Roman', Times, serif; font-size:10.5pt; font-weight:bold; font-style:italic; text-decoration:underline; text-align:center; vertical-align:middle; color:#0F172A;">
+      <td colspan="${rightSpan}" style="font-family:'Times New Roman', Times, serif; font-size:10.5pt; font-weight:bold; font-style:italic; text-decoration:underline; text-align:center; vertical-align:middle; color:#000000;">
         ${escapeHtml(mottoLine2)}
       </td>
     </tr>
@@ -122,19 +122,19 @@ export async function exportToFormattedExcel({
   // 2. Tiêu đề chính & Phụ đề
   const titleSection = `
     <tr style="height:36px;">
-      <td colspan="${totalCols}" style="font-family:'Times New Roman', Times, serif; font-size:15pt; font-weight:bold; text-align:center; vertical-align:middle; color:#0F172A;">
+      <td colspan="${totalCols}" style="font-family:'Times New Roman', Times, serif; font-size:15pt; font-weight:bold; text-align:center; vertical-align:middle; color:#000000;">
         ${escapeHtml(finalTitle.toUpperCase())}
       </td>
     </tr>
     ${finalSubtitle ? `
     <tr style="height:22px;">
-      <td colspan="${totalCols}" style="font-family:'Times New Roman', Times, serif; font-size:11pt; font-style:italic; text-align:center; vertical-align:middle; color:#334155;">
+      <td colspan="${totalCols}" style="font-family:'Times New Roman', Times, serif; font-size:11pt; font-style:italic; text-align:center; vertical-align:middle; color:#000000;">
         ${escapeHtml(finalSubtitle)}
       </td>
     </tr>` : ''}
     ${metaInfo && metaInfo.length > 0 ? `
     <tr style="height:24px;">
-      <td colspan="${totalCols}" style="font-family:'Times New Roman', Times, serif; font-size:10pt; font-style:italic; text-align:center; vertical-align:middle; color:#475569; background-color:#F8FAFC; border:1px solid #E2E8F0;">
+      <td colspan="${totalCols}" style="font-family:'Times New Roman', Times, serif; font-size:10pt; font-style:italic; text-align:center; vertical-align:middle; color:#000000; background-color:transparent; border:1px solid #000000;">
         ${escapeHtml(metaInfo.map(m => `${m.label}: ${m.value}`).join('   |   '))}
       </td>
     </tr>` : ''}
@@ -145,9 +145,9 @@ export async function exportToFormattedExcel({
   const headerCells = columns
     .map(
       (col) =>
-        `<th style="background-color:#F1F5F9; color:#0F172A; font-weight:bold; font-size:11pt; font-family:'Times New Roman', Times, serif; text-align:${
+        `<th style="background-color:transparent; color:#000000; font-weight:bold; font-size:11pt; font-family:'Times New Roman', Times, serif; text-align:${
           col.align || 'center'
-        }; vertical-align:middle; height:32px; border:1px solid #334155; padding:6px 10px;">${escapeHtml(
+        }; vertical-align:middle; height:32px; border:1px solid #000000; padding:6px 10px;">${escapeHtml(
           col.header,
         )}</th>`,
     )
@@ -155,15 +155,14 @@ export async function exportToFormattedExcel({
 
   // 4. Data Rows
   const bodyRows = rows
-    .map((row, rIdx) => {
-      const bgClass = rIdx % 2 === 1 ? 'background-color:#F8FAFC;' : 'background-color:#FFFFFF;';
+    .map((row) => {
       const cells = row
         .map((val, cIdx) => {
           const colConf = columns[cIdx] || { align: 'left' };
           const align = colConf.align || (typeof val === 'number' ? 'right' : 'left');
           const displayVal = val === null || val === undefined ? '' : String(val);
 
-          return `<td style="${bgClass} border:1px solid #94A3B8; color:#0F172A; font-size:11pt; font-family:'Times New Roman', Times, serif; text-align:${align}; vertical-align:middle; padding:6px 10px; mso-number-format:'\\@';">${escapeHtml(
+          return `<td style="background-color:transparent; border:1px solid #000000; color:#000000; font-size:11pt; font-family:'Times New Roman', Times, serif; text-align:${align}; vertical-align:middle; padding:6px 10px; mso-number-format:'\\@';">${escapeHtml(
             displayVal,
           )}</td>`;
         })
@@ -180,10 +179,10 @@ export async function exportToFormattedExcel({
     const span = isLast ? totalCols - signerColSpan * (finalSigners.length - 1) : signerColSpan;
     return `
       <td colspan="${span}" style="font-family:'Times New Roman', Times, serif; text-align:center; vertical-align:top; border:none; padding:10px;">
-        <div style="font-weight:bold; font-size:11pt; color:#0F172A;">${escapeHtml(s.title.toUpperCase())}</div>
-        <div style="font-style:italic; font-size:10pt; color:#475569; margin-top:2px;">${escapeHtml(s.subtitle || '(Ký, ghi rõ họ tên)')}</div>
+        <div style="font-weight:bold; font-size:11pt; color:#000000;">${escapeHtml(s.title.toUpperCase())}</div>
+        <div style="font-style:italic; font-size:10pt; color:#000000; margin-top:2px;">${escapeHtml(s.subtitle || '(Ký, ghi rõ họ tên)')}</div>
         <div style="height:60px;"></div>
-        <div style="color:#94A3B8; font-size:10pt;">...................................</div>
+        <div style="color:#000000; font-size:10pt;">...................................</div>
       </td>
     `;
   }).join('');
@@ -192,12 +191,12 @@ export async function exportToFormattedExcel({
     <tr style="height:14px;"><td colspan="${totalCols}" style="border:none;"></td></tr>
     ${finalFooterNotes ? `
     <tr style="height:20px;">
-      <td colspan="${totalCols}" style="font-family:'Times New Roman', Times, serif; font-size:10pt; font-style:italic; color:#475569; border:none;">
+      <td colspan="${totalCols}" style="font-family:'Times New Roman', Times, serif; font-size:10pt; font-style:italic; color:#000000; border:none;">
         * ${escapeHtml(finalFooterNotes)}
       </td>
     </tr>` : ''}
     <tr style="height:24px;">
-      <td colspan="${totalCols}" style="font-family:'Times New Roman', Times, serif; font-size:11pt; font-style:italic; text-align:right; border:none; padding-right:15px; color:#0F172A;">
+      <td colspan="${totalCols}" style="font-family:'Times New Roman', Times, serif; font-size:11pt; font-style:italic; text-align:right; border:none; padding-right:15px; color:#000000;">
         Ngày ${dayStr} tháng ${monthStr} năm ${yearStr}
       </td>
     </tr>

@@ -86,21 +86,22 @@ export function generateShuffledPaperVariants(
 }
 
 /** Xuất 1 mã đề thi ra file Word (.doc) */
-export function exportExamPaperToWord(data: ExamPaperExportData, includeAnswerKey = true) {
+export function exportExamPaperToWord(data: ExamPaperExportData, includeAnswerKey = false) {
   exportBulkExamPapersToWord([data], includeAnswerKey, data.subjectCode);
 }
 
 /** Xuất trọn bộ N mã đề thi và Bảng đáp án ma trận tổng hợp ra 1 file Word (.doc) duy nhất */
 export function exportBulkExamPapersToWord(
   papers: ExamPaperExportData[],
-  includeAnswerKey = true,
+  includeAnswerKey = false,
   customFileName?: string,
-) {
+  customOptions?: Partial<ExamPaperExportModel>
+): void {
   if (!papers || papers.length === 0) return;
 
   const mappedPapers: ExamPaperExportModel[] = papers.map((p) => ({
-    paperCode: p.paperCode,
-    title: p.title,
+    paperCode: p.paperCode || '101',
+    paperTitle: p.title || 'ĐỀ THI KẾT THÚC HỌC PHẦN',
     subjectName: p.subjectName,
     subjectCode: p.subjectCode,
     durationMinutes: p.durationMinutes,
@@ -108,6 +109,7 @@ export function exportBulkExamPapersToWord(
     examType: p.examType,
     departmentName: p.departmentName,
     schoolName: p.schoolName,
+    ...customOptions,
     questions: p.questions.map((q) => ({
       order: q.order,
       code: q.code,
@@ -127,7 +129,7 @@ export function exportBulkExamPapersToWord(
   }));
 
   // Dùng chung 100% template HTML với bản In/PDF
-  const html = generateUnifiedExamPaperHtml(mappedPapers, includeAnswerKey);
+  const html = generateUnifiedExamPaperHtml(mappedPapers, includeAnswerKey, customOptions);
 
   const blob = new Blob(['\ufeff' + html], { type: 'application/msword;charset=utf-8' });
   const link = document.createElement('a');

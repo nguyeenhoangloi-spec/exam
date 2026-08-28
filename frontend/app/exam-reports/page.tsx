@@ -647,13 +647,13 @@ export default function ExamReportsPage() {
       .map(
         (c, idx) => `
  <tr>
- <td style="text-align: center; border: 1px solid #cbd5e1; padding: 6px;">${idx + 1}</td>
- <td style="border: 1px solid #cbd5e1; padding: 6px; font-weight: bold;">${escapeHtml(c.studentCode)}</td>
- <td style="border: 1px solid #cbd5e1; padding: 6px;">${escapeHtml(c.fullName)}</td>
- <td style="border: 1px solid #cbd5e1; padding: 6px;">${escapeHtml(c.className)}</td>
- <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">${formatCandidateStatus(c.status)}</td>
- <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; font-weight: bold; font-size: 11pt; ${c.totalScore >= 5 ? 'color: #047857;' : 'color: #b91c1c;'}">${c.status === 'ABSENT' ? 'Vắng' : c.totalScore}</td>
- <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">${c.submittedAt ? new Date(c.submittedAt).toLocaleTimeString('vi-VN') : '—'}</td>
+ <td style="text-align: center; border: 1px solid #000000; padding: 5px 6px;">${idx + 1}</td>
+ <td style="border: 1px solid #000000; padding: 5px 6px; font-weight: bold;">${escapeHtml(c.studentCode)}</td>
+ <td style="border: 1px solid #000000; padding: 5px 6px;">${escapeHtml(c.fullName)}</td>
+ <td style="border: 1px solid #000000; padding: 5px 6px;">${escapeHtml(c.className)}</td>
+ <td style="border: 1px solid #000000; padding: 5px 6px; text-align: center;">${formatCandidateStatus(c.status)}</td>
+ <td style="border: 1px solid #000000; padding: 5px 6px; text-align: center; font-weight: bold; font-size: 10.5pt; color: #000000;">${c.status === 'ABSENT' ? 'Vắng' : c.totalScore}</td>
+ <td style="border: 1px solid #000000; padding: 5px 6px; text-align: center;">${c.submittedAt ? new Date(c.submittedAt).toLocaleTimeString('vi-VN') : '—'}</td>
  </tr>
  `,
       )
@@ -666,15 +666,33 @@ export default function ExamReportsPage() {
  <meta charset="utf-8">
  <title>Báo cáo Kết quả Ca thi - ${escapeHtml(report.schedule.subjectName)}</title>
  <style>
- body { font-family: 'Times New Roman', Times, serif; font-size: 13pt; line-height: 1.4; color: #0f172a; padding: 20px; }
- .header-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
- .title { text-align: center; font-size: 16pt; font-weight: bold; text-transform: uppercase; margin: 20px 0 10px 0; }
- .meta { font-size: 11pt; margin-bottom: 20px; line-height: 1.6; }
- table.data-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 11pt; }
- table.data-table th { border: 1px solid #94a3b8; background-color: #f1f5f9; padding: 8px; text-align: center; }
+ body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.35; color: #000000; padding: 15px; margin: 0; }
+ .header-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; }
+ .title { text-align: center; font-size: 14pt; font-weight: bold; text-transform: uppercase; margin: 10px 0 6px 0; }
+ .meta { font-size: 10pt; margin-bottom: 12px; line-height: 1.5; color: #000000; border-bottom: 1px solid #000000; padding-bottom: 6px; }
+ table.data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 10pt; table-layout: fixed; page-break-inside: auto; }
+ table.data-table thead { display: table-header-group; }
+ table.data-table tr { page-break-inside: avoid; page-break-after: auto; }
+ table.data-table th { border: 1px solid #000000; background-color: transparent; padding: 6px; text-align: center; color: #000000; font-weight: bold; }
+ table.data-table td { border: 1px solid #000000; padding: 5px 6px; color: #000000; word-break: break-word; }
+ @media print { body { padding: 0; } @page { size: A4 portrait; margin: 10mm; } }
  </style>
  </head>
  <body>
+ <table class="header-table">
+   <tr>
+     <td style="width:50%; text-align:center; vertical-align:top; border:none; padding:0;">
+       <div style="font-weight:bold; font-size:10.5pt;">TRƯỜNG ĐẠI HỌC NAM CẦN THƠ</div>
+       <div style="font-size:10pt;">KHOA CÔNG NGHỆ THÔNG TIN</div>
+       <div style="border-top:1px solid #000; display:inline-block; width:110px; margin-top:2px;"></div>
+     </td>
+     <td style="width:50%; text-align:center; vertical-align:top; border:none; padding:0;">
+       <div style="font-weight:bold; font-size:10.5pt;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+       <div style="font-weight:bold; font-size:10pt; font-style:italic;">Độc lập - Tự do - Hạnh phúc</div>
+       <div style="border-top:1px solid #000; display:inline-block; width:110px; margin-top:2px;"></div>
+     </td>
+   </tr>
+ </table>
  <div class="title">BẢNG TỔNG HỢP KẾT QUẢ ĐIỂM THI CA THI</div>
  <div class="meta">
  <p style="margin:2px 0;"><strong>Môn học:</strong> ${escapeHtml(report.schedule.subjectName)} (${escapeHtml(report.schedule.subjectCode)})</p>
@@ -684,12 +702,12 @@ export default function ExamReportsPage() {
  <thead>
  <tr>
  <th style="width: 40px;">STT</th>
- <th>Mã Sinh Viên</th>
+ <th style="width: 90px;">Mã Sinh Viên</th>
  <th>Họ và Tên</th>
- <th>Lớp Học</th>
- <th>Trạng Thái</th>
- <th>Điểm Thi</th>
- <th>Giờ Nộp</th>
+ <th style="width: 100px;">Lớp Học</th>
+ <th style="width: 90px;">Trạng Thái</th>
+ <th style="width: 70px;">Điểm Thi</th>
+ <th style="width: 80px;">Giờ Nộp</th>
  </tr>
  </thead>
  <tbody>

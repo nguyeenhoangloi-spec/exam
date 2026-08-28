@@ -574,31 +574,40 @@ export default function ExamArrangementPage() {
       <!DOCTYPE html>
       <html>
       <head>
+        <meta charset="utf-8">
         <title>Danh sách dán cửa phòng thi - ${escapeHtml(roomTitle)}</title>
         <style>
-          @page { size: A4 portrait; margin: 15mm; }
-          body { font-family: 'Times New Roman', serif; font-size: 13px; color: #000; margin: 0; padding: 10px; }
-          .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-          .title { text-align: center; margin: 15px 0; }
-          .title h2 { margin: 0; font-size: 18px; font-weight: bold; text-transform: uppercase; }
-          .title h3 { margin: 5px 0 0 0; font-size: 15px; color: #1e3a8a; }
-          .meta { margin-bottom: 12px; line-height: 1.6; font-size: 13px; }
-          table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-          th, td { border: 1px solid #000; padding: 6px 8px; font-size: 12px; }
-          th { background: #f2f2f2; font-size: 12px; }
+          @page { size: A4 portrait; margin: 10mm; }
+          body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; color: #000000; margin: 0; padding: 15px; line-height: 1.35; }
+          .header-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; }
+          .header-table td { vertical-align: top; border: none; padding: 0; }
+          .title { text-align: center; margin: 10px 0 6px; }
+          .title h2 { margin: 0; font-size: 14pt; font-weight: bold; text-transform: uppercase; color: #000000; }
+          .title h3 { margin: 4px 0 0 0; font-size: 12pt; font-weight: bold; color: #000000; }
+          .meta { margin-bottom: 12px; line-height: 1.5; font-size: 10pt; color: #000000; border-bottom: 1px solid #000000; padding-bottom: 6px; }
+          table.data-table { width: 100%; border-collapse: collapse; margin-top: 8px; table-layout: fixed; page-break-inside: auto; }
+          table.data-table thead { display: table-header-group; }
+          table.data-table tr { page-break-inside: avoid; page-break-after: auto; }
+          table.data-table th { border: 1px solid #000000; background: transparent; padding: 6px; font-size: 10pt; font-weight: bold; color: #000000; text-align: center; }
+          table.data-table td { border: 1px solid #000000; padding: 5px 6px; font-size: 10pt; color: #000000; word-break: break-word; }
+          @media print { body { padding: 0; } }
         </style>
       </head>
       <body>
-        <div class="header">
-          <div style="text-align:center;">
-            <strong>BỘ GIÁO DỤC VÀ ĐÀO TẠO</strong><br/>
-            <strong>TRƯỜNG ĐẠI HỌC NAM CẦN THƠ</strong>
-          </div>
-          <div style="text-align:center;">
-            <strong>HỘI ĐỒNG THI HỌC KỲ</strong><br/>
-            <u>Năm học 2025 - 2026</u>
-          </div>
-        </div>
+        <table class="header-table">
+          <tr>
+            <td style="width:50%; text-align:center; vertical-align:top; border:none; padding:0;">
+              <div style="font-weight:bold; font-size:10.5pt;">TRƯỜNG ĐẠI HỌC NAM CẦN THƠ</div>
+              <div style="font-size:10pt;">HỘI ĐỒNG THI HỌC KỲ</div>
+              <div style="border-top:1px solid #000; display:inline-block; width:110px; margin-top:2px;"></div>
+            </td>
+            <td style="width:50%; text-align:center; vertical-align:top; border:none; padding:0;">
+              <div style="font-weight:bold; font-size:10.5pt;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+              <div style="font-weight:bold; font-size:10pt; font-style:italic;">Độc lập - Tự do - Hạnh phúc</div>
+              <div style="border-top:1px solid #000; display:inline-block; width:110px; margin-top:2px;"></div>
+            </td>
+          </tr>
+        </table>
 
         <div class="title">
           <h2>DANH SÁCH THÍ SINH PHÒNG THI</h2>
@@ -611,15 +620,15 @@ export default function ExamArrangementPage() {
           <strong>Tổng số thí sinh:</strong> ${filteredStudents.length} sinh viên
         </div>
 
-        <table>
+        <table class="data-table">
           <thead>
             <tr>
-              <th style="width:40px;">STT</th>
-              <th style="width:90px;">SBD</th>
-              <th style="width:100px;">Mã SV</th>
-              <th>Họ và Tên</th>
-              <th style="width:100px;">Lớp</th>
-              <th style="width:80px;">Chỗ ngồi</th>
+              <th style="width:6%;">STT</th>
+              <th style="width:14%;">SBD</th>
+              <th style="width:16%;">Mã SV</th>
+              <th style="width:34%;">Họ và Tên</th>
+              <th style="width:16%;">Lớp</th>
+              <th style="width:14%;">Chỗ ngồi</th>
             </tr>
           </thead>
           <tbody>${rowsHtml}</tbody>
@@ -663,7 +672,7 @@ export default function ExamArrangementPage() {
         <td style="font-weight:bold;">${escapeHtml(st.fullName)}</td>
         <td style="text-align:center;">${escapeHtml(st.className || 'CNTT-K65')}</td>
         <td style="text-align:center;font-weight:bold;">Ghế #${st.seatNumber}</td>
-        <td style="height:32px;"></td>
+        <td style="height:30px;"></td>
         <td></td>
       </tr>`
       )
@@ -673,47 +682,57 @@ export default function ExamArrangementPage() {
       <!DOCTYPE html>
       <html>
       <head>
+        <meta charset="utf-8">
         <title>Danh sách ký tên dự thi - ${escapeHtml(subjectName)}</title>
         <style>
-          @page { size: A4 portrait; margin: 15mm; }
-          body { font-family: 'Times New Roman', serif; font-size: 13px; color: #000; margin: 0; padding: 10px; }
-          .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-          .title { text-align: center; margin: 15px 0; }
-          .title h2 { margin: 0; font-size: 16px; font-weight: bold; text-transform: uppercase; }
-          .title p { margin: 4px 0 0 0; font-size: 13px; font-style: italic; }
-          table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-          th, td { border: 1px solid #000; padding: 6px 8px; font-size: 12px; }
-          th { background: #f2f2f2; font-size: 12px; }
+          @page { size: A4 portrait; margin: 10mm; }
+          body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; color: #000000; margin: 0; padding: 15px; line-height: 1.35; }
+          .header-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; }
+          .header-table td { vertical-align: top; border: none; padding: 0; }
+          .title { text-align: center; margin: 10px 0 6px; }
+          .title h2 { margin: 0; font-size: 14pt; font-weight: bold; text-transform: uppercase; color: #000000; }
+          .title p { margin: 4px 0 0 0; font-size: 10.5pt; font-style: italic; color: #000000; }
+          .meta { margin-bottom: 12px; line-height: 1.5; font-size: 10pt; color: #000000; border-bottom: 1px solid #000000; padding-bottom: 6px; }
+          table.data-table { width: 100%; border-collapse: collapse; margin-top: 8px; table-layout: fixed; page-break-inside: auto; }
+          table.data-table thead { display: table-header-group; }
+          table.data-table tr { page-break-inside: avoid; page-break-after: auto; }
+          table.data-table th { border: 1px solid #000000; background: transparent; padding: 6px; font-size: 10pt; font-weight: bold; color: #000000; text-align: center; }
+          table.data-table td { border: 1px solid #000000; padding: 5px 6px; font-size: 10pt; color: #000000; word-break: break-word; }
+          @media print { body { padding: 0; } }
         </style>
       </head>
       <body>
-        <div class="header">
-          <div style="text-align:center;">
-            <strong>BỘ GIÁO DỤC VÀ ĐÀO TẠO</strong><br/>
-            <strong>TRƯỜNG ĐẠI HỌC NAM CẦN THƠ</strong>
-          </div>
-          <div style="text-align:center;">
-            <strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br/>
-            <u>Độc lập - Tự do - Hạnh phúc</u>
-          </div>
-        </div>
+        <table class="header-table">
+          <tr>
+            <td style="width:50%; text-align:center; vertical-align:top; border:none; padding:0;">
+              <div style="font-weight:bold; font-size:10.5pt;">TRƯỜNG ĐẠI HỌC NAM CẦN THƠ</div>
+              <div style="font-size:10pt;">HỘI ĐỒNG THI HỌC KỲ</div>
+              <div style="border-top:1px solid #000; display:inline-block; width:110px; margin-top:2px;"></div>
+            </td>
+            <td style="width:50%; text-align:center; vertical-align:top; border:none; padding:0;">
+              <div style="font-weight:bold; font-size:10.5pt;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+              <div style="font-weight:bold; font-size:10pt; font-style:italic;">Độc lập - Tự do - Hạnh phúc</div>
+              <div style="border-top:1px solid #000; display:inline-block; width:110px; margin-top:2px;"></div>
+            </td>
+          </tr>
+        </table>
 
         <div class="title">
           <h2>DANH SÁCH THÍ SINH DỰ THI VÀ KÝ TÊN</h2>
           <p>Môn thi: ${escapeHtml(subjectName)} (${escapeHtml(subjectCode)})</p>
         </div>
 
-        <table>
+        <table class="data-table">
           <thead>
             <tr>
-              <th style="width:35px;">STT</th>
-              <th style="width:75px;">SBD</th>
-              <th style="width:85px;">Mã SV</th>
-              <th>Họ và Tên</th>
-              <th style="width:85px;">Lớp</th>
-              <th style="width:70px;">Chỗ ngồi</th>
-              <th style="width:90px;">Chữ ký</th>
-              <th style="width:65px;">Ghi chú</th>
+              <th style="width:5%;">STT</th>
+              <th style="width:11%;">SBD</th>
+              <th style="width:12%;">Mã SV</th>
+              <th style="width:26%;">Họ và Tên</th>
+              <th style="width:12%;">Lớp</th>
+              <th style="width:10%;">Chỗ ngồi</th>
+              <th style="width:14%;">Chữ ký</th>
+              <th style="width:10%;">Ghi chú</th>
             </tr>
           </thead>
           <tbody>${rowsHtml}</tbody>

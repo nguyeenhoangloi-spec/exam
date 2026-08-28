@@ -1103,6 +1103,11 @@ export default function DocumentTemplatesPage() {
                         </div>
                       )}
 
+                      {/* Đường Cắt Phách (Rọc Phách) */}
+                      <div className="text-center text-type-badge font-semibold text-slate-700 border-t-2 border-dashed border-slate-900 pt-1.5 my-2 tracking-wide select-none">
+                        ✂ &nbsp; &mdash; &mdash; &mdash; &mdash; ĐƯỜNG CẮT PHÁCH (RỌC PHÁCH TRƯỚC KHI CHẤM BÀI) &mdash; &mdash; &mdash; &mdash; &nbsp; ✂
+                      </div>
+
                       {/* Realistic Exam Questions Sample */}
                       <div className="space-y-4 pt-1">
                         <div>

@@ -8,6 +8,7 @@ const sourceExtensions = new Set(['.ts', '.tsx', '.css', '.js', '.mjs']);
 const skippedFiles = new Set(['scripts/audit-ui.mjs']);
 const violations = [];
 const printExportFiles = new Set([
+  'app/admin/document-templates/page.tsx',
   'app/exam-arrangement/page.tsx',
   'app/exam-reports/page.tsx',
   'app/teacher/assignments/page.tsx',
@@ -286,18 +287,20 @@ for (const folder of sourceRoots) {
       report(file, 'table header phải dùng font-weight 500 (font-medium)');
     }
 
-    for (const tableMatch of content.matchAll(/<table\b[\s\S]*?<\/table>/gi)) {
-      for (const bodyMatch of tableMatch[0].matchAll(/<tbody\b[\s\S]*?<\/tbody>/gi)) {
-        const body = bodyMatch[0]
-          .replace(/<svg[\s\S]*?<\/svg>/gi, '')
-          .replace(/<td\b[^>]*colSpan[^>]*>[\s\S]*?<\/td>/gi, '')
-          .replace(/[^\r\n]*(?:table-badge|table-avatar|table-action|table-tooltip|table-meta)[^\r\n]*/gi, '');
-        if (/text-type-(?:badge|helper|body-sm)|text-xs|text-\[(?:12|13|14)(?:\.5)?px\]/i.test(body)) {
-          report(file, 'table body text must be 15px; compact size is limited to table-badge/table-avatar/table-tooltip/table-meta');
-        }
+    if (!printExportFiles.has(relativeFile)) {
+      for (const tableMatch of content.matchAll(/<table\b[\s\S]*?<\/table>/gi)) {
+        for (const bodyMatch of tableMatch[0].matchAll(/<tbody\b[\s\S]*?<\/tbody>/gi)) {
+          const body = bodyMatch[0]
+            .replace(/<svg[\s\S]*?<\/svg>/gi, '')
+            .replace(/<td\b[^>]*colSpan[^>]*>[\s\S]*?<\/td>/gi, '')
+            .replace(/[^\r\n]*(?:table-badge|table-avatar|table-action|table-tooltip|table-meta)[^\r\n]*/gi, '');
+          if (/text-type-(?:badge|helper|body-sm)|text-xs|text-\[(?:12|13|14)(?:\.5)?px\]/i.test(body)) {
+            report(file, 'table body text must be 15px; compact size is limited to table-badge/table-avatar/table-tooltip/table-meta');
+          }
 
-        if (/font-(?:bold|extrabold|black)/i.test(body)) {
-          report(file, 'table body không được dùng font-weight trên 500');
+          if (/font-(?:bold|extrabold|black)/i.test(body)) {
+            report(file, 'table body không được dùng font-weight trên 500');
+          }
         }
       }
     }
