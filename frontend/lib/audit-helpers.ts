@@ -13,6 +13,8 @@ export const TRANSLATED_ACTIONS: Record<string, string> = {
   PERMISSION_DENIED: 'Từ chối do thiếu quyền hạn',
   ROLE_DENIED: 'Từ chối do sai vai trò quy định',
   AUTH_SESSION_REVOKED: 'Thu hồi phiên đăng nhập',
+  LOCK: 'Khóa tài khoản / đối tượng',
+  UNLOCK: 'Mở khóa tài khoản / đối tượng',
 
   // --- 2. In ấn, Xuất dữ liệu & Kho lưu trữ bài thi ---
   PRINT: 'In ấn biểu mẫu',
@@ -35,7 +37,8 @@ export const TRANSLATED_ACTIONS: Record<string, string> = {
   EXAM_ARCHIVED_ATTEMPTS_VIEWED: 'Xem danh sách bài thi lưu trữ của ca thi',
   EXAM_ARCHIVED_BATCH_DOSSIER_EXTRACTED: 'Trích xuất trọn bộ túi hồ sơ lưu trữ bài thi',
   EXAM_ARCHIVED_DISPOSAL_PROPOSAL_VIEWED: 'Xem biên bản đề xuất tiêu hủy bài thi hết hạn',
-  EXAM_ARCHIVE_ATTEMPT_DETAIL_VIEWED: 'Xem chi tiết bài làm thí sinh trong kho lưu trữ',
+  EXAM_ARCHIVE_ATTEMPT_DETAIL_VIEWED: 'Xem chi tiết bài thi lưu trữ',
+  ARCHIVE_ATTEMPT_VIEWED: 'Xem bài thi lưu trữ',
   EXAM_ARCHIVE_INTEGRITY_VERIFIED: 'Kiểm tra toàn vẹn chữ ký số bài thi lưu trữ',
 
   // --- 3. Coi thi, Khảo thí, Chấm thi & Phúc khảo ---
@@ -56,12 +59,19 @@ export const TRANSLATED_ACTIONS: Record<string, string> = {
   REJECT_CHANGE: 'Từ chối đổi ca coi thi',
   DUPLICATE: 'Nhân bản dữ liệu',
   BULK_UPDATE: 'Cập nhật hàng loạt',
-  LOCK: 'Khóa đối tượng',
-  UNLOCK: 'Mở khóa đối tượng',
+  EXTEND_EXAM_TIME: 'Gia hạn thời gian làm bài',
+  BULK_EXTEND_EXAM_TIME: 'Gia hạn thời gian làm bài hàng loạt',
   REOPEN_ENTRY: 'Mở lại lượt nộp bài',
   REOPEN_EXAM_ATTEMPT: 'Mở lại lượt thi cho thí sinh',
   RESOLVE_EXAM_INCIDENT: 'Xử lý sự cố phòng thi',
-  RESTORE_EXAM_PAPER: 'Khôi phục đề thi đã xóa',
+  RESTORE_EXAM_PAPER: 'Khôi phục đề thi',
+  RESTORE_EXAM_SCHEDULE: 'Khôi phục ca thi',
+  RESTORE_QUESTION: 'Khôi phục câu hỏi',
+  HARD_DELETE_EXAM_PAPER: 'Xóa vĩnh viễn đề thi',
+  HARD_DELETE_EXAM_SCHEDULE: 'Xóa vĩnh viễn ca thi',
+  HARD_DELETE_QUESTION: 'Xóa vĩnh viễn câu hỏi',
+  AUTO_PURGE_TRASH: 'Tự động dọn sạch thùng rác',
+  CREATE_GRADE_APPEAL: 'Nộp đơn phúc khảo bài thi',
   REVIEW_GRADE_APPEAL: 'Xem xét đơn phúc khảo',
   REGRADE: 'Chấm lại bài thi phúc khảo',
   APPROVE: 'Phê duyệt',
@@ -125,42 +135,68 @@ export const TRANSLATED_ENTITIES: Record<string, string> = {
   AUTH: 'Xác thực & Bảo mật',
   EXAMPAPER: 'Đề thi',
   EXAM_PAPER: 'Đề thi',
+  ExamPaper: 'Đề thi',
   EXAMARRANGEMENT: 'Xếp phòng thi',
+  ExamArrangement: 'Xếp phòng thi',
   EXAMSUPERVISOR: 'Cán bộ coi thi',
   EXAM_SUPERVISOR: 'Cán bộ coi thi',
+  ExamSupervisor: 'Cán bộ coi thi',
   PROCTOR_ASSIGNMENT: 'Phân công coi thi',
   EXAMPERIOD: 'Kỳ thi',
   EXAM_PERIOD: 'Kỳ thi',
+  ExamPeriod: 'Kỳ thi',
   EXAMSCHEDULE: 'Lịch thi / Ca thi',
   EXAM_SCHEDULE: 'Lịch thi / Ca thi',
-  EXAM_ATTEMPT: 'Bài làm của thí sinh',
+  ExamSchedule: 'Lịch thi / Ca thi',
+  EXAMATTEMPT: 'Bài làm thí sinh',
+  EXAM_ATTEMPT: 'Bài làm thí sinh',
+  ExamAttempt: 'Bài làm thí sinh',
   EXAM_REPORT: 'Báo cáo khảo thí',
   EXAM_ARCHIVE: 'Kho lưu trữ bài thi',
   EXAM_ARCHIVE_CONFIG: 'Cấu hình lưu trữ bài thi',
+  EXAMARCHIVESCONFIG: 'Cấu hình lưu trữ bài thi',
+  ExamArchivesConfig: 'Cấu hình lưu trữ bài thi',
   EXAM_ROOM: 'Phòng thi',
+  ExamRoom: 'Phòng thi',
   STUDENT: 'Hồ sơ sinh viên',
+  Student: 'Hồ sơ sinh viên',
   TEACHER: 'Hồ sơ giảng viên',
+  Teacher: 'Hồ sơ giảng viên',
+  CLASS: 'Lớp sinh viên',
+  Class: 'Lớp sinh viên',
   DEPARTMENT: 'Khoa / Đơn vị đào tạo',
+  Department: 'Khoa / Đơn vị đào tạo',
   SUBJECT: 'Môn học / Học phần',
+  Subject: 'Môn học / Học phần',
   QUESTION: 'Câu hỏi thi',
+  Question: 'Câu hỏi thi',
   QUESTION_BANK: 'Ngân hàng câu hỏi',
   QUESTION_RUBRIC: 'Barem chấm tự luận (Rubric)',
+  QuestionRubric: 'Barem chấm tự luận (Rubric)',
   ESSAYREVIEW: 'Chấm bài tự luận',
+  EssayReview: 'Chấm bài tự luận',
   GRADEAPPEAL: 'Đơn phúc khảo',
   GRADE_APPEAL: 'Đơn phúc khảo',
+  GradeAppeal: 'Đơn phúc khảo',
   BACKUP: 'Hệ thống sao lưu',
   BACKUPOVERVIEW: 'Tổng quan sao lưu',
   BACKUP_SYSTEM: 'Hệ thống sao lưu',
   BACKUPSETTINGS: 'Cấu hình sao lưu',
   BACKUP_SETTINGS: 'Cấu hình sao lưu',
   BACKUP_STORAGE: 'Vị trí lưu trữ sao lưu',
+  BackupStorage: 'Vị trí lưu trữ sao lưu',
   BACKUP_JOB: 'Bản sao lưu dữ liệu',
+  BackupJob: 'Bản sao lưu dữ liệu',
   ACCESSCONTROL: 'Ma trận phân quyền',
   ACCESS_CONTROL: 'Ma trận phân quyền',
   ACCESSROLE: 'Vai trò người dùng',
+  AccessRole: 'Vai trò người dùng',
   USERACCESS: 'Quyền hạn người dùng',
   USER: 'Tài khoản người dùng',
+  User: 'Tài khoản người dùng',
   DOCUMENT_TEMPLATE: 'Biểu mẫu tài liệu',
+  DocumentTemplate: 'Biểu mẫu tài liệu',
+  TRASH: 'Thùng rác hệ thống',
   SECURITY_AUDIT: 'Kiểm toán an ninh',
   SECURITYAUDITEVENT: 'Sự kiện kiểm toán',
   SecurityAuditEvent: 'Sự kiện kiểm toán',
@@ -214,6 +250,7 @@ export const secActionLabel: Record<string, string> = {
   EXAM_ARCHIVED_BATCH_DOSSIER_EXTRACTED: 'Trích xuất trọn bộ túi hồ sơ lưu trữ bài thi',
   EXAM_ARCHIVED_DISPOSAL_PROPOSAL_VIEWED: 'Xem biên bản đề xuất tiêu hủy bài thi hết hạn',
   EXAM_ARCHIVE_ATTEMPT_DETAIL_VIEWED: 'Xem chi tiết bài làm thí sinh trong kho lưu trữ',
+  ARCHIVE_ATTEMPT_VIEWED: 'Xem bài thi lưu trữ',
   EXAM_ARCHIVE_INTEGRITY_VERIFIED: 'Kiểm tra toàn vẹn chữ ký số bài thi lưu trữ',
   BACKUP_OVERVIEW_VIEWED: 'Xem tổng quan sao lưu hệ thống',
   BACKUP_SETTINGS_VIEWED: 'Xem cấu hình sao lưu hệ thống',
@@ -237,6 +274,7 @@ export function getActionLabel(action: string): string {
   if (secActionLabel[normalized]) return secActionLabel[normalized];
 
   return action
+    .replace(/Archive Attempt Viewed/gi, 'Xem bài thi lưu trữ')
     .replace(/Backup Storage Reordered/gi, 'Sắp xếp nơi lưu trữ')
     .replace(/Backup Storage Updated/gi, 'Cập nhật nơi lưu trữ')
     .replace(/Backup Storage Test Failed/gi, 'Kiểm tra lưu trữ thất bại')
@@ -346,6 +384,12 @@ export function formatDetailedAuditDescription(log: {
   if (normAction === 'UPDATE_EXAM_PASSWORD') {
     return `Thay đổi mật khẩu bảo vệ đề thi chính thức cho ca thi ${shortId}`;
   }
+  if (normAction === 'LOCK') {
+    return desc || `Khóa đối tượng ${getEntityLabel(log.entityType)} ${shortId}`;
+  }
+  if (normAction === 'UNLOCK') {
+    return desc || `Mở khóa đối tượng ${getEntityLabel(log.entityType)} ${shortId}`;
+  }
 
   // 2. In ấn & Hồ sơ lưu trữ bài thi
   if (normAction === 'EXAM_ARCHIVED_BATCH_DOSSIER_EXTRACTED') {
@@ -365,6 +409,10 @@ export function formatDetailedAuditDescription(log: {
   }
   if (normAction === 'QUESTION_BANK_EXPORTED') {
     return `Xuất toàn bộ ngân hàng câu hỏi thi ra tệp dữ liệu`;
+  }
+  if (normAction === 'ARCHIVE_ATTEMPT_VIEWED' || normAction === 'EXAM_ARCHIVE_ATTEMPT_DETAIL_VIEWED') {
+    const studentCode = log.metadata?.studentCode ? ` (MSSV: ${log.metadata.studentCode})` : '';
+    return `Xem chi tiết hồ sơ bài làm thí sinh${studentCode} trong kho lưu trữ điện tử đã công bố và niêm phong.`;
   }
 
   // 3. Tra cứu đáp án, bài làm, điểm số
@@ -407,12 +455,15 @@ export function formatDetailedAuditDescription(log: {
     return `Cán bộ chấm lại bài thi phúc khảo theo barem quy định (${shortId})`;
   }
 
-  // 5. Coi thi, Xếp phòng, Đổi ca
+  // 5. Coi thi, Xếp phòng, Đổi ca, Gia hạn
   if (normAction === 'AUTO_ASSIGN') {
     return desc || `Tự động phân công cán bộ coi thi cho các phòng thi`;
   }
   if (normAction === 'ARRANGE') {
     return desc || `Hoàn tất xếp phòng thi và phân bổ thí sinh cho ca thi ${shortId}`;
+  }
+  if (normAction === 'CONFIRM') {
+    return desc || `Cán bộ coi thi đã xác nhận nhiệm vụ coi thi ${shortId}`;
   }
   if (normAction === 'REQUEST_CHANGE') {
     return desc || `Giảng viên gửi yêu cầu xin đổi ca coi thi tại phòng thi ${shortId}`;
@@ -420,8 +471,37 @@ export function formatDetailedAuditDescription(log: {
   if (normAction === 'APPROVE_CHANGE') {
     return desc || `Phê duyệt yêu cầu đổi ca coi thi tại phòng thi ${shortId}`;
   }
+  if (normAction === 'REJECT_CHANGE') {
+    return desc || `Từ chối yêu cầu đổi ca coi thi tại phòng thi ${shortId}`;
+  }
+  if (normAction === 'EXTEND_EXAM_TIME') {
+    return desc || `Cán bộ coi thi đã gia hạn thêm thời gian làm bài thi ${shortId}`;
+  }
+  if (normAction === 'BULK_EXTEND_EXAM_TIME') {
+    return desc || `Cán bộ coi thi đã gia hạn thời gian làm bài hàng loạt cho phòng thi`;
+  }
+  if (normAction === 'RESOLVE_EXAM_INCIDENT') {
+    return desc || `Cán bộ coi thi xử lý và lập biên bản sự cố phòng thi ${shortId}`;
+  }
 
-  // 6. Sao lưu & Khôi phục
+  // 6. Thùng rác & Phục hồi
+  if (normAction === 'RESTORE_EXAM_SCHEDULE') {
+    return desc || `Khôi phục ca thi ${shortId} từ thùng rác về trạng thái hoạt động`;
+  }
+  if (normAction === 'RESTORE_EXAM_PAPER') {
+    return desc || `Khôi phục đề thi ${shortId} từ thùng rác về trạng thái hoạt động`;
+  }
+  if (normAction === 'RESTORE_QUESTION') {
+    return desc || `Khôi phục câu hỏi thi ${shortId} từ thùng rác về trạng thái hoạt động`;
+  }
+  if (normAction === 'HARD_DELETE_EXAM_SCHEDULE' || normAction === 'HARD_DELETE_EXAM_PAPER' || normAction === 'HARD_DELETE_QUESTION') {
+    return desc || `Xóa vĩnh viễn dữ liệu ${shortId} khỏi hệ thống`;
+  }
+  if (normAction === 'AUTO_PURGE_TRASH') {
+    return `Tiến trình hệ thống tự động dọn sạch các đối tượng trong thùng rác đã quá hạn`;
+  }
+
+  // 7. Sao lưu & Khôi phục
   if (normAction === 'BACKUP_QUEUED') {
     return `Đưa vào hàng đợi tiến trình tạo bản sao lưu dữ liệu toàn hệ thống`;
   }
@@ -435,7 +515,7 @@ export function formatDetailedAuditDescription(log: {
     return `Xác thực tính toàn vẹn chữ ký số SHA-256 của bản sao lưu ${shortId}`;
   }
 
-  // 7. Phân quyền
+  // 8. Phân quyền
   if (normAction === 'ACCESS_ROLE_PERMISSION_GRANTED') {
     return `Cấp quyền truy cập mới cho vai trò quản trị trong hệ thống`;
   }
@@ -449,12 +529,12 @@ export function formatDetailedAuditDescription(log: {
     return `Tra cứu ma trận quyền hạn hiệu lực của tài khoản ${shortId}`;
   }
 
-  // 8. Nếu description gốc bằng tiếng Việt có nghĩa rõ ràng
+  // 9. Nếu description gốc bằng tiếng Việt có nghĩa rõ ràng
   if (desc && !/^[A-Za-z0-9_\s:-]+$/.test(desc) && desc.length > 5) {
     return desc;
   }
 
-  // 9. Fallback chung có ngữ cảnh
+  // 10. Fallback chung có ngữ cảnh
   const act = getActionLabel(normAction);
   const ent = getEntityLabel(log.entityType);
   if (shortId) {

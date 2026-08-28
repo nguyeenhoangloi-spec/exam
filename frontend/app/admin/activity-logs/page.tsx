@@ -142,7 +142,7 @@ function ActivityLogsContent() {
     const [search, setSearch] = useState<string>('');
     const [entityFilter, setEntityFilter] = useState<string>('');
     const [page, setPage] = useState<number>(1);
-    const [limit, setLimit] = useState<number>(10);
+    const [limit, setLimit] = useState<number>(15);
     const [totalCount, setTotalCount] = useState<number>(0);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
@@ -327,7 +327,7 @@ function ActivityLogsContent() {
     const [secCategory, setSecCategory] = useState<string>('');
     const [secOutcome, setSecOutcome] = useState<string>('');
     const [secPage, setSecPage] = useState<number>(1);
-    const [secLimit, setLimitSec] = useState<number>(10);
+    const [secLimit, setLimitSec] = useState<number>(15);
     const [secTotal, setSecTotal] = useState<number>(0);
     const [legalHoldModalEvent, setLegalHoldModalEvent] = useState<SecurityEvent | null>(null);
     const [legalHoldLoading, setLegalHoldLoading] = useState<boolean>(false);
@@ -696,12 +696,13 @@ function ActivityLogsContent() {
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
-                                <table className="ui-table w-full text-left border-collapse min-w-[760px]">
+                                <table className="ui-table w-full text-left border-collapse min-w-[850px]">
                                     <thead>
                                         <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/50 text-type-body-sm font-medium text-slate-600 dark:text-slate-300">
                                             <th className="py-3.5 px-5 w-48">Thời gian thực hiện</th>
-                                            <th className="py-3.5 px-5 w-52">Tài khoản thao tác</th>
-                                            <th className="py-3.5 px-5">Diễn giải nội dung thao tác</th>
+                                            <th className="py-3.5 px-5 w-44">Tài khoản thao tác</th>
+                                            <th className="py-3.5 px-5 w-64">Hành động & Phân hệ</th>
+                                            <th className="py-3.5 px-5">Diễn giải nội dung chi tiết</th>
                                             <th className="py-3.5 px-5 w-12 text-right"></th>
                                         </tr>
                                     </thead>
@@ -736,7 +737,7 @@ function ActivityLogsContent() {
                                                     {/* Cột 2: Tài khoản thao tác */}
                                                     <td className="py-3.5 px-5 whitespace-nowrap">
                                                         <div className="flex flex-col">
-                                                            <span className="font-medium text-type-body text-slate-900 dark:text-slate-100 truncate max-w-[170px]">
+                                                            <span className="font-medium text-type-body text-slate-900 dark:text-slate-100 truncate max-w-[150px]">
                                                                 {log.actor?.username || 'Hệ thống'}
                                                             </span>
                                                             {log.actor?.role && (
@@ -747,15 +748,14 @@ function ActivityLogsContent() {
                                                         </div>
                                                     </td>
 
-                                                    {/* Cột 3: Diễn giải nội dung thao tác chi tiết */}
-                                                    <td className="py-3.5 px-5">
+                                                    {/* Cột 3: Hành động & Phân hệ */}
+                                                    <td className="py-3.5 px-5 whitespace-nowrap">
                                                         <div className="space-y-0.5">
+                                                            <div className="font-medium text-type-body text-slate-900 dark:text-slate-100">
+                                                                {actionLabel}
+                                                            </div>
                                                             <div className="flex items-center gap-1.5 flex-wrap">
-                                                                <span className="font-medium text-type-body text-slate-900 dark:text-slate-100">
-                                                                    {actionLabel}
-                                                                </span>
-                                                                <span className="text-slate-400 dark:text-slate-600">·</span>
-                                                                <span className="font-medium text-type-body text-blue-600 dark:text-blue-400">
+                                                                <span className="table-meta text-type-meta font-medium text-blue-600 dark:text-blue-400">
                                                                     {entityLabel}
                                                                 </span>
                                                                 {shortId && (
@@ -767,13 +767,17 @@ function ActivityLogsContent() {
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            <p className="text-type-body text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
-                                                                {detailedDescription}
-                                                            </p>
                                                         </div>
                                                     </td>
 
-                                                    {/* Xem chi tiết */}
+                                                    {/* Cột 4: Diễn giải nội dung chi tiết */}
+                                                    <td className="py-3.5 px-5">
+                                                        <p className="text-type-body text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
+                                                            {detailedDescription}
+                                                        </p>
+                                                    </td>
+
+                                                    {/* Cột 5: Xem chi tiết */}
                                                     <td className="py-3.5 px-5 text-right whitespace-nowrap">
                                                         <span className="text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 inline-flex items-center justify-center transition">
                                                             <ArrowUpRight className="h-4 w-4" />
@@ -801,7 +805,7 @@ function ActivityLogsContent() {
                                 setLimit(newLimit);
                                 setPage(1);
                             }}
-                            limitOptions={[10, 20, 50, 100]}
+                            limitOptions={[10, 15, 20, 50, 100]}
                         />
                     )}
                 </div>
@@ -967,7 +971,7 @@ function ActivityLogsContent() {
                                 setLimitSec(newLimit);
                                 setSecPage(1);
                             }}
-                            limitOptions={[10, 20, 50, 100]}
+                            limitOptions={[10, 15, 20, 50, 100]}
                         />
                     )}
                 </div>
