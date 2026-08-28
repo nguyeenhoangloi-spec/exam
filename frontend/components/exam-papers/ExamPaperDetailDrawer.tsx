@@ -452,46 +452,39 @@ export function ExamPaperDetailDrawer({
         </div>
 
         {/* ── 4. Sticky Action Footer ── */}
-        <div className="border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/90 px-6 py-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
-          <div className="flex items-center gap-2">
-            <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">Trạng thái:</span>
-            <span
-              className={`px-2.5 py-0.5 rounded-xl text-type-helper font-semibold border ${paper.status === 'PUBLISHED'
-                  ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60'
-                  : paper.status === 'ARCHIVED'
-                    ? 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700'
-                    : 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200/80 dark:border-amber-800/60'
-                }`}
+        <div className="border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/90 px-6 py-4 flex items-center justify-end gap-2.5 shrink-0">
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            onClick={onClose}
+          >
+            Đóng
+          </Button>
+
+          {paper.status === 'DRAFT' && (currentUserRole === 'ADMIN' || currentUserRole === 'TEACHER') && onPublish && (
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => onPublish(paper)}
+              disabled={isBusy}
+              isLoading={isBusy}
             >
-              {paper.status === 'PUBLISHED' ? 'Đã phát hành' : paper.status === 'ARCHIVED' ? 'Lưu trữ' : 'Bản nháp'}
-            </span>
-          </div>
+              Phát hành
+            </Button>
+          )}
 
-          <div className="flex items-center gap-2.5 shrink-0">
-            {paper.status === 'DRAFT' && (currentUserRole === 'ADMIN' || currentUserRole === 'TEACHER') && onPublish && (
-              <Button
-                variant="primary"
-                size="md"
-                onClick={() => onPublish(paper)}
-                disabled={isBusy}
-                isLoading={isBusy}
-              >
-                Phát hành
-              </Button>
-            )}
-
-            {paper.status === 'PUBLISHED' && currentUserRole === 'ADMIN' && onArchive && (
-              <Button
-                variant="secondary"
-                size="md"
-                onClick={() => onArchive(paper)}
-                disabled={isBusy}
-                isLoading={isBusy}
-              >
-                Lưu trữ
-              </Button>
-            )}
-          </div>
+          {paper.status === 'PUBLISHED' && currentUserRole === 'ADMIN' && onArchive && (
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={() => onArchive(paper)}
+              disabled={isBusy}
+              isLoading={isBusy}
+            >
+              Lưu trữ
+            </Button>
+          )}
         </div>
       </div>
 

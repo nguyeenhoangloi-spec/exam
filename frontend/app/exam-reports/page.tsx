@@ -970,7 +970,22 @@ export default function ExamReportsPage() {
               </div>
             )}
 
-            {/* ── 4. Search & Action Toolbar Row (Single Unified Row) ── */}
+            {/* ── 4. Candidate Status Tabs ── */}
+            <TabBar
+              tabs={[
+                { key: 'ALL', label: 'Tất cả thí sinh', count: tabCounts.total },
+                { key: 'SUBMITTED', label: 'Đã nộp bài', count: tabCounts.submitted },
+                { key: 'ABSENT', label: 'Vắng thi', count: tabCounts.absent },
+                ...(tabCounts.flagged > 0 ? [{ key: 'FLAGGED', label: 'Có cảnh báo', count: tabCounts.flagged }] : []),
+              ]}
+              active={statusFilter}
+              onChange={(key) => {
+                setStatusFilter(key);
+                setPage(1);
+              }}
+            />
+
+            {/* ── 5. Search & Action Toolbar Row (Single Unified Row) ── */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               {/* Left: Unified Search Bar with Embedded SlidersHorizontal Popover */}
               <div className="relative flex-1 max-w-xl min-w-[240px]">
@@ -1032,21 +1047,6 @@ export default function ExamReportsPage() {
                 onRefresh={handleRefresh}
               />
             </div>
-
-            {/* ── 5. Candidate Status Tabs ── */}
-            <TabBar
-              tabs={[
-                { key: 'ALL', label: 'Tất cả thí sinh', count: tabCounts.total },
-                { key: 'SUBMITTED', label: 'Đã nộp bài', count: tabCounts.submitted },
-                { key: 'ABSENT', label: 'Vắng thi', count: tabCounts.absent },
-                ...(tabCounts.flagged > 0 ? [{ key: 'FLAGGED', label: 'Có cảnh báo', count: tabCounts.flagged }] : []),
-              ]}
-              active={statusFilter}
-              onChange={(key) => {
-                setStatusFilter(key);
-                setPage(1);
-              }}
-            />
 
             {/* Full-Width DataGrid Table */}
             {loadingReport ? (

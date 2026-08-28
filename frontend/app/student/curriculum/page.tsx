@@ -460,7 +460,21 @@ export default function StudentCurriculumPage() {
           })}
         </div>
 
-        {/* ── 3. Search & Action Toolbar Row (Single Unified Row) ── */}
+        {/* ── Status TabBar ── */}
+        <TabBar
+          tabs={[
+            { key: 'ALL', label: 'Tất cả học phần', count: curriculumList.length },
+            { key: 'COMPLETED', label: 'Đã hoàn thành', count: curriculumList.filter((c: any) => c.isCompleted).length },
+            { key: 'INCOMPLETE', label: 'Chưa tích lũy', count: curriculumList.filter((c: any) => !c.isCompleted).length },
+          ]}
+          active={filterStatus}
+          onChange={(key) => {
+            setFilterStatus(key);
+            setPage(1);
+          }}
+        />
+
+        {/* ── Search & Action Toolbar Row (Single Unified Row) ── */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           {/* Left: Unified Search Bar with Embedded SlidersHorizontal Popover */}
           <div className="relative flex-1 max-w-xl min-w-[240px]">
@@ -557,20 +571,6 @@ export default function StudentCurriculumPage() {
             />
           </div>
         </div>
-
-        {/* ── 4. Status TabBar ── */}
-        <TabBar
-          tabs={[
-            { key: 'ALL', label: 'Tất cả học phần', count: curriculumList.length },
-            { key: 'COMPLETED', label: 'Đã hoàn thành', count: curriculumList.filter((c: any) => c.isCompleted).length },
-            { key: 'INCOMPLETE', label: 'Chưa tích lũy', count: curriculumList.filter((c: any) => !c.isCompleted).length },
-          ]}
-          active={filterStatus}
-          onChange={(key) => {
-            setFilterStatus(key);
-            setPage(1);
-          }}
-        />
 
         {/* ── 5. Standard Content (List / Grid / Compact) ── */}
         {loading ? (

@@ -503,54 +503,47 @@ export default function ExamSupervisorsPage() {
         <div>
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             {/* Trái: Thông tin Ca thi chuẩn mẫu */}
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50 shadow-2xs">
-                <GraduationCap className="h-5 w-5 stroke-[2]" />
+            <div className="space-y-0.5 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center px-2 py-0.5 ui-pill rounded-full text-type-helper font-medium ui-pill-solid bg-blue-600 text-white tracking-wide">
+                  {selectedSchedule?.type || 'CHÍNH THỨC'}
+                </span>
+                <h3 className="text-type-body font-semibold text-slate-900 dark:text-white truncate">
+                  {selectedSchedule?.subject?.subjectName || selectedSchedule?.subjectName || 'Chưa chọn ca thi'}
+                </h3>
+                <span className="text-type-helper font-medium text-slate-400 dark:text-slate-500">
+                  #{selectedSchedule?.subject?.subjectCode || selectedSchedule?.subjectCode || 'MH'}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => setShowSchedulePicker(true)}
+                  className="p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer inline-flex items-center justify-center"
+                  title="Đổi ca thi"
+                  aria-label="Đổi ca thi"
+                >
+                  <ArrowLeftRight className="h-3.5 w-3.5" />
+                </button>
               </div>
 
-              <div className="space-y-0.5 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center px-3 py-0.5 ui-pill rounded-full text-type-helper font-medium ui-pill-solid bg-blue-600 text-white tracking-wide">
-                    {selectedSchedule?.type || 'CHÍNH THỨC'}
-                  </span>
-                  <h3 className="text-type-body font-semibold text-slate-900 dark:text-white truncate">
-                    {selectedSchedule?.subject?.subjectName || selectedSchedule?.subjectName || 'Chưa chọn ca thi'}
-                  </h3>
-                  <span className="text-type-helper font-medium text-slate-400 dark:text-slate-500">
-                    #{selectedSchedule?.subject?.subjectCode || selectedSchedule?.subjectCode || 'MH'}
-                  </span>
-
-                  <button
-                    type="button"
-                    onClick={() => setShowSchedulePicker(true)}
-                    className="p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer inline-flex items-center justify-center"
-                    title="Đổi ca thi"
-                    aria-label="Đổi ca thi"
-                  >
-                    <ArrowLeftRight className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-3 text-type-helper text-slate-500 dark:text-slate-400 flex-wrap font-normal">
-                  {selectedSchedule && (
-                    <>
-                      <span className="flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5 text-slate-400" />
-                        {selectedSchedule.startTime} - {selectedSchedule.endTime}
-                      </span>
-                      {selectedSchedule.examDate && (
-                        <span className="flex items-center gap-1.5">
-                          <Calendar className="h-3.5 w-3.5 text-slate-400" />
-                          {new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN')}
-                        </span>
-                      )}
-                      <span className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
-                        <DoorOpen className="h-3.5 w-3.5 text-blue-600" />
-                        {currentRooms.length} phòng thi
-                      </span>
-                    </>
-                  )}
-                </div>
+              <div className="flex items-center gap-2.5 text-type-helper text-slate-500 dark:text-slate-400 flex-wrap font-normal">
+                {selectedSchedule && (
+                  <>
+                    {selectedSchedule.examDate && (
+                      <span>{new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN')}</span>
+                    )}
+                    {selectedSchedule.startTime && (
+                      <>
+                        {selectedSchedule.examDate && <span>·</span>}
+                        <span>{selectedSchedule.startTime} – {selectedSchedule.endTime}</span>
+                      </>
+                    )}
+                    <span>·</span>
+                    <span className="font-medium text-slate-700 dark:text-slate-300">
+                      {currentRooms.length} phòng thi
+                    </span>
+                  </>
+                )}
               </div>
             </div>
 

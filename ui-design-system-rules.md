@@ -702,3 +702,30 @@ Nhằm đảm bảo giao diện luôn mạch lạc, phẳng, thoáng đãng và 
 | **2. Trạng thái (Lifecycle Status)** | Tiến trình vòng đời: *Đã xác nhận, Chờ duyệt, Từ chối, Đang diễn ra, Đã khóa* | Dùng `<StatusBadge />`<br>• **Trong Bảng dữ liệu**: Bắt buộc dùng `variant="dot"` (`● Đã xác nhận`)<br>• **Trong Drawer / Card**: dùng `variant="pill"` (`rounded-full`, `ui-pill`) | ❌ **CẤM** dùng cho danh từ, vai trò hay chức danh cố định. |
 | **3. Vai trò / Chức danh (Role & Position)** | Phân công vai trò: *Giám thị 1 (Chính), Giám thị 2 (Phụ), Trưởng điểm* | **Typography phân cấp phẳng** (Typography-First):<br>• `Giám thị 1 (Chính)`: chữ `text-slate-900 dark:text-slate-100 font-semibold`<br>• `Giám thị 2 (Phụ)`: chữ `text-slate-600 dark:text-slate-400 font-normal` | ❌ **CẤM** gắn chấm `●` giả làm trạng thái.<br>❌ **CẤM** đóng khung hộp badge màu mè tranh chấp với cột Trạng thái. |
 | **4. Họ tên & Học hàm/Học vị** | Danh xưng & Tên: *ThS. Nguyễn Đức Thắng* | • Danh xưng gắn liền trước họ tên: `ThS. Nguyễn Đức Thắng`<br>• Thông tin phụ: dùng text `text-type-helper text-slate-500` (`Học vị: ThS`) | ❌ **CẤM** đóng khung badge cho tên hoặc học vị. |
+
+## 21. Quy chuẩn Thiết Kế Phẳng & Chống Rối Rắm (Anti-Bloat & Flat UI Manifesto 2026)
+
+Áp dụng **BẮT BUỘC** cho mọi màn hình, form nhập liệu, modal, drawer và toolbar trong toàn hệ thống. Mọi Agent khi lập kế hoạch (`/plan`), tạo mã (`/create`) hay rà soát (`/audit`) đều phải tuân thủ nghiêm ngặt:
+
+### 21.1 Cấm Lồng Ghép Khung Hộp Rời Rạc (No Nested Box Bloat)
+- **Tuyệt đối CẤM** bọc các cụm control nhỏ lẻ (như bộ tăng giảm stepper, cụm radio, cụm preset, nút chọn nhanh) bằng nhiều ô bo góc rời rạc lồi lõm với nền xám.
+- **Bộ tăng giảm Stepper:** Phải là một khối phẳng liền mạch duy nhất (`inline-flex items-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-0.5`).
+- **Phân tách section:** Dùng đường kẻ mảnh hairline phẳng (`border-t border-slate-100 dark:border-slate-800` hoặc `divide-y divide-slate-100`) thay vì nhồi nhét nhiều thẻ Card xám lồng nhau.
+
+### 21.2 Hạn Chế Nền Xám Dày (No Heavy Grey Backgrounds)
+- Nền toàn trang, card, modal, drawer giữ trắng sáng thanh thoát (`bg-white`, `bg-slate-50/50`).
+- Tuyệt đối không dùng các mảng `bg-slate-100`, `bg-slate-200` to dày làm rãnh nền bao bọc các nhóm nhập liệu.
+
+### 21.3 Dọn Sạch Chữ Thừa & Helper Text Rườm Rà (No Redundant Helper Text)
+- **Không nhồi nhét ghi chú dài dòng:** Nếu placeholder hoặc nhãn (label) đã rõ nghĩa, tuyệt đối không chèn thêm các dòng helper text giải thích dài dưới từng ô input.
+- **Không lặp lại trạng thái:** Nếu Header của modal/drawer đã có `StatusBadge`, cấm hiển thị thêm cụm `Trạng thái: [ Bản nháp ]` ở Footer.
+- **Phân cách thông số nhẹ nhàng:** Dùng dấu chấm `·` phẳng (hoặc ngoặc đơn mảnh) thay vì các khối tag xám hay gạch nối dài rối mắt (VD: `Toán cao cấp · 40 câu · 60 phút`).
+
+### 21.4 Tối Giản Nút Bấm & Chống Giật Layout (Button Minimalism & No Layout Shift)
+- **Tối đa 1 Primary CTA duy nhất:** Trong mỗi modal, form hoặc toolbar, chỉ có duy nhất 1 nút chính `variant="primary"` (`bg-blue-600 text-white`). Các nút còn lại bắt buộc dùng `variant="secondary"` hoặc `ghost`.
+- **Chống giãn nở khi Loading (Zero Layout Shift):** Khi nút chuyển sang trạng thái `isLoading`, nhãn chữ phải giữ nguyên hoặc dùng chiều rộng cố định (`min-w-[120px]`), spinner xoay chính giữa. Tuyệt đối không đổi sang chuỗi text dài hơn (như đổi từ *"Tạo đề thi"* thành *"Đang sinh đề..."*) làm nút bị phình to hoặc giật màn hình.
+
+### 21.5 Cấm Đóng Khung Badge Tùy Tiện (Badge Minimalism)
+- Badge/Pill chỉ dành riêng cho **Trạng thái vòng đời** (`StatusBadge`) hoặc **Mã kỹ thuật** (`IdentifierBadge`).
+- Cấm đóng khung badge cho: tên môn, ngày giờ, số câu, điểm số, học vị, dải mã xem trước `(101 – 103)` hay nhãn chức năng.
+

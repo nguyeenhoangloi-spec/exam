@@ -314,6 +314,13 @@ export default function RegradeManagementPage() {
           rejected={counts.rejected}
         />
 
+        {/* ── 4. Status Filter TabBar ── */}
+        <TabBar
+          tabs={tabs}
+          active={statusTab}
+          onChange={(key) => { setStatusTab(key); setPage(1); }}
+        />
+
         {/* ── 3. Search & Action Toolbar Row (Single Unified Row) ── */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
           {/* Left: Unified Search Bar with Embedded SlidersHorizontal Popover */}
@@ -393,13 +400,6 @@ export default function RegradeManagementPage() {
             />
           </div>
         </div>
-
-        {/* ── 4. Status Filter TabBar ── */}
-        <TabBar
-          tabs={tabs}
-          active={statusTab}
-          onChange={(key) => { setStatusTab(key); setPage(1); }}
-        />
 
         {/* ── 5. Main Data Table Container ── */}
         <div>

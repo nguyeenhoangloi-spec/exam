@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { AlertTriangle, Lock, ShieldAlert, KeyRound, X, Eye, EyeOff } from 'lucide-react';
+import { AlertTriangle, Lock, ShieldAlert, KeyRound, X, Eye, EyeOff, Check } from 'lucide-react';
 import { FilterSelect } from './ui/FilterSelect';
 import { Button } from './ui/Button';
 import { getUserErrorMessage } from '../lib/error-message';
@@ -107,10 +107,6 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
   const isReasonValid = Boolean(
     selectedReason !== 'Lý do khác' ? selectedReason.trim() : customReason.trim(),
   );
-  const isExamPasswordValid = examPasswordRequired
-    ? examPassword.trim().length >= 4
-    : true;
-  const isPasswordValid = passwordRequired ? password.trim().length > 0 : true;
 
   const handleQuickFillPhrase = () => {
     setInputPhrase(confirmPhrase);
@@ -131,13 +127,13 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
       return;
     }
 
-    if (passwordRequired && !isPasswordValid) {
+    if (passwordRequired && (!password || password.trim().length === 0)) {
       setErrorMsg('Vui lòng nhập mật khẩu tài khoản Admin để xác thực thao tác.');
       return;
     }
 
     if (examPasswordRequired && examPassword.trim().length < 4) {
-      setErrorMsg('Vui lòng nhập mật khẩu thi chính thức (tối thiểu 4 ký tự) ở mục 5.');
+      setErrorMsg('Vui lòng nhập mật khẩu thi chính thức (tối thiểu 4 ký tự).');
       return;
     }
 
@@ -190,13 +186,13 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
-          <div className="p-6 overflow-y-auto space-y-4 flex-1 bg-white dark:bg-slate-900">
+          <div className="p-5 sm:p-6 overflow-y-auto space-y-3.5 flex-1 bg-white dark:bg-slate-900">
             {/* Warning Callout Banner */}
-            <div className="rounded-xl bg-rose-50/80 border border-rose-200 dark:bg-rose-950/30 dark:border-rose-900/50 p-3.5 flex items-start gap-3">
+            <div className="rounded-xl bg-rose-50/70 border border-rose-200/80 dark:bg-rose-950/30 dark:border-rose-900/50 p-3 flex items-start gap-2.5">
               <AlertTriangle className="h-4 w-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
               <div className="text-type-helper text-rose-900 dark:text-rose-200 space-y-0.5">
                 <p className="font-semibold text-rose-700 dark:text-rose-300">Cảnh báo hậu quả:</p>
-                <p className="leading-relaxed font-medium">{warningMessage}</p>
+                <p className="leading-relaxed font-normal">{warningMessage}</p>
               </div>
             </div>
 
@@ -207,7 +203,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             )}
 
             {/* 1. Reason Select */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">
                 Lý do thực hiện thao tác <span className="text-rose-500">*</span>
               </label>
@@ -215,7 +211,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                 containerClassName="w-full"
                 value={selectedReason}
                 onChange={(e) => setSelectedReason(e.target.value)}
-                className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none bg-slate-50/50 dark:bg-slate-800/70 cursor-pointer transition shadow-2xs"
+                className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-700 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none bg-slate-50/50 dark:bg-slate-800/70 cursor-pointer transition shadow-2xs"
               >
                 {reasons.map((r) => (
                   <option key={r} value={r}>
@@ -230,39 +226,40 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                   required
                   value={customReason}
                   onChange={(e) => setCustomReason(e.target.value)}
-                  className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition shadow-2xs"
+                  className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-700 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition shadow-2xs mt-1.5"
                 />
               )}
             </div>
 
-            {/* 2. Note Textarea */}
-            <div className="space-y-1.5">
+            {/* 2. Note Input (compact 1 line) */}
+            <div className="space-y-1">
               <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">
                 Ghi chú chi tiết <span className="text-type-helper text-slate-400 font-normal">(Tùy chọn)</span>
               </label>
-              <textarea
-                rows={2}
-                placeholder="Nhập bổ sung văn bản chỉ đạo, số quyết định hoặc thông tin liên quan..."
+              <input
+                type="text"
+                placeholder="Văn bản chỉ đạo, số quyết định hoặc thông tin liên quan..."
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition bg-white dark:bg-slate-900 placeholder:text-slate-400"
+                className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-700 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 focus:!border-rose-500 focus:outline-none transition bg-white dark:bg-slate-900 placeholder:text-slate-400 shadow-2xs"
               />
             </div>
 
             {/* 3. Confirm Phrase */}
-            <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <label className="block text-type-body font-medium text-slate-700 dark:text-slate-300">
                   Nhập cụm từ xác nhận <span className="text-rose-500">*</span>
                 </label>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-type-helper font-medium text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-800/60 px-2 py-0.5 ui-pill rounded-full">
+                <div className="flex items-center gap-1.5 text-type-helper">
+                  <span className="font-semibold text-rose-600 dark:text-rose-400 tracking-wide">
                     {targetPhrase}
                   </span>
+                  <span className="text-slate-300 dark:text-slate-600">·</span>
                   <button
                     type="button"
                     onClick={handleQuickFillPhrase}
-                    className="text-type-helper font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 px-2 py-0.5 rounded-xl transition cursor-pointer"
+                    className="font-medium text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
                     title="Tự động điền cụm từ xác nhận"
                   >
                     Điền nhanh
@@ -280,62 +277,54 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                   onChange={(e) => setInputPhrase(e.target.value)}
                   className={`w-full h-10 rounded-xl border px-3.5 text-type-body font-medium focus:outline-none transition shadow-2xs ${
                     isPhraseMatched
-                      ? 'border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-200 focus:!border-emerald-500 pr-24 font-semibold'
-                      : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:!border-rose-500'
+                      ? 'border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-200 focus:!border-emerald-500 pr-10 font-semibold'
+                      : 'border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:!border-rose-500'
                   }`}
                 />
                 {isPhraseMatched && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-emerald-600 dark:text-emerald-400 bg-emerald-100/80 dark:bg-emerald-900/50 px-2 py-0.5 rounded-md text-type-helper font-semibold">
-                    <span>Đã khớp</span>
-                    <span>✓</span>
+                  <div className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center text-emerald-600 dark:text-emerald-400" title="Đã khớp chính xác">
+                    <Check className="h-4 w-4 stroke-[2.5]" />
                   </div>
                 )}
               </div>
             </div>
 
-            {/* 4. Account Password */}
-            <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <div className="flex items-center justify-between">
+            {/* 4. Account Password (chỉ hiển thị khi bắt buộc) */}
+            {passwordRequired && (
+              <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
                 <label className="text-type-body font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                   <KeyRound className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Mật khẩu tài khoản của bạn {passwordRequired && <span className="text-rose-500">*</span>}</span>
+                  <span>Mật khẩu tài khoản Admin <span className="text-rose-500">*</span></span>
                 </label>
-                {!passwordRequired && (
-                  <span className="text-type-helper text-slate-400 font-normal">(Tùy chọn nếu đã đăng nhập)</span>
-                )}
+                <input
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  placeholder="Nhập mật khẩu tài khoản của bạn để xác thực"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-700 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 focus:!border-rose-500 focus:outline-none transition shadow-2xs"
+                />
               </div>
-              <input
-                type="password"
-                required={passwordRequired}
-                autoComplete="current-password"
-                placeholder={passwordRequired ? 'Nhập mật khẩu Admin hiện tại' : 'Mật khẩu tài khoản (tùy chọn)'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 px-3.5 text-type-body font-normal text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 focus:!border-rose-500 focus:outline-none transition shadow-2xs"
-              />
-            </div>
+            )}
 
             {/* 5. Exam Password (if required) */}
             {examPasswordRequired && (
-              <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <div className="flex items-center justify-between">
-                  <label className="text-type-body font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Mật khẩu thi chính thức <span className="text-rose-500">*</span></span>
-                  </label>
-                  <span className="text-type-helper font-medium text-blue-700 dark:text-blue-300 px-2.5 py-0.5 ui-pill rounded-full border border-blue-200/60 dark:border-blue-800/60">
-                    Thí sinh dùng khi mở đề
-                  </span>
-                </div>
+              <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <label className="text-type-body font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5 flex-wrap">
+                  <Lock className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Mật khẩu thi chính thức <span className="text-rose-500">*</span></span>
+                  <span className="text-type-helper text-slate-400 font-normal">(Thí sinh dùng khi mở đề)</span>
+                </label>
                 <div className="relative">
                   <input
                     type={showExamPassword ? 'text' : 'password'}
                     autoComplete="off"
                     required
-                    placeholder="Nhập mật khẩu thi (tối thiểu 4 ký tự)"
+                    placeholder="Nhập mật khẩu ca thi (tối thiểu 4 ký tự)"
                     value={examPassword}
                     onChange={(e) => setExamPassword(e.target.value)}
-                    className="w-full h-10 rounded-xl border border-slate-200 dark:border-slate-700 px-3.5 pr-10 text-type-body font-normal text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 focus:!border-rose-500 focus:outline-none shadow-2xs transition"
+                    className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-700 px-3.5 pr-10 text-type-body font-normal text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 focus:!border-rose-500 focus:outline-none shadow-2xs transition"
                   />
                   <button
                     type="button"
@@ -346,9 +335,6 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                     {showExamPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
-                <p className="text-type-helper text-slate-500 dark:text-slate-400 leading-relaxed">
-                  Mật khẩu này dùng cho thí sinh mở đề khi vào phòng thi. Hệ thống tự động mã hóa bảo mật (bcrypt).
-                </p>
               </div>
             )}
           </div>
@@ -369,6 +355,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
               variant="danger"
               size="md"
               isLoading={loading}
+              className="min-w-[120px]"
               leftIcon={<ShieldAlert className="w-4 h-4" />}
             >
               {actionButtonText}

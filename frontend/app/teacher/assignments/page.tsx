@@ -476,7 +476,23 @@ export default function TeacherAssignmentsPage() {
           ))}
         </div>
 
-        {/* ── 3. Search & Action Toolbar ── */}
+        {/* ── Status TabBar ── */}
+        <TabBar
+          tabs={[
+            { key: 'ALL', label: 'Tất cả ca thi', count: statusCounts.all },
+            { key: 'CONFIRMED', label: 'Đã xác nhận', count: statusCounts.confirmed },
+            { key: 'PENDING', label: 'Chờ xác nhận', count: statusCounts.pending },
+            ...(statusCounts.changeRequested > 0 ? [{ key: 'CHANGE_REQUESTED', label: 'Xin đổi ca', count: statusCounts.changeRequested }] : []),
+            ...(statusCounts.expired > 0 ? [{ key: 'EXPIRED', label: 'Quá hạn', count: statusCounts.expired }] : []),
+          ]}
+          active={filterStatus}
+          onChange={(key) => {
+            setFilterStatus(key);
+            setPage(1);
+          }}
+        />
+
+        {/* ── Search & Action Toolbar ── */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           {/* Left: Search input */}
           <div className="flex items-center gap-2 flex-1 max-w-md">
@@ -553,22 +569,6 @@ export default function TeacherAssignmentsPage() {
             />
           </div>
         </div>
-
-        {/* ── 4. Status TabBar ── */}
-        <TabBar
-          tabs={[
-            { key: 'ALL', label: 'Tất cả ca thi', count: statusCounts.all },
-            { key: 'CONFIRMED', label: 'Đã xác nhận', count: statusCounts.confirmed },
-            { key: 'PENDING', label: 'Chờ xác nhận', count: statusCounts.pending },
-            ...(statusCounts.changeRequested > 0 ? [{ key: 'CHANGE_REQUESTED', label: 'Xin đổi ca', count: statusCounts.changeRequested }] : []),
-            ...(statusCounts.expired > 0 ? [{ key: 'EXPIRED', label: 'Quá hạn', count: statusCounts.expired }] : []),
-          ]}
-          active={filterStatus}
-          onChange={(key) => {
-            setFilterStatus(key);
-            setPage(1);
-          }}
-        />
 
         {/* ── 5. Assignments Content (Calendar View hoặc List Table View) ── */}
         {loading ? (

@@ -130,23 +130,23 @@ export function ExamPaperExportModal({
             <span className="text-type-body font-medium text-slate-800 dark:text-slate-200">
               Số lượng mã đề
             </span>
-            <div className="flex items-center gap-1.5">
+            <div className="inline-flex items-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-0.5">
               <button
                 type="button"
                 onClick={() => setVariantCount(Math.max(1, count - 1))}
                 disabled={count <= 1}
-                className="h-8 w-8 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer flex items-center justify-center text-type-body-sm"
+                className="h-7 w-7 rounded-xl text-slate-700 dark:text-slate-300 font-semibold hover:bg-white dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer flex items-center justify-center text-type-body-sm"
               >
                 −
               </button>
-              <div className="h-8 min-w-[3.5rem] px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-center text-type-body font-semibold text-blue-600 dark:text-blue-400 shadow-2xs">
+              <span className="min-w-[3rem] px-2 text-center text-type-body font-semibold text-blue-600 dark:text-blue-400">
                 {count} / {maxAvailableVariants}
-              </div>
+              </span>
               <button
                 type="button"
                 onClick={() => setVariantCount(Math.min(maxAvailableVariants, count + 1))}
                 disabled={count >= maxAvailableVariants}
-                className="h-8 w-8 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer flex items-center justify-center text-type-body-sm"
+                className="h-7 w-7 rounded-xl text-slate-700 dark:text-slate-300 font-semibold hover:bg-white dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer flex items-center justify-center text-type-body-sm"
               >
                 +
               </button>
@@ -164,10 +164,10 @@ export function ExamPaperExportModal({
                 value={startCode}
                 onChange={(e) => setStartCode(e.target.value)}
                 placeholder="101"
-                className="w-20 h-8 text-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-type-body font-semibold focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                className="w-16 h-8 text-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-type-body font-semibold focus:border-blue-500 focus:outline-none transition"
               />
-              <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-xl">
-                Dải mã: <strong className="font-semibold text-blue-600 dark:text-blue-400">{codeRangeLabel}</strong>
+              <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">
+                (Dải mã: <span className="font-semibold text-blue-600 dark:text-blue-400">{codeRangeLabel}</span>)
               </span>
             </div>
           </div>

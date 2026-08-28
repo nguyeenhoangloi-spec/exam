@@ -572,7 +572,23 @@ export default function StudentResultsPage() {
           })}
         </div>
 
-        {/* ── 3. Search & Action Toolbar Row (Single Unified Row) ── */}
+        {/* ── Status TabBar ── */}
+        <TabBar
+          tabs={[
+            { key: 'ALL', label: 'Tất cả kết quả', count: statusCounts.all },
+            { key: 'PASSED', label: 'Đạt', count: statusCounts.passed },
+            { key: 'FAILED', label: 'Chưa đạt', count: statusCounts.failed },
+            { key: 'GRADING', label: 'Đang chấm', count: statusCounts.grading },
+            ...(statusCounts.unpublished > 0 ? [{ key: 'UNPUBLISHED', label: 'Chờ công bố', count: statusCounts.unpublished }] : []),
+          ]}
+          active={filterStatus}
+          onChange={(key) => {
+            setFilterStatus(key);
+            setPage(1);
+          }}
+        />
+
+        {/* ── Search & Action Toolbar Row (Single Unified Row) ── */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           {/* Left: Unified Search Bar with Embedded SlidersHorizontal Popover */}
           <div className="relative flex-1 max-w-xl min-w-[240px]">
@@ -669,22 +685,6 @@ export default function StudentResultsPage() {
             />
           </div>
         </div>
-
-        {/* ── 4. Status TabBar ── */}
-        <TabBar
-          tabs={[
-            { key: 'ALL', label: 'Tất cả kết quả', count: statusCounts.all },
-            { key: 'PASSED', label: 'Đạt', count: statusCounts.passed },
-            { key: 'FAILED', label: 'Chưa đạt', count: statusCounts.failed },
-            { key: 'GRADING', label: 'Đang chấm', count: statusCounts.grading },
-            ...(statusCounts.unpublished > 0 ? [{ key: 'UNPUBLISHED', label: 'Chờ công bố', count: statusCounts.unpublished }] : []),
-          ]}
-          active={filterStatus}
-          onChange={(key) => {
-            setFilterStatus(key);
-            setPage(1);
-          }}
-        />
 
         {/* ── 5. Standard Content (List / Grid / Compact) ── */}
         {loading ? (

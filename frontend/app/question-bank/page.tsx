@@ -349,8 +349,24 @@ export default function QuestionBankPage() {
           onExport={exportCsv}
         />
 
+        {/* Status TabBar */}
+        <TabBar
+          tabs={[
+            { key: '', label: 'Tất cả câu hỏi', count: counts.total ?? counts.all ?? 0 },
+            { key: 'DRAFT', label: 'Bản nháp', count: counts.DRAFT ?? counts.draft ?? 0 },
+            { key: 'PENDING', label: 'Chờ duyệt', count: counts.PENDING ?? counts.pending ?? 0 },
+            { key: 'APPROVED', label: 'Đã duyệt', count: counts.APPROVED ?? counts.approved ?? 0 },
+            { key: 'REJECTED', label: 'Bị từ chối', count: counts.REJECTED ?? counts.rejected ?? 0 },
+          ]}
+          active={filterValues.status}
+          onChange={(key) => {
+            setFilterValues({ ...filterValues, status: key });
+            setPage(1);
+          }}
+        />
+
         {/* Search & Action Toolbar Row (Single Horizontal Unified Row) */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           {/* Left: Unified Search Bar with Embedded ListFilter Popover (Cách 1) */}
           <div className="relative flex-1 max-w-xl">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
@@ -420,22 +436,6 @@ export default function QuestionBankPage() {
             />
           </div>
         </div>
-
-        {/* Status TabBar */}
-        <TabBar
-          tabs={[
-            { key: '', label: 'Tất cả câu hỏi', count: counts.total ?? counts.all ?? 0 },
-            { key: 'DRAFT', label: 'Bản nháp', count: counts.DRAFT ?? counts.draft ?? 0 },
-            { key: 'PENDING', label: 'Chờ duyệt', count: counts.PENDING ?? counts.pending ?? 0 },
-            { key: 'APPROVED', label: 'Đã duyệt', count: counts.APPROVED ?? counts.approved ?? 0 },
-            { key: 'REJECTED', label: 'Bị từ chối', count: counts.REJECTED ?? counts.rejected ?? 0 },
-          ]}
-          active={filterValues.status}
-          onChange={(key) => {
-            setFilterValues({ ...filterValues, status: key });
-            setPage(1);
-          }}
-        />
 
         {/* Floating Bulk Action Bar when items selected */}
         {(() => {
