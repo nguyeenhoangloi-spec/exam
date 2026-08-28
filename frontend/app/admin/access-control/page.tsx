@@ -685,12 +685,16 @@ export default function AccessControlPage() {
   const accountContext = (user: AccessUser) => {
     if (user.role === 'STUDENT') {
       const studentClass = user.student?.class;
+      const deptName = studentClass?.department?.name;
+      const deptLabel = deptName ? (deptName.startsWith('Khoa') || deptName.startsWith('Viện') ? deptName : `Khoa ${deptName}`) : '';
       return studentClass
-        ? `Lớp ${studentClass.name}${studentClass.department?.name ? ` · ${studentClass.department.name}` : ''}`
+        ? `Lớp ${studentClass.name}${deptLabel ? ` · ${deptLabel}` : ''}`
         : 'Chưa có lớp/khoa trong hồ sơ';
     }
     if (user.role === 'TEACHER') {
-      return user.teacher?.department?.name ? `Khoa ${user.teacher.department.name}` : 'Chưa gán khoa';
+      const deptName = user.teacher?.department?.name;
+      if (!deptName) return 'Chưa gán khoa';
+      return deptName.startsWith('Khoa') || deptName.startsWith('Viện') ? deptName : `Khoa ${deptName}`;
     }
     return 'Toàn quyền hệ thống';
   };
@@ -960,230 +964,229 @@ export default function AccessControlPage() {
         </div>
       ) : (
         <>
-            {/* ══════════ TAB 1: MA TRẬN QUYỀN THEO VAI TRÒ ══════════ */}
-            {tab === 'matrix' && (
-              <section className="space-y-5">
-                {/* Search & Filter Toolbar (Single Unified Row with Embedded SlidersHorizontal Popover) */}
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 py-1">
-                  {/* Left: Unified Search Bar with Embedded SlidersHorizontal Popover */}
-                  <div className="relative flex-1 max-w-xl min-w-[240px]">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                    <input
-                      ref={matrixSearchInputRef}
-                      type="text"
-                      placeholder="Tìm theo tên chức năng, mã quyền..."
-                      value={matrixSearch}
-                      onChange={(e) => setMatrixSearch(e.target.value)}
-                      className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+          {/* ══════════ TAB 1: MA TRẬN QUYỀN THEO VAI TRÒ ══════════ */}
+          {tab === 'matrix' && (
+            <section className="space-y-5">
+              {/* Search & Filter Toolbar (Single Unified Row with Embedded SlidersHorizontal Popover) */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 py-1">
+                {/* Left: Unified Search Bar with Embedded SlidersHorizontal Popover */}
+                <div className="relative flex-1 max-w-xl min-w-[240px]">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                  <input
+                    ref={matrixSearchInputRef}
+                    type="text"
+                    placeholder="Tìm theo tên chức năng, mã quyền..."
+                    value={matrixSearch}
+                    onChange={(e) => setMatrixSearch(e.target.value)}
+                    className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+                  />
+
+                  {/* Embedded actions on right edge of search input */}
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                    {matrixSearch ? (
+                      <button
+                        type="button"
+                        onClick={() => setMatrixSearch('')}
+                        className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer p-0.5"
+                        title="Xóa tìm kiếm"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    ) : (
+                      <kbd
+                        className="hidden sm:inline-flex h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
+                        onClick={() => matrixSearchInputRef.current?.focus()}
+                        title="Nhấn phím / để tìm nhanh"
+                      >
+                        /
+                      </kbd>
+                    )}
+
+                    <div className="h-3.5 w-px bg-slate-200 dark:bg-slate-700" />
+
+                    <PermissionFilterPopover
+                      moduleFilter={matrixModuleFilter}
+                      onModuleFilterChange={setMatrixModuleFilter}
+                      onlySensitive={onlySensitive}
+                      onOnlySensitiveChange={setOnlySensitive}
+                      availableModules={availableModules}
+                      permissions={permissions}
+                      totalFilteredCount={filteredPermissions.length}
+                      totalCount={permissions.length}
+                      onResetAll={() => {
+                        setMatrixSearch('');
+                        setMatrixModuleFilter('ALL');
+                        setOnlySensitive(false);
+                      }}
                     />
-
-                    {/* Embedded actions on right edge of search input */}
-                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
-                      {matrixSearch ? (
-                        <button
-                          type="button"
-                          onClick={() => setMatrixSearch('')}
-                          className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer p-0.5"
-                          title="Xóa tìm kiếm"
-                        >
-                          <X className="h-3.5 w-3.5" />
-                        </button>
-                      ) : (
-                        <kbd
-                          className="hidden sm:inline-flex h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
-                          onClick={() => matrixSearchInputRef.current?.focus()}
-                          title="Nhấn phím / để tìm nhanh"
-                        >
-                          /
-                        </kbd>
-                      )}
-
-                      <div className="h-3.5 w-px bg-slate-200 dark:bg-slate-700" />
-
-                      <PermissionFilterPopover
-                        moduleFilter={matrixModuleFilter}
-                        onModuleFilterChange={setMatrixModuleFilter}
-                        onlySensitive={onlySensitive}
-                        onOnlySensitiveChange={setOnlySensitive}
-                        availableModules={availableModules}
-                        permissions={permissions}
-                        totalFilteredCount={filteredPermissions.length}
-                        totalCount={permissions.length}
-                        onResetAll={() => {
-                          setMatrixSearch('');
-                          setMatrixModuleFilter('ALL');
-                          setOnlySensitive(false);
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Right side: Active Filters summary badge / result count & Refresh button (Không viền) */}
-                  <div className="flex items-center gap-2">
-                    {matrixModuleFilter !== 'ALL' && (
-                      <span className="ui-pill inline-flex h-[26px] items-center gap-1.5 rounded-full border border-blue-300 dark:border-blue-700 bg-transparent px-2.5 py-0 text-type-helper font-medium text-blue-700 dark:text-blue-400 select-none">
-                        <span>Nhóm: {matrixModuleFilter}</span>
-                        <button
-                          type="button"
-                          onClick={() => setMatrixModuleFilter('ALL')}
-                          className="appearance-none border-0 bg-transparent p-0 m-0 text-blue-600 hover:text-blue-900 transition cursor-pointer inline-flex items-center shrink-0"
-                          title="Gỡ bộ lọc"
-                        >
-                          <X className="h-3 w-3 shrink-0" />
-                        </button>
-                      </span>
-                    )}
-                    {onlySensitive && (
-                      <span className="ui-pill inline-flex h-[26px] items-center gap-1.5 rounded-full border border-amber-400 dark:border-amber-600 bg-transparent px-2.5 py-0 text-type-helper font-medium text-amber-700 dark:text-amber-400 select-none">
-                        <LockKeyhole className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
-                        <span>Chỉ nhạy cảm</span>
-                        <button
-                          type="button"
-                          onClick={() => setOnlySensitive(false)}
-                          className="appearance-none border-0 bg-transparent p-0 m-0 text-amber-700 hover:text-amber-950 transition cursor-pointer inline-flex items-center shrink-0"
-                          title="Gỡ bộ lọc"
-                        >
-                          <X className="h-3 w-3 shrink-0" />
-                        </button>
-                      </span>
-                    )}
-                    <span className="table-meta text-slate-400 font-normal shrink-0 tabular-nums text-type-helper">
-                      Hiển thị <strong className="font-semibold text-slate-700 dark:text-slate-300">{filteredPermissions.length}</strong>/{permissions.length} quyền
-                    </span>
                   </div>
                 </div>
 
-                {/* Matrix Table (6 Cột Rõ Ràng + Checkbox Tick Chuẩn Xác) */}
-                <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/60 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
-                  <table className="ui-table min-w-[900px] w-full text-left border-collapse">
-                    <thead className="bg-slate-50/70 text-type-body-sm font-medium text-slate-600 dark:bg-slate-850/50 dark:text-slate-300 border-b border-slate-100 dark:border-slate-800">
+                {/* Right side: Active Filters summary badge / result count & Refresh button (Không viền) */}
+                <div className="flex items-center gap-2">
+                  {matrixModuleFilter !== 'ALL' && (
+                    <span className="ui-pill inline-flex h-[26px] items-center gap-1.5 rounded-full border border-blue-300 dark:border-blue-700 bg-transparent px-2.5 py-0 text-type-helper font-medium text-blue-700 dark:text-blue-400 select-none">
+                      <span>Nhóm: {matrixModuleFilter}</span>
+                      <button
+                        type="button"
+                        onClick={() => setMatrixModuleFilter('ALL')}
+                        className="appearance-none border-0 bg-transparent p-0 m-0 text-blue-600 hover:text-blue-900 transition cursor-pointer inline-flex items-center shrink-0"
+                        title="Gỡ bộ lọc"
+                      >
+                        <X className="h-3 w-3 shrink-0" />
+                      </button>
+                    </span>
+                  )}
+                  {onlySensitive && (
+                    <span className="ui-pill inline-flex h-[26px] items-center gap-1.5 rounded-full border border-amber-400 dark:border-amber-600 bg-transparent px-2.5 py-0 text-type-helper font-medium text-amber-700 dark:text-amber-400 select-none">
+                      <LockKeyhole className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                      <span>Chỉ nhạy cảm</span>
+                      <button
+                        type="button"
+                        onClick={() => setOnlySensitive(false)}
+                        className="appearance-none border-0 bg-transparent p-0 m-0 text-amber-700 hover:text-amber-950 transition cursor-pointer inline-flex items-center shrink-0"
+                        title="Gỡ bộ lọc"
+                      >
+                        <X className="h-3 w-3 shrink-0" />
+                      </button>
+                    </span>
+                  )}
+                  <span className="table-meta text-slate-400 font-normal shrink-0 tabular-nums text-type-helper">
+                    Hiển thị <strong className="font-semibold text-slate-700 dark:text-slate-300">{filteredPermissions.length}</strong>/{permissions.length} quyền
+                  </span>
+                </div>
+              </div>
+
+              {/* Matrix Table (6 Cột Rõ Ràng + Checkbox Tick Chuẩn Xác) */}
+              <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/60 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
+                <table className="ui-table min-w-[900px] w-full text-left border-collapse">
+                  <thead className="bg-slate-50/70 text-type-body-sm font-medium text-slate-600 dark:bg-slate-850/50 dark:text-slate-300 border-b border-slate-100 dark:border-slate-800">
+                    <tr>
+                      <th className="px-5 py-3.5 w-[38%]">
+                        <span className="font-semibold text-slate-900 dark:text-slate-100">Chức năng</span>
+                      </th>
+                      <th className="px-4 py-3.5 w-[14%] font-medium">Nhóm</th>
+                      <th className="px-4 py-3.5 w-[18%] font-medium">Mã định danh</th>
+                      {(['ADMIN', 'TEACHER', 'STUDENT'] as Role[]).map((role) => {
+                        const grantedCount = roleGrantedCounts[role];
+                        return (
+                          <th key={role} className="px-4 py-3.5 text-center w-[10%]">
+                            <div className="flex flex-col items-center gap-0.5">
+                              <span className="font-semibold text-slate-900 dark:text-slate-100">
+                                {ROLE_LABEL[role]}
+                              </span>
+                              <span className="table-meta text-slate-400 font-normal tabular-nums">
+                                {grantedCount}/{permissions.length}
+                              </span>
+                            </div>
+                          </th>
+                        );
+                      })}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                    {Object.keys(groupedPermissions).length === 0 ? (
                       <tr>
-                        <th className="px-5 py-3.5 w-[38%]">
-                          <span className="font-semibold text-slate-900 dark:text-slate-100">Chức năng</span>
-                        </th>
-                        <th className="px-4 py-3.5 w-[14%] font-medium">Nhóm</th>
-                        <th className="px-4 py-3.5 w-[18%] font-medium">Mã định danh</th>
-                        {(['ADMIN', 'TEACHER', 'STUDENT'] as Role[]).map((role) => {
-                          const grantedCount = roleGrantedCounts[role];
-                          return (
-                            <th key={role} className="px-4 py-3.5 text-center w-[10%]">
-                              <div className="flex flex-col items-center gap-0.5">
-                                <span className="font-semibold text-slate-900 dark:text-slate-100">
-                                  {ROLE_LABEL[role]}
-                                </span>
-                                <span className="table-meta text-slate-400 font-normal tabular-nums">
-                                  {grantedCount}/{permissions.length}
+                        <td
+                          colSpan={6}
+                          className="px-5 py-12 text-center table-meta text-slate-400 font-normal"
+                        >
+                          Không có quyền nào phù hợp.
+                        </td>
+                      </tr>
+                    ) : (
+                      Object.entries(groupedPermissions).map(([module, items]) => (
+                        <React.Fragment key={module}>
+                          {/* Module Header Bar (Thanh nhóm phẳng, thanh lịch) */}
+                          <tr className="border-y border-slate-100 bg-slate-50/60 dark:border-slate-800 dark:bg-slate-800/30">
+                            <td colSpan={6} className="px-5 py-2.5 table-meta font-medium text-blue-700 dark:text-blue-400">
+                              <div className="flex items-center gap-2">
+                                <span className="h-3.5 w-1 rounded-full bg-blue-600" />
+                                <span className="font-semibold">{module}</span>
+                                <span className="font-normal text-slate-400">
+                                  ({items.length} quyền)
                                 </span>
                               </div>
-                            </th>
-                          );
-                        })}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
-                      {Object.keys(groupedPermissions).length === 0 ? (
-                        <tr>
-                          <td
-                            colSpan={6}
-                            className="px-5 py-12 text-center table-meta text-slate-400 font-normal"
-                          >
-                            Không có quyền nào phù hợp.
-                          </td>
-                        </tr>
-                      ) : (
-                        Object.entries(groupedPermissions).map(([module, items]) => (
-                          <React.Fragment key={module}>
-                            {/* Module Header Bar (Thanh nhóm phẳng, thanh lịch) */}
-                            <tr className="border-y border-slate-100 bg-slate-50/60 dark:border-slate-800 dark:bg-slate-800/30">
-                              <td colSpan={6} className="px-5 py-2.5 table-meta font-medium text-blue-700 dark:text-blue-400">
+                            </td>
+                          </tr>
+
+                          {/* Permission Rows */}
+                          {items.map((permission) => (
+                            <tr
+                              key={permission.code}
+                              className="hover:bg-slate-50/60 dark:hover:bg-slate-850/50 transition-colors"
+                            >
+                              <td className="px-5 py-3">
                                 <div className="flex items-center gap-2">
-                                  <span className="h-3.5 w-1 rounded-full bg-blue-600" />
-                                  <span className="font-semibold">{module}</span>
-                                  <span className="font-normal text-slate-400">
-                                    ({items.length} quyền)
+                                  <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
+                                    {permission.name}
                                   </span>
+                                  {permission.sensitive && (
+                                    <span className="table-badge ui-pill inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-amber-400 dark:border-amber-600 bg-transparent text-type-helper font-medium text-amber-700 dark:text-amber-400">
+                                      <LockKeyhole className="h-3 w-3" />
+                                      Nhạy cảm
+                                    </span>
+                                  )}
                                 </div>
                               </td>
-                            </tr>
+                              <td className="px-4 py-3 table-meta text-slate-700 dark:text-slate-300 font-normal">
+                                {permission.module}
+                              </td>
+                              <td className="px-4 py-3 table-meta text-slate-400 font-normal tabular-nums">
+                                {permission.code}
+                              </td>
+                              {(['ADMIN', 'TEACHER', 'STUDENT'] as Role[]).map((role) => {
+                                const enabled = permission.roles.includes(role);
+                                const isLockedAdmin =
+                                  role === 'ADMIN' &&
+                                  ['ACCESS_CONTROL_VIEW', 'ACCESS_CONTROL_MANAGE'].includes(
+                                    permission.code
+                                  );
 
-                            {/* Permission Rows */}
-                            {items.map((permission) => (
-                              <tr
-                                key={permission.code}
-                                className="hover:bg-slate-50/60 dark:hover:bg-slate-850/50 transition-colors"
-                              >
-                                <td className="px-5 py-3">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
-                                      {permission.name}
-                                    </span>
-                                    {permission.sensitive && (
-                                      <span className="table-badge ui-pill inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-amber-400 dark:border-amber-600 bg-transparent text-type-helper font-medium text-amber-700 dark:text-amber-400">
-                                        <LockKeyhole className="h-3 w-3" />
-                                        Nhạy cảm
-                                      </span>
-                                    )}
-                                  </div>
-                                </td>
-                                <td className="px-4 py-3 table-meta text-slate-700 dark:text-slate-300 font-normal">
-                                  {permission.module}
-                                </td>
-                                <td className="px-4 py-3 table-meta text-slate-400 font-normal tabular-nums">
-                                  {permission.code}
-                                </td>
-                                {(['ADMIN', 'TEACHER', 'STUDENT'] as Role[]).map((role) => {
-                                  const enabled = permission.roles.includes(role);
-                                  const isLockedAdmin =
-                                    role === 'ADMIN' &&
-                                    ['ACCESS_CONTROL_VIEW', 'ACCESS_CONTROL_MANAGE'].includes(
-                                      permission.code
-                                    );
-
-                                  return (
-                                    <td key={role} className="px-4 py-3 text-center">
-                                      <button
-                                        type="button"
-                                        disabled={saving || isLockedAdmin}
-                                        onClick={() =>
-                                          requestRolePermission(role, permission)
-                                        }
-                                        aria-pressed={enabled}
-                                        title={
-                                          isLockedAdmin
-                                            ? 'Quyền quản trị cốt lõi không thể thu hồi'
-                                            : `${enabled ? 'Thu hồi' : 'Cấp'} quyền ${permission.name}`
-                                        }
-                                        className="inline-flex items-center justify-center p-1.5 rounded-xl hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors cursor-pointer disabled:cursor-not-allowed group"
-                                      >
-                                        <div
-                                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-all ${
-                                            isLockedAdmin
-                                              ? 'border-slate-200 bg-slate-100 text-slate-400 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-500'
-                                              : enabled
+                                return (
+                                  <td key={role} className="px-4 py-3 text-center">
+                                    <button
+                                      type="button"
+                                      disabled={saving || isLockedAdmin}
+                                      onClick={() =>
+                                        requestRolePermission(role, permission)
+                                      }
+                                      aria-pressed={enabled}
+                                      title={
+                                        isLockedAdmin
+                                          ? 'Quyền quản trị cốt lõi không thể thu hồi'
+                                          : `${enabled ? 'Thu hồi' : 'Cấp'} quyền ${permission.name}`
+                                      }
+                                      className="inline-flex items-center justify-center p-1.5 rounded-xl hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors cursor-pointer disabled:cursor-not-allowed group"
+                                    >
+                                      <div
+                                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-all ${isLockedAdmin
+                                            ? 'border-slate-200 bg-slate-100 text-slate-400 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-500'
+                                            : enabled
                                               ? 'border-blue-600 bg-blue-600 text-white shadow-2xs group-hover:bg-blue-700 group-hover:border-blue-700'
                                               : 'border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900 group-hover:border-slate-400 dark:group-hover:border-slate-600'
                                           }`}
-                                        >
-                                          {isLockedAdmin ? (
-                                            <LockKeyhole className="h-3 w-3" />
-                                          ) : enabled ? (
-                                            <Check className="h-3.5 w-3.5 stroke-[3]" />
-                                          ) : null}
-                                        </div>
-                                      </button>
-                                    </td>
-                                  );
-                                })}
-                              </tr>
-                            ))}
-                          </React.Fragment>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </section>
-            )}
+                                      >
+                                        {isLockedAdmin ? (
+                                          <LockKeyhole className="h-3 w-3" />
+                                        ) : enabled ? (
+                                          <Check className="h-3.5 w-3.5 stroke-[3]" />
+                                        ) : null}
+                                      </div>
+                                    </button>
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          ))}
+                        </React.Fragment>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
 
           {/* ══════════ TAB 2: TÀI KHOẢN & PHẠM VI TRUY CẬP ══════════ */}
           {tab === 'users' && (
@@ -1273,11 +1276,10 @@ export default function AccessControlPage() {
                             key={user.id}
                             type="button"
                             onClick={() => setSelectedUserId(user.id)}
-                            className={`w-full rounded-xl px-3 py-2.5 text-left transition cursor-pointer ${
-                              isSelected
+                            className={`w-full rounded-xl px-3 py-2.5 text-left transition cursor-pointer ${isSelected
                                 ? 'bg-slate-100/90 dark:bg-slate-800/90 text-slate-900 dark:text-white ring-1 ring-slate-200 dark:ring-slate-700'
                                 : 'hover:bg-slate-50 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-200'
-                            }`}
+                              }`}
                           >
                             <div className="flex items-center justify-between gap-2">
                               <span className={`truncate text-type-body-sm ${isSelected ? 'font-semibold text-slate-950 dark:text-white' : 'font-medium text-slate-900 dark:text-slate-100'}`}>
@@ -1357,7 +1359,7 @@ export default function AccessControlPage() {
                                 variant="primary"
                                 size="sm"
                                 onClick={saveScopes}
-                                disabled={saving || scopeReason.trim().length < 5}
+                                disabled={saving}
                               >
                                 Lưu phạm vi
                               </Button>
@@ -1365,32 +1367,27 @@ export default function AccessControlPage() {
                           </div>
                         </div>
 
-                        {/* Sub-Tab Navigation Bar - Chỉ hiển thị khi vai trò TEACHER cần phân công nhiều chế độ */}
+                        {/* Sub-Tab Navigation Bar - Dùng TabBar dạng segmented (Capsule trượt nền xám) để phân cấp rõ ràng với Tab cấp 1 */}
                         {selectedUser.role === 'TEACHER' && (
-                          <div className="pt-2">
-                            <SlidingSegmentedControl<'scopes' | 'overrides' | 'effective'>
-                              value={userStudioTab}
-                              onChange={(val) => setUserStudioTab(val)}
-                              variant="default"
-                              size="md"
-                              className="shadow-xs"
-                              options={[
+                          <div className="pt-1">
+                            <TabBar<'scopes' | 'overrides' | 'effective'>
+                              active={userStudioTab}
+                              onChange={(key) => setUserStudioTab(key)}
+                              variant="segmented"
+                              tabs={[
                                 {
-                                  value: 'scopes',
+                                  key: 'scopes',
                                   label: 'Phạm vi dữ liệu',
-                                  icon: Building2,
                                   count: draftScopes.length,
                                 },
                                 {
-                                  value: 'overrides',
+                                  key: 'overrides',
                                   label: 'Quyền riêng cá nhân',
-                                  icon: Sparkles,
                                   count: selectedUser.permissionOverrides.length,
                                 },
                                 {
-                                  value: 'effective',
+                                  key: 'effective',
                                   label: 'Quyền hiệu lực',
-                                  icon: ShieldCheck,
                                   count: effective?.permissions?.filter((item: any) => item.allowed).length || 0,
                                 },
                               ]}
@@ -1474,19 +1471,6 @@ export default function AccessControlPage() {
                           <>
                             {userStudioTab === 'scopes' && (
                               <div className="space-y-4">
-                                <label className="block">
-                                  <span className="mb-1.5 block text-type-helper font-medium text-slate-700 dark:text-slate-300">
-                                    Lý do thay đổi phạm vi
-                                  </span>
-                                  <input
-                                    type="text"
-                                    value={scopeReason}
-                                    onChange={(event) => setScopeReason(event.target.value)}
-                                    maxLength={500}
-                                    placeholder="Ví dụ: Phân công phụ trách khoa và học phần trong học kỳ II"
-                                    className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                                  />
-                                </label>
                                 <ScopeManagerStudio
                                   departments={scopeOptions.departments || []}
                                   classes={scopeOptions.classes || []}
