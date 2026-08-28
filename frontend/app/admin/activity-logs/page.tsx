@@ -528,6 +528,27 @@ function ActivityLogsContent() {
         }
     }, [secPage, secLimit, secSearch, secCategory, secOutcome]);
 
+    // Tải trước số lượng tổng cho cả 2 tab ngay khi trang khởi tạo
+    useEffect(() => {
+        const fetchInitialCounts = async () => {
+            try {
+                const [auditRes, secRes] = await Promise.allSettled([
+                    api.get('/audit-logs', { params: { page: 1, limit: 1 } }),
+                    api.get('/security-audit/events', { params: { page: 1, limit: 1 } }),
+                ]);
+                if (auditRes.status === 'fulfilled') {
+                    setTotalCount(Number(auditRes.value.data?.total) || 0);
+                }
+                if (secRes.status === 'fulfilled') {
+                    setSecTotal(Number(secRes.value.data?.total) || 0);
+                }
+            } catch {
+                // Ignore silent prefetch failures
+            }
+        };
+        void fetchInitialCounts();
+    }, []);
+
     useEffect(() => {
         if (activeTab === 'security') {
             void loadSecurityAudit();
