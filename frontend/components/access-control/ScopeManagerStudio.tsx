@@ -123,7 +123,7 @@ export function ScopeManagerStudio({
       },
       {
         type: 'SUBJECT',
-        label: 'Học phần & Môn',
+        label: 'Môn học',
         count: draftScopes.filter((s) => s.type === 'SUBJECT').length,
         total: subjects.length,
       },

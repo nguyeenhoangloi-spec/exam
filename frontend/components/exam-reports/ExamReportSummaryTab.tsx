@@ -15,6 +15,7 @@ import {
   History,
   Search,
   Settings2,
+  Trash2,
   Users,
   X,
 } from 'lucide-react';
@@ -251,6 +252,37 @@ export function ExamReportSummaryTab({
       setHistory([]);
     }
   }, []);
+
+  const clearHistory = () => {
+    try {
+      localStorage.removeItem(HISTORY_KEY);
+      setHistory([]);
+      setHistoryPage(1);
+      setNotice({ type: 'success', message: 'Đã xóa toàn bộ lịch sử xuất báo cáo trên thiết bị.' });
+    } catch {
+      // ignore
+    }
+  };
+
+  const deleteHistoryItem = (id: string) => {
+    try {
+      const next = history.filter((item) => item.id !== id);
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+      setHistory(next);
+      setNotice({ type: 'success', message: 'Đã xóa bản ghi lịch sử.' });
+    } catch {
+      // ignore
+    }
+  };
+
+  const reopenHistoryItem = (item: HistoryItem) => {
+    setType(item.type);
+    setTitle(item.title);
+    setPreview(null);
+    setColumns([]);
+    setTab('builder');
+    setNotice({ type: 'success', message: `Đã nạp cấu hình "${item.title}". Nhấn "Xem trước báo cáo" để tạo dữ liệu mới nhất.` });
+  };
 
   const requestFilters = useMemo(
     () =>
@@ -575,85 +607,89 @@ export function ExamReportSummaryTab({
             }`}
           >
             {/* Lớp bọc bên trong có kích thước cố định, chống bóp méo text và tràn shadow khi thu phóng */}
-            <div className="w-[320px] 2xl:w-[340px] p-5 flex flex-col justify-between min-h-full space-y-4 shrink-0">
-              <div className="space-y-4">
-                <div>
-                  <h2 className="text-type-section font-semibold text-slate-900 dark:text-white">
+            <div className="w-[320px] 2xl:w-[340px] flex flex-col justify-between min-h-full shrink-0">
+              <div className="flex flex-col space-y-4">
+                {/* Header Cột Trái: Cùng padding top pt-4 để thẳng hàng với Cột Phải */}
+                <div className="px-5 pt-4 pb-0 shrink-0">
+                  <h2 className="text-type-section font-semibold text-slate-900 dark:text-white truncate leading-6">
                     Cấu hình báo cáo
                   </h2>
-                  <p className="mt-0.5 text-type-helper text-slate-500 dark:text-slate-400">
-                    Chọn phạm vi dữ liệu để xem trước và xuất file
+                  <p className="text-type-helper text-slate-400 font-normal truncate mt-0.5 leading-5">
+                    Chọn phạm vi dữ liệu để xem trước
                   </p>
                 </div>
 
-                <Select
-                  label="Loại báo cáo"
-                  value={type}
-                  onChange={(v) => {
-                    setType(v);
-                    setPreview(null);
-                    setColumns([]);
-                  }}
-                  options={catalog.map((i) => ({ value: i.type, label: i.name }))}
-                  all={false}
-                />
+                {/* Form fields */}
+                <div className="px-5 space-y-4">
+                  <Select
+                    label="Loại báo cáo"
+                    value={type}
+                    onChange={(v) => {
+                      setType(v);
+                      setPreview(null);
+                      setColumns([]);
+                    }}
+                    options={catalog.map((i) => ({ value: i.type, label: i.name }))}
+                    all={false}
+                  />
 
-                <label className="block">
-                  <span className="mb-1.5 block text-type-body font-medium text-slate-900 dark:text-slate-100">
-                    Tiêu đề báo cáo
-                  </span>
-                  <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder={catalog.find((i) => i.type === type)?.name}
-                    className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:border-blue-500 transition shadow-2xs"
-                  />
-                </label>
+                  <label className="block">
+                    <span className="mb-1.5 block text-type-body font-medium text-slate-900 dark:text-slate-100">
+                      Tiêu đề báo cáo
+                    </span>
+                    <input
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder={catalog.find((i) => i.type === type)?.name}
+                      className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:border-blue-500 transition shadow-2xs"
+                    />
+                  </label>
 
-                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-                  <Select
-                    label="Kỳ thi"
-                    value={filters.examPeriodId}
-                    onChange={(v) => setFilters((f) => ({ ...f, examPeriodId: v }))}
-                    options={summary?.options.periods.map((i) => ({ value: String(i.id), label: i.name })) || []}
-                  />
-                  <Select
-                    label="Môn học"
-                    value={filters.subjectId}
-                    onChange={(v) => setFilters((f) => ({ ...f, subjectId: v }))}
-                    options={
-                      summary?.options.subjects.map((i) => ({ value: String(i.id), label: `[${i.code}] ${i.name}` })) || []
-                    }
-                  />
-                  <Select
-                    label="Khoa"
-                    value={filters.departmentId}
-                    onChange={(v) => setFilters((f) => ({ ...f, departmentId: v }))}
-                    options={summary?.options.departments.map((i) => ({ value: String(i.id), label: i.name })) || []}
-                  />
-                  <Select
-                    label="Lớp học"
-                    value={filters.classId}
-                    onChange={(v) => setFilters((f) => ({ ...f, classId: v }))}
-                    options={summary?.options.classes.map((i) => ({ value: String(i.id), label: i.name })) || []}
-                  />
-                </div>
+                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                    <Select
+                      label="Kỳ thi"
+                      value={filters.examPeriodId}
+                      onChange={(v) => setFilters((f) => ({ ...f, examPeriodId: v }))}
+                      options={summary?.options.periods.map((i) => ({ value: String(i.id), label: i.name })) || []}
+                    />
+                    <Select
+                      label="Môn học"
+                      value={filters.subjectId}
+                      onChange={(v) => setFilters((f) => ({ ...f, subjectId: v }))}
+                      options={
+                        summary?.options.subjects.map((i) => ({ value: String(i.id), label: `[${i.code}] ${i.name}` })) || []
+                      }
+                    />
+                    <Select
+                      label="Khoa"
+                      value={filters.departmentId}
+                      onChange={(v) => setFilters((f) => ({ ...f, departmentId: v }))}
+                      options={summary?.options.departments.map((i) => ({ value: String(i.id), label: i.name })) || []}
+                    />
+                    <Select
+                      label="Lớp học"
+                      value={filters.classId}
+                      onChange={(v) => setFilters((f) => ({ ...f, classId: v }))}
+                      options={summary?.options.classes.map((i) => ({ value: String(i.id), label: i.name })) || []}
+                    />
+                  </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <DateInput
-                    label="Từ ngày"
-                    value={filters.fromDate}
-                    onChange={(v) => setFilters((f) => ({ ...f, fromDate: v }))}
-                  />
-                  <DateInput
-                    label="Đến ngày"
-                    value={filters.toDate}
-                    onChange={(v) => setFilters((f) => ({ ...f, toDate: v }))}
-                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <DateInput
+                      label="Từ ngày"
+                      value={filters.fromDate}
+                      onChange={(v) => setFilters((f) => ({ ...f, fromDate: v }))}
+                    />
+                    <DateInput
+                      label="Đến ngày"
+                      value={filters.toDate}
+                      onChange={(v) => setFilters((f) => ({ ...f, toDate: v }))}
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-2">
+              <div className="p-5 pt-4">
                 <Button
                   type="button"
                   variant="primary"
@@ -669,14 +705,14 @@ export function ExamReportSummaryTab({
           </aside>
 
           {/* CỘT PHẢI: Bảng xem trước dữ liệu (Dính liền trong khung) */}
-          <div className="flex-1 min-w-0 flex flex-col divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
-            {/* Header Toolbar phẳng nền trắng tinh gọn */}
-            <div className="flex flex-wrap justify-between items-center gap-3 px-5 py-3.5 bg-white dark:bg-slate-900 shrink-0">
+          <div className="flex-1 min-w-0 flex flex-col bg-white dark:bg-slate-900">
+            {/* Header Toolbar phẳng nền trắng tinh gọn không đường cắt dưới */}
+            <div className="flex flex-wrap justify-between items-center gap-3 px-5 py-4 bg-white dark:bg-slate-900 shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
                 <button
                   type="button"
                   onClick={() => setCollapseConfig(!collapseConfig)}
-                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0"
+                  className="p-1 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0"
                   title={collapseConfig ? 'Mở rộng cột cấu hình' : 'Thu gọn cột cấu hình'}
                 >
                   <ChevronLeft
@@ -687,7 +723,7 @@ export function ExamReportSummaryTab({
                 </button>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h2 className="text-type-section font-semibold text-slate-900 dark:text-white truncate">
+                    <h2 className="text-type-section font-semibold text-slate-900 dark:text-white truncate leading-6">
                       {preview?.title || 'Bản xem trước dữ liệu'}
                     </h2>
                     {preview && (
@@ -696,7 +732,7 @@ export function ExamReportSummaryTab({
                       </span>
                     )}
                   </div>
-                  <p className="text-type-helper text-slate-400 font-normal truncate mt-0.5">
+                  <p className="text-type-helper text-slate-400 font-normal truncate mt-0.5 leading-5">
                     {preview
                       ? `Tạo lúc ${new Date(preview.generatedAt).toLocaleString('vi-VN')} | Đang xuất ${columns.length}/${preview.columns.length} cột`
                       : 'Thiết lập cấu hình bên trái rồi nhấn Xem trước báo cáo'}
@@ -897,36 +933,50 @@ export function ExamReportSummaryTab({
         </div>
       )}
 
-      {/* ── TAB 3: LỊCH SỬ XUẤT BÁO CÁO (Chuẩn Bảng & Phân trang như /exam-rooms) ── */}
+      {/* ── TAB 3: LỊCH SỬ XUẤT BÁO CÁO (Phẳng Liền Mạch Không Đường Cắt Dưới) ── */}
       {tab === 'history' && (
-        <div className="space-y-4">
-          {/* Header Thông tin */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h2 className="text-type-section font-semibold text-slate-900 dark:text-white">
-                Lịch sử xuất báo cáo trên thiết bị
-              </h2>
-              <p className="mt-0.5 text-type-helper text-slate-500 dark:text-slate-400">
-                Các thao tác xuất file chính thức đồng thời được lưu lại trong nhật ký kiểm toán hệ thống
+        <div className="w-full rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden flex flex-col">
+          {/* Header Toolbar bên trong khung (Không đường cắt dưới) */}
+          <div className="flex flex-wrap justify-between items-center gap-3 px-5 py-4 bg-white dark:bg-slate-900 shrink-0">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h2 className="text-type-section font-semibold text-slate-900 dark:text-white truncate">
+                  Lịch sử xuất báo cáo trên thiết bị
+                </h2>
+                {history.length > 0 && (
+                  <span className="text-type-helper text-slate-400 font-normal tabular-nums shrink-0">
+                    ({history.length} bản ghi)
+                  </span>
+                )}
+              </div>
+              <p className="text-type-helper text-slate-400 font-normal truncate mt-0.5">
+                Nhật ký các thao tác xuất file chính thức được lưu trên trình duyệt này
               </p>
             </div>
+
             {history.length > 0 && (
-              <span className="text-type-helper text-slate-400 font-normal tabular-nums">
-                Tổng cộng {history.length} bản ghi
-              </span>
+              <button
+                type="button"
+                onClick={clearHistory}
+                className="text-type-helper font-medium text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors inline-flex items-center gap-1.5 cursor-pointer py-1"
+                title="Xóa toàn bộ lịch sử lưu trên máy này"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>Dọn dẹp lịch sử</span>
+              </button>
             )}
           </div>
 
-          {/* Bảng Dữ liệu Phẳng Chuẩn Hệ Thống (y hệt /exam-rooms) */}
-          <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+          {/* Bảng Dữ liệu Phẳng */}
+          <div className="w-full overflow-x-auto flex-1">
             <table className="ui-table w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/50 text-type-body-sm font-medium text-slate-600 dark:text-slate-400">
-                  <th className="py-3.5 px-5">Tiêu đề báo cáo</th>
-                  <th className="py-3.5 px-5">Loại báo cáo</th>
+                  <th className="py-3.5 px-5">Tên báo cáo</th>
                   <th className="py-3.5 px-5 text-center">Định dạng</th>
                   <th className="py-3.5 px-5 text-center">Số bản ghi</th>
                   <th className="py-3.5 px-5 text-right">Thời gian xuất</th>
+                  <th className="py-3.5 px-5 text-right">Thao tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
@@ -935,24 +985,58 @@ export function ExamReportSummaryTab({
                     key={item.id}
                     className="hover:bg-slate-50/80 dark:hover:bg-slate-850/60 transition-colors"
                   >
-                    <td className="py-4 px-5">
-                      <span className="font-semibold text-type-body text-slate-900 dark:text-slate-100">
-                        {item.title}
-                      </span>
+                    <td className="py-3.5 px-5">
+                      <div>
+                        <span className="font-semibold text-type-body text-slate-900 dark:text-slate-100">
+                          {item.title}
+                        </span>
+                        <p className="table-meta text-type-helper text-slate-400 font-normal mt-0.5">
+                          {catalog.find((c) => c.type === item.type)?.name || item.type}
+                        </p>
+                      </div>
                     </td>
-                    <td className="py-4 px-5 text-type-body text-slate-600 dark:text-slate-300">
-                      {catalog.find((c) => c.type === item.type)?.name || item.type}
-                    </td>
-                    <td className="py-4 px-5 text-center whitespace-nowrap">
-                      <span className="table-badge inline-flex items-center px-2.5 py-0.5 rounded-full ui-pill text-type-helper font-medium bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800">
+                    <td className="py-3.5 px-5 text-center whitespace-nowrap">
+                      <span
+                        className={`table-badge inline-flex items-center px-2.5 py-0.5 rounded-full ui-pill text-type-helper font-medium ${
+                          item.format === 'XLSX'
+                            ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800'
+                            : 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800'
+                        }`}
+                      >
                         {item.format}
                       </span>
                     </td>
-                    <td className="py-4 px-5 text-center whitespace-nowrap text-type-body tabular-nums text-slate-700 dark:text-slate-300">
+                    <td className="py-3.5 px-5 text-center whitespace-nowrap text-type-body tabular-nums text-slate-700 dark:text-slate-300">
                       {item.totalRows}
                     </td>
-                    <td className="py-4 px-5 text-right whitespace-nowrap text-type-body tabular-nums text-slate-500 dark:text-slate-400">
-                      {new Date(item.createdAt).toLocaleString('vi-VN')}
+                    <td className="py-3.5 px-5 text-right whitespace-nowrap tabular-nums">
+                      <div className="text-type-body font-medium text-slate-800 dark:text-slate-200">
+                        {new Date(item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                      </div>
+                      <div className="table-meta text-type-helper text-slate-400 font-normal">
+                        {new Date(item.createdAt).toLocaleDateString('vi-VN')}
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-5 text-right whitespace-nowrap">
+                      <div className="inline-flex items-center justify-end gap-3">
+                        <button
+                          type="button"
+                          onClick={() => reopenHistoryItem(item)}
+                          className="table-meta text-type-helper font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors cursor-pointer inline-flex items-center gap-1"
+                          title="Nạp lại cấu hình này sang Tab Tạo báo cáo"
+                        >
+                          <ArrowUpRight className="h-3.5 w-3.5" />
+                          <span>Mở lại</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deleteHistoryItem(item.id)}
+                          className="table-meta text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer"
+                          title="Xóa bản ghi này"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -967,21 +1051,23 @@ export function ExamReportSummaryTab({
             )}
           </div>
 
-          {/* Thanh phân trang PaginationBar nằm bên dưới bảng (y hệt /exam-rooms) */}
+          {/* Thanh phân trang PaginationBar nằm bên trong đáy khung */}
           {history.length > 0 && (
-            <PaginationBar
-              page={historyPage}
-              totalPages={Math.ceil(history.length / historyLimit) || 1}
-              limit={historyLimit}
-              totalItems={history.length}
-              unit="báo cáo"
-              onPage={(p) => setHistoryPage(p)}
-              onLimit={(l) => {
-                setHistoryLimit(l);
-                setHistoryPage(1);
-              }}
-              limitOptions={[10, 20, 50]}
-            />
+            <div className="px-4 py-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40">
+              <PaginationBar
+                page={historyPage}
+                totalPages={Math.ceil(history.length / historyLimit) || 1}
+                limit={historyLimit}
+                totalItems={history.length}
+                unit="báo cáo"
+                onPage={(p) => setHistoryPage(p)}
+                onLimit={(l) => {
+                  setHistoryLimit(l);
+                  setHistoryPage(1);
+                }}
+                limitOptions={[10, 20, 50]}
+              />
+            </div>
           )}
         </div>
       )}
