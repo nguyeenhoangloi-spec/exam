@@ -26,6 +26,8 @@ import {
   BarChart3,
   FileCheck2,
   Cpu,
+  ArrowRight,
+  SlidersHorizontal,
 } from 'lucide-react';
 import api from '../../../lib/api';
 import { invalidateCache } from '../../../lib/api-cache';
@@ -45,6 +47,7 @@ import { ScopeTagPicker } from '../../../components/access-control/ScopeTagPicke
 import { ScopeManagerStudio } from '../../../components/access-control/ScopeManagerStudio';
 import { PermissionSimulatorModal } from '../../../components/access-control/PermissionSimulatorModal';
 import { PermissionFilterPopover } from '../../../components/access-control/PermissionFilterPopover';
+import { UserRoleFilterPopover } from '../../../components/access-control/UserRoleFilterPopover';
 import { AccessHistoryFilterPopover, AccessHistoryFilterState } from '../../../components/access-control/AccessHistoryFilterPopover';
 
 type Role = 'ADMIN' | 'TEACHER' | 'STUDENT';
@@ -1187,7 +1190,7 @@ export default function AccessControlPage() {
             <section className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
               <div className="grid grid-cols-1 xl:grid-cols-[340px_minmax(0,1fr)] xl:divide-x divide-slate-200/90 dark:divide-slate-800">
                 {/* Left Column: User Master List */}
-                <div className="flex flex-col bg-slate-50/40 dark:bg-slate-900/40 h-full">
+                <div className="flex flex-col bg-white dark:bg-slate-900 h-full">
                   <div className="border-b border-slate-200/80 p-4 dark:border-slate-800 space-y-3 bg-white dark:bg-slate-900">
                     <div className="flex items-center justify-between">
                       <h2 className="text-type-card font-semibold text-slate-900 dark:text-white">
@@ -1198,68 +1201,62 @@ export default function AccessControlPage() {
                       </span>
                     </div>
 
-                    {/* Search box & Refresh */}
-                    <div className="flex items-center gap-1.5">
-                      <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
-                        <input
-                          type="text"
-                          placeholder="Tìm tài khoản, họ tên, email..."
-                          value={userSearch}
-                          onChange={(e) => setUserSearch(e.target.value)}
-                          className="h-9 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-8 pr-8 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
-                        />
+                    {/* Search box with standard SlidersHorizontal embedded filter icon */}
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                      <input
+                        type="text"
+                        placeholder="Tìm tài khoản, họ tên, email..."
+                        value={userSearch}
+                        onChange={(e) => setUserSearch(e.target.value)}
+                        className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-9 pr-16 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+                      />
+
+                      {/* Embedded controls on the right */}
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
                         {userSearch && (
                           <button
                             type="button"
                             onClick={() => setUserSearch('')}
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                            className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                            title="Xóa tìm kiếm"
                           >
                             <X className="h-3.5 w-3.5" />
                           </button>
                         )}
+
+                        <div className="h-3.5 w-px bg-slate-200 dark:bg-slate-700" />
+
+                        <UserRoleFilterPopover
+                          userRoleFilter={userRoleFilter}
+                          onUserRoleFilterChange={setUserRoleFilter}
+                          users={users}
+                          totalCount={users.length}
+                          filteredCount={filteredUsers.length}
+                          onResetAll={() => setUserRoleFilter('ALL')}
+                        />
                       </div>
                     </div>
 
-                    {/* Role filter Capsule Chips - Không dùng icon, có badge đếm số lượng, tự động cuộn vào giữa khi chọn */}
-                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar scroll-smooth">
-                      {[
-                        { key: 'ALL', label: 'Tất cả', count: users.length },
-                        { key: 'TEACHER', label: 'Giảng viên', count: users.filter((u) => u.role === 'TEACHER').length },
-                        { key: 'ADMIN', label: 'Quản trị', count: users.filter((u) => u.role === 'ADMIN').length },
-                        { key: 'STUDENT', label: 'Sinh viên', count: users.filter((u) => u.role === 'STUDENT').length },
-                      ].map((item) => {
-                        const isActive = userRoleFilter === item.key;
-                        return (
+                    {/* Active filter summary tag if filtered */}
+                    {userRoleFilter !== 'ALL' && (
+                      <div className="flex items-center gap-1.5 pt-0.5">
+                        <span className="ui-pill inline-flex h-[24px] items-center gap-1.5 rounded-full border border-blue-300 dark:border-blue-700 bg-transparent px-2 py-0 text-type-helper font-medium text-blue-700 dark:text-blue-300 select-none">
+                          <span>Vai trò: {ROLE_LABEL[userRoleFilter as Role]}</span>
                           <button
-                            key={item.key}
-                            ref={(el) => {
-                              roleChipRefs.current[item.key] = el;
-                            }}
                             type="button"
-                            onClick={() => handleSelectRoleFilter(item.key)}
-                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-type-helper font-semibold transition-all duration-200 shrink-0 cursor-pointer ${isActive
-                              ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/25 scale-[1.02]'
-                              : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700/80'
-                              }`}
-                            title={`${item.label} (${item.count})`}
+                            onClick={() => setUserRoleFilter('ALL')}
+                            className="appearance-none border-0 bg-transparent p-0 m-0 text-blue-600 hover:text-blue-900 transition cursor-pointer inline-flex items-center shrink-0"
+                            title="Bỏ lọc"
                           >
-                            <span>{item.label}</span>
-                            <span
-                              className={`ui-pill px-1.5 py-0.2 rounded-full text-type-helper font-medium ${isActive
-                                ? 'ui-pill-solid bg-white/20 text-white'
-                                : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
-                                }`}
-                            >
-                              {item.count}
-                            </span>
+                            <X className="h-3 w-3 shrink-0" />
                           </button>
-                        );
-                      })}
-                    </div>
+                        </span>
+                      </div>
+                    )}
                   </div>
 
-                  {/* User List Items */}
+                  {/* User List Items - Phẳng, thanh lịch, không màu mè rối rắm */}
                   <div className="overflow-y-auto p-2 space-y-1 flex-1 max-h-[640px] custom-scrollbar">
                     {filteredUsers.length === 0 ? (
                       <p className="py-8 text-center table-meta text-slate-400 font-normal">
@@ -1276,23 +1273,24 @@ export default function AccessControlPage() {
                             key={user.id}
                             type="button"
                             onClick={() => setSelectedUserId(user.id)}
-                            className={`w-full rounded-xl px-3 py-2.5 text-left transition cursor-pointer ${isSelected
-                              ? 'bg-blue-50/90 text-blue-900 border-l-4 border-blue-600 dark:bg-blue-950/60 dark:text-blue-200 shadow-2xs'
-                              : 'hover:bg-slate-100/70 dark:hover:bg-slate-800/70 border-l-4 border-transparent'
-                              }`}
+                            className={`w-full rounded-xl px-3 py-2.5 text-left transition cursor-pointer ${
+                              isSelected
+                                ? 'bg-slate-100/90 dark:bg-slate-800/90 text-slate-900 dark:text-white ring-1 ring-slate-200 dark:ring-slate-700'
+                                : 'hover:bg-slate-50 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-200'
+                            }`}
                           >
                             <div className="flex items-center justify-between gap-2">
-                              <span className="truncate text-type-body font-semibold">
+                              <span className={`truncate text-type-body-sm ${isSelected ? 'font-semibold text-slate-950 dark:text-white' : 'font-medium text-slate-900 dark:text-slate-100'}`}>
                                 {displayName(user)}
                               </span>
-                              <span className="table-meta text-slate-400 font-normal shrink-0">
+                              <span className="text-type-helper text-slate-400 font-normal shrink-0">
                                 {ROLE_LABEL[user.role]}
                               </span>
                             </div>
 
-                            <div className="mt-1 flex items-center justify-between table-meta text-slate-500 font-normal">
+                            <div className="mt-0.5 flex items-center justify-between text-type-helper text-slate-400 font-normal">
                               <span className="truncate">{user.username}</span>
-                              <div className="flex items-center gap-1 shrink-0">
+                              <div className="flex items-center gap-1.5 shrink-0">
                                 {hasOverrides && (
                                   <span
                                     className="h-1.5 w-1.5 rounded-full bg-amber-500"
@@ -1318,12 +1316,12 @@ export default function AccessControlPage() {
                 <div className="flex flex-col bg-white dark:bg-slate-900 min-h-[640px]">
                   {selectedUser ? (
                     <>
-                      {/* User Profile Header Bar */}
-                      <div className="border-b border-slate-200/80 dark:border-slate-800 p-4 space-y-4">
+                      {/* User Profile Header Bar - Nhẹ nhàng, phẳng, mềm mại */}
+                      <div className="border-b border-slate-100 dark:border-slate-800 p-4 space-y-3">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                           {/* User Identity Info */}
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="h-11 w-11 shrink-0 rounded-2xl bg-blue-600/10 dark:bg-blue-400/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-semibold text-type-body border border-blue-200/60 dark:border-blue-800/60">
+                            <div className="h-10 w-10 shrink-0 rounded-full bg-blue-600/10 dark:bg-blue-400/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-semibold text-type-body border border-blue-200/50 dark:border-blue-800/50">
                               {displayName(selectedUser).charAt(0).toUpperCase()}
                             </div>
                             <div className="min-w-0 space-y-0.5">
@@ -1343,15 +1341,17 @@ export default function AccessControlPage() {
 
                           {/* Top Right Actions */}
                           <div className="flex items-center gap-2 shrink-0">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={resetUserAccess}
-                              disabled={saving}
-                              leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
-                            >
-                              Khôi phục mặc định
-                            </Button>
+                            {(selectedUser.permissionOverrides.length > 0 || selectedUser.accessScopes.length > 0) && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={resetUserAccess}
+                                disabled={saving}
+                                leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
+                              >
+                                Khôi phục mặc định
+                              </Button>
+                            )}
                             {userStudioTab === 'scopes' && selectedUser.role === 'TEACHER' && (
                               <Button
                                 variant="primary"
@@ -1365,233 +1365,60 @@ export default function AccessControlPage() {
                           </div>
                         </div>
 
-                        {/* Sub-Tab Navigation Bar with SlidingSegmentedControl */}
-                        <div className="border-t border-slate-100 dark:border-slate-800 pt-3">
-                          <SlidingSegmentedControl<'scopes' | 'overrides' | 'effective'>
-                            value={userStudioTab}
-                            onChange={(val) => setUserStudioTab(val)}
-                            variant="default"
-                            size="md"
-                            className="shadow-xs"
-                            options={[
-                              {
-                                value: 'scopes',
-                                label: 'Phạm vi dữ liệu',
-                                icon: Building2,
-                                count: draftScopes.length,
-                              },
-                              {
-                                value: 'overrides',
-                                label: 'Quyền riêng cá nhân',
-                                icon: Sparkles,
-                                count: selectedUser.permissionOverrides.length,
-                              },
-                              {
-                                value: 'effective',
-                                label: 'Quyền hiệu lực',
-                                icon: ShieldCheck,
-                                count: effective?.permissions?.filter((item: any) => item.allowed).length || 0,
-                              },
-                            ]}
-                          />
-                        </div>
+                        {/* Sub-Tab Navigation Bar - Chỉ hiển thị khi vai trò TEACHER cần phân công nhiều chế độ */}
+                        {selectedUser.role === 'TEACHER' && (
+                          <div className="pt-2">
+                            <SlidingSegmentedControl<'scopes' | 'overrides' | 'effective'>
+                              value={userStudioTab}
+                              onChange={(val) => setUserStudioTab(val)}
+                              variant="default"
+                              size="md"
+                              className="shadow-xs"
+                              options={[
+                                {
+                                  value: 'scopes',
+                                  label: 'Phạm vi dữ liệu',
+                                  icon: Building2,
+                                  count: draftScopes.length,
+                                },
+                                {
+                                  value: 'overrides',
+                                  label: 'Quyền riêng cá nhân',
+                                  icon: Sparkles,
+                                  count: selectedUser.permissionOverrides.length,
+                                },
+                                {
+                                  value: 'effective',
+                                  label: 'Quyền hiệu lực',
+                                  icon: ShieldCheck,
+                                  count: effective?.permissions?.filter((item: any) => item.allowed).length || 0,
+                                },
+                              ]}
+                            />
+                          </div>
+                        )}
                       </div>
 
                       {/* Sub-Tab Body Container */}
                       <div className="p-4 flex-1">
-                        {/* Sub-Tab Content 1: Manual data scope for teachers */}
-                        {userStudioTab === 'scopes' && (
-                          selectedUser.role === 'TEACHER' ? (
-                            <div className="space-y-4">
-                              <label className="block">
-                                <span className="mb-1.5 block text-type-helper font-medium text-slate-700 dark:text-slate-300">
-                                  Lý do thay đổi phạm vi
-                                </span>
-                                <input
-                                  type="text"
-                                  value={scopeReason}
-                                  onChange={(event) => setScopeReason(event.target.value)}
-                                  maxLength={500}
-                                  placeholder="Ví dụ: Phân công phụ trách khoa và học phần trong học kỳ II"
-                                  className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                                />
-                              </label>
-                              <ScopeManagerStudio
-                                departments={scopeOptions.departments || []}
-                                classes={scopeOptions.classes || []}
-                                subjects={scopeOptions.subjects || []}
-                                draftScopes={draftScopes}
-                                onScopesChange={setDraftScopes}
-                                onSave={saveScopes}
-                                saving={saving}
-                              />
-                            </div>
-                          ) : (
-                            <div className="rounded-2xl border border-blue-200 bg-blue-50/70 p-5 dark:border-blue-900/70 dark:bg-blue-950/30">
-                              <div className="flex items-start gap-3">
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white">
-                                  {selectedUser.role === 'STUDENT' ? <GraduationCap className="h-5 w-5" /> : <ShieldCheck className="h-5 w-5" />}
-                                </div>
-                                <div className="min-w-0">
-                                  <h3 className="text-type-card font-semibold text-blue-950 dark:text-blue-100">
-                                    {selectedUser.role === 'STUDENT' ? 'Phạm vi sinh viên được xác định tự động' : 'Quản trị viên có toàn quyền'}
-                                  </h3>
-                                  <p className="mt-1 text-type-body text-blue-900/80 dark:text-blue-200/80">
-                                    {selectedUser.role === 'STUDENT'
-                                      ? `Tài khoản này sử dụng dữ liệu theo hồ sơ ${accountContext(selectedUser)}. Danh sách Khoa/Lớp/Môn dùng chung không phải là các khoa sinh viên đang thuộc.`
-                                      : 'Không cần gán thủ công Khoa, Lớp hoặc Môn học cho tài khoản quản trị viên.'}
-                                  </p>
-                                  {selectedUser.role === 'STUDENT' && selectedUser.accessScopes.length > 0 && (
-                                    <p className="mt-3 text-type-helper font-semibold text-amber-700 dark:text-amber-300">
-                                      Tài khoản đang có {selectedUser.accessScopes.length} phạm vi riêng cũ; hãy dùng “Khôi phục mặc định” để xóa cấu hình thừa nếu cần.
-                                    </p>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          )
-                        )}
-
-                        {/* Sub-Tab Content 2: Permission Overrides */}
-                        {userStudioTab === 'overrides' && (
-                          <div className="space-y-4">
+                        {selectedUser.role === 'ADMIN' ? (
+                          /* View cho ADMIN: Trực tiếp hiển thị 24 quyền toàn quyền, phẳng, không nút thừa */
+                          <div className="space-y-3">
                             <div className="flex items-center justify-between">
                               <div>
                                 <h3 className="text-type-card font-semibold text-slate-900 dark:text-white">
-                                  Cấu hình quyền riêng
+                                  Quyền hạn hiệu lực
                                 </h3>
                                 <p className="text-type-helper text-slate-400 font-normal mt-0.5">
-                                  Chỉ hiện quyền nghiệp vụ tương thích với vai trò; quyền quản trị lõi luôn bị khóa.
+                                  Tài khoản quản trị viên có toàn quyền kiểm soát trên mọi phân hệ hệ thống
                                 </p>
                               </div>
-                              <span className="ui-pill rounded-full bg-amber-50 dark:bg-amber-950/60 px-2.5 py-0.5 text-type-helper font-medium text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-                                {selectedUser.permissionOverrides.length} ngoại lệ
+                              <span className="ui-pill rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 text-type-helper font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800">
+                                {effective?.permissions?.filter((item: any) => item.allowed).length || 24} quyền kích hoạt
                               </span>
                             </div>
 
-                            <div className="space-y-2">
-                              <input
-                                type="text"
-                                value={overrideReason}
-                                onChange={(event) => setOverrideReason(event.target.value)}
-                                maxLength={500}
-                                placeholder="Lý do cấp hoặc chặn quyền riêng (bắt buộc)"
-                                className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                              />
-                              <div className="flex items-center gap-2">
-                                <select
-                                  value={overrideCode}
-                                  onChange={(e) => setOverrideCode(e.target.value)}
-                                  className="h-10 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-type-body font-normal text-slate-800 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 shadow-2xs"
-                                >
-                                  <option value="">-- Chọn quyền cần gán ngoại lệ --</option>
-                                  {availableOverridePermissions.map((p) => (
-                                    <option key={p.code} value={p.code}>
-                                      [{p.module}] {p.name} ({p.code})
-                                    </option>
-                                  ))}
-                                </select>
-
-                                <Button
-                                  variant="primary"
-                                  size="md"
-                                  disabled={
-                                    !overrideCode ||
-                                    saving ||
-                                    overrideReason.trim().length < 5 ||
-                                    !selectedPermissionEligibleForUser ||
-                                    selectedPermissionAlreadyInRole ||
-                                    selectedPermissionAlreadyOverridden
-                                  }
-                                  onClick={() => handleQuickAddOverride('ALLOW')}
-                                  leftIcon={<Plus className="h-4 w-4" />}
-                                  title={!selectedPermissionEligibleForUser ? 'Quyền không tương thích với vai trò hoặc bị khóa bảo mật' : selectedPermissionAlreadyInRole ? 'Quyền đã có theo vai trò' : undefined}
-                                >
-                                  Cấp quyền
-                                </Button>
-
-                                <Button
-                                  variant="danger"
-                                  size="md"
-                                  disabled={
-                                    !overrideCode ||
-                                    saving ||
-                                    overrideReason.trim().length < 5 ||
-                                    !selectedPermissionEligibleForUser ||
-                                    !selectedPermissionAlreadyInRole ||
-                                    selectedPermissionAlreadyOverridden
-                                  }
-                                  onClick={() => handleQuickAddOverride('DENY')}
-                                  leftIcon={<X className="h-4 w-4" />}
-                                  title={!selectedPermissionEligibleForUser ? 'Quyền không tương thích với vai trò hoặc bị khóa bảo mật' : !selectedPermissionAlreadyInRole ? 'Chỉ chặn được quyền đang có theo vai trò' : undefined}
-                                >
-                                  Chặn quyền
-                                </Button>
-                              </div>
-                            </div>
-
-                            {/* Overrides Chips List */}
-                            <div className="space-y-2 pt-2">
-                              <h4 className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">
-                                Danh sách quyền đang được ghi đè:
-                              </h4>
-                              <div className="flex flex-wrap gap-2">
-                                {selectedUser.permissionOverrides.length ? (
-                                  selectedUser.permissionOverrides.map((override) => (
-                                    <div
-                                      key={override.id}
-                                      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-type-helper font-medium shadow-2xs transition-all duration-200 ${override.effect === 'ALLOW'
-                                        ? 'bg-emerald-50/70 border-emerald-200/80 text-emerald-950 dark:bg-emerald-950/30 dark:border-emerald-800/80 dark:text-emerald-200'
-                                        : 'bg-rose-50/70 border-rose-200/80 text-rose-950 dark:bg-rose-950/30 dark:border-rose-800/80 dark:text-rose-200'
-                                        }`}
-                                    >
-                                      <span className="font-semibold">{override.permission.name}</span>
-                                      <span
-                                        className={`ui-pill px-2 py-0.5 rounded-full text-type-helper font-medium ${override.effect === 'ALLOW'
-                                          ? 'ui-pill-solid bg-emerald-600 text-white'
-                                          : 'ui-pill-solid bg-rose-600 text-white'
-                                          }`}
-                                      >
-                                        {override.effect === 'ALLOW' ? 'Cấp quyền' : 'Chặn quyền'}
-                                      </span>
-                                      <button
-                                        type="button"
-                                        onClick={() => removeOverride(override.permission.code)}
-                                        className="flex h-4.5 w-4.5 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer ml-0.5 shrink-0"
-                                        title="Gỡ ngoại lệ quyền này"
-                                      >
-                                        <X className="h-3 w-3" />
-                                      </button>
-                                    </div>
-                                  ))
-                                ) : (
-                                  <div className="w-full rounded-xl border border-slate-100 dark:border-slate-800 p-4 text-center text-type-body-sm text-slate-400 font-normal">
-                                    Tài khoản này đang sử dụng quyền theo vai trò mặc định, chưa có ngoại lệ nào.
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Sub-Tab Content 3: Effective Permissions Matrix */}
-                        {userStudioTab === 'effective' && (
-                          <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <h3 className="text-type-card font-semibold text-slate-900 dark:text-white">
-                                  Quyền hiệu lực tổng hợp
-                                </h3>
-                                <p className="text-type-helper text-slate-400 font-normal mt-0.5">
-                                  Tổng hợp quyền cuối cùng của tài khoản sau khi kết hợp vai trò và các ngoại lệ
-                                </p>
-                              </div>
-                              <span className="ui-pill rounded-full bg-blue-50 dark:bg-blue-950/60 px-2.5 py-0.5 text-type-helper font-medium text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800">
-                                {effective?.permissions?.filter((item: any) => item.allowed).length || 0} quyền hiệu lực
-                              </span>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-96 overflow-y-auto p-1 custom-scrollbar">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-[520px] overflow-y-auto p-1 custom-scrollbar">
                               {effective?.permissions
                                 ?.filter((item: any) => item.allowed)
                                 .map((p: any) => (
@@ -1601,18 +1428,238 @@ export default function AccessControlPage() {
                                     title={p.name}
                                   >
                                     <span className="truncate font-semibold">{p.name}</span>
-                                    <span
-                                      className={`ui-pill rounded-full text-type-helper font-medium px-2 py-0.5 shrink-0 ${p.source === 'ROLE'
-                                        ? 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                                        : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'
-                                        }`}
-                                    >
-                                      {p.source === 'ROLE' ? 'Vai trò' : 'Quyền riêng'}
+                                    <span className="ui-pill rounded-full text-type-helper font-medium px-2 py-0.5 shrink-0 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                                      Toàn quyền
                                     </span>
                                   </div>
                                 ))}
                             </div>
                           </div>
+                        ) : selectedUser.role === 'STUDENT' ? (
+                          /* View cho SINH VIÊN: Hiển thị hồ sơ & quyền hạn của sinh viên */
+                          <div className="space-y-4">
+                            <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-1">
+                              <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
+                                Hồ sơ sinh viên
+                              </h3>
+                              <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal leading-relaxed">
+                                {accountContext(selectedUser)} · Quyền truy cập được tự động xác định theo lịch đăng ký thi của sinh viên.
+                              </p>
+                            </div>
+
+                            <div className="space-y-2">
+                              <h4 className="text-type-card font-semibold text-slate-900 dark:text-white">
+                                Quyền hiệu lực
+                              </h4>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[400px] overflow-y-auto p-1 custom-scrollbar">
+                                {effective?.permissions
+                                  ?.filter((item: any) => item.allowed)
+                                  .map((p: any) => (
+                                    <div
+                                      key={p.code}
+                                      className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 p-3 text-type-body-sm font-medium text-slate-800 dark:text-slate-200 truncate flex items-center justify-between gap-2 shadow-2xs"
+                                      title={p.name}
+                                    >
+                                      <span className="truncate font-semibold">{p.name}</span>
+                                      <span className="ui-pill rounded-full text-type-helper font-medium px-2 py-0.5 shrink-0 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                                        Sinh viên
+                                      </span>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          /* View cho GIẢNG VIÊN: Có 3 sub-tab */
+                          <>
+                            {userStudioTab === 'scopes' && (
+                              <div className="space-y-4">
+                                <label className="block">
+                                  <span className="mb-1.5 block text-type-helper font-medium text-slate-700 dark:text-slate-300">
+                                    Lý do thay đổi phạm vi
+                                  </span>
+                                  <input
+                                    type="text"
+                                    value={scopeReason}
+                                    onChange={(event) => setScopeReason(event.target.value)}
+                                    maxLength={500}
+                                    placeholder="Ví dụ: Phân công phụ trách khoa và học phần trong học kỳ II"
+                                    className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                                  />
+                                </label>
+                                <ScopeManagerStudio
+                                  departments={scopeOptions.departments || []}
+                                  classes={scopeOptions.classes || []}
+                                  subjects={scopeOptions.subjects || []}
+                                  draftScopes={draftScopes}
+                                  onScopesChange={setDraftScopes}
+                                  onSave={saveScopes}
+                                  saving={saving}
+                                />
+                              </div>
+                            )}
+
+                            {userStudioTab === 'overrides' && (
+                              <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <h3 className="text-type-card font-semibold text-slate-900 dark:text-white">
+                                      Cấu hình quyền riêng
+                                    </h3>
+                                    <p className="text-type-helper text-slate-400 font-normal mt-0.5">
+                                      Chỉ hiện quyền nghiệp vụ tương thích với vai trò; quyền quản trị lõi luôn bị khóa.
+                                    </p>
+                                  </div>
+                                  <span className="ui-pill rounded-full bg-amber-50 dark:bg-amber-950/60 px-2.5 py-0.5 text-type-helper font-medium text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                                    {selectedUser.permissionOverrides.length} ngoại lệ
+                                  </span>
+                                </div>
+
+                                <div className="space-y-2">
+                                  <input
+                                    type="text"
+                                    value={overrideReason}
+                                    onChange={(event) => setOverrideReason(event.target.value)}
+                                    maxLength={500}
+                                    placeholder="Lý do cấp hoặc chặn quyền riêng (bắt buộc)"
+                                    className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                                  />
+                                  <div className="flex items-center gap-2">
+                                    <select
+                                      value={overrideCode}
+                                      onChange={(e) => setOverrideCode(e.target.value)}
+                                      className="h-10 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-type-body font-normal text-slate-800 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 shadow-2xs"
+                                    >
+                                      <option value="">-- Chọn quyền cần gán ngoại lệ --</option>
+                                      {availableOverridePermissions.map((p) => (
+                                        <option key={p.code} value={p.code}>
+                                          [{p.module}] {p.name} ({p.code})
+                                        </option>
+                                      ))}
+                                    </select>
+
+                                    <Button
+                                      variant="primary"
+                                      size="md"
+                                      disabled={
+                                        !overrideCode ||
+                                        saving ||
+                                        overrideReason.trim().length < 5 ||
+                                        !selectedPermissionEligibleForUser ||
+                                        selectedPermissionAlreadyInRole ||
+                                        selectedPermissionAlreadyOverridden
+                                      }
+                                      onClick={() => handleQuickAddOverride('ALLOW')}
+                                      leftIcon={<Plus className="h-4 w-4" />}
+                                      title={!selectedPermissionEligibleForUser ? 'Quyền không tương thích với vai trò hoặc bị khóa bảo mật' : selectedPermissionAlreadyInRole ? 'Quyền đã có theo vai trò' : undefined}
+                                    >
+                                      Cấp quyền
+                                    </Button>
+
+                                    <Button
+                                      variant="danger"
+                                      size="md"
+                                      disabled={
+                                        !overrideCode ||
+                                        saving ||
+                                        overrideReason.trim().length < 5 ||
+                                        !selectedPermissionEligibleForUser ||
+                                        !selectedPermissionAlreadyInRole ||
+                                        selectedPermissionAlreadyOverridden
+                                      }
+                                      onClick={() => handleQuickAddOverride('DENY')}
+                                      leftIcon={<X className="h-4 w-4" />}
+                                      title={!selectedPermissionEligibleForUser ? 'Quyền không tương thích với vai trò hoặc bị khóa bảo mật' : !selectedPermissionAlreadyInRole ? 'Chỉ chặn được quyền đang có theo vai trò' : undefined}
+                                    >
+                                      Chặn quyền
+                                    </Button>
+                                  </div>
+                                </div>
+
+                                {/* Overrides Chips List */}
+                                <div className="space-y-2 pt-2">
+                                  <h4 className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">
+                                    Danh sách quyền đang được ghi đè:
+                                  </h4>
+                                  <div className="flex flex-wrap gap-2">
+                                    {selectedUser.permissionOverrides.length ? (
+                                      selectedUser.permissionOverrides.map((override) => (
+                                        <div
+                                          key={override.id}
+                                          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-type-helper font-medium shadow-2xs transition-all duration-200 ${override.effect === 'ALLOW'
+                                            ? 'bg-emerald-50/70 border-emerald-200/80 text-emerald-950 dark:bg-emerald-950/30 dark:border-emerald-800/80 dark:text-emerald-200'
+                                            : 'bg-rose-50/70 border-rose-200/80 text-rose-950 dark:bg-rose-950/30 dark:border-rose-800/80 dark:text-rose-200'
+                                            }`}
+                                        >
+                                          <span className="font-semibold">{override.permission.name}</span>
+                                          <span
+                                            className={`ui-pill px-2 py-0.5 rounded-full text-type-helper font-medium ${override.effect === 'ALLOW'
+                                              ? 'ui-pill-solid bg-emerald-600 text-white'
+                                              : 'ui-pill-solid bg-rose-600 text-white'
+                                              }`}
+                                          >
+                                            {override.effect === 'ALLOW' ? 'Cấp quyền' : 'Chặn quyền'}
+                                          </span>
+                                          <button
+                                            type="button"
+                                            onClick={() => removeOverride(override.permission.code)}
+                                            className="flex h-4.5 w-4.5 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer ml-0.5 shrink-0"
+                                            title="Gỡ ngoại lệ quyền này"
+                                          >
+                                            <X className="h-3 w-3" />
+                                          </button>
+                                        </div>
+                                      ))
+                                    ) : (
+                                      <div className="w-full rounded-xl border border-slate-100 dark:border-slate-800 p-4 text-center text-type-body-sm text-slate-400 font-normal">
+                                        Tài khoản này đang sử dụng quyền theo vai trò mặc định, chưa có ngoại lệ nào.
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {userStudioTab === 'effective' && (
+                              <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <h3 className="text-type-card font-semibold text-slate-900 dark:text-white">
+                                      Quyền hiệu lực tổng hợp
+                                    </h3>
+                                    <p className="text-type-helper text-slate-400 font-normal mt-0.5">
+                                      Tổng hợp quyền cuối cùng của tài khoản sau khi kết hợp vai trò và các ngoại lệ
+                                    </p>
+                                  </div>
+                                  <span className="ui-pill rounded-full bg-blue-50 dark:bg-blue-950/60 px-2.5 py-0.5 text-type-helper font-medium text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800">
+                                    {effective?.permissions?.filter((item: any) => item.allowed).length || 0} quyền hiệu lực
+                                  </span>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-96 overflow-y-auto p-1 custom-scrollbar">
+                                  {effective?.permissions
+                                    ?.filter((item: any) => item.allowed)
+                                    .map((p: any) => (
+                                      <div
+                                        key={p.code}
+                                        className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 p-3 text-type-body-sm font-medium text-slate-800 dark:text-slate-200 truncate flex items-center justify-between gap-2 shadow-2xs"
+                                        title={p.name}
+                                      >
+                                        <span className="truncate font-semibold">{p.name}</span>
+                                        <span
+                                          className={`ui-pill rounded-full text-type-helper font-medium px-2 py-0.5 shrink-0 ${p.source === 'ROLE'
+                                            ? 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                                            : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'
+                                            }`}
+                                        >
+                                          {p.source === 'ROLE' ? 'Vai trò' : 'Quyền riêng'}
+                                        </span>
+                                      </div>
+                                    ))}
+                                </div>
+                              </div>
+                            )}
+                          </>
                         )}
                       </div>
                     </>
