@@ -443,7 +443,7 @@ export default function DocumentTemplatesPage() {
           <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
             Mẫu biểu in ấn
           </h1>
-          <p className="text-type-helper text-slate-600 dark:text-slate-400 font-normal">
+          <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
             Tùy biến tiêu đề, định dạng trang in A4 và áp dụng trực tiếp toàn hệ thống.
           </p>
         </div>
