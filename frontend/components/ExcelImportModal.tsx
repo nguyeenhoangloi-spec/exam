@@ -189,10 +189,10 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
           {previewData.length > 0 && (
             <div className="ui-table-wrap max-h-52 overflow-auto rounded-xl border border-slate-200">
               <table className="ui-table w-full text-left text-type-body-sm text-slate-900">
-                <thead className="sticky top-0 bg-slate-50 text-type-body-sm font-medium text-slate-500 border-b border-slate-200">
+                <thead className="sticky top-0 bg-slate-50 text-type-body-sm font-medium text-slate-700 border-b border-slate-200">
                   <tr>
                     {Object.keys(previewData[0]).map((key) => (
-                      <th key={key} className="px-3 py-2 font-medium">
+                      <th key={key} className="px-3 py-2 font-medium bg-slate-50 whitespace-nowrap">
                         {key}
                       </th>
                     ))}

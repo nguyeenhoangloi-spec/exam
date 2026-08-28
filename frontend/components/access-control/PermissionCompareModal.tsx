@@ -229,13 +229,13 @@ export function PermissionCompareModal({
               <div className="overflow-hidden rounded-2xl border border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-900 shadow-2xs dark:border-slate-800 dark:bg-slate-900">
                 <div className="ui-table-wrap overflow-x-auto max-h-[400px]">
                   <table className="ui-table min-w-[700px] w-full text-left">
-                    <thead className="bg-slate-50 text-type-helper font-medium text-slate-700 dark:bg-slate-800/60 dark:text-slate-200 sticky top-0 z-10">
+                    <thead className="bg-slate-50 text-type-helper font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-200 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700">
                       <tr>
-                        <th className="px-4 py-3">Chức năng & Nhóm</th>
-                        <th className="px-4 py-3 text-center w-40">
+                        <th className="px-4 py-3 bg-slate-50 dark:bg-slate-800">Chức năng & Nhóm</th>
+                        <th className="px-4 py-3 text-center w-40 bg-slate-50 dark:bg-slate-800">
                           {getDisplayName(userA)} (A)
                         </th>
-                        <th className="px-4 py-3 text-center w-40">
+                        <th className="px-4 py-3 text-center w-40 bg-slate-50 dark:bg-slate-800">
                           {getDisplayName(userB)} (B)
                         </th>
                       </tr>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   AlertTriangle,
   ArrowUpRight,
@@ -8,6 +9,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ClipboardList,
+  Columns3,
   Eye,
   FileSpreadsheet,
   FileText,
@@ -149,11 +151,87 @@ export function ExamReportSummaryTab({
   const [collapseConfig, setCollapseConfig] = useState(false);
   const [openTemplateMenu, setOpenTemplateMenu] = useState(false);
   const templateMenuRef = useRef<HTMLDivElement>(null);
+  const templateBtnRef = useRef<HTMLButtonElement>(null);
+  const [templateMenuStyle, setTemplateMenuStyle] = useState<React.CSSProperties>({});
+
+  const updateTemplateMenuPosition = useCallback(() => {
+    if (!templateBtnRef.current) return;
+    const rect = templateBtnRef.current.getBoundingClientRect();
+    const width = 288; // w-72
+    let left = rect.right - width;
+    if (left < 16) left = 16;
+    const top = rect.bottom + 6;
+    setTemplateMenuStyle({
+      position: 'fixed',
+      top: `${top}px`,
+      left: `${left}px`,
+      width: `${width}px`,
+      zIndex: 99999,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!openTemplateMenu) return;
+    updateTemplateMenuPosition();
+    const handleScrollOrResize = () => updateTemplateMenuPosition();
+    window.addEventListener('scroll', handleScrollOrResize, true);
+    window.addEventListener('resize', handleScrollOrResize);
+    return () => {
+      window.removeEventListener('scroll', handleScrollOrResize, true);
+      window.removeEventListener('resize', handleScrollOrResize);
+    };
+  }, [openTemplateMenu, updateTemplateMenuPosition]);
+
+  const [openColumnMenu, setOpenColumnMenu] = useState(false);
+  const columnMenuRef = useRef<HTMLDivElement>(null);
+  const columnBtnRef = useRef<HTMLButtonElement>(null);
+  const [columnMenuStyle, setColumnMenuStyle] = useState<React.CSSProperties>({});
+
+  const updateColumnMenuPosition = useCallback(() => {
+    if (!columnBtnRef.current) return;
+    const rect = columnBtnRef.current.getBoundingClientRect();
+    const width = 288; // w-72
+    let left = rect.right - width;
+    if (left < 16) left = 16;
+    const top = rect.bottom + 6;
+    setColumnMenuStyle({
+      position: 'fixed',
+      top: `${top}px`,
+      left: `${left}px`,
+      width: `${width}px`,
+      zIndex: 99999,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!openColumnMenu) return;
+    updateColumnMenuPosition();
+    const handleScrollOrResize = () => updateColumnMenuPosition();
+    window.addEventListener('scroll', handleScrollOrResize, true);
+    window.addEventListener('resize', handleScrollOrResize);
+    return () => {
+      window.removeEventListener('scroll', handleScrollOrResize, true);
+      window.removeEventListener('resize', handleScrollOrResize);
+    };
+  }, [openColumnMenu, updateColumnMenuPosition]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (templateMenuRef.current && !templateMenuRef.current.contains(event.target as Node)) {
+      if (
+        templateMenuRef.current &&
+        !templateMenuRef.current.contains(event.target as Node) &&
+        templateBtnRef.current &&
+        !templateBtnRef.current.contains(event.target as Node)
+      ) {
         setOpenTemplateMenu(false);
+      }
+      if (
+        columnMenuRef.current &&
+        !columnMenuRef.current.contains(event.target as Node) &&
+        columnBtnRef.current &&
+        !columnBtnRef.current.contains(event.target as Node)
+      ) {
+        setOpenColumnMenu(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -261,13 +339,21 @@ export function ExamReportSummaryTab({
 
   const printPreview = () => {
     if (!preview) return;
+    const selectedCols = preview.columns.filter((c) => columns.includes(c.key));
     const ok = printReport({
       title: preview.title,
       subtitle: `Thời điểm lập: ${new Date(preview.generatedAt).toLocaleString('vi-VN')}, ${preview.totalRows} bản ghi`,
-      columns: preview.columns
-        .filter((c) => columns.includes(c.key))
-        .map((c) => ({ header: c.label, align: c.align })),
-      rows: preview.rows.map((row) => preview.columns.filter((c) => columns.includes(c.key)).map((c) => row[c.key])),
+      orientation: selectedCols.length > 6 ? 'landscape' : 'portrait',
+      columns: selectedCols.map((c) => ({
+        header: c.label,
+        align: c.align,
+        width: ['periodName', 'subjectName', 'departmentName'].includes(c.key)
+          ? '18%'
+          : ['subjectCode', 'examDate'].includes(c.key)
+            ? '11%'
+            : '7%',
+      })),
+      rows: preview.rows.map((row) => selectedCols.map((c) => row[c.key])),
       footerNotes: 'Dữ liệu chính thức trong phạm vi được phép truy cập.',
     });
     if (!ok) setNotice({ type: 'error', message: 'Trình duyệt đang chặn cửa sổ in. Vui lòng cho phép popup.' });
@@ -345,58 +431,69 @@ export function ExamReportSummaryTab({
               </div>
             </div>
 
-            {/* Right: Mẫu báo cáo dropdown button (Bậc 3 Secondary chuẩn 40px) */}
-            <div className="relative shrink-0" ref={templateMenuRef}>
+            {/* Right: Mẫu báo cáo dropdown button (Pure Ghost Button) */}
+            <div className="relative shrink-0">
               <button
+                ref={templateBtnRef}
                 type="button"
                 onClick={() => setOpenTemplateMenu((v) => !v)}
-                className={`h-10 inline-flex items-center gap-1.5 px-3.5 rounded-xl border text-type-body font-medium transition-colors cursor-pointer shadow-2xs select-none ${openTemplateMenu
-                    ? 'border-blue-500 ring-2 ring-blue-500/20 text-slate-900 bg-white dark:bg-slate-900 dark:text-white'
-                    : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-850'
-                  }`}
+                className={`h-9 inline-flex items-center gap-1.5 px-2.5 rounded-xl text-type-body font-medium transition cursor-pointer select-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none ${
+                  openTemplateMenu
+                    ? 'text-slate-900 dark:text-white font-semibold'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                }`}
+                title="Chọn mẫu báo cáo"
               >
-                <FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0" />
+                <FileSpreadsheet className="h-4 w-4 text-slate-400 shrink-0" />
                 <span>Mẫu báo cáo</span>
                 <ChevronDown
-                  className={`h-4 w-4 text-slate-400 dark:text-slate-500 shrink-0 transition-transform duration-200 ${openTemplateMenu ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
-                    }`}
+                  className={`h-3.5 w-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${
+                    openTemplateMenu ? 'rotate-180 text-slate-600 dark:text-slate-300' : ''
+                  }`}
                 />
               </button>
 
-              {/* Menu Popover */}
-              {openTemplateMenu && (
-                <div className="absolute right-0 mt-1.5 w-72 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl p-1.5 z-30 divide-y divide-slate-100 dark:divide-slate-800/80 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="px-3 py-2">
-                    <p className="text-type-body-sm font-semibold text-slate-900 dark:text-white">
-                      Chọn mẫu báo cáo
-                    </p>
-                    <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
-                      Mở nhanh cấu hình và xem trước dữ liệu
-                    </p>
-                  </div>
+              {/* Menu Popover qua Portal */}
+              {openTemplateMenu &&
+                typeof document !== 'undefined' &&
+                createPortal(
+                  <div
+                    ref={templateMenuRef}
+                    style={templateMenuStyle}
+                    className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-1.5 z-30 divide-y divide-slate-100 dark:divide-slate-800 animate-in fade-in zoom-in-95 duration-150"
+                  >
+                    <div className="px-3 py-2">
+                      <p className="text-type-body-sm font-semibold text-slate-900 dark:text-white">
+                        Chọn mẫu báo cáo
+                      </p>
+                      <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
+                        Mở nhanh cấu hình và xem trước dữ liệu
+                      </p>
+                    </div>
 
-                  <div className="pt-1 space-y-0.5 max-h-80 overflow-y-auto">
-                    {catalog.map((item) => (
-                      <button
-                        key={item.type}
-                        type="button"
-                        onClick={() => choose(item)}
-                        className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-850 text-left transition-colors cursor-pointer group"
-                      >
-                        <div className="min-w-0 flex-1 pr-2">
-                          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
-                            {item.name}
-                          </p>
-                          <p className="text-type-helper text-slate-400 dark:text-slate-500 font-normal truncate mt-0.5">
-                            {item.description}
-                          </p>
-                        </div>
-                        <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+                    <div className="pt-1 space-y-0.5 max-h-80 overflow-y-auto custom-scrollbar">
+                      {catalog.map((item) => (
+                        <button
+                          key={item.type}
+                          type="button"
+                          onClick={() => choose(item)}
+                          className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition-colors cursor-pointer group"
+                        >
+                          <div className="min-w-0 flex-1 pr-2">
+                            <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
+                              {item.name}
+                            </p>
+                            <p className="text-type-helper text-slate-400 dark:text-slate-500 font-normal truncate mt-0.5">
+                              {item.description}
+                            </p>
+                          </div>
+                          <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>,
+                  document.body,
+                )}
             </div>
           </div>
 
@@ -559,10 +656,11 @@ export function ExamReportSummaryTab({
             </div>
           </aside>
 
-          {/* Cột phải: Bảng xem trước */}
-          <div className="flex-1 min-w-0 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
-            <div className="flex flex-wrap justify-between items-center gap-3 border-b border-slate-100 dark:border-slate-800 p-4 bg-slate-50/60 dark:bg-slate-850/50">
-              <div className="flex items-center gap-2.5 min-w-0">
+          {/* Cột phải: Bảng xem trước (Khối phẳng liền mạch duy nhất) */}
+          <div className="flex-1 min-w-0 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs flex flex-col">
+            {/* Header Toolbar phẳng nền trắng tinh gọn */}
+            <div className="flex flex-wrap justify-between items-center gap-3 border-b border-slate-100 dark:border-slate-800 px-5 py-3.5 bg-white dark:bg-slate-900 shrink-0">
+              <div className="flex items-center gap-3 min-w-0">
                 <button
                   type="button"
                   onClick={() => setCollapseConfig(!collapseConfig)}
@@ -570,84 +668,186 @@ export function ExamReportSummaryTab({
                   title={collapseConfig ? 'Mở cột cấu hình' : 'Thu gọn cột cấu hình'}
                 >
                   <ChevronLeft
-                    className={`h-4 w-4 transition-transform duration-300 ease-in-out ${collapseConfig ? 'rotate-180' : ''}`}
+                    className={`h-4 w-4 transition-transform duration-200 ease-in-out ${collapseConfig ? 'rotate-180' : ''}`}
                   />
                 </button>
                 <div className="min-w-0">
-                  <h2 className="text-type-section font-semibold text-slate-900 dark:text-white truncate">
-                    {preview?.title || 'Bản xem trước dữ liệu'}
-                  </h2>
-                  <p className="mt-0.5 text-type-helper text-slate-500 dark:text-slate-400 truncate">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-type-section font-semibold text-slate-900 dark:text-white truncate">
+                      {preview?.title || 'Bản xem trước dữ liệu'}
+                    </h2>
+                    {preview && (
+                      <span className="text-type-helper text-slate-400 font-normal tabular-nums shrink-0">
+                        ({preview.totalRows} bản ghi)
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-type-helper text-slate-400 font-normal truncate mt-0.5">
                     {preview
-                      ? `${preview.totalRows} bản ghi, tạo lúc ${new Date(preview.generatedAt).toLocaleString('vi-VN')}`
+                      ? `Tạo lúc ${new Date(preview.generatedAt).toLocaleString('vi-VN')} | Đang xuất ${columns.length}/${preview.columns.length} cột`
                       : 'Thiết lập cấu hình bên trái rồi nhấn Xem trước báo cáo'}
                   </p>
                 </div>
               </div>
 
               {preview && (
-                <DataActionsDropdown
-                  onExportExcel={() => exportFile('XLSX')}
-                  onExportCsv={() => exportFile('CSV')}
-                  onPrint={printPreview}
-                  printLabel="In báo cáo"
-                />
+                <div className="flex items-center gap-2">
+                  {/* Smart Column Selector Popover - Tối giản, thanh lịch, trung tính */}
+                  <div className="relative">
+                    <button
+                      ref={columnBtnRef}
+                      type="button"
+                      onClick={() => setOpenColumnMenu((v) => !v)}
+                      className={`h-9 inline-flex items-center gap-1.5 px-2 rounded-xl text-type-body-sm font-medium transition cursor-pointer select-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none ${
+                        openColumnMenu
+                          ? 'text-slate-900 dark:text-white font-semibold'
+                          : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                      title="Tùy chỉnh cột xuất file"
+                    >
+                      <Columns3 className="h-4 w-4 text-slate-400" />
+                      <span>Cột xuất file</span>
+                      <ChevronDown
+                        className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${
+                          openColumnMenu ? 'rotate-180 text-slate-600 dark:text-slate-300' : ''
+                        }`}
+                      />
+                    </button>
+
+                    {/* Popover Dropdown qua Portal */}
+                    {openColumnMenu &&
+                      typeof document !== 'undefined' &&
+                      createPortal(
+                        <div
+                          ref={columnMenuRef}
+                          style={columnMenuStyle}
+                          className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-3 space-y-2 animate-in fade-in zoom-in-95 duration-150"
+                        >
+                          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                            <span className="text-type-body-sm font-semibold text-slate-900 dark:text-white">
+                              Cột xuất ({columns.length}/{preview.columns.length})
+                            </span>
+                            <div className="flex items-center gap-1.5 text-type-helper font-medium">
+                              <button
+                                type="button"
+                                onClick={() => setColumns(preview.columns.map((c) => c.key))}
+                                className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white cursor-pointer"
+                              >
+                                Tất cả
+                              </button>
+                              <span className="text-slate-300 dark:text-slate-700">|</span>
+                              <button
+                                type="button"
+                                onClick={() => setColumns([])}
+                                className="text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 cursor-pointer"
+                              >
+                                Bỏ hết
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="max-h-60 overflow-y-auto space-y-0.5 custom-scrollbar pr-1">
+                            {preview.columns.map((c) => {
+                              const isChecked = columns.includes(c.key);
+                              return (
+                                <label
+                                  key={c.key}
+                                  className="flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition select-none text-type-body"
+                                >
+                                  <span
+                                    className={`text-type-body-sm ${
+                                      isChecked
+                                        ? 'font-medium text-slate-900 dark:text-slate-100'
+                                        : 'text-slate-400 dark:text-slate-500'
+                                    }`}
+                                  >
+                                    {c.label}
+                                  </span>
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={() =>
+                                      setColumns((prev) =>
+                                        prev.includes(c.key) ? prev.filter((k) => k !== c.key) : [...prev, c.key],
+                                      )
+                                    }
+                                    className="h-4 w-4 rounded-md border-slate-300 dark:border-slate-600 text-slate-900 focus:ring-slate-400 cursor-pointer"
+                                  />
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>,
+                        document.body,
+                      )}
+                  </div>
+
+                  <DataActionsDropdown
+                    onExportExcel={() => exportFile('XLSX')}
+                    onExportCsv={() => exportFile('CSV')}
+                    onPrint={printPreview}
+                    printLabel="In báo cáo"
+                  />
+                </div>
               )}
             </div>
 
             {!preview ? (
               <div className="flex min-h-96 flex-col items-center justify-center p-8 text-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 mb-3 border border-blue-100 dark:border-blue-900/50">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 mb-3 border border-slate-200/60 dark:border-slate-700">
                   <FileText className="h-6 w-6" />
                 </div>
                 <p className="font-semibold text-type-body text-slate-900 dark:text-white">
                   Chưa có bản xem trước
                 </p>
-                <p className="mt-1 max-w-md text-type-helper text-slate-500 dark:text-slate-400">
+                <p className="mt-1 max-w-md text-type-helper text-slate-400">
                   Vui lòng chọn loại báo cáo và các điều kiện lọc, sau đó nhấn &ldquo;Xem trước báo cáo&rdquo; để kiểm tra dữ liệu trước khi xuất file.
                 </p>
               </div>
             ) : (
               <>
-                {/* Chọn cột hiển thị */}
-                <div className="border-b border-slate-100 dark:border-slate-800 p-4 bg-slate-50/40 dark:bg-slate-900/40">
-                  <p className="mb-2 text-type-helper font-medium text-slate-700 dark:text-slate-300">
-                    Các cột được chọn xuất file:
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {preview.columns.map((c) => {
-                      const isChecked = columns.includes(c.key);
-                      return (
-                        <button
-                          key={c.key}
-                          type="button"
-                          onClick={() =>
-                            setColumns((x) =>
-                              x.includes(c.key) ? x.filter((k) => k !== c.key) : [...x, c.key],
-                            )
-                          }
-                          className={`rounded-xl border px-3 py-1 text-type-helper font-medium transition cursor-pointer ${isChecked
-                              ? 'border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-700 dark:bg-blue-950/60 dark:text-blue-400'
-                              : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                            }`}
-                        >
-                          {isChecked ? '✓ ' : ''}
-                          {c.label}
-                        </button>
-                      );
-                    })}
+                {/* Thông báo thanh mảnh khi có cột bị ẩn */}
+                {columns.length < preview.columns.length && (
+                  <div className="px-5 py-2 bg-slate-50/80 dark:bg-slate-800/40 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-type-helper text-slate-600 dark:text-slate-400 shrink-0">
+                    <div className="flex items-center gap-1.5">
+                      <span>Đang ẩn <strong>{preview.columns.length - columns.length}</strong> cột trong bản xem trước và file xuất.</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setColumns(preview.columns.map((c) => c.key))}
+                      className="font-medium text-slate-900 dark:text-slate-100 hover:underline cursor-pointer"
+                    >
+                      Hiện lại tất cả ({preview.columns.length} cột)
+                    </button>
                   </div>
-                </div>
+                )}
 
-                <div className="ui-table-wrap max-h-[560px] overflow-auto">
+                {/* Bảng xem trước dữ liệu phẳng tràn viền (Không bọc khung lồng khung) */}
+                <div className="w-full overflow-x-auto max-h-[560px] custom-scrollbar flex-1">
                   <table className="ui-table w-full min-w-[760px] text-type-body text-left border-collapse">
                     <thead className="sticky top-0 bg-slate-50 dark:bg-slate-800 z-10">
-                      <tr className="border-b border-slate-100 dark:border-slate-700">
+                      <tr className="border-b border-slate-200/90 dark:border-slate-700">
                         {preview.columns
                           .filter((c) => columns.includes(c.key))
                           .map((c) => (
-                            <th key={c.key} className="py-3 px-4 text-type-body-sm font-medium text-slate-700 dark:text-slate-300">
-                              {c.label}
+                            <th
+                              key={c.key}
+                              className="group/th py-3 px-4 text-type-body-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 whitespace-nowrap select-none"
+                            >
+                              <div className="flex items-center justify-between gap-2">
+                                <span>{c.label}</span>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setColumns((prev) => prev.filter((k) => k !== c.key));
+                                  }}
+                                  className="min-h-0 min-w-0 p-0.5 opacity-0 group-hover/th:opacity-100 hover:scale-125 active:scale-95 transition-all text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 cursor-pointer shrink-0"
+                                  title={`Ẩn cột "${c.label}" khỏi file xuất`}
+                                >
+                                  <X className="h-3 w-3 stroke-[2.5]" />
+                                </button>
+                              </div>
                             </th>
                           ))}
                       </tr>
@@ -660,8 +860,9 @@ export function ExamReportSummaryTab({
                             .map((c) => (
                               <td
                                 key={c.key}
-                                className={`py-3.5 px-4 text-type-body text-slate-800 dark:text-slate-200 ${c.align === 'right' ? 'text-right tabular-nums' : ''
-                                  }`}
+                                className={`py-3.5 px-4 text-type-body text-slate-800 dark:text-slate-200 ${
+                                  c.align === 'right' ? 'text-right tabular-nums' : ''
+                                }`}
                               >
                                 {String(row[c.key] ?? '—')}
                               </td>
@@ -671,7 +872,7 @@ export function ExamReportSummaryTab({
                     </tbody>
                   </table>
                   {!preview.rows.length && (
-                    <p className="p-10 text-center text-type-body text-slate-500 dark:text-slate-400">
+                    <p className="p-10 text-center text-type-body text-slate-400">
                       Không tìm thấy dữ liệu nào phù hợp với phạm vi lọc đã chọn.
                     </p>
                   )}

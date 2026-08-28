@@ -87,7 +87,7 @@ export async function getPublishedTemplatesMap(): Promise<Record<string, any>> {
 
 /** In các báo cáo dạng bảng (lịch thi, danh sách thi, bảng điểm...) */
 export function printReport(options: PrintReportOptions): boolean {
-  const printable = window.open('', '_blank', 'width=980,height=780');
+  const printable = window.open('', '_blank', 'width=1080,height=800');
   if (!printable) return false;
 
   const published = options.templateCode && templateCache ? templateCache[options.templateCode] : null;
@@ -95,28 +95,85 @@ export function printReport(options: PrintReportOptions): boolean {
   const facultyName = options.facultyName !== undefined ? options.facultyName : (published?.header?.facultyName || 'KHOA CÔNG NGHỆ THÔNG TIN');
   const motto = published?.header?.motto || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc';
   const pageSize = options.pageSize || published?.page?.size || 'A4';
-  const orientation = options.orientation || published?.page?.orientation || 'portrait';
-  const marginMm = published?.page?.marginMm || 15;
+  
+  // Tự động chuyển sang khổ ngang (landscape) khi bảng có trên 6 cột nếu không chỉ định rõ
+  const orientation = options.orientation || published?.page?.orientation || (options.columns.length > 6 ? 'landscape' : 'portrait');
+  const marginMm = published?.page?.marginMm || (orientation === 'landscape' ? 10 : 15);
+
+  const numCols = options.columns.length;
+  // Điều chỉnh font size và padding bảng in dựa trên số lượng cột
+  const tableFontSize = numCols > 11 ? '8.5pt' : numCols > 7 ? '9pt' : '10pt';
+  const tableCellPadding = numCols > 11 ? '4px 4px' : '5px 6px';
 
   const metaHtml = options.metaInfo?.length
     ? `<div class="meta">${options.metaInfo.map(m => `<div><strong>${escapeHtml(m.label)}:</strong> ${escapeHtml(m.value)}</div>`).join('')}</div>`
     : '';
 
-  // Chuẩn hóa trọng số cột thành phần trăm chính xác summing to 100% (chống tràn lề phải)
+  // Phân bổ trọng số cột thông minh (Smart Column Weighting)
   const numericWeights = options.columns.map((c) => {
-    if (!c.width) return 10;
-    const num = parseFloat(String(c.width).replace(/[^\d.]/g, ''));
-    return isNaN(num) || num <= 0 ? 10 : num;
+    if (c.width) {
+      const num = parseFloat(String(c.width).replace(/[^\d.]/g, ''));
+      if (!isNaN(num) && num > 0) return num;
+    }
+    const headerLower = (c.header || '').toLowerCase();
+    // Cột văn bản dài
+    if (
+      headerLower.includes('kỳ thi') ||
+      headerLower.includes('tên') ||
+      headerLower.includes('môn thi') ||
+      headerLower.includes('khoa') ||
+      headerLower.includes('đơn vị') ||
+      headerLower.includes('phòng thi') ||
+      headerLower.includes('nội dung') ||
+      headerLower.includes('lý do') ||
+      headerLower.includes('ghi chú')
+    ) {
+      return 18;
+    }
+    // Cột mã, ngày tháng, ca thi, số báo danh
+    if (
+      headerLower.includes('mã') ||
+      headerLower.includes('ngày') ||
+      headerLower.includes('giờ') ||
+      headerLower.includes('thời gian') ||
+      headerLower.includes('sbd') ||
+      headerLower.includes('lớp')
+    ) {
+      return 11;
+    }
+    // Cột số liệu ngắn (dự kiến, nộp, vắng, điểm, tỷ lệ, stt...)
+    if (
+      c.align === 'right' ||
+      headerLower.includes('số') ||
+      headerLower.includes('điểm') ||
+      headerLower.includes('tỷ lệ') ||
+      headerLower.includes('vắng') ||
+      headerLower.includes('chấm') ||
+      headerLower.includes('đạt') ||
+      headerLower.includes('stt')
+    ) {
+      return 7;
+    }
+    return 10;
   });
   const totalWeight = numericWeights.reduce((sum, w) => sum + w, 0) || 1;
   const normalizedPercentages = numericWeights.map((w) => ((w / totalWeight) * 100).toFixed(1));
 
   const headers = options.columns
-    .map((c, idx) => `<th style="text-align:${c.align || 'center'}; width:${normalizedPercentages[idx]}%; border:1px solid #000000; padding:5px 6px; font-weight:bold; font-size:10pt; background:transparent; color:#000000;">${escapeHtml(c.header)}</th>`)
+    .map((c, idx) => {
+      const isShortCol = numericWeights[idx] <= 11;
+      return `<th style="text-align:${c.align || 'center'}; width:${normalizedPercentages[idx]}%; border:1px solid #000000; padding:${tableCellPadding}; font-weight:bold; font-size:${tableFontSize}; background:transparent; color:#000000; ${isShortCol ? 'white-space:nowrap;' : 'word-break:normal;'}">${escapeHtml(c.header)}</th>`;
+    })
     .join('');
 
   const rows = options.rows
-    .map((row) => `<tr>${row.map((cell, j) => `<td style="text-align:${options.columns[j]?.align || (j === 0 ? 'center' : 'left')}; border:1px solid #000000; padding:5px 6px; font-size:10pt; color:#000000; word-break:break-word;">${escapeHtml(cell)}</td>`).join('')}</tr>`)
+    .map((row) => `<tr>${row.map((cell, j) => {
+      const col = options.columns[j];
+      const isNumericOrDate = col?.align === 'right' || col?.align === 'center' || numericWeights[j] <= 11;
+      const textAlign = col?.align || (j === 0 ? 'center' : 'left');
+      const whiteSpace = isNumericOrDate ? 'white-space:nowrap;' : 'word-break:break-word;';
+      return `<td style="text-align:${textAlign}; border:1px solid #000000; padding:${tableCellPadding}; font-size:${tableFontSize}; color:#000000; ${whiteSpace}">${escapeHtml(cell)}</td>`;
+    }).join('')}</tr>`)
     .join('');
 
   const signers = options.signers || published?.footer?.signers || [
@@ -127,7 +184,7 @@ export function printReport(options: PrintReportOptions): boolean {
   const signerHtml = `<table class="signers"><tr>${signers.map((s: any) => `<td><strong>${escapeHtml(s.title)}</strong><em>${escapeHtml(s.subtitle || '')}</em><div class="sig-line">...................................</div></td>`).join('')}</tr></table>`;
   const footerNotes = options.footerNotes || published?.footer?.note || '';
 
-  printable.document.write(`<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>${escapeHtml(options.title)}</title><style>*{box-sizing:border-box}body{font-family:'Times New Roman',Times,serif;font-size:11pt;color:#000000;padding:15px;margin:0}.header-table{width:100%;border-collapse:collapse;margin-bottom:10px;table-layout:fixed}.header-table td{vertical-align:top;border:none;padding:0}.inst-box{font-weight:bold;font-size:10.5pt;text-align:center;width:50%}.inst-box span{display:block;font-weight:normal;font-size:10pt;margin-top:1px}.motto-box{font-weight:bold;font-size:10.5pt;text-align:center;width:50%}.motto-box em{display:block;font-weight:bold;font-size:10pt;font-style:italic;margin-top:1px}.title{text-align:center;font-size:14pt;font-weight:bold;text-transform:uppercase;margin:10px 0 2px}.subtitle{text-align:center;font-style:italic;margin-bottom:8px;font-size:10pt;color:#000000}.meta{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0;border-bottom:1px solid #000000;padding-bottom:6px;font-size:10pt;color:#000000}table.data{width:100%;border-collapse:collapse;margin:8px 0;table-layout:fixed;page-break-inside:auto}table.data thead{display:table-header-group}table.data tr{page-break-inside:avoid;page-break-after:auto}table.data th{background:transparent;font-weight:bold;font-size:10pt;border:1px solid #000000;padding:5px 6px;text-align:center;color:#000000}table.data td{border:1px solid #000000;padding:5px 6px;font-size:10pt;color:#000000;word-break:break-word}.signers{width:100%;margin-top:28px;border-collapse:collapse;border:none;table-layout:fixed;page-break-inside:avoid}.signers td{text-align:center;vertical-align:top;border:none;width:${100 / (signers.length || 1)}%}.signers strong{font-size:10.5pt;display:block;color:#000000}.signers em{display:block;margin-top:2px;min-height:50px;color:#000000;font-size:9.5pt}.sig-line{color:#000000;margin-top:4px}@media print{body{padding:0}@page{size:${pageSize} ${orientation};margin:${marginMm}mm}}</style></head><body><table class="header-table"><tr><td class="inst-box"><div>${escapeHtml(institutionName)}</div>${facultyName ? `<span>${escapeHtml(facultyName)}</span>` : ''}<div style="border-top:1px solid #000;display:inline-block;padding-top:2px;width:110px;margin-top:2px"></div></td><td class="motto-box"><div>${escapeHtml(motto.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM')}</div><em>${escapeHtml(motto.split('\n')[1] || 'Độc lập - Tự do - Hạnh phúc')}</em><div style="border-top:1px solid #000;display:inline-block;padding-top:2px;width:110px;margin-top:2px"></div></td></tr></table><h1 class="title">${escapeHtml(options.title)}</h1>${options.subtitle ? `<div class="subtitle">${escapeHtml(options.subtitle)}</div>` : ''}${metaHtml}<table class="data"><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>${footerNotes ? `<p style="margin-top:8px;font-style:italic;font-size:9.5pt"><em>* ${escapeHtml(footerNotes)}</em></p>` : ''}<p style="text-align:right;font-style:italic;margin-top:14px;font-size:10.5pt">Ngày ${new Date().getDate()} tháng ${new Date().getMonth() + 1} năm ${new Date().getFullYear()}</p>${signerHtml}<script>window.onload=()=>setTimeout(()=>window.print(),300)</script></body></html>`);
+  printable.document.write(`<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>${escapeHtml(options.title)}</title><style>*{box-sizing:border-box}body{font-family:'Times New Roman',Times,serif;font-size:11pt;color:#000000;padding:15px;margin:0}.header-table{width:100%;border-collapse:collapse;margin-bottom:10px;table-layout:fixed}.header-table td{vertical-align:top;border:none;padding:0}.inst-box{font-weight:bold;font-size:10.5pt;text-align:center;width:50%}.inst-box span{display:block;font-weight:normal;font-size:10pt;margin-top:1px}.motto-box{font-weight:bold;font-size:10.5pt;text-align:center;width:50%}.motto-box em{display:block;font-weight:bold;font-size:10pt;font-style:italic;margin-top:1px}.title{text-align:center;font-size:14pt;font-weight:bold;text-transform:uppercase;margin:10px 0 2px}.subtitle{text-align:center;font-style:italic;margin-bottom:8px;font-size:10pt;color:#000000}.meta{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0;border-bottom:1px solid #000000;padding-bottom:6px;font-size:10pt;color:#000000}table.data{width:100%;border-collapse:collapse;margin:8px 0;table-layout:fixed;page-break-inside:auto}table.data thead{display:table-header-group}table.data tr{page-break-inside:avoid;page-break-after:auto}table.data th{background:transparent;font-weight:bold;font-size:${tableFontSize};border:1px solid #000000;padding:${tableCellPadding};text-align:center;color:#000000}table.data td{border:1px solid #000000;padding:${tableCellPadding};font-size:${tableFontSize};color:#000000}.signers{width:100%;margin-top:28px;border-collapse:collapse;border:none;table-layout:fixed;page-break-inside:avoid}.signers td{text-align:center;vertical-align:top;border:none;width:${100 / (signers.length || 1)}%}.signers strong{font-size:10.5pt;display:block;color:#000000}.signers em{display:block;margin-top:2px;min-height:50px;color:#000000;font-size:9.5pt}.sig-line{color:#000000;margin-top:4px}@media print{body{padding:0}@page{size:${pageSize} ${orientation};margin:${marginMm}mm}}</style></head><body><table class="header-table"><tr><td class="inst-box"><div>${escapeHtml(institutionName)}</div>${facultyName ? `<span>${escapeHtml(facultyName)}</span>` : ''}<div style="border-top:1px solid #000;display:inline-block;padding-top:2px;width:110px;margin-top:2px"></div></td><td class="motto-box"><div>${escapeHtml(motto.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM')}</div><em>${escapeHtml(motto.split('\n')[1] || 'Độc lập - Tự do - Hạnh phúc')}</em><div style="border-top:1px solid #000;display:inline-block;padding-top:2px;width:110px;margin-top:2px"></div></td></tr></table><h1 class="title">${escapeHtml(options.title)}</h1>${options.subtitle ? `<div class="subtitle">${escapeHtml(options.subtitle)}</div>` : ''}${metaHtml}<table class="data"><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>${footerNotes ? `<p style="margin-top:8px;font-style:italic;font-size:9.5pt"><em>* ${escapeHtml(footerNotes)}</em></p>` : ''}<p style="text-align:right;font-style:italic;margin-top:14px;font-size:10.5pt">Ngày ${new Date().getDate()} tháng ${new Date().getMonth() + 1} năm ${new Date().getFullYear()}</p>${signerHtml}<script>window.onload=()=>setTimeout(()=>window.print(),300)</script></body></html>`);
   printable.document.close();
   return true;
 }
