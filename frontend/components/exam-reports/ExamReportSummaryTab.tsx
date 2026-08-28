@@ -10,7 +10,6 @@ import {
   ChevronLeft,
   ClipboardList,
   Columns3,
-  Eye,
   FileSpreadsheet,
   FileText,
   History,
@@ -25,6 +24,7 @@ import { Toast } from '../Toast';
 import { TabBar, TabItem } from '../ui/TabBar';
 import { DataActionsDropdown } from '../ui/DataActionsDropdown';
 import { Button } from '../ui/Button';
+import { PaginationBar } from '../ui/PaginationBar';
 
 export interface SummaryScheduleRow {
   id: number;
@@ -145,6 +145,8 @@ export function ExamReportSummaryTab({
   const [columns, setColumns] = useState<string[]>([]);
   const [busy, setBusy] = useState('');
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [historyPage, setHistoryPage] = useState(1);
+  const [historyLimit, setHistoryLimit] = useState(10);
   const [notice, setNotice] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [search, setSearch] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -372,6 +374,11 @@ export function ExamReportSummaryTab({
       .slice(0, 8);
   }, [search, summary?.schedules]);
 
+  const paginatedHistory = useMemo(() => {
+    const start = (historyPage - 1) * historyLimit;
+    return history.slice(start, start + historyLimit);
+  }, [history, historyPage, historyLimit]);
+
   const navigationTabs = useMemo<TabItem<'overview' | 'builder' | 'history'>[]>(
     () => [
       { key: 'overview', label: 'Tổng quan ca thi' },
@@ -555,120 +562,127 @@ export function ExamReportSummaryTab({
         </div>
       )}
 
-      {/* ── TAB 2: TẠO BÁO CÁO THEO MẪU ── */}
+      {/* ── TAB 2: TẠO BÁO CÁO THEO MẪU (1 KHUNG DUY NHẤT CHIA 2 BÊN LIỀN NHAU) ── */}
       {tab === 'builder' && (
-        <div className="flex flex-col xl:flex-row gap-5 items-start">
-          {/* Cột trái: Cấu hình báo cáo */}
+        <div className="w-full rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden flex flex-col xl:flex-row">
+          {/* CỘT TRÁI: Cấu hình báo cáo (Sliding drawer êm ái, nội dung giữ nguyên kích thước cố định để chống giật chữ và tràn bóng) */}
           <aside
             aria-label="Cấu hình báo cáo"
-            className={`transition-all duration-300 ease-in-out shrink-0 xl:sticky xl:top-4 overflow-hidden ${collapseConfig
-                ? 'max-h-0 xl:max-h-none xl:w-0 xl:opacity-0 xl:pointer-events-none xl:-mr-5 hidden xl:block'
-                : 'w-full xl:w-[360px] xl:opacity-100'
-              }`}
+            className={`transition-[width,opacity] duration-300 ease-in-out shrink-0 bg-white dark:bg-slate-900 overflow-hidden flex flex-col justify-between ${
+              collapseConfig
+                ? 'w-0 opacity-0 pointer-events-none'
+                : 'w-full xl:w-[320px] 2xl:w-[340px] opacity-100 border-b xl:border-b-0 xl:border-r border-slate-100 dark:border-slate-800'
+            }`}
           >
-            <div className="w-full xl:w-[360px] space-y-4 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs">
-              <div>
-                <h2 className="text-type-section font-semibold text-slate-900 dark:text-white">
-                  Cấu hình báo cáo
-                </h2>
-                <p className="mt-0.5 text-type-helper text-slate-500 dark:text-slate-400">
-                  Chọn phạm vi dữ liệu bên dưới để xem trước và xuất file
-                </p>
+            {/* Lớp bọc bên trong có kích thước cố định, chống bóp méo text và tràn shadow khi thu phóng */}
+            <div className="w-[320px] 2xl:w-[340px] p-5 flex flex-col justify-between min-h-full space-y-4 shrink-0">
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-type-section font-semibold text-slate-900 dark:text-white">
+                    Cấu hình báo cáo
+                  </h2>
+                  <p className="mt-0.5 text-type-helper text-slate-500 dark:text-slate-400">
+                    Chọn phạm vi dữ liệu để xem trước và xuất file
+                  </p>
+                </div>
+
+                <Select
+                  label="Loại báo cáo"
+                  value={type}
+                  onChange={(v) => {
+                    setType(v);
+                    setPreview(null);
+                    setColumns([]);
+                  }}
+                  options={catalog.map((i) => ({ value: i.type, label: i.name }))}
+                  all={false}
+                />
+
+                <label className="block">
+                  <span className="mb-1.5 block text-type-body font-medium text-slate-900 dark:text-slate-100">
+                    Tiêu đề báo cáo
+                  </span>
+                  <input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder={catalog.find((i) => i.type === type)?.name}
+                    className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:border-blue-500 transition shadow-2xs"
+                  />
+                </label>
+
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                  <Select
+                    label="Kỳ thi"
+                    value={filters.examPeriodId}
+                    onChange={(v) => setFilters((f) => ({ ...f, examPeriodId: v }))}
+                    options={summary?.options.periods.map((i) => ({ value: String(i.id), label: i.name })) || []}
+                  />
+                  <Select
+                    label="Môn học"
+                    value={filters.subjectId}
+                    onChange={(v) => setFilters((f) => ({ ...f, subjectId: v }))}
+                    options={
+                      summary?.options.subjects.map((i) => ({ value: String(i.id), label: `[${i.code}] ${i.name}` })) || []
+                    }
+                  />
+                  <Select
+                    label="Khoa"
+                    value={filters.departmentId}
+                    onChange={(v) => setFilters((f) => ({ ...f, departmentId: v }))}
+                    options={summary?.options.departments.map((i) => ({ value: String(i.id), label: i.name })) || []}
+                  />
+                  <Select
+                    label="Lớp học"
+                    value={filters.classId}
+                    onChange={(v) => setFilters((f) => ({ ...f, classId: v }))}
+                    options={summary?.options.classes.map((i) => ({ value: String(i.id), label: i.name })) || []}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <DateInput
+                    label="Từ ngày"
+                    value={filters.fromDate}
+                    onChange={(v) => setFilters((f) => ({ ...f, fromDate: v }))}
+                  />
+                  <DateInput
+                    label="Đến ngày"
+                    value={filters.toDate}
+                    onChange={(v) => setFilters((f) => ({ ...f, toDate: v }))}
+                  />
+                </div>
               </div>
 
-              <Select
-                label="Loại báo cáo"
-                value={type}
-                onChange={(v) => {
-                  setType(v);
-                  setPreview(null);
-                  setColumns([]);
-                }}
-                options={catalog.map((i) => ({ value: i.type, label: i.name }))}
-                all={false}
-              />
-
-              <label className="block">
-                <span className="mb-1.5 block text-type-body font-medium text-slate-900 dark:text-slate-100">
-                  Tiêu đề báo cáo
-                </span>
-                <input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder={catalog.find((i) => i.type === type)?.name}
-                  className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:border-blue-500 transition shadow-2xs"
-                />
-              </label>
-
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-                <Select
-                  label="Kỳ thi"
-                  value={filters.examPeriodId}
-                  onChange={(v) => setFilters((f) => ({ ...f, examPeriodId: v }))}
-                  options={summary?.options.periods.map((i) => ({ value: String(i.id), label: i.name })) || []}
-                />
-                <Select
-                  label="Môn học"
-                  value={filters.subjectId}
-                  onChange={(v) => setFilters((f) => ({ ...f, subjectId: v }))}
-                  options={
-                    summary?.options.subjects.map((i) => ({ value: String(i.id), label: `[${i.code}] ${i.name}` })) || []
-                  }
-                />
-                <Select
-                  label="Khoa"
-                  value={filters.departmentId}
-                  onChange={(v) => setFilters((f) => ({ ...f, departmentId: v }))}
-                  options={summary?.options.departments.map((i) => ({ value: String(i.id), label: i.name })) || []}
-                />
-                <Select
-                  label="Lớp học"
-                  value={filters.classId}
-                  onChange={(v) => setFilters((f) => ({ ...f, classId: v }))}
-                  options={summary?.options.classes.map((i) => ({ value: String(i.id), label: i.name })) || []}
-                />
+              <div className="pt-2">
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  onClick={loadPreview}
+                  isLoading={busy === 'preview'}
+                  className="w-full justify-center h-10"
+                >
+                  Xem trước báo cáo
+                </Button>
               </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <DateInput
-                  label="Từ ngày"
-                  value={filters.fromDate}
-                  onChange={(v) => setFilters((f) => ({ ...f, fromDate: v }))}
-                />
-                <DateInput
-                  label="Đến ngày"
-                  value={filters.toDate}
-                  onChange={(v) => setFilters((f) => ({ ...f, toDate: v }))}
-                />
-              </div>
-
-              <Button
-                type="button"
-                variant="primary"
-                size="md"
-                onClick={loadPreview}
-                isLoading={busy === 'preview'}
-                leftIcon={<Eye className="h-4 w-4" />}
-                className="w-full justify-center"
-              >
-                Xem trước báo cáo
-              </Button>
             </div>
           </aside>
 
-          {/* Cột phải: Bảng xem trước (Khối phẳng liền mạch duy nhất) */}
-          <div className="flex-1 min-w-0 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs flex flex-col">
+          {/* CỘT PHẢI: Bảng xem trước dữ liệu (Dính liền trong khung) */}
+          <div className="flex-1 min-w-0 flex flex-col divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
             {/* Header Toolbar phẳng nền trắng tinh gọn */}
-            <div className="flex flex-wrap justify-between items-center gap-3 border-b border-slate-100 dark:border-slate-800 px-5 py-3.5 bg-white dark:bg-slate-900 shrink-0">
-              <div className="flex items-center gap-3 min-w-0">
+            <div className="flex flex-wrap justify-between items-center gap-3 px-5 py-3.5 bg-white dark:bg-slate-900 shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0">
                 <button
                   type="button"
                   onClick={() => setCollapseConfig(!collapseConfig)}
                   className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0"
-                  title={collapseConfig ? 'Mở cột cấu hình' : 'Thu gọn cột cấu hình'}
+                  title={collapseConfig ? 'Mở rộng cột cấu hình' : 'Thu gọn cột cấu hình'}
                 >
                   <ChevronLeft
-                    className={`h-4 w-4 transition-transform duration-200 ease-in-out ${collapseConfig ? 'rotate-180' : ''}`}
+                    className={`h-4 w-4 transition-transform duration-200 ease-in-out ${
+                      collapseConfig ? 'rotate-180' : ''
+                    }`}
                   />
                 </button>
                 <div className="min-w-0">
@@ -801,7 +815,7 @@ export function ExamReportSummaryTab({
                   Chưa có bản xem trước
                 </p>
                 <p className="mt-1 max-w-md text-type-helper text-slate-400">
-                  Vui lòng chọn loại báo cáo và các điều kiện lọc, sau đó nhấn &ldquo;Xem trước báo cáo&rdquo; để kiểm tra dữ liệu trước khi xuất file.
+                  Vui lòng chọn loại báo cáo và các điều kiện lọc bên trái, sau đó nhấn &ldquo;Xem trước báo cáo&rdquo; để kiểm tra dữ liệu trước khi xuất file.
                 </p>
               </div>
             ) : (
@@ -822,8 +836,8 @@ export function ExamReportSummaryTab({
                   </div>
                 )}
 
-                {/* Bảng xem trước dữ liệu phẳng tràn viền (Không bọc khung lồng khung) */}
-                <div className="w-full overflow-x-auto max-h-[560px] custom-scrollbar flex-1">
+                {/* Bảng xem trước dữ liệu phẳng tràn viền */}
+                <div className="w-full overflow-x-auto max-h-[640px] custom-scrollbar flex-1">
                   <table className="ui-table w-full min-w-[760px] text-type-body text-left border-collapse">
                     <thead className="sticky top-0 bg-slate-50 dark:bg-slate-800 z-10">
                       <tr className="border-b border-slate-200/90 dark:border-slate-700">
@@ -883,41 +897,91 @@ export function ExamReportSummaryTab({
         </div>
       )}
 
-      {/* ── TAB 3: LỊCH SỬ XUẤT BÁO CÁO ── */}
+      {/* ── TAB 3: LỊCH SỬ XUẤT BÁO CÁO (Chuẩn Bảng & Phân trang như /exam-rooms) ── */}
       {tab === 'history' && (
-        <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs space-y-4">
-          <div>
-            <h2 className="text-type-section font-semibold text-slate-900 dark:text-white">
-              Lịch sử xuất báo cáo trên thiết bị
-            </h2>
-            <p className="mt-0.5 text-type-helper text-slate-500 dark:text-slate-400">
-              Các thao tác xuất file chính thức đồng thời được lưu lại trong nhật ký kiểm toán hệ thống
-            </p>
+        <div className="space-y-4">
+          {/* Header Thông tin */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 className="text-type-section font-semibold text-slate-900 dark:text-white">
+                Lịch sử xuất báo cáo trên thiết bị
+              </h2>
+              <p className="mt-0.5 text-type-helper text-slate-500 dark:text-slate-400">
+                Các thao tác xuất file chính thức đồng thời được lưu lại trong nhật ký kiểm toán hệ thống
+              </p>
+            </div>
+            {history.length > 0 && (
+              <span className="text-type-helper text-slate-400 font-normal tabular-nums">
+                Tổng cộng {history.length} bản ghi
+              </span>
+            )}
           </div>
 
-          {history.length ? (
-            <div className="divide-y divide-slate-100 dark:divide-slate-800">
-              {history.map((item) => (
-                <div key={item.id} className="flex items-center justify-between gap-3 py-3.5">
-                  <div>
-                    <p className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
-                      {item.title}
-                    </p>
-                    <p className="mt-0.5 text-type-helper text-slate-500 dark:text-slate-400 tabular-nums">
-                      {item.totalRows} bản ghi, thời gian: {new Date(item.createdAt).toLocaleString('vi-VN')}
-                    </p>
-                  </div>
-                  <span className="table-badge inline-flex items-center px-2.5 py-0.5 rounded-full ui-pill text-type-helper font-medium bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800">
-                    {item.format}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="py-12 text-center text-slate-500 dark:text-slate-400">
-              <p className="text-type-body font-medium">Chưa có báo cáo nào được xuất trên thiết bị này</p>
-              <p className="text-type-helper text-slate-400 mt-1">Khi bạn xuất file Excel hoặc CSV, lịch sử sẽ xuất hiện tại đây.</p>
-            </div>
+          {/* Bảng Dữ liệu Phẳng Chuẩn Hệ Thống (y hệt /exam-rooms) */}
+          <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+            <table className="ui-table w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/50 text-type-body-sm font-medium text-slate-600 dark:text-slate-400">
+                  <th className="py-3.5 px-5">Tiêu đề báo cáo</th>
+                  <th className="py-3.5 px-5">Loại báo cáo</th>
+                  <th className="py-3.5 px-5 text-center">Định dạng</th>
+                  <th className="py-3.5 px-5 text-center">Số bản ghi</th>
+                  <th className="py-3.5 px-5 text-right">Thời gian xuất</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                {paginatedHistory.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="hover:bg-slate-50/80 dark:hover:bg-slate-850/60 transition-colors"
+                  >
+                    <td className="py-4 px-5">
+                      <span className="font-semibold text-type-body text-slate-900 dark:text-slate-100">
+                        {item.title}
+                      </span>
+                    </td>
+                    <td className="py-4 px-5 text-type-body text-slate-600 dark:text-slate-300">
+                      {catalog.find((c) => c.type === item.type)?.name || item.type}
+                    </td>
+                    <td className="py-4 px-5 text-center whitespace-nowrap">
+                      <span className="table-badge inline-flex items-center px-2.5 py-0.5 rounded-full ui-pill text-type-helper font-medium bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800">
+                        {item.format}
+                      </span>
+                    </td>
+                    <td className="py-4 px-5 text-center whitespace-nowrap text-type-body tabular-nums text-slate-700 dark:text-slate-300">
+                      {item.totalRows}
+                    </td>
+                    <td className="py-4 px-5 text-right whitespace-nowrap text-type-body tabular-nums text-slate-500 dark:text-slate-400">
+                      {new Date(item.createdAt).toLocaleString('vi-VN')}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {!history.length && (
+              <div className="py-12 text-center text-slate-500 dark:text-slate-400">
+                <p className="text-type-body font-medium">Chưa có báo cáo nào được xuất trên thiết bị này</p>
+                <p className="text-type-helper text-slate-400 mt-1">Khi bạn xuất file Excel hoặc CSV, lịch sử sẽ xuất hiện tại đây.</p>
+              </div>
+            )}
+          </div>
+
+          {/* Thanh phân trang PaginationBar nằm bên dưới bảng (y hệt /exam-rooms) */}
+          {history.length > 0 && (
+            <PaginationBar
+              page={historyPage}
+              totalPages={Math.ceil(history.length / historyLimit) || 1}
+              limit={historyLimit}
+              totalItems={history.length}
+              unit="báo cáo"
+              onPage={(p) => setHistoryPage(p)}
+              onLimit={(l) => {
+                setHistoryLimit(l);
+                setHistoryPage(1);
+              }}
+              limitOptions={[10, 20, 50]}
+            />
           )}
         </div>
       )}
