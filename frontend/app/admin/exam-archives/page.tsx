@@ -542,20 +542,19 @@ export default function ExamArchivesPage() {
                   <th scope="col" className="p-3.5 whitespace-nowrap font-medium">Kỳ thi / Niên khóa</th>
                   <th scope="col" className="p-3.5 whitespace-nowrap font-medium">Ngày thi và Ca thi</th>
                   <th scope="col" className="p-3.5 whitespace-nowrap text-center font-medium">Bài thi lưu</th>
-                  <th scope="col" className="p-3.5 whitespace-nowrap font-medium">Niên hạn lưu trữ ({summary?.retentionYears || 2} năm)</th>
-                  <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap font-medium">Thao tác</th>
+                  <th scope="col" className="p-3.5 pr-4 whitespace-nowrap text-right font-medium">Niên hạn lưu trữ ({summary?.retentionYears || 2} năm)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-normal">
                 {loading ? (
                   <tr>
-                    <td colSpan={7} className="p-8 text-center text-slate-400">
+                    <td colSpan={6} className="p-8 text-center text-slate-400">
                       Đang tải danh sách ca thi lưu trữ...
                     </td>
                   </tr>
                 ) : paginatedSchedules.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="p-8 text-center text-slate-400">
+                    <td colSpan={6} className="p-8 text-center text-slate-400">
                       Chưa có ca thi nào hoàn tất công bố và chuyển vào kho lưu trữ phù hợp điều kiện lọc.
                     </td>
                   </tr>
@@ -584,34 +583,23 @@ export default function ExamArchivesPage() {
                         {s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : ''} ({s.timeSlot})
                       </td>
                       <td className="p-3.5 whitespace-nowrap text-center font-normal tabular-nums">
-                        <span className="inline-flex items-center gap-1.5 font-medium text-slate-800 dark:text-slate-200">
-                          <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                          <span>{s.archivedAttemptsCount}</span>
-                          <span className="text-type-meta text-slate-400 font-normal">bài</span>
+                        <span className="font-medium text-slate-800 dark:text-slate-200">
+                          {s.archivedAttemptsCount} bài
                         </span>
                       </td>
-                      <td className="p-3.5 whitespace-nowrap font-normal">
-                        <div className="flex flex-col gap-0.5">
-                          <div className="inline-flex items-center gap-2 font-medium text-slate-900 dark:text-slate-100">
-                            <span
-                              className={`h-2 w-2 rounded-full shrink-0 ${
-                                s.isEligibleForDisposal
-                                  ? 'bg-amber-500 ring-4 ring-amber-500/15'
-                                  : 'bg-emerald-500 ring-4 ring-emerald-500/15'
-                              }`}
-                            />
-                            <span>
-                              {s.isEligibleForDisposal ? 'Đủ niên hạn tiêu hủy' : s.remainingTimeText}
-                            </span>
+                      <td className="p-3.5 pr-4 whitespace-nowrap font-normal">
+                        <div className="flex flex-col items-end gap-0.5">
+                          <div className="font-medium text-slate-900 dark:text-slate-100">
+                            {s.isEligibleForDisposal ? (
+                              <span className="text-amber-600 dark:text-amber-400">Đủ niên hạn tiêu hủy</span>
+                            ) : (
+                              <span>{s.remainingTimeText}</span>
+                            )}
                           </div>
-                          <span className="text-type-meta text-slate-400 dark:text-slate-500 pl-4">
+                          <span className="text-type-meta text-slate-400 dark:text-slate-500">
                             {s.isEligibleForDisposal ? 'Hết hạn: ' : 'Đến ngày: '}
                             {s.retentionUntil ? new Date(s.retentionUntil).toLocaleDateString('vi-VN') : '—'}
                           </span>
-                        </div>
-                      </td>
-                      <td className="p-3.5 pr-4 text-right whitespace-nowrap table-action">
-                        <div className="flex items-center justify-end gap-1.5">
                           {s.isEligibleForDisposal && (
                             <button
                               type="button"
@@ -619,25 +607,13 @@ export default function ExamArchivesPage() {
                                 e.stopPropagation();
                                 handlePrintDisposalProposal(s.id);
                               }}
-                              className="h-8 px-2.5 inline-flex items-center gap-1.5 rounded-xl border border-amber-200/80 dark:border-amber-800/60 bg-amber-50/50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors text-type-meta font-medium cursor-pointer"
+                              className="mt-1 h-7 px-2.5 inline-flex items-center gap-1.5 rounded-xl border border-amber-200/90 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100 transition-colors text-type-meta font-medium cursor-pointer"
                               title={`Lập biên bản đề xuất tiêu hủy bài thi hết hạn ${summary?.retentionYears || 2} năm`}
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                               <span>Lập BB tiêu hủy</span>
                             </button>
                           )}
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleSelectSchedule(s);
-                            }}
-                            className="table-action h-8 px-2.5 inline-flex items-center gap-1 rounded-xl text-type-body font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50/80 dark:hover:bg-blue-950/40 transition-colors cursor-pointer"
-                            title="Xem chi tiết danh sách bài thi"
-                          >
-                            <span>Xem bài thi</span>
-                            <ChevronRight className="w-3.5 h-3.5" />
-                          </button>
                         </div>
                       </td>
                     </tr>
@@ -675,20 +651,19 @@ export default function ExamArchivesPage() {
                   <th scope="col" className="p-3.5 min-w-[180px] font-medium">Họ và Tên thí sinh</th>
                   <th scope="col" className="p-3.5 whitespace-nowrap font-medium">Lớp</th>
                   <th scope="col" className="p-3.5 whitespace-nowrap text-center font-medium">Điểm số</th>
-                  <th scope="col" className="p-3.5 whitespace-nowrap text-center font-medium">Thời gian nộp</th>
-                  <th scope="col" className="p-3.5 pr-4 text-right whitespace-nowrap font-medium">Hành động</th>
+                  <th scope="col" className="p-3.5 pr-4 whitespace-nowrap text-right font-medium">Thời gian nộp</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-normal">
                 {loadingAttempts ? (
                   <tr>
-                    <td colSpan={7} className="p-8 text-center text-slate-400">
+                    <td colSpan={6} className="p-8 text-center text-slate-400">
                       Đang trích xuất bài thi từ kho lưu trữ...
                     </td>
                   </tr>
                 ) : paginatedAttempts.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="p-8 text-center text-slate-400">
+                    <td colSpan={6} className="p-8 text-center text-slate-400">
                       Không tìm thấy bài thi nào phù hợp với điều kiện tìm kiếm.
                     </td>
                   </tr>
@@ -717,24 +692,10 @@ export default function ExamArchivesPage() {
                           </span>
                         </span>
                       </td>
-                      <td className="p-3.5 whitespace-nowrap text-center font-normal tabular-nums text-slate-500">
+                      <td className="p-3.5 pr-4 whitespace-nowrap text-right font-normal tabular-nums text-slate-500">
                         {att.submittedAt
                           ? new Date(att.submittedAt).toLocaleTimeString('vi-VN')
                           : '—'}
-                      </td>
-                      <td className="p-3.5 pr-4 text-right whitespace-nowrap table-action">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenDetail(att.id);
-                          }}
-                          className="table-action h-8 px-2.5 inline-flex items-center gap-1 rounded-xl text-type-body font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50/80 dark:hover:bg-blue-950/40 transition-colors cursor-pointer"
-                          title="Xem chi tiết bài làm của sinh viên"
-                        >
-                          <span>Xem bài làm</span>
-                          <ChevronRight className="w-3.5 h-3.5" />
-                        </button>
                       </td>
                     </tr>
                   ))
