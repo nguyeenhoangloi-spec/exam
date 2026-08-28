@@ -594,23 +594,23 @@ export default function BackupsPage() {
             {/* Header matching standard page header across all management pages */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
                 <div className="space-y-0.5">
-                    <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-                        Sao lưu dữ liệu
-                    </h1>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+                            Sao lưu dữ liệu
+                        </h1>
+                        {overview?.worker && (
+                            <span className="ui-pill inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-400 text-type-helper font-medium">
+                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
+                                <span>Worker: {overview.worker.enabled ? 'Bật' : 'Tắt'}</span>
+                            </span>
+                        )}
+                    </div>
                     <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
                         Vận hành an toàn database, file upload và {jobs.length} bản snapshot hệ thống {overview?.totalBytes ? `· Dung lượng: ${formatBytes(overview.totalBytes)}` : ''}
                     </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 shrink-0">
-                    {/* System Status Indicators */}
-                    {overview?.worker && (
-                        <span className="inline-flex items-center gap-1.5 h-10 px-3 rounded-xl border border-emerald-300 dark:border-emerald-700 bg-transparent text-emerald-700 dark:text-emerald-400 text-type-body-sm font-semibold">
-                            <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
-                            <span>Worker: {overview.worker.enabled ? 'Bật' : 'Tắt'}</span>
-                        </span>
-                    )}
-
                     <DataActionsDropdown
                         onExportExcel={handleExportExcel}
                         onExportCsv={handleExportCsv}

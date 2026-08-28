@@ -493,7 +493,7 @@ export default function TeacherAssignmentsPage() {
         />
 
         {/* ── Search & Action Toolbar ── */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
           {/* Left: Search input */}
           <div className="flex items-center gap-2 flex-1 max-w-md">
             <div className="relative flex-1 min-w-[240px]">

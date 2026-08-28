@@ -691,9 +691,17 @@ function ActivityLogsContent() {
             {/* ── 1. Page Header (Tiêu đề 28px, Phụ đề 14px) ── */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-0.5">
-                    <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-                        Nhật ký & kiểm toán
-                    </h1>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
+                            Nhật ký & kiểm toán
+                        </h1>
+                        {activeTab === 'security' && secIntegrity && (
+                            <span className="ui-pill inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-400 text-type-helper font-medium">
+                                <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                                <span>Toàn vẹn ({secIntegrity.checked.toLocaleString('vi-VN')})</span>
+                            </span>
+                        )}
+                    </div>
                     <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
                         {activeTab === 'activity'
                             ? `Ghi nhận chi tiết ${totalCount.toLocaleString('vi-VN')} lượt thao tác vận hành trên toàn hệ thống`
@@ -702,14 +710,6 @@ function ActivityLogsContent() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-                    {/* Status pill Capsule */}
-                    {activeTab === 'security' && secIntegrity && (
-                        <span className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-emerald-300 dark:border-emerald-700 bg-transparent text-emerald-700 dark:text-emerald-400 text-type-body-sm font-semibold">
-                            <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-                            <span>Toàn vẹn ({secIntegrity.checked})</span>
-                        </span>
-                    )}
-
                     {/* Data actions dropdown 15px */}
                     <DataActionsDropdown
                         onExportExcel={activeTab === 'activity' ? handleExportExcelActivity : handleExportExcelSecurity}
@@ -731,7 +731,7 @@ function ActivityLogsContent() {
             />
 
             {/* ── 3. Unified Embedded Search Bar ── */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-0.5">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
                 <div className="relative flex-1 max-w-xl min-w-[240px]">
                     <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
                     <input
@@ -1098,17 +1098,15 @@ function ActivityLogsContent() {
             {drawerOpenLog && (
                 <div role="dialog" aria-modal="true" aria-label="Chi tiết nhật ký" className="fixed inset-0 z-[100] overflow-hidden">
                     <div
-                        className={`fixed inset-0 bg-slate-950/40 backdrop-blur-[2px] transition-opacity duration-200 ${
-                            drawerVisible ? 'opacity-100' : 'opacity-0'
-                        }`}
+                        className={`fixed inset-0 bg-slate-950/40 backdrop-blur-[2px] transition-opacity duration-200 ${drawerVisible ? 'opacity-100' : 'opacity-0'
+                            }`}
                         onClick={() => setSelectedLog(null)}
                     />
 
                     <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
                         <div
-                            className={`w-screen max-w-[480px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col pointer-events-auto transition-transform duration-250 ease-out will-change-transform ${
-                                drawerVisible ? 'translate-x-0' : 'translate-x-full'
-                            }`}
+                            className={`w-screen max-w-[480px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col pointer-events-auto transition-transform duration-250 ease-out will-change-transform ${drawerVisible ? 'translate-x-0' : 'translate-x-full'
+                                }`}
                         >
                             {/* Drawer Header (18px) */}
                             <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800">

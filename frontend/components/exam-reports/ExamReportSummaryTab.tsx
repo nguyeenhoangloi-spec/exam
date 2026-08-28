@@ -15,6 +15,7 @@ import {
   Search,
   Settings2,
   Users,
+  X,
 } from 'lucide-react';
 import api from '../../lib/api';
 import { printReport } from '../../lib/export-print';
@@ -144,6 +145,7 @@ export function ExamReportSummaryTab({
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [notice, setNotice] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [search, setSearch] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [collapseConfig, setCollapseConfig] = useState(false);
   const [openTemplateMenu, setOpenTemplateMenu] = useState(false);
   const templateMenuRef = useRef<HTMLDivElement>(null);
@@ -307,84 +309,94 @@ export function ExamReportSummaryTab({
 
       {/* ── TAB 1: BẢNG CA THI GẦN ĐÂY (PHẲNG, LIỀN MẠCH, THOÁNG ĐÃNG) ── */}
       {tab === 'overview' && (
-        <div className="space-y-3.5">
-          {/* Toolbar của Bảng: Tiêu đề bên trái, Mẫu báo cáo & Tìm kiếm bên phải */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-0.5">
-            <div>
-              <h2 className="text-type-section font-semibold text-slate-900 dark:text-white">
-                Ca thi mới nhất
-              </h2>
-              <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
-                Nhấn vào dòng để xem bảng điểm chi tiết ca thi
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2.5 w-full sm:w-auto">
-              {/* Nút Chọn mẫu báo cáo */}
-              <div className="relative" ref={templateMenuRef}>
-                <button
-                  type="button"
-                  onClick={() => setOpenTemplateMenu((v) => !v)}
-                  className={`h-9 inline-flex items-center gap-1.5 px-3 rounded-xl border text-type-body-sm font-medium transition-colors cursor-pointer ${
-                    openTemplateMenu
-                      ? 'border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-500 dark:bg-blue-950/60 dark:text-blue-400'
-                      : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-850'
-                  }`}
-                >
-                  <span>Mẫu báo cáo</span>
-                  <ChevronDown
-                    className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${
-                      openTemplateMenu ? 'rotate-180 text-blue-600' : ''
-                    }`}
-                  />
-                </button>
-
-                {/* Menu Popover */}
-                {openTemplateMenu && (
-                  <div className="absolute right-0 mt-1.5 w-72 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl p-1.5 z-30 divide-y divide-slate-100 dark:divide-slate-800/80 animate-in fade-in zoom-in-95 duration-150">
-                    <div className="px-3 py-2">
-                      <p className="text-type-body-sm font-semibold text-slate-900 dark:text-white">
-                        Chọn mẫu báo cáo
-                      </p>
-                      <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
-                        Mở nhanh cấu hình và xem trước dữ liệu
-                      </p>
-                    </div>
-
-                    <div className="pt-1 space-y-0.5 max-h-80 overflow-y-auto">
-                      {catalog.map((item) => (
-                        <button
-                          key={item.type}
-                          type="button"
-                          onClick={() => choose(item)}
-                          className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-850 text-left transition-colors cursor-pointer group"
-                        >
-                          <div className="min-w-0 flex-1 pr-2">
-                            <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
-                              {item.name}
-                            </p>
-                            <p className="text-type-helper text-slate-400 dark:text-slate-500 font-normal truncate mt-0.5">
-                              {item.description}
-                            </p>
-                          </div>
-                          <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+        <div className="space-y-5">
+          {/* Unified Search & Action Toolbar Row (Chuẩn đồng bộ 100% với các trang khác) */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
+            {/* Left: Search Bar with 40px height, shortcut /, clear X button */}
+            <div className="relative flex-1 max-w-xl min-w-[240px]">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Tìm theo mã môn, tên môn, kỳ thi, khoa..."
+                className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-12 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+              />
+              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                {search ? (
+                  <button
+                    type="button"
+                    onClick={() => setSearch('')}
+                    className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer p-0.5"
+                    title="Xóa tìm kiếm"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                ) : (
+                  <kbd
+                    className="hidden sm:inline-flex h-5 items-center justify-center px-1.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-normal text-type-helper text-slate-400 select-none cursor-pointer"
+                    onClick={() => searchInputRef.current?.focus()}
+                    title="Nhấn phím / để tìm nhanh"
+                  >
+                    /
+                  </kbd>
                 )}
               </div>
+            </div>
 
-              {/* Ô tìm kiếm */}
-              <div className="relative w-full sm:w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Tìm mã môn, tên môn..."
-                  className="h-9 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-9 pr-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition"
+            {/* Right: Mẫu báo cáo dropdown button (Bậc 3 Secondary chuẩn 40px) */}
+            <div className="relative shrink-0" ref={templateMenuRef}>
+              <button
+                type="button"
+                onClick={() => setOpenTemplateMenu((v) => !v)}
+                className={`h-10 inline-flex items-center gap-1.5 px-3.5 rounded-xl border text-type-body font-medium transition-colors cursor-pointer shadow-2xs select-none ${openTemplateMenu
+                    ? 'border-blue-500 ring-2 ring-blue-500/20 text-slate-900 bg-white dark:bg-slate-900 dark:text-white'
+                    : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-850'
+                  }`}
+              >
+                <FileSpreadsheet className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0" />
+                <span>Mẫu báo cáo</span>
+                <ChevronDown
+                  className={`h-4 w-4 text-slate-400 dark:text-slate-500 shrink-0 transition-transform duration-200 ${openTemplateMenu ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
+                    }`}
                 />
-              </div>
+              </button>
+
+              {/* Menu Popover */}
+              {openTemplateMenu && (
+                <div className="absolute right-0 mt-1.5 w-72 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl p-1.5 z-30 divide-y divide-slate-100 dark:divide-slate-800/80 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="px-3 py-2">
+                    <p className="text-type-body-sm font-semibold text-slate-900 dark:text-white">
+                      Chọn mẫu báo cáo
+                    </p>
+                    <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
+                      Mở nhanh cấu hình và xem trước dữ liệu
+                    </p>
+                  </div>
+
+                  <div className="pt-1 space-y-0.5 max-h-80 overflow-y-auto">
+                    {catalog.map((item) => (
+                      <button
+                        key={item.type}
+                        type="button"
+                        onClick={() => choose(item)}
+                        className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-850 text-left transition-colors cursor-pointer group"
+                      >
+                        <div className="min-w-0 flex-1 pr-2">
+                          <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
+                            {item.name}
+                          </p>
+                          <p className="text-type-helper text-slate-400 dark:text-slate-500 font-normal truncate mt-0.5">
+                            {item.description}
+                          </p>
+                        </div>
+                        <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -452,11 +464,10 @@ export function ExamReportSummaryTab({
           {/* Cột trái: Cấu hình báo cáo */}
           <aside
             aria-label="Cấu hình báo cáo"
-            className={`transition-all duration-300 ease-in-out shrink-0 xl:sticky xl:top-4 overflow-hidden ${
-              collapseConfig
+            className={`transition-all duration-300 ease-in-out shrink-0 xl:sticky xl:top-4 overflow-hidden ${collapseConfig
                 ? 'max-h-0 xl:max-h-none xl:w-0 xl:opacity-0 xl:pointer-events-none xl:-mr-5 hidden xl:block'
                 : 'w-full xl:w-[360px] xl:opacity-100'
-            }`}
+              }`}
           >
             <div className="w-full xl:w-[360px] space-y-4 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs">
               <div>
@@ -615,11 +626,10 @@ export function ExamReportSummaryTab({
                               x.includes(c.key) ? x.filter((k) => k !== c.key) : [...x, c.key],
                             )
                           }
-                          className={`rounded-xl border px-3 py-1 text-type-helper font-medium transition cursor-pointer ${
-                            isChecked
+                          className={`rounded-xl border px-3 py-1 text-type-helper font-medium transition cursor-pointer ${isChecked
                               ? 'border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-700 dark:bg-blue-950/60 dark:text-blue-400'
                               : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                          }`}
+                            }`}
                         >
                           {isChecked ? '✓ ' : ''}
                           {c.label}
@@ -650,9 +660,8 @@ export function ExamReportSummaryTab({
                             .map((c) => (
                               <td
                                 key={c.key}
-                                className={`py-3.5 px-4 text-type-body text-slate-800 dark:text-slate-200 ${
-                                  c.align === 'right' ? 'text-right tabular-nums' : ''
-                                }`}
+                                className={`py-3.5 px-4 text-type-body text-slate-800 dark:text-slate-200 ${c.align === 'right' ? 'text-right tabular-nums' : ''
+                                  }`}
                               >
                                 {String(row[c.key] ?? '—')}
                               </td>

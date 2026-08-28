@@ -125,17 +125,15 @@ export function TabBar<T extends string = string>({
                   onChange(tab.key);
                 });
               }}
-              className={`group relative z-10 flex items-center justify-center gap-1.5 flex-1 min-w-fit px-2.5 sm:px-3 py-1.5 text-type-body-sm font-semibold rounded-xl focus-visible:outline-none motion-safe:transition-colors duration-200 ease-out cursor-pointer whitespace-nowrap shrink-0 select-none active:scale-[0.98] ${
-                isActive
+              className={`group relative z-10 flex items-center justify-center gap-1.5 flex-1 min-w-fit px-2.5 sm:px-3 py-1.5 text-type-body-sm font-semibold rounded-xl focus-visible:outline-none motion-safe:transition-colors duration-200 ease-out cursor-pointer whitespace-nowrap shrink-0 select-none active:scale-[0.98] ${isActive
                   ? 'text-slate-900 dark:text-slate-100 font-semibold'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
-              }`}
+                }`}
             >
               {tab.icon && (
                 <span
-                  className={`shrink-0 transition-colors duration-200 ${
-                    isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'
-                  }`}
+                  className={`shrink-0 transition-colors duration-200 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'
+                    }`}
                 >
                   {tab.icon}
                 </span>
@@ -143,11 +141,10 @@ export function TabBar<T extends string = string>({
               <span className="shrink-0">{tab.label}</span>
               {typeof tab.count === 'number' && (
                 <span
-                  className={`ui-pill rounded-full border px-1.5 py-0.5 text-type-helper font-medium transition-all duration-200 tabular-nums shrink-0 ${
-                    isActive
+                  className={`ui-pill rounded-full border px-1.5 py-0.5 text-type-helper font-medium transition-all duration-200 tabular-nums shrink-0 ${isActive
                       ? 'ui-pill-solid bg-blue-600 text-white border-blue-600 shadow-2xs'
                       : 'text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 group-hover:border-slate-400'
-                  }`}
+                    }`}
                 >
                   {tab.count.toLocaleString('vi-VN')}
                 </span>
@@ -197,17 +194,15 @@ export function TabBar<T extends string = string>({
                 onChange(tab.key);
               });
             }}
-            className={`group relative z-10 flex items-center gap-1.5 px-3.5 py-2.5 text-type-body font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 motion-safe:transition-colors duration-200 ease-out cursor-pointer whitespace-nowrap shrink-0 select-none active:scale-[0.98] ${
-              isActive
+            className={`group relative z-10 flex items-center gap-1.5 px-3.5 py-2.5 text-type-body font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 motion-safe:transition-colors duration-200 ease-out cursor-pointer whitespace-nowrap shrink-0 select-none active:scale-[0.98] ${isActive
                 ? 'text-primary-600 dark:text-blue-400 font-semibold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-            }`}
+              }`}
           >
             {tab.icon && (
               <span
-                className={`shrink-0 transition-colors duration-200 ${
-                  isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'
-                }`}
+                className={`shrink-0 transition-colors duration-200 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'
+                  }`}
               >
                 {tab.icon}
               </span>
@@ -216,11 +211,10 @@ export function TabBar<T extends string = string>({
 
             {typeof tab.count === 'number' && (
               <span
-                className={`ui-pill rounded-full border px-2 py-0.5 text-type-helper font-medium transition-all duration-200 tabular-nums shrink-0 ${
-                  isActive
+                className={`ui-pill rounded-full border px-2 py-0.5 text-type-helper font-medium transition-all duration-200 tabular-nums shrink-0 ${isActive
                     ? 'ui-pill-solid bg-blue-600 text-white border-blue-600 shadow-2xs'
                     : 'text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 group-hover:border-slate-400'
-                }`}
+                  }`}
               >
                 {tab.count.toLocaleString('vi-VN')}
               </span>

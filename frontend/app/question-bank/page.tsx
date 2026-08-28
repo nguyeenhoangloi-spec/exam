@@ -366,7 +366,7 @@ export default function QuestionBankPage() {
         />
 
         {/* Search & Action Toolbar Row (Single Horizontal Unified Row) */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
           {/* Left: Unified Search Bar with Embedded ListFilter Popover (Cách 1) */}
           <div className="relative flex-1 max-w-xl">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />

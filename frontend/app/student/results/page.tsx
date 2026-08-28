@@ -589,7 +589,7 @@ export default function StudentResultsPage() {
         />
 
         {/* ── Search & Action Toolbar Row (Single Unified Row) ── */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
           {/* Left: Unified Search Bar with Embedded SlidersHorizontal Popover */}
           <div className="relative flex-1 max-w-xl min-w-[240px]">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />

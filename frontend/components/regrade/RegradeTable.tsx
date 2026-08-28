@@ -163,14 +163,26 @@ export function RegradeTable({
                 )}
 
                 <td className="p-3.5 pr-4 text-right whitespace-nowrap">
-                  <Button
-                    variant={item.status === 'PENDING' ? 'primary' : 'secondary'}
-                    size="sm"
-                    onClick={() => onReview(item)}
-                    leftIcon={item.status === 'PENDING' ? <Edit3 className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                  >
-                    {item.status === 'PENDING' ? 'Thẩm định đơn' : 'Xem thẩm định'}
-                  </Button>
+                  {item.status === 'PENDING' ? (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => onReview(item)}
+                      leftIcon={<Edit3 className="h-3.5 w-3.5" />}
+                    >
+                      Thẩm định
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onReview(item)}
+                      leftIcon={<Eye className="h-3.5 w-3.5 text-slate-400" />}
+                      className="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    >
+                      Chi tiết
+                    </Button>
+                  )}
                 </td>
               </tr>
             );
