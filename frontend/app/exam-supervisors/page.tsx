@@ -181,25 +181,6 @@ export default function ExamSupervisorsPage() {
     }
   }, [scheduleIdFromQuery]);
 
-  const reviewChangeRequest = async (request: any, approve: boolean) => {
-    try {
-      if (!approve) {
-        await api.post(`/teachers/supervisor-change-requests/${request.id}/reject`, {});
-        setToast({ message: 'Đã từ chối yêu cầu đổi ca; phân công cũ được giữ nguyên.', type: 'success' });
-      } else {
-        const candidates = await api.get(`/teachers/supervisor-change-requests/${request.id}/eligible-replacements`);
-        const options = (candidates.data || []).map((teacher: any) => `${teacher.id}: ${teacher.fullName} (${teacher.teacherCode})`).join('\n');
-        const selected = window.prompt(`Nhập ID giảng viên thay thế hợp lệ:\n${options}`);
-        if (!selected) return;
-        await api.post(`/teachers/supervisor-change-requests/${request.id}/approve`, { replacementTeacherId: Number(selected) });
-        setToast({ message: 'Đã duyệt đổi ca và gửi yêu cầu xác nhận đến giảng viên thay thế.', type: 'success' });
-      }
-      await fetchData(true);
-    } catch (err: any) {
-      setToast({ message: err?.response?.data?.message || err.message || 'Không thể xử lý yêu cầu đổi ca.', type: 'error' });
-    }
-  };
-
   useEffect(() => {
     const u = getAuthUser();
     if (!u) {

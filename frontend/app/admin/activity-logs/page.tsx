@@ -12,6 +12,7 @@ import { DataActionsDropdown } from '../../../components/ui/DataActionsDropdown'
 import { PaginationBar } from '../../../components/ui/PaginationBar';
 import { ActivityFilterPopover } from '../../../components/activity-logs/ActivityFilterPopover';
 import { Toast } from '../../../components/Toast';
+import { ConfirmModal } from '../../../components/ConfirmModal';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import { printReport } from '../../../lib/export-print';
@@ -496,6 +497,8 @@ function ActivityLogsContent() {
     const [secPage, setSecPage] = useState<number>(1);
     const [secLimit, setLimitSec] = useState<number>(10);
     const [secTotal, setSecTotal] = useState<number>(0);
+    const [legalHoldModalEvent, setLegalHoldModalEvent] = useState<SecurityEvent | null>(null);
+    const [legalHoldLoading, setLegalHoldLoading] = useState<boolean>(false);
 
     const loadSecurityAudit = useCallback(async () => {
         setSecLoading(true);
@@ -655,15 +658,24 @@ function ActivityLogsContent() {
         });
     };
 
-    const handleApplyLegalHold = async (event: SecurityEvent) => {
-        const reason = window.prompt('Nhập lý do khóa lưu giữ điều tra pháp lý:');
-        if (!reason?.trim()) return;
+    const handleApplyLegalHold = (event: SecurityEvent) => {
+        setLegalHoldModalEvent(event);
+    };
+
+    const handleConfirmLegalHold = async (reason?: string) => {
+        if (!legalHoldModalEvent) return;
+        setLegalHoldLoading(true);
         try {
-            await api.post(`/security-audit/events/${event.id}/legal-hold`, { reason });
+            await api.post(`/security-audit/events/${legalHoldModalEvent.id}/legal-hold`, {
+                reason: reason?.trim() || 'Khóa lưu giữ điều tra pháp lý',
+            });
             setToast({ type: 'success', message: 'Đã khóa lưu giữ sự kiện kiểm toán.' });
+            setLegalHoldModalEvent(null);
             await loadSecurityAudit();
         } catch (error: any) {
             setToast({ type: 'error', message: error?.response?.data?.message || error?.message || 'Không thể tạo khóa.' });
+        } finally {
+            setLegalHoldLoading(false);
         }
     };
 
@@ -1050,7 +1062,7 @@ function ActivityLogsContent() {
                                                         {event.legalHold ? (
                                                             <span
                                                                 title="Đang khóa lưu giữ điều tra pháp lý"
-                                                                className="table-badge ui-pill font-medium text-type-helper inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200/80 dark:border-amber-800"
+                                                                className="table-badge ui-pill font-medium text-type-helper inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800"
                                                             >
                                                                 <Lock className="h-3 w-3" />
                                                                 <span>Đã khóa</span>
@@ -1060,7 +1072,7 @@ function ActivityLogsContent() {
                                                                 type="button"
                                                                 onClick={() => void handleApplyLegalHold(event)}
                                                                 title="Khóa lưu giữ điều tra pháp lý"
-                                                                className="inline-flex items-center justify-center h-7 w-7 rounded-xl text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition cursor-pointer"
+                                                                className="inline-flex items-center justify-center h-7 w-7 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:bg-blue-950/40 transition cursor-pointer"
                                                             >
                                                                 <Lock className="h-3.5 w-3.5" />
                                                             </button>
@@ -1206,6 +1218,24 @@ function ActivityLogsContent() {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Legal Hold Confirmation Modal */}
+            {legalHoldModalEvent && (
+                <ConfirmModal
+                    isOpen={Boolean(legalHoldModalEvent)}
+                    onClose={() => setLegalHoldModalEvent(null)}
+                    onConfirm={handleConfirmLegalHold}
+                    title="Khóa lưu giữ sự kiện kiểm toán"
+                    message={`Bạn đang thực hiện khóa lưu giữ điều tra pháp lý cho sự kiện "${secActionLabel[legalHoldModalEvent.action] || getActionLabel(legalHoldModalEvent.action)}" (Mã sự kiện: ${legalHoldModalEvent.id}). Sự kiện này sẽ được bảo vệ tuyệt đối và miễn trừ khỏi chính sách xóa định kỳ.`}
+                    type="info"
+                    confirmVariant="primary"
+                    requireReason={true}
+                    reasonPlaceholder="Nhập lý do khóa lưu giữ điều tra pháp lý..."
+                    confirmText="Xác nhận khóa"
+                    cancelText="Hủy bỏ"
+                    isLoading={legalHoldLoading}
+                />
             )}
         </main>
     );

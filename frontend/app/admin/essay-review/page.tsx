@@ -1007,9 +1007,9 @@ function AdminEssayReviewContent() {
                                 setOpenActionMenu(false);
                                 handleReopen();
                               }}
-                              className="w-full px-3.5 py-2 text-left text-type-helper font-medium text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-amber-950/40 hover:text-amber-600 dark:hover:text-amber-400 flex items-center gap-2.5 transition cursor-pointer"
+                              className="w-full px-3.5 py-2 text-left text-type-helper font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white flex items-center gap-2.5 transition cursor-pointer"
                             >
-                              <RotateCcw className="w-4 h-4 text-amber-600 shrink-0" />
+                              <RotateCcw className="w-4 h-4 text-slate-500 shrink-0" />
                               <span>Mở lại bài thi</span>
                             </button>
                           </div>

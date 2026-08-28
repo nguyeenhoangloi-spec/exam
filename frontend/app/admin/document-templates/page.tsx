@@ -15,6 +15,7 @@ import { usePageTitle } from '../../../components/PageTitleContext';
 import { Button } from '../../../components/ui/Button';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { Toast } from '../../../components/Toast';
+import { ConfirmModal } from '../../../components/ConfirmModal';
 import { printReport, printExamPaper } from '../../../lib/export-print';
 
 type DataSource =
@@ -220,6 +221,8 @@ export default function DocumentTemplatesPage() {
   const [zoomScale, setZoomScale] = useState<number>(95);
   const [activeTab, setActiveTab] = useState<'settings' | 'templates'>('settings');
   const [searchQuery, setSearchQuery] = useState('');
+  const [deleteTemplateId, setDeleteTemplateId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const loadTemplates = useCallback(async () => {
     setLoading(true);
@@ -309,19 +312,27 @@ export default function DocumentTemplatesPage() {
     }
   };
 
-  const handleDeleteTemplate = async (id: string, e?: React.MouseEvent) => {
+  const handleDeleteTemplate = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
-    if (!window.confirm('Bạn có chắc chắn muốn xóa biểu mẫu này không?')) return;
+    setDeleteTemplateId(id);
+  };
+
+  const handleConfirmDeleteTemplate = async () => {
+    if (!deleteTemplateId) return;
+    setIsDeleting(true);
     try {
-      await api.delete(`/document-templates/${id}`);
-      setTemplates((prev) => prev.filter((item) => item.id !== id));
-      if (selectedId === id) {
-        const remaining = templates.filter((item) => item.id !== id);
+      await api.delete(`/document-templates/${deleteTemplateId}`);
+      setTemplates((prev) => prev.filter((item) => item.id !== deleteTemplateId));
+      if (selectedId === deleteTemplateId) {
+        const remaining = templates.filter((item) => item.id !== deleteTemplateId);
         setSelectedId(remaining.length > 0 ? remaining[0].id : null);
       }
       setToast({ type: 'success', message: 'Đã xóa biểu mẫu thành công.' });
+      setDeleteTemplateId(null);
     } catch (error: any) {
       setToast({ type: 'error', message: error?.response?.data?.message || 'Không thể xóa biểu mẫu.' });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -1260,6 +1271,21 @@ export default function DocumentTemplatesPage() {
           message={toast.message}
           type={toast.type}
           onClose={() => setToast(null)}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteTemplateId && (
+        <ConfirmModal
+          isOpen={Boolean(deleteTemplateId)}
+          onClose={() => setDeleteTemplateId(null)}
+          onConfirm={handleConfirmDeleteTemplate}
+          title="Xác nhận xóa biểu mẫu"
+          message="Bạn có chắc chắn muốn xóa biểu mẫu này không? Thao tác này không thể hoàn tác."
+          type="danger"
+          confirmText="Xác nhận xóa"
+          cancelText="Hủy bỏ"
+          isLoading={isDeleting}
         />
       )}
     </main>

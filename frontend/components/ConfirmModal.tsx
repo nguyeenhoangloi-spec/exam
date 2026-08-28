@@ -86,7 +86,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         return {
           icon: <AlertTriangle className="h-4.5 w-4.5 text-amber-600 dark:text-amber-400" />,
           iconShell: 'bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:border-amber-800/60',
-          btnVariant: 'warning' as const,
+          btnVariant: confirmVariant || ('warning' as const),
         };
       case 'info':
       default:

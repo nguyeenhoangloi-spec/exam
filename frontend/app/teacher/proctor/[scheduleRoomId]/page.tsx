@@ -673,7 +673,23 @@ export default function ProctorDashboardPage() {
         ))}
       </div>
 
-      {/* ── 3. Search & Action Toolbar Row (Single Unified Row) ── */}
+      {/* ── 3. Status Filter TabBar ── */}
+      <TabBar
+        tabs={[
+          { key: 'ALL', label: 'Tất cả', count: students.length },
+          { key: 'IN_PROGRESS', label: 'Đang làm bài', count: students.filter((s: any) => s.attempt?.status === 'IN_PROGRESS').length },
+          { key: 'FLAGGED', label: 'Có cảnh báo', count: students.filter((s: any) => s.attempt?.isFlagged).length },
+          { key: 'SUBMITTED', label: 'Đã nộp bài', count: students.filter((s: any) => ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(s.attempt?.status)).length },
+          { key: 'DISCONNECTED', label: 'Mất kết nối', count: students.filter((s: any) => s.attempt?.status === 'DISCONNECTED').length },
+        ]}
+        active={filter}
+        onChange={(k) => {
+          setFilter(k as any);
+          setPage(1);
+        }}
+      />
+
+      {/* ── 4. Search & Action Toolbar Row (Single Unified Row) ── */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Left: Unified Search Bar with Embedded SlidersHorizontal Popover */}
         <div className="relative flex-1 max-w-xl min-w-[240px]">
@@ -772,25 +788,6 @@ export default function ProctorDashboardPage() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* ── 4. Status Filter TabBar ── */}
-      <div className="border-b border-slate-200/80 dark:border-slate-800">
-        <TabBar
-          tabs={[
-            { key: 'ALL', label: 'Tất cả', count: students.length },
-            { key: 'IN_PROGRESS', label: 'Đang làm bài', count: students.filter((s: any) => s.attempt?.status === 'IN_PROGRESS').length },
-            { key: 'FLAGGED', label: 'Có cảnh báo', count: students.filter((s: any) => s.attempt?.isFlagged).length },
-            { key: 'SUBMITTED', label: 'Đã nộp bài', count: students.filter((s: any) => ['SUBMITTED', 'AUTO_SUBMITTED', 'GRADED'].includes(s.attempt?.status)).length },
-            { key: 'DISCONNECTED', label: 'Mất kết nối', count: students.filter((s: any) => s.attempt?.status === 'DISCONNECTED').length },
-          ]}
-          active={filter}
-          onChange={(k) => {
-            setFilter(k as any);
-            setPage(1);
-          }}
-          className="border-b-0 pt-0"
-        />
       </div>
 
       {/* ── 5. Main Content (Standard List View Mode) ── */}
@@ -941,7 +938,7 @@ export default function ProctorDashboardPage() {
                                 setActionType('REOPEN');
                               }}
                               title="Mở lại phiên thi khi có sự cố"
-                              className="table-action h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-body font-medium text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/80 dark:hover:bg-amber-950/50 transition active:scale-95 cursor-pointer select-none"
+                              className="table-action h-8 inline-flex items-center gap-1.5 rounded-xl px-2.5 text-type-body font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/80 dark:hover:bg-blue-950/50 transition active:scale-95 cursor-pointer select-none"
                             >
                               <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
                               <span>Mở lại</span>
