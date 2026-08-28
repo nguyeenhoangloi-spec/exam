@@ -956,8 +956,8 @@ export default function DocumentTemplatesPage() {
             </button>
           </div>
 
-          {/* Vùng Render Tờ Giấy A4 */}
-          <div className="flex flex-1 items-start justify-center overflow-auto pb-6">
+          {/* Vùng Render Tờ Giấy A4/A5 Preview */}
+          <div className="flex flex-1 items-start justify-center overflow-x-auto overflow-y-auto pb-6 custom-scrollbar">
             {draft && config ? (
               <div
                 style={{
@@ -965,14 +965,18 @@ export default function DocumentTemplatesPage() {
                   transformOrigin: 'top center',
                   transition: 'transform 0.15s ease-out',
                 }}
-                className="flex justify-center"
+                className="flex justify-center shrink-0 my-2"
               >
                 {/* Simulation Paper Sheet */}
                 <div
                   style={{
                     padding: `${config.page.marginMm}mm`,
-                    width: config.page.orientation === 'landscape' ? '297mm' : '210mm',
-                    minHeight: config.page.orientation === 'landscape' ? '210mm' : '297mm',
+                    width: config.page.size === 'A5'
+                      ? (config.page.orientation === 'landscape' ? '210mm' : '148mm')
+                      : (config.page.orientation === 'landscape' ? '297mm' : '210mm'),
+                    minHeight: config.page.size === 'A5'
+                      ? (config.page.orientation === 'landscape' ? '148mm' : '210mm')
+                      : (config.page.orientation === 'landscape' ? '210mm' : '297mm'),
                     fontFamily: "'Times New Roman', Times, serif",
                   }}
                   className="bg-white text-slate-900 shadow-xl rounded-sm border border-slate-300 dark:border-slate-700"
@@ -1020,7 +1024,7 @@ export default function DocumentTemplatesPage() {
                         )}
                       </div>
 
-                      {/* Khung Thông Tin Học Phần (Chuẩn Khảo Thí 2 Cột x 2 Hàng kèm Lời Dặn) */}
+                      {/* Khung Thông Tin Học Phần */}
                       <div className="border border-slate-700 p-2 my-2 text-type-body bg-slate-50">
                         <table className="w-full border-collapse border-none text-type-body">
                           <tbody>
@@ -1043,7 +1047,7 @@ export default function DocumentTemplatesPage() {
                         </table>
                       </div>
 
-                      {/* Khung Thông Tin Thí Sinh (Chuẩn Khảo Thí) */}
+                      {/* Khung Thông Tin Thí Sinh */}
                       <table className="w-full border-collapse border border-slate-700 text-type-helper">
                         <tbody>
                           <tr>
@@ -1079,7 +1083,7 @@ export default function DocumentTemplatesPage() {
                         </tbody>
                       </table>
 
-                      {/* Khung Giám Thị & Chấm Điểm (4 Ô Cân Đối) */}
+                      {/* Khung Giám Thị & Chấm Điểm */}
                       {config.examInfo?.showScoreBox !== false && (
                         <div className="border border-slate-700 overflow-hidden">
                           <div className="grid grid-cols-4 bg-slate-100 font-semibold text-center text-type-helper border-b border-slate-700 p-1.5">
@@ -1151,11 +1155,16 @@ export default function DocumentTemplatesPage() {
                       {/* Signers Table */}
                       {config.footer.signers.length > 0 && (
                         <div className="pt-6">
-                          <div className="grid grid-cols-2 gap-4 text-center">
+                          <div
+                            className="grid gap-4 text-center"
+                            style={{
+                              gridTemplateColumns: `repeat(${Math.min(4, Math.max(1, config.footer.signers.length))}, minmax(0, 1fr))`,
+                            }}
+                          >
                             {config.footer.signers.map((s, idx) => (
                               <div key={idx} className="space-y-1">
                                 <div className="font-semibold text-type-body">{s.title}</div>
-                                <div className="italic text-type-helper text-slate-600 min-h-[55px] font-normal">
+                                <div className="italic text-type-helper text-slate-600 min-h-[45px] font-normal">
                                   {s.subtitle || ''}
                                 </div>
                                 <div className="text-slate-400 font-normal">
@@ -1214,7 +1223,7 @@ export default function DocumentTemplatesPage() {
                               {config.columns
                                 .filter((c) => c.visible !== false)
                                 .map((c) => (
-                                  <th
+                                   <th
                                     key={c.key}
                                     style={{
                                       textAlign: c.align || 'center',
@@ -1266,11 +1275,16 @@ export default function DocumentTemplatesPage() {
                           {new Date().getFullYear()}
                         </div>
                         {config.footer.signers.length > 0 && (
-                          <div className="grid grid-cols-2 gap-4 text-center">
+                          <div
+                            className="grid gap-4 text-center"
+                            style={{
+                              gridTemplateColumns: `repeat(${Math.min(4, Math.max(1, config.footer.signers.length))}, minmax(0, 1fr))`,
+                            }}
+                          >
                             {config.footer.signers.map((s, idx) => (
                               <div key={idx} className="space-y-1">
                                 <div className="font-semibold text-type-body">{s.title}</div>
-                                <div className="italic text-type-helper text-slate-600 min-h-[55px] font-normal">
+                                <div className="italic text-type-helper text-slate-600 min-h-[45px] font-normal">
                                   {s.subtitle || ''}
                                 </div>
                                 <div className="text-slate-400 font-normal">
