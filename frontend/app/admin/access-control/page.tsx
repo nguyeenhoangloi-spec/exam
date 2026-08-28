@@ -1161,10 +1161,10 @@ export default function AccessControlPage() {
                                     >
                                       <div
                                         className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-all ${isLockedAdmin
-                                            ? 'border-slate-200 bg-slate-100 text-slate-400 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-500'
-                                            : enabled
-                                              ? 'border-blue-600 bg-blue-600 text-white shadow-2xs group-hover:bg-blue-700 group-hover:border-blue-700'
-                                              : 'border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900 group-hover:border-slate-400 dark:group-hover:border-slate-600'
+                                          ? 'border-slate-200 bg-slate-100 text-slate-400 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-500'
+                                          : enabled
+                                            ? 'border-blue-600 bg-blue-600 text-white shadow-2xs group-hover:bg-blue-700 group-hover:border-blue-700'
+                                            : 'border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900 group-hover:border-slate-400 dark:group-hover:border-slate-600'
                                           }`}
                                       >
                                         {isLockedAdmin ? (
@@ -1277,8 +1277,8 @@ export default function AccessControlPage() {
                             type="button"
                             onClick={() => setSelectedUserId(user.id)}
                             className={`w-full rounded-xl px-3 py-2.5 text-left transition cursor-pointer ${isSelected
-                                ? 'bg-slate-100/90 dark:bg-slate-800/90 text-slate-900 dark:text-white ring-1 ring-slate-200 dark:ring-slate-700'
-                                : 'hover:bg-slate-50 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-200'
+                              ? 'bg-slate-100/90 dark:bg-slate-800/90 text-slate-900 dark:text-white ring-1 ring-slate-200 dark:ring-slate-700'
+                              : 'hover:bg-slate-50 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-200'
                               }`}
                           >
                             <div className="flex items-center justify-between gap-2">

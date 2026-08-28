@@ -70,7 +70,7 @@ export class AccessControlService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
-  ) {}
+  ) { }
 
   async ensureCatalog() {
     const existing = await this.prisma.permission.findMany({
