@@ -699,7 +699,7 @@ export function AccountSettingsModal({
                   {displayName}
                 </h2>
                 <p className="text-type-helper text-slate-500 dark:text-slate-400 truncate">
-                  {roleName} · {userCode}
+                  {roleName} ({userCode})
                 </p>
               </div>
             </div>
@@ -829,7 +829,7 @@ export function AccountSettingsModal({
 
                       <div className="flex flex-wrap items-center gap-2 text-type-body-sm text-slate-600 dark:text-slate-300">
                         <span className="font-semibold text-blue-600 dark:text-blue-400">{roleName}</span>
-                        <span>·</span>
+                        <span>|</span>
                         <span className="text-slate-500 dark:text-slate-400 truncate">{deptOrClass}</span>
                       </div>
 

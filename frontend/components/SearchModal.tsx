@@ -580,7 +580,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
               <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-type-helper font-semibold">↓</kbd>
               <span className="text-slate-500 font-medium">Điều hướng</span>
             </span>
-            <span className="text-slate-300 dark:text-slate-600">•</span>
+            <span className="text-slate-300 dark:text-slate-600">|</span>
             <span className="flex items-center gap-1.5">
               <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-type-helper font-semibold">↵</kbd>
               <span className="text-slate-500 font-medium">Chọn</span>

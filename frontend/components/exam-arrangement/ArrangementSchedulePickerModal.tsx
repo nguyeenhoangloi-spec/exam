@@ -218,9 +218,9 @@ export function ArrangementSchedulePickerModal({
 
                     <div className="flex items-center gap-2 text-type-helper text-slate-500 dark:text-slate-400 flex-wrap">
                       <span className="font-semibold text-slate-700 dark:text-slate-300">
-                        {s.startTime} - {s.endTime}
+                        {s.startTime} – {s.endTime}
                       </span>
-                      {dateStr && <span>• Ngày: {dateStr}</span>}
+                      {dateStr && <span>| Ngày: {dateStr}</span>}
                     </div>
                   </div>
 

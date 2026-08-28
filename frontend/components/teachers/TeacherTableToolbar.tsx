@@ -53,7 +53,7 @@ export function TeacherTableToolbar({
           options={[
             { value: 'newest', label: 'Mới nhất' },
             { value: 'oldest', label: 'Cũ nhất' },
-            { value: 'name_asc', label: 'Tên giảng viên: A - Z' },
+            { value: 'name_asc', label: 'Tên giảng viên: A – Z' },
           ]}
         />
 

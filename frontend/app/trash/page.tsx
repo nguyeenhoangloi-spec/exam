@@ -372,7 +372,7 @@ function TrashPageContent() {
             </span>
           </h1>
           <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-            {currentCategoryInfo.subtitle} · Tự động dọn dẹp và hủy vĩnh viễn sau 30 ngày
+            {currentCategoryInfo.subtitle} (Tự động dọn dẹp và hủy vĩnh viễn sau 30 ngày)
           </p>
         </div>
       </div>
@@ -552,7 +552,7 @@ function TrashPageContent() {
                 options={[
                   { value: 'newest', label: 'Mới nhất' },
                   { value: 'oldest', label: 'Cũ nhất' },
-                  { value: 'title_asc', label: 'Tên: A - Z' },
+                  { value: 'title_asc', label: 'Tên: A – Z' },
                 ]}
               />
 

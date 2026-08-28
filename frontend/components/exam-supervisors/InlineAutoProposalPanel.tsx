@@ -62,7 +62,7 @@ export function InlineAutoProposalPanel({
       { value: '', label: '-- Chưa phân công --' },
       ...teachers.map((t) => ({
         value: String(t.id),
-        label: `${t.fullName} (${t.teacherCode}) · ${t.degree || 'TS'}`,
+        label: `${t.fullName} (${t.teacherCode}) – ${t.degree || 'TS'}`,
       })),
     ];
   }, [teachers]);
@@ -117,7 +117,7 @@ export function InlineAutoProposalPanel({
           Phương án tự động
         </h3>
         <span className="text-type-helper text-slate-500 dark:text-slate-400 font-medium">
-          ({totalAssignedCount}/{totalRequired} vị trí — {progressPercent}%)
+          ({totalAssignedCount}/{totalRequired} vị trí | {progressPercent}%)
         </span>
       </div>
 

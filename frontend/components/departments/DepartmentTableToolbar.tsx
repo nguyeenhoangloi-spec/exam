@@ -51,7 +51,7 @@ export function DepartmentTableToolbar({
           options={[
             { value: 'newest', label: 'Mới nhất' },
             { value: 'oldest', label: 'Cũ nhất' },
-            { value: 'name_asc', label: 'Tên khoa: A - Z' },
+            { value: 'name_asc', label: 'Tên khoa: A – Z' },
             { value: 'subjects_desc', label: 'Môn học: Nhiều nhất' },
           ]}
         />

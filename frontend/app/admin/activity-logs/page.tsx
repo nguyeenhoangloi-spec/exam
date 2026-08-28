@@ -720,17 +720,15 @@ function ActivityLogsContent() {
                                                     onClick={() => setSelectedLog(log)}
                                                     className="group hover:bg-slate-50/80 dark:hover:bg-slate-850/60 transition-colors cursor-pointer"
                                                 >
-                                                    {/* Cột 1: Thời gian thực hiện 2 tầng (Tuyệt đối + Tương đối) */}
+                                                    {/* Cột 1: Thời gian thực hiện 2 tầng (Dòng 1 Giờ, Dòng 2 Ngày + Tương đối) */}
                                                     <td className="py-3.5 px-5 whitespace-nowrap">
                                                         <div className="flex flex-col" title={timeInfo.fullTooltip}>
-                                                            <span className="text-type-body font-normal tabular-nums text-slate-900 dark:text-slate-100">
-                                                                {timeInfo.absolute}
+                                                            <span className="text-type-body font-medium tabular-nums text-slate-900 dark:text-slate-100">
+                                                                {timeInfo.timeOnly}
                                                             </span>
-                                                            {timeInfo.relative && (
-                                                                <span className="table-meta text-type-meta text-slate-500 dark:text-slate-400">
-                                                                    {timeInfo.relative}
-                                                                </span>
-                                                            )}
+                                                            <span className="table-meta text-type-meta tabular-nums text-slate-500 dark:text-slate-400">
+                                                                {timeInfo.dateOnly}{timeInfo.relative ? ` (${timeInfo.relative})` : ''}
+                                                            </span>
                                                         </div>
                                                     </td>
 
@@ -849,17 +847,15 @@ function ActivityLogsContent() {
 
                                             return (
                                                 <tr key={event.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/60 transition-colors">
-                                                    {/* Cột 1: Thời điểm ghi nhận */}
+                                                    {/* Cột 1: Thời điểm ghi nhận 2 tầng (Dòng 1 Giờ, Dòng 2 Ngày + Tương đối) */}
                                                     <td className="py-3.5 px-5 whitespace-nowrap">
                                                         <div className="flex flex-col" title={timeInfo.fullTooltip}>
-                                                            <span className="text-type-body font-normal tabular-nums text-slate-900 dark:text-slate-100">
-                                                                {timeInfo.absolute}
+                                                            <span className="text-type-body font-medium tabular-nums text-slate-900 dark:text-slate-100">
+                                                                {timeInfo.timeOnly}
                                                             </span>
-                                                            {timeInfo.relative && (
-                                                                <span className="table-meta text-type-meta text-slate-500 dark:text-slate-400">
-                                                                    {timeInfo.relative}
-                                                                </span>
-                                                            )}
+                                                            <span className="table-meta text-type-meta tabular-nums text-slate-500 dark:text-slate-400">
+                                                                {timeInfo.dateOnly}{timeInfo.relative ? ` (${timeInfo.relative})` : ''}
+                                                            </span>
                                                         </div>
                                                     </td>
 
@@ -886,7 +882,7 @@ function ActivityLogsContent() {
                                                                 </span>
                                                                 {event.entityType && (
                                                                     <>
-                                                                        <span className="text-slate-400 dark:text-slate-600">·</span>
+                                                                        <span className="text-slate-400 dark:text-slate-600">|</span>
                                                                         <span className="font-medium text-type-body text-blue-600 dark:text-blue-400">
                                                                             {entityName}
                                                                         </span>

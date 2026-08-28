@@ -238,9 +238,9 @@ const sampleRowsByCode: Record<string, Array<Record<string, any>>> = {
     { index: 3, studentCode: 'SV20260003', fullName: 'Lê Hoàng Cường', className: 'CNTT-K68B', totalScore: '6.5', sealShort: 'J9K0L1M2', approvedBy: 'Hội đồng Khảo thí' },
   ],
   EXAM_ARCHIVE_DOSSIER: [
-    { index: 1, item: '1. Thông tin thí sinh & Học phần', value: 'Nguyễn Văn An (SV20260001) · Môn: Lập trình Web Nâng cao (IT4409)', note: 'Khớp danh sách' },
+    { index: 1, item: '1. Thông tin thí sinh & Học phần', value: 'Nguyễn Văn An (SV20260001) | Lập trình Web Nâng cao (IT4409)', note: 'Khớp danh sách' },
     { index: 2, item: '2. Mã niêm phong số (SHA-256)', value: '7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069', note: 'Toàn vẹn 100%' },
-    { index: 3, item: '3. Điểm số chính thức & Cán bộ chấm', value: '9.0 / 10.0 đ · Chấm bởi: TS. Trần Hải · Duyệt bởi: Hội đồng Khảo thí', note: 'Đã công bố' },
+    { index: 3, item: '3. Điểm số chính thức & Cán bộ chấm', value: '9.0 / 10.0 đ | Cán bộ chấm: TS. Trần Hải | Duyệt: Hội đồng Khảo thí', note: 'Đã công bố' },
     { index: 4, item: '4. Tình trạng lưu trữ đào tạo', value: 'Bản trích lục niêm phong lưu trữ đào tạo chính quy', note: 'Đạt chuẩn lưu trữ' },
   ],
 };
@@ -889,7 +889,7 @@ export default function DocumentTemplatesPage() {
                           {item.name}
                         </div>
                         <div className="text-type-helper text-slate-400 font-normal">
-                          {sourceLabels[item.dataSource]} · {item.code}
+                          {sourceLabels[item.dataSource]} ({item.code})
                         </div>
                       </div>
 
@@ -921,11 +921,11 @@ export default function DocumentTemplatesPage() {
         </div>
 
         {/* Cột Phải: Canvas A4 Workspace Trực Quan (Tâm Điểm Thị Giác) */}
-        <div className="flex flex-col rounded-2xl bg-slate-100/60 p-4 sm:p-8 dark:bg-slate-950/70 border border-slate-200/60 dark:border-slate-850 min-h-[750px]">
+        <div className="flex flex-col rounded-2xl bg-slate-100/60 p-4 sm:p-8 dark:bg-slate-950/70 border border-slate-200/60 dark:border-slate-855 min-h-[750px]">
           {/* Floating Context Toolbar Mini */}
           <div className="mx-auto mb-6 flex items-center justify-between gap-3.5 rounded-full border border-slate-200/60 bg-white/90 px-4 py-1.5 shadow-2xs backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/90">
             <span className="text-type-helper font-medium text-slate-600 dark:text-slate-300">
-              {config?.page.size || 'A4'} {config?.page.orientation === 'landscape' ? 'Ngang' : 'Dọc'} · Lề {config?.page.marginMm || 15}mm
+              {config?.page.size || 'A4'} {config?.page.orientation === 'landscape' ? 'Ngang' : 'Dọc'} | Lề {config?.page.marginMm || 15}mm
             </span>
             <div className="h-3 w-px bg-slate-200 dark:bg-slate-700" />
             <div className="flex items-center gap-1">

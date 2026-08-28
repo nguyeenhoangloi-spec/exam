@@ -595,7 +595,7 @@ export default function ExamReportsPage() {
       filename: `Bao_Cao_Tong_Ket_Khao_Thi_${new Date().toISOString().slice(0, 10)}.xls`,
       templateCode: 'EXAM_SUMMARY_REPORT',
       title: 'BÁO CÁO TỔNG KẾT KHẢO THÍ',
-      subtitle: `Kỳ thi Học kỳ 1 - Năm học 2025 - 2026 · Tổng số ca thi: ${summary.stats.totalSchedules}`,
+      subtitle: `Kỳ thi Học kỳ 1 – Năm học 2025–2026, tổng số ${summary.stats.totalSchedules} ca thi`,
       columns: [
         { header: 'STT', align: 'center', width: 6 },
         { header: 'Kỳ thi', width: 22 },
@@ -696,7 +696,7 @@ export default function ExamReportsPage() {
  <div class="title">BẢNG TỔNG HỢP KẾT QUẢ ĐIỂM THI CA THI</div>
  <div class="meta">
  <p style="margin:2px 0;"><strong>Môn học:</strong> ${escapeHtml(report.schedule.subjectName)} (${escapeHtml(report.schedule.subjectCode)})</p>
- <p style="margin:2px 0;"><strong>Kỳ thi:</strong> ${escapeHtml(report.schedule.periodName)} · <strong>Ngày thi:</strong> ${report.schedule.examDate} (${report.schedule.startTime} - ${report.schedule.endTime})</p>
+ <p style="margin:2px 0;"><strong>Kỳ thi:</strong> ${escapeHtml(report.schedule.periodName)}, <strong>Ngày thi:</strong> ${report.schedule.examDate} (${report.schedule.startTime} – ${report.schedule.endTime})</p>
  </div>
  <table class="data-table">
  <thead>
@@ -963,10 +963,10 @@ export default function ExamReportsPage() {
                                 <span className={`px-2 py-0.5 rounded text-type-helper ${formatBadge.badgeClass}`}>
                                   {formatBadge.label}
                                 </span>
-                                <span className="text-slate-400 dark:text-slate-500">· {period}</span>
+                                <span className="text-slate-400 dark:text-slate-500">| {period}</span>
                               </div>
                               <span className="font-semibold text-slate-700 dark:text-slate-200">
-                                {s.startTime}–{s.endTime} {s.examDate ? `· ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
+                                {s.startTime}–{s.endTime}{s.examDate ? ` | ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
                               </span>
                             </div>
                           </button>

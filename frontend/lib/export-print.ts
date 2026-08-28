@@ -503,7 +503,7 @@ export function printBatchArchivedDossier(data: any): boolean {
 
         <div class="title" style="margin: 8px 0;">
           <h2 style="font-size: 12.5pt; margin: 0; text-transform: uppercase;">BÀI THI KẾT THÚC HỌC PHẦN (LƯU TRỮ CHÍNH QUY)</h2>
-          <p style="margin: 2px 0; font-size: 9.5pt; font-style: italic;">(Bài thi số ${attIdx + 1}/${attempts.length} · Thuộc túi bài thi niêm phong)</p>
+          <p style="margin: 2px 0; font-size: 9.5pt; font-style: italic;">(Bài thi số ${attIdx + 1}/${attempts.length}, thuộc túi bài thi niêm phong)</p>
         </div>
 
         <table class="meta-table" style="margin-bottom: 12px;">
@@ -625,7 +625,7 @@ export function printBatchArchivedDossier(data: any): boolean {
         <tr>
           <td><strong>Niên hạn lưu trữ:</strong></td>
           <td colspan="3">
-            Thời hạn <strong>${schedule.retentionYears ? `${schedule.retentionYears} năm` : '02 năm'}</strong> · Hết hạn vào ngày: 
+            Thời hạn <strong>${schedule.retentionYears ? `${schedule.retentionYears} năm` : '02 năm'}</strong>, hết hạn vào ngày: 
             <strong>${schedule.retentionUntil ? new Date(schedule.retentionUntil).toLocaleDateString('vi-VN') : 'Đang tính toán'}</strong> 
             (${escapeHtml(schedule.remainingTimeText || '')})
           </td>

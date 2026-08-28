@@ -1467,7 +1467,7 @@ export default function ProctorDashboardPage() {
                     ) : (
                       <span className="ui-pill inline-flex items-center gap-1 text-type-helper font-medium px-2 py-0.5 rounded-full border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300">
                         <Radio className="w-3 h-3 text-emerald-500 animate-pulse" />
-                        Toàn phòng • {stats.total || 0} thí sinh
+                        Toàn phòng | {stats.total || 0} thí sinh
                       </span>
                     )}
                   </div>
@@ -1654,7 +1654,7 @@ export default function ProctorDashboardPage() {
                     ) : (
                       <span className="ui-pill inline-flex items-center gap-1 text-type-helper font-medium px-2 py-0.5 rounded-full border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300">
                         <Radio className="w-3 h-3 text-emerald-500 animate-pulse" />
-                        Toàn phòng • {stats.total || 0} thí sinh
+                        Toàn phòng | {stats.total || 0} thí sinh
                       </span>
                     )}
                   </div>

@@ -327,7 +327,7 @@ export default function StudentCurriculumPage() {
       filename: `Khung_chuong_trinh_${studentInfo?.studentCode || 'sinh_vien'}`,
       templateCode: 'STUDENT_CURRICULUM_REPORT',
       title: 'KHUNG CHƯƠNG TRÌNH ĐÀO TẠO',
-      subtitle: `Sinh viên: ${studentInfo?.fullName} (${studentInfo?.studentCode}) · Lớp: ${studentInfo?.className} · Khoa: ${studentInfo?.departmentName}`,
+      subtitle: `Sinh viên: ${studentInfo?.fullName} (${studentInfo?.studentCode}), Lớp: ${studentInfo?.className}, Khoa: ${studentInfo?.departmentName}`,
       columns: [
         { header: 'STT', width: 6, align: 'center' },
         { header: 'Học kỳ', width: 12, align: 'center' },
@@ -555,8 +555,8 @@ export default function StudentCurriculumPage() {
               options={[
                 { value: 'semester_asc', label: 'Học kỳ: Tăng dần' },
                 { value: 'semester_desc', label: 'Học kỳ: Giảm dần' },
-                { value: 'name_asc', label: 'Tên môn: A - Z' },
-                { value: 'name_desc', label: 'Tên môn: Z - A' },
+                { value: 'name_asc', label: 'Tên môn: A – Z' },
+                { value: 'name_desc', label: 'Tên môn: Z – A' },
                 { value: 'credits_desc', label: 'Số tín chỉ: Cao nhất' },
                 { value: 'credits_asc', label: 'Số tín chỉ: Thấp nhất' },
               ]}

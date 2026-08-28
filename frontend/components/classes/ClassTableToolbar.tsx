@@ -49,7 +49,7 @@ export function ClassTableToolbar({
           options={[
             { value: 'newest', label: 'Mới nhất' },
             { value: 'oldest', label: 'Cũ nhất' },
-            { value: 'name_asc', label: 'Tên lớp: A - Z' },
+            { value: 'name_asc', label: 'Tên lớp: A – Z' },
             { value: 'students_desc', label: 'Sĩ số: Cao nhất' },
           ]}
         />

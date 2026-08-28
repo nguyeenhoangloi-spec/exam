@@ -116,7 +116,7 @@ export function ExamPaperExportModal({
             <strong className="font-semibold text-slate-900 dark:text-slate-100">{basePaper.subjectName}</strong> ({basePaper.subjectCode})
           </div>
           <span className="shrink-0 font-normal">
-            {basePaper.questions.length} câu ({basePaper.durationMinutes} phút) · {isEssay ? 'Tự luận' : 'Trắc nghiệm'}
+            {basePaper.questions.length} câu ({basePaper.durationMinutes} phút) | {isEssay ? 'Tự luận' : 'Trắc nghiệm'}
           </span>
         </div>
 

@@ -1099,8 +1099,8 @@ export default function StudentExamTakePage() {
             title: 'Lưu ý giám sát an toàn thi',
             content: (
               <div className="space-y-2 text-type-helper text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
-                <p>• Mọi thay đổi đáp án được tự động đồng bộ tức thời với máy chủ.</p>
-                <p>• Không bấm F5, không chuyển tab hoặc mở ứng dụng ngoài để tránh bị ghi nhận vi phạm quy chế.</p>
+                <p>- Mọi thay đổi đáp án được tự động đồng bộ tức thời với máy chủ.</p>
+                <p>- Không bấm F5, không chuyển tab hoặc mở ứng dụng ngoài để tránh bị ghi nhận vi phạm quy chế.</p>
               </div>
             ),
           },

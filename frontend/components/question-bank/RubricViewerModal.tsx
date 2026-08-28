@@ -93,8 +93,8 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
       title="Đáp án & Ba-rem chấm"
       subtitle={
         question.code
-          ? `Câu ${question.code} • Điểm tối đa: ${question.score || totalRubricScore || 0}đ`
-          : `Điểm tối đa: ${question.score || totalRubricScore || 0}đ`
+          ? `Câu ${question.code} | Điểm tối đa: ${question.score || totalRubricScore || 0} điểm`
+          : `Điểm tối đa: ${question.score || totalRubricScore || 0} điểm`
       }
     >
       <div className="space-y-4">
@@ -230,13 +230,13 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
                     {(c.fullCreditGuide || c.partialCreditGuide || c.zeroCreditGuide) && (
                       <div className="text-type-helper space-y-0.5 pt-1 text-slate-500 pl-7.5 font-normal">
                         {c.fullCreditGuide && (
-                          <div>• <span className="font-medium text-emerald-600 dark:text-emerald-400">Đạt tối đa:</span> {c.fullCreditGuide}</div>
+                          <div>- <span className="font-medium text-emerald-600 dark:text-emerald-400">Đạt tối đa:</span> {c.fullCreditGuide}</div>
                         )}
                         {c.partialCreditGuide && (
-                          <div>• <span className="font-medium text-amber-600 dark:text-amber-400">Đạt một phần:</span> {c.partialCreditGuide}</div>
+                          <div>- <span className="font-medium text-amber-600 dark:text-amber-400">Đạt một phần:</span> {c.partialCreditGuide}</div>
                         )}
                         {c.zeroCreditGuide && (
-                          <div>• <span className="font-medium text-rose-600 dark:text-rose-400">Không đạt:</span> {c.zeroCreditGuide}</div>
+                          <div>- <span className="font-medium text-rose-600 dark:text-rose-400">Không đạt:</span> {c.zeroCreditGuide}</div>
                         )}
                       </div>
                     )}

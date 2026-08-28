@@ -420,7 +420,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
                   <p className="text-type-helper font-medium text-slate-500 dark:text-slate-400 mt-1 truncate">
                     Sinh viên: <strong className="font-semibold text-slate-900 dark:text-slate-100">{data.student?.fullName}</strong>
                     {' '}(<span className="font-medium text-slate-700 dark:text-slate-300">{data.student?.studentCode}</span>)
-                    {data.paper?.subjectName && <span> • Môn: {data.paper.subjectName}</span>}
+                    {data.paper?.subjectName && <span> ({data.paper.subjectName})</span>}
                   </p>
                 )}
               </div>

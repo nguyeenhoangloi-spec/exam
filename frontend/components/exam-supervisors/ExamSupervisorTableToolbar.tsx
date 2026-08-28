@@ -45,8 +45,8 @@ export function ExamSupervisorTableToolbar({
         options={[
           { value: 'newest', label: 'Mới nhất' },
           { value: 'oldest', label: 'Cũ nhất' },
-          { value: 'name_asc', label: 'Tên cán bộ A - Z' },
-          { value: 'name_desc', label: 'Tên cán bộ Z - A' },
+          { value: 'name_asc', label: 'Tên cán bộ: A – Z' },
+          { value: 'name_desc', label: 'Tên cán bộ: Z – A' },
           { value: 'room_asc', label: 'Phòng thi' },
         ]}
       />

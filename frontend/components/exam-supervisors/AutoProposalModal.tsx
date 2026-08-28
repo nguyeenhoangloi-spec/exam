@@ -65,7 +65,7 @@ export function AutoProposalModal({
       { value: '', label: '-- Chưa phân công --' },
       ...teachers.map((t) => ({
         value: String(t.id),
-        label: `${t.fullName} (${t.teacherCode}) · ${t.degree || 'TS'}`,
+        label: `${t.fullName} (${t.teacherCode}) – ${t.degree || 'TS'}`,
       })),
     ];
   }, [teachers]);

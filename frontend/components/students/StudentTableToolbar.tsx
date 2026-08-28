@@ -51,8 +51,8 @@ export function StudentTableToolbar({
           options={[
             { value: 'newest', label: 'Mới nhất' },
             { value: 'oldest', label: 'Cũ nhất' },
-            { value: 'name_asc', label: 'Họ và tên: A - Z' },
-            { value: 'code_asc', label: 'Mã sinh viên: A - Z' },
+            { value: 'name_asc', label: 'Họ và tên: A – Z' },
+            { value: 'code_asc', label: 'Mã sinh viên: A – Z' },
           ]}
         />
 

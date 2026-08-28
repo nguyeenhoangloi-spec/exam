@@ -719,7 +719,7 @@ Nhằm đảm bảo giao diện luôn mạch lạc, phẳng, thoáng đãng và 
 ### 21.3 Dọn Sạch Chữ Thừa & Helper Text Rườm Rà (No Redundant Helper Text)
 - **Không nhồi nhét ghi chú dài dòng:** Nếu placeholder hoặc nhãn (label) đã rõ nghĩa, tuyệt đối không chèn thêm các dòng helper text giải thích dài dưới từng ô input.
 - **Không lặp lại trạng thái:** Nếu Header của modal/drawer đã có `StatusBadge`, cấm hiển thị thêm cụm `Trạng thái: [ Bản nháp ]` ở Footer.
-- **Phân cách thông số nhẹ nhàng:** Dùng dấu chấm `·` phẳng (hoặc ngoặc đơn mảnh) thay vì các khối tag xám hay gạch nối dài rối mắt (VD: `Toán cao cấp · 40 câu · 60 phút`).
+- **Phân cách thông số khoa học:** Tuân thủ chuẩn mực phân tách tại Mục 22, tuyệt đối không lạm dụng dấu chấm nhỏ `·` hoặc gạch dài `—` tùy tiện.
 
 ### 21.4 Tối Giản Nút Bấm & Chống Giật Layout (Button Minimalism & No Layout Shift)
 - **Tối đa 1 Primary CTA duy nhất:** Trong mỗi modal, form hoặc toolbar, chỉ có duy nhất 1 nút chính `variant="primary"` (`bg-blue-600 text-white`). Các nút còn lại bắt buộc dùng `variant="secondary"` hoặc `ghost`.
@@ -728,4 +728,41 @@ Nhằm đảm bảo giao diện luôn mạch lạc, phẳng, thoáng đãng và 
 ### 21.5 Cấm Đóng Khung Badge Tùy Tiện (Badge Minimalism)
 - Badge/Pill chỉ dành riêng cho **Trạng thái vòng đời** (`StatusBadge`) hoặc **Mã kỹ thuật** (`IdentifierBadge`).
 - Cấm đóng khung badge cho: tên môn, ngày giờ, số câu, điểm số, học vị, dải mã xem trước `(101 – 103)` hay nhãn chức năng.
+
+## 22. Quy Chuẩn Phân Tách Dữ Liệu Đồng Nhất Toàn Hệ Thống 2026 (Unified Data Separation Standard)
+
+Để hệ thống đạt chuẩn hành chính và chuyên môn học thuật cao nhất, toàn bộ dữ liệu bắt buộc tuân theo **5 quy tắc cố định**, loại bỏ triệt để việc dùng lẫn lộn dấu chấm nhỏ `·`, gạch dài `—`, gạch ngang `-` hay gạch đứng `|`:
+
+### 22.1 Thời gian (Giờ & Ngày tháng)
+- **Trong Bảng dữ liệu (Table Body)**: Bắt buộc dùng **2 tầng độc lập**:
+  - Dòng 1: Giờ phút giây `14:45:02` (Font Deep Ink `tabular-nums text-slate-900 dark:text-slate-100`).
+  - Dòng 2: Ngày tháng năm `28/08/2026` (kèm thời gian tương đối `11 phút trước` trong `table-meta`).
+- **Trên cùng 1 dòng đơn (Inline / Subtitle / Báo cáo)**: Dùng **dấu phẩy hành chính `, `**:
+  - `14:45:02, 28/08/2026` (Quy chuẩn văn bản hành chính Việt Nam).
+- **Khoảng thời gian (Time Range)**: Dùng **gạch ngang En-dash chuẩn ` – `**:
+  - `07:30 – 09:30` (Không dùng `->`, `~` hay `-` dính liền).
+
+### 22.2 Tên Đối Tượng & Mã Định Danh
+- **Trong Bảng dữ liệu**:
+  - Dòng 1: Tên đối tượng (`font-semibold text-slate-900 dark:text-slate-100`, vd: `Toán cao cấp`).
+  - Dòng 2: Mã định danh (`table-meta text-slate-500 font-mono tabular-nums`, vd: `MATH101` hoặc `#071ae648`).
+- **Trong Dropdown Select / Tiêu đề Modal (1 dòng đơn)**: Dùng **cặp ngoặc đơn `(MÃ)` ngay sau tên**:
+  - `Toán cao cấp (MATH101)`
+  - `Nguyễn Văn A (GV0012)`
+
+### 22.3 Thông Số Kỹ Thuật Nghiệp Vụ (Số câu, Thời lượng, Điểm số)
+- **Trong Bảng dữ liệu / Chip thông số**: Dùng **gạch đứng mảnh mờ ` | `** (`text-slate-300 dark:text-slate-700`):
+  - `40 câu | 60 phút | 10.0 điểm`
+- **Trong Văn bản mô tả / Thuyết minh**: Dùng **dấu phẩy hành chính `, `**:
+  - `Đề thi gồm 40 câu hỏi, thời gian làm bài 60 phút, thang điểm 10.`
+
+### 22.4 Học Kỳ & Năm Học (Kỳ Thi)
+- Dùng **gạch ngang En-dash chuẩn ` – `**:
+  - `Học kỳ 1 – Năm học 2025–2026` (hoặc `HK1 – 2025/2026`).
+
+### 22.5 Thông Tin Người Dùng & Vai Trò
+- **Trong Bảng dữ liệu**:
+  - Dòng 1: Họ tên hoặc Tên tài khoản (`font-medium text-slate-900`).
+  - Dòng 2: Nhãn vai trò (`table-meta text-slate-500`) + Email/MSSV.
+
 

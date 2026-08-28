@@ -376,7 +376,7 @@ export default function BackupsPage() {
             filename: `Sao_luu_du_lieu_${new Date().toISOString().split('T')[0]}.xls`,
             templateCode: 'SYSTEM_AUDIT_LOG',
             title: 'DANH SÁCH BẢN SAO LƯU HỆ THỐNG',
-            subtitle: `Tổng số: ${sortedJobs.length} bản snapshot · Xuất ngày: ${new Date().toLocaleDateString('vi-VN')}`,
+            subtitle: `Tổng số: ${sortedJobs.length} bản snapshot, xuất ngày: ${new Date().toLocaleDateString('vi-VN')}`,
             columns,
             rows,
         });
@@ -402,7 +402,7 @@ export default function BackupsPage() {
     const handlePrint = () => {
         printReport({
             title: 'BÁO CÁO DANH SÁCH BẢN SAO LƯU HỆ THỐNG KHẢO THÍ',
-            subtitle: `Tổng số bản snapshot: ${sortedJobs.length} · Dung lượng: ${overview?.totalBytes ? formatBytes(overview.totalBytes) : '—'}`,
+            subtitle: `Tổng số bản snapshot: ${sortedJobs.length}, dung lượng: ${overview?.totalBytes ? formatBytes(overview.totalBytes) : '—'}`,
             facultyName: 'PHÒNG QUẢN TRỊ HỆ THỐNG & DỮ LIỆU KHẢO THÍ',
             columns: [
                 { header: 'STT', width: '40px', align: 'center' },
@@ -606,7 +606,7 @@ export default function BackupsPage() {
                         )}
                     </div>
                     <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-                        Vận hành an toàn database, file upload và {jobs.length} bản snapshot hệ thống {overview?.totalBytes ? `· Dung lượng: ${formatBytes(overview.totalBytes)}` : ''}
+                        Vận hành an toàn database, file upload và {jobs.length} bản snapshot hệ thống{overview?.totalBytes ? ` | Dung lượng: ${formatBytes(overview.totalBytes)}` : ''}
                     </p>
                 </div>
 
@@ -1245,7 +1245,7 @@ export default function BackupsPage() {
                             {selectedJob?.snapshotId}
                         </p>
                         <p className="text-type-helper font-semibold text-slate-500 mt-0.5">
-                            {formatDate(selectedJob?.completedAt)} · {formatBytes(selectedJob?.sizeBytes)}
+                            {formatDate(selectedJob?.completedAt)} | {formatBytes(selectedJob?.sizeBytes)}
                         </p>
                     </div>
 
@@ -1258,8 +1258,8 @@ export default function BackupsPage() {
                             value={target}
                             onChange={(e) => setTarget(e.target.value as RestoreTarget)}
                         >
-                            <option value="STAGING">Staging — Môi trường kiểm thử an toàn</option>
-                            <option value="PRODUCTION">Production — Môi trường vận hành thực tế (Cần Admin 2 phê duyệt)</option>
+                            <option value="STAGING">Staging – Môi trường kiểm thử an toàn</option>
+                            <option value="PRODUCTION">Production – Môi trường vận hành thực tế (Cần Admin 2 phê duyệt)</option>
                         </FilterSelect>
                     </div>
 

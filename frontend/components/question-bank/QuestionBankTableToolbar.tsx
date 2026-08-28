@@ -44,7 +44,7 @@ export function QuestionBankTableToolbar({
           options={[
             { value: 'newest', label: 'Mới nhất' },
             { value: 'oldest', label: 'Cũ nhất' },
-            { value: 'code_asc', label: 'Mã câu hỏi: A - Z' },
+            { value: 'code_asc', label: 'Mã câu hỏi: A – Z' },
           ]}
         />
 

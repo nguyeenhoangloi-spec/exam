@@ -205,7 +205,7 @@ export function PermissionSimulatorModal({
                   <option value="">-- Chọn tài khoản --</option>
                   {users.map((u) => (
                     <option key={u.id} value={u.id}>
-                      {getDisplayName(u)} ({u.username} · {u.role})
+                      {getDisplayName(u)} ({u.username} – {u.role})
                     </option>
                   ))}
                 </select>

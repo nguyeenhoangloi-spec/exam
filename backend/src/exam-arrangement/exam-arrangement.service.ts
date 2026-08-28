@@ -304,8 +304,8 @@ export class ExamArrangementService {
             const majorSub = majorSubjectMap.get(deptId);
             const requirementType = majorSub ? majorSub.type : 'ELECTIVE';
             const requirementLabel = majorSub
-              ? `${student.class.department.name} • ${majorSub.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}`
-              : `${student.class.department.name} • Tự chọn ngoài khung`;
+              ? `${student.class.department.name} (${majorSub.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'})`
+              : `${student.class.department.name} (Tự chọn ngoài khung)`;
 
             arrangementResults.push({
               id: roomStudent?.id ?? 0,
@@ -452,8 +452,8 @@ export class ExamArrangementService {
           const majorSub = deptId ? majorSubjectMap.get(deptId) : null;
           const requirementType = majorSub ? majorSub.type : 'ELECTIVE';
           const requirementLabel = majorSub
-            ? `${deptName} • ${majorSub.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}`
-            : `${deptName} • Tự chọn ngoài khung`;
+            ? `${deptName} (${majorSub.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'})`
+            : `${deptName} (Tự chọn ngoài khung)`;
 
           return {
             ...ers,

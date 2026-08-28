@@ -385,7 +385,7 @@ export default function ExamArchivesPage() {
           </h1>
           <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
             {selectedSchedule
-              ? `${selectedSchedule.subjectName} (${selectedSchedule.subjectCode}) · ${selectedSchedule.examPeriodName} · ${selectedSchedule.schoolYear}`
+              ? `${selectedSchedule.subjectName} (${selectedSchedule.subjectCode}) | ${selectedSchedule.examPeriodName} – ${selectedSchedule.schoolYear}`
               : 'Quản lý và trích lục hồ sơ bài thi đã công bố niêm phong theo quy chế khảo thí'}
           </p>
         </div>
@@ -568,11 +568,11 @@ export default function ExamArchivesPage() {
                           {s.subjectName}
                         </div>
                         <div className="text-type-meta text-slate-500 dark:text-slate-400 tabular-nums">
-                          {s.subjectCode} {s.departmentName ? `· ${s.departmentName}` : ''}
+                          {s.subjectCode} {s.departmentName ? `(${s.departmentName})` : ''}
                         </div>
                       </td>
                       <td className="p-3.5 whitespace-nowrap font-normal text-slate-700 dark:text-slate-300">
-                        {s.examPeriodName} · {s.schoolYear}
+                        {s.examPeriodName} – {s.schoolYear}
                       </td>
                       <td className="p-3.5 whitespace-nowrap font-normal text-slate-700 dark:text-slate-300 tabular-nums">
                         {s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : ''} ({s.timeSlot})

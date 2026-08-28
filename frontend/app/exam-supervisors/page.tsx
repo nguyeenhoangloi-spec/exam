@@ -466,8 +466,8 @@ export default function ExamSupervisorsPage() {
               {changeRequests.filter((request) => request.status === 'PENDING').map((request) => (
                 <div key={request.id} className="flex flex-col gap-3 rounded-xl border border-slate-200/60 p-3 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800">
                   <div className="min-w-0">
-                    <p className="text-type-body-sm font-medium text-slate-900 dark:text-slate-100">{request.requesterTeacher?.fullName} · {request.examSupervisor?.examScheduleRoom?.examSchedule?.subject?.subjectName}</p>
-                    <p className="text-type-helper text-slate-700 dark:text-slate-300">Phòng {request.examSupervisor?.examScheduleRoom?.room?.roomCode} — Lý do: {request.reason}</p>
+                    <p className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">{request.requesterTeacher?.fullName} <span className="font-normal text-slate-500">({request.examSupervisor?.examScheduleRoom?.examSchedule?.subject?.subjectName})</span></p>
+                    <p className="text-type-helper text-slate-600 dark:text-slate-400">Phòng {request.examSupervisor?.examScheduleRoom?.room?.roomCode} – Lý do: {request.reason}</p>
                   </div>
                   <div className="flex shrink-0 gap-2">
                     <Button variant="primary" size="sm" onClick={() => setReviewModalRequest(request)} leftIcon={<ArrowLeftRight className="h-3.5 w-3.5" />}>
@@ -515,11 +515,11 @@ export default function ExamSupervisorsPage() {
                     )}
                     {selectedSchedule.startTime && (
                       <>
-                        {selectedSchedule.examDate && <span>·</span>}
+                        {selectedSchedule.examDate && <span>|</span>}
                         <span>{selectedSchedule.startTime} – {selectedSchedule.endTime}</span>
                       </>
                     )}
-                    <span>·</span>
+                    <span>|</span>
                     <span className="font-medium text-slate-700 dark:text-slate-300">
                       {currentRooms.length} phòng thi
                     </span>

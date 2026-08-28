@@ -688,7 +688,7 @@ export default function AccessControlPage() {
       const deptName = studentClass?.department?.name;
       const deptLabel = deptName ? (deptName.startsWith('Khoa') || deptName.startsWith('Viện') ? deptName : `Khoa ${deptName}`) : '';
       return studentClass
-        ? `Lớp ${studentClass.name}${deptLabel ? ` · ${deptLabel}` : ''}`
+        ? `Lớp ${studentClass.name}${deptLabel ? ` (${deptLabel})` : ''}`
         : 'Chưa có lớp/khoa trong hồ sơ';
     }
     if (user.role === 'TEACHER') {
@@ -1336,7 +1336,7 @@ export default function AccessControlPage() {
                                 </span>
                               </div>
                               <p className="table-meta text-slate-400 font-normal truncate">
-                                {selectedUser.username} · {selectedUser.email} · {accountContext(selectedUser)}
+                                {selectedUser.username} | {selectedUser.email} | {accountContext(selectedUser)}
                               </p>
                             </div>
                           </div>
@@ -1440,7 +1440,7 @@ export default function AccessControlPage() {
                                 Hồ sơ sinh viên
                               </h3>
                               <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal leading-relaxed">
-                                {accountContext(selectedUser)} · Quyền truy cập được tự động xác định theo lịch đăng ký thi của sinh viên.
+                                {accountContext(selectedUser)} | Quyền truy cập được tự động xác định theo lịch đăng ký thi của sinh viên.
                               </p>
                             </div>
 

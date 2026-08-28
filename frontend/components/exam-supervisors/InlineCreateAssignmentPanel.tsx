@@ -48,7 +48,7 @@ export function InlineCreateAssignmentPanel({
       { value: '', label: '-- Chọn cán bộ coi thi --' },
       ...teachers.map((t) => ({
         value: String(t.id),
-        label: `${t.fullName} (${t.teacherCode}) · ${t.degree || 'TS'}`,
+        label: `${t.fullName} (${t.teacherCode}) – ${t.degree || 'TS'}`,
       })),
     ];
   }, [teachers]);
@@ -60,7 +60,7 @@ export function InlineCreateAssignmentPanel({
         .filter((t) => String(t.id) !== supervisor1Id)
         .map((t) => ({
           value: String(t.id),
-          label: `${t.fullName} (${t.teacherCode}) · ${t.degree || 'TS'}`,
+          label: `${t.fullName} (${t.teacherCode}) – ${t.degree || 'TS'}`,
         })),
     ];
   }, [teachers, supervisor1Id]);

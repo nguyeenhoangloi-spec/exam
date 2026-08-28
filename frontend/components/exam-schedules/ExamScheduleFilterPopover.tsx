@@ -280,7 +280,7 @@ export function ExamScheduleFilterPopover({
       const r = rooms.find((x) => String(x.id) === filters.roomId);
       if (r) parts.push(r.roomCode || r.code || r.name);
     }
-    return parts.slice(0, 2).join(' • ');
+    return parts.slice(0, 2).join(', ');
   };
 
   return (
@@ -554,7 +554,7 @@ export function ExamScheduleFilterPopover({
                               {p.name}
                             </div>
                             <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
-                              {p.semester} • {p.schoolYear}
+                              {p.semester} – {p.schoolYear}
                             </div>
                           </div>
 

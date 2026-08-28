@@ -248,7 +248,7 @@ export function ExamPeriodFilterPopover({
     }
     if (selectedSemester) parts.push(selectedSemester);
     if (selectedSchoolYear) parts.push(selectedSchoolYear);
-    return parts.slice(0, 2).join(' • ');
+    return parts.slice(0, 2).join(', ');
   };
 
   return (

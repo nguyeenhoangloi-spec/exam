@@ -159,7 +159,7 @@ export function PermissionCompareModal({
                 <option value="">-- Chọn tài khoản A --</option>
                 {users.map((u) => (
                   <option key={u.id} value={u.id}>
-                    {getDisplayName(u)} ({u.username} · {u.role})
+                    {getDisplayName(u)} ({u.username} – {u.role})
                   </option>
                 ))}
               </select>
@@ -177,7 +177,7 @@ export function PermissionCompareModal({
                 <option value="">-- Chọn tài khoản B --</option>
                 {users.map((u) => (
                   <option key={u.id} value={u.id}>
-                    {getDisplayName(u)} ({u.username} · {u.role})
+                    {getDisplayName(u)} ({u.username} – {u.role})
                   </option>
                 ))}
               </select>
@@ -269,7 +269,7 @@ export function PermissionCompareModal({
                                 )}
                               </div>
                               <p className="table-meta text-slate-500 font-normal">
-                                [{item.module}] · {item.code}
+                                [{item.module}] {item.code}
                               </p>
                             </td>
 

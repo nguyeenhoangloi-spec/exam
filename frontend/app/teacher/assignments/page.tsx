@@ -225,7 +225,7 @@ export default function TeacherAssignmentsPage() {
       filename: `Lich_coi_thi_${currentUser?.teacher?.teacherCode || currentUser?.username || 'giang_vien'}`,
       templateCode: 'SUPERVISOR_ASSIGNMENT',
       title: 'LỊCH PHÂN CÔNG COI THI',
-      subtitle: `Giảng viên: ${currentUser?.fullName || currentUser?.teacher?.fullName || currentUser?.username || ''} · Mã GV: ${currentUser?.teacher?.teacherCode || currentUser?.teacherCode || currentUser?.username || ''}`,
+      subtitle: `Giảng viên: ${currentUser?.fullName || currentUser?.teacher?.fullName || currentUser?.username || ''} (${currentUser?.teacher?.teacherCode || currentUser?.teacherCode || currentUser?.username || ''})`,
       columns: [
         { header: 'STT', width: 6, align: 'center' },
         { header: 'Mã môn', width: 14, align: 'center' },
@@ -540,7 +540,7 @@ export default function TeacherAssignmentsPage() {
               options={[
                 { value: 'newest', label: 'Ngày thi: Mới nhất' },
                 { value: 'oldest', label: 'Ngày thi: Cũ nhất' },
-                { value: 'name_asc', label: 'Môn thi: A - Z' },
+                { value: 'name_asc', label: 'Môn thi: A – Z' },
               ]}
             />
 

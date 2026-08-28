@@ -192,7 +192,7 @@ export function RoomSelectorPopover({
                     Phòng thi khả dụng trong ca
                   </h4>
                   <p className="text-type-helper text-slate-500 dark:text-slate-400">
-                    {availableCount} phòng trống • Tổng sức chứa: {selectedCapacity} chỗ
+                    {availableCount} phòng trống | Tổng sức chứa: {selectedCapacity} chỗ
                   </p>
                 </div>
               </div>

@@ -184,7 +184,7 @@ export function RolePresetsModal({
               <option value="">-- Chọn tài khoản cần gán mẫu --</option>
               {users.map((u) => (
                 <option key={u.id} value={u.id}>
-                  {getDisplayName(u)} ({u.username} · {u.role})
+                  {getDisplayName(u)} ({u.username} – {u.role})
                 </option>
               ))}
             </select>

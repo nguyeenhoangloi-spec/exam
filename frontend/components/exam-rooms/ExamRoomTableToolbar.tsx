@@ -51,7 +51,7 @@ export function ExamRoomTableToolbar({
           options={[
             { value: 'newest', label: 'Mới nhất' },
             { value: 'oldest', label: 'Cũ nhất' },
-            { value: 'name_asc', label: 'Mã phòng: A - Z' },
+            { value: 'name_asc', label: 'Mã phòng: A – Z' },
             { value: 'capacity_desc', label: 'Sức chứa: Cao nhất' },
           ]}
         />

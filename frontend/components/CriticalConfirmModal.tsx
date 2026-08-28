@@ -255,7 +255,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                   <span className="font-semibold text-rose-600 dark:text-rose-400 tracking-wide">
                     {targetPhrase}
                   </span>
-                  <span className="text-slate-300 dark:text-slate-600">·</span>
+                  <span className="text-slate-300 dark:text-slate-600">|</span>
                   <button
                     type="button"
                     onClick={handleQuickFillPhrase}

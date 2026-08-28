@@ -154,7 +154,7 @@ export default function DashboardPage() {
 
     printReport({
       title: 'BÁO CÁO TỔNG QUAN HỆ THỐNG KHẢO THÍ & NGÂN HÀNG ĐỀ THI',
-      subtitle: `Học kỳ / Đợt thi: ${periodLabel} · Ngày xuất báo cáo: ${dateStr}`,
+      subtitle: `Học kỳ / Đợt thi: ${periodLabel}, ngày xuất báo cáo: ${dateStr}`,
       metaInfo: [
         { label: 'Đơn vị lập báo cáo', value: 'Ban Khảo thí & Đảm bảo chất lượng giáo dục' },
         { label: 'Hệ thống', value: 'Hệ thống Quản lý Khảo thí Exam Management System' },

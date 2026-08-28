@@ -309,13 +309,15 @@ export function formatShortId(id?: string | null): string | null {
 /** Format thời gian 2 tầng: Tuyệt đối chuẩn tiếng Việt + Tương đối thân thiện */
 export function formatDateTime2Tier(isoString: string): {
   absolute: string;
+  timeOnly: string;
+  dateOnly: string;
   relative: string;
   fullTooltip: string;
 } {
   try {
     const date = new Date(isoString);
     if (isNaN(date.getTime())) {
-      return { absolute: isoString, relative: '', fullTooltip: isoString };
+      return { absolute: isoString, timeOnly: isoString, dateOnly: '', relative: '', fullTooltip: isoString };
     }
 
     const now = new Date();
@@ -333,7 +335,9 @@ export function formatDateTime2Tier(isoString: string): {
     const month = pad(date.getMonth() + 1);
     const year = date.getFullYear();
 
-    const absolute = `${hours}:${minutes}:${seconds} · ${day}/${month}/${year}`;
+    const timeOnly = `${hours}:${minutes}:${seconds}`;
+    const dateOnly = `${day}/${month}/${year}`;
+    const absolute = `${timeOnly}, ${dateOnly}`;
     const fullTooltip = `${hours}:${minutes}:${seconds}, ngày ${day} tháng ${month} năm ${year} (UTC+07:00 Giờ Đông Dương)`;
 
     let relative = '';
@@ -351,9 +355,9 @@ export function formatDateTime2Tier(isoString: string): {
       relative = `${day}/${month}/${year}`;
     }
 
-    return { absolute, relative, fullTooltip };
+    return { absolute, timeOnly, dateOnly, relative, fullTooltip };
   } catch {
-    return { absolute: isoString, relative: '', fullTooltip: isoString };
+    return { absolute: isoString, timeOnly: isoString, dateOnly: '', relative: '', fullTooltip: isoString };
   }
 }
 

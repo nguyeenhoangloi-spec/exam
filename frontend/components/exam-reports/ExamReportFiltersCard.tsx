@@ -63,13 +63,13 @@ export function ExamReportFiltersCard({
             {formattedDate && <span>{formattedDate}</span>}
             {reportSchedule.startTime && (
               <>
-                {formattedDate && <span>·</span>}
+                {formattedDate && <span>|</span>}
                 <span>{reportSchedule.startTime} – {reportSchedule.endTime}</span>
               </>
             )}
             {reportSchedule.periodName && (
               <>
-                <span>·</span>
+                <span>|</span>
                 <span className="font-medium text-slate-700 dark:text-slate-300">
                   {reportSchedule.periodName}
                 </span>

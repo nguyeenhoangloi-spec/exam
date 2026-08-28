@@ -361,7 +361,7 @@ export default function StudentResultsPage() {
       filename: `Bang_diem_${studentInfo?.studentCode || 'sinh_vien'}`,
       templateCode: 'EXAM_SCORE_TRANSCRIPT',
       title: 'PHIẾU ĐIỂM HỌC TẬP & THI HỌC PHẦN',
-      subtitle: `Sinh viên: ${studentInfo?.fullName || ''} (${studentInfo?.studentCode || ''}) · Lớp: ${studentInfo?.className || ''} · Khoa: ${studentInfo?.departmentName || ''}`,
+      subtitle: `Sinh viên: ${studentInfo?.fullName || ''} (${studentInfo?.studentCode || ''}), Lớp: ${studentInfo?.className || ''}, Khoa: ${studentInfo?.departmentName || ''}`,
       columns: [
         { header: 'STT', width: 6, align: 'center' },
         { header: 'Mã môn', width: 14, align: 'center' },
@@ -671,8 +671,8 @@ export default function StudentResultsPage() {
                 { value: 'date_asc', label: 'Ngày thi: Cũ nhất' },
                 { value: 'score_desc', label: 'Điểm số: Cao nhất' },
                 { value: 'score_asc', label: 'Điểm số: Thấp nhất' },
-                { value: 'code_asc', label: 'Mã môn: A - Z' },
-                { value: 'name_asc', label: 'Tên môn: A - Z' },
+                { value: 'code_asc', label: 'Mã môn: A – Z' },
+                { value: 'name_asc', label: 'Tên môn: A – Z' },
               ]}
             />
 
@@ -931,7 +931,7 @@ export default function StudentResultsPage() {
           details={[
             { label: 'Môn thi', value: detailItem?.subjectName, icon: BookOpen },
             { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{detailItem?.subjectCode || '---'}</IdentifierBadge> },
-            { label: 'Kỳ thi', value: `${detailItem?.schoolYear} — ${detailItem?.semester}` },
+            { label: 'Kỳ thi', value: `${detailItem?.schoolYear} – ${detailItem?.semester}` },
             { label: 'Số tín chỉ', value: `${detailItem?.credits} tín chỉ` },
             { label: 'Ngày thi', value: detailItem?.examDate ? new Date(detailItem.examDate).toLocaleDateString('vi-VN') : '', icon: Calendar },
             { label: 'Hình thức thi', value: detailItem ? formatExamType(detailItem.examType) : '', icon: GraduationCap },

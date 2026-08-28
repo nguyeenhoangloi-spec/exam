@@ -550,7 +550,7 @@ export default function ExamPapersPage() {
         message: (
           <div className="space-y-1">
             <p className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
-              Sinh đề thi: <span className="font-semibold text-slate-950 dark:text-white">#{paperCode}</span> ({questionCount} câu hỏi · {totalScore} điểm)
+              Sinh đề thi: <span className="font-semibold text-slate-950 dark:text-white">#{paperCode}</span> ({questionCount} câu hỏi, {totalScore} điểm)
             </p>
             <p className="text-type-helper text-slate-500 dark:text-slate-400">
               Đề thi sẽ được lưu ở trạng thái bản nháp để bạn có thể xem lại trước khi phát hành.
@@ -1140,7 +1140,7 @@ export default function ExamPapersPage() {
         <Modal
           isOpen={swapModal.isOpen}
           onClose={() => setSwapModal({ isOpen: false, questionIndex: null, targetQuestion: null, alternatives: [], loading: false })}
-          title={`Đổi câu hỏi #${(swapModal.questionIndex ?? 0) + 1} — Gợi ý thay thế`}
+          title={`Đổi câu hỏi #${(swapModal.questionIndex ?? 0) + 1} – Gợi ý thay thế`}
         >
           <div className="space-y-4">
             {/* Header thông tin câu hỏi đang thay thế */}
@@ -1148,7 +1148,7 @@ export default function ExamPapersPage() {
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">Câu hỏi đang thay thế:</span>
                 <span className="px-2 py-0.5 ui-pill rounded-full text-type-helper font-medium text-slate-700 dark:text-slate-300">
-                  {swapModal.targetQuestion?.type === 'ESSAY' ? 'Tự luận' : swapModal.targetQuestion?.type === 'FILL_BLANK' ? 'Điền khuyết' : 'Trắc nghiệm'} • {swapModal.targetQuestion?.difficulty || 'Trung bình'}
+                  {swapModal.targetQuestion?.type === 'ESSAY' ? 'Tự luận' : swapModal.targetQuestion?.type === 'FILL_BLANK' ? 'Điền khuyết' : 'Trắc nghiệm'} | {swapModal.targetQuestion?.difficulty || 'Trung bình'}
                 </span>
               </div>
               <p className="text-type-body-sm font-medium text-slate-900 dark:text-slate-100 leading-relaxed italic border-l-2 border-blue-500 pl-3">
@@ -1192,7 +1192,7 @@ export default function ExamPapersPage() {
                       <span className="flex items-center gap-1">
                         Mã: <IdentifierBadge tone="neutral" size="sm">#{altQ.id}</IdentifierBadge>
                       </span>
-                      <span>•</span>
+                      <span>|</span>
                       <span>Độ khó: {altQ.difficulty || 'Trung bình'}</span>
                     </div>
                   </div>

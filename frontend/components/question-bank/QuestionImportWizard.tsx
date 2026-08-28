@@ -889,7 +889,7 @@ export function QuestionImportWizard({
 
                     {(r.errors.length > 0 || r.duplicates.length > 0) && (
                       <div className="text-type-helper font-semibold text-rose-600">
-                        <span>{r.errors.join(', ')}{r.duplicates.length ? ' · Cảnh báo câu hỏi bị trùng nội dung trong CSDL' : ''}</span>
+                        <span>{[...r.errors, ...(r.duplicates.length ? ['Cảnh báo câu hỏi bị trùng nội dung trong CSDL'] : [])].join(', ')}</span>
                       </div>
                     )}
                   </div>

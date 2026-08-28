@@ -114,7 +114,7 @@ export function StorageTargetModal({
               value={provider}
               disabled={Boolean(target)}
               onChange={(e) => updateProvider(e.target.value as StorageProvider)}
-              options={providers.map((item) => ({ value: item.value, label: `${item.label} — ${item.hint}` }))}
+              options={providers.map((item) => ({ value: item.value, label: `${item.label} (${item.hint})` }))}
               fullWidth
             />
           </div>

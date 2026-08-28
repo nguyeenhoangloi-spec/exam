@@ -80,7 +80,7 @@ export function ScopeTagPicker({
           >
             Chọn tất cả
           </button>
-          <span className="text-slate-300 dark:text-slate-600">·</span>
+          <span className="text-slate-300 dark:text-slate-600">|</span>
           <button
             type="button"
             onClick={handleClearAll}

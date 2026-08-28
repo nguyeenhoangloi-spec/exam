@@ -48,7 +48,7 @@ export function ExamReportTableToolbar({
         options={[
           { value: 'score_desc', label: 'Điểm thi: Cao nhất' },
           { value: 'score_asc', label: 'Điểm thi: Thấp nhất' },
-          { value: 'name_asc', label: 'Thí sinh: A - Z' },
+          { value: 'name_asc', label: 'Thí sinh: A – Z' },
           { value: 'violation_desc', label: 'Vi phạm: Nhiều nhất' },
         ]}
       />

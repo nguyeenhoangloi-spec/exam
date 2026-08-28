@@ -731,7 +731,7 @@ export default function SubjectsPage() {
       <Modal
         isOpen={Boolean(enrollClassSubject)}
         onClose={() => setEnrollClassSubject(null)}
-        title={`Gán Lớp vào Môn — ${enrollClassSubject?.subjectName || ''}`}
+        title={`Gán Lớp vào Môn – ${enrollClassSubject?.subjectName || ''}`}
       >
         <form onSubmit={handleEnrollByClass} className="space-y-4">
           {/* Chọn lớp */}
@@ -747,7 +747,7 @@ export default function SubjectsPage() {
                 <option value="">-- Chọn lớp để gán --</option>
                 {classes.map((c: any) => (
                   <option key={c.id} value={String(c.id)}>
-                    {c.code} — {c.name} {c.department?.name ? `(${c.department.name})` : ''} · {c._count?.students ?? c.students?.length ?? 0} SV
+                    {c.name} ({c.code}){c.department?.name ? ` – ${c.department.name}` : ''} | {c._count?.students ?? c.students?.length ?? 0} SV
                   </option>
                 ))}
               </FilterSelect>
@@ -1016,7 +1016,7 @@ export default function SubjectsPage() {
                           .map((c: any) => (
                             <div key={c.classId} className="rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 flex items-center justify-between gap-3">
                               <div>
-                                <p className="text-type-body-sm font-semibold text-slate-900 dark:text-white">{c.classCode} — {c.className}</p>
+                                <p className="text-type-body-sm font-semibold text-slate-900 dark:text-white">{c.className} <span className="text-type-helper font-normal text-slate-500">({c.classCode})</span></p>
                                 <p className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 mt-0.5">{c.departmentName}</p>
                                 <div className="flex flex-wrap gap-1 mt-1.5">
                                   {c.semesters?.map((s: string) => (
@@ -1080,7 +1080,7 @@ export default function SubjectsPage() {
                           <div key={e.id} className="py-2.5 px-3 -mx-3 rounded-xl flex items-center justify-between hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
                             <div>
                               <p className="text-type-body-sm font-semibold text-slate-900 dark:text-white">{e.student?.fullName}</p>
-                              <p className="text-type-helper font-semibold text-slate-500">{e.student?.studentCode} · {e.student?.class?.name || 'Chưa có lớp'}</p>
+                              <p className="text-type-helper font-normal text-slate-500">{e.student?.studentCode} ({e.student?.class?.name || 'Chưa có lớp'})</p>
                             </div>
                             <div className="text-right">
                               <span className="text-type-helper font-medium text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60 ui-pill rounded-full px-2 py-0.5">{e.semester}</span>

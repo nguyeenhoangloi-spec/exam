@@ -63,7 +63,7 @@ export default function ReportsPage() {
 
     printReport({
       title: 'BÁO CÁO TỔNG QUAN HỆ THỐNG KHẢO THÍ & NGÂN HÀNG ĐỀ THI',
-      subtitle: `Tổng hợp số liệu thời gian thực · Ngày trích xuất: ${dateStr}`,
+      subtitle: `Tổng hợp số liệu thời gian thực, ngày trích xuất: ${dateStr}`,
       facultyName: 'BAN KHẢO THÍ & ĐẢM BẢO CHẤT LƯỢNG',
       metaInfo: [
         { label: 'Đơn vị lập báo cáo', value: 'Ban Khảo thí & Đảm bảo chất lượng giáo dục' },

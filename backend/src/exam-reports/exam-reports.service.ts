@@ -373,7 +373,7 @@ export class ExamReportsService {
       sheet.getCell(1, 1).font = { name: 'Arial', size: 16, bold: true, color: { argb: 'FF1E66F5' } };
       sheet.getCell(1, 1).alignment = { horizontal: 'center', vertical: 'middle' };
       sheet.mergeCells(2, 1, 2, width);
-      sheet.getCell(2, 1).value = `Thời điểm xuất: ${new Date(preview.generatedAt).toLocaleString('vi-VN')} · Tổng số bản ghi: ${preview.totalRows}`;
+      sheet.getCell(2, 1).value = `Thời điểm xuất: ${new Date(preview.generatedAt).toLocaleString('vi-VN')}, Tổng số bản ghi: ${preview.totalRows}`;
       sheet.getCell(2, 1).alignment = { horizontal: 'center' };
       sheet.getCell(2, 1).font = { name: 'Arial', size: 10, color: { argb: 'FF374151' } };
       const header = sheet.getRow(4);

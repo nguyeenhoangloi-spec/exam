@@ -263,7 +263,7 @@ export function ExamReportSummaryTab({
     if (!preview) return;
     const ok = printReport({
       title: preview.title,
-      subtitle: `Thời điểm lập: ${new Date(preview.generatedAt).toLocaleString('vi-VN')} · ${preview.totalRows} bản ghi`,
+      subtitle: `Thời điểm lập: ${new Date(preview.generatedAt).toLocaleString('vi-VN')}, ${preview.totalRows} bản ghi`,
       columns: preview.columns
         .filter((c) => columns.includes(c.key))
         .map((c) => ({ header: c.label, align: c.align })),
@@ -579,7 +579,7 @@ export function ExamReportSummaryTab({
                   </h2>
                   <p className="mt-0.5 text-type-helper text-slate-500 dark:text-slate-400 truncate">
                     {preview
-                      ? `${preview.totalRows} bản ghi · Tạo lúc: ${new Date(preview.generatedAt).toLocaleString('vi-VN')}`
+                      ? `${preview.totalRows} bản ghi, tạo lúc ${new Date(preview.generatedAt).toLocaleString('vi-VN')}`
                       : 'Thiết lập cấu hình bên trái rồi nhấn Xem trước báo cáo'}
                   </p>
                 </div>
@@ -703,7 +703,7 @@ export function ExamReportSummaryTab({
                       {item.title}
                     </p>
                     <p className="mt-0.5 text-type-helper text-slate-500 dark:text-slate-400 tabular-nums">
-                      {item.totalRows} bản ghi · Thời gian: {new Date(item.createdAt).toLocaleString('vi-VN')}
+                      {item.totalRows} bản ghi, thời gian: {new Date(item.createdAt).toLocaleString('vi-VN')}
                     </p>
                   </div>
                   <span className="table-badge inline-flex items-center px-2.5 py-0.5 rounded-full ui-pill text-type-helper font-medium bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800">

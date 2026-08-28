@@ -51,7 +51,7 @@ export function ExamPaperTableToolbar({
           options={[
             { value: 'newest', label: 'Mới nhất' },
             { value: 'oldest', label: 'Cũ nhất' },
-            { value: 'code_asc', label: 'Mã đề: A - Z' },
+            { value: 'code_asc', label: 'Mã đề: A – Z' },
             { value: 'questions_desc', label: 'Số câu: Nhiều nhất' },
           ]}
         />

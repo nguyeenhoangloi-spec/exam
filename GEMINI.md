@@ -270,9 +270,10 @@ Các quy tắc nghiệp vụ bắt buộc:
 Áp dụng **BẮT BUỘC** cho mọi chức năng UI/UX:
 1. **Cấm lồng khung hộp rời rạc:** Không bọc các cụm control nhỏ lẻ (stepper, radio, preset) bằng nhiều ô bo góc rời rạc lồi lõm với nền xám. Bộ tăng giảm Stepper phải là 1 khối phẳng liền mạch (`inline-flex rounded-xl border border-slate-200/90 bg-slate-50/50 p-0.5`). Phân tách section bằng đường kẻ mảnh hairline phẳng (`border-t border-slate-100 dark:border-slate-800` hoặc `divide-y`).
 2. **Hạn chế nền xám dày:** Nền toàn trang, modal, card, drawer giữ trắng sáng (`bg-white`, `bg-slate-50/50`). Cấm dùng các mảng `bg-slate-100`, `bg-slate-200` to dày làm rãnh nền bao bọc input.
-3. **Dọn sạch chữ thừa & Helper text:** Bỏ các dòng ghi chú giải thích rườm rà dưới ô input nếu nhãn đã rõ nghĩa. Không lặp lại trạng thái ở Footer nếu Header đã có badge. Phân cách thông số bằng dấu chấm `·` phẳng (VD: `Toán cao cấp · 40 câu · 60 phút`).
+3. **Dọn sạch chữ thừa & Helper text:** Bỏ các dòng ghi chú giải thích rườm rà dưới ô input nếu nhãn đã rõ nghĩa. Không lặp lại trạng thái ở Footer nếu Header đã có badge.
 4. **Tối giản nút bấm & Chống giật Layout:** Chỉ duy nhất 1 Primary CTA (`bg-blue-600 text-white`). Khi nút chuyển sang `isLoading`, nhãn chữ giữ nguyên hoặc cố định `min-w-[120px]`, spinner xoay tại tâm, tuyệt đối không đổi sang chuỗi text dài hơn gây phình to/giật layout.
 5. **Cấm đóng khung Badge tùy tiện:** Badge/Pill chỉ dành cho Trạng thái (`StatusBadge`) hoặc Mã định danh (`IdentifierBadge`). Không đóng khung badge cho tên môn, ngày giờ, số câu, điểm số, học vị hay dải mã xem trước `(101 – 103)`.
+6. **Quy chuẩn Phân tách Dữ liệu Đồng nhất (Data Separation Standard):** Loại bỏ việc dùng lẫn lộn dấu chấm nhỏ `·`, gạch dài `—`, gạch ngang `-`. Thời gian: 2 tầng trong bảng / `HH:mm:ss, DD/MM/YYYY` trên 1 dòng đơn. Tên + Mã đối tượng: `Tên đối tượng (MÃ)`. Thông số kỹ thuật: `40 câu | 60 phút | 10.0 điểm`. Ca thi: `07:30 – 09:30`. Học kỳ: `Học kỳ 1 – Năm học 2025–2026`.
 
 ## 🧱 Cấu trúc Ưu tiên Dự án
 

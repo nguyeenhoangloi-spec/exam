@@ -1008,7 +1008,7 @@ export default function StudentsPage() {
                         <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-950/60 rounded-xl px-4 py-3 border border-blue-200/80 dark:border-blue-800/60 text-type-body-sm">
                           <span className="font-semibold text-blue-900 dark:text-blue-200">Tổng cộng:</span>
                           <span className="font-semibold text-blue-700 dark:text-blue-300">
-                            {drawerSubjects.length} môn • {drawerSubjects.reduce((acc: number, item: any) => acc + (item.subject?.credits || item.credits || 0), 0)} tín chỉ
+                            {drawerSubjects.length} môn | {drawerSubjects.reduce((acc: number, item: any) => acc + (item.subject?.credits || item.credits || 0), 0)} tín chỉ
                           </span>
                         </div>
 
@@ -1021,7 +1021,7 @@ export default function StudentsPage() {
                                   <h4 className="text-type-body font-semibold text-slate-900 dark:text-white break-words">{sub.subjectName || sub.name}</h4>
                                   <div className="mt-1 flex items-center gap-2 flex-wrap">
                                     <IdentifierBadge tone="neutral">{sub.subjectCode || sub.code}</IdentifierBadge>
-                                    <span className="text-type-helper font-semibold text-slate-500">{item.semester} • {item.schoolYear || item.year || ''}</span>
+                                    <span className="text-type-helper font-semibold text-slate-500">{item.semester} – {item.schoolYear || item.year || ''}</span>
                                   </div>
                                 </div>
                                 <div className="text-right shrink-0">
@@ -1058,7 +1058,7 @@ export default function StudentsPage() {
                               <div className="flex items-center gap-2">
                                 <Calendar className="h-4 w-4 text-blue-600" />
                                 <span className="text-type-helper font-semibold text-slate-800 dark:text-slate-200">
-                                  {sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'} • {sched.startTime || ''} - {sched.endTime || ''}
+                                  {sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'} ({sched.startTime || ''} – {sched.endTime || ''})
                                 </span>
                               </div>
                               <span className="px-2.5 py-0.5 ui-pill rounded-full text-type-helper font-medium text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">

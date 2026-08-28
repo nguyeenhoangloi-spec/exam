@@ -497,7 +497,7 @@ function AdminEssayReviewContent() {
         const code = sched.code || `Ca #${sched.id}`;
         const timeStr = sched.startTime && sched.endTime ? `${sched.startTime}–${sched.endTime}` : '';
         const subjName = sched.subject?.subjectName || r.subjectName || '';
-        const label = `${code}${timeStr ? ` (${timeStr})` : ''} · ${subjName}`;
+        const label = `${code}${timeStr ? ` (${timeStr})` : ''} – ${subjName}`;
         map.set(sched.id.toString(), label);
       }
     });
@@ -869,11 +869,8 @@ function AdminEssayReviewContent() {
                     <div className="flex flex-wrap items-center gap-1.5 text-type-helper text-slate-500 mt-0.5">
                       <span>Mã SV:</span>
                       <IdentifierBadge tone="neutral">{selected.student?.studentCode}</IdentifierBadge>
-                      <span>
-                        · Môn:{' '}
-                        <strong className="text-slate-800 dark:text-slate-200">
-                          {selected.onlineExamConfig?.examSchedule?.subject?.subjectName || selected.subjectName || 'Môn thi'}
-                        </strong>
+                      <span className="font-normal text-slate-600 dark:text-slate-400">
+                        ({selected.onlineExamConfig?.examSchedule?.subject?.subjectName || selected.subjectName || 'Môn thi'})
                       </span>
                     </div>
                   </div>

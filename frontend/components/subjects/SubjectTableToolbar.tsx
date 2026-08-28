@@ -49,7 +49,7 @@ export function SubjectTableToolbar({
           options={[
             { value: 'newest', label: 'Mới nhất' },
             { value: 'oldest', label: 'Cũ nhất' },
-            { value: 'name_asc', label: 'Tên môn: A - Z' },
+            { value: 'name_asc', label: 'Tên môn: A – Z' },
             { value: 'credits_desc', label: 'Tín chỉ: Nhiều nhất' },
           ]}
         />

@@ -185,9 +185,9 @@ export function ExamPaperDetailDrawer({
               </div>
 
               <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400 truncate">
-                {periodName ? `${periodName} · ` : ''}{questionCount} câu · {paper.totalScore}đ · {paper.durationMinutes} phút
+                {periodName ? `${periodName} | ` : ''}{questionCount} câu | {paper.totalScore} điểm | {paper.durationMinutes} phút
                 {((paper as any).mediaMaxPlays || (paper as any).mediaMode) && (
-                  <span> · {(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0 ? 'Media tự do' : `Khảo thí: ${(paper as any).mediaMaxPlays || 2} lượt`}</span>
+                  <span> | {(paper as any).mediaMode === 'REFERENCE' || (paper as any).mediaMaxPlays === 0 ? 'Media tự do' : `Khảo thí: ${(paper as any).mediaMaxPlays || 2} lượt`}</span>
                 )}
               </p>
             </div>

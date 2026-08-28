@@ -773,7 +773,7 @@ export default function ExamSchedulesPage() {
               </label>
               {currentUser?.role === 'TEACHER' ? (
                 <div className="flex h-10 items-center rounded-xl border border-blue-200 bg-blue-50 px-3.5 text-type-body font-semibold text-blue-700">
-                  Thi thử — dự thi tự do online
+                  Thi thử – dự thi tự do online
                 </div>
               ) : (
                 <FilterSelect containerClassName="w-full"

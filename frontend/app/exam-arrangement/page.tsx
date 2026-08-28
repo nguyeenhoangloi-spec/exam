@@ -244,7 +244,7 @@ export default function ExamArrangementPage() {
               className,
               departmentName: deptName,
               requirementType: ers.requirementType || 'MANDATORY',
-              requirementLabel: ers.requirementLabel || `${deptName} • Bắt buộc`,
+              requirementLabel: ers.requirementLabel || `${deptName} (Bắt buộc)`,
               roomCode: sr.room?.roomCode || sr.examRoom?.roomCode,
               roomName: sr.room?.roomName || sr.examRoom?.roomName || sr.room?.roomCode,
               building: sr.room?.building || sr.examRoom?.building || '---',
@@ -877,18 +877,18 @@ export default function ExamArrangementPage() {
                 </button>
               </div>
 
-              {/* Hàng 2: Ngày thi · Giờ thi · Số phòng */}
+              {/* Hàng 2: Ngày thi | Giờ thi | Số phòng */}
               <div className="flex items-center gap-2.5 text-type-helper text-slate-500 dark:text-slate-400 flex-wrap font-normal">
                 {currentSchedule?.examDate && (
                   <span>{new Date(currentSchedule.examDate).toLocaleDateString('vi-VN')}</span>
                 )}
                 {currentSchedule?.startTime && currentSchedule?.endTime && (
                   <>
-                    {currentSchedule.examDate && <span>·</span>}
+                    {currentSchedule.examDate && <span>|</span>}
                     <span>{currentSchedule.startTime} – {currentSchedule.endTime}</span>
                   </>
                 )}
-                <span>·</span>
+                <span>|</span>
                 <span className="font-medium text-slate-700 dark:text-slate-300">
                   {result?.summary?.totalRoomsAssigned || selectedRoomIds.length || 0} phòng thi
                 </span>
@@ -1262,7 +1262,7 @@ export default function ExamArrangementPage() {
                               <span className="text-type-helper text-slate-400 dark:text-slate-500">
                                 (Mã: {room.roomCode}{room.building ? `, Tòa ${room.building}` : ''})
                               </span>
-                              <span className="text-slate-300 dark:text-slate-600">•</span>
+                              <span className="text-slate-300 dark:text-slate-600">|</span>
                               <span className="text-type-helper text-slate-500 dark:text-slate-400">
                                 Ghép {classBreakdowns.length} lớp học phần
                               </span>

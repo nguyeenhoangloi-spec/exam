@@ -334,7 +334,7 @@ export function ExamPaperMatrixForm({
                 </span>
                 {((selectedSchedule as any).periodName || (selectedSchedule as any).examPeriod?.name) && (
                   <span className="text-type-helper font-normal text-slate-400 hidden sm:inline">
-                    — {(selectedSchedule as any).periodName || (selectedSchedule as any).examPeriod?.name}
+                    – {(selectedSchedule as any).periodName || (selectedSchedule as any).examPeriod?.name}
                   </span>
                 )}
 
@@ -392,7 +392,7 @@ export function ExamPaperMatrixForm({
                     <div>
                       <p className="text-type-card font-semibold text-slate-900 dark:text-white tracking-tight">Chọn ca thi / lịch thi</p>
                       <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400 mt-0.5">
-                        {pending.length} ca chưa có đề · {created.length} ca đã có đề
+                        {pending.length} ca chưa có đề | {created.length} ca đã có đề
                       </p>
                     </div>
                     <button
@@ -429,7 +429,7 @@ export function ExamPaperMatrixForm({
                                 [{subCode}] {subName}
                               </p>
                               <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal mt-0.5 truncate">
-                                {periodName} · {fmt(s.examDate)}
+                                {periodName}, {fmt(s.examDate)}
                               </p>
                               <p className="text-type-helper text-slate-400 dark:text-slate-500 mt-0.5 font-normal">{s.startTime} – {s.endTime}</p>
                             </button>
@@ -461,7 +461,7 @@ export function ExamPaperMatrixForm({
                                   </span>
                                 </div>
                                 <p className="text-type-helper text-slate-400 dark:text-slate-500 font-normal mt-0.5 truncate">
-                                  {periodName} · {fmt(s.examDate)} ({s.startTime} – {s.endTime})
+                                  {periodName}, {fmt(s.examDate)} ({s.startTime} – {s.endTime})
                                 </p>
                               </div>
                             );
@@ -500,7 +500,7 @@ export function ExamPaperMatrixForm({
                                 </span>
                               </div>
                               <p className="text-type-helper text-slate-400 dark:text-slate-500 font-normal mt-0.5 truncate">
-                                {periodName} · {fmt(s.examDate)}
+                                {periodName}, {fmt(s.examDate)}
                               </p>
                             </button>
                           );

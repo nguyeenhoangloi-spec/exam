@@ -259,6 +259,10 @@ for (const folder of sourceRoots) {
       if (/\bleading-none\b/i.test(content)) {
         report(file, 'không dùng leading-none vì có thể cắt dấu tiếng Việt; dùng line-height của token typography');
       }
+      const sanitizedContent = content.replace(/\/[^\r\n\/]*[•·][^\r\n\/]*\//g, '');
+      if (/[•·]/.test(sanitizedContent)) {
+        report(file, 'Web UI phải tuân thủ chuẩn phân tách dữ liệu (Section 22); không lạm dụng ký tự chấm thô • hoặc ·');
+      }
     }
 
     if (file.endsWith('.tsx') && /fontSize\s*:\s*['"]?(?:10|11|[0-9])(?:px)?['"]?(?=\s*[,}])/i.test(content)) {

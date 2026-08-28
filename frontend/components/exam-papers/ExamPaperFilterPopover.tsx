@@ -473,7 +473,7 @@ export function ExamPaperFilterPopover({
                               {subName}
                             </div>
                             <div className="text-type-helper truncate text-slate-500 dark:text-slate-400">
-                              {s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : ''} • {s.startTime} - {s.endTime}
+                              {s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : ''} ({s.startTime} – {s.endTime})
                             </div>
                           </div>
 
