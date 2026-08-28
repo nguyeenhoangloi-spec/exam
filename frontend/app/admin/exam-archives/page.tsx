@@ -3,16 +3,11 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   Search,
-  Printer,
-  FileSpreadsheet,
   ShieldCheck,
-  ChevronRight,
   ArrowLeft,
   Layers,
   Trash2,
-  Clock,
   X,
-  FileText,
 } from 'lucide-react';
 import api from '../../../lib/api';
 import { usePageTitle } from '../../../components/PageTitleContext';
@@ -446,7 +441,7 @@ export default function ExamArchivesPage() {
                 ? 'Tìm theo MSSV, họ và tên thí sinh...'
                 : 'Tìm theo tên môn, mã học phần, kỳ thi...'
             }
-            className="w-full h-10 pl-10 pr-9 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 text-type-body text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors shadow-2xs"
+            className="w-full h-10 pl-10 pr-9 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 text-type-body text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors shadow-2xs"
           />
           {searchQuery && (
             <button
@@ -565,7 +560,7 @@ export default function ExamArchivesPage() {
                       onClick={() => handleSelectSchedule(s)}
                       className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 cursor-pointer transition-colors group"
                     >
-                      <td className="p-3.5 pl-4 text-center text-slate-400 font-normal">
+                      <td className="p-3.5 pl-4 text-center text-slate-400 font-normal tabular-nums">
                         {(schedulePage - 1) * scheduleLimit + idx + 1}
                       </td>
                       <td className="p-3.5 font-normal">
@@ -576,14 +571,14 @@ export default function ExamArchivesPage() {
                           {s.subjectCode} {s.departmentName ? `· ${s.departmentName}` : ''}
                         </div>
                       </td>
-                      <td className="p-3.5 whitespace-nowrap font-normal text-slate-600 dark:text-slate-400">
+                      <td className="p-3.5 whitespace-nowrap font-normal text-slate-700 dark:text-slate-300">
                         {s.examPeriodName} · {s.schoolYear}
                       </td>
-                      <td className="p-3.5 whitespace-nowrap font-normal text-slate-600 dark:text-slate-400">
+                      <td className="p-3.5 whitespace-nowrap font-normal text-slate-700 dark:text-slate-300 tabular-nums">
                         {s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : ''} ({s.timeSlot})
                       </td>
                       <td className="p-3.5 whitespace-nowrap text-center font-normal tabular-nums">
-                        <span className="font-medium text-slate-800 dark:text-slate-200">
+                        <span className="font-medium text-slate-900 dark:text-slate-100">
                           {s.archivedAttemptsCount} bài
                         </span>
                       </td>
@@ -591,12 +586,12 @@ export default function ExamArchivesPage() {
                         <div className="flex flex-col items-end gap-0.5">
                           <div className="font-medium text-slate-900 dark:text-slate-100">
                             {s.isEligibleForDisposal ? (
-                              <span className="text-amber-600 dark:text-amber-400">Đủ niên hạn tiêu hủy</span>
+                              <span className="text-amber-700 dark:text-amber-400 font-semibold">Đủ niên hạn tiêu hủy</span>
                             ) : (
                               <span>{s.remainingTimeText}</span>
                             )}
                           </div>
-                          <span className="text-type-meta text-slate-400 dark:text-slate-500">
+                          <span className="text-type-meta text-slate-500 dark:text-slate-400 tabular-nums">
                             {s.isEligibleForDisposal ? 'Hết hạn: ' : 'Đến ngày: '}
                             {s.retentionUntil ? new Date(s.retentionUntil).toLocaleDateString('vi-VN') : '—'}
                           </span>
@@ -674,16 +669,16 @@ export default function ExamArchivesPage() {
                       onClick={() => handleOpenDetail(att.id)}
                       className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 cursor-pointer transition-colors group"
                     >
-                      <td className="p-3.5 pl-4 text-center text-slate-400 font-normal">
+                      <td className="p-3.5 pl-4 text-center text-slate-400 font-normal tabular-nums">
                         {(attemptPage - 1) * attemptLimit + idx + 1}
                       </td>
-                      <td className="p-3.5 whitespace-nowrap tabular-nums font-normal text-slate-800 dark:text-slate-200">
+                      <td className="p-3.5 whitespace-nowrap tabular-nums font-medium text-slate-900 dark:text-slate-100">
                         {att.studentCode}
                       </td>
-                      <td className="p-3.5 font-normal text-slate-900 dark:text-slate-100">
+                      <td className="p-3.5 font-medium text-slate-900 dark:text-slate-100">
                         {att.fullName}
                       </td>
-                      <td className="p-3.5 whitespace-nowrap font-normal text-slate-600 dark:text-slate-400">{att.className}</td>
+                      <td className="p-3.5 whitespace-nowrap font-normal text-slate-700 dark:text-slate-300">{att.className}</td>
                       <td className="p-3.5 whitespace-nowrap text-center font-normal">
                         <span className="inline-flex items-center justify-center gap-1.5 tabular-nums font-semibold text-slate-950 dark:text-slate-50">
                           <span>{att.totalScore}đ</span>
@@ -692,7 +687,7 @@ export default function ExamArchivesPage() {
                           </span>
                         </span>
                       </td>
-                      <td className="p-3.5 pr-4 whitespace-nowrap text-right font-normal tabular-nums text-slate-500">
+                      <td className="p-3.5 pr-4 whitespace-nowrap text-right font-normal tabular-nums text-slate-700 dark:text-slate-300">
                         {att.submittedAt
                           ? new Date(att.submittedAt).toLocaleTimeString('vi-VN')
                           : '—'}

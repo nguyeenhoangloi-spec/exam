@@ -157,7 +157,7 @@ export function ExamArchiveDetailModal({ attemptId, isOpen, onClose }: ExamArchi
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div className="min-w-0">
-              <h3 className="text-type-title-sm font-semibold text-slate-950 dark:text-slate-50 truncate">
+              <h3 className="text-type-title-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
                 Hồ sơ bài thi
               </h3>
               <p className="text-type-meta text-slate-500 dark:text-slate-400 truncate mt-0.5">
@@ -189,25 +189,25 @@ export function ExamArchiveDetailModal({ attemptId, isOpen, onClose }: ExamArchi
               <div className="pb-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="space-y-1">
                   <div className="flex flex-wrap items-center gap-2 text-type-body font-medium text-slate-900 dark:text-slate-100">
-                    <span className="font-semibold text-slate-950 dark:text-slate-50 text-type-title-sm">{data.student.fullName}</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-title-sm">{data.student.fullName}</span>
                     <span className="text-type-meta tabular-nums text-slate-500 font-normal">({data.student.studentCode})</span>
                     <span className="text-slate-300 dark:text-slate-700">·</span>
-                    <span className="text-type-meta text-slate-600 dark:text-slate-400 font-normal">{data.student.className}</span>
+                    <span className="text-type-meta text-slate-700 dark:text-slate-300 font-normal">{data.student.className}</span>
                     {data.student.departmentName && (
                       <>
                         <span className="text-slate-300 dark:text-slate-700">·</span>
-                        <span className="text-type-meta text-slate-600 dark:text-slate-400 font-normal">{data.student.departmentName}</span>
+                        <span className="text-type-meta text-slate-700 dark:text-slate-300 font-normal">{data.student.departmentName}</span>
                       </>
                     )}
                   </div>
                   <p className="text-type-meta text-slate-500 dark:text-slate-400">
-                    Học phần: <strong className="font-medium text-slate-800 dark:text-slate-200">{data.schedule.subjectName}</strong> ({data.schedule.subjectCode}) · Nộp bài lúc {data.submission.submittedAt ? new Date(data.submission.submittedAt).toLocaleTimeString('vi-VN') : '—'} ({data.submission.submittedAt ? new Date(data.submission.submittedAt).toLocaleDateString('vi-VN') : ''})
+                    Học phần: <strong className="font-medium text-slate-900 dark:text-slate-100">{data.schedule.subjectName}</strong> ({data.schedule.subjectCode}) · Nộp bài lúc {data.submission.submittedAt ? new Date(data.submission.submittedAt).toLocaleTimeString('vi-VN') : '—'} ({data.submission.submittedAt ? new Date(data.submission.submittedAt).toLocaleDateString('vi-VN') : ''})
                   </p>
                 </div>
 
                 <div className="shrink-0 text-left sm:text-right">
                   <span className="text-type-meta text-slate-500 dark:text-slate-400 block">Điểm chính thức</span>
-                  <div className="text-type-title-lg font-semibold text-slate-950 dark:text-slate-50 tabular-nums">
+                  <div className="text-type-title-lg font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
                     {data.submission.totalScore !== null ? data.submission.totalScore : 0}
                     <span className="text-type-body-sm font-normal text-slate-400"> / {data.submission.maxScore}đ</span>
                   </div>
@@ -215,13 +215,13 @@ export function ExamArchiveDetailModal({ attemptId, isOpen, onClose }: ExamArchi
               </div>
 
               {/* Dòng Chứng Thực Niêm Phong Phẳng (Loại bỏ hoàn toàn khung xanh, tinh gọn và sang trọng) */}
-              <div className="flex flex-wrap items-center justify-between gap-3 text-type-meta text-slate-600 dark:text-slate-400 py-1">
+              <div className="flex flex-wrap items-center justify-between gap-3 text-type-meta text-slate-700 dark:text-slate-300 py-1">
                 <div className="flex items-center gap-2 min-w-0">
                   <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span className="font-medium text-slate-700 dark:text-slate-300">
                     Mã niêm phong SHA-256:
                   </span>
-                  <span className="tabular-nums font-medium text-slate-800 dark:text-slate-200 select-all truncate max-w-[200px] sm:max-w-[320px]" title={data.digitalSeal.sealHash}>
+                  <span className="tabular-nums font-medium text-slate-900 dark:text-slate-100 select-all truncate max-w-[200px] sm:max-w-[320px]" title={data.digitalSeal.sealHash}>
                     {data.digitalSeal.sealHash}
                   </span>
                   <button
@@ -240,7 +240,7 @@ export function ExamArchiveDetailModal({ attemptId, isOpen, onClose }: ExamArchi
                 </div>
 
                 <div className="text-slate-500">
-                  Duyệt bởi: <strong className="font-medium text-slate-700 dark:text-slate-300">{data.submission.approvedBy || 'Hội đồng Khảo thí'}</strong>
+                  Duyệt bởi: <strong className="font-medium text-slate-900 dark:text-slate-100">{data.submission.approvedBy || 'Hội đồng Khảo thí'}</strong>
                 </div>
               </div>
 
@@ -276,7 +276,7 @@ export function ExamArchiveDetailModal({ attemptId, isOpen, onClose }: ExamArchi
                           </div>
 
                           <div className="shrink-0 text-right">
-                            <span className="text-type-meta font-medium tabular-nums px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                            <span className="text-type-meta font-medium tabular-nums px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100">
                               {q.studentAnswer.finalScore} / {q.maxScore}đ
                             </span>
                           </div>
@@ -290,16 +290,16 @@ export function ExamArchiveDetailModal({ attemptId, isOpen, onClose }: ExamArchi
                               const isCorrect = opt.isCorrect;
 
                               let cardStyle =
-                                'border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-800/60 text-slate-700 dark:text-slate-300';
+                                'border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-800/60 text-slate-800 dark:text-slate-200';
                               if (isSelected && isCorrect) {
                                 cardStyle =
-                                  'border-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-200 font-medium';
+                                  'border-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/30 text-emerald-950 dark:text-emerald-200 font-medium';
                               } else if (isSelected && !isCorrect) {
                                 cardStyle =
-                                  'border-rose-300 bg-rose-50/40 dark:bg-rose-950/30 text-rose-900 dark:text-rose-200 font-medium';
+                                  'border-rose-300 bg-rose-50/40 dark:bg-rose-950/30 text-rose-950 dark:text-rose-200 font-medium';
                               } else if (!isSelected && isCorrect) {
                                 cardStyle =
-                                  'border-emerald-300/80 border-dashed bg-emerald-50/15 text-emerald-800 dark:text-emerald-300';
+                                  'border-emerald-300/80 border-dashed bg-emerald-50/15 text-emerald-900 dark:text-emerald-300';
                               }
 
                               return (
@@ -391,15 +391,15 @@ export function ExamArchiveDetailModal({ attemptId, isOpen, onClose }: ExamArchi
                         {/* 3. Bài làm tự luận (ESSAY) */}
                         {isEssay && (
                           <div className="space-y-2 pt-1">
-                            <div className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/40 text-type-body-sm leading-relaxed text-slate-800 dark:text-slate-200 whitespace-pre-wrap">
-                              <span className="font-medium text-slate-500 block mb-1">
+                            <div className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/40 text-type-body-sm leading-relaxed text-slate-900 dark:text-slate-100 whitespace-pre-wrap">
+                              <span className="font-medium text-slate-500 dark:text-slate-400 block mb-1">
                                 Nội dung bài làm của thí sinh:
                               </span>
                               {q.studentAnswer.textAnswer || '(Thí sinh không nhập nội dung văn bản)'}
                             </div>
 
                             {q.studentAnswer.teacherComment && (
-                              <div className="p-2.5 rounded-xl border border-blue-100 dark:border-blue-900/40 bg-blue-50/20 text-type-meta text-blue-900 dark:text-blue-200">
+                              <div className="p-2.5 rounded-xl border border-blue-100 dark:border-blue-900/40 bg-blue-50/20 text-type-meta text-blue-950 dark:text-blue-200">
                                 <strong>Nhận xét của cán bộ chấm:</strong> {q.studentAnswer.teacherComment}
                               </div>
                             )}
@@ -426,8 +426,8 @@ export function ExamArchiveDetailModal({ attemptId, isOpen, onClose }: ExamArchi
 
                         {/* 4. Fallback cho textAnswer thông thường nếu chưa hiển thị */}
                         {!isEssay && !isFillBlank && !hasOptions && q.studentAnswer.textAnswer && (
-                          <div className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/40 text-type-body-sm text-slate-800 dark:text-slate-200">
-                            <span className="text-slate-500 font-medium block mb-1">
+                          <div className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/40 text-type-body-sm text-slate-900 dark:text-slate-100">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium block mb-1">
                               Câu trả lời của thí sinh:
                             </span>
                             <div className="font-semibold">{q.studentAnswer.textAnswer}</div>
