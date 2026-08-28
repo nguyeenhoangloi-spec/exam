@@ -590,7 +590,7 @@ export function ExamReportSummaryTab({
                   onExportExcel={() => exportFile('XLSX')}
                   onExportCsv={() => exportFile('CSV')}
                   onPrint={printPreview}
-                  printLabel="In / PDF"
+                  printLabel="In báo cáo"
                 />
               )}
             </div>

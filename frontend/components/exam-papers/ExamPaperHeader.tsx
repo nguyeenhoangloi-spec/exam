@@ -29,9 +29,7 @@ export function ExamPaperHeader({
         {(onExportAll || onPrintAll) && (
           <DataActionsDropdown
             onExportAll={onExportAll}
-            exportLabel="Xuất báo cáo"
             onPrintAll={onPrintAll}
-            printLabel="In danh sách"
           />
         )}
       </div>

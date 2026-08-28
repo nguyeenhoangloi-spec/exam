@@ -108,7 +108,6 @@ export default function ReportsPage() {
         <div className="flex items-center gap-2.5 shrink-0">
           <DataActionsDropdown
             onPrintReport={handlePrint}
-            printLabel="In / Xuất báo cáo PDF"
           />
         </div>
       </div>

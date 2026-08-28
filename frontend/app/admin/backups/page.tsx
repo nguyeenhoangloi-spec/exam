@@ -615,9 +615,6 @@ export default function BackupsPage() {
                         onExportExcel={handleExportExcel}
                         onExportCsv={handleExportCsv}
                         onPrint={handlePrint}
-                        exportLabel="Xuất file Excel"
-                        exportCsvLabel="Xuất file CSV"
-                        printLabel="In biên bản / Xuất PDF"
                     />
 
                     <Button

@@ -239,10 +239,9 @@ export default function StudentExamSchedulePage() {
 
           <div className="flex items-center gap-2.5">
             <DataActionsDropdown
-              onExport={exportCsv}
-              exportLabel="Xuất file CSV"
+              onExportCsv={exportCsv}
               onPrint={handlePrintReport}
-              printLabel="In lịch thi cá nhân"
+              printLabel="In lịch thi"
             />
           </div>
         </div>

@@ -407,7 +407,6 @@ export default function StudentCurriculumPage() {
           <div className="flex items-center gap-2.5 shrink-0">
             <DataActionsDropdown
               onExportExcel={handleExportExcel}
-              exportLabel="Xuất file Excel"
               onPrint={handlePrintReport}
               printLabel="In khung đào tạo"
             />

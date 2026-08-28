@@ -417,7 +417,6 @@ export default function TeacherAssignmentsPage() {
           <div className="flex items-center gap-2.5 shrink-0">
             <DataActionsDropdown
               onExportExcel={exportExcel}
-              exportLabel="Xuất file Excel"
               onPrint={handlePrintReport}
               printLabel="In lịch coi thi"
             />

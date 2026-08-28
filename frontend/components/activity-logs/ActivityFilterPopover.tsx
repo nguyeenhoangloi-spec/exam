@@ -10,15 +10,7 @@ import {
   Zap,
   Layers,
   Shield,
-  Clock,
-  CheckCircle2,
   AlertCircle,
-  FileSpreadsheet,
-  Building2,
-  GraduationCap,
-  BookOpen,
-  Cpu,
-  LockKeyhole,
 } from 'lucide-react';
 
 interface ActivityFilterPopoverProps {
