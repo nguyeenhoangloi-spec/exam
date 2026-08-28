@@ -494,7 +494,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => togglePanel('account')}
                 className={`group flex items-center gap-2.5 rounded-xl py-1 px-2 text-left transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                   openPanel === 'account'
-                    ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-600'
+                    ? 'bg-slate-100 dark:bg-slate-800 ring-1 ring-slate-200/80 dark:ring-slate-700/80'
                     : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/80'
                 }`}
               >
@@ -504,10 +504,10 @@ export const Header: React.FC<HeaderProps> = ({
                     <DynamicImage
                       src={avatarUrl}
                       alt={displayName}
-                      className="h-8 w-8 sm:h-9 sm:w-9 rounded-full object-cover ring-2 ring-blue-500/20"
+                      className="h-8 w-8 sm:h-9 sm:w-9 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700"
                     />
                   ) : (
-                    <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-blue-600 font-semibold text-white text-type-helper sm:text-type-body-sm tracking-tight shadow-xs">
+                    <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-slate-800 dark:bg-slate-700 font-semibold text-white text-type-helper sm:text-type-body-sm tracking-tight shadow-xs">
                       {getSmartMonogram(displayName)}
                     </div>
                   )}
@@ -516,18 +516,18 @@ export const Header: React.FC<HeaderProps> = ({
 
                 {/* Name & Role text */}
                 <div className="hidden sm:block text-left leading-tight">
-                  <span className="block truncate max-w-[130px] text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <span className="block truncate max-w-[130px] text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 group-hover:text-slate-950 dark:group-hover:text-white transition-colors">
                     {displayName}
                   </span>
-                  <span className="block text-type-badge font-medium text-blue-600 dark:text-blue-400">
+                  <span className="block text-type-badge font-medium text-slate-500 dark:text-slate-400">
                     {displayRoleLabel}
                   </span>
                 </div>
 
                 {/* Chevron Arrow */}
                 <ChevronDown
-                  className={`h-4 w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-transform duration-200 ${
-                    openPanel === 'account' ? 'rotate-180 text-blue-600' : ''
+                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-transform duration-200 ${
+                    openPanel === 'account' ? 'rotate-180 text-slate-700 dark:text-slate-200' : ''
                   }`}
                   strokeWidth={1.5}
                 />

@@ -3,7 +3,7 @@
 import React from 'react';
 import { List, LayoutGrid, CalendarDays } from 'lucide-react';
 
-export type ViewMode = 'list' | 'grid' | 'calendar';
+export type ViewMode = 'list' | 'grid' | 'calendar' | 'matrix' | 'table';
 
 export interface ViewModeSegmentedControlProps<T extends string = ViewMode> {
   viewMode: T;
@@ -25,6 +25,8 @@ export function ViewModeSegmentedControl<T extends string = ViewMode>({
     list: { label: 'Dạng bảng danh sách', icon: List },
     grid: { label: 'Dạng lưới thẻ', icon: LayoutGrid },
     calendar: { label: 'Dạng lịch tuần', icon: CalendarDays },
+    matrix: { label: 'Xem sơ đồ ma trận chỗ ngồi', icon: LayoutGrid },
+    table: { label: 'Xem bảng danh sách sinh viên', icon: List },
   };
 
   return (

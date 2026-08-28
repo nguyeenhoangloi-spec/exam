@@ -11,6 +11,7 @@ import { Button } from '../../components/ui/Button';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { SlidingSegmentedControl } from '../../components/ui/SlidingSegmentedControl';
+import { ViewModeSegmentedControl } from '../../components/ui/ViewModeSegmentedControl';
 import {
   DoorOpen,
   Users,
@@ -903,36 +904,12 @@ export default function ExamArrangementPage() {
                     )}
                   </div>
 
-                  {/* Icon Toggle Sơ Đồ / Bảng */}
-                  <div className="h-10 inline-flex items-center bg-slate-100/90 dark:bg-slate-800/80 p-0.5 rounded-xl border border-slate-200/80 dark:border-slate-700/70">
-                    <button
-                      type="button"
-                      onClick={() => setViewMode('matrix')}
-                      className={`h-9 w-9 rounded-xl flex items-center justify-center transition cursor-pointer ${
-                        viewMode === 'matrix'
-                          ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs font-semibold'
-                          : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                      }`}
-                      title="Xem sơ đồ ma trận chỗ ngồi"
-                      aria-label="Xem sơ đồ"
-                    >
-                      <LayoutGrid className="h-4 w-4" />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setViewMode('table')}
-                      className={`h-9 w-9 rounded-xl flex items-center justify-center transition cursor-pointer ${
-                        viewMode === 'table'
-                          ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-2xs font-semibold'
-                          : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                      }`}
-                      title="Xem bảng danh sách sinh viên"
-                      aria-label="Xem danh sách"
-                    >
-                      <List className="h-4 w-4" />
-                    </button>
-                  </div>
+                  {/* Icon Toggle Sơ Đồ / Bảng (SlidingSegmentedControl đồng bộ chuẩn hệ thống) */}
+                  <ViewModeSegmentedControl<'matrix' | 'table'>
+                    viewMode={viewMode}
+                    onChange={setViewMode}
+                    supportedModes={['matrix', 'table']}
+                  />
 
                   {/* Nút Cấu hình lại (Ghost button) */}
                   <Button
