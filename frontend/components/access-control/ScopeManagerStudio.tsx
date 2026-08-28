@@ -117,7 +117,7 @@ export function ScopeManagerStudio({
       },
       {
         type: 'CLASS',
-        label: 'Lớp sinh hoạt',
+        label: 'Lớp học',
         count: draftScopes.filter((s) => s.type === 'CLASS').length,
         total: classes.length,
       },
@@ -142,7 +142,6 @@ export function ScopeManagerStudio({
           }}
           size="sm"
           pillShape="pill"
-          equalWidth
           className="shrink-0"
           options={scopeTabs.map((tab) => ({
             value: tab.type,
