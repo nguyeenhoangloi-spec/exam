@@ -1421,10 +1421,10 @@ export default function AccessControlPage() {
                                 .map((p: any) => (
                                   <div
                                     key={p.code}
-                                    className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 p-3 text-type-body-sm font-medium text-slate-800 dark:text-slate-200 truncate flex items-center justify-between gap-2 shadow-2xs"
+                                    className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 p-3.5 text-type-body min-h-[48px] flex items-center justify-between gap-3 shadow-2xs"
                                     title={p.name}
                                   >
-                                    <span className="truncate font-semibold">{p.name}</span>
+                                    <span className="truncate font-semibold text-slate-900 dark:text-white">{p.name}</span>
                                     <span className="ui-pill rounded-full text-type-helper font-medium px-2 py-0.5 shrink-0 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                                       Toàn quyền
                                     </span>
@@ -1515,11 +1515,28 @@ export default function AccessControlPage() {
                                       className="h-10 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-type-body font-normal text-slate-800 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 shadow-2xs"
                                     >
                                       <option value="">-- Chọn quyền cần gán ngoại lệ --</option>
-                                      {availableOverridePermissions.map((p) => (
-                                        <option key={p.code} value={p.code}>
-                                          [{p.module}] {p.name} ({p.code})
-                                        </option>
-                                      ))}
+                                      {availableOverridePermissions.filter((p) => !selectedUserRolePermissionCodes.has(p.code)).length > 0 && (
+                                        <optgroup label="Quyền mở rộng (Có thể cấp thêm)">
+                                          {availableOverridePermissions
+                                            .filter((p) => !selectedUserRolePermissionCodes.has(p.code))
+                                            .map((p) => (
+                                              <option key={p.code} value={p.code}>
+                                                + [{p.module}] {p.name} ({p.code})
+                                              </option>
+                                            ))}
+                                        </optgroup>
+                                      )}
+                                      {availableOverridePermissions.filter((p) => selectedUserRolePermissionCodes.has(p.code)).length > 0 && (
+                                        <optgroup label="Quyền hiện có theo vai trò (Có thể chặn)">
+                                          {availableOverridePermissions
+                                            .filter((p) => selectedUserRolePermissionCodes.has(p.code))
+                                            .map((p) => (
+                                              <option key={p.code} value={p.code}>
+                                                - [{p.module}] {p.name} ({p.code})
+                                              </option>
+                                            ))}
+                                        </optgroup>
+                                      )}
                                     </select>
 
                                     <Button
@@ -1626,10 +1643,10 @@ export default function AccessControlPage() {
                                     .map((p: any) => (
                                       <div
                                         key={p.code}
-                                        className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 p-3 text-type-body-sm font-medium text-slate-800 dark:text-slate-200 truncate flex items-center justify-between gap-2 shadow-2xs"
+                                        className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 p-3.5 text-type-body min-h-[48px] flex items-center justify-between gap-3 shadow-2xs"
                                         title={p.name}
                                       >
-                                        <span className="truncate font-semibold">{p.name}</span>
+                                        <span className="truncate font-semibold text-slate-900 dark:text-white">{p.name}</span>
                                         <span
                                           className={`ui-pill rounded-full text-type-helper font-medium px-2 py-0.5 shrink-0 ${p.source === 'ROLE'
                                             ? 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'

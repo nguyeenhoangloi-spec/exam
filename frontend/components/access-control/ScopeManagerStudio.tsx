@@ -216,9 +216,9 @@ export function ScopeManagerStudio({
               <div
                 key={item.id}
                 onClick={() => !disabled && handleToggle(item.id)}
-                className={`rounded-xl px-3.5 py-2.5 text-type-body h-[52px] flex items-center justify-between gap-3 shadow-2xs border transition-all duration-150 cursor-pointer select-none ${isSelected
+                className={`rounded-xl border p-3.5 text-type-body min-h-[48px] flex items-center justify-between gap-3 shadow-2xs transition-all duration-150 cursor-pointer select-none ${isSelected
                   ? 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 shadow-xs ring-1 ring-slate-400/20 dark:ring-slate-600/30'
-                  : 'bg-slate-50/60 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-800 hover:bg-slate-100/70 dark:hover:bg-slate-800/70 hover:border-slate-300 dark:hover:border-slate-700 text-slate-800 dark:text-slate-200'
+                  : 'border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/70 text-slate-800 dark:text-slate-200'
                   } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                 title={item.name}
               >

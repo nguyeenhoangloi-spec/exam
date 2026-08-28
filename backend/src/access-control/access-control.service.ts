@@ -61,12 +61,8 @@ const PROTECTED_USER_OVERRIDE_PERMISSIONS = new Set([
   'SECURITY_AUDIT_MANAGE',
   'BACKUP_MANAGE',
   'USER_MANAGE',
-  'EXAM_ARRANGEMENT_MANAGE',
-  'EXAM_SUPERVISOR_MANAGE',
-  'SYSTEM_REPORT_VIEW',
-  'ESSAY_PUBLISH',
   'TRASH_MANAGE',
-  'DOCUMENT_TEMPLATE_MANAGE',
+  'SYSTEM_REPORT_VIEW',
 ]);
 
 @Injectable()
@@ -127,10 +123,7 @@ export class AccessControlService {
         ...permission,
         roles: permission.rolePermissions.map((entry) => entry.role),
         userOverrideAllowed: !PROTECTED_USER_OVERRIDE_PERMISSIONS.has(permission.code),
-        // This list is defined by the API contract, not by the editable role
-        // matrix. It prevents the UI from offering an override that the route's
-        // role guard can never honor.
-        userOverrideRoles: this.permissionSeed(permission.code)?.roles ?? [],
+        userOverrideRoles: ROLES.filter((role) => this.canUseUserOverride(role, permission.code)),
       })),
     };
   }
@@ -452,7 +445,19 @@ export class AccessControlService {
    */
   canUseUserOverride(role: SystemRole, permissionCode: string) {
     const seed = this.permissionSeed(permissionCode);
-    return Boolean(seed && !PROTECTED_USER_OVERRIDE_PERMISSIONS.has(permissionCode) && seed.roles.includes(role));
+    if (!seed) return false;
+    // Core system protected permissions are strictly non-delegable
+    if (PROTECTED_USER_OVERRIDE_PERMISSIONS.has(permissionCode)) return false;
+    // Student can only override student permissions
+    if (role === 'STUDENT') {
+      return seed.roles.includes('STUDENT');
+    }
+    // Teachers/Staff can receive all non-protected operational & academic permissions
+    if (role === 'TEACHER') {
+      const studentOnlyCodes = ['STUDENT_SCHEDULE_VIEW', 'STUDENT_RESULT_VIEW', 'STUDENT_CURRICULUM_VIEW', 'ONLINE_EXAM_TAKE'];
+      return !studentOnlyCodes.includes(permissionCode);
+    }
+    return true;
   }
 
   private assertRolePermissionChange(role: SystemRole, permissionCode: string, granted: boolean) {
