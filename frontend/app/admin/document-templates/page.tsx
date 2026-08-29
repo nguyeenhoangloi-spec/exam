@@ -521,9 +521,9 @@ export default function DocumentTemplatesPage() {
         </div>
       </div>
 
-      {/* 2. Workspace Liền Mạch: Gộp chung thành 1 Khối Studio Thống Nhất, phân tách bằng đường cắt Hairline */}
-      <div className="w-full rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 shadow-2xs overflow-hidden grid grid-cols-1 lg:grid-cols-[440px_minmax(0,1fr)] items-stretch">
-        {/* Cột Trái: Sidebar Cấu hình (Được ngăn cách bằng đường kẻ cắt dọc phẳng mờ) */}
+      {/* 2. Workspace Liền Mạch: Cột Trái Rộng Rãi 500px - Không Bị Che Chữ */}
+      <div className="w-full rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 shadow-sm overflow-hidden grid grid-cols-1 lg:grid-cols-[500px_minmax(0,1fr)] items-stretch">
+        {/* Cột Trái: Sidebar Cấu hình */}
         <div className="flex flex-col p-5 space-y-4 border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900">
           {/* Segmented Tab Switcher Đúng 2 Nút Phẳng */}
           <div className="flex rounded-xl bg-slate-100/80 p-0.5 dark:bg-slate-800/80 shrink-0">
@@ -531,8 +531,8 @@ export default function DocumentTemplatesPage() {
               type="button"
               onClick={() => setActiveTab('settings')}
               className={`flex-1 rounded-xl py-2 text-type-body font-medium transition cursor-pointer text-center ${activeTab === 'settings'
-                  ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-900 dark:text-slate-100'
-                  : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
+                ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-900 dark:text-slate-100'
+                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
                 }`}
             >
               Thiết lập in ấn
@@ -541,26 +541,23 @@ export default function DocumentTemplatesPage() {
               type="button"
               onClick={() => setActiveTab('columns')}
               className={`flex-1 rounded-xl py-2 text-type-body font-medium transition cursor-pointer text-center ${activeTab === 'columns'
-                  ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-900 dark:text-slate-100'
-                  : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
+                ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-900 dark:text-slate-100'
+                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
                 }`}
             >
               Danh sách Mẫu ({templates.length})
             </button>
           </div>
 
-          {/* Vùng Nội Dung Cấu Hình Cột Trái: Tab 1 in-flow định hình độ dài chuẩn, Tab 2 absolute inset-0 */}
+          {/* Vùng Nội Dung Cấu Hình Cột Trái: Tab Thiết lập in ấn LUÔN LUÔN là khung chuẩn master duy nhất */}
           <div className="relative flex-1">
-            {/* Tab 1: Thiết lập In ấn (In-flow duy nhất định hình độ dài chuẩn cho toàn bộ card) */}
+            {/* Tab 1: Thiết lập In ấn (Luôn giữ nguyên trong layout flow để định hình độ dài chuẩn bất biến) */}
             <div
-              className={
-                activeTab === 'settings'
-                  ? 'space-y-5 divide-y divide-slate-100 dark:divide-slate-800'
-                  : 'space-y-5 divide-y divide-slate-100 dark:divide-slate-800 invisible select-none pointer-events-none'
-              }
-              aria-hidden={activeTab !== 'settings'}
+              className={`space-y-5 divide-y divide-slate-100 dark:divide-slate-800 ${activeTab === 'settings'
+                  ? 'opacity-100'
+                  : 'invisible pointer-events-none select-none aria-hidden'
+                }`}
             >
-              <div className="space-y-5 divide-y divide-slate-100 dark:divide-slate-800">
               {/* Section 1: Đơn vị & Tiêu đề */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -742,7 +739,7 @@ export default function DocumentTemplatesPage() {
                 </div>
               )}
 
-              {/* Section 3: Cấu trúc Cột (Gộp trực tiếp vào luồng cấu hình phẳng) */}
+              {/* Section 3: Cấu trúc Cột (Khung cuộn tối đa 160px) */}
               {config && config.templateType !== 'EXAM_PAPER' && (
                 <div className="pt-4 space-y-3">
                   <div className="flex items-center justify-between">
@@ -756,8 +753,8 @@ export default function DocumentTemplatesPage() {
                     </div>
                   </div>
 
-                  {/* Danh sách cột phẳng */}
-                  <div className="space-y-2 divide-y divide-slate-100 dark:divide-slate-800">
+                  {/* Danh sách cột phẳng với khung cuộn tối đa 160px */}
+                  <div className="max-h-[160px] overflow-y-auto custom-scrollbar pr-1 space-y-2 divide-y divide-slate-100 dark:divide-slate-800">
                     {config.columns?.map((column, index) => (
                       <div key={column.key || index} className="pt-2.5 first:pt-0 space-y-1.5">
                         <div className="flex items-center gap-1.5">
@@ -786,8 +783,8 @@ export default function DocumentTemplatesPage() {
                             className="h-9 flex-1 min-w-0 rounded-xl border border-slate-200/60 bg-white px-2.5 text-type-body font-medium text-slate-900 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
                           />
 
-                          {/* Align Selector */}
-                          <div className="w-20 shrink-0">
+                          {/* Align Selector: Rộng rãi không bị che chữ */}
+                          <div className="w-[94px] shrink-0">
                             <FilterSelect
                               value={column.align || 'left'}
                               onChange={(e) => {
@@ -919,7 +916,7 @@ export default function DocumentTemplatesPage() {
                                   footer: { ...config.footer, signers: nextSigners },
                                 });
                               }}
-                              className="rounded-xl p-2 text-slate-400 hover:text-rose-600 cursor-pointer transition"
+                              className="rounded-xl p-2 text-slate-400 hover:text-rose-600 cursor-pointer transition shrink-0"
                               title="Xóa người ký"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -932,146 +929,141 @@ export default function DocumentTemplatesPage() {
                 </div>
               )}
             </div>
-          </div>
 
-            {/* Tab 2: Danh Sách Mẫu Biểu (Ghim chính xác theo kích thước của Tab 1 bằng absolute inset-0) */}
+            {/* Tab 2: Danh Sách Mẫu Biểu (Lấp đầy trọn vẹn 100% không gian theo đúng độ dài của Tab 1) */}
             {activeTab === 'columns' && (
-              <div className="absolute inset-0 flex flex-col space-y-3 overflow-hidden">
-              <div className="relative shrink-0">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                <input
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Tìm kiếm biểu mẫu..."
-                  className="h-9 w-full rounded-xl border border-slate-200/60 bg-white pl-9 pr-3 text-type-body font-normal text-slate-900 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
-                />
-              </div>
+              <div className="absolute inset-0 flex flex-col space-y-3">
+                <div className="relative shrink-0">
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Tìm kiếm biểu mẫu..."
+                    className="h-9 w-full rounded-xl border border-slate-200/60 bg-white pl-9 pr-3 text-type-body font-normal text-slate-900 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
+                  />
+                </div>
 
-              {/* Vùng cuộn danh sách mẫu: trọn vẹn 100% chiều cao của Tab 1 */}
-              <div className="flex-1 min-h-0 space-y-2 overflow-y-auto custom-scrollbar pr-1">
-                {filteredTemplates.map((template) => {
-                  const isSelected = template.id === selectedId;
-                  return (
-                    <div
-                      key={template.id}
-                      onClick={() => {
-                        setSelectedId(template.id);
-                        setActiveTab('settings');
-                      }}
-                      className={`group relative rounded-xl border p-3 transition cursor-pointer ${isSelected
+                {/* Danh sách 26 mẫu: Lấp đầy 100% chiều cao của Tab 1 và cuộn mượt mà */}
+                <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1.5 space-y-2">
+                  {filteredTemplates.map((template) => {
+                    const isSelected = template.id === selectedId;
+                    return (
+                      <div
+                        key={template.id}
+                        onClick={() => {
+                          setSelectedId(template.id);
+                          setActiveTab('settings');
+                        }}
+                        className={`group relative rounded-xl border p-3 transition cursor-pointer ${isSelected
                           ? 'border-blue-500 bg-blue-50/40 dark:border-blue-500/80 dark:bg-blue-950/20'
                           : 'border-slate-200/60 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-850'
-                        }`}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-semibold text-type-body text-slate-900 dark:text-slate-100 truncate">
-                              {template.name}
-                            </span>
-                            {template.isDefault && (
-                              <span className="ui-pill text-type-helper font-medium px-2 py-0.5 rounded-full border border-blue-300 text-blue-700 dark:border-blue-700 dark:text-blue-400 shrink-0">
-                                Mặc định
+                          }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-semibold text-type-body text-slate-900 dark:text-slate-100 truncate">
+                                {template.name}
                               </span>
-                            )}
+                              {template.isDefault && (
+                                <span className="ui-pill text-type-helper font-medium px-2 py-0.5 rounded-full border border-blue-300 text-blue-700 dark:border-blue-700 dark:text-blue-400 shrink-0">
+                                  Mặc định
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-type-helper text-slate-500 truncate mt-0.5">
+                              {sourceLabels[template.dataSource] || template.dataSource} ({template.code})
+                            </p>
                           </div>
-                          <p className="text-type-helper text-slate-500 truncate mt-0.5">
-                            {sourceLabels[template.dataSource] || template.dataSource} ({template.code})
-                          </p>
+
+                          {!template.isDefault && (
+                            <button
+                              type="button"
+                              onClick={(e) => handleDeleteTemplate(template.id, e)}
+                              className="rounded-xl p-1 text-slate-400 hover:text-rose-600 transition"
+                              title="Xóa mẫu"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
                         </div>
-
-                        {!template.isDefault && (
-                          <button
-                            type="button"
-                            onClick={(e) => handleDeleteTemplate(template.id, e)}
-                            className="rounded-xl p-1 text-slate-400 hover:text-rose-600 transition"
-                            title="Xóa mẫu"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        )}
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
 
-        {/* Cột Phải: Studio Canvas In Ấn Hiện Đại (Liền mạch bên trong cùng 1 khối) */}
-        <div className="flex flex-col bg-slate-100/70 dark:bg-slate-950/70 overflow-hidden min-h-0">
-          {/* Top Bar Trong Suốt Liền Mạch (Bỏ hoàn toàn dải nền trắng) */}
-          <div className="flex items-center justify-between px-4 py-3 bg-slate-100/90 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60 shrink-0 z-10 sticky top-0">
-            <div className="flex items-center gap-2.5">
+        {/* Cột Phải: Studio Canvas Cố Định 95% - Bằng Đáy Khít Với Cột Trái */}
+        <div className="flex flex-col bg-slate-100/70 dark:bg-slate-950/70 overflow-hidden h-full min-h-0">
+          {/* Top Bar Tinh Gọn - Tối Giản Nút & Chữ */}
+          <div className="flex items-center justify-between px-4 py-2.5 bg-slate-100/90 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60 shrink-0 z-10 sticky top-0">
+            <div className="flex items-center gap-2">
               <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
-                Xem trước trang in
+                Xem trước
               </span>
-              <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full border border-slate-200/90 bg-transparent text-slate-700 dark:border-slate-700 dark:text-slate-300">
-                {config?.page.size || 'A4'} | {config?.page.orientation === 'landscape' ? 'Khổ ngang' : 'Khổ dọc'} | Lề {config?.page.marginMm || 15}mm
+              <span className="text-type-helper text-slate-500 font-normal">
+                ({config?.page.size || 'A4'} · {config?.page.orientation === 'landscape' ? 'Khổ ngang' : 'Khổ dọc'})
               </span>
             </div>
 
-            {/* Controls: Nút In Mẫu (Icon Không Nền Không Khung) + Stepper Zoom */}
-            <div className="flex items-center gap-2">
-              {/* Nút In Mẫu: Ghost button tinh gọn */}
-              <button
-                type="button"
-                onClick={testPrint}
-                disabled={!draft || !config}
-                className="h-8 inline-flex items-center gap-1.5 px-3 rounded-xl text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition cursor-pointer text-type-body font-medium disabled:opacity-30 disabled:cursor-not-allowed shadow-2xs border border-transparent hover:border-slate-200/60 dark:hover:border-slate-700"
-                title="In thử nghiệm biểu mẫu này (PDF / Máy in)"
-              >
-                <Printer className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                <span>In mẫu</span>
-              </button>
-
-              <div className="h-4 w-px bg-slate-200/80 dark:bg-slate-700" />
-
-              {/* Scale Zoom Controls - Phẳng nguyên khối trong suốt */}
-              <div className="inline-flex items-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-transparent p-0.5 shadow-2xs text-type-body font-medium">
+            {/* Controls: Hoàn toàn không nền, không khung, phẳng tuyệt đối */}
+            <div className="flex items-center gap-1.5">
+              {/* Stepper Zoom: Không nền, không khung */}
+              <div className="inline-flex items-center text-type-body font-medium">
                 <button
                   type="button"
-                  onClick={() => setZoomScale((s) => Math.max(50, s - 10))}
-                  className="p-1 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition cursor-pointer"
+                  onClick={() => setZoomScale((s) => Math.max(50, s - 5))}
+                  className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                   title="Thu nhỏ"
                 >
-                  <ZoomOut className="h-3.5 w-3.5" />
-                </button>
-                <span className="px-1.5 py-0.5 tabular-nums text-type-helper text-slate-700 dark:text-slate-300 font-medium">
-                  {zoomScale}%
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setZoomScale((s) => Math.min(150, s + 10))}
-                  className="p-1 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition cursor-pointer"
-                  title="Phóng to"
-                >
-                  <ZoomIn className="h-3.5 w-3.5" />
+                  <ZoomOut className="h-4 w-4" />
                 </button>
                 <button
                   type="button"
                   onClick={() => setZoomScale(95)}
-                  className="p-1 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition cursor-pointer"
-                  title="Đặt lại kích thước mặc định (95%)"
+                  className="px-1.5 py-0.5 tabular-nums text-type-helper text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 font-semibold cursor-pointer transition"
+                  title="Bấm để đặt lại chuẩn 95%"
                 >
-                  <RotateCcw className="h-3.5 w-3.5" />
+                  {zoomScale}%
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setZoomScale((s) => Math.min(150, s + 5))}
+                  className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                  title="Phóng to"
+                >
+                  <ZoomIn className="h-4 w-4" />
                 </button>
               </div>
+
+              <div className="h-3.5 w-px bg-slate-200 dark:bg-slate-800 mx-0.5" />
+
+              {/* Nút In Mẫu: Chỉ icon, không nền, không khung */}
+              <button
+                type="button"
+                onClick={testPrint}
+                disabled={!draft || !config}
+                className="p-1.5 rounded-lg text-slate-600 hover:text-blue-600 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-blue-400 dark:hover:bg-slate-800 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                title="In thử nghiệm biểu mẫu này (PDF / Máy in)"
+              >
+                <Printer className="h-4 w-4" />
+              </button>
             </div>
           </div>
 
-          {/* Canvas Viewport: Trực tiếp đặt trang in trên Canvas Studio */}
-          <div className="flex-1 min-h-0 flex justify-center items-start overflow-auto p-6 lg:p-8 custom-scrollbar">
+          {/* Canvas Viewport: Không gian Studio rộng mở, ôm theo đúng độ dài của Tab Thiết lập in ấn */}
+          <div className="flex-1 flex justify-center items-center overflow-hidden p-6 lg:p-8 select-none bg-slate-100/60 dark:bg-slate-950/60 bg-[radial-gradient(#cbd5e1_1.2px,transparent_1.2px)] dark:bg-[radial-gradient(#334155_1.2px,transparent_1.2px)] [background-size:24px_24px]">
             {draft && config ? (
               <div
                 style={{
                   transform: `scale(${zoomScale / 100})`,
-                  transformOrigin: 'top center',
+                  transformOrigin: 'center center',
                   transition: 'transform 0.15s ease-out',
                 }}
-                className="transition-all"
+                className="transition-all shrink-0 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.14),0_0_0_1px_rgba(0,0,0,0.06)] rounded-xs"
               >
                 <div
                   style={{
@@ -1080,7 +1072,7 @@ export default function DocumentTemplatesPage() {
                     padding: `${config.page.marginMm || 15}mm`,
                     fontFamily: '"Times New Roman", Times, serif',
                   }}
-                  className="bg-white text-slate-950 shadow-[0_10px_35px_-5px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.06)] rounded-xs transition-all dark:bg-white dark:text-slate-950 text-left"
+                  className="bg-white text-slate-950 shadow-[0_15px_45px_-10px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.06)] rounded-xs transition-all dark:bg-white dark:text-slate-950 text-left"
                 >
                   {config.templateType === 'EXAM_PAPER' ? (
                     /* EXAM PAPER FORMAT */
