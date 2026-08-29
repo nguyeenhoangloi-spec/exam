@@ -943,8 +943,8 @@ export default function DocumentTemplatesPage() {
                   />
                 </div>
 
-                {/* Danh sách 26 mẫu: Lấp đầy 100% chiều cao của Tab 1 và cuộn mượt mà */}
-                <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1.5 space-y-2">
+                {/* Danh sách 26 mẫu: Thiết kế phẳng siêu gọn, bỏ chữ Mặc định và khung thô */}
+                <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredTemplates.map((template) => {
                     const isSelected = template.id === selectedId;
                     return (
@@ -954,39 +954,31 @@ export default function DocumentTemplatesPage() {
                           setSelectedId(template.id);
                           setActiveTab('settings');
                         }}
-                        className={`group relative rounded-xl border p-3 transition cursor-pointer ${isSelected
-                          ? 'border-blue-500 bg-blue-50/40 dark:border-blue-500/80 dark:bg-blue-950/20'
-                          : 'border-slate-200/60 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-850'
-                          }`}
+                        className={`group relative flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg transition cursor-pointer ${
+                          isSelected
+                            ? 'bg-blue-50/80 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 font-semibold'
+                            : 'hover:bg-slate-100/70 text-slate-800 dark:text-slate-200 dark:hover:bg-slate-800/60'
+                        }`}
                       >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-semibold text-type-body text-slate-900 dark:text-slate-100 truncate">
-                                {template.name}
-                              </span>
-                              {template.isDefault && (
-                                <span className="ui-pill text-type-helper font-medium px-2 py-0.5 rounded-full border border-blue-300 text-blue-700 dark:border-blue-700 dark:text-blue-400 shrink-0">
-                                  Mặc định
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-type-helper text-slate-500 truncate mt-0.5">
-                              {sourceLabels[template.dataSource] || template.dataSource} ({template.code})
-                            </p>
-                          </div>
-
-                          {!template.isDefault && (
-                            <button
-                              type="button"
-                              onClick={(e) => handleDeleteTemplate(template.id, e)}
-                              className="rounded-xl p-1 text-slate-400 hover:text-rose-600 transition"
-                              title="Xóa mẫu"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          )}
+                        <div className="flex-1 min-w-0">
+                          <span className={`block text-type-body truncate ${isSelected ? 'font-semibold text-blue-700 dark:text-blue-400' : 'font-medium text-slate-900 dark:text-slate-100'}`}>
+                            {template.name}
+                          </span>
+                          <p className="text-type-helper text-slate-600 dark:text-slate-400 truncate mt-0.5 font-normal">
+                            {sourceLabels[template.dataSource] || template.dataSource} · {template.code}
+                          </p>
                         </div>
+
+                        {!template.isDefault && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleDeleteTemplate(template.id, e)}
+                            className="rounded-lg p-1 text-slate-400 hover:text-rose-600 transition opacity-0 group-hover:opacity-100 shrink-0"
+                            title="Xóa mẫu"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        )}
                       </div>
                     );
                   })}
