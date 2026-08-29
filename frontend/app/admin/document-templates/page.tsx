@@ -521,10 +521,10 @@ export default function DocumentTemplatesPage() {
         </div>
       </div>
 
-      {/* 2. Workspace Liền Mạch: Chuẩn Độ Dài Đồng Nhất Giữa Tab Thiết Lập, Tab Danh Sách Mẫu và Studio Live Canvas */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[440px_minmax(0,1fr)] items-stretch">
-        {/* Cột Trái: Sidebar Cấu hình (Độ dài chuẩn tự nhiên theo Tab Thiết Lập, Tab 2 đồng bộ 100%) */}
-        <div className="w-full flex flex-col rounded-2xl border border-slate-200/80 bg-white p-5 shadow-2xs dark:border-slate-800 dark:bg-slate-900 space-y-4">
+      {/* 2. Workspace Liền Mạch: Gộp chung thành 1 Khối Studio Thống Nhất, phân tách bằng đường cắt Hairline */}
+      <div className="w-full rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 shadow-2xs overflow-hidden grid grid-cols-1 lg:grid-cols-[440px_minmax(0,1fr)] items-stretch">
+        {/* Cột Trái: Sidebar Cấu hình (Được ngăn cách bằng đường kẻ cắt dọc phẳng mờ) */}
+        <div className="flex flex-col p-5 space-y-4 border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900">
           {/* Segmented Tab Switcher Đúng 2 Nút Phẳng */}
           <div className="flex rounded-xl bg-slate-100/80 p-0.5 dark:bg-slate-800/80 shrink-0">
             <button
@@ -1000,8 +1000,8 @@ export default function DocumentTemplatesPage() {
         </div>
       </div>
 
-        {/* Cột Phải: Studio Canvas In Ấn Hiện Đại (Tự động co giãn bằng 100% Cột Trái) */}
-        <div className="w-full flex flex-col rounded-2xl border border-slate-200/80 bg-slate-100/70 shadow-2xs dark:border-slate-800 dark:bg-slate-950/70 overflow-hidden">
+        {/* Cột Phải: Studio Canvas In Ấn Hiện Đại (Liền mạch bên trong cùng 1 khối) */}
+        <div className="flex flex-col bg-slate-100/70 dark:bg-slate-950/70 overflow-hidden min-h-0">
           {/* Top Bar Trong Suốt Liền Mạch (Bỏ hoàn toàn dải nền trắng) */}
           <div className="flex items-center justify-between px-4 py-3 bg-slate-100/90 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60 shrink-0 z-10 sticky top-0">
             <div className="flex items-center gap-2.5">
