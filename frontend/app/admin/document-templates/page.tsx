@@ -965,7 +965,7 @@ export default function DocumentTemplatesPage() {
                             {template.name}
                           </span>
                           <p className="text-type-helper text-slate-600 dark:text-slate-400 truncate mt-0.5 font-normal">
-                            {sourceLabels[template.dataSource] || template.dataSource} · {template.code}
+                            {sourceLabels[template.dataSource] || template.dataSource} | {template.code}
                           </p>
                         </div>
 
@@ -973,7 +973,7 @@ export default function DocumentTemplatesPage() {
                           <button
                             type="button"
                             onClick={(e) => handleDeleteTemplate(template.id, e)}
-                            className="rounded-lg p-1 text-slate-400 hover:text-rose-600 transition opacity-0 group-hover:opacity-100 shrink-0"
+                            className="rounded-xl p-1 text-slate-400 hover:text-rose-600 transition opacity-0 group-hover:opacity-100 shrink-0"
                             title="Xóa mẫu"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -997,7 +997,7 @@ export default function DocumentTemplatesPage() {
                 Xem trước
               </span>
               <span className="text-type-helper text-slate-500 font-normal">
-                ({config?.page.size || 'A4'} · {config?.page.orientation === 'landscape' ? 'Khổ ngang' : 'Khổ dọc'})
+                ({config?.page.size || 'A4'} | {config?.page.orientation === 'landscape' ? 'Khổ ngang' : 'Khổ dọc'})
               </span>
             </div>
 
@@ -1008,7 +1008,7 @@ export default function DocumentTemplatesPage() {
                 <button
                   type="button"
                   onClick={() => setZoomScale((s) => Math.max(50, s - 5))}
-                  className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                  className="p-1.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                   title="Thu nhỏ"
                 >
                   <ZoomOut className="h-4 w-4" />
@@ -1024,7 +1024,7 @@ export default function DocumentTemplatesPage() {
                 <button
                   type="button"
                   onClick={() => setZoomScale((s) => Math.min(150, s + 5))}
-                  className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                  className="p-1.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                   title="Phóng to"
                 >
                   <ZoomIn className="h-4 w-4" />
@@ -1038,7 +1038,7 @@ export default function DocumentTemplatesPage() {
                 type="button"
                 onClick={testPrint}
                 disabled={!draft || !config}
-                className="p-1.5 rounded-lg text-slate-600 hover:text-blue-600 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-blue-400 dark:hover:bg-slate-800 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                className="p-1.5 rounded-xl text-slate-600 hover:text-blue-600 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-blue-400 dark:hover:bg-slate-800 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                 title="In thử nghiệm biểu mẫu này (PDF / Máy in)"
               >
                 <Printer className="h-4 w-4" />

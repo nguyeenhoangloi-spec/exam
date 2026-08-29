@@ -34,10 +34,7 @@ import { TabBar, TabItem } from '../ui/TabBar';
 import { DataActionsDropdown } from '../ui/DataActionsDropdown';
 import { Button } from '../ui/Button';
 import { PaginationBar } from '../ui/PaginationBar';
-import {
-  FormulaEditorModal,
-  DynamicColumnDefinition,
-} from './FormulaEditorModal';
+import { DynamicColumnDefinition } from './FormulaEditorModal';
 import { evaluateFormula, FormulaVariable } from '../../lib/formula-engine';
 
 export interface SummaryScheduleRow {
@@ -188,7 +185,6 @@ export function ExamReportSummaryTab({
   const [columns, setColumns] = useState<string[]>([]);
   const [customLabels, setCustomLabels] = useState<Record<string, string>>({});
   const [scoreRounding, setScoreRounding] = useState<'0.1' | '0.25' | '0.5'>('0.1');
-  const [passThreshold, setPassThreshold] = useState<number>(5.0);
   const [editingLabelKey, setEditingLabelKey] = useState<string | null>(null);
   const [busy, setBusy] = useState('');
   const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -203,56 +199,124 @@ export function ExamReportSummaryTab({
   const templateBtnRef = useRef<HTMLButtonElement>(null);
   const [templateMenuStyle, setTemplateMenuStyle] = useState<React.CSSProperties>({});
 
-  // Dynamic Formula Columns State
-  const [customFormulaColumns, setCustomFormulaColumns] = useState<DynamicColumnDefinition[]>([]);
-  const [isFormulaModalOpen, setIsFormulaModalOpen] = useState(false);
-  const [editingFormulaColumn, setEditingFormulaColumn] = useState<DynamicColumnDefinition | null>(null);
+  // Evaluation & Rule Settings Directly in Left Sidebar (Giải pháp 1: Bỏ hẳn Popup)
+  const [passThreshold, setPassThreshold] = useState<number>(5.0);
+  const [examWeight, setExamWeight] = useState<number>(70);
+  const [bonusWeight, setBonusWeight] = useState<number>(30);
+  const [enabledRules, setEnabledRules] = useState<{
+    passFail: boolean;
+    moetLevels: boolean;
+    weighted: boolean;
+    letterGrade: boolean;
+    grade4: boolean;
+    rate: boolean;
+  }>({
+    passFail: true,
+    moetLevels: false,
+    weighted: false,
+    letterGrade: false,
+    grade4: false,
+    rate: false,
+  });
 
+  // Tự động sinh danh sách cột tính toán dựa trên cấu hình ở Sidebar
+  const customFormulaColumns: DynamicColumnDefinition[] = useMemo(() => {
+    const list: DynamicColumnDefinition[] = [];
+
+    if (enabledRules.passFail) {
+      list.push({
+        id: 'calc_pass_fail',
+        key: 'calc_pass_fail',
+        header: 'Kết quả',
+        type: 'FORMULA',
+        formula: `IF({totalScore} >= ${passThreshold}, "ĐẠT", "KHÔNG ĐẠT")`,
+        align: 'center',
+        decimals: 2,
+        visible: true,
+      });
+    }
+
+    if (enabledRules.moetLevels) {
+      list.push({
+        id: 'calc_moet_levels',
+        key: 'calc_moet_levels',
+        header: 'Xếp loại',
+        type: 'FORMULA',
+        formula: 'CLASSIFICATION({totalScore})',
+        align: 'center',
+        decimals: 2,
+        visible: true,
+      });
+    }
+
+    if (enabledRules.weighted) {
+      const w1 = Number((examWeight / 100).toFixed(2));
+      const w2 = Number((bonusWeight / 100).toFixed(2));
+      list.push({
+        id: 'calc_weighted',
+        key: 'calc_weighted',
+        header: 'Điểm tổng kết',
+        type: 'FORMULA',
+        formula: `ROUND({totalScore} * ${w1} + {bonusScore} * ${w2}, 2)`,
+        align: 'right',
+        decimals: 2,
+        visible: true,
+      });
+    }
+
+    if (enabledRules.letterGrade) {
+      list.push({
+        id: 'calc_letter_grade',
+        key: 'calc_letter_grade',
+        header: 'Điểm chữ',
+        type: 'FORMULA',
+        formula: 'LETTER_GRADE({totalScore})',
+        align: 'center',
+        decimals: 2,
+        visible: true,
+      });
+    }
+
+    if (enabledRules.grade4) {
+      list.push({
+        id: 'calc_grade_4',
+        key: 'calc_grade_4',
+        header: 'Điểm hệ 4',
+        type: 'FORMULA',
+        formula: 'GRADE4({totalScore})',
+        align: 'center',
+        decimals: 2,
+        visible: true,
+      });
+    }
+
+    if (enabledRules.rate) {
+      list.push({
+        id: 'calc_rate',
+        key: 'calc_rate',
+        header: 'Tỷ lệ nộp bài',
+        type: 'FORMULA',
+        formula: 'ROUND(({submitted} / {assigned}) * 100, 1)',
+        align: 'right',
+        decimals: 1,
+        visible: true,
+      });
+    }
+
+    return list;
+  }, [enabledRules, passThreshold, examWeight, bonusWeight]);
+
+  // Tự động thêm các cột được tích chọn vào columns hiển thị
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('exam_report_custom_formula_cols');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          setCustomFormulaColumns(parsed);
-        }
-      }
-    } catch {
-      // Ignore
+    const dynamicKeys = customFormulaColumns.map((c) => c.key);
+    if (dynamicKeys.length > 0) {
+      setColumns((prev) => {
+        const set = new Set(prev);
+        dynamicKeys.forEach((k) => set.add(k));
+        return Array.from(set);
+      });
     }
-  }, []);
-
-  const saveFormulaColumns = (cols: DynamicColumnDefinition[]) => {
-    setCustomFormulaColumns(cols);
-    try {
-      localStorage.setItem('exam_report_custom_formula_cols', JSON.stringify(cols));
-    } catch {
-      // Ignore
-    }
-  };
-
-  const handleSaveFormulaColumn = (col: DynamicColumnDefinition) => {
-    const idx = customFormulaColumns.findIndex((c) => c.key === col.key);
-    let nextCols: DynamicColumnDefinition[];
-    if (idx >= 0) {
-      nextCols = [...customFormulaColumns];
-      nextCols[idx] = col;
-    } else {
-      nextCols = [...customFormulaColumns, col];
-    }
-    saveFormulaColumns(nextCols);
-    setColumns((prev) => (prev.includes(col.key) ? prev : [...prev, col.key]));
-    setIsFormulaModalOpen(false);
-    setEditingFormulaColumn(null);
-    setNotice({ type: 'success', message: `Đã cập nhật cột công thức "${col.header}".` });
-  };
-
-  const handleDeleteFormulaColumn = (colKey: string) => {
-    const nextCols = customFormulaColumns.filter((c) => c.key !== colKey);
-    saveFormulaColumns(nextCols);
-    setColumns((prev) => prev.filter((k) => k !== colKey));
-    setNotice({ type: 'success', message: 'Đã xóa cột công thức.' });
-  };
+  }, [customFormulaColumns]);
 
   const availableVariablesForFormula: FormulaVariable[] = useMemo(() => {
     if (!preview?.columns) return [];
@@ -473,10 +537,11 @@ export function ExamReportSummaryTab({
     setBusy('preview');
     setNotice(null);
     try {
+      const baseColumnsToSend = columns.filter((k) => !k.startsWith('calc_'));
       const r = await api.post<ReportPreview>('/exam-reports/preview', {
         type,
         filters: requestFilters,
-        columns: columns.length ? columns : undefined,
+        columns: baseColumnsToSend.length ? baseColumnsToSend : undefined,
         title: title.trim() || undefined,
         customLabels: Object.keys(customLabels).length ? customLabels : undefined,
         scoreRounding,
@@ -485,7 +550,11 @@ export function ExamReportSummaryTab({
       setPreview(r.data);
       const baseKeys = r.data.columns.map((c) => c.key);
       const formulaKeys = customFormulaColumns.map((fc) => fc.key);
-      setColumns([...baseKeys, ...formulaKeys]);
+      setColumns((prev) => {
+        const baseSelected = prev.filter((k) => baseKeys.includes(k));
+        const activeBase = baseSelected.length > 0 ? baseSelected : baseKeys;
+        return Array.from(new Set([...activeBase, ...formulaKeys]));
+      });
     } catch (e) {
       setNotice({ type: 'error', message: e instanceof Error ? e.message : 'Không tạo được bản xem trước.' });
     } finally {
@@ -798,7 +867,7 @@ export function ExamReportSummaryTab({
                         <span className="font-semibold text-type-body text-slate-900 dark:text-slate-100">
                           {r.subjectName}
                         </span>
-                        <span className="table-meta text-type-helper text-slate-400 font-mono tabular-nums">
+                        <span className="table-meta text-type-helper text-slate-400 font-normal tabular-nums">
                           ({r.subjectCode})
                         </span>
                       </div>
@@ -922,6 +991,123 @@ export function ExamReportSummaryTab({
                       onChange={(v) => setFilters((f) => ({ ...f, toDate: v }))}
                     />
                   </div>
+
+                  {/* ── TIÊU CHUẨN ĐÁNH GIÁ & QUY CÁCH TÍNH (TRỰC TIẾP TẠI SIDEBAR) ── */}
+                  <div className="pt-3 space-y-3 border-t border-slate-100 dark:border-slate-800">
+                    <span className="block text-type-body font-semibold text-slate-900 dark:text-slate-100">
+                      Tiêu chuẩn đánh giá
+                    </span>
+
+                    {/* Mức điểm đạt */}
+                    <div className="space-y-1">
+                      <span className="block text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+                        Điểm đạt tối thiểu
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          step="0.5"
+                          min="0"
+                          max="10"
+                          value={passThreshold}
+                          onChange={(e) => setPassThreshold(Number(e.target.value) || 5.0)}
+                          className="h-10 w-24 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-semibold text-blue-600 outline-none focus:border-blue-500 transition shadow-2xs"
+                        />
+                        <span className="text-type-helper text-slate-400 font-normal">/ 10 điểm</span>
+                      </div>
+                    </div>
+
+                    {/* Tỷ lệ điểm hệ số */}
+                    <div className="space-y-1">
+                      <span className="block text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+                        Tỷ lệ điểm hệ số (%)
+                      </span>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            value={examWeight}
+                            onChange={(e) => {
+                              const val = Number(e.target.value) || 0;
+                              setExamWeight(val);
+                              setBonusWeight(Math.max(0, 100 - val));
+                            }}
+                            className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 text-type-body font-semibold text-blue-600 outline-none focus:border-blue-500 transition shadow-2xs"
+                          />
+                          <span className="text-type-helper text-slate-500">% Thi</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            value={bonusWeight}
+                            onChange={(e) => {
+                              const val = Number(e.target.value) || 0;
+                              setBonusWeight(val);
+                              setExamWeight(Math.max(0, 100 - val));
+                            }}
+                            className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 text-type-body font-semibold text-blue-600 outline-none focus:border-blue-500 transition shadow-2xs"
+                          />
+                          <span className="text-type-helper text-slate-500">% Cần</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Danh sách các cột đánh giá nhanh */}
+                    <div className="space-y-2 pt-1">
+                      <span className="block text-type-helper font-medium text-slate-600 dark:text-slate-400">
+                        Cột bổ sung vào bảng:
+                      </span>
+                      <label className="flex items-center gap-2 text-type-body font-medium text-slate-800 dark:text-slate-200 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={enabledRules.passFail}
+                          onChange={(e) => setEnabledRules((prev) => ({ ...prev, passFail: e.target.checked }))}
+                          className="h-4 w-4 rounded accent-blue-600"
+                        />
+                        <span>Cột Kết quả (Đạt / Không đạt)</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-type-body font-medium text-slate-800 dark:text-slate-200 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={enabledRules.moetLevels}
+                          onChange={(e) => setEnabledRules((prev) => ({ ...prev, moetLevels: e.target.checked }))}
+                          className="h-4 w-4 rounded accent-blue-600"
+                        />
+                        <span>Cột Xếp loại học lực (Bộ GD&ĐT)</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-type-body font-medium text-slate-800 dark:text-slate-200 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={enabledRules.weighted}
+                          onChange={(e) => setEnabledRules((prev) => ({ ...prev, weighted: e.target.checked }))}
+                          className="h-4 w-4 rounded accent-blue-600"
+                        />
+                        <span>Cột Điểm tổng kết hệ số</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-type-body font-medium text-slate-800 dark:text-slate-200 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={enabledRules.letterGrade}
+                          onChange={(e) => setEnabledRules((prev) => ({ ...prev, letterGrade: e.target.checked }))}
+                          className="h-4 w-4 rounded accent-blue-600"
+                        />
+                        <span>Cột Điểm Chữ (A, B, C, D, F)</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-type-body font-medium text-slate-800 dark:text-slate-200 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={enabledRules.grade4}
+                          onChange={(e) => setEnabledRules((prev) => ({ ...prev, grade4: e.target.checked }))}
+                          className="h-4 w-4 rounded accent-blue-600"
+                        />
+                        <span>Cột Thang điểm 4.0</span>
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -977,20 +1163,6 @@ export function ExamReportSummaryTab({
 
               {preview && (
                 <div className="flex items-center gap-2">
-                  {/* Soft Accent Button: Thêm cột công thức (Bậc 2 Button Hierarchy) */}
-                  <Button
-                    type="button"
-                    variant="soft"
-                    size="sm"
-                    onClick={() => {
-                      setEditingFormulaColumn(null);
-                      setIsFormulaModalOpen(true);
-                    }}
-                    title="Thêm cột tính toán động bằng công thức toán học"
-                  >
-                    Thêm cột công thức
-                  </Button>
-
                   {/* Smart Column Selector Popover - Tối giản, thanh lịch, trung tính */}
                   <div className="relative">
                     <button
@@ -1151,38 +1323,8 @@ export function ExamReportSummaryTab({
                                   </div>
 
                                   <div className="flex items-center gap-1 shrink-0">
-                                    {/* Nút sửa công thức nếu là formula column */}
-                                    {c.isFormula && (
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          const fc = customFormulaColumns.find((f) => f.key === c.key);
-                                          if (fc) {
-                                            setEditingFormulaColumn(fc);
-                                            setIsFormulaModalOpen(true);
-                                          }
-                                        }}
-                                        className="p-1.5 text-blue-600 hover:text-blue-700 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/60 rounded-xl cursor-pointer"
-                                        title="Chỉnh sửa công thức"
-                                      >
-                                        <Edit2 className="h-3.5 w-3.5" />
-                                      </button>
-                                    )}
-
-                                    {/* Nút xóa cột nếu là formula column */}
-                                    {c.isFormula && (
-                                      <button
-                                        type="button"
-                                        onClick={() => handleDeleteFormulaColumn(c.key)}
-                                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-xl cursor-pointer"
-                                        title="Xóa cột công thức này"
-                                      >
-                                        <Trash2 className="h-3.5 w-3.5" />
-                                      </button>
-                                    )}
-
-                                    {/* Nút bút chì đổi tên nhãn cho cột thường */}
-                                    {!c.isFormula && !isEditing && (
+                                    {/* Nút bút chì đổi tên nhãn cho mọi cột */}
+                                    {!isEditing && (
                                       <button
                                         type="button"
                                         onClick={() => setEditingLabelKey(c.key)}
@@ -1443,17 +1585,6 @@ export function ExamReportSummaryTab({
         </div>
       )}
 
-      {/* Formula Editor Modal */}
-      <FormulaEditorModal
-        isOpen={isFormulaModalOpen}
-        onClose={() => {
-          setIsFormulaModalOpen(false);
-          setEditingFormulaColumn(null);
-        }}
-        onSave={handleSaveFormulaColumn}
-        initialColumn={editingFormulaColumn}
-        customVariables={availableVariablesForFormula}
-      />
     </div>
   );
 }
