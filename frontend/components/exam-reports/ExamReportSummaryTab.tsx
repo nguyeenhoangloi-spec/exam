@@ -256,11 +256,25 @@ export function ExamReportSummaryTab({
 
   const availableVariablesForFormula: FormulaVariable[] = useMemo(() => {
     if (!preview?.columns) return [];
+    const textKeys = [
+      'studentCode',
+      'fullName',
+      'className',
+      'status',
+      'subjectCode',
+      'subjectName',
+      'periodName',
+      'departmentName',
+      'examDate',
+      'range',
+      'classification',
+      'createdAt',
+    ];
     return preview.columns.map((c) => ({
       key: c.key,
       label: customLabels[c.key] || c.label,
-      type: 'number' as const,
-      sampleValue: 8.5,
+      type: textKeys.includes(c.key) ? ('string' as const) : ('number' as const),
+      sampleValue: textKeys.includes(c.key) ? 'Mẫu' : 8.5,
     }));
   }, [preview, customLabels]);
 
@@ -784,8 +798,8 @@ export function ExamReportSummaryTab({
                         <span className="font-semibold text-type-body text-slate-900 dark:text-slate-100">
                           {r.subjectName}
                         </span>
-                        <span className="table-meta text-type-helper text-slate-400 tabular-nums">
-                          #{r.subjectCode}
+                        <span className="table-meta text-type-helper text-slate-400 font-mono tabular-nums">
+                          ({r.subjectCode})
                         </span>
                       </div>
                       <p className="table-meta text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
@@ -796,10 +810,10 @@ export function ExamReportSummaryTab({
                       {r.periodName}
                     </td>
                     <td className="py-4 px-5 whitespace-nowrap text-type-body tabular-nums text-slate-500 dark:text-slate-400">
-                      {new Date(r.examDate).toLocaleDateString('vi-VN')}
+                      {new Date(r.examDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                     </td>
                     <td className="py-4 px-5 text-center whitespace-nowrap">
-                      <span className="table-badge inline-flex items-center px-2.5 py-0.5 rounded-full ui-pill text-type-helper font-medium bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800 tabular-nums">
+                      <span className="text-type-body font-medium text-slate-800 dark:text-slate-200 tabular-nums">
                         {r.graded}/{r.submitted} bài
                       </span>
                     </td>
@@ -963,7 +977,7 @@ export function ExamReportSummaryTab({
 
               {preview && (
                 <div className="flex items-center gap-2">
-                  {/* Soft Accent Button: Thêm Cột Công Thức (Bậc 2 Button Hierarchy) */}
+                  {/* Soft Accent Button: Thêm cột công thức (Bậc 2 Button Hierarchy) */}
                   <Button
                     type="button"
                     variant="soft"
@@ -974,7 +988,7 @@ export function ExamReportSummaryTab({
                     }}
                     title="Thêm cột tính toán động bằng công thức toán học"
                   >
-                    + Thêm Cột Công Thức
+                    Thêm cột công thức
                   </Button>
 
                   {/* Smart Column Selector Popover - Tối giản, thanh lịch, trung tính */}
