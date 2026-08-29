@@ -178,7 +178,26 @@ Hệ thống đã có file seed mẫu tạo sẵn các tài khoản:
 
 ---
 
-### Bước 1: Khởi tạo Backend (NestJS + Prisma)
+## 🚀 Cài Đặt & Khởi Chạy Nhanh Đa Nền Tảng (1-Click Install & Run)
+
+Tất cả các script triển khai và cài đặt được gom gọn gàng trong thư mục **`deploy/`**:
+
+### 🪟 Dành cho Windows (`deploy/windows/`):
+* **🌟 1-Click Mở App Trực Tiếp (Nhanh nhất)**: Click đúp file `deploy\windows\exam-management-app.bat` (tự động build, bật server và mở ngay cửa sổ App Desktop độc lập!).
+* **Dùng Docker (Khuyến nghị)**: Click đúp file `deploy\windows\exam-management-docker-run.bat` (hoặc chạy `npm run docker:up`).
+* **Cài đặt trực tiếp (Native)**: Click đúp file `deploy\windows\exam-management-install.bat` rồi click `deploy\windows\exam-management-start.bat`.
+
+### 🐧 Dành cho Linux (`deploy/linux/` - Ubuntu / Debian / CentOS / Server):
+* **🌟 1-Click Mở App Trực Tiếp**: Chạy `./deploy/linux/exam-management-app.sh`
+* **Dùng Docker (Khuyến nghị)**: Chạy `./deploy/linux/exam-management-docker-run.sh` (hoặc `npm run docker:up`).
+* **Cài đặt trực tiếp (Native)**: Chạy `./deploy/linux/exam-management-install.sh` rồi `./deploy/linux/exam-management-start.sh`.
+* **Dịch vụ tự khởi động khi boot (Systemd)**: `sudo ./deploy/linux/systemd/install-services.sh`.
+
+📖 Xem tài liệu hướng dẫn triển khai chi tiết tại: [docs/HUONG-DAN-CAI-DAT-WINDOWS-LINUX.md](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/HUONG-DAN-CAI-DAT-WINDOWS-LINUX.md)
+
+---
+
+### Bước 1: Khởi tạo Backend (NestJS + Prisma thủ công)
 
 1. Mở Terminal và di chuyển vào thư mục backend:
    ```bash

@@ -15,6 +15,10 @@ build/
 out/
 .next/
 .next*
+dist-package/
+release/
+release-desktop/
+release-app/
 .swc/
 .turbo/
 .parcel-cache/

@@ -1,0 +1,27 @@
+[Unit]
+Description=Exam Management System - Backend API Service
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=exam
+Group=exam
+WorkingDirectory=/opt/exam-management/backend
+Environment=NODE_ENV=production
+Environment=PORT=3001
+EnvironmentFile=/opt/exam-management/.env
+ExecStartPre=/usr/bin/npx prisma migrate deploy
+ExecStart=/usr/bin/node dist/src/main.js
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=exam-management-backend
+
+# Security Sandbox
+ProtectSystem=full
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

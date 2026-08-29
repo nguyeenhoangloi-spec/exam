@@ -185,16 +185,16 @@ export function ReportTemplatePickerModal({
                           {tpl.name}
                         </h4>
                         {tpl.isSystemPreset ? (
-                          <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200">
+                          <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full border border-slate-300 text-slate-700 dark:border-slate-600 dark:text-slate-300">
                             Mẫu hệ thống
                           </span>
                         ) : (
-                          <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200">
+                          <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full border border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-300">
                             Mẫu riêng đã lưu
                           </span>
                         )}
                         {isCurrent && (
-                          <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                          <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full border border-blue-300 text-blue-700 dark:border-blue-700 dark:text-blue-300">
                             Đang áp dụng
                           </span>
                         )}
@@ -206,12 +206,12 @@ export function ReportTemplatePickerModal({
                         </p>
                       )}
 
-                      <div className="flex items-center gap-2 text-type-meta text-slate-400 pt-1 flex-wrap">
-                        <span>Số lượng cột: {tpl.columns.length}</span>
-                        <span>|</span>
-                        <span>Người ký: {tpl.signers.length}</span>
-                        <span>|</span>
-                        <span>Tiêu đề: {tpl.headerConfig.title}</span>
+                      <div className="flex items-center gap-2 text-type-helper text-slate-500 dark:text-slate-400 pt-1 flex-wrap">
+                        <span>{tpl.columns.length} cột</span>
+                        <span className="text-slate-300 dark:text-slate-700">|</span>
+                        <span>{tpl.signers.length} người ký</span>
+                        <span className="text-slate-300 dark:text-slate-700">|</span>
+                        <span className="truncate max-w-xs">{tpl.headerConfig.title}</span>
                       </div>
                     </div>
 

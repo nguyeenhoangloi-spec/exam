@@ -197,7 +197,7 @@ export function FormulaEditorModal({
                 <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                 <div className="flex-1 flex items-center justify-between flex-wrap gap-2">
                   <span>Cú pháp hợp lệ</span>
-                  <div className="flex items-center gap-1.5 text-type-body font-medium text-emerald-900 dark:text-emerald-100 bg-emerald-100/70 dark:bg-emerald-900/60 px-2.5 py-0.5 rounded-full">
+                  <div className="flex items-center gap-1.5 text-type-helper font-medium text-emerald-800 dark:text-emerald-300 ui-pill border border-emerald-300 dark:border-emerald-700 px-2.5 py-0.5 rounded-full">
                     <span>Kết quả mẫu:</span>
                     <span className="tabular-nums font-semibold">{String(validation.sampleResult ?? '---')}</span>
                   </div>
@@ -219,7 +219,7 @@ export function FormulaEditorModal({
               <button
                 type="button"
                 onClick={() => setActivePresetTab('vars')}
-                className={`text-type-body-sm pb-1 font-medium transition ${
+                className={`text-type-body-sm pb-1 font-medium transition cursor-pointer ${
                   activePresetTab === 'vars'
                     ? 'text-blue-600 border-b-2 border-blue-600 font-semibold'
                     : 'text-slate-500 hover:text-slate-800'
@@ -230,7 +230,7 @@ export function FormulaEditorModal({
               <button
                 type="button"
                 onClick={() => setActivePresetTab('functions')}
-                className={`text-type-body-sm pb-1 font-medium transition ${
+                className={`text-type-body-sm pb-1 font-medium transition cursor-pointer ${
                   activePresetTab === 'functions'
                     ? 'text-blue-600 border-b-2 border-blue-600 font-semibold'
                     : 'text-slate-500 hover:text-slate-800'
@@ -251,7 +251,7 @@ export function FormulaEditorModal({
                   key={v.key}
                   type="button"
                   onClick={() => insertVariable(v.key)}
-                  className="flex items-center justify-between p-2 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-300 hover:bg-blue-50/40 text-left transition shadow-2xs group"
+                  className="flex items-center justify-between p-2 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-300 hover:bg-blue-50/40 text-left transition shadow-2xs group cursor-pointer"
                 >
                   <div className="truncate">
                     <p className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600">
@@ -277,7 +277,7 @@ export function FormulaEditorModal({
                     </p>
                     <p className="text-type-helper text-slate-500">{fn.description}</p>
                   </div>
-                  <span className="ui-pill text-type-helper px-2.5 py-0.5 rounded-full border border-slate-200 text-slate-600 font-medium group-hover:border-blue-300 group-hover:text-blue-600 shrink-0">
+                  <span className="text-type-helper px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium group-hover:border-blue-300 group-hover:text-blue-600 shrink-0">
                     Chèn mẫu
                   </span>
                 </div>

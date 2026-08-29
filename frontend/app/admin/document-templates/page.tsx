@@ -486,7 +486,7 @@ export default function DocumentTemplatesPage() {
           <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
             {mainTab === 'standard'
               ? 'Tùy biến tiêu đề, định dạng trang in A4/A5 và áp dụng trực tiếp toàn hệ thống.'
-              : 'Thiết kế báo cáo tùy chỉnh, viết công thức tính điểm và cấu hình chữ ký tự động.'}
+              : 'Thiết kế báo cáo tùy chỉnh, viết công thức tính điểm và xuất bảng điểm trực quan.'}
           </p>
         </div>
 

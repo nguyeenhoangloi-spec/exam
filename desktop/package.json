@@ -1,0 +1,89 @@
+{
+  "name": "exam-management-desktop",
+  "version": "1.0.0",
+  "description": "Phần mềm Quản lý Khảo thí Sinh viên (Native Desktop Application)",
+  "main": "main.js",
+  "author": "Antigravity",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "pack": "electron-builder --dir",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.exammanagement.system",
+    "productName": "Exam Management System",
+    "directories": {
+      "output": "../release-app"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "splash.html",
+      "assets/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../dist-package",
+        "to": "app-dist",
+        "filter": ["**/*", "!**/node_modules/.cache/**", "!**/*.map"]
+      },
+      {
+        "from": "../backend/node_modules",
+        "to": "app-dist/backend/node_modules",
+        "filter": [
+          "**/*",
+          "!@aws-sdk/**",
+          "!typescript/**",
+          "!@types/**",
+          "!jest/**",
+          "!@nestjs/cli/**",
+          "!eslint/**",
+          "!prettier/**",
+          "!**/*.map",
+          "!**/*.ts",
+          "!**/test/**",
+          "!**/docs/**"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "artifactName": "ExamManagement-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Exam Management System"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Education",
+      "artifactName": "ExamManagement-${version}.${ext}"
+    }
+  },
+  "dependencies": {
+    "cross-spawn": "^7.0.3"
+  },
+  "devDependencies": {
+    "electron": "^29.1.0",
+    "electron-builder": "^24.13.3"
+  }
+}

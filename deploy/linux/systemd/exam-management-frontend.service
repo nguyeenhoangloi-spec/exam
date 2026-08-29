@@ -1,0 +1,27 @@
+[Unit]
+Description=Exam Management System - Frontend Web Service
+After=network.target exam-management-backend.service
+Wants=exam-management-backend.service
+
+[Service]
+Type=simple
+User=exam
+Group=exam
+WorkingDirectory=/opt/exam-management/frontend
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=HOSTNAME=0.0.0.0
+EnvironmentFile=/opt/exam-management/.env
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=exam-management-frontend
+
+# Security Sandbox
+ProtectSystem=full
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

@@ -16,7 +16,6 @@ import { exportToFormattedExcel } from '../../lib/export-excel';
 import { printReport } from '../../lib/export-print';
 import { Toast } from '../Toast';
 import {
-  Plus,
   Trash2,
   MoveUp,
   MoveDown,
@@ -26,8 +25,8 @@ import {
   Printer,
   FileText,
   Bookmark,
-  ChevronDown,
-  ChevronUp,
+  FileDown,
+  Sparkles,
 } from 'lucide-react';
 
 const SAVED_TEMPLATES_STORAGE_KEY = 'exam_custom_report_templates_v2';
@@ -48,6 +47,9 @@ export function DynamicReportBuilderTab({
   const [signers, setSigners] = useState(SYSTEM_PRESET_TEMPLATES[0].signers);
   const [footerNotes, setFooterNotes] = useState(SYSTEM_PRESET_TEMPLATES[0].footerNotes || '');
 
+  // Page orientation for preview & export
+  const [pageOrientation, setPageOrientation] = useState<'portrait' | 'landscape'>('portrait');
+
   // Saved templates from localStorage
   const [customTemplates, setCustomTemplates] = useState<SavedReportTemplate[]>([]);
 
@@ -57,9 +59,7 @@ export function DynamicReportBuilderTab({
   const [isTemplatePickerOpen, setIsTemplatePickerOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  // Section collapse states
-  const [showLayoutConfig, setShowLayoutConfig] = useState(false);
-  const [showSignerConfig, setShowSignerConfig] = useState(false);
+  // Busy state for exports (prevent duplicate triggers)
   const [busyExport, setBusyExport] = useState<'XLSX' | 'CSV' | 'PRINT' | ''>('');
 
   // Load custom templates from localStorage
@@ -74,6 +74,14 @@ export function DynamicReportBuilderTab({
       // Ignore parse errors
     }
   }, []);
+
+  // Auto-switch orientation if columns count exceeds threshold
+  useEffect(() => {
+    const activeColsCount = columns.filter((c) => c.visible !== false).length;
+    if (activeColsCount >= 7 && pageOrientation === 'portrait') {
+      setPageOrientation('landscape');
+    }
+  }, [columns, pageOrientation]);
 
   // Save custom templates to storage
   const saveCustomTemplatesToStorage = (list: SavedReportTemplate[]) => {
@@ -152,7 +160,7 @@ export function DynamicReportBuilderTab({
     ];
   }, [candidates]);
 
-  // Compute live spreadsheet rows
+  // Compute live spreadsheet rows with safe formula engine
   const computedTableData = useMemo(() => {
     return sampleCandidates.map((row, index) => {
       const rowResult: Record<string, any> = { ...row, stt: index + 1 };
@@ -171,6 +179,27 @@ export function DynamicReportBuilderTab({
       return rowResult;
     });
   }, [sampleCandidates, columns]);
+
+  // Summary statistics for table footer
+  const summaryStats = useMemo(() => {
+    const total = computedTableData.length;
+    if (total === 0) {
+      return { total: 0, avg: '0.00', max: '0.0', min: '0.0', passCount: 0, passRate: '0.0%' };
+    }
+
+    const scores = computedTableData
+      .map((r) => Number(r.totalScore))
+      .filter((s) => !isNaN(s) && s !== null && s !== undefined);
+
+    const sum = scores.reduce((a, b) => a + b, 0);
+    const avg = scores.length ? (sum / scores.length).toFixed(2) : '0.00';
+    const max = scores.length ? Math.max(...scores).toFixed(1) : '0.0';
+    const min = scores.length ? Math.min(...scores).toFixed(1) : '0.0';
+    const passCount = scores.filter((s) => s >= 4.0).length;
+    const passRate = scores.length ? `${((passCount / scores.length) * 100).toFixed(1)}%` : '0.0%';
+
+    return { total, avg, max, min, passCount, passRate };
+  }, [computedTableData]);
 
   // Handle template switch
   const handleSelectTemplate = (template: SavedReportTemplate) => {
@@ -306,16 +335,18 @@ export function DynamicReportBuilderTab({
           .join(',')
       );
 
-      const csvContent = '\uFEFF' + [headers, ...rows].join('\n');
+      const csvContent = `\uFEFF${headers}\n${rows.join('\n')}`;
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url;
-      link.download = `${headerConfig.title.replace(/\s+/g, '_')}.csv`;
+      link.setAttribute('href', url);
+      link.setAttribute(
+        'download',
+        `${headerConfig.title.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.csv`
+      );
       document.body.appendChild(link);
       link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
+      document.body.removeChild(link);
 
       setToast({ message: 'Đã tải xuống file CSV!', type: 'success' });
     } catch {
@@ -341,6 +372,8 @@ export function DynamicReportBuilderTab({
         subtitle: headerConfig.subtitle,
         institutionName: headerConfig.institutionName,
         facultyName: headerConfig.facultyName,
+        orientation: pageOrientation,
+        pageSize: 'A4',
         columns: activeCols.map((c) => ({
           header: c.header,
           align: c.align || 'left',
@@ -355,13 +388,13 @@ export function DynamicReportBuilderTab({
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      {/* Top Action Bar: Template Chooser & Main Export Controls */}
+      {/* Top Main Toolbar: Seamless Single-Bar Controls */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
+          <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shrink-0">
             <Bookmark className="h-5 w-5" />
           </div>
           <div>
@@ -370,22 +403,22 @@ export function DynamicReportBuilderTab({
                 {currentTemplate.name}
               </span>
               {currentTemplate.isSystemPreset ? (
-                <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200">
+                <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full border border-slate-300 text-slate-700 dark:border-slate-600 dark:text-slate-300">
                   Mẫu hệ thống
                 </span>
               ) : (
-                <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200">
+                <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full border border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-300">
                   Mẫu riêng
                 </span>
               )}
             </div>
             <p className="text-type-body-sm text-slate-500 dark:text-slate-400 font-normal">
-              {currentTemplate.description || 'Tự do cấu hình công thức, cột và bố cục xuất báo cáo.'}
+              {currentTemplate.description || 'Tự do cấu hình công thức, cột và xem trước kết quả trực quan.'}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap sm:justify-end">
           <Button
             variant="secondary"
             size="md"
@@ -421,52 +454,51 @@ export function DynamicReportBuilderTab({
             onClick={handleExportExcel}
             disabled={!!busyExport}
             leftIcon={<FileSpreadsheet className="h-4 w-4" />}
+            className="min-w-[170px]"
           >
             {busyExport === 'XLSX' ? 'Đang tạo Excel...' : 'Xuất File Excel (.xlsx)'}
           </Button>
         </div>
       </div>
 
-      {/* Main Studio Grid: Left Configuration & Right Live Preview */}
+      {/* Main Studio Grid: Left Column & Formula Manager (5 Cols) + Right Live Preview (7 Cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        {/* Left Column (5 Cols): Column & Formula Manager */}
+        {/* Left Column (5 Cols): Dedicated Column Structure & Formula Manager */}
         <div className="lg:col-span-5 space-y-4">
-          {/* Column Manager Card */}
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+            {/* Header with Soft Accent CTA for Formula Creation */}
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
                 <h3 className="text-type-card font-semibold text-slate-900 dark:text-slate-100">
                   Cấu trúc Cột ({columns.length})
                 </h3>
                 <p className="text-type-helper text-slate-500 font-normal">
-                  Sắp xếp, sửa tiêu đề hoặc tạo cột công thức tính toán mới.
+                  Sắp xếp, sửa tiêu đề hoặc tạo cột công thức tính toán.
                 </p>
               </div>
 
-              <div className="flex items-center gap-1.5">
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => {
-                    setEditingColumn(null);
-                    setIsFormulaModalOpen(true);
-                  }}
-                  leftIcon={<Plus className="h-3.5 w-3.5" />}
-                >
-                  Thêm Cột Công Thức
-                </Button>
-              </div>
+              {/* Soft Accent Button (Tier 2) per Button Hierarchy 2026 */}
+              <Button
+                variant="soft"
+                size="sm"
+                onClick={() => {
+                  setEditingColumn(null);
+                  setIsFormulaModalOpen(true);
+                }}
+              >
+                + Thêm Cột Công Thức
+              </Button>
             </div>
 
-            {/* Column List */}
-            <div className="p-3 space-y-2 max-h-[460px] overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800/80">
+            {/* Column List with Clean Hairline Divider */}
+            <div className="p-3 space-y-2 max-h-[520px] overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800/80">
               {columns.map((col, idx) => (
                 <div
                   key={col.id}
-                  className="pt-2 first:pt-0 flex items-center justify-between gap-2 text-type-body-sm"
+                  className="pt-2.5 first:pt-0 flex items-center justify-between gap-2 text-type-body-sm"
                 >
                   <div className="flex items-center gap-2 flex-1 truncate">
-                    <span className="tabular-nums text-type-helper text-slate-400 w-4 text-center">
+                    <span className="tabular-nums text-type-helper text-slate-400 w-4 text-center font-medium">
                       {idx + 1}
                     </span>
                     <div className="truncate flex-1">
@@ -475,17 +507,17 @@ export function DynamicReportBuilderTab({
                           {col.header}
                         </span>
                         {col.type === 'FORMULA' ? (
-                          <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200">
+                          <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full border border-blue-300 text-blue-700 dark:border-blue-700 dark:text-blue-400">
                             Công thức
                           </span>
                         ) : (
-                          <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+                          <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full border border-slate-300 text-slate-600 dark:border-slate-700 dark:text-slate-400">
                             Gốc
                           </span>
                         )}
                       </div>
                       {col.formula && (
-                        <p className="text-type-helper text-slate-500 truncate" title={col.formula}>
+                        <p className="text-type-helper text-slate-500 truncate pt-0.5" title={col.formula}>
                           {col.formula}
                         </p>
                       )}
@@ -498,7 +530,7 @@ export function DynamicReportBuilderTab({
                       type="button"
                       disabled={idx === 0}
                       onClick={() => handleMoveColumn(idx, 'up')}
-                      className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-30 rounded-xl hover:bg-slate-100 transition"
+                      className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-25 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                       title="Di chuyển lên"
                     >
                       <MoveUp className="h-3.5 w-3.5" />
@@ -507,7 +539,7 @@ export function DynamicReportBuilderTab({
                       type="button"
                       disabled={idx === columns.length - 1}
                       onClick={() => handleMoveColumn(idx, 'down')}
-                      className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-30 rounded-xl hover:bg-slate-100 transition"
+                      className="p-1.5 text-slate-400 hover:text-slate-700 disabled:opacity-25 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                       title="Di chuyển xuống"
                     >
                       <MoveDown className="h-3.5 w-3.5" />
@@ -520,7 +552,7 @@ export function DynamicReportBuilderTab({
                           setEditingColumn(col);
                           setIsFormulaModalOpen(true);
                         }}
-                        className="p-1 text-blue-600 hover:text-blue-700 rounded-xl hover:bg-blue-50 transition ml-0.5"
+                        className="p-1.5 text-blue-600 hover:text-blue-700 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition ml-0.5 cursor-pointer"
                         title="Chỉnh sửa công thức"
                       >
                         <Edit2 className="h-3.5 w-3.5" />
@@ -530,7 +562,7 @@ export function DynamicReportBuilderTab({
                     <button
                       type="button"
                       onClick={() => handleDeleteColumn(col.id)}
-                      className="p-1 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition ml-0.5"
+                      className="p-1.5 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/60 transition ml-0.5 cursor-pointer"
                       title="Xóa cột này"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -540,9 +572,9 @@ export function DynamicReportBuilderTab({
               ))}
             </div>
 
-            {/* Quick Add Fields Footer */}
-            <div className="p-3 bg-slate-50/70 dark:bg-slate-850/50 border-t border-slate-100 dark:border-slate-800">
-              <p className="text-type-helper font-medium text-slate-600 dark:text-slate-300 mb-2">
+            {/* Quick Add Standard Variables Footer */}
+            <div className="p-3.5 bg-slate-50/70 dark:bg-slate-850/50 border-t border-slate-100 dark:border-slate-800">
+              <p className="text-type-helper font-semibold text-slate-700 dark:text-slate-300 mb-2">
                 + Thêm nhanh trường dữ liệu gốc:
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -552,7 +584,7 @@ export function DynamicReportBuilderTab({
                       key={v.key}
                       type="button"
                       onClick={() => handleAddStandardField(v.key, v.label)}
-                      className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-blue-400 hover:text-blue-600 transition"
+                      className="inline-flex items-center gap-1 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1 text-type-helper font-medium text-slate-700 dark:text-slate-200 hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shadow-2xs"
                     >
                       + {v.label}
                     </button>
@@ -561,186 +593,54 @@ export function DynamicReportBuilderTab({
               </div>
             </div>
           </div>
-
-          {/* Accordion 1: Cấu hình Tiêu đề & Đơn vị (Header Layout) */}
-          <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
-            <button
-              type="button"
-              onClick={() => setShowLayoutConfig(!showLayoutConfig)}
-              className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50/60 transition"
-            >
-              <div>
-                <h4 className="text-type-card font-semibold text-slate-900 dark:text-slate-100">
-                  Tiêu đề văn bản & Đơn vị
-                </h4>
-                <p className="text-type-helper text-slate-500 font-normal">
-                  Quốc hiệu, Tên trường, Khoa, Tiêu đề và Chú thích chân trang.
-                </p>
-              </div>
-              {showLayoutConfig ? (
-                <ChevronUp className="h-4 w-4 text-slate-400" />
-              ) : (
-                <ChevronDown className="h-4 w-4 text-slate-400" />
-              )}
-            </button>
-
-            {showLayoutConfig && (
-              <div className="p-4 pt-0 space-y-3 border-t border-slate-100 dark:border-slate-800 mt-2">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                  <div className="space-y-1">
-                    <label className="text-type-label font-medium text-slate-700 dark:text-slate-300">
-                      Tên trường / Cơ quan chủ quản
-                    </label>
-                    <input
-                      type="text"
-                      value={headerConfig.institutionName}
-                      onChange={(e) =>
-                        setHeaderConfig({ ...headerConfig, institutionName: e.target.value })
-                      }
-                      className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body font-normal text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-type-label font-medium text-slate-700 dark:text-slate-300">
-                      Tên Khoa / Phòng ban
-                    </label>
-                    <input
-                      type="text"
-                      value={headerConfig.facultyName}
-                      onChange={(e) =>
-                        setHeaderConfig({ ...headerConfig, facultyName: e.target.value })
-                      }
-                      className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body font-normal text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-type-label font-medium text-slate-700 dark:text-slate-300">
-                    Tiêu đề chính của Báo cáo
-                  </label>
-                  <input
-                    type="text"
-                    value={headerConfig.title}
-                    onChange={(e) => setHeaderConfig({ ...headerConfig, title: e.target.value })}
-                    className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body font-normal text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-type-label font-medium text-slate-700 dark:text-slate-300">
-                    Phụ đề (Học kỳ, Đợt thi, Môn học...)
-                  </label>
-                  <input
-                    type="text"
-                    value={headerConfig.subtitle}
-                    onChange={(e) =>
-                      setHeaderConfig({ ...headerConfig, subtitle: e.target.value })
-                    }
-                    className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body font-normal text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Accordion 2: Cấu hình Khung Chữ Ký (Signers Matrix) */}
-          <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
-            <button
-              type="button"
-              onClick={() => setShowSignerConfig(!showSignerConfig)}
-              className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50/60 transition"
-            >
-              <div>
-                <h4 className="text-type-card font-semibold text-slate-900 dark:text-slate-100">
-                  Khung Chữ Ký ({signers.length} vị trí)
-                </h4>
-                <p className="text-type-helper text-slate-500 font-normal">
-                  Cán bộ chấm thi, Trưởng bộ môn, Trưởng khoa, Ban giám hiệu.
-                </p>
-              </div>
-              {showSignerConfig ? (
-                <ChevronUp className="h-4 w-4 text-slate-400" />
-              ) : (
-                <ChevronDown className="h-4 w-4 text-slate-400" />
-              )}
-            </button>
-
-            {showSignerConfig && (
-              <div className="p-4 pt-0 space-y-3 border-t border-slate-100 dark:border-slate-800 mt-2">
-                <div className="space-y-2 pt-2">
-                  {signers.map((s, sIdx) => (
-                    <div key={sIdx} className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={s.title}
-                        onChange={(e) => {
-                          const next = [...signers];
-                          next[sIdx].title = e.target.value;
-                          setSigners(next);
-                        }}
-                        placeholder="Chức danh (VD: Trưởng Khoa)"
-                        className="h-10 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-type-body font-normal text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                      />
-                      <input
-                        type="text"
-                        value={s.subtitle || ''}
-                        onChange={(e) => {
-                          const next = [...signers];
-                          next[sIdx].subtitle = e.target.value;
-                          setSigners(next);
-                        }}
-                        placeholder="(Ký, ghi rõ họ tên)"
-                        className="h-10 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-type-body font-normal text-slate-600 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setSigners(signers.filter((_, i) => i !== sIdx))}
-                        className="p-2 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50"
-                        title="Xóa vị trí ký này"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                {signers.length < 4 && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setSigners([
-                        ...signers,
-                        { title: 'Vị trí mới', subtitle: '(Ký, ghi rõ họ tên)' },
-                      ])
-                    }
-                    className="text-type-helper text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
-                  >
-                    + Thêm vị trí người ký
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Right Column (7 Cols): Realtime Interactive Live Spreadsheet Preview */}
         <div className="lg:col-span-7 space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <Eye className="h-4 w-4 text-blue-600" />
               <h3 className="text-type-card font-semibold text-slate-900 dark:text-slate-100">
                 Bảng Xem Trước Trực Quan (Live Preview)
               </h3>
             </div>
-            <span className="text-type-helper text-slate-400 font-normal">
-              Dữ liệu tính toán tự động theo thời gian thực
-            </span>
+
+            {/* Orientation & Stats Switcher */}
+            <div className="flex items-center gap-2">
+              <div className="inline-flex rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850 p-0.5 text-type-body-sm font-medium">
+                <button
+                  type="button"
+                  onClick={() => setPageOrientation('portrait')}
+                  className={`px-2.5 py-1 rounded-xl transition cursor-pointer ${
+                    pageOrientation === 'portrait'
+                      ? 'bg-white dark:bg-slate-800 text-blue-600 font-semibold shadow-2xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  }`}
+                >
+                  Khổ Dọc
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPageOrientation('landscape')}
+                  className={`px-2.5 py-1 rounded-xl transition cursor-pointer ${
+                    pageOrientation === 'landscape'
+                      ? 'bg-white dark:bg-slate-800 text-blue-600 font-semibold shadow-2xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  }`}
+                >
+                  Khổ Ngang
+                </button>
+              </div>
+
+              <span className="text-type-helper text-slate-400 font-normal">
+                {computedTableData.length} thí sinh
+              </span>
+            </div>
           </div>
 
           {/* Virtual Paper Sheet Container */}
           <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-6 space-y-6 overflow-x-auto min-h-[500px]">
-            {/* 1. Header Đơn vị & Quốc hiệu */}
+            {/* 1. Header Đơn vị & Quốc hiệu (Inherited from Template) */}
             <div className="grid grid-cols-2 gap-4 text-center">
               <div>
                 <p className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
@@ -773,7 +673,7 @@ export function DynamicReportBuilderTab({
               )}
             </div>
 
-            {/* 3. Bảng Dữ liệu Động với các Cột Công thức */}
+            {/* 3. Bảng Dữ liệu Động với các Cột Công thức & Dòng Thống kê Tổng kết */}
             <div className="ui-table-wrap overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
               <table className="ui-table w-full text-left border-collapse min-w-[600px]">
                 <thead>
@@ -824,10 +724,31 @@ export function DynamicReportBuilderTab({
                     </tr>
                   ))}
                 </tbody>
+
+                {/* Table Footer Summary Statistics Row */}
+                <tfoot>
+                  <tr className="bg-slate-50/90 dark:bg-slate-800/90 border-t-2 border-slate-300 dark:border-slate-700 font-semibold text-type-body-sm text-slate-900 dark:text-slate-100">
+                    <td colSpan={2} className="py-2.5 px-3 text-left">
+                      TỔNG CỘNG ({summaryStats.total} Thí sinh)
+                    </td>
+                    <td
+                      colSpan={Math.max(1, columns.length - 2)}
+                      className="py-2.5 px-3 text-right text-slate-700 dark:text-slate-300 tabular-nums"
+                    >
+                      Điểm TB: <span className="font-semibold text-blue-600">{summaryStats.avg}</span>
+                      <span className="mx-2 text-slate-300 dark:text-slate-600">|</span>
+                      Cao nhất: <span className="font-semibold text-emerald-600">{summaryStats.max}</span>
+                      <span className="mx-2 text-slate-300 dark:text-slate-600">|</span>
+                      Thấp nhất: <span className="font-semibold text-rose-600">{summaryStats.min}</span>
+                      <span className="mx-2 text-slate-300 dark:text-slate-600">|</span>
+                      Đạt: <span className="font-semibold text-emerald-600">{summaryStats.passCount}/{summaryStats.total} ({summaryStats.passRate})</span>
+                    </td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
 
-            {/* 4. Footer Chữ Ký */}
+            {/* 4. Footer Chữ Ký (Inherited from Template) */}
             <div className="pt-6">
               <div
                 className="grid gap-4 text-center"
