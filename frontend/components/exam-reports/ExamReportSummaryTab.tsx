@@ -13,6 +13,7 @@ import {
   FileSpreadsheet,
   FileText,
   History,
+  Pencil,
   Search,
   Settings2,
   Trash2,
@@ -132,6 +133,33 @@ interface Props {
 
 const HISTORY_KEY = 'exam_report_export_history';
 
+export const MINISTRY_PRESET_LABELS: Record<string, string> = {
+  periodName: 'Học kỳ / Đợt thi',
+  subjectCode: 'Mã học phần',
+  subjectName: 'Tên học phần',
+  departmentName: 'Khoa / Đơn vị QL',
+  examDate: 'Ngày thi',
+  assigned: 'Tổng số thí sinh',
+  submitted: 'Số bài nộp',
+  graded: 'Đã chấm thi',
+  absent: 'Vắng thi',
+  ungraded: 'Chưa chấm',
+  flagged: 'Vi phạm / Gắn cờ',
+  avgScore: 'Điểm TB học phần',
+  passRate: 'Tỷ lệ đạt (%)',
+  range: 'Dải phân bố điểm',
+  classification: 'Xếp loại học lực',
+  count: 'Số lượng bài thi',
+  rate: 'Tỷ trọng (%)',
+  studentCode: 'Mã sinh viên (MSSV)',
+  studentName: 'Họ và tên sinh viên',
+  className: 'Lớp sinh hoạt',
+  status: 'Trạng thái xử lý',
+  originalScore: 'Điểm công bố',
+  revisedScore: 'Điểm sau phúc khảo',
+  createdAt: 'Ngày tiếp nhận',
+};
+
 export function ExamReportSummaryTab({
   summary,
   filters,
@@ -144,6 +172,10 @@ export function ExamReportSummaryTab({
   const [title, setTitle] = useState('');
   const [preview, setPreview] = useState<ReportPreview | null>(null);
   const [columns, setColumns] = useState<string[]>([]);
+  const [customLabels, setCustomLabels] = useState<Record<string, string>>({});
+  const [scoreRounding, setScoreRounding] = useState<'0.1' | '0.25' | '0.5'>('0.1');
+  const [passThreshold, setPassThreshold] = useState<number>(5.0);
+  const [editingLabelKey, setEditingLabelKey] = useState<string | null>(null);
   const [busy, setBusy] = useState('');
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [historyPage, setHistoryPage] = useState(1);
@@ -156,6 +188,27 @@ export function ExamReportSummaryTab({
   const templateMenuRef = useRef<HTMLDivElement>(null);
   const templateBtnRef = useRef<HTMLButtonElement>(null);
   const [templateMenuStyle, setTemplateMenuStyle] = useState<React.CSSProperties>({});
+
+  const applyMinistryPreset = () => {
+    setCustomLabels({ ...MINISTRY_PRESET_LABELS });
+    setNotice({ type: 'success', message: 'Đã áp dụng bộ nhãn tiêu chuẩn Bộ GD&ĐT.' });
+  };
+
+  const resetCustomLabels = () => {
+    setCustomLabels({});
+    setNotice({ type: 'success', message: 'Đã khôi phục nhãn cột mặc định của hệ thống.' });
+  };
+
+  const handleUpdateLabel = (key: string, newLabel: string) => {
+    setCustomLabels((prev) => {
+      if (!newLabel.trim()) {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      }
+      return { ...prev, [key]: newLabel.trim() };
+    });
+  };
 
   const updateTemplateMenuPosition = useCallback(() => {
     if (!templateBtnRef.current) return;
@@ -193,7 +246,7 @@ export function ExamReportSummaryTab({
   const updateColumnMenuPosition = useCallback(() => {
     if (!columnBtnRef.current) return;
     const rect = columnBtnRef.current.getBoundingClientRect();
-    const width = 288; // w-72
+    const width = 360; // w-[360px]
     let left = rect.right - width;
     if (left < 16) left = 16;
     const top = rect.bottom + 6;
@@ -303,6 +356,9 @@ export function ExamReportSummaryTab({
         filters: requestFilters,
         columns: columns.length ? columns : undefined,
         title: title.trim() || undefined,
+        customLabels: Object.keys(customLabels).length ? customLabels : undefined,
+        scoreRounding,
+        passThreshold,
       });
       setPreview(r.data);
       setColumns(r.data.columns.map((c) => c.key));
@@ -311,7 +367,7 @@ export function ExamReportSummaryTab({
     } finally {
       setBusy('');
     }
-  }, [columns, requestFilters, title, type]);
+  }, [columns, customLabels, passThreshold, requestFilters, scoreRounding, title, type]);
 
   const choose = (item: CatalogItem) => {
     setType(item.type);
@@ -334,6 +390,9 @@ export function ExamReportSummaryTab({
           filters: requestFilters,
           columns: columns.length ? columns : undefined,
           title: title.trim() || undefined,
+          customLabels: Object.keys(customLabels).length ? customLabels : undefined,
+          scoreRounding,
+          passThreshold,
         },
         { responseType: 'blob' },
       );
@@ -379,7 +438,7 @@ export function ExamReportSummaryTab({
       subtitle: `Thời điểm lập: ${new Date(preview.generatedAt).toLocaleString('vi-VN')}, ${preview.totalRows} bản ghi`,
       orientation: selectedCols.length > 6 ? 'landscape' : 'portrait',
       columns: selectedCols.map((c) => ({
-        header: c.label,
+        header: customLabels[c.key] || c.label,
         align: c.align,
         width: ['periodName', 'subjectName', 'departmentName'].includes(c.key)
           ? '18%'
@@ -686,6 +745,35 @@ export function ExamReportSummaryTab({
                       onChange={(v) => setFilters((f) => ({ ...f, toDate: v }))}
                     />
                   </div>
+
+                  <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-3">
+                    <p className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">
+                      Quy chế khảo thí & Làm tròn
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Select
+                        label="Làm tròn điểm"
+                        value={scoreRounding}
+                        onChange={(v) => setScoreRounding(v as '0.1' | '0.25' | '0.5')}
+                        options={[
+                          { value: '0.1', label: '0.1 (Bộ GD&ĐT)' },
+                          { value: '0.25', label: '0.25 điểm' },
+                          { value: '0.5', label: '0.5 điểm' },
+                        ]}
+                        all={false}
+                      />
+                      <Select
+                        label="Ngưỡng điểm đạt"
+                        value={String(passThreshold)}
+                        onChange={(v) => setPassThreshold(Number(v))}
+                        options={[
+                          { value: '5', label: '≥ 5.0 (Thang 10)' },
+                          { value: '4', label: '≥ 4.0 (Tín chỉ D)' },
+                        ]}
+                        all={false}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -771,12 +859,17 @@ export function ExamReportSummaryTab({
                         <div
                           ref={columnMenuRef}
                           style={columnMenuStyle}
-                          className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-3 space-y-2 animate-in fade-in zoom-in-95 duration-150"
+                          className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-3 space-y-2.5 animate-in fade-in zoom-in-95 duration-150"
                         >
                           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
-                            <span className="text-type-body-sm font-semibold text-slate-900 dark:text-white">
-                              Cột xuất ({columns.length}/{preview.columns.length})
-                            </span>
+                            <div>
+                              <span className="text-type-body-sm font-semibold text-slate-900 dark:text-white">
+                                Tùy biến cột & nhãn ({columns.length}/{preview.columns.length})
+                              </span>
+                              <p className="text-type-helper text-slate-400 font-normal mt-0.5">
+                                Đổi tên tiêu đề theo biểu mẫu Bộ GD&ĐT
+                              </p>
+                            </div>
                             <div className="flex items-center gap-1.5 text-type-helper font-medium">
                               <button
                                 type="button"
@@ -796,34 +889,105 @@ export function ExamReportSummaryTab({
                             </div>
                           </div>
 
-                          <div className="max-h-60 overflow-y-auto space-y-0.5 custom-scrollbar pr-1">
+                          {/* Bộ mẫu Preset nhanh */}
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={applyMinistryPreset}
+                              className="px-2.5 py-1 rounded-xl text-type-helper font-medium bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/60 transition cursor-pointer border border-blue-200/60 dark:border-blue-800"
+                              title="Tự động áp dụng bộ tên tiêu chuẩn hành chính Bộ GD&ĐT"
+                            >
+                              Mẫu Bộ GD&ĐT
+                            </button>
+                            <button
+                              type="button"
+                              onClick={resetCustomLabels}
+                              className="px-2.5 py-1 rounded-xl text-type-helper font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                              title="Khôi phục tên cột ban đầu"
+                            >
+                              Mặc định
+                            </button>
+                          </div>
+
+                          <div className="max-h-64 overflow-y-auto space-y-1 custom-scrollbar pr-1">
                             {preview.columns.map((c) => {
                               const isChecked = columns.includes(c.key);
+                              const currentLabel = customLabels[c.key] || c.label;
+                              const isCustomized = Boolean(customLabels[c.key] && customLabels[c.key] !== c.label);
+                              const isEditing = editingLabelKey === c.key;
+
                               return (
-                                <label
+                                <div
                                   key={c.key}
-                                  className="flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition select-none text-type-body"
+                                  className={`p-2 rounded-xl border transition ${
+                                    isChecked
+                                      ? 'bg-slate-50/70 dark:bg-slate-850/60 border-slate-200/60 dark:border-slate-700'
+                                      : 'bg-transparent border-transparent text-slate-400 dark:text-slate-500'
+                                  }`}
                                 >
-                                  <span
-                                    className={`text-type-body-sm ${
-                                      isChecked
-                                        ? 'font-medium text-slate-900 dark:text-slate-100'
-                                        : 'text-slate-400 dark:text-slate-500'
-                                    }`}
-                                  >
-                                    {c.label}
-                                  </span>
-                                  <input
-                                    type="checkbox"
-                                    checked={isChecked}
-                                    onChange={() =>
-                                      setColumns((prev) =>
-                                        prev.includes(c.key) ? prev.filter((k) => k !== c.key) : [...prev, c.key],
-                                      )
-                                    }
-                                    className="h-4 w-4 rounded-md border-slate-300 dark:border-slate-600 text-slate-900 focus:ring-slate-400 cursor-pointer"
-                                  />
-                                </label>
+                                  <div className="flex items-center justify-between gap-2">
+                                    <label className="flex items-center gap-2 min-w-0 flex-1 cursor-pointer select-none">
+                                      <input
+                                        type="checkbox"
+                                        checked={isChecked}
+                                        onChange={() =>
+                                          setColumns((prev) =>
+                                            prev.includes(c.key) ? prev.filter((k) => k !== c.key) : [...prev, c.key],
+                                          )
+                                        }
+                                        className="h-4 w-4 rounded-md border-slate-300 dark:border-slate-600 text-slate-900 focus:ring-slate-400 cursor-pointer"
+                                      />
+                                      {!isEditing ? (
+                                        <span
+                                          className={`text-type-body-sm truncate ${
+                                            isChecked
+                                              ? 'font-medium text-slate-900 dark:text-slate-100'
+                                              : 'text-slate-400 dark:text-slate-500'
+                                          }`}
+                                        >
+                                          {currentLabel}
+                                          {isCustomized && (
+                                            <span className="ml-1.5 text-type-helper text-blue-600 dark:text-blue-400 font-normal">
+                                              (Đã sửa)
+                                            </span>
+                                          )}
+                                        </span>
+                                      ) : null}
+                                    </label>
+
+                                    {isEditing ? (
+                                      <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                                        <input
+                                          autoFocus
+                                          type="text"
+                                          defaultValue={currentLabel}
+                                          onBlur={(e) => {
+                                            handleUpdateLabel(c.key, e.target.value);
+                                            setEditingLabelKey(null);
+                                          }}
+                                          onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                              handleUpdateLabel(c.key, (e.target as HTMLInputElement).value);
+                                              setEditingLabelKey(null);
+                                            } else if (e.key === 'Escape') {
+                                              setEditingLabelKey(null);
+                                            }
+                                          }}
+                                          className="h-8 w-full rounded-xl border border-blue-500 bg-white dark:bg-slate-900 px-2 text-type-body font-normal text-slate-900 dark:text-slate-100 outline-none"
+                                        />
+                                      </div>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        onClick={() => setEditingLabelKey(c.key)}
+                                        className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition rounded-xl hover:bg-white dark:hover:bg-slate-800 cursor-pointer"
+                                        title="Chỉnh sửa tên cột này"
+                                      >
+                                        <Pencil className="h-3.5 w-3.5" />
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
                               );
                             })}
                           </div>
@@ -879,27 +1043,30 @@ export function ExamReportSummaryTab({
                       <tr className="border-b border-slate-200/90 dark:border-slate-700">
                         {preview.columns
                           .filter((c) => columns.includes(c.key))
-                          .map((c) => (
-                            <th
-                              key={c.key}
-                              className="group/th py-3 px-4 text-type-body-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 whitespace-nowrap select-none"
-                            >
-                              <div className="flex items-center justify-between gap-2">
-                                <span>{c.label}</span>
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setColumns((prev) => prev.filter((k) => k !== c.key));
-                                  }}
-                                  className="min-h-0 min-w-0 p-0.5 opacity-0 group-hover/th:opacity-100 hover:scale-125 active:scale-95 transition-all text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 cursor-pointer shrink-0"
-                                  title={`Ẩn cột "${c.label}" khỏi file xuất`}
-                                >
-                                  <X className="h-3 w-3 stroke-[2.5]" />
-                                </button>
-                              </div>
-                            </th>
-                          ))}
+                          .map((c) => {
+                            const headerLabel = customLabels[c.key] || c.label;
+                            return (
+                              <th
+                                key={c.key}
+                                className="group/th py-3 px-4 text-type-body-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 whitespace-nowrap select-none"
+                              >
+                                <div className="flex items-center justify-between gap-2">
+                                  <span>{headerLabel}</span>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setColumns((prev) => prev.filter((k) => k !== c.key));
+                                    }}
+                                    className="min-h-0 min-w-0 p-0.5 opacity-0 group-hover/th:opacity-100 hover:scale-125 active:scale-95 transition-all text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 cursor-pointer shrink-0"
+                                    title={`Ẩn cột "${headerLabel}" khỏi file xuất`}
+                                  >
+                                    <X className="h-3 w-3 stroke-[2.5]" />
+                                  </button>
+                                </div>
+                              </th>
+                            );
+                          })}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">

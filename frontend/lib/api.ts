@@ -178,4 +178,17 @@ export const restoreAuthSession = async () => {
   return restoreSessionPromise;
 };
 
+export const logoutApi = async () => {
+  try {
+    await api.post('/auth/logout');
+  } catch {
+    // Ignore server error on logout to always clean client session
+  } finally {
+    removeAuth(true);
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
+  }
+};
+
 export default api;

@@ -333,6 +333,13 @@ export class ExamReportsService {
       columns = columns.filter((column) => requestedColumns.has(column.key));
     }
 
+    if (dto.customLabels && typeof dto.customLabels === 'object') {
+      columns = columns.map((col) => ({
+        ...col,
+        label: dto.customLabels?.[col.key]?.trim() || col.label,
+      }));
+    }
+
     return {
       type: dto.type,
       title: dto.title?.trim() || definition?.name || 'Báo cáo khảo thí',

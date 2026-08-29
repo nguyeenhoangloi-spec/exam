@@ -76,6 +76,17 @@ export class ExamReportPreviewDto {
   @IsOptional()
   @IsString()
   title?: string;
+
+  @IsOptional()
+  customLabels?: Record<string, string>;
+
+  @IsOptional()
+  @IsString()
+  scoreRounding?: '0.1' | '0.25' | '0.5';
+
+  @IsOptional()
+  @Type(() => Number)
+  passThreshold?: number;
 }
 
 export class ExamReportExportDto extends ExamReportPreviewDto {

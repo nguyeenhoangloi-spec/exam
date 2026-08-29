@@ -20,6 +20,7 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 import { removeAuth, getAuthUser, getUserAvatar } from '../lib/auth';
+import { logoutApi } from '../lib/api';
 import { User } from '../types';
 import { DynamicImage } from './ui/DynamicImage';
 import { ConfirmModal } from './ConfirmModal';
@@ -38,8 +39,8 @@ export interface NotificationItem {
 export interface HeaderProps {
   user?: User;
   title?: string;
-  collapsed?: boolean;
-  onToggleSidebar?: () => void;
+  collapsed: boolean;
+  onToggleSidebar: () => void;
   onMenuClick?: () => void;
 }
 
@@ -59,6 +60,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [openPanel, setOpenPanel] = useState<'notifications' | 'account' | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const [readNotificationIds, setReadNotificationIds] = useState<number[]>([]);
   const [expandedNotifIds, setExpandedNotifIds] = useState<number[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
@@ -261,10 +263,10 @@ export const Header: React.FC<HeaderProps> = ({
     setExpandedNotifIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
   };
 
-  const handleLogout = () => {
-    removeAuth();
-    setShowLogoutConfirm(false);
-    window.location.href = '/login';
+  const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    await logoutApi();
   };
 
   const displayName = user?.teacher?.fullName || user?.student?.fullName || user?.username || 'Người dùng';
@@ -284,13 +286,16 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Confirmation Modal for Logout */}
       <ConfirmModal
         isOpen={showLogoutConfirm}
-        onClose={() => setShowLogoutConfirm(false)}
+        onClose={() => {
+          if (!loggingOut) setShowLogoutConfirm(false);
+        }}
         onConfirm={handleLogout}
         title="Đăng xuất khỏi hệ thống?"
         message="Bạn có chắc chắn muốn đăng xuất phiên làm việc hiện tại không?"
         type="danger"
         confirmText="Đăng xuất"
         cancelText="Hủy bỏ"
+        isLoading={loggingOut}
       />
 
       {/* Quick Search Modal */}

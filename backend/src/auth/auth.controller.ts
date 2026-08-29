@@ -52,7 +52,13 @@ export class AuthController {
   }
 
   private clearSession(response: Response) {
-    response.clearCookie(this.refreshCookieName, this.cookieOptions());
+    const secure = process.env.COOKIE_SECURE === 'true' || process.env.NODE_ENV === 'production';
+    response.clearCookie(this.refreshCookieName, {
+      httpOnly: true,
+      secure,
+      sameSite: 'lax',
+      path: '/auth',
+    });
   }
 
   @Public()
