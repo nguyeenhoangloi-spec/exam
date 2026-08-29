@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   Menu,
-  Sun,
-  Moon,
   Bell,
   Search,
   CheckCheck,
@@ -56,7 +54,6 @@ export const Header: React.FC<HeaderProps> = ({
   const router = useRouter();
   const [user, setUser] = useState<User | null>(propUser || null);
   const [avatarSrc, setAvatarSrc] = useState<string>('');
-  const [isDark, setIsDark] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [openPanel, setOpenPanel] = useState<'notifications' | 'account' | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -99,31 +96,6 @@ export const Header: React.FC<HeaderProps> = ({
     window.addEventListener('open-account-settings', handleOpenAccountSettings);
     return () => window.removeEventListener('open-account-settings', handleOpenAccountSettings);
   }, []);
-
-  // Theme Sync
-  useEffect(() => {
-    const isDarkMode =
-      localStorage.getItem('theme') === 'dark' ||
-      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    setIsDark(isDarkMode);
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const newDark = !isDark;
-    setIsDark(newDark);
-    if (newDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  };
 
   // Close dropdown on click outside or escape
   useEffect(() => {
@@ -334,19 +306,8 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           </div>
 
-          {/* Right Side: Quick Theme Switcher, Notification Bell & User Profile */}
+          {/* Right Side: Notification Bell & User Profile */}
           <div className="flex items-center gap-1.5 sm:gap-2.5">
-            {/* Quick Dark/Light Theme Switcher */}
-            <button
-              type="button"
-              aria-label="Chuyển chế độ sáng tối"
-              onClick={toggleTheme}
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition cursor-pointer"
-              title={isDark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'}
-            >
-              {isDark ? <Sun className="h-4.5 w-4.5" strokeWidth={1.5} /> : <Moon className="h-4.5 w-4.5" strokeWidth={1.5} />}
-            </button>
-
             {/* Notification Bell */}
             <div className="relative">
               <button

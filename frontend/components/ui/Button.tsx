@@ -76,7 +76,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={isBtnDisabled}
         aria-busy={isLoading || undefined}
         aria-disabled={isBtnDisabled || undefined}
-        className={`relative ui-pressable inline-flex items-center justify-center font-sans tracking-tight transition-[background-color,border-color,box-shadow,color,opacity,transform] duration-150 ease-out cursor-pointer select-none disabled:bg-slate-200 disabled:text-slate-500 dark:disabled:bg-slate-700 dark:disabled:text-slate-400 disabled:border-transparent disabled:shadow-none disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+        className={`relative ui-pressable inline-flex items-center justify-center font-sans tracking-tight transition-[transform,box-shadow,opacity] duration-150 ease-out cursor-pointer select-none disabled:bg-slate-200 disabled:text-slate-500 dark:disabled:bg-slate-700 dark:disabled:text-slate-400 disabled:border-transparent disabled:shadow-none disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
         {...props}
       >
         {/* Shimmer / Glass light sweep effect on hover for Primary CTA Buttons */}

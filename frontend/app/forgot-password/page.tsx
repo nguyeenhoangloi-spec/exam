@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { Toast } from '../../components/Toast';
 import { Button } from '../../components/ui/Button';
+import { isDarkModeActive, toggleTheme } from '../../lib/theme';
 import api from '../../lib/api';
 
 export const dynamic = 'force-dynamic';
@@ -62,11 +63,18 @@ export default function ForgotPasswordPage() {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem('theme') === 'dark') {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
-    }
+    setIsDark(isDarkModeActive());
+    const handleThemeChange = (e: any) => {
+      setIsDark(e.detail?.isDark ?? isDarkModeActive());
+    };
+    window.addEventListener('theme-change', handleThemeChange);
+    return () => window.removeEventListener('theme-change', handleThemeChange);
   }, []);
+
+  const toggleDark = () => {
+    const next = toggleTheme();
+    setIsDark(next === 'dark');
+  };
 
   useEffect(() => {
     if (resendCountdown <= 0) return;
@@ -85,15 +93,6 @@ export default function ForgotPasswordPage() {
       return () => clearTimeout(timer);
     }
   }, [step]);
-
-  const toggleDark = useCallback(() => {
-    setIsDark((prev) => {
-      const next = !prev;
-      document.documentElement.classList.toggle('dark', next);
-      localStorage.setItem('theme', next ? 'dark' : 'light');
-      return next;
-    });
-  }, []);
 
   // Step 1: Request OTP
   const handleRequestOtp = async (e: React.FormEvent) => {

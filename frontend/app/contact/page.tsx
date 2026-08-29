@@ -32,6 +32,7 @@ import { Toast } from '../../components/Toast';
 import { Modal } from '../../components/Modal';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
+import { isDarkModeActive, toggleTheme } from '../../lib/theme';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { User } from '../../types';
@@ -125,19 +126,17 @@ export default function ContactSupportPage() {
   }, [currentUser]);
 
   useEffect(() => {
-    if (localStorage.getItem('theme') === 'dark') {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
-    }
+    setIsDark(isDarkModeActive());
+    const handleThemeChange = (e: any) => {
+      setIsDark(e.detail?.isDark ?? isDarkModeActive());
+    };
+    window.addEventListener('theme-change', handleThemeChange);
+    return () => window.removeEventListener('theme-change', handleThemeChange);
   }, []);
 
   const toggleDark = useCallback(() => {
-    setIsDark((prev) => {
-      const next = !prev;
-      document.documentElement.classList.toggle('dark', next);
-      localStorage.setItem('theme', next ? 'dark' : 'light');
-      return next;
-    });
+    const next = toggleTheme();
+    setIsDark(next === 'dark');
   }, []);
 
   // Knowledge Base Articles
@@ -166,7 +165,7 @@ export default function ContactSupportPage() {
         title: 'Hướng dẫn tra cứu Lịch thi cá nhân, Số báo danh và Phòng thi',
         summary: 'Cách xem lịch thi chính thức, ca thi, sơ đồ phòng thi và mã tra cứu kết quả dành cho Sinh viên.',
         readTime: '2 phút đọc',
-        tags: ['Lịch thi', 'Số báo danh', 'Phòng thi'],
+        tags: ['Lịch thi', 'Số báo danh', ' Phòng thi'],
         updatedAt: '05/08/2026',
         content: [
           '1. Đăng nhập vào hệ thống quản lý khảo thí bằng tài khoản sinh viên do nhà trường cấp.',
@@ -187,39 +186,6 @@ export default function ContactSupportPage() {
         content: [
           '1. Đơn phúc khảo được mở trong vòng 07 ngày kể từ khi công bố điểm thi môn học.',
           '2. Vào mục "Thống kê kỳ thi" ➔ Chọn môn học cần phúc khảo ➔ Bấm nút "Nộp đơn phúc khảo".',
-          '3. Nhập lý do phúc khảo và tải lên ảnh chụp minh chứng (nếu có).',
-          '4. Hội đồng Khảo thí sẽ chấm lại bài thi và cập nhật điểm mới lên hệ thống. Lịch sử thay đổi điểm được lưu minh bạch.',
-        ],
-      },
-      {
-        id: 'art-4',
-        category: 'TEACHER',
-        categoryLabel: 'Giảng viên',
-        title: 'Hướng dẫn tạo & duyệt Ngân hàng câu hỏi trắc nghiệm / tự luận',
-        summary: 'Cấu trúc ma trận đề thi theo 4 mức độ Bloom: Nhớ, Hiểu, Vận dụng, Phân tích và quy trình duyệt câu hỏi.',
-        readTime: '5 phút đọc',
-        tags: ['Ngân hàng câu hỏi', 'Duyệt đề', 'Bloom'],
-        updatedAt: '06/08/2026',
-        content: [
-          '1. Giảng viên truy cập menu "Ngân hàng câu hỏi" ➔ Chọn "Tạo câu hỏi mới" hoặc "Nhập từ Excel/Word".',
-          '2. Phân loại chuẩn xác mức độ nhận thức Bloom (Nhớ, Hiểu, Vận dụng, Phân tích) và môn học tương ứng.',
-          '3. Sau khi tạo xong, chuyển trạng thái câu hỏi sang "Chờ duyệt".',
-          '4. Trưởng bộ môn sẽ thẩm định và phê duyệt để đưa câu hỏi vào Ngân hàng chính thức phục vụ phát hành đề thi.',
-        ],
-      },
-      {
-        id: 'art-5',
-        category: 'RULES',
-        categoryLabel: 'Quy chế thi',
-        title: 'Quy chế An toàn An ninh phòng thi trực tuyến & Giám sát AI Proctored',
-        summary: 'Các quy định bắt buộc về bật Webcam, Fullscreen, cấm chuyển tab và phạt điểm vi phạm an ninh.',
-        readTime: '4 phút đọc',
-        tags: ['Quy chế thi', 'Chống gian lận', 'Webcam'],
-        updatedAt: '03/08/2026',
-        content: [
-          '1. Bắt buộc bật toàn màn hình (Fullscreen) và cho phép truy cập Camera/Microphone trong suốt quá trình làm bài.',
-          '2. Cấm tuyệt đối chuyển tab trình duyệt, mở tài liệu phụ hoặc sử dụng phần mềm điều khiển từ xa (TeamViewer, UltraViewer).',
-          '3. Mỗi hành vi chuyển tab hoặc rời màn hình thi sẽ bị hệ thống AI ghi nhận và cảnh cáo tự động.',
           '4. Vi phạm quá 5 lần sẽ bị hệ thống tự động khóa bài thi (Auto-submit) và đánh dấu nghi vấn gian lận.',
         ],
       },

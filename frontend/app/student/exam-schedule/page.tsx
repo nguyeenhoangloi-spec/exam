@@ -14,6 +14,7 @@ import { Button } from '../../../components/ui/Button';
 import { DataActionsDropdown } from '../../../components/ui/DataActionsDropdown';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
+import { KPICards, KPICardItem } from '../../../components/KPICards';
 import {
   BookMarked,
   Calendar,
@@ -135,31 +136,35 @@ export default function StudentExamSchedulePage() {
   const tracNghiemCount = schedules.filter((s) => s.examType === 'TRAC_NGHIEM').length;
   const sbdCount = schedules.filter((s) => Boolean(s.examNumber || s.registrationNumber)).length;
 
-  const KPI = [
+  const kpiItems: KPICardItem[] = [
     {
-      label: 'Tổng số môn thi',
-      value: `${schedules.length} môn`,
+      title: 'Tổng số môn thi',
+      value: schedules.length,
+      unit: ' môn',
       subtext: 'Học kỳ hiện tại',
       progressPercent: schedules.length > 0 ? 100 : 0,
       icon: Calendar,
     },
     {
-      label: 'Đã xếp phòng thi',
-      value: `${roomAssignedCount} môn`,
+      title: 'Đã xếp phòng thi',
+      value: roomAssignedCount,
+      unit: ' môn',
       subtext: 'Theo lịch thi chuẩn',
       progressPercent: schedules.length > 0 ? Math.round((roomAssignedCount / schedules.length) * 100) : 100,
       icon: CheckCircle2,
     },
     {
-      label: 'Thi trắc nghiệm',
-      value: `${tracNghiemCount} môn`,
+      title: 'Thi trắc nghiệm',
+      value: tracNghiemCount,
+      unit: ' môn',
       subtext: 'Làm bài trực tuyến',
       progressPercent: schedules.length > 0 ? Math.round((tracNghiemCount / schedules.length) * 100) : 0,
       icon: BookOpen,
     },
     {
-      label: 'Đã cấp số báo danh',
-      value: `${sbdCount} ca thi`,
+      title: 'Đã cấp số báo danh',
+      value: sbdCount,
+      unit: ' ca thi',
       subtext: 'Đã duyệt SBD & Ghế',
       progressPercent: schedules.length > 0 ? Math.round((sbdCount / schedules.length) * 100) : 0,
       icon: Award,
@@ -245,48 +250,8 @@ export default function StudentExamSchedulePage() {
             />
           </div>
         </div>
-
-        {/* ── 2. Standard 4 KPI Cards Row With Micro Progress Tracks ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-          {KPI.map(({ label, value, subtext, progressPercent, icon: Icon }) => (
-            <div
-              key={label}
-              className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1 min-w-0">
-                  <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
-                    {label}
-                  </span>
-                  <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
-                    {value}
-                  </div>
-                </div>
-
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
-                  <Icon className="h-5 w-5 stroke-[2.2]" />
-                </div>
-              </div>
-
-              {/* Thanh đo tiến độ tỷ lệ động nhỏ mảnh, tinh tế (Micro Progress Track) */}
-              <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
-                <div
-                  className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(Math.max(progressPercent, 5), 100)}%` }}
-                />
-              </div>
-
-              <div className="mt-2.5">
-                <span
-                  title={subtext}
-                  className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
-                >
-                  {subtext}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* ── 2. Standard 4 KPI Cards Row ── */}
+        <KPICards items={kpiItems} columns={4} />
 
         {/* ── Status Tabs & Search Row (Chuẩn /exam-papers & /teacher/regrade) ── */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-200/80 dark:border-slate-800 pb-1">

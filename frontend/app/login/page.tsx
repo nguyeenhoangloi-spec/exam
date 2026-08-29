@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import api from '../../lib/api';
 import { getAuthToken, getAuthUser, setAuthToken } from '../../lib/auth';
+import { isDarkModeActive, toggleTheme } from '../../lib/theme';
 import { Toast } from '../../components/Toast';
 import { Button } from '../../components/ui/Button';
 import {
@@ -43,11 +44,15 @@ export default function LoginPage() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
-    if (localStorage.getItem('theme') === 'dark') {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
-    }
+    setIsDark(isDarkModeActive());
+    const handleThemeChange = (e: any) => {
+      setIsDark(e.detail?.isDark ?? isDarkModeActive());
+    };
+    window.addEventListener('theme-change', handleThemeChange);
+    return () => window.removeEventListener('theme-change', handleThemeChange);
+  }, []);
 
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const googleSuccess = params.get('google') === 'success';
     const googleError = params.get('google_error');
@@ -119,12 +124,8 @@ export default function LoginPage() {
   }, []);
 
   const toggleDark = useCallback(() => {
-    setIsDark((previous) => {
-      const next = !previous;
-      document.documentElement.classList.toggle('dark', next);
-      localStorage.setItem('theme', next ? 'dark' : 'light');
-      return next;
-    });
+    const nextMode = toggleTheme();
+    setIsDark(nextMode === 'dark');
   }, []);
 
   const handleGoogleLogin = useCallback(() => {

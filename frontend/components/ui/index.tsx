@@ -13,3 +13,5 @@ export * from './DataActionsDropdown';
 export * from './ViewModeSegmentedControl';
 export * from './SlidingSegmentedControl';
 export { StatusBadge } from '../common/StatusBadge';
+export { KPICards } from '../KPICards';
+export type { KPICardItem, KPIColor, KPICardsProps } from '../KPICards';

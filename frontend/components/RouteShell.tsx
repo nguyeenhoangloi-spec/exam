@@ -8,6 +8,7 @@ import { User } from '../types';
 import { canAccessPath, resolveWorkspaceRoute } from '../lib/access';
 import { getAuthUser } from '../lib/auth';
 import api, { restoreAuthSession, warmupGlobalCache } from '../lib/api';
+import { applyTheme, getSavedTheme, initThemeListener } from '../lib/theme';
 import { NavigationProgress } from './NavigationProgress';
 import { usePageTitleValue } from './PageTitleContext';
 
@@ -74,14 +75,15 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
         }
     }, []);
 
-    // Apply saved theme (dark mode) on first load so it persists across pages
+    // Apply saved theme (dark mode) on first load and attach system listeners
     useEffect(() => {
         try {
-            const theme = window.localStorage.getItem('theme');
-            document.documentElement.classList.toggle('dark', theme === 'dark');
-        } catch (e) {
+            const savedTheme = getSavedTheme();
+            applyTheme(savedTheme, false);
+        } catch {
             /* ignore */
         }
+        return initThemeListener();
     }, []);
 
     useEffect(() => {

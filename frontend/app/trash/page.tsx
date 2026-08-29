@@ -11,6 +11,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { Button } from '../../components/ui/Button';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
+import { KPICards, KPICardItem } from '../../components/KPICards';
 import { TrashPaginationBar } from '../../components/trash/TrashPaginationBar';
 import { TrashBulkAction } from '../../components/trash/TrashBulkAction';
 import { TrashFilterPopover } from '../../components/trash/TrashFilterPopover';
@@ -378,100 +379,63 @@ function TrashPageContent() {
       </div>
 
       {/* 4 Thẻ Thống Kê KPI Card (Đồng bộ 100% chuẩn Xanh & Trắng) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-        {[
+      <KPICards
+        columns={4}
+        items={[
           {
-            key: 'schedules',
             title: 'Lịch thi đã xóa',
             value: stats.schedules,
             subtext: 'Lịch thi khảo thí',
             progressPercent: stats.schedules > 0 ? 100 : 0,
             icon: CalendarCheck,
+            selected: activeCategory === 'schedules',
+            onClick: () => {
+              setActiveCategory('schedules');
+              setPage(1);
+              router.push('/trash?type=schedules');
+            },
           },
           {
-            key: 'papers',
             title: 'Đề thi đã xóa',
             value: stats.papers,
             subtext: 'Bộ đề thi trắc nghiệm / tự luận',
             progressPercent: stats.papers > 0 ? 100 : 0,
             icon: FileText,
+            selected: activeCategory === 'papers',
+            onClick: () => {
+              setActiveCategory('papers');
+              setPage(1);
+              router.push('/trash?type=papers');
+            },
           },
           {
-            key: 'questions',
             title: 'Câu hỏi đã xóa',
             value: stats.questions,
             subtext: 'Ngân hàng câu hỏi',
             progressPercent: stats.questions > 0 ? 100 : 0,
             icon: HelpCircle,
+            selected: activeCategory === 'questions',
+            onClick: () => {
+              setActiveCategory('questions');
+              setPage(1);
+              router.push('/trash?type=questions');
+            },
           },
           {
-            key: 'users',
             title: 'Tài khoản / khác',
             value: (stats.users || 0) + (stats.subjects || 0) + (stats.classes || 0),
             subtext: 'Người dùng, Môn học, Lớp',
             progressPercent: ((stats.users || 0) + (stats.subjects || 0) + (stats.classes || 0)) > 0 ? 100 : 0,
             icon: Users,
-            isExtraCategory: true,
+            selected: ['users', 'subjects', 'classes'].includes(activeCategory),
+            onClick: () => {
+              setActiveCategory('users');
+              setPage(1);
+              router.push('/trash?type=users');
+            },
           },
-        ].map((item) => {
-          const IconComponent = item.icon;
-          const isSelected = item.isExtraCategory
-            ? ['users', 'subjects', 'classes'].includes(activeCategory)
-            : activeCategory === item.key;
-
-          return (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => {
-                setActiveCategory(item.key);
-                setPage(1);
-                router.push(`/trash?type=${item.key}`);
-              }}
-              className={`group relative flex flex-col justify-between p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer shadow-2xs hover:-translate-y-0.5 hover:shadow-md ${isSelected
-                  ? 'bg-blue-50/40 dark:bg-blue-950/30 border-blue-500 ring-2 ring-blue-500/20'
-                  : 'bg-white dark:bg-slate-900 border-slate-200/60 dark:border-slate-800 hover:border-slate-300/90 dark:hover:border-slate-700'
-                }`}
-            >
-              <div className="flex items-start justify-between gap-3 w-full">
-                <div className="space-y-1 min-w-0">
-                  <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate tracking-normal">
-                    {item.title}
-                  </span>
-                  <div className="text-type-kpi font-bold leading-[38px] tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
-                    {item.value}
-                  </div>
-                </div>
-                <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-semibold transition-all duration-200 group-hover:scale-105 ${isSelected
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white'
-                    }`}
-                >
-                  <IconComponent className="h-5 w-5 stroke-[2.2]" />
-                </div>
-              </div>
-
-              {/* Thanh đo tiến độ tỷ lệ động nhỏ mảnh, tinh tế (Micro Progress Track) */}
-              <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
-                <div
-                  className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(Math.max(item.progressPercent, 5), 100)}%` }}
-                />
-              </div>
-
-              <div className="mt-2.5 w-full">
-                <span
-                  title={item.subtext}
-                  className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
-                >
-                  {item.subtext}
-                </span>
-              </div>
-            </button>
-          );
-        })}
-      </div>
+        ]}
+      />
 
       {/* Search & Action Toolbar Row (Single Unified Row) */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">

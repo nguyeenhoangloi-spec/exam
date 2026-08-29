@@ -20,6 +20,8 @@ import {
   SortDropdown,
   ColumnToggleDropdown,
   StatusBadge,
+  KPICards,
+  KPICardItem,
 } from '../../../components/ui';
 import { TeacherAssignmentBulkAction } from '../../../components/exam-supervisors/TeacherAssignmentBulkAction';
 import { DutyAvailabilityModal } from '../../../components/exam-supervisors/DutyAvailabilityModal';
@@ -293,30 +295,33 @@ export default function TeacherAssignmentsPage() {
   const supervisor1Count = useMemo(() => assignments.filter((a) => a.role === 'SUPERVISOR_1').length, [assignments]);
   const confirmedCount = useMemo(() => assignments.filter((a) => a.status === 'CONFIRMED').length, [assignments]);
 
-  const KPI = [
+  const kpiItems: KPICardItem[] = [
     {
-      label: 'Tổng ca coi thi',
-      value: `${assignments.length} ca`,
+      title: 'Tổng ca coi thi',
+      value: assignments.length,
+      unit: ' ca',
       subtext: 'Học kỳ hiện tại',
       progressPercent: assignments.length > 0 ? 100 : 0,
       icon: Calendar,
     },
     {
-      label: 'Giám thị 1 (Chính)',
-      value: `${supervisor1Count} ca`,
+      title: 'Giám thị 1 (Chính)',
+      value: supervisor1Count,
+      unit: ' ca',
       subtext: 'Chịu trách nhiệm phòng',
       progressPercent: assignments.length > 0 ? Math.round((supervisor1Count / assignments.length) * 100) : 0,
       icon: ShieldCheck,
     },
     {
-      label: 'Đã xác nhận ca',
-      value: `${confirmedCount}/${assignments.length} ca`,
+      title: 'Đã xác nhận ca',
+      value: `${confirmedCount}/${assignments.length}`,
+      unit: ' ca',
       subtext: 'Sẵn sàng gác thi',
       progressPercent: assignments.length > 0 ? Math.round((confirmedCount / assignments.length) * 100) : 100,
       icon: CheckCircle2,
     },
     {
-      label: 'Thời gian tập trung',
+      title: 'Thời gian tập trung',
       value: 'Trước 15p',
       subtext: 'Chuẩn bị & điểm danh',
       progressPercent: 100,
@@ -434,46 +439,7 @@ export default function TeacherAssignmentsPage() {
         </div>
 
         {/* ── 2. Standard KPI Cards Row ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-          {KPI.map(({ label, value, subtext, progressPercent, icon: Icon }) => (
-            <div
-              key={label}
-              className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1 min-w-0">
-                  <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
-                    {label}
-                  </span>
-                  <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
-                    {value}
-                  </div>
-                </div>
-
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
-                  <Icon className="h-5 w-5 stroke-[2.2]" />
-                </div>
-              </div>
-
-              {/* Micro Progress Track */}
-              <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
-                <div
-                  className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(Math.max(progressPercent, 5), 100)}%` }}
-                />
-              </div>
-
-              <div className="mt-2.5">
-                <span
-                  title={subtext}
-                  className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
-                >
-                  {subtext}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+        <KPICards items={kpiItems} columns={4} />
 
         {/* ── Status TabBar ── */}
         <TabBar

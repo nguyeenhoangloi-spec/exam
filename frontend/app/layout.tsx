@@ -25,10 +25,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: `
               (function() {
                 try {
-                  if (localStorage.getItem('theme') === 'dark') {
+                  var saved = localStorage.getItem('theme');
+                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  var isDark = saved === 'dark' || (saved !== 'light' && prefersDark);
+                  if (isDark) {
                     document.documentElement.classList.add('dark');
+                    document.documentElement.style.colorScheme = 'dark';
                   } else {
                     document.documentElement.classList.remove('dark');
+                    document.documentElement.style.colorScheme = 'light';
                   }
                   if (localStorage.getItem('sidebar-collapsed') === 'true') {
                     document.documentElement.classList.add('sidebar-collapsed');
@@ -41,7 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body className="typography-scale bg-slate-50 min-h-screen">
+      <body className="typography-scale bg-slate-50 dark:bg-slate-950 min-h-screen">
         <PageTitleProvider>
           <RouteShell>{children}</RouteShell>
         </PageTitleProvider>

@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import api from '../lib/api';
 import { getAuthUser, getAuthToken, setAuthToken, getUserAvatar, setUserAvatar } from '../lib/auth';
+import { applyTheme, getSavedTheme, ThemeMode } from '../lib/theme';
 import { User as UserType } from '../types';
 import { Toast } from './Toast';
 import { DynamicImage } from './ui/DynamicImage';
@@ -374,8 +375,7 @@ export function AccountSettingsModal({
   // Load theme preference on mount
   useEffect(() => {
     try {
-      const savedTheme = (localStorage.getItem('theme') as 'light' | 'dark' | 'system') || 'light';
-      setThemeMode(savedTheme);
+      setThemeMode(getSavedTheme());
 
       const savedCompact = localStorage.getItem('table_compact') === 'true';
       setCompactTable(savedCompact);
@@ -383,6 +383,8 @@ export function AccountSettingsModal({
       // ignore localStorage errors
     }
   }, []);
+
+
 
   // Helper: Tạo PNG Canvas avatar chữ viết tắt theo màu gradient (Sắc nét 100%, không bị lỗi hiển thị)
   const generateCanvasMonogram = (text: string, fromColor: string, toColor: string): string => {
@@ -546,7 +548,6 @@ export function AccountSettingsModal({
   const handleAvatarSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     if (!file.type.startsWith('image/')) {
       setToast({ message: 'Vui lòng chọn file hình ảnh hợp lệ (PNG, JPG, WEBP)!', type: 'error' });
       return;
@@ -555,7 +556,6 @@ export function AccountSettingsModal({
       setToast({ message: 'Dung lượng ảnh tối đa là 12MB!', type: 'error' });
       return;
     }
-
     const reader = new FileReader();
     reader.onload = (event) => {
       const dataUrl = event.target?.result as string;
@@ -591,17 +591,19 @@ export function AccountSettingsModal({
     setToast({ message: 'Đã gỡ ảnh đại diện về mặc định!', type: 'success' });
   };
 
-  // Change Password Handler
+  // Change Password
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentPassword) {
-      setToast({ message: 'Vui lòng nhập mật khẩu hiện tại.', type: 'error' });
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setToast({ message: 'Vui lòng điền đầy đủ các trường mật khẩu.', type: 'error' });
       return;
     }
-    if (!newPassword || newPassword.length < 6) {
-      setToast({ message: 'Mật khẩu mới phải có tối thiểu 6 ký tự.', type: 'error' });
+
+    if (newPassword.length < 6) {
+      setToast({ message: 'Mật khẩu mới phải có ít nhất 6 ký tự.', type: 'error' });
       return;
     }
+
     if (newPassword !== confirmPassword) {
       setToast({ message: 'Mật khẩu xác nhận không trùng khớp.', type: 'error' });
       return;
@@ -614,19 +616,19 @@ export function AccountSettingsModal({
         newPassword,
         confirmPassword,
       });
-
-      setToast({ message: 'Đổi mật khẩu tài khoản thành công!', type: 'success' });
+      setToast({ message: 'Đổi mật khẩu thành công! Bạn có thể dùng mật khẩu mới từ lần đăng nhập sau.', type: 'success' });
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
+      setShowConfirm(false);
     } catch (err: any) {
-      setToast({ message: err?.response?.data?.message || err.message || 'Đổi mật khẩu thất bại. Vui lòng kiểm tra lại!', type: 'error' });
+      setToast({ message: err.message || 'Đổi mật khẩu thất bại. Vui lòng kiểm tra lại mật khẩu hiện tại.', type: 'error' });
     } finally {
       setChangingPassword(false);
     }
   };
 
-  // Password Strength Meter
+  // Password strength meter
   const getPasswordStrength = (pass: string) => {
     if (!pass) return { label: 'Chưa nhập', score: 0, color: 'bg-slate-200 dark:bg-slate-700', text: 'text-slate-400' };
     let score = 0;
@@ -643,19 +645,13 @@ export function AccountSettingsModal({
   const strength = getPasswordStrength(newPassword);
 
   // Apply Theme
-  const handleApplyTheme = (mode: 'light' | 'dark' | 'system') => {
+  const handleApplyTheme = (mode: ThemeMode) => {
     setThemeMode(mode);
-    localStorage.setItem('theme', mode);
-
-    let isDark = false;
-    if (mode === 'dark') {
-      isDark = true;
-    } else if (mode === 'system') {
-      isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-
-    document.documentElement.classList.toggle('dark', isDark);
-    setToast({ message: `Đã áp dụng giao diện: ${mode === 'dark' ? 'Tối' : mode === 'light' ? 'Sáng' : 'Theo hệ thống'}`, type: 'success' });
+    applyTheme(mode, true);
+    setToast({
+      message: `Đã chuyển sang ${mode === 'dark' ? 'Giao diện Tối' : mode === 'light' ? 'Giao diện Sáng' : 'Giao diện Theo hệ thống'}`,
+      type: 'success',
+    });
   };
 
   if (!isOpen || !mounted) return null;
