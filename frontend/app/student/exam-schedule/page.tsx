@@ -38,14 +38,18 @@ import { StudentScheduleCalendarView } from '../../../components/student/Student
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { PersonalScheduleItem } from '../../../types';
 import { PageSkeleton } from '../../../components/ui/Skeleton';
+import { getCachedData } from '../../../lib/api';
 
 export default function StudentExamSchedulePage() {
   usePageTitle('Lịch thi cá nhân');
   const router = useRouter();
+  const cachedSchedules = typeof window !== 'undefined' ? getCachedData<PersonalScheduleItem[]>('/students/my-schedule') : null;
+  const cachedCurriculum = typeof window !== 'undefined' ? getCachedData<{ student?: any }>('/students/my-curriculum') : null;
+
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [studentInfo, setStudentInfo] = useState<any>(null);
-  const [schedules, setSchedules] = useState<PersonalScheduleItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [studentInfo, setStudentInfo] = useState<any>(cachedCurriculum?.student || null);
+  const [schedules, setSchedules] = useState<PersonalScheduleItem[]>(cachedSchedules || []);
+  const [loading, setLoading] = useState(!cachedSchedules);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [drawerSchedule, setDrawerSchedule] = useState<PersonalScheduleItem | null>(null);
   const [modeFilter, setModeFilter] = useState<string>('ALL');
@@ -65,7 +69,7 @@ export default function StudentExamSchedulePage() {
 
   const fetchMySchedule = async () => {
     try {
-      setLoading(true);
+      if (!schedules.length && !cachedSchedules) setLoading(true);
       const [scheduleRes, profileRes] = await Promise.allSettled([
         api.get('/students/my-schedule'),
         api.get('/students/my-curriculum'),
@@ -227,7 +231,7 @@ export default function StudentExamSchedulePage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">

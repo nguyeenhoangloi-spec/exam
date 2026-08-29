@@ -30,6 +30,7 @@ import { RescheduleModal } from '../../components/exam-schedules/RescheduleModal
 import { CancelScheduleModal } from '../../components/exam-schedules/CancelScheduleModal';
 import { Calendar, Clock, Building, Users, AlertTriangle, FileSpreadsheet, Search, X } from 'lucide-react';
 import { PageSkeleton } from '../../components/ui/Skeleton';
+import { getCachedData } from '../../lib/api';
 
 function calculateEndTime(startTime: string, durationMinutes: number): string {
   if (!startTime) return '08:30';
@@ -48,12 +49,17 @@ export default function ExamSchedulesPage() {
   usePageTitle('Quản lý lịch thi');
   const router = useRouter();
 
+  const cachedSchedules = typeof window !== 'undefined' ? getCachedData<ExamScheduleItemExtended[]>('/exam-schedules') : null;
+  const cachedPeriods = typeof window !== 'undefined' ? getCachedData<ExamPeriod[]>('/exam-periods') : null;
+  const cachedRooms = typeof window !== 'undefined' ? getCachedData<ExamRoom[]>('/exam-rooms') : null;
+  const cachedSubjects = typeof window !== 'undefined' ? getCachedData<any[]>('/subjects') : null;
+
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [schedules, setSchedules] = useState<ExamScheduleItemExtended[]>([]);
-  const [periods, setPeriods] = useState<ExamPeriod[]>([]);
-  const [rooms, setRooms] = useState<ExamRoom[]>([]);
-  const [subjects, setSubjects] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [schedules, setSchedules] = useState<ExamScheduleItemExtended[]>(cachedSchedules || []);
+  const [periods, setPeriods] = useState<ExamPeriod[]>(cachedPeriods || []);
+  const [rooms, setRooms] = useState<ExamRoom[]>(cachedRooms || []);
+  const [subjects, setSubjects] = useState<any[]>(cachedSubjects || []);
+  const [loading, setLoading] = useState(!cachedSchedules);
 
   // Filters State
   const [filterValues, setFilterValues] = useState<ExamScheduleFilterValues>({
@@ -137,7 +143,6 @@ export default function ExamSchedulesPage() {
   }, []);
 
   const fetchInitialData = useCallback(async () => {
-    setLoading(true);
     try {
       const isTeacher = getAuthUser()?.role === 'TEACHER';
       const [resPeriods, resSubjects, resSchedules] = await Promise.all([
@@ -448,7 +453,7 @@ export default function ExamSchedulesPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
         {/* Header */}
         <ExamScheduleHeader
           onAdd={openAddModal}

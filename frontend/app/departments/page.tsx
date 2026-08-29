@@ -25,6 +25,7 @@ import { DepartmentBulkAction } from '../../components/departments/DepartmentBul
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { PageSkeleton } from '../../components/ui/Skeleton';
+import { getCachedData } from '../../lib/api';
 
 interface CurriculumItem {
   id: number;
@@ -46,14 +47,16 @@ export default function DepartmentsPage() {
   usePageTitle('Quản lý khoa');
   const router = useRouter();
 
+  const cachedDepts = typeof window !== 'undefined' ? getCachedData<Department[]>('/departments') : null;
+  const cachedSubs = typeof window !== 'undefined' ? getCachedData<Subject[]>('/subjects') : null;
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [allSubjects, setAllSubjects] = useState<Subject[]>([]);
+  const [departments, setDepartments] = useState<Department[]>(cachedDepts || []);
+  const [allSubjects, setAllSubjects] = useState<Subject[]>(cachedSubs || []);
   const [search, setSearch] = useState('');
   const [hasClassFilter, setHasClassFilter] = useState('');
   const [hasTeacherFilter, setHasTeacherFilter] = useState('');
   const [hasSubjectFilter, setHasSubjectFilter] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedDepts);
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -127,7 +130,6 @@ export default function DepartmentsPage() {
   }, []);
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
     try {
       const [resDepts, resSubs] = await Promise.all([
         api.get('/departments'),
@@ -404,7 +406,7 @@ export default function DepartmentsPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
         {/* Header */}
         <DepartmentHeader
           onAdd={openAddModal}

@@ -336,7 +336,7 @@ export default function ExamPapersPage() {
   });
 
   const fetchData = useCallback(async (silent = false) => {
-    if (!silent) setLoading(true);
+    if (!silent && !papers.length && !_papersCache) setLoading(true);
     try {
       const [scheduleResponse, paperResponse] = await Promise.all([
         api.get<ExamSchedule[]>('/exam-schedules'),
@@ -851,7 +851,7 @@ export default function ExamPapersPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
         <ExamPaperHeader
           onExportAll={exportExcel}
           onPrintAll={handlePrintReport}

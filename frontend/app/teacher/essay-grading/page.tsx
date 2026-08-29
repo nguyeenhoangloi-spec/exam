@@ -2,7 +2,7 @@
 
 import React, { Suspense, useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import api from '../../../lib/api';
+import api, { getCachedData } from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import { Toast } from '../../../components/Toast';
@@ -53,8 +53,9 @@ function TeacherEssayGradingContent() {
   const searchParams = useSearchParams();
   const attemptIdParam = searchParams.get('attemptId');
 
+  const cachedRows = typeof window !== 'undefined' ? getCachedData<any[]>('/essay/grading/assignments') : null;
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [rows, setRows] = useState<any[]>([]);
+  const [rows, setRows] = useState<any[]>(cachedRows || []);
   const rowsRef = useRef<any[]>([]);
   rowsRef.current = rows;
 
@@ -66,7 +67,7 @@ function TeacherEssayGradingContent() {
   const [comments, setComments] = useState<Record<string, string>>({});
   const [teacherComments, setTeacherComments] = useState<Record<string, string>>({});
   const [aiEvidence, setAiEvidence] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedRows);
   const [saving, setSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -180,7 +181,7 @@ function TeacherEssayGradingContent() {
   }, []);
 
   const loadAssignments = useCallback(async () => {
-    setLoading(true);
+    if (!rows.length && !cachedRows) setLoading(true);
     try {
       const user = getAuthUser();
       setCurrentUser(user || null);
@@ -709,7 +710,7 @@ function TeacherEssayGradingContent() {
   }
 
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 ">
       {/* ── 1. Standard Page Header ── */}
       <div className="pb-1 space-y-0.5">
         <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">

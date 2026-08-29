@@ -250,12 +250,15 @@ function clone<T>(val: T): T {
   return JSON.parse(JSON.stringify(val));
 }
 
+import { getCachedData } from '../../../lib/api';
+
 export default function DocumentTemplatesPage() {
   usePageTitle('Mẫu biểu in ấn');
-  const [loading, setLoading] = useState(true);
+  const cachedTemplates = typeof window !== 'undefined' ? getCachedData<Template[]>('/document-templates') : null;
+  const [loading, setLoading] = useState(!cachedTemplates);
   const [saving, setSaving] = useState(false);
-  const [templates, setTemplates] = useState<Template[]>([]);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [templates, setTemplates] = useState<Template[]>(cachedTemplates || []);
+  const [selectedId, setSelectedId] = useState<string | null>(cachedTemplates?.[0]?.id || null);
   const [draft, setDraft] = useState<Template | null>(null);
   const [config, setConfig] = useState<Config | null>(null);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -266,7 +269,7 @@ export default function DocumentTemplatesPage() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const loadTemplates = useCallback(async () => {
-    setLoading(true);
+    if (!templates.length && !cachedTemplates) setLoading(true);
     try {
       const response = await api.get('/document-templates');
       const list = response.data as Template[];
@@ -470,7 +473,7 @@ export default function DocumentTemplatesPage() {
   }
 
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 ">
       {/* 1. Header Tiêu Chuẩn Hệ Thống (Đồng bộ khoảng cách pb-1, space-y-0.5) */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
         <div className="space-y-0.5">

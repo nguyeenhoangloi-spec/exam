@@ -14,7 +14,7 @@ import { RecentActivityList } from '../../components/dashboard/RecentActivityLis
 import { Button } from '../../components/ui/Button';
 import { DataActionsDropdown } from '../../components/ui/DataActionsDropdown';
 import { printReport } from '../../lib/export-print';
-import api from '../../lib/api';
+import api, { getCachedData } from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { User } from '../../types';
 import { DashboardOverview } from '../../types/dashboard';
@@ -23,14 +23,15 @@ import { RefreshCw, BarChart2, FileText, CheckCircle2, Clock } from 'lucide-reac
 export default function ReportsPage() {
   usePageTitle('Báo cáo tổng quan');
   const router = useRouter();
+  const cachedData = typeof window !== 'undefined' ? getCachedData<DashboardOverview>('/dashboard/overview') : null;
   const [user, setUser] = useState<User | null>(null);
-  const [data, setData] = useState<DashboardOverview | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<DashboardOverview | null>(cachedData);
+  const [loading, setLoading] = useState(!cachedData);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState('');
 
-  const load = useCallback(async (showLoading = true) => {
-    if (showLoading) setLoading(true);
+  const load = useCallback(async (showLoading = false) => {
+    if (showLoading && !data && !cachedData) setLoading(true);
     setIsRefreshing(true);
     setError('');
     try {
@@ -49,7 +50,7 @@ export default function ReportsPage() {
     if (!currentUser) return void router.replace('/login');
     if (currentUser.role !== 'ADMIN') return void router.replace('/dashboard');
     setUser(currentUser);
-    load(true);
+    load();
   }, [load, router]);
 
   const handlePrint = () => {

@@ -168,6 +168,8 @@ const calculateDuration = (start?: string | null, end?: string | null) => {
     return `${mins} phút ${secs % 60} giây`;
 };
 
+import { getCachedData } from '../../../lib/api';
+
 export default function BackupsPage() {
     usePageTitle('Sao lưu dữ liệu');
     const router = useRouter();
@@ -176,10 +178,14 @@ export default function BackupsPage() {
     // every render, which otherwise causes the data-loading effect to loop.
     const currentUserRole = currentUser?.role;
 
-    const [overview, setOverview] = useState<Overview | null>(null);
-    const [jobs, setJobs] = useState<BackupJob[]>([]);
-    const [restoreRequests, setRestoreRequests] = useState<RestoreRequest[]>([]);
-    const [loading, setLoading] = useState(true);
+    const cachedOverview = typeof window !== 'undefined' ? getCachedData<Overview>('/backups/overview') : null;
+    const cachedJobs = typeof window !== 'undefined' ? getCachedData<{ items: BackupJob[] }>('/backups/jobs')?.items : null;
+    const cachedRestores = typeof window !== 'undefined' ? getCachedData<RestoreRequest[]>('/backups/restore-requests') : null;
+
+    const [overview, setOverview] = useState<Overview | null>(cachedOverview || null);
+    const [jobs, setJobs] = useState<BackupJob[]>(cachedJobs || []);
+    const [restoreRequests, setRestoreRequests] = useState<RestoreRequest[]>(cachedRestores || []);
+    const [loading, setLoading] = useState(!cachedOverview);
     const [refreshing, setRefreshing] = useState(false);
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
@@ -256,8 +262,8 @@ export default function BackupsPage() {
     const [rejectReason, setRejectReason] = useState('');
 
     const fetchData = useCallback(async (silent = false) => {
-        if (!silent) setLoading(true);
-        else setRefreshing(true);
+        if (!silent && !overview && !jobs.length) setLoading(true);
+        else if (silent) setRefreshing(true);
         try {
             const [overviewResponse, jobsResponse, restoreResponse] = await Promise.all([
                 api.get<Overview>('/backups/overview', { params: { noCache: true } }),
@@ -592,7 +598,7 @@ export default function BackupsPage() {
     }
 
     return (
-        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
+        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 ">
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
             {/* Header matching standard page header across all management pages */}

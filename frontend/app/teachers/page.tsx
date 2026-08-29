@@ -29,20 +29,24 @@ import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { PageSkeleton } from '../../components/ui/Skeleton';
 
+import { getCachedData } from '../../lib/api';
+
 const DEGREE_OPTIONS = ['GS.TS', 'PGS.TS', 'TS', 'ThS'];
 
 export default function TeachersPage() {
   usePageTitle('Quản lý giảng viên');
   const router = useRouter();
 
+  const cachedTeachers = typeof window !== 'undefined' ? getCachedData<Teacher[]>('/teachers') : null;
+  const cachedDepts = typeof window !== 'undefined' ? getCachedData<Department[]>('/departments') : null;
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>(cachedTeachers || []);
+  const [departments, setDepartments] = useState<Department[]>(cachedDepts || []);
   const [search, setSearch] = useState('');
   const [selectedDeptId, setSelectedDeptId] = useState('');
   const [selectedDegree, setSelectedDegree] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedTeachers);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -145,7 +149,6 @@ export default function TeachersPage() {
   });
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
     try {
       const [resTeachers, resDepts] = await Promise.all([
         cachedGet('/teachers'),
@@ -409,7 +412,7 @@ export default function TeachersPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
         {/* Header */}
         <TeacherHeader
           onAdd={openAddModal}

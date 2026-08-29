@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import React, { useCallback, useEffect, useMemo, useState, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import api from '../../../lib/api';
+import api, { getCachedData } from '../../../lib/api';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Button } from '../../../components/ui/Button';
 import { TabBar, TabItem } from '../../../components/ui/TabBar';
@@ -137,9 +137,9 @@ function ActivityLogsContent() {
 
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-    /* ── Activity State ── */
-    const [logs, setLogs] = useState<AuditLogRecord[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const cachedLogs = typeof window !== 'undefined' ? getCachedData<{ items: AuditLogRecord[] }>('/audit-logs')?.items : null;
+    const [logs, setLogs] = useState<AuditLogRecord[]>(cachedLogs || []);
+    const [loading, setLoading] = useState<boolean>(!cachedLogs);
     const [search, setSearch] = useState<string>('');
     const [entityFilter, setEntityFilter] = useState<string>('');
     const [page, setPage] = useState<number>(1);
@@ -181,7 +181,7 @@ function ActivityLogsContent() {
 
     const fetchLogs = useCallback(async (): Promise<boolean> => {
         try {
-            setLoading(true);
+            if (!logs.length && !cachedLogs) setLoading(true);
             const params: any = { page, limit, sort: 'newest' };
             if (search.trim()) params.search = search.trim();
             if (entityFilter) params.entityType = entityFilter;
@@ -547,7 +547,7 @@ function ActivityLogsContent() {
     }
 
     return (
-        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
+        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 ">
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
             {/* ── 1. Page Header (Tiêu đề H1, Phụ đề chi tiết) ── */}

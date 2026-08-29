@@ -147,7 +147,7 @@ export default function ExamSupervisorsPage() {
   );
 
   const fetchData = useCallback(async (background = false) => {
-    if (!background) setLoading(true);
+    if (!background && !_cache && !schedules.length) setLoading(true);
     try {
       const [resSchedules, resTeachers, resChanges] = await Promise.all([
         api.get('/exam-schedules'),
@@ -442,7 +442,7 @@ export default function ExamSupervisorsPage() {
         onSelectSchedule={selectSchedule}
       />
 
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
         {/* ── 1. Page Header ── */}
         <ExamSupervisorHeader
           onExport={handleExportExcel}

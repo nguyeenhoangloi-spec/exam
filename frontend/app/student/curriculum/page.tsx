@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../../../lib/api';
+import api, { getCachedData } from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Toast } from '../../../components/Toast';
@@ -88,10 +88,11 @@ export default function StudentCurriculumPage() {
   usePageTitle('Chương trình đào tạo');
   const router = useRouter();
 
-  const [studentInfo, setStudentInfo] = useState<StudentInfo | null>(null);
-  const [stats, setStats] = useState<StatsInfo | null>(null);
-  const [curriculumList, setCurriculumList] = useState<CurriculumItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cachedData = typeof window !== 'undefined' ? getCachedData<{ student?: StudentInfo; stats?: StatsInfo; curriculum?: CurriculumItem[] }>('/students/my-curriculum') : null;
+  const [studentInfo, setStudentInfo] = useState<StudentInfo | null>(cachedData?.student || null);
+  const [stats, setStats] = useState<StatsInfo | null>(cachedData?.stats || null);
+  const [curriculumList, setCurriculumList] = useState<CurriculumItem[]>(cachedData?.curriculum || []);
+  const [loading, setLoading] = useState(!cachedData);
 
   // Filters & Search
   const [search, setSearch] = useState('');
@@ -146,7 +147,7 @@ export default function StudentCurriculumPage() {
     };
 
     try {
-      setLoading(true);
+      if (!curriculumList.length && !cachedData) setLoading(true);
       const res = await api.get('/students/my-curriculum');
       setStudentInfo(res.data.student || defaultStudent);
       setStats(res.data.stats);
@@ -390,7 +391,7 @@ export default function StudentCurriculumPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">

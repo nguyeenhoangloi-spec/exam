@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback, useMemo, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Check } from 'lucide-react';
-import api from '../../lib/api';
+import api, { getCachedData } from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { Toast } from '../../components/Toast';
@@ -59,7 +59,9 @@ function TrashPageContent() {
   const searchParams = useSearchParams();
   const typeParam = searchParams.get('type');
 
-  const [stats, setStats] = useState<TrashStats>({ total: 0, schedules: 0, papers: 0, questions: 0 });
+  const cachedStats = typeof window !== 'undefined' ? getCachedData<TrashStats>('/trash/stats') : null;
+  const cachedItems = typeof window !== 'undefined' ? getCachedData<TrashItem[]>('/trash/items') : null;
+  const [stats, setStats] = useState<TrashStats>(cachedStats || { total: 0, schedules: 0, papers: 0, questions: 0 });
   const [activeCategory, setActiveCategory] = useState<string>(typeParam || 'schedules');
   const [sortOrder, setSortOrder] = useState<string>('newest');
   const [openColumnMenu, setOpenColumnMenu] = useState(false);
@@ -79,8 +81,8 @@ function TrashPageContent() {
     }
   }, [typeParam]);
 
-  const [items, setItems] = useState<TrashItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [items, setItems] = useState<TrashItem[]>(cachedItems || []);
+  const [loading, setLoading] = useState(!cachedItems);
   const [search, setSearch] = useState('');
   const [expiryFilter, setExpiryFilter] = useState('');
   const [selectedIds, setSelectedIds] = useState<(number | string)[]>([]);
@@ -130,7 +132,6 @@ function TrashPageContent() {
   }, []);
 
   const fetchItems = useCallback(async () => {
-    setLoading(true);
     try {
       const fetchType = activeCategory === 'ALL' ? 'schedules' : activeCategory;
       const res = await api.get<TrashItem[]>('/trash/items', {
@@ -354,7 +355,7 @@ function TrashPageContent() {
   }
 
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
       {/* Toast Alert */}
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 

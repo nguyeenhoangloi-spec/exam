@@ -96,7 +96,7 @@ export function PageSkeleton({
     variant?: 'table' | 'cards' | 'form';
 }) {
     return (
-        <div className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200" aria-busy="true" aria-live="polite">
+        <div className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen" aria-busy="true" aria-live="polite">
             {/* Page Header Skeleton */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-2">

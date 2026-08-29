@@ -25,20 +25,24 @@ import { SubjectPaginationBar } from '../../components/subjects/SubjectPaginatio
 import { SubjectBulkAction } from '../../components/subjects/SubjectBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { PageSkeleton } from '../../components/ui/Skeleton';
+import { getCachedData } from '../../lib/api';
 
 export default function SubjectsPage() {
   usePageTitle('Quản lý môn học');
   const router = useRouter();
 
+  const cachedSubjects = typeof window !== 'undefined' ? getCachedData<Subject[]>('/subjects') : null;
+  const cachedDepts = typeof window !== 'undefined' ? getCachedData<Department[]>('/departments') : null;
+  const cachedClasses = typeof window !== 'undefined' ? getCachedData<any[]>('/classes') : null;
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [classes, setClasses] = useState<any[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>(cachedSubjects || []);
+  const [departments, setDepartments] = useState<Department[]>(cachedDepts || []);
+  const [classes, setClasses] = useState<any[]>(cachedClasses || []);
   const [search, setSearch] = useState('');
   const [selectedDeptId, setSelectedDeptId] = useState('');
   const [filterCredits, setFilterCredits] = useState('');
   const [filterHasStudents, setFilterHasStudents] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedSubjects);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -132,7 +136,6 @@ export default function SubjectsPage() {
   });
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
     try {
       const [resSubjects, resDepts, resClasses] = await Promise.all([
         api.get('/subjects'),
@@ -414,7 +417,7 @@ export default function SubjectsPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
         <SubjectHeader
           onAdd={openAddModal}
           onExport={exportExcel}

@@ -28,19 +28,22 @@ import { StudentPaginationBar } from '../../components/students/StudentPaginatio
 import { StudentBulkAction } from '../../components/students/StudentBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { PageSkeleton } from '../../components/ui/Skeleton';
+import { getCachedData } from '../../lib/api';
 
 export default function StudentsPage() {
   usePageTitle('Quản lý sinh viên');
   const router = useRouter();
 
+  const cachedStudents = typeof window !== 'undefined' ? getCachedData<Student[]>('/students') : null;
+  const cachedClasses = typeof window !== 'undefined' ? getCachedData<ClassItem[]>('/classes') : null;
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [students, setStudents] = useState<Student[]>([]);
-  const [classes, setClasses] = useState<ClassItem[]>([]);
+  const [students, setStudents] = useState<Student[]>(cachedStudents || []);
+  const [classes, setClasses] = useState<ClassItem[]>(cachedClasses || []);
   const [search, setSearch] = useState('');
   const [selectedClassId, setSelectedClassId] = useState('');
   const [selectedGender, setSelectedGender] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedStudents);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -183,7 +186,6 @@ export default function StudentsPage() {
   });
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
     try {
       const [resStudents, resClasses] = await Promise.all([
         cachedGet('/students'),
@@ -451,7 +453,7 @@ export default function StudentsPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
         {/* Header */}
         <StudentHeader
           onAdd={openAddModal}

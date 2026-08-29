@@ -279,11 +279,11 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
             >
                 <Header user={user} title={title} collapsed={collapsed} onToggleSidebar={handleToggle} onMenuClick={() => setMobileOpen(true)} />
                 {/* pt-16 (64px) matches the fixed header height (h-16) so content never hides underneath it */}
-                <main className="w-full min-w-0 max-w-full overflow-x-clip pt-16 min-h-screen">
-                    <div key={pathname} className="animate-in fade-in-0 duration-150 motion-reduce:animate-none">
+                <div className="w-full min-w-0 max-w-full overflow-x-clip pt-16 min-h-screen">
+                    <div key={pathname} className="animate-in fade-in-0 duration-200 ease-out fill-mode-forwards motion-reduce:animate-none">
                         {children}
                     </div>
-                </main>
+                </div>
             </div>
         </div>
     );

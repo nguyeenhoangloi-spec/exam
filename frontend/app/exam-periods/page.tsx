@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../../lib/api';
+import api, { getCachedData } from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
 import { usePageTitle } from '../../components/PageTitleContext';
 import { exportToFormattedExcel } from '../../lib/export-excel';
@@ -31,13 +31,14 @@ export default function ExamPeriodsPage() {
   usePageTitle('Quản lý kỳ thi');
   const router = useRouter();
 
+  const cachedPeriods = typeof window !== 'undefined' ? getCachedData<ExamPeriod[]>('/exam-periods') : null;
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [periods, setPeriods] = useState<ExamPeriod[]>([]);
+  const [periods, setPeriods] = useState<ExamPeriod[]>(cachedPeriods || []);
   const [search, setSearch] = useState('');
   const [selectedSemester, setSelectedSemester] = useState('');
   const [selectedSchoolYear, setSelectedSchoolYear] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedPeriods);
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -98,7 +99,6 @@ export default function ExamPeriodsPage() {
   }, []);
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
     try {
       const res = await api.get('/exam-periods');
       if (res.data && Array.isArray(res.data)) {
@@ -306,7 +306,7 @@ export default function ExamPeriodsPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
         {/* Header */}
         <ExamPeriodHeader
           onAdd={openAddModal}

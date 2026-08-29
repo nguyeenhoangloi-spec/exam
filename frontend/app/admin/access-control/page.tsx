@@ -29,7 +29,7 @@ import {
   ArrowRight,
   SlidersHorizontal,
 } from 'lucide-react';
-import api from '../../../lib/api';
+import api, { getCachedData } from '../../../lib/api';
 import { invalidateCache } from '../../../lib/api-cache';
 import { getAuthUser } from '../../../lib/auth';
 import { usePageTitle } from '../../../components/PageTitleContext';
@@ -124,24 +124,31 @@ const ACCESS_TABS: Array<{ id: Tab; label: string; Icon: React.ElementType }> = 
 ];
 
 export default function AccessControlPage() {
-  usePageTitle('Phân quyền & truy cập');
+  usePageTitle('Phân quyền & Kiểm soát truy cập');
   const router = useRouter();
+
   const [tab, setTab] = useState<Tab>('matrix');
-  const [permissions, setPermissions] = useState<Permission[]>([]);
-  const [users, setUsers] = useState<AccessUser[]>([]);
-  const [scopeOptions, setScopeOptions] = useState<any>({
+
+  const cachedOverview = typeof window !== 'undefined' ? getCachedData<any>('/access-control/overview') : null;
+  const cachedUsers = typeof window !== 'undefined' ? getCachedData<AccessUser[]>('/access-control/users') : null;
+  const cachedScopes = typeof window !== 'undefined' ? getCachedData<any>('/access-control/scope-options') : null;
+  const cachedHistory = typeof window !== 'undefined' ? getCachedData<any[]>('/access-control/history?limit=200') : null;
+
+  const [permissions, setPermissions] = useState<Permission[]>(cachedOverview?.permissions || []);
+  const [users, setUsers] = useState<AccessUser[]>(cachedUsers || []);
+  const [scopeOptions, setScopeOptions] = useState<any>(cachedScopes || {
     departments: [],
     classes: [],
     subjects: [],
   });
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState<any[]>(cachedHistory || []);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [effective, setEffective] = useState<any>(null);
   const [overrideCode, setOverrideCode] = useState('');
   const [overrideReason, setOverrideReason] = useState('');
   const [scopeReason, setScopeReason] = useState('');
   const [draftScopes, setDraftScopes] = useState<Scope[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedOverview);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [confirm, setConfirm] = useState<{
@@ -408,7 +415,7 @@ export default function AccessControlPage() {
   const historyTotalPages = Math.ceil(filteredHistory.length / historyPageSize) || 1;
 
   const load = useCallback(async (showSpinner = true) => {
-    if (showSpinner) setLoading(true);
+    if (showSpinner && !permissions.length && !cachedOverview) setLoading(true);
     try {
       const [overviewResult, usersResult, scopesResult, historyResult] = await Promise.all([
         api.get('/access-control/overview'),
@@ -896,7 +903,7 @@ export default function AccessControlPage() {
   }
 
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 ">
       {/* ── 1. Standard Header ── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
         <div className="space-y-0.5">

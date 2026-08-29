@@ -117,7 +117,7 @@ export default function QuestionBankPage() {
 
   const load = async () => {
     try {
-      setLoading(true);
+      if (!questions.length && !initialQList.length) setLoading(true);
       setError('');
       const params: any = {
         page,
@@ -330,7 +330,7 @@ export default function QuestionBankPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 ">
         {/* Header Section */}
         <QuestionBankHeader
           onAdd={() => {

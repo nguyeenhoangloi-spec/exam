@@ -25,7 +25,7 @@ import {
   StorageTargetPayload,
 } from '../../../components/backups/StorageTargetModal';
 import { PageSkeleton } from '../../../components/ui/Skeleton';
-import api from '../../../lib/api';
+import api, { getCachedData } from '../../../lib/api';
 
 type BackupSettings = {
   autoBackupEnabled: boolean;
@@ -102,12 +102,15 @@ const inputClass =
 
 export default function SystemSettingsPage() {
   usePageTitle('Cài đặt hệ thống');
-  const [settings, setSettings] = useState<BackupSettings>(defaults);
-  const [storage, setStorage] = useState<StorageStatus>({});
+  const cachedSettings = typeof window !== 'undefined' ? getCachedData<BackupSettings>('/backups/settings') : null;
+  const cachedOverview = typeof window !== 'undefined' ? getCachedData<{ storage?: StorageStatus }>('/backups/overview') : null;
+
+  const [settings, setSettings] = useState<BackupSettings>(cachedSettings ? { ...defaults, ...cachedSettings, storageTargets: cachedSettings.storageTargets || [] } : defaults);
+  const [storage, setStorage] = useState<StorageStatus>(cachedOverview?.storage || {});
   const [auditPolicies, setAuditPolicies] = useState<AuditRetentionPolicy[]>([]);
   const [archiveStatus, setArchiveStatus] = useState<AuditArchiveStatus | null>(null);
   const [archiveConfig, setArchiveConfig] = useState<ExamArchiveConfig>({ retentionYears: 2 });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedSettings);
   const [savingAll, setSavingAll] = useState(false);
   const [busyId, setBusyId] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
@@ -117,7 +120,7 @@ export default function SystemSettingsPage() {
 
   const load = async () => {
     try {
-      setLoading(true);
+      if (!cachedSettings && !settings.storageTargets.length) setLoading(true);
       const [settingsResponse, overviewResponse] = await Promise.all([
         api.get<BackupSettings>('/backups/settings', { params: { noCache: true } }),
         api.get<{ storage?: StorageStatus }>('/backups/overview', { params: { noCache: true } }),
@@ -275,7 +278,7 @@ export default function SystemSettingsPage() {
   }
 
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 ">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       {/* 1. Header Tiêu Chuẩn Hệ Thống (CHỈ 1 NÚT PRIMARY CTA "LƯU THAY ĐỔI" DUY NHẤT) */}

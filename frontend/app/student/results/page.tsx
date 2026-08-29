@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../../../lib/api';
+import api, { getCachedData } from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Toast } from '../../../components/Toast';
@@ -99,15 +99,16 @@ export default function StudentResultsPage() {
   usePageTitle('Kết quả bài thi');
   const router = useRouter();
 
-  const [studentInfo, setStudentInfo] = useState<StudentInfo | null>(null);
-  const [results, setResults] = useState<ExamResultItem[]>([]);
-  const [stats, setStats] = useState<SummaryStats>({
+  const cachedData = typeof window !== 'undefined' ? getCachedData<{ student?: StudentInfo; results?: ExamResultItem[]; stats?: SummaryStats }>('/students/my-results') : null;
+  const [studentInfo, setStudentInfo] = useState<StudentInfo | null>(cachedData?.student || null);
+  const [results, setResults] = useState<ExamResultItem[]>(cachedData?.results || []);
+  const [stats, setStats] = useState<SummaryStats>(cachedData?.stats || {
     totalExams: 0,
     avgScore: 0,
     passedCount: 0,
     failedCount: 0,
   });
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(!cachedData);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   // Filters & Search
@@ -167,7 +168,7 @@ export default function StudentResultsPage() {
     };
 
     try {
-      setLoading(true);
+      if (!results.length && !cachedData) setLoading(true);
       const res = await api.get('/students/my-results');
       if (res.data) {
         setStudentInfo(res.data.student || defaultStudent);
@@ -504,7 +505,7 @@ export default function StudentResultsPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 ">
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">

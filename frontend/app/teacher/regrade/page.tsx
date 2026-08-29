@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
-import api from '../../../lib/api';
+import api, { getCachedData } from '../../../lib/api';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Button } from '../../../components/ui/Button';
 import { TabBar, TabItem } from '../../../components/ui/TabBar';
@@ -24,8 +24,9 @@ import { PageSkeleton } from '../../../components/ui/Skeleton';
 export default function RegradeManagementPage() {
   usePageTitle('Thẩm định phúc khảo');
 
-  const [appeals, setAppeals] = useState<GradeAppealItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const cachedAppeals = typeof window !== 'undefined' ? getCachedData<GradeAppealItem[]>('/grade-appeals') : null;
+  const [appeals, setAppeals] = useState<GradeAppealItem[]>(cachedAppeals || []);
+  const [loading, setLoading] = useState<boolean>(!cachedAppeals);
   const [search, setSearch] = useState<string>('');
   const [statusTab, setStatusTab] = useState<string>('ALL');
   const [subjectFilter, setSubjectFilter] = useState<string>('ALL');
@@ -73,7 +74,7 @@ export default function RegradeManagementPage() {
 
   const fetchAppeals = useCallback(async () => {
     try {
-      setLoading(true);
+      if (!appeals.length && !cachedAppeals) setLoading(true);
       const params: any = {};
       if (search.trim()) params.search = search.trim();
       const res = await api.get('/grade-appeals', { params });
@@ -302,7 +303,7 @@ export default function RegradeManagementPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 ">
         {/* ── 1. Page Header ── */}
         <RegradeHeader
           onRefresh={handleRefresh}

@@ -26,18 +26,21 @@ import { ClassBulkAction } from '../../components/classes/ClassBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { PageSkeleton } from '../../components/ui/Skeleton';
+import { getCachedData } from '../../lib/api';
 
 export default function ClassesPage() {
   usePageTitle('Quản lý lớp học');
   const router = useRouter();
 
+  const cachedClasses = typeof window !== 'undefined' ? getCachedData<ClassItem[]>('/classes') : null;
+  const cachedDepts = typeof window !== 'undefined' ? getCachedData<Department[]>('/departments') : null;
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [classes, setClasses] = useState<ClassItem[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
+  const [classes, setClasses] = useState<ClassItem[]>(cachedClasses || []);
+  const [departments, setDepartments] = useState<Department[]>(cachedDepts || []);
   const [search, setSearch] = useState('');
   const [selectedDeptId, setSelectedDeptId] = useState('');
   const [selectedSizeRange, setSelectedSizeRange] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedClasses);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -102,7 +105,6 @@ export default function ClassesPage() {
   });
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
     try {
       const [resClasses, resDepts] = await Promise.all([
         api.get('/classes'),
@@ -356,7 +358,7 @@ export default function ClassesPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
         {/* Header */}
         <ClassHeader
           onAdd={openAddModal}

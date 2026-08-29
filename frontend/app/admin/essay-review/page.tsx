@@ -44,13 +44,15 @@ import { QuestionMediaPlayer } from '../../../components/exam/QuestionMediaPlaye
 import { DynamicImage } from '../../../components/ui/DynamicImage';
 import { ImageLightboxModal } from '../../../components/ImageLightboxModal';
 import { getImageUrl } from '../../../lib/media-utils';
+import { getCachedData } from '../../../lib/api';
 
 function AdminEssayReviewContent() {
   usePageTitle('Duyệt bài tự luận');
-  const [rows, setRows] = useState<any[]>([]);
+  const cachedRows = typeof window !== 'undefined' ? getCachedData<any[]>('/essay/grading/assignments') : null;
+  const [rows, setRows] = useState<any[]>(cachedRows || []);
   const [selected, setSelected] = useState<any>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedRows);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [subjectFilter, setSubjectFilter] = useState<string>('ALL');
@@ -275,7 +277,7 @@ function AdminEssayReviewContent() {
   }, [selected, scores]);
 
   const loadAssignments = useCallback(async () => {
-    setLoading(true);
+    if (!rows.length && !cachedRows) setLoading(true);
     try {
       const res = await api.get('/essay/grading/assignments', { params: { noCache: true } });
       setRows(res.data || []);
@@ -582,7 +584,7 @@ function AdminEssayReviewContent() {
   }
 
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 ">
       {/* ── 1. Standard Page Header ── */}
       <div className="pb-1 space-y-0.5">
         <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">

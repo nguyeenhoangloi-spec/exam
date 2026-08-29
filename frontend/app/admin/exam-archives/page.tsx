@@ -78,18 +78,24 @@ interface FilterOptions {
   departments: Array<{ id: number; name: string; code: string }>;
 }
 
+import { getCachedData } from '../../../lib/api';
+
 export default function ExamArchivesPage() {
   usePageTitle('Kho lưu trữ bài thi');
 
-  const [summary, setSummary] = useState<ArchiveSummary | null>(null);
-  const [schedules, setSchedules] = useState<ArchivedSchedule[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cachedSummary = typeof window !== 'undefined' ? getCachedData<ArchiveSummary>('/exam-archives/summary') : null;
+  const cachedSchedules = typeof window !== 'undefined' ? getCachedData<ArchivedSchedule[]>('/exam-archives/schedules') : null;
+  const cachedFilters = typeof window !== 'undefined' ? getCachedData<FilterOptions>('/exam-archives/filter-options') : null;
+
+  const [summary, setSummary] = useState<ArchiveSummary | null>(cachedSummary || null);
+  const [schedules, setSchedules] = useState<ArchivedSchedule[]>(cachedSchedules || []);
+  const [loading, setLoading] = useState(!cachedSchedules);
   const [selectedSchedule, setSelectedSchedule] = useState<ArchivedSchedule | null>(null);
   const [attempts, setAttempts] = useState<ArchivedAttempt[]>([]);
   const [loadingAttempts, setLoadingAttempts] = useState(false);
 
   // Filters
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>({ examPeriods: [], departments: [] });
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>(cachedFilters || { examPeriods: [], departments: [] });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPeriodId, setSelectedPeriodId] = useState<string>('');
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>('');
@@ -117,7 +123,7 @@ export default function ExamArchivesPage() {
 
   // Load summary and schedules
   const loadArchiveData = useCallback(async () => {
-    setLoading(true);
+    if (!schedules.length && !cachedSchedules) setLoading(true);
     try {
       const [sumRes, schedRes] = await Promise.all([
         api.get('/exam-archives/summary'),
@@ -381,7 +387,7 @@ export default function ExamArchivesPage() {
   }
 
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 ">
       {/* Header chuẩn hóa toàn hệ thống - Đồng bộ 100% với ExamReportHeader, TeacherHeader */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
         <div className="space-y-0.5">

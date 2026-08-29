@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../../../lib/api';
+import api, { getCachedData } from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { downloadCsv } from '../../../lib/export-csv';
@@ -60,9 +60,10 @@ import {
 export default function TeacherAssignmentsPage() {
   usePageTitle('Lịch coi thi');
   const router = useRouter();
+  const cachedAssignments = typeof window !== 'undefined' ? getCachedData<any[]>('/teachers/my-assignments') : null;
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [assignments, setAssignments] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [assignments, setAssignments] = useState<any[]>(cachedAssignments || []);
+  const [loading, setLoading] = useState(!cachedAssignments);
   const [busyId, setBusyId] = useState<number | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [drawerDuty, setDrawerDuty] = useState<any | null>(null);
@@ -128,7 +129,7 @@ export default function TeacherAssignmentsPage() {
 
   const fetchMyAssignments = async () => {
     try {
-      setLoading(true);
+      if (!assignments.length && !cachedAssignments) setLoading(true);
       const res = await api.get('/teachers/my-assignments');
       setAssignments(res.data || []);
     } catch (err: any) {
@@ -412,7 +413,7 @@ export default function TeacherAssignmentsPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">

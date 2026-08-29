@@ -25,18 +25,20 @@ import { ExamRoomPaginationBar } from '../../components/exam-rooms/ExamRoomPagin
 import { ExamRoomBulkAction } from '../../components/exam-rooms/ExamRoomBulkAction';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { PageSkeleton } from '../../components/ui/Skeleton';
+import { getCachedData } from '../../lib/api';
 
 export default function ExamRoomsPage() {
   usePageTitle('Quản lý phòng thi');
   const router = useRouter();
 
+  const cachedRooms = typeof window !== 'undefined' ? getCachedData<ExamRoom[]>('/exam-rooms') : null;
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [rooms, setRooms] = useState<ExamRoom[]>([]);
+  const [rooms, setRooms] = useState<ExamRoom[]>(cachedRooms || []);
   const [search, setSearch] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [selectedBuilding, setSelectedBuilding] = useState('');
   const [selectedCapacityRange, setSelectedCapacityRange] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!cachedRooms);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -98,7 +100,6 @@ export default function ExamRoomsPage() {
   });
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
     try {
       const res = await api.get('/exam-rooms');
       if (res.data && Array.isArray(res.data)) {
@@ -333,7 +334,7 @@ export default function ExamRoomsPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
         {/* Header */}
         <ExamRoomHeader
           onAdd={openAddModal}

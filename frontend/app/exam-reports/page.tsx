@@ -203,6 +203,8 @@ function getScheduleStatusBadge(s: any) {
   return { label: 'Đã kết thúc', key: 'COMPLETED', dotClass: 'bg-slate-300', textClass: 'text-slate-500 font-medium' };
 }
 
+import { getCachedData } from '../../lib/api';
+
 export default function ExamReportsPage() {
   usePageTitle('Báo cáo & Thống kê');
   const router = useRouter();
@@ -213,8 +215,9 @@ export default function ExamReportsPage() {
     viewParam === 'schedule' ? 'schedule' : 'summary'
   );
 
+  const cachedSchedules = typeof window !== 'undefined' ? getCachedData<ExamSchedule[]>('/exam-reports/schedules') : null;
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
+  const [schedules, setSchedules] = useState<ExamSchedule[]>(cachedSchedules || []);
   const [selectedScheduleId, setSelectedScheduleId] = useState<string>('');
   const [report, setReport] = useState<GradeReportResponse | null>(null);
   const [summary, setSummary] = useState<SummaryData | null>(null);
@@ -227,7 +230,7 @@ export default function ExamReportsPage() {
     fromDate: searchParams.get('fromDate') || '',
     toDate: searchParams.get('toDate') || '',
   });
-  const [loadingSchedules, setLoadingSchedules] = useState(true);
+  const [loadingSchedules, setLoadingSchedules] = useState(!cachedSchedules);
   const [loadingReport, setLoadingReport] = useState(false);
   const [showSchedulePicker, setShowSchedulePicker] = useState(false);
 
@@ -728,7 +731,7 @@ export default function ExamReportsPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
         {/* Header */}
         <ExamReportHeader
           title={activeMainTab === 'summary' ? 'Tổng báo cáo' : 'Bảng điểm chi tiết ca thi'}
