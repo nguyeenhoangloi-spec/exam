@@ -183,9 +183,7 @@ function TeacherEssayGradingContent() {
   const loadAssignments = useCallback(async () => {
     if (!rows.length && !cachedRows) setLoading(true);
     try {
-      const user = getAuthUser();
-      setCurrentUser(user || null);
-      const res = await api.get('/essay/grading/assignments', { params: { noCache: true } });
+      const res = await api.get('/essay/grading/assignments');
       setRows(res.data || []);
       if (attemptIdParam) {
         await openAttempt(attemptIdParam);

@@ -20,6 +20,7 @@ const MAX_BYTES = 20 * 1024 * 1024; // 20 MB
 @Injectable()
 export class EssayService {
   private readonly logger = new Logger(EssayService.name);
+  private lastAutoMarkZero = 0;
 
   constructor(
     private readonly prisma: PrismaService,
@@ -216,13 +217,24 @@ export class EssayService {
 
   async autoMarkZeroForExpiredExams(): Promise<{ success: boolean; updatedCount: number }> {
     const now = new Date();
+    // Cooldown throttle: Only run at most once every 60 seconds
+    if (Date.now() - this.lastAutoMarkZero < 60000) {
+      return { success: true, updatedCount: 0 };
+    }
+    this.lastAutoMarkZero = Date.now();
+
     const onlineConfigs = await this.prisma.onlineExamConfig.findMany({
+      where: {
+        examSchedule: {
+          examDate: { lte: now },
+        },
+      },
       include: {
         examSchedule: {
           include: {
             examScheduleRooms: {
               include: {
-                examRoomStudents: { include: { student: true } },
+                examRoomStudents: { select: { studentId: true } },
               },
             },
           },
@@ -230,7 +242,7 @@ export class EssayService {
       },
     });
 
-    let updatedCount = 0;
+    const expiredConfigs: { config: any; examEnd: Date }[] = [];
 
     for (const config of onlineConfigs) {
       const sched = config.examSchedule;
@@ -254,20 +266,46 @@ export class EssayService {
         59,
       );
 
-      // Nếu chưa hết giờ ca thi -> Chưa tự động chấm 0đ vắng thi
-      if (now <= examEnd) continue;
+      if (now > examEnd) {
+        expiredConfigs.push({ config, examEnd });
+      }
+    }
 
+    if (expiredConfigs.length === 0) {
+      return { success: true, updatedCount: 0 };
+    }
+
+    const expiredConfigIds = expiredConfigs.map((item) => item.config.id);
+    const existingAttempts = await this.prisma.examAttempt.findMany({
+      where: {
+        onlineExamConfigId: { in: expiredConfigIds },
+      },
+      select: {
+        id: true,
+        studentId: true,
+        onlineExamConfigId: true,
+        status: true,
+        gradingStatus: true,
+        submittedAt: true,
+      },
+    });
+
+    const attemptMap = new Map<string, (typeof existingAttempts)[0]>();
+    for (const a of existingAttempts) {
+      attemptMap.set(`${a.studentId}-${a.onlineExamConfigId}`, a);
+    }
+
+    let updatedCount = 0;
+
+    for (const { config, examEnd } of expiredConfigs) {
+      const sched = config.examSchedule;
       const rooms = sched.examScheduleRooms || [];
       for (const room of rooms) {
         for (const ers of room.examRoomStudents || []) {
           if (!ers.studentId) continue;
 
-          const attempt = await this.prisma.examAttempt.findFirst({
-            where: {
-              studentId: ers.studentId,
-              onlineExamConfigId: config.id,
-            },
-          });
+          const key = `${ers.studentId}-${config.id}`;
+          const attempt = attemptMap.get(key);
 
           if (!attempt) {
             // Trường hợp 1: Thí sinh vắng thi không vào thi -> Tạo điểm 0đ PUBLISHED
@@ -291,9 +329,6 @@ export class EssayService {
             attempt.gradingStatus !== EssayAttemptGradingStatus.PUBLISHED &&
             attempt.gradingStatus !== EssayAttemptGradingStatus.WAITING_APPROVAL
           ) {
-            // Trường hợp 2: Thí sinh đã tham gia thi nhưng hết giờ ca thi.
-            // Không tự động ghi điểm AI ở đây; Giảng viên phải chủ động bấm
-            // "Chấm mẫu AI" để xem đề xuất theo Rubric và xác nhận điểm.
             const isAlreadySubmitted = attempt.status === AttemptStatus.SUBMITTED || attempt.status === AttemptStatus.AUTO_SUBMITTED;
             await this.prisma.examAttempt.update({
               where: { id: attempt.id },
@@ -332,7 +367,6 @@ export class EssayService {
       orderBy: { submittedAt: 'asc' },
       include: {
         student: true,
-        snapshot: true,
         onlineExamConfig: {
           include: {
             examSchedule: { include: { subject: true, examPeriod: true } },
@@ -350,10 +384,6 @@ export class EssayService {
     });
 
     const attemptsWithEssay = attempts.filter((a) => {
-      const snap = a.snapshot?.snapshotData;
-      if (Array.isArray(snap) && snap.length > 0) {
-        return (snap as any[]).some((q) => q.type === 'ESSAY');
-      }
       const paperQuestions = a.onlineExamConfig?.examPaper?.questions || [];
       if (paperQuestions.length > 0) {
         return paperQuestions.some((eq: any) => eq.question?.type === 'ESSAY');
