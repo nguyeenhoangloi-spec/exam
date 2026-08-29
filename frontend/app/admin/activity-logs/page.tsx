@@ -14,6 +14,7 @@ import { ActivityFilterPopover } from '../../../components/activity-logs/Activit
 import { Toast } from '../../../components/Toast';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import { StatusBadge } from '../../../components/common/StatusBadge';
+import { PageSkeleton } from '../../../components/ui/Skeleton';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import { printReport } from '../../../lib/export-print';
 import { USER_ROLE_LABELS } from '../../../lib/enum-labels';
@@ -541,12 +542,12 @@ function ActivityLogsContent() {
         },
     ], [totalCount, secTotal]);
 
-    /* =========================================================================
-       3. RENDER (ĐỒNG BỘ 100% CỠ CHỮ GIỮA 2 TAB & DEEP INK PALETTE)
-    ========================================================================= */
+    if ((activeTab === 'activity' ? loading : secLoading) && !logs.length && !secEvents.length) {
+        return <PageSkeleton hasKPIs={false} variant="table" />;
+    }
 
     return (
-        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
+        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
             {/* ── 1. Page Header (Tiêu đề H1, Phụ đề chi tiết) ── */}

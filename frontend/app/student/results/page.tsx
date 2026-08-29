@@ -22,6 +22,7 @@ import {
 import { StudentResultFilterPopover } from '../../../components/student-results/StudentResultFilterPopover';
 import { StudentResultBulkAction } from '../../../components/student-results/StudentResultBulkAction';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
+import { PageSkeleton } from '../../../components/ui/Skeleton';
 import { downloadCsv } from '../../../lib/export-csv';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import { printReport } from '../../../lib/export-print';
@@ -497,9 +498,13 @@ export default function StudentResultsPage() {
     }
   };
 
+  if (loading && !results.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">

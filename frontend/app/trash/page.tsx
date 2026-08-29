@@ -22,6 +22,7 @@ import {
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { SortDropdown } from '../../components/ui/SortDropdown';
 import { ColumnToggleDropdown } from '../../components/ui/ColumnToggleDropdown';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 
 interface TrashItem {
   id: number | string;
@@ -348,8 +349,12 @@ function TrashPageContent() {
     label: 'Lịch thi',
   };
 
+  if (loading && !items.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
       {/* Toast Alert */}
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 

@@ -19,6 +19,7 @@ import { PaginationBar } from '../../../components/ui/PaginationBar';
 import { RegradeReviewDrawer, GradeAppealItem } from '../../../components/regrade/RegradeReviewDrawer';
 import { RegradeBulkAction } from '../../../components/regrade/RegradeBulkAction';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
+import { PageSkeleton } from '../../../components/ui/Skeleton';
 
 export default function RegradeManagementPage() {
   usePageTitle('Thẩm định phúc khảo');
@@ -295,9 +296,13 @@ export default function RegradeManagementPage() {
     });
   };
 
+  if (loading && !appeals.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
         {/* ── 1. Page Header ── */}
         <RegradeHeader
           onRefresh={handleRefresh}

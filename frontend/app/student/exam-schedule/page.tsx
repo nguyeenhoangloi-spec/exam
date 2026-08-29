@@ -37,6 +37,7 @@ import { ViewModeSegmentedControl } from '../../../components/ui/ViewModeSegment
 import { StudentScheduleCalendarView } from '../../../components/student/StudentScheduleCalendarView';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { PersonalScheduleItem } from '../../../types';
+import { PageSkeleton } from '../../../components/ui/Skeleton';
 
 export default function StudentExamSchedulePage() {
   usePageTitle('Lịch thi cá nhân');
@@ -220,9 +221,13 @@ export default function StudentExamSchedulePage() {
       });
   }, [schedules, modeFilter, statusFilter, searchQuery]);
 
+  if (loading && !schedules.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">

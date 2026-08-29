@@ -26,6 +26,7 @@ import { ExamReportPaginationBar } from '../../components/exam-reports/ExamRepor
 import { ExamReportBulkAction } from '../../components/exam-reports/ExamReportBulkAction';
 import { ExamReportSummaryTab, SummaryData } from '../../components/exam-reports/ExamReportSummaryTab';
 import { TabBar } from '../../components/ui/TabBar';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 
 interface GradeReportResponse {
   schedule: {
@@ -721,9 +722,13 @@ export default function ExamReportsPage() {
     printable.print();
   };
 
+  if (loadingSchedules && !schedules.length && !summary) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
         {/* Header */}
         <ExamReportHeader
           title={activeMainTab === 'summary' ? 'Tổng báo cáo' : 'Bảng điểm chi tiết ca thi'}

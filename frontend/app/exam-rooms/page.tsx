@@ -24,6 +24,7 @@ import { ExamRoomTable } from '../../components/exam-rooms/ExamRoomTable';
 import { ExamRoomPaginationBar } from '../../components/exam-rooms/ExamRoomPaginationBar';
 import { ExamRoomBulkAction } from '../../components/exam-rooms/ExamRoomBulkAction';
 import { FilterSelect } from '../../components/ui/FilterSelect';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 
 export default function ExamRoomsPage() {
   usePageTitle('Quản lý phòng thi');
@@ -326,9 +327,13 @@ export default function ExamRoomsPage() {
     });
   };
 
+  if (loading && !rooms.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
         {/* Header */}
         <ExamRoomHeader
           onAdd={openAddModal}

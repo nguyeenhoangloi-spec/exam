@@ -50,6 +50,7 @@ import { PermissionFilterPopover } from '../../../components/access-control/Perm
 import { UserRoleFilterPopover } from '../../../components/access-control/UserRoleFilterPopover';
 import { AccessHistoryFilterPopover, AccessHistoryFilterState } from '../../../components/access-control/AccessHistoryFilterPopover';
 import { PermissionOverrideSelect } from '../../../components/access-control/PermissionOverrideSelect';
+import { PageSkeleton } from '../../../components/ui/Skeleton';
 
 type Role = 'ADMIN' | 'TEACHER' | 'STUDENT';
 type Tab = 'matrix' | 'users' | 'history';
@@ -890,8 +891,12 @@ export default function AccessControlPage() {
     [permissions.length, users.length, history.length]
   );
 
+  if (loading && !permissions.length && !users.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen text-slate-900 dark:text-slate-100 dark:bg-slate-950">
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
       {/* ── 1. Standard Header ── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
         <div className="space-y-0.5">

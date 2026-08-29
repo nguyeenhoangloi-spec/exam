@@ -25,6 +25,7 @@ import { ClassPaginationBar } from '../../components/classes/ClassPaginationBar'
 import { ClassBulkAction } from '../../components/classes/ClassBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 
 export default function ClassesPage() {
   usePageTitle('Quản lý lớp học');
@@ -349,9 +350,13 @@ export default function ClassesPage() {
     });
   };
 
+  if (loading && !classes.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
         {/* Header */}
         <ClassHeader
           onAdd={openAddModal}

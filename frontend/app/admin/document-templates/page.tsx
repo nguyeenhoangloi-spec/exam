@@ -17,6 +17,7 @@ import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { Toast } from '../../../components/Toast';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import { printReport, printExamPaper } from '../../../lib/export-print';
+import { PageSkeleton } from '../../../components/ui/Skeleton';
 
 type DataSource =
   | 'EXAM_SCHEDULE_LIST'
@@ -465,18 +466,11 @@ export default function DocumentTemplatesPage() {
   }, [templates, searchQuery]);
 
   if (loading) {
-    return (
-      <div className="flex min-h-[500px] items-center justify-center">
-        <div className="flex flex-col items-center gap-3 text-type-body text-slate-700 dark:text-slate-300">
-          <div className="h-8 w-8 animate-spin rounded-full border-3 border-blue-600 border-t-transparent" />
-          <span className="font-medium">Đang tải Studio Biểu mẫu...</span>
-        </div>
-      </div>
-    );
+    return <PageSkeleton hasKPIs={false} variant="cards" />;
   }
 
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
       {/* 1. Header Tiêu Chuẩn Hệ Thống (Đồng bộ khoảng cách pb-1, space-y-0.5) */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
         <div className="space-y-0.5">

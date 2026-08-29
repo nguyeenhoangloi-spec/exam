@@ -31,6 +31,7 @@ import { ExamPaperBulkAction } from '../../components/exam-papers/ExamPaperBulkA
 import { ExamPaperDetailDrawer } from '../../components/exam-papers/ExamPaperDetailDrawer';
 import { ExamPaperExportModal } from '../../components/exam-papers/ExamPaperExportModal';
 import { ExamPaperExportData } from '../../lib/export-docx';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 
 function formatPaperForExport(paper: any) {
   const details = paper.details || paper.questions || paper.paperDetails || [];
@@ -844,9 +845,13 @@ export default function ExamPapersPage() {
     });
   };
 
+  if (loading && !papers.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
         <ExamPaperHeader
           onExportAll={exportExcel}
           onPrintAll={handlePrintReport}

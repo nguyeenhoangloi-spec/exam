@@ -29,6 +29,7 @@ import { ExamSchedulePaginationBar } from '../../components/exam-schedules/ExamS
 import { RescheduleModal } from '../../components/exam-schedules/RescheduleModal';
 import { CancelScheduleModal } from '../../components/exam-schedules/CancelScheduleModal';
 import { Calendar, Clock, Building, Users, AlertTriangle, FileSpreadsheet, Search, X } from 'lucide-react';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 
 function calculateEndTime(startTime: string, durationMinutes: number): string {
   if (!startTime) return '08:30';
@@ -441,9 +442,13 @@ export default function ExamSchedulesPage() {
     }
   };
 
+  if (loading && !schedules.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
         {/* Header */}
         <ExamScheduleHeader
           onAdd={openAddModal}

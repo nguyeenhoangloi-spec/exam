@@ -27,6 +27,7 @@ import { StudentTable } from '../../components/students/StudentTable';
 import { StudentPaginationBar } from '../../components/students/StudentPaginationBar';
 import { StudentBulkAction } from '../../components/students/StudentBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 
 export default function StudentsPage() {
   usePageTitle('Quản lý sinh viên');
@@ -444,9 +445,13 @@ export default function StudentsPage() {
     });
   };
 
+  if (loading && !students.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
         {/* Header */}
         <StudentHeader
           onAdd={openAddModal}

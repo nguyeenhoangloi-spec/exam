@@ -24,6 +24,7 @@ import { ExamPeriodPaginationBar } from '../../components/exam-periods/ExamPerio
 import { ExamPeriodBulkAction } from '../../components/exam-periods/ExamPeriodBulkAction';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { ExamPeriodFilterPopover } from '../../components/exam-periods/ExamPeriodFilterPopover';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 
 export default function ExamPeriodsPage() {
 
@@ -299,9 +300,13 @@ export default function ExamPeriodsPage() {
     });
   };
 
+  if (loading && !periods.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
         {/* Header */}
         <ExamPeriodHeader
           onAdd={openAddModal}

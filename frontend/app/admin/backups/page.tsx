@@ -54,6 +54,7 @@ import { CriticalConfirmModal, CriticalConfirmPayload } from '../../../component
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { DataActionsDropdown } from '../../../components/ui/DataActionsDropdown';
 import { PaginationBar } from '../../../components/ui/PaginationBar';
+import { PageSkeleton } from '../../../components/ui/Skeleton';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import { exportCsvData } from '../../../lib/export-csv';
 import { printReport } from '../../../lib/export-print';
@@ -586,9 +587,12 @@ export default function BackupsPage() {
         return request.target === 'PRODUCTION' && request.requestedBy?.id === currentUser?.id;
     };
 
-    {/* Shared control sizing is applied globally; keep this page behavior unchanged. */ }
+    if (loading && !jobs.length) {
+        return <PageSkeleton hasKPIs={false} variant="table" />;
+    }
+
     return (
-        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
+        <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
             {/* Header matching standard page header across all management pages */}

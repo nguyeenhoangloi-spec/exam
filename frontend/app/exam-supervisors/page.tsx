@@ -26,6 +26,7 @@ import { ExamSupervisorBulkAction } from '../../components/exam-supervisors/Exam
 import { InlineAutoProposalPanel } from '../../components/exam-supervisors/InlineAutoProposalPanel';
 import { SchedulePickerModal } from '../../components/exam-supervisors/SchedulePickerModal';
 import { ReviewSupervisorChangeModal } from '../../components/exam-supervisors/ReviewSupervisorChangeModal';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 
 function getTeacherInitials(fullName?: string): string {
   if (!fullName) return 'GV';
@@ -413,6 +414,10 @@ export default function ExamSupervisorsPage() {
     }
   };
 
+  if (loading && !schedules.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
       {/* Toast */}
@@ -437,7 +442,7 @@ export default function ExamSupervisorsPage() {
         onSelectSchedule={selectSchedule}
       />
 
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950/50 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
         {/* ── 1. Page Header ── */}
         <ExamSupervisorHeader
           onExport={handleExportExcel}

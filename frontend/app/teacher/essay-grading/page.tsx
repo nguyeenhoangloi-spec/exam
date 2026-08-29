@@ -11,6 +11,7 @@ import { RubricViewerModal } from '../../../components/question-bank/RubricViewe
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { TabBar } from '../../../components/ui/TabBar';
+import { PageSkeleton } from '../../../components/ui/Skeleton';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import { ProfileDrawer } from '../../../components/ProfileDrawer';
@@ -703,8 +704,12 @@ function TeacherEssayGradingContent() {
       || selected.gradingStatus === 'WAITING_APPROVAL';
   }, [selected]);
 
+  if (loading && !rows.length) {
+    return <PageSkeleton hasKPIs={false} variant="cards" />;
+  }
+
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
       {/* ── 1. Standard Page Header ── */}
       <div className="pb-1 space-y-0.5">
         <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">

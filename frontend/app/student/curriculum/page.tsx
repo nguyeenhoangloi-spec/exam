@@ -22,6 +22,7 @@ import { ProfileDrawer } from '../../../components/ProfileDrawer';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { StudentCurriculumFilterPopover } from '../../../components/student-curriculum/StudentCurriculumFilterPopover';
 import { StudentCurriculumBulkAction } from '../../../components/student-curriculum/StudentCurriculumBulkAction';
+import { PageSkeleton } from '../../../components/ui/Skeleton';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import { printReport } from '../../../lib/export-print';
 import {
@@ -383,9 +384,13 @@ export default function StudentCurriculumPage() {
     if (!paginationPages.includes(totalPages)) paginationPages.push(totalPages);
   }
 
+  if (loading && !curriculumList.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">

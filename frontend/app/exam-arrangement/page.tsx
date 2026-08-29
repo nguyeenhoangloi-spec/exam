@@ -12,6 +12,7 @@ import { FilterSelect } from '../../components/ui/FilterSelect';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { SlidingSegmentedControl } from '../../components/ui/SlidingSegmentedControl';
 import { ViewModeSegmentedControl } from '../../components/ui/ViewModeSegmentedControl';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 import {
   DoorOpen,
   Users,
@@ -831,9 +832,13 @@ export default function ExamArrangementPage() {
 
   const currentSchedule = schedules.find((s) => s.id.toString() === selectedScheduleId);
 
+  if (isLoadingSchedule && !schedules.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-4 sm:px-6 py-6 space-y-5 min-h-screen">
+      <main className="w-full px-4 sm:px-6 py-6 space-y-5 min-h-screen bg-slate-50/50 dark:bg-slate-950 animate-in fade-in-0 duration-200">
         <ExamArrangementHeader
           onPrintDoorList={handlePrintDoorList}
           onPrintAttendance={handlePrintAttendanceSheet}

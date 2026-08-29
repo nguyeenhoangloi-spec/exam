@@ -28,6 +28,7 @@ import { DutyAvailabilityModal } from '../../../components/exam-supervisors/Duty
 import { SupervisorChangeRequestModal } from '../../../components/exam-supervisors/SupervisorChangeRequestModal';
 import { ViewModeSegmentedControl } from '../../../components/ui/ViewModeSegmentedControl';
 import { TeacherAssignmentCalendarView } from '../../../components/teacher/TeacherAssignmentCalendarView';
+import { PageSkeleton } from '../../../components/ui/Skeleton';
 import {
   ShieldCheck,
   Calendar,
@@ -405,9 +406,13 @@ export default function TeacherAssignmentsPage() {
     drawerDuty?.examDate && new Date(drawerDuty.examDate).getTime() < new Date().setHours(0, 0, 0, 0),
   );
 
+  if (loading && !assignments.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
         {/* ── 1. Standard Page Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
           <div className="space-y-0.5">

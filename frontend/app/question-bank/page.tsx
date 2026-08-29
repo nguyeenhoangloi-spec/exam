@@ -21,6 +21,7 @@ import { QuestionAIWizard } from '../../components/question-bank/QuestionAIWizar
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { Toast } from '../../components/Toast';
 import { exportToFormattedExcel } from '../../lib/export-excel';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 
 const _cache = (typeof window !== 'undefined' && (window as any).__QB_CACHE__) || null;
 
@@ -323,9 +324,13 @@ export default function QuestionBankPage() {
     setPage(1);
   };
 
+  if (loading && !questions.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen text-slate-900 dark:text-slate-100">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
         {/* Header Section */}
         <QuestionBankHeader
           onAdd={() => {

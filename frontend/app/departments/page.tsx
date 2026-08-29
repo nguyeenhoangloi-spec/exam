@@ -24,6 +24,7 @@ import { DepartmentPaginationBar } from '../../components/departments/Department
 import { DepartmentBulkAction } from '../../components/departments/DepartmentBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 
 interface CurriculumItem {
   id: number;
@@ -397,9 +398,13 @@ export default function DepartmentsPage() {
     });
   };
 
+  if (loading && !departments.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
         {/* Header */}
         <DepartmentHeader
           onAdd={openAddModal}

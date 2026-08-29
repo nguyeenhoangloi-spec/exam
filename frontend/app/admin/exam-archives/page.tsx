@@ -16,6 +16,7 @@ import { DataActionsDropdown } from '../../../components/ui/DataActionsDropdown'
 import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { PaginationBar } from '../../../components/ui/PaginationBar';
 import { ExamArchiveDetailModal } from '../../../components/exam-archives/ExamArchiveDetailModal';
+import { PageSkeleton } from '../../../components/ui/Skeleton';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import {
   printReport,
@@ -375,8 +376,12 @@ export default function ExamArchivesPage() {
     });
   };
 
+  if (loading && !schedules.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
-    <main className="w-full min-h-screen bg-slate-50/50 dark:bg-slate-900/50 p-6 space-y-5">
+    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 animate-in fade-in-0 duration-200">
       {/* Header chuẩn hóa toàn hệ thống - Đồng bộ 100% với ExamReportHeader, TeacherHeader */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
         <div className="space-y-0.5">

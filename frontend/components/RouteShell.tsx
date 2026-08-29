@@ -9,7 +9,6 @@ import { canAccessPath, resolveWorkspaceRoute } from '../lib/access';
 import { getAuthUser } from '../lib/auth';
 import api, { restoreAuthSession, warmupGlobalCache } from '../lib/api';
 import { applyTheme, getSavedTheme, initThemeListener } from '../lib/theme';
-import { NavigationProgress } from './NavigationProgress';
 import { usePageTitleValue } from './PageTitleContext';
 
 /** Public entry/support routes and pages that intentionally omit the app shell. */
@@ -86,9 +85,11 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
         return initThemeListener();
     }, []);
 
+    // Load auth user and permissions once on mount, and subscribe to auth events.
+    // We intentionally DO NOT re-run this on every pathname change to avoid unmounting the shell.
     useEffect(() => {
         let active = true;
-        const updateAuthUser = async () => {
+        const updateAuthUser = async (force = false) => {
             await restoreAuthSession();
             if (!active) return;
             const u = getAuthUser();
@@ -96,6 +97,10 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
             setAuthLoaded(true);
             if (u?.role) {
                 warmupGlobalCache(u.role);
+                // If permissions are already loaded for this user and not forced, reuse them immediately
+                if (!force && permissionsLoaded && permissionOwnerId === u.id) {
+                    return;
+                }
                 try {
                     const response = await api.get('/access-control/me/effective');
                     if (!active) return;
@@ -123,10 +128,10 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
         void updateAuthUser();
 
         if (typeof window !== 'undefined') {
-            const handleAuthChange = () => { void updateAuthUser(); };
+            const handleAuthChange = () => { void updateAuthUser(true); };
             const handleAuthStorage = (event: StorageEvent) => {
                 if (event.key === 'exam_app_user') {
-                    void updateAuthUser();
+                    void updateAuthUser(true);
                 }
             };
             const handlePageShow = (event: PageTransitionEvent) => {
@@ -144,7 +149,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
                 window.removeEventListener('pageshow', handlePageShow);
             };
         }
-    }, [pathname]);
+    }, [permissionsLoaded, permissionOwnerId]);
 
     const handleToggle = () => {
         setIsToggling(true);
@@ -250,7 +255,6 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
 
     return (
         <div className="min-h-screen overflow-x-clip bg-slate-50 dark:bg-slate-950">
-            <NavigationProgress />
             {mobileOpen && (
                 <button
                     type="button"
@@ -275,7 +279,11 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
             >
                 <Header user={user} title={title} collapsed={collapsed} onToggleSidebar={handleToggle} onMenuClick={() => setMobileOpen(true)} />
                 {/* pt-16 (64px) matches the fixed header height (h-16) so content never hides underneath it */}
-                <main className="w-full min-w-0 max-w-full overflow-x-clip pt-16 min-h-screen">{children}</main>
+                <main className="w-full min-w-0 max-w-full overflow-x-clip pt-16 min-h-screen">
+                    <div key={pathname} className="animate-in fade-in-0 duration-150 motion-reduce:animate-none">
+                        {children}
+                    </div>
+                </main>
             </div>
         </div>
     );

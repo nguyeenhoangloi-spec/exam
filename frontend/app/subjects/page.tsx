@@ -24,6 +24,7 @@ import { SubjectTable } from '../../components/subjects/SubjectTable';
 import { SubjectPaginationBar } from '../../components/subjects/SubjectPaginationBar';
 import { SubjectBulkAction } from '../../components/subjects/SubjectBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
+import { PageSkeleton } from '../../components/ui/Skeleton';
 
 export default function SubjectsPage() {
   usePageTitle('Quản lý môn học');
@@ -407,9 +408,13 @@ export default function SubjectsPage() {
     return Array.from(map.entries()).map(([id, label]) => ({ id, label }));
   }, [drawerEnrollments]);
 
+  if (loading && !subjects.length) {
+    return <PageSkeleton hasKPIs={true} variant="table" />;
+  }
+
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 min-h-screen">
+      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen animate-in fade-in-0 duration-200">
         <SubjectHeader
           onAdd={openAddModal}
           onExport={exportExcel}
