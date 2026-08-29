@@ -6,14 +6,17 @@ import {
   AlertTriangle,
   ArrowUpRight,
   BarChart3,
+  Check,
   ChevronDown,
   ChevronLeft,
   ClipboardList,
   Columns3,
   FileSpreadsheet,
   FileText,
+  GripVertical,
   History,
   Pencil,
+  RotateCcw,
   Search,
   Settings2,
   Trash2,
@@ -248,7 +251,7 @@ export function ExamReportSummaryTab({
   const updateColumnMenuPosition = useCallback(() => {
     if (!columnBtnRef.current) return;
     const rect = columnBtnRef.current.getBoundingClientRect();
-    const width = 360; // w-[360px]
+    const width = 380; // w-[380px]
     let left = rect.right - width;
     if (left < 16) left = 16;
     const top = rect.bottom + 6;
@@ -836,50 +839,61 @@ export function ExamReportSummaryTab({
                         <div
                           ref={columnMenuRef}
                           style={columnMenuStyle}
-                          className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-3 space-y-2.5 animate-in fade-in zoom-in-95 duration-150"
+                          className="rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-3.5 space-y-2.5 animate-in fade-in zoom-in-95 duration-150"
                         >
-                          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
-                            <div>
-                              <span className="text-type-body-sm font-semibold text-slate-900 dark:text-white">
-                                Tùy biến cột & nhãn ({columns.length}/{preview.columns.length})
-                              </span>
-                              <p className="text-type-helper text-slate-400 font-normal mt-0.5">
+                          {/* Header Popover & Hàng nút tác vụ nhanh */}
+                          <div className="space-y-2 pb-2.5 border-b border-slate-100 dark:border-slate-800">
+                            <div className="px-1.5">
+                              <div className="flex items-center justify-between gap-2">
+                                <h3 className="text-type-body font-semibold text-slate-900 dark:text-white leading-5">
+                                  Tùy biến cột & nhãn
+                                </h3>
+                                <span className="!text-xs text-slate-400 dark:text-slate-500 !font-normal tabular-nums">
+                                  [{columns.length}/{preview.columns.length}]
+                                </span>
+                              </div>
+                              <p className="!text-xs text-slate-400 dark:text-slate-500 !font-normal mt-0.5 leading-4">
                                 Tùy chỉnh cột hiển thị & chỉnh sửa tên tiêu đề
                               </p>
                             </div>
-                            <div className="flex items-center gap-1.5 text-type-helper font-medium">
+
+                            {/* Hàng 3 nút thao tác thanh mảnh, căn bằng lề 2 bên */}
+                            <div className="flex items-center justify-between gap-2 px-1.5 pt-0.5">
+                              <div className="flex items-center gap-1.5 !text-xs !font-normal">
+                                <button
+                                  type="button"
+                                  onClick={() => setColumns(preview.columns.map((c) => c.key))}
+                                  className="!min-h-0 !p-0 !bg-transparent !text-xs !font-normal text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+                                >
+                                  Chọn tất cả
+                                </button>
+                                <span className="text-slate-300 dark:text-slate-600 select-none !text-xs">|</span>
+                                <button
+                                  type="button"
+                                  onClick={() => setColumns([])}
+                                  className="!min-h-0 !p-0 !bg-transparent !text-xs !font-normal text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                                >
+                                  Bỏ chọn
+                                </button>
+                              </div>
+
                               <button
                                 type="button"
-                                onClick={() => setColumns(preview.columns.map((c) => c.key))}
-                                className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white cursor-pointer"
+                                onClick={() => {
+                                  resetCustomLabels();
+                                  setColumns(preview.columns.map((c) => c.key));
+                                }}
+                                className="!min-h-0 !p-0 !bg-transparent !text-xs !font-normal inline-flex items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                                title="Khôi phục trạng thái và tên cột ban đầu"
                               >
-                                Tất cả
-                              </button>
-                              <span className="text-slate-300 dark:text-slate-700">|</span>
-                              <button
-                                type="button"
-                                onClick={() => setColumns([])}
-                                className="text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 cursor-pointer"
-                              >
-                                Bỏ hết
+                                <RotateCcw className="h-3 w-3" />
+                                <span>Đặt lại mặc định</span>
                               </button>
                             </div>
                           </div>
 
-                          {Object.keys(customLabels).length > 0 && (
-                            <div className="flex items-center justify-end">
-                              <button
-                                type="button"
-                                onClick={resetCustomLabels}
-                                className="text-type-helper font-medium text-blue-600 dark:text-blue-400 hover:underline transition cursor-pointer"
-                                title="Khôi phục tên cột ban đầu"
-                              >
-                                Khôi phục nhãn mặc định
-                              </button>
-                            </div>
-                          )}
-
-                          <div className="max-h-64 overflow-y-auto space-y-1 custom-scrollbar pr-1">
+                          {/* Danh sách cột phẳng hoàn toàn không viền, chỉ đổi màu nhẹ khi hover */}
+                          <div className="max-h-64 overflow-y-auto space-y-0.5 custom-scrollbar pr-0.5">
                             {preview.columns.map((c) => {
                               const isChecked = columns.includes(c.key);
                               const currentLabel = customLabels[c.key] || c.label;
@@ -889,41 +903,46 @@ export function ExamReportSummaryTab({
                               return (
                                 <div
                                   key={c.key}
-                                  className={`p-2 rounded-xl border transition ${isChecked
-                                      ? 'bg-slate-50/70 dark:bg-slate-850/60 border-slate-200/60 dark:border-slate-700'
-                                      : 'bg-transparent border-transparent text-slate-400 dark:text-slate-500'
-                                    }`}
+                                  className="group/item flex items-center justify-between gap-2 py-1.5 px-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-xl transition-colors"
                                 >
-                                  <div className="flex items-center justify-between gap-2">
-                                    <label className="flex items-center gap-2 min-w-0 flex-1 cursor-pointer select-none">
-                                      <input
-                                        type="checkbox"
-                                        checked={isChecked}
-                                        onChange={() =>
-                                          setColumns((prev) =>
-                                            prev.includes(c.key) ? prev.filter((k) => k !== c.key) : [...prev, c.key],
-                                          )
-                                        }
-                                        className="h-4 w-4 rounded-md border-slate-300 dark:border-slate-600 text-slate-900 focus:ring-slate-400 cursor-pointer"
-                                      />
-                                      {!isEditing ? (
+                                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                                    {/* Icon tay nắm ::: */}
+                                    <GripVertical className="h-4 w-4 text-slate-300 dark:text-slate-600 shrink-0 select-none group-hover/item:text-slate-400 dark:group-hover/item:text-slate-500 cursor-grab" />
+
+                                    {/* Checkbox [✓] */}
+                                    <input
+                                      id={`col-toggle-${c.key}`}
+                                      type="checkbox"
+                                      checked={isChecked}
+                                      onChange={() =>
+                                        setColumns((prev) =>
+                                          prev.includes(c.key) ? prev.filter((k) => k !== c.key) : [...prev, c.key],
+                                        )
+                                      }
+                                      className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500/20 cursor-pointer shrink-0"
+                                    />
+
+                                    {!isEditing ? (
+                                      <label
+                                        htmlFor={`col-toggle-${c.key}`}
+                                        className="flex items-center min-w-0 flex-1 cursor-pointer select-none"
+                                      >
                                         <span
-                                          className={`text-type-body-sm truncate ${isChecked
+                                          className={`text-type-body-sm truncate ${
+                                            isChecked
                                               ? 'font-medium text-slate-900 dark:text-slate-100'
-                                              : 'text-slate-400 dark:text-slate-500'
-                                            }`}
+                                              : 'text-slate-400 dark:text-slate-500 font-normal'
+                                          }`}
                                         >
                                           {currentLabel}
-                                          {isCustomized && (
-                                            <span className="ml-1.5 text-type-helper text-blue-600 dark:text-blue-400 font-normal">
-                                              (Đã sửa)
-                                            </span>
-                                          )}
                                         </span>
-                                      ) : null}
-                                    </label>
-
-                                    {isEditing ? (
+                                        {isCustomized && (
+                                          <span className="ml-1.5 text-type-badge font-normal text-blue-600 dark:text-blue-400 shrink-0">
+                                            (Đã sửa)
+                                          </span>
+                                        )}
+                                      </label>
+                                    ) : (
                                       <div className="flex items-center gap-1.5 flex-1 min-w-0">
                                         <input
                                           autoFocus
@@ -941,20 +960,23 @@ export function ExamReportSummaryTab({
                                               setEditingLabelKey(null);
                                             }
                                           }}
-                                          className="h-8 w-full rounded-xl border border-blue-500 bg-white dark:bg-slate-900 px-2 text-type-body font-normal text-slate-900 dark:text-slate-100 outline-none"
+                                          className="h-7 w-full rounded-lg border border-blue-500 bg-white dark:bg-slate-900 px-2 text-type-body-sm font-normal text-slate-900 dark:text-slate-100 outline-none shadow-2xs"
                                         />
                                       </div>
-                                    ) : (
-                                      <button
-                                        type="button"
-                                        onClick={() => setEditingLabelKey(c.key)}
-                                        className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition rounded-xl hover:bg-white dark:hover:bg-slate-800 cursor-pointer"
-                                        title="Chỉnh sửa tên cột này"
-                                      >
-                                        <Pencil className="h-3.5 w-3.5" />
-                                      </button>
                                     )}
                                   </div>
+
+                                  {/* Nút bút chì: chỉ hiển thị khi hover */}
+                                  {!isEditing ? (
+                                    <button
+                                      type="button"
+                                      onClick={() => setEditingLabelKey(c.key)}
+                                      className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-150 p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700 rounded-md cursor-pointer shrink-0"
+                                      title={`Đổi tên tiêu đề "${currentLabel}"`}
+                                    >
+                                      <Pencil className="h-3.5 w-3.5" />
+                                    </button>
+                                  ) : null}
                                 </div>
                               );
                             })}
