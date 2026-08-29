@@ -160,6 +160,8 @@ export const MINISTRY_PRESET_LABELS: Record<string, string> = {
   createdAt: 'Ngày tiếp nhận',
 };
 
+import Link from 'next/link';
+
 export function ExamReportSummaryTab({
   summary,
   filters,
@@ -473,7 +475,7 @@ export function ExamReportSummaryTab({
   const navigationTabs = useMemo<TabItem<'overview' | 'builder' | 'history'>[]>(
     () => [
       { key: 'overview', label: 'Tổng quan ca thi' },
-      { key: 'builder', label: 'Tạo báo cáo theo mẫu' },
+      { key: 'builder', label: 'Tạo báo cáo danh mục' },
       { key: 'history', label: 'Lịch sử xuất', count: history.length || undefined },
     ],
     [history.length],
@@ -535,19 +537,17 @@ export function ExamReportSummaryTab({
                 ref={templateBtnRef}
                 type="button"
                 onClick={() => setOpenTemplateMenu((v) => !v)}
-                className={`h-9 inline-flex items-center gap-1.5 px-2.5 rounded-xl text-type-body font-medium transition cursor-pointer select-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none ${
-                  openTemplateMenu
+                className={`h-9 inline-flex items-center gap-1.5 px-2.5 rounded-xl text-type-body font-medium transition cursor-pointer select-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none ${openTemplateMenu
                     ? 'text-slate-900 dark:text-white font-semibold'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-                }`}
+                  }`}
                 title="Chọn mẫu báo cáo"
               >
                 <FileSpreadsheet className="h-4 w-4 text-slate-400 shrink-0" />
                 <span>Mẫu báo cáo</span>
                 <ChevronDown
-                  className={`h-3.5 w-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${
-                    openTemplateMenu ? 'rotate-180 text-slate-600 dark:text-slate-300' : ''
-                  }`}
+                  className={`h-3.5 w-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${openTemplateMenu ? 'rotate-180 text-slate-600 dark:text-slate-300' : ''
+                    }`}
                 />
               </button>
 
@@ -588,6 +588,16 @@ export function ExamReportSummaryTab({
                           <ArrowUpRight className="h-4 w-4 text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
                         </button>
                       ))}
+                    </div>
+
+                    <div className="pt-1 mt-1 border-t border-slate-100 dark:border-slate-800">
+                      <Link
+                        href="/admin/document-templates"
+                        className="w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-slate-50 dark:hover:bg-slate-800 text-type-body-sm font-medium text-blue-600 dark:text-blue-400 transition-colors cursor-pointer group"
+                      >
+                        <span>Quản lý & Thiết kế biểu mẫu in</span>
+                        <ArrowUpRight className="h-4 w-4 shrink-0 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      </Link>
                     </div>
                   </div>,
                   document.body,
@@ -659,11 +669,10 @@ export function ExamReportSummaryTab({
           {/* CỘT TRÁI: Cấu hình báo cáo (Sliding drawer êm ái, nội dung giữ nguyên kích thước cố định để chống giật chữ và tràn bóng) */}
           <aside
             aria-label="Cấu hình báo cáo"
-            className={`transition-[width,opacity] duration-300 ease-in-out shrink-0 bg-white dark:bg-slate-900 overflow-hidden flex flex-col justify-between ${
-              collapseConfig
+            className={`transition-[width,opacity] duration-300 ease-in-out shrink-0 bg-white dark:bg-slate-900 overflow-hidden flex flex-col justify-between ${collapseConfig
                 ? 'w-0 opacity-0 pointer-events-none'
                 : 'w-full xl:w-[320px] 2xl:w-[340px] opacity-100 border-b xl:border-b-0 xl:border-r border-slate-100 dark:border-slate-800'
-            }`}
+              }`}
           >
             {/* Lớp bọc bên trong có kích thước cố định, chống bóp méo text và tràn shadow khi thu phóng */}
             <div className="w-[320px] 2xl:w-[340px] flex flex-col justify-between min-h-full shrink-0">
@@ -745,35 +754,6 @@ export function ExamReportSummaryTab({
                       onChange={(v) => setFilters((f) => ({ ...f, toDate: v }))}
                     />
                   </div>
-
-                  <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-3">
-                    <p className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">
-                      Quy chế khảo thí & Làm tròn
-                    </p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <Select
-                        label="Làm tròn điểm"
-                        value={scoreRounding}
-                        onChange={(v) => setScoreRounding(v as '0.1' | '0.25' | '0.5')}
-                        options={[
-                          { value: '0.1', label: '0.1 (Bộ GD&ĐT)' },
-                          { value: '0.25', label: '0.25 điểm' },
-                          { value: '0.5', label: '0.5 điểm' },
-                        ]}
-                        all={false}
-                      />
-                      <Select
-                        label="Ngưỡng điểm đạt"
-                        value={String(passThreshold)}
-                        onChange={(v) => setPassThreshold(Number(v))}
-                        options={[
-                          { value: '5', label: '≥ 5.0 (Thang 10)' },
-                          { value: '4', label: '≥ 4.0 (Tín chỉ D)' },
-                        ]}
-                        all={false}
-                      />
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -804,9 +784,8 @@ export function ExamReportSummaryTab({
                   title={collapseConfig ? 'Mở rộng cột cấu hình' : 'Thu gọn cột cấu hình'}
                 >
                   <ChevronLeft
-                    className={`h-4 w-4 transition-transform duration-200 ease-in-out ${
-                      collapseConfig ? 'rotate-180' : ''
-                    }`}
+                    className={`h-4 w-4 transition-transform duration-200 ease-in-out ${collapseConfig ? 'rotate-180' : ''
+                      }`}
                   />
                 </button>
                 <div className="min-w-0">
@@ -836,19 +815,17 @@ export function ExamReportSummaryTab({
                       ref={columnBtnRef}
                       type="button"
                       onClick={() => setOpenColumnMenu((v) => !v)}
-                      className={`h-9 inline-flex items-center gap-1.5 px-2 rounded-xl text-type-body-sm font-medium transition cursor-pointer select-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none ${
-                        openColumnMenu
+                      className={`h-9 inline-flex items-center gap-1.5 px-2 rounded-xl text-type-body-sm font-medium transition cursor-pointer select-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none ${openColumnMenu
                           ? 'text-slate-900 dark:text-white font-semibold'
                           : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-                      }`}
+                        }`}
                       title="Tùy chỉnh cột xuất file"
                     >
                       <Columns3 className="h-4 w-4 text-slate-400" />
                       <span>Cột xuất file</span>
                       <ChevronDown
-                        className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${
-                          openColumnMenu ? 'rotate-180 text-slate-600 dark:text-slate-300' : ''
-                        }`}
+                        className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${openColumnMenu ? 'rotate-180 text-slate-600 dark:text-slate-300' : ''
+                          }`}
                       />
                     </button>
 
@@ -867,7 +844,7 @@ export function ExamReportSummaryTab({
                                 Tùy biến cột & nhãn ({columns.length}/{preview.columns.length})
                               </span>
                               <p className="text-type-helper text-slate-400 font-normal mt-0.5">
-                                Đổi tên tiêu đề theo biểu mẫu Bộ GD&ĐT
+                                Tùy chỉnh cột hiển thị & chỉnh sửa tên tiêu đề
                               </p>
                             </div>
                             <div className="flex items-center gap-1.5 text-type-helper font-medium">
@@ -889,25 +866,18 @@ export function ExamReportSummaryTab({
                             </div>
                           </div>
 
-                          {/* Bộ mẫu Preset nhanh */}
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={applyMinistryPreset}
-                              className="px-2.5 py-1 rounded-xl text-type-helper font-medium bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/60 transition cursor-pointer border border-blue-200/60 dark:border-blue-800"
-                              title="Tự động áp dụng bộ tên tiêu chuẩn hành chính Bộ GD&ĐT"
-                            >
-                              Mẫu Bộ GD&ĐT
-                            </button>
-                            <button
-                              type="button"
-                              onClick={resetCustomLabels}
-                              className="px-2.5 py-1 rounded-xl text-type-helper font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
-                              title="Khôi phục tên cột ban đầu"
-                            >
-                              Mặc định
-                            </button>
-                          </div>
+                          {Object.keys(customLabels).length > 0 && (
+                            <div className="flex items-center justify-end">
+                              <button
+                                type="button"
+                                onClick={resetCustomLabels}
+                                className="text-type-helper font-medium text-blue-600 dark:text-blue-400 hover:underline transition cursor-pointer"
+                                title="Khôi phục tên cột ban đầu"
+                              >
+                                Khôi phục nhãn mặc định
+                              </button>
+                            </div>
+                          )}
 
                           <div className="max-h-64 overflow-y-auto space-y-1 custom-scrollbar pr-1">
                             {preview.columns.map((c) => {
@@ -919,11 +889,10 @@ export function ExamReportSummaryTab({
                               return (
                                 <div
                                   key={c.key}
-                                  className={`p-2 rounded-xl border transition ${
-                                    isChecked
+                                  className={`p-2 rounded-xl border transition ${isChecked
                                       ? 'bg-slate-50/70 dark:bg-slate-850/60 border-slate-200/60 dark:border-slate-700'
                                       : 'bg-transparent border-transparent text-slate-400 dark:text-slate-500'
-                                  }`}
+                                    }`}
                                 >
                                   <div className="flex items-center justify-between gap-2">
                                     <label className="flex items-center gap-2 min-w-0 flex-1 cursor-pointer select-none">
@@ -939,11 +908,10 @@ export function ExamReportSummaryTab({
                                       />
                                       {!isEditing ? (
                                         <span
-                                          className={`text-type-body-sm truncate ${
-                                            isChecked
+                                          className={`text-type-body-sm truncate ${isChecked
                                               ? 'font-medium text-slate-900 dark:text-slate-100'
                                               : 'text-slate-400 dark:text-slate-500'
-                                          }`}
+                                            }`}
                                         >
                                           {currentLabel}
                                           {isCustomized && (
@@ -1077,9 +1045,8 @@ export function ExamReportSummaryTab({
                             .map((c) => (
                               <td
                                 key={c.key}
-                                className={`py-3.5 px-4 text-type-body text-slate-800 dark:text-slate-200 ${
-                                  c.align === 'right' ? 'text-right tabular-nums' : ''
-                                }`}
+                                className={`py-3.5 px-4 text-type-body text-slate-800 dark:text-slate-200 ${c.align === 'right' ? 'text-right tabular-nums' : ''
+                                  }`}
                               >
                                 {String(row[c.key] ?? '—')}
                               </td>
@@ -1164,11 +1131,10 @@ export function ExamReportSummaryTab({
                     </td>
                     <td className="py-3.5 px-5 text-center whitespace-nowrap">
                       <span
-                        className={`table-badge inline-flex items-center px-2.5 py-0.5 rounded-full ui-pill text-type-helper font-medium ${
-                          item.format === 'XLSX'
+                        className={`table-badge inline-flex items-center px-2.5 py-0.5 rounded-full ui-pill text-type-helper font-medium ${item.format === 'XLSX'
                             ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800'
                             : 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800'
-                        }`}
+                          }`}
                       >
                         {item.format}
                       </span>

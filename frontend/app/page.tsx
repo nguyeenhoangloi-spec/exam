@@ -25,10 +25,10 @@ export default function Home() {
   }, [router]);
 
   return (
-    <div className="flex h-screen items-center justify-center bg-slate-900 text-white">
-      <div className="text-center">
-        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-slate-300 font-medium">Đang chuyển hướng...</p>
+    <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200" aria-live="polite">
+      <div className="flex flex-col items-center gap-3">
+        <div className="h-8 w-8 animate-spin rounded-full border-3 border-blue-600 border-t-transparent" />
+        <p className="text-type-body font-medium text-slate-700 dark:text-slate-300">Đang chuyển hướng...</p>
       </div>
     </div>
   );

@@ -18,6 +18,8 @@ import { Toast } from '../../../components/Toast';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import { printReport, printExamPaper } from '../../../lib/export-print';
 import { PageSkeleton } from '../../../components/ui/Skeleton';
+import { TabBar } from '../../../components/ui/TabBar';
+import { DynamicReportBuilderTab } from '../../../components/exam-reports/DynamicReportBuilderTab';
 
 type DataSource =
   | 'EXAM_SCHEDULE_LIST'
@@ -264,6 +266,7 @@ export default function DocumentTemplatesPage() {
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [zoomScale, setZoomScale] = useState<number>(95);
   const [activeTab, setActiveTab] = useState<'settings' | 'templates'>('settings');
+  const [mainTab, setMainTab] = useState<'standard' | 'dynamic'>('standard');
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTemplateId, setDeleteTemplateId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -478,26 +481,41 @@ export default function DocumentTemplatesPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
         <div className="space-y-0.5">
           <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">
-            Mẫu biểu in ấn
+            Mẫu biểu & Báo cáo in ấn
           </h1>
           <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-            Tùy biến tiêu đề, định dạng trang in A4 và áp dụng trực tiếp toàn hệ thống.
+            {mainTab === 'standard'
+              ? 'Tùy biến tiêu đề, định dạng trang in A4/A5 và áp dụng trực tiếp toàn hệ thống.'
+              : 'Thiết kế báo cáo tùy chỉnh, viết công thức tính điểm và cấu hình chữ ký tự động.'}
           </p>
         </div>
 
-        {/* Action Button Duy Nhất */}
-        <Button
-          variant="primary"
-          size="md"
-          onClick={handleSaveAndApply}
-          disabled={saving || !draft}
-        >
-          {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
-        </Button>
+        {/* Action Button Duy Nhất (Chỉ cho tab in chuẩn) */}
+        {mainTab === 'standard' && (
+          <Button
+            variant="primary"
+            size="md"
+            onClick={handleSaveAndApply}
+            disabled={saving || !draft}
+          >
+            {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
+          </Button>
+        )}
       </div>
 
-      {/* 2. Workspace Liền Mạch (2 Cột đồng bộ gap-5) */}
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[400px_minmax(0,1fr)]">
+      {/* Main TabBar Switcher */}
+      <TabBar
+        tabs={[
+          { key: 'standard', label: 'Biểu mẫu in chuẩn (A4 / A5)' },
+          { key: 'dynamic', label: 'Thiết kế biểu mẫu động & Công thức' },
+        ]}
+        active={mainTab}
+        onChange={(k) => setMainTab(k as 'standard' | 'dynamic')}
+      />
+
+      {mainTab === 'standard' ? (
+        /* 2. Workspace Liền Mạch (2 Cột đồng bộ gap-5) */
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-[400px_minmax(0,1fr)]">
         {/* Cột Trái: Sidebar Cấu hình có padding chuẩn p-5 */}
         <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-2xs dark:border-slate-800 dark:bg-slate-900 space-y-4">
           {/* Segmented Tab Switcher Thuần Túy */}
@@ -1320,6 +1338,9 @@ export default function DocumentTemplatesPage() {
           </div>
         </div>
       </div>
+    ) : (
+      <DynamicReportBuilderTab />
+    )}
 
       {/* Toast Notification */}
       {toast && (
