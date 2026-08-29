@@ -22,14 +22,23 @@ import {
   Trash2,
   Users,
   X,
+  Edit2,
+  Calculator,
 } from 'lucide-react';
 import api from '../../lib/api';
 import { printReport } from '../../lib/export-print';
+import { exportToFormattedExcel } from '../../lib/export-excel';
+import { exportCsvData } from '../../lib/export-csv';
 import { Toast } from '../Toast';
 import { TabBar, TabItem } from '../ui/TabBar';
 import { DataActionsDropdown } from '../ui/DataActionsDropdown';
 import { Button } from '../ui/Button';
 import { PaginationBar } from '../ui/PaginationBar';
+import {
+  FormulaEditorModal,
+  DynamicColumnDefinition,
+} from './FormulaEditorModal';
+import { evaluateFormula, FormulaVariable } from '../../lib/formula-engine';
 
 export interface SummaryScheduleRow {
   id: number;
@@ -193,6 +202,100 @@ export function ExamReportSummaryTab({
   const templateMenuRef = useRef<HTMLDivElement>(null);
   const templateBtnRef = useRef<HTMLButtonElement>(null);
   const [templateMenuStyle, setTemplateMenuStyle] = useState<React.CSSProperties>({});
+
+  // Dynamic Formula Columns State
+  const [customFormulaColumns, setCustomFormulaColumns] = useState<DynamicColumnDefinition[]>([]);
+  const [isFormulaModalOpen, setIsFormulaModalOpen] = useState(false);
+  const [editingFormulaColumn, setEditingFormulaColumn] = useState<DynamicColumnDefinition | null>(null);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('exam_report_custom_formula_cols');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setCustomFormulaColumns(parsed);
+        }
+      }
+    } catch {
+      // Ignore
+    }
+  }, []);
+
+  const saveFormulaColumns = (cols: DynamicColumnDefinition[]) => {
+    setCustomFormulaColumns(cols);
+    try {
+      localStorage.setItem('exam_report_custom_formula_cols', JSON.stringify(cols));
+    } catch {
+      // Ignore
+    }
+  };
+
+  const handleSaveFormulaColumn = (col: DynamicColumnDefinition) => {
+    const idx = customFormulaColumns.findIndex((c) => c.key === col.key);
+    let nextCols: DynamicColumnDefinition[];
+    if (idx >= 0) {
+      nextCols = [...customFormulaColumns];
+      nextCols[idx] = col;
+    } else {
+      nextCols = [...customFormulaColumns, col];
+    }
+    saveFormulaColumns(nextCols);
+    setColumns((prev) => (prev.includes(col.key) ? prev : [...prev, col.key]));
+    setIsFormulaModalOpen(false);
+    setEditingFormulaColumn(null);
+    setNotice({ type: 'success', message: `Đã cập nhật cột công thức "${col.header}".` });
+  };
+
+  const handleDeleteFormulaColumn = (colKey: string) => {
+    const nextCols = customFormulaColumns.filter((c) => c.key !== colKey);
+    saveFormulaColumns(nextCols);
+    setColumns((prev) => prev.filter((k) => k !== colKey));
+    setNotice({ type: 'success', message: 'Đã xóa cột công thức.' });
+  };
+
+  const availableVariablesForFormula: FormulaVariable[] = useMemo(() => {
+    if (!preview?.columns) return [];
+    return preview.columns.map((c) => ({
+      key: c.key,
+      label: customLabels[c.key] || c.label,
+      type: 'number' as const,
+      sampleValue: 8.5,
+    }));
+  }, [preview, customLabels]);
+
+  const allColumns = useMemo(() => {
+    if (!preview) return [];
+    const baseCols = preview.columns.map((c) => ({
+      key: c.key,
+      label: c.label,
+      align: c.align,
+      isFormula: false,
+      formula: undefined as string | undefined,
+      decimals: undefined as number | undefined,
+    }));
+    const formulaCols = customFormulaColumns.map((fc) => ({
+      key: fc.key,
+      label: fc.header,
+      align: fc.align || 'center',
+      isFormula: true,
+      formula: fc.formula,
+      decimals: fc.decimals,
+    }));
+    return [...baseCols, ...formulaCols];
+  }, [preview, customFormulaColumns]);
+
+  const renderReportCell = (c: any, row: Record<string, any>) => {
+    if (c.isFormula && c.formula) {
+      const res = evaluateFormula(c.formula, row);
+      if (res === null || res === undefined) return '—';
+      if (typeof res === 'number') {
+        return Number.isInteger(res) ? String(res) : res.toFixed(c.decimals ?? 1);
+      }
+      return String(res);
+    }
+    return row[c.key] !== undefined && row[c.key] !== null ? String(row[c.key]) : '—';
+  };
 
   const applyMinistryPreset = () => {
     setCustomLabels({ ...MINISTRY_PRESET_LABELS });
@@ -366,13 +469,15 @@ export function ExamReportSummaryTab({
         passThreshold,
       });
       setPreview(r.data);
-      setColumns(r.data.columns.map((c) => c.key));
+      const baseKeys = r.data.columns.map((c) => c.key);
+      const formulaKeys = customFormulaColumns.map((fc) => fc.key);
+      setColumns([...baseKeys, ...formulaKeys]);
     } catch (e) {
       setNotice({ type: 'error', message: e instanceof Error ? e.message : 'Không tạo được bản xem trước.' });
     } finally {
       setBusy('');
     }
-  }, [columns, customLabels, passThreshold, requestFilters, scoreRounding, title, type]);
+  }, [columns, customFormulaColumns, customLabels, passThreshold, requestFilters, scoreRounding, title, type]);
 
   const choose = (item: CatalogItem) => {
     setType(item.type);
@@ -384,50 +489,95 @@ export function ExamReportSummaryTab({
   };
 
   const exportFile = async (format: 'CSV' | 'XLSX') => {
+    if (!preview) return;
     setBusy(format);
     setNotice(null);
     try {
-      const r = await api.post(
-        '/exam-reports/export',
-        {
+      if (customFormulaColumns.length > 0) {
+        const activeCols = allColumns.filter((c) => columns.includes(c.key));
+        const exportHeaders = activeCols.map((c) => customLabels[c.key] || c.label);
+        const exportRows = preview.rows.map((row) =>
+          activeCols.map((c) => renderReportCell(c, row))
+        );
+
+        if (format === 'XLSX') {
+          await exportToFormattedExcel({
+            filename: `Bao_Cao_${new Date().toISOString().slice(0, 10)}.xlsx`,
+            title: preview.title || title || 'BÁO CÁO KHẢO THÍ TỔNG HỢP',
+            subtitle: `Thời điểm lập: ${new Date(preview.generatedAt).toLocaleString('vi-VN')}, ${preview.totalRows} bản ghi`,
+            columns: activeCols.map((c) => ({
+              header: customLabels[c.key] || c.label,
+              align: c.align || 'left',
+            })),
+            rows: exportRows,
+            footerNotes: 'Báo cáo trích xuất từ Hệ thống Quản lý Khảo thí EMS.',
+            templateCode: type,
+          });
+        } else {
+          exportCsvData(
+            `Bao_Cao_${new Date().toISOString().slice(0, 10)}.csv`,
+            exportHeaders,
+            exportRows,
+          );
+        }
+
+        const item: HistoryItem = {
+          id: `${Date.now()}-${format}`,
+          title: preview.title || title || 'Báo cáo khảo thí',
           type,
           format,
-          filters: requestFilters,
-          columns: columns.length ? columns : undefined,
-          title: title.trim() || undefined,
-          customLabels: Object.keys(customLabels).length ? customLabels : undefined,
-          scoreRounding,
-          passThreshold,
-        },
-        { responseType: 'blob' },
-      );
-      const disposition = String(r.headers['content-disposition'] || '');
-      const encoded = disposition.match(/filename\*=UTF-8''([^;]+)/i)?.[1];
-      const filename = encoded
-        ? decodeURIComponent(encoded)
-        : `Bao_Cao_${new Date().toISOString().slice(0, 10)}.${format.toLowerCase()}`;
-      const url = URL.createObjectURL(r.data);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-      const item: HistoryItem = {
-        id: `${Date.now()}-${format}`,
-        title: preview?.title || title || 'Báo cáo khảo thí',
-        type,
-        format,
-        totalRows: preview?.totalRows || 0,
-        createdAt: new Date().toISOString(),
-      };
-      setHistory((current) => {
-        const next = [item, ...current].slice(0, 30);
-        localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
-        return next;
-      });
-      setNotice({ type: 'success', message: `Đã tạo file ${format} theo đúng phạm vi đang chọn.` });
+          totalRows: preview.totalRows || 0,
+          createdAt: new Date().toISOString(),
+        };
+        setHistory((current) => {
+          const next = [item, ...current].slice(0, 30);
+          localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+          return next;
+        });
+        setNotice({ type: 'success', message: `Đã tạo file ${format} với đầy đủ các cột công thức tính toán.` });
+      } else {
+        const r = await api.post(
+          '/exam-reports/export',
+          {
+            type,
+            format,
+            filters: requestFilters,
+            columns: columns.length ? columns : undefined,
+            title: title.trim() || undefined,
+            customLabels: Object.keys(customLabels).length ? customLabels : undefined,
+            scoreRounding,
+            passThreshold,
+          },
+          { responseType: 'blob' },
+        );
+        const disposition = String(r.headers['content-disposition'] || '');
+        const encoded = disposition.match(/filename\*=UTF-8''([^;]+)/i)?.[1];
+        const filename = encoded
+          ? decodeURIComponent(encoded)
+          : `Bao_Cao_${new Date().toISOString().slice(0, 10)}.${format.toLowerCase()}`;
+        const url = URL.createObjectURL(r.data);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        const item: HistoryItem = {
+          id: `${Date.now()}-${format}`,
+          title: preview?.title || title || 'Báo cáo khảo thí',
+          type,
+          format,
+          totalRows: preview?.totalRows || 0,
+          createdAt: new Date().toISOString(),
+        };
+        setHistory((current) => {
+          const next = [item, ...current].slice(0, 30);
+          localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+          return next;
+        });
+        setNotice({ type: 'success', message: `Đã tạo file ${format} theo đúng phạm vi đang chọn.` });
+      }
     } catch (e) {
       setNotice({ type: 'error', message: e instanceof Error ? e.message : 'Không xuất được báo cáo.' });
     } finally {
@@ -437,7 +587,7 @@ export function ExamReportSummaryTab({
 
   const printPreview = () => {
     if (!preview) return;
-    const selectedCols = preview.columns.filter((c) => columns.includes(c.key));
+    const selectedCols = allColumns.filter((c) => columns.includes(c.key));
     const ok = printReport({
       title: preview.title,
       subtitle: `Thời điểm lập: ${new Date(preview.generatedAt).toLocaleString('vi-VN')}, ${preview.totalRows} bản ghi`,
@@ -451,8 +601,9 @@ export function ExamReportSummaryTab({
             ? '11%'
             : '7%',
       })),
-      rows: preview.rows.map((row) => selectedCols.map((c) => row[c.key])),
+      rows: preview.rows.map((row) => selectedCols.map((c) => renderReportCell(c, row))),
       footerNotes: 'Dữ liệu chính thức trong phạm vi được phép truy cập.',
+      templateCode: type,
     });
     if (!ok) setNotice({ type: 'error', message: 'Trình duyệt đang chặn cửa sổ in. Vui lòng cho phép popup.' });
   };
@@ -812,6 +963,20 @@ export function ExamReportSummaryTab({
 
               {preview && (
                 <div className="flex items-center gap-2">
+                  {/* Soft Accent Button: Thêm Cột Công Thức (Bậc 2 Button Hierarchy) */}
+                  <Button
+                    type="button"
+                    variant="soft"
+                    size="sm"
+                    onClick={() => {
+                      setEditingFormulaColumn(null);
+                      setIsFormulaModalOpen(true);
+                    }}
+                    title="Thêm cột tính toán động bằng công thức toán học"
+                  >
+                    + Thêm Cột Công Thức
+                  </Button>
+
                   {/* Smart Column Selector Popover - Tối giản, thanh lịch, trung tính */}
                   <div className="relative">
                     <button
@@ -848,30 +1013,30 @@ export function ExamReportSummaryTab({
                                 <h3 className="text-type-body font-semibold text-slate-900 dark:text-white leading-5">
                                   Tùy biến cột & nhãn
                                 </h3>
-                                <span className="!text-xs text-slate-400 dark:text-slate-500 !font-normal tabular-nums">
-                                  [{columns.length}/{preview.columns.length}]
+                                <span className="text-type-helper text-slate-400 dark:text-slate-500 font-normal tabular-nums">
+                                  [{columns.length}/{allColumns.length}]
                                 </span>
                               </div>
-                              <p className="!text-xs text-slate-400 dark:text-slate-500 !font-normal mt-0.5 leading-4">
+                              <p className="text-type-helper text-slate-400 dark:text-slate-500 font-normal mt-0.5 leading-4">
                                 Tùy chỉnh cột hiển thị & chỉnh sửa tên tiêu đề
                               </p>
                             </div>
 
                             {/* Hàng 3 nút thao tác thanh mảnh, căn bằng lề 2 bên */}
                             <div className="flex items-center justify-between gap-2 px-1.5 pt-0.5">
-                              <div className="flex items-center gap-1.5 !text-xs !font-normal">
+                              <div className="flex items-center gap-1.5 text-type-helper font-normal">
                                 <button
                                   type="button"
-                                  onClick={() => setColumns(preview.columns.map((c) => c.key))}
-                                  className="!min-h-0 !p-0 !bg-transparent !text-xs !font-normal text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+                                  onClick={() => setColumns(allColumns.map((c) => c.key))}
+                                  className="min-h-0 p-0 bg-transparent text-type-helper font-normal text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
                                 >
                                   Chọn tất cả
                                 </button>
-                                <span className="text-slate-300 dark:text-slate-600 select-none !text-xs">|</span>
+                                <span className="text-slate-300 dark:text-slate-600 select-none text-type-helper">|</span>
                                 <button
                                   type="button"
                                   onClick={() => setColumns([])}
-                                  className="!min-h-0 !p-0 !bg-transparent !text-xs !font-normal text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                                  className="min-h-0 p-0 bg-transparent text-type-helper font-normal text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer"
                                 >
                                   Bỏ chọn
                                 </button>
@@ -881,9 +1046,9 @@ export function ExamReportSummaryTab({
                                 type="button"
                                 onClick={() => {
                                   resetCustomLabels();
-                                  setColumns(preview.columns.map((c) => c.key));
+                                  setColumns(allColumns.map((c) => c.key));
                                 }}
-                                className="!min-h-0 !p-0 !bg-transparent !text-xs !font-normal inline-flex items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                                className="min-h-0 p-0 bg-transparent text-type-helper font-normal inline-flex items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer"
                                 title="Khôi phục trạng thái và tên cột ban đầu"
                               >
                                 <RotateCcw className="h-3 w-3" />
@@ -894,7 +1059,7 @@ export function ExamReportSummaryTab({
 
                           {/* Danh sách cột phẳng hoàn toàn không viền, chỉ đổi màu nhẹ khi hover */}
                           <div className="max-h-64 overflow-y-auto space-y-0.5 custom-scrollbar pr-0.5">
-                            {preview.columns.map((c) => {
+                            {allColumns.map((c) => {
                               const isChecked = columns.includes(c.key);
                               const currentLabel = customLabels[c.key] || c.label;
                               const isCustomized = Boolean(customLabels[c.key] && customLabels[c.key] !== c.label);
@@ -936,7 +1101,12 @@ export function ExamReportSummaryTab({
                                         >
                                           {currentLabel}
                                         </span>
-                                        {isCustomized && (
+                                        {c.isFormula && (
+                                          <span className="ml-1.5 ui-pill text-type-helper font-medium px-2 py-0.5 rounded-full border border-blue-300 text-blue-700 dark:border-blue-700 dark:text-blue-400 shrink-0">
+                                            Công thức
+                                          </span>
+                                        )}
+                                        {isCustomized && !c.isFormula && (
                                           <span className="ml-1.5 text-type-badge font-normal text-blue-600 dark:text-blue-400 shrink-0">
                                             (Đã sửa)
                                           </span>
@@ -960,23 +1130,55 @@ export function ExamReportSummaryTab({
                                               setEditingLabelKey(null);
                                             }
                                           }}
-                                          className="h-7 w-full rounded-lg border border-blue-500 bg-white dark:bg-slate-900 px-2 text-type-body-sm font-normal text-slate-900 dark:text-slate-100 outline-none shadow-2xs"
+                                          className="h-8 w-full rounded-xl border border-blue-500 bg-white dark:bg-slate-900 px-2.5 text-type-body font-normal text-slate-900 dark:text-slate-100 outline-none shadow-2xs"
                                         />
                                       </div>
                                     )}
                                   </div>
 
-                                  {/* Nút bút chì: chỉ hiển thị khi hover */}
-                                  {!isEditing ? (
-                                    <button
-                                      type="button"
-                                      onClick={() => setEditingLabelKey(c.key)}
-                                      className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-150 p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700 rounded-md cursor-pointer shrink-0"
-                                      title={`Đổi tên tiêu đề "${currentLabel}"`}
-                                    >
-                                      <Pencil className="h-3.5 w-3.5" />
-                                    </button>
-                                  ) : null}
+                                  <div className="flex items-center gap-1 shrink-0">
+                                    {/* Nút sửa công thức nếu là formula column */}
+                                    {c.isFormula && (
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const fc = customFormulaColumns.find((f) => f.key === c.key);
+                                          if (fc) {
+                                            setEditingFormulaColumn(fc);
+                                            setIsFormulaModalOpen(true);
+                                          }
+                                        }}
+                                        className="p-1.5 text-blue-600 hover:text-blue-700 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/60 rounded-xl cursor-pointer"
+                                        title="Chỉnh sửa công thức"
+                                      >
+                                        <Edit2 className="h-3.5 w-3.5" />
+                                      </button>
+                                    )}
+
+                                    {/* Nút xóa cột nếu là formula column */}
+                                    {c.isFormula && (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDeleteFormulaColumn(c.key)}
+                                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-xl cursor-pointer"
+                                        title="Xóa cột công thức này"
+                                      >
+                                        <Trash2 className="h-3.5 w-3.5" />
+                                      </button>
+                                    )}
+
+                                    {/* Nút bút chì đổi tên nhãn cho cột thường */}
+                                    {!c.isFormula && !isEditing && (
+                                      <button
+                                        type="button"
+                                        onClick={() => setEditingLabelKey(c.key)}
+                                        className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-150 p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700 rounded-xl cursor-pointer shrink-0"
+                                        title={`Đổi tên tiêu đề "${currentLabel}"`}
+                                      >
+                                        <Pencil className="h-3.5 w-3.5" />
+                                      </button>
+                                    )}
+                                  </div>
                                 </div>
                               );
                             })}
@@ -1011,17 +1213,17 @@ export function ExamReportSummaryTab({
             ) : (
               <>
                 {/* Thông báo thanh mảnh khi có cột bị ẩn */}
-                {columns.length < preview.columns.length && (
+                {columns.length < allColumns.length && (
                   <div className="px-5 py-2 bg-slate-50/80 dark:bg-slate-800/40 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-type-helper text-slate-600 dark:text-slate-400 shrink-0">
                     <div className="flex items-center gap-1.5">
-                      <span>Đang ẩn <strong>{preview.columns.length - columns.length}</strong> cột trong bản xem trước và file xuất.</span>
+                      <span>Đang ẩn <strong>{allColumns.length - columns.length}</strong> cột trong bản xem trước và file xuất.</span>
                     </div>
                     <button
                       type="button"
-                      onClick={() => setColumns(preview.columns.map((c) => c.key))}
+                      onClick={() => setColumns(allColumns.map((c) => c.key))}
                       className="font-medium text-slate-900 dark:text-slate-100 hover:underline cursor-pointer"
                     >
-                      Hiện lại tất cả ({preview.columns.length} cột)
+                      Hiện lại tất cả ({allColumns.length} cột)
                     </button>
                   </div>
                 )}
@@ -1031,7 +1233,7 @@ export function ExamReportSummaryTab({
                   <table className="ui-table w-full min-w-[760px] text-type-body text-left border-collapse">
                     <thead className="sticky top-0 bg-slate-50 dark:bg-slate-800 z-10">
                       <tr className="border-b border-slate-200/90 dark:border-slate-700">
-                        {preview.columns
+                        {allColumns
                           .filter((c) => columns.includes(c.key))
                           .map((c) => {
                             const headerLabel = customLabels[c.key] || c.label;
@@ -1062,7 +1264,7 @@ export function ExamReportSummaryTab({
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                       {preview.rows.map((row, i) => (
                         <tr key={i} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/60 transition-colors">
-                          {preview.columns
+                          {allColumns
                             .filter((c) => columns.includes(c.key))
                             .map((c) => (
                               <td
@@ -1070,7 +1272,7 @@ export function ExamReportSummaryTab({
                                 className={`py-3.5 px-4 text-type-body text-slate-800 dark:text-slate-200 ${c.align === 'right' ? 'text-right tabular-nums' : ''
                                   }`}
                               >
-                                {String(row[c.key] ?? '—')}
+                                {renderReportCell(c, row)}
                               </td>
                             ))}
                         </tr>
@@ -1226,6 +1428,18 @@ export function ExamReportSummaryTab({
           )}
         </div>
       )}
+
+      {/* Formula Editor Modal */}
+      <FormulaEditorModal
+        isOpen={isFormulaModalOpen}
+        onClose={() => {
+          setIsFormulaModalOpen(false);
+          setEditingFormulaColumn(null);
+        }}
+        onSave={handleSaveFormulaColumn}
+        initialColumn={editingFormulaColumn}
+        customVariables={availableVariablesForFormula}
+      />
     </div>
   );
 }

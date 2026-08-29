@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Printer,
   Plus,
@@ -23,15 +23,6 @@ import { Toast } from '../../../components/Toast';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import { printReport, printExamPaper } from '../../../lib/export-print';
 import { PageSkeleton } from '../../../components/ui/Skeleton';
-import {
-  FormulaEditorModal,
-  DynamicColumnDefinition,
-} from '../../../components/exam-reports/FormulaEditorModal';
-import {
-  evaluateFormula,
-  STANDARD_REPORT_VARIABLES,
-  FormulaVariable,
-} from '../../../lib/formula-engine';
 
 type DataSource =
   | 'EXAM_SCHEDULE_LIST'
@@ -268,14 +259,6 @@ function clone<T>(val: T): T {
 }
 
 function renderCellValue(column: Column, row: Record<string, any>) {
-  if (column.type === 'FORMULA' && column.formula) {
-    const res = evaluateFormula(column.formula, row);
-    if (res === null || res === undefined) return '#ERR';
-    if (typeof res === 'number') {
-      return Number.isInteger(res) ? String(res) : res.toFixed(column.decimals ?? 1);
-    }
-    return String(res);
-  }
   return row[column.key] !== undefined && row[column.key] !== null ? String(row[column.key]) : '---';
 }
 
@@ -294,10 +277,6 @@ export default function DocumentTemplatesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTemplateId, setDeleteTemplateId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  // Formula Modal State
-  const [isFormulaModalOpen, setIsFormulaModalOpen] = useState(false);
-  const [editingColumn, setEditingColumn] = useState<DynamicColumnDefinition | null>(null);
 
   const loadTemplates = useCallback(async () => {
     if (!templates.length && !cachedTemplates) setLoading(true);
@@ -411,30 +390,6 @@ export default function DocumentTemplatesPage() {
     }
   };
 
-  const handleSaveFormulaColumn = (colDef: DynamicColumnDefinition) => {
-    if (!config) return;
-    const nextCols = clone(config.columns || []);
-    const existingIdx = nextCols.findIndex((c) => c.key === colDef.key);
-    const newCol: Column = {
-      key: colDef.key,
-      label: colDef.header,
-      align: colDef.align || 'center',
-      width: colDef.width ? `${colDef.width}px` : undefined,
-      type: 'FORMULA',
-      formula: colDef.formula,
-      decimals: colDef.decimals ?? 1,
-      visible: true,
-    };
-    if (existingIdx >= 0) {
-      nextCols[existingIdx] = newCol;
-    } else {
-      nextCols.push(newCol);
-    }
-    updateConfig({ ...config, columns: nextCols });
-    setIsFormulaModalOpen(false);
-    setToast({ message: 'Đã cập nhật cột công thức!', type: 'success' });
-  };
-
   const handleMoveColumn = (index: number, direction: 'up' | 'down') => {
     if (!config?.columns) return;
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
@@ -445,32 +400,6 @@ export default function DocumentTemplatesPage() {
     nextCols[targetIndex] = temp;
     updateConfig({ ...config, columns: nextCols });
   };
-
-  const handleAddStandardField = (fieldKey: string, fieldLabel: string) => {
-    if (!config) return;
-    const nextCols = clone(config.columns || []);
-    if (nextCols.some((c) => c.key === fieldKey)) return;
-    nextCols.push({
-      key: fieldKey,
-      label: fieldLabel,
-      align: 'left',
-      visible: true,
-      type: 'FIELD',
-    });
-    updateConfig({ ...config, columns: nextCols });
-  };
-
-  const customVariables: FormulaVariable[] = useMemo(() => {
-    if (!config?.columns) return [];
-    return config.columns
-      .filter((c) => c.type !== 'FORMULA')
-      .map((c) => ({
-        key: c.key,
-        label: c.label,
-        type: 'number' as const,
-        sampleValue: 8.5,
-      }));
-  }, [config?.columns]);
 
   const testPrint = () => {
     if (!config || !draft) return;
@@ -574,21 +503,12 @@ export default function DocumentTemplatesPage() {
             Mẫu biểu & Báo cáo in ấn
           </h1>
           <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-            Tùy biến tiêu đề, khổ giấy A4/A5, cột hiển thị và công thức tính điểm toàn hệ thống.
+            Tùy biến tiêu đề, khổ giấy A4/A5, căn lề và cấu trúc cột hiển thị cho các phôi in ấn toàn hệ thống.
           </p>
         </div>
 
-        {/* Action Button Duy Nhất Trên Header */}
+        {/* Duy nhất 1 Primary CTA trên Header */}
         <div className="flex items-center gap-2">
-          <Button
-            variant="secondary"
-            size="md"
-            onClick={testPrint}
-            disabled={!draft || !config}
-            leftIcon={<Printer className="h-4 w-4" />}
-          >
-            In thử nghiệm
-          </Button>
           <Button
             variant="primary"
             size="md"
@@ -601,484 +521,423 @@ export default function DocumentTemplatesPage() {
         </div>
       </div>
 
-      {/* 2. Workspace Liền Mạch: 1 Sidebar Cấu hình (Trái) + 1 Khung Live Virtual Paper Sheet Duy Nhất (Phải) */}
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[420px_minmax(0,1fr)]">
-        {/* Cột Trái: Sidebar Cấu hình (3-tab segmented) */}
-        <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-2xs dark:border-slate-800 dark:bg-slate-900 space-y-4">
-          {/* Segmented Tab Switcher 3 Nút Liền Mạch */}
-          <div className="flex rounded-2xl bg-slate-100 p-1 dark:bg-slate-850">
+      {/* 2. Workspace Liền Mạch: Chuẩn Độ Dài Đồng Nhất Giữa Tab Thiết Lập, Tab Danh Sách Mẫu và Studio Live Canvas */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[440px_minmax(0,1fr)] items-stretch">
+        {/* Cột Trái: Sidebar Cấu hình (Độ dài chuẩn tự nhiên theo Tab Thiết Lập, Tab 2 đồng bộ 100%) */}
+        <div className="w-full flex flex-col rounded-2xl border border-slate-200/80 bg-white p-5 shadow-2xs dark:border-slate-800 dark:bg-slate-900 space-y-4">
+          {/* Segmented Tab Switcher Đúng 2 Nút Phẳng */}
+          <div className="flex rounded-xl bg-slate-100/80 p-0.5 dark:bg-slate-800/80 shrink-0">
             <button
               type="button"
               onClick={() => setActiveTab('settings')}
-              className={`flex-1 rounded-xl py-2 text-type-body font-medium transition cursor-pointer text-center ${
-                activeTab === 'settings'
-                  ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-800 dark:text-slate-100'
+              className={`flex-1 rounded-xl py-2 text-type-body font-medium transition cursor-pointer text-center ${activeTab === 'settings'
+                  ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-900 dark:text-slate-100'
                   : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
-              }`}
+                }`}
             >
-              Thuộc tính in
+              Thiết lập in ấn
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('columns')}
-              className={`flex-1 rounded-xl py-2 text-type-body font-medium transition cursor-pointer text-center ${
-                activeTab === 'columns'
-                  ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-800 dark:text-slate-100'
+              className={`flex-1 rounded-xl py-2 text-type-body font-medium transition cursor-pointer text-center ${activeTab === 'columns'
+                  ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-900 dark:text-slate-100'
                   : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
-              }`}
+                }`}
             >
-              Cột & Công thức
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('templates')}
-              className={`flex-1 rounded-xl py-2 text-type-body font-medium transition cursor-pointer text-center ${
-                activeTab === 'templates'
-                  ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-800 dark:text-slate-100'
-                  : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
-              }`}
-            >
-              Mẫu ({templates.length})
+              Danh sách Mẫu ({templates.length})
             </button>
           </div>
 
-          {/* Tab 1: Thuộc tính In ấn (Đơn vị, Tiêu đề, Khổ in, Khung chữ ký) */}
-          {activeTab === 'settings' && draft && config && (
-            <div className="space-y-5 divide-y divide-slate-100 dark:divide-slate-800">
-              {/* Đơn vị & Tiêu đề */}
+          {/* Vùng Nội Dung Cấu Hình Cột Trái: Tab 1 in-flow định hình độ dài chuẩn, Tab 2 absolute inset-0 */}
+          <div className="relative flex-1">
+            {/* Tab 1: Thiết lập In ấn (In-flow duy nhất định hình độ dài chuẩn cho toàn bộ card) */}
+            <div
+              className={
+                activeTab === 'settings'
+                  ? 'space-y-5 divide-y divide-slate-100 dark:divide-slate-800'
+                  : 'space-y-5 divide-y divide-slate-100 dark:divide-slate-800 invisible select-none pointer-events-none'
+              }
+              aria-hidden={activeTab !== 'settings'}
+            >
+              <div className="space-y-5 divide-y divide-slate-100 dark:divide-slate-800">
+              {/* Section 1: Đơn vị & Tiêu đề */}
               <div className="space-y-3">
-                <span className="block text-type-body font-semibold text-slate-900 dark:text-slate-100">
-                  Đơn vị & Tiêu đề
-                </span>
-                <div className="space-y-2.5">
-                  <FormInput
-                    label="Tên biểu mẫu"
-                    value={draft.name}
-                    onChange={(v) => setDraft({ ...draft, name: v })}
-                    placeholder="Tên biểu mẫu..."
-                  />
-                  <FormInput
-                    label="Tên Trường / Cơ quan"
-                    value={config.header.institutionName}
-                    onChange={(v) => setHeader('institutionName', v)}
-                    placeholder="TRƯỜNG ĐẠI HỌC NAM CẦN THƠ..."
-                  />
-                  <FormInput
-                    label="Khoa / Đơn vị tổ chức"
-                    value={config.header.facultyName || ''}
-                    onChange={(v) => setHeader('facultyName', v)}
-                    placeholder="KHOA CÔNG NGHỆ THÔNG TIN..."
-                  />
-                  <FormInput
-                    label="Tiêu đề chính"
-                    value={config.header.title}
-                    onChange={(v) => setHeader('title', v)}
-                    placeholder="ĐỀ THI KẾT THÚC HỌC PHẦN..."
-                  />
-                  <FormInput
-                    label="Phụ đề / Học kỳ"
-                    value={config.header.subtitle}
-                    onChange={(v) => setHeader('subtitle', v)}
-                    placeholder="Học kỳ 1 - Năm học 2025 - 2026..."
-                  />
-                  <FormInput
-                    label="Quốc hiệu / Khẩu hiệu"
-                    value={config.header.motto || ''}
-                    onChange={(v) => setHeader('motto', v)}
-                    placeholder="CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM..."
-                  />
+                <div className="flex items-center justify-between">
+                  <span className="block text-type-body font-semibold text-slate-900 dark:text-slate-100">
+                    Đơn vị & Tiêu đề
+                  </span>
+                  <span className="text-type-helper text-slate-500 font-normal">
+                    {sourceLabels[draft?.dataSource || 'GENERIC_REPORT'] || draft?.dataSource}
+                  </span>
                 </div>
-              </div>
-
-              {/* Khổ giấy & Bố cục */}
-              <div className="pt-4 space-y-3">
-                <span className="block text-type-body font-semibold text-slate-900 dark:text-slate-100">
-                  Khổ giấy & Định dạng
-                </span>
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div>
-                    <span className="mb-1 block text-type-body font-medium text-slate-800 dark:text-slate-200">
-                      Khổ giấy
-                    </span>
-                    <FilterSelect
-                      value={config.page.size}
-                      onChange={(e) =>
-                        updateConfig({
-                          ...config,
-                          page: { ...config.page, size: e.target.value as 'A4' | 'A5' },
-                        })
-                      }
-                      options={[
-                        { value: 'A4', label: 'A4' },
-                        { value: 'A5', label: 'A5' },
-                      ]}
-                      fullWidth
+                {draft && config && (
+                  <div className="space-y-2.5">
+                    <FormInput
+                      label="Tên biểu mẫu"
+                      value={draft.name}
+                      onChange={(v) => setDraft({ ...draft, name: v })}
+                      placeholder="Tên biểu mẫu..."
                     />
-                  </div>
-
-                  <div>
-                    <span className="mb-1 block text-type-body font-medium text-slate-800 dark:text-slate-200">
-                      Hướng giấy
-                    </span>
-                    <FilterSelect
-                      value={config.page.orientation}
-                      onChange={(e) =>
-                        updateConfig({
-                          ...config,
-                          page: { ...config.page, orientation: e.target.value as 'portrait' | 'landscape' },
-                        })
-                      }
-                      options={[
-                        { value: 'portrait', label: 'Dọc' },
-                        { value: 'landscape', label: 'Ngang' },
-                      ]}
-                      fullWidth
+                    <FormInput
+                      label="Tên Trường / Cơ quan"
+                      value={config.header.institutionName}
+                      onChange={(v) => setHeader('institutionName', v)}
+                      placeholder="TRƯỜNG ĐẠI HỌC NAM CẦN THƠ..."
                     />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div>
-                    <span className="mb-1 block text-type-body font-medium text-slate-800 dark:text-slate-200">
-                      Lề trang
-                    </span>
-                    <FilterSelect
-                      value={String(config.page.marginMm)}
-                      onChange={(e) =>
-                        updateConfig({
-                          ...config,
-                          page: { ...config.page, marginMm: Number(e.target.value) || 15 },
-                        })
-                      }
-                      options={[
-                        { value: '10', label: '10 mm' },
-                        { value: '15', label: '15 mm' },
-                        { value: '20', label: '20 mm' },
-                      ]}
-                      fullWidth
+                    <FormInput
+                      label="Khoa / Đơn vị tổ chức"
+                      value={config.header.facultyName || ''}
+                      onChange={(v) => setHeader('facultyName', v)}
+                      placeholder="KHOA CÔNG NGHỆ THÔNG TIN..."
                     />
-                  </div>
-
-                  <div>
-                    <span className="mb-1 block text-type-body font-medium text-slate-800 dark:text-slate-200">
-                      Dạng tài liệu
-                    </span>
-                    <FilterSelect
-                      value={config.templateType || 'TABLE'}
-                      onChange={(e) =>
-                        updateConfig({
-                          ...config,
-                          templateType: e.target.value as TemplateType,
-                        })
-                      }
-                      options={[
-                        { value: 'TABLE', label: 'Bảng dữ liệu' },
-                        { value: 'EXAM_PAPER', label: 'Đề thi' },
-                      ]}
-                      fullWidth
+                    <FormInput
+                      label="Tiêu đề chính"
+                      value={config.header.title}
+                      onChange={(v) => setHeader('title', v)}
+                      placeholder="ĐỀ THI KẾT THÚC HỌC PHẦN..."
                     />
-                  </div>
-                </div>
-
-                {config.templateType === 'EXAM_PAPER' && (
-                  <div className="pt-2 space-y-2">
-                    <div className="flex items-center gap-4">
-                      <label className="flex items-center gap-2 cursor-pointer text-type-body font-medium text-slate-800 dark:text-slate-200">
-                        <input
-                          type="checkbox"
-                          checked={config.examInfo?.showScoreBox !== false}
-                          onChange={(e) => setExamInfo('showScoreBox', e.target.checked)}
-                          className="h-4 w-4 rounded accent-blue-600"
-                        />
-                        <span>Khung chấm điểm</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer text-type-body font-medium text-slate-800 dark:text-slate-200">
-                        <input
-                          type="checkbox"
-                          checked={config.examInfo?.showInstructions !== false}
-                          onChange={(e) => setExamInfo('showInstructions', e.target.checked)}
-                          className="h-4 w-4 rounded accent-blue-600"
-                        />
-                        <span>Quy chế phòng thi</span>
-                      </label>
-                    </div>
-                    {config.examInfo?.showInstructions !== false && (
-                      <FormInput
-                        label="Nội dung quy chế"
-                        value={
-                          config.examInfo?.instructionText ||
-                          '(Thí sinh không được sử dụng tài liệu. Cán bộ coi thi không giải thích gì thêm.)'
-                        }
-                        onChange={(v) => setExamInfo('instructionText', v)}
-                        placeholder="Nội dung quy chế..."
-                      />
-                    )}
+                    <FormInput
+                      label="Phụ đề / Học kỳ"
+                      value={config.header.subtitle}
+                      onChange={(v) => setHeader('subtitle', v)}
+                      placeholder="Học kỳ 1 - Năm học 2025 - 2026..."
+                    />
+                    <FormInput
+                      label="Quốc hiệu / Khẩu hiệu"
+                      value={config.header.motto || ''}
+                      onChange={(v) => setHeader('motto', v)}
+                      placeholder="CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM..."
+                    />
                   </div>
                 )}
               </div>
 
-              {/* Chân trang & Chữ ký */}
-              <div className="pt-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
-                    Chân trang & Chữ ký
+              {/* Section 2: Khổ giấy & Định dạng */}
+              {config && (
+                <div className="pt-4 space-y-3">
+                  <span className="block text-type-body font-semibold text-slate-900 dark:text-slate-100">
+                    Khổ giấy & Định dạng
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const nextSigners = [...(config.footer.signers || [])];
-                      nextSigners.push({ title: 'CHỨC DANH', subtitle: '(Ký, ghi rõ họ tên)' });
-                      updateConfig({ ...config, footer: { ...config.footer, signers: nextSigners } });
-                    }}
-                    className="text-type-helper font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 cursor-pointer"
-                  >
-                    + Thêm người ký
-                  </button>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <span className="mb-1 block text-type-body font-medium text-slate-800 dark:text-slate-200">
+                        Khổ giấy
+                      </span>
+                      <FilterSelect
+                        value={config.page.size}
+                        onChange={(e) =>
+                          updateConfig({
+                            ...config,
+                            page: { ...config.page, size: e.target.value as 'A4' | 'A5' },
+                          })
+                        }
+                        options={[
+                          { value: 'A4', label: 'A4' },
+                          { value: 'A5', label: 'A5' },
+                        ]}
+                        fullWidth
+                      />
+                    </div>
+
+                    <div>
+                      <span className="mb-1 block text-type-body font-medium text-slate-800 dark:text-slate-200">
+                        Hướng giấy
+                      </span>
+                      <FilterSelect
+                        value={config.page.orientation}
+                        onChange={(e) =>
+                          updateConfig({
+                            ...config,
+                            page: { ...config.page, orientation: e.target.value as 'portrait' | 'landscape' },
+                          })
+                        }
+                        options={[
+                          { value: 'portrait', label: 'Dọc' },
+                          { value: 'landscape', label: 'Ngang' },
+                        ]}
+                        fullWidth
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <span className="mb-1 block text-type-body font-medium text-slate-800 dark:text-slate-200">
+                        Lề trang
+                      </span>
+                      <FilterSelect
+                        value={String(config.page.marginMm)}
+                        onChange={(e) =>
+                          updateConfig({
+                            ...config,
+                            page: { ...config.page, marginMm: Number(e.target.value) || 15 },
+                          })
+                        }
+                        options={[
+                          { value: '10', label: '10 mm' },
+                          { value: '15', label: '15 mm' },
+                          { value: '20', label: '20 mm' },
+                        ]}
+                        fullWidth
+                      />
+                    </div>
+
+                    <div>
+                      <span className="mb-1 block text-type-body font-medium text-slate-800 dark:text-slate-200">
+                        Dạng tài liệu
+                      </span>
+                      <FilterSelect
+                        value={config.templateType || 'TABLE'}
+                        onChange={(e) =>
+                          updateConfig({
+                            ...config,
+                            templateType: e.target.value as TemplateType,
+                          })
+                        }
+                        options={[
+                          { value: 'TABLE', label: 'Bảng dữ liệu' },
+                          { value: 'EXAM_PAPER', label: 'Đề thi' },
+                        ]}
+                        fullWidth
+                      />
+                    </div>
+                  </div>
+
+                  {config.templateType === 'EXAM_PAPER' && (
+                    <div className="pt-2 space-y-2">
+                      <div className="flex items-center gap-4">
+                        <label className="flex items-center gap-2 cursor-pointer text-type-body font-medium text-slate-800 dark:text-slate-200">
+                          <input
+                            type="checkbox"
+                            checked={config.examInfo?.showScoreBox !== false}
+                            onChange={(e) => setExamInfo('showScoreBox', e.target.checked)}
+                            className="h-4 w-4 rounded accent-blue-600"
+                          />
+                          <span>Khung chấm điểm</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer text-type-body font-medium text-slate-800 dark:text-slate-200">
+                          <input
+                            type="checkbox"
+                            checked={config.examInfo?.showInstructions !== false}
+                            onChange={(e) => setExamInfo('showInstructions', e.target.checked)}
+                            className="h-4 w-4 rounded accent-blue-600"
+                          />
+                          <span>Quy chế phòng thi</span>
+                        </label>
+                      </div>
+                      {config.examInfo?.showInstructions !== false && (
+                        <FormInput
+                          label="Nội dung quy chế"
+                          value={
+                            config.examInfo?.instructionText ||
+                            '(Thí sinh không được sử dụng tài liệu. Cán bộ coi thi không giải thích gì thêm.)'
+                          }
+                          onChange={(v) => setExamInfo('instructionText', v)}
+                          placeholder="Nội dung quy chế..."
+                        />
+                      )}
+                    </div>
+                  )}
                 </div>
+              )}
 
-                <div className="space-y-2.5">
-                  <FormInput
-                    label="Ghi chú cuối trang"
-                    value={config.footer.note}
-                    onChange={(v) =>
-                      updateConfig({
-                        ...config,
-                        footer: { ...config.footer, note: v },
-                      })
-                    }
-                    placeholder="Ghi chú cuối trang..."
-                  />
+              {/* Section 3: Cấu trúc Cột (Gộp trực tiếp vào luồng cấu hình phẳng) */}
+              {config && config.templateType !== 'EXAM_PAPER' && (
+                <div className="pt-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="block text-type-body font-semibold text-slate-900 dark:text-slate-100">
+                        Cấu trúc Cột ({config.columns?.length || 0})
+                      </span>
+                      <p className="text-type-helper text-slate-500 font-normal">
+                        Bật/tắt hiển thị, đặt tên tiêu đề và căn chỉnh lề
+                      </p>
+                    </div>
+                  </div>
 
-                  <div className="space-y-2 pt-1">
-                    {config.footer.signers.map((signer, sIdx) => (
-                      <div key={sIdx} className="flex items-center gap-2">
-                        <div className="flex-1 space-y-1.5">
+                  {/* Danh sách cột phẳng */}
+                  <div className="space-y-2 divide-y divide-slate-100 dark:divide-slate-800">
+                    {config.columns?.map((column, index) => (
+                      <div key={column.key || index} className="pt-2.5 first:pt-0 space-y-1.5">
+                        <div className="flex items-center gap-1.5">
+                          {/* Checkbox visible */}
                           <input
-                            value={signer.title}
+                            type="checkbox"
+                            aria-label={`Bật/tắt cột ${column.label}`}
+                            checked={column.visible !== false}
                             onChange={(e) => {
-                              const nextSigners = clone(config.footer.signers);
-                              nextSigners[sIdx].title = e.target.value;
-                              updateConfig({
-                                ...config,
-                                footer: { ...config.footer, signers: nextSigners },
-                              });
+                              const nextCols = clone(config.columns);
+                              nextCols[index].visible = e.target.checked;
+                              updateConfig({ ...config, columns: nextCols });
                             }}
-                            placeholder="Chức danh"
-                            className="h-9 w-full rounded-xl border border-slate-200/60 bg-white px-2.5 text-type-body font-medium text-slate-900 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
+                            className="h-4 w-4 rounded accent-blue-600 shrink-0"
                           />
+
+                          {/* Header input */}
                           <input
-                            value={signer.subtitle || ''}
+                            value={column.label}
                             onChange={(e) => {
-                              const nextSigners = clone(config.footer.signers);
-                              nextSigners[sIdx].subtitle = e.target.value;
-                              updateConfig({
-                                ...config,
-                                footer: { ...config.footer, signers: nextSigners },
-                              });
+                              const nextCols = clone(config.columns);
+                              nextCols[index].label = e.target.value;
+                              updateConfig({ ...config, columns: nextCols });
                             }}
-                            placeholder="Ghi chú ký"
-                            className="h-9 w-full rounded-xl border border-slate-200/60 bg-white px-2.5 text-type-body font-normal text-slate-700 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-300"
+                            placeholder="Tên cột"
+                            className="h-9 flex-1 min-w-0 rounded-xl border border-slate-200/60 bg-white px-2.5 text-type-body font-medium text-slate-900 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
                           />
-                        </div>
-                        {config.footer.signers.length > 1 && (
+
+                          {/* Align Selector */}
+                          <div className="w-20 shrink-0">
+                            <FilterSelect
+                              value={column.align || 'left'}
+                              onChange={(e) => {
+                                const nextCols = clone(config.columns);
+                                nextCols[index].align = e.target.value as Column['align'];
+                                updateConfig({ ...config, columns: nextCols });
+                              }}
+                              options={[
+                                { value: 'left', label: 'Trái' },
+                                { value: 'center', label: 'Giữa' },
+                                { value: 'right', label: 'Phải' },
+                              ]}
+                              fullWidth
+                            />
+                          </div>
+
+                          {/* Move Up / Down */}
                           <button
                             type="button"
-                            onClick={() => {
-                              const nextSigners = config.footer.signers.filter((_, idx) => idx !== sIdx);
-                              updateConfig({
-                                ...config,
-                                footer: { ...config.footer, signers: nextSigners },
-                              });
-                            }}
-                            className="rounded-xl p-2 text-slate-400 hover:text-rose-600 cursor-pointer transition"
-                            title="Xóa người ký"
+                            disabled={index === 0}
+                            onClick={() => handleMoveColumn(index, 'up')}
+                            className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-25 rounded-xl transition cursor-pointer"
+                            title="Di chuyển lên"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <MoveUp className="h-3.5 w-3.5" />
                           </button>
-                        )}
+                          <button
+                            type="button"
+                            disabled={index === config.columns.length - 1}
+                            onClick={() => handleMoveColumn(index, 'down')}
+                            className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-25 rounded-xl transition cursor-pointer"
+                            title="Di chuyển xuống"
+                          >
+                            <MoveDown className="h-3.5 w-3.5" />
+                          </button>
+
+                          {/* Delete Column Button */}
+                          {config.columns.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const nextCols = config.columns.filter((_, idx) => idx !== index);
+                                updateConfig({ ...config, columns: nextCols });
+                              }}
+                              className="p-1 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/60 transition cursor-pointer"
+                              title="Xóa cột này khỏi mẫu in"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
-              </div>
-            </div>
-          )}
+              )}
 
-          {/* Tab 2: Cột & Công thức Tính Điểm */}
-          {activeTab === 'columns' && draft && config && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="block text-type-body font-semibold text-slate-900 dark:text-slate-100">
-                    Cấu trúc Cột ({config.columns?.length || 0})
-                  </span>
-                  <p className="text-type-helper text-slate-500 font-normal">
-                    Quản lý cột và tạo công thức tính điểm toán học.
-                  </p>
-                </div>
-
-                <Button
-                  variant="soft"
-                  size="sm"
-                  onClick={() => {
-                    setEditingColumn(null);
-                    setIsFormulaModalOpen(true);
-                  }}
-                >
-                  + Thêm Cột Công Thức
-                </Button>
-              </div>
-
-              {/* Danh sách cột có nút di chuyển thứ tự & sửa công thức */}
-              <div className="space-y-2 max-h-[460px] overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800">
-                {config.columns?.map((column, index) => (
-                  <div key={column.key || index} className="pt-2.5 first:pt-0 space-y-1.5">
-                    <div className="flex items-center gap-1.5">
-                      {/* Checkbox visible */}
-                      <input
-                        type="checkbox"
-                        aria-label={`Bật/tắt cột ${column.label}`}
-                        checked={column.visible !== false}
-                        onChange={(e) => {
-                          const nextCols = clone(config.columns);
-                          nextCols[index].visible = e.target.checked;
-                          updateConfig({ ...config, columns: nextCols });
-                        }}
-                        className="h-4 w-4 rounded accent-blue-600 shrink-0"
-                      />
-
-                      {/* Header input */}
-                      <input
-                        value={column.label}
-                        onChange={(e) => {
-                          const nextCols = clone(config.columns);
-                          nextCols[index].label = e.target.value;
-                          updateConfig({ ...config, columns: nextCols });
-                        }}
-                        placeholder="Tên cột"
-                        className="h-9 flex-1 min-w-0 rounded-xl border border-slate-200/60 bg-white px-2.5 text-type-body font-medium text-slate-900 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
-                      />
-
-                      {/* Align Selector */}
-                      <div className="w-20 shrink-0">
-                        <FilterSelect
-                          value={column.align || 'left'}
-                          onChange={(e) => {
-                            const nextCols = clone(config.columns);
-                            nextCols[index].align = e.target.value as Column['align'];
-                            updateConfig({ ...config, columns: nextCols });
-                          }}
-                          options={[
-                            { value: 'left', label: 'Trái' },
-                            { value: 'center', label: 'Giữa' },
-                            { value: 'right', label: 'Phải' },
-                          ]}
-                          fullWidth
-                        />
-                      </div>
-
-                      {/* Move Up / Down */}
-                      <button
-                        type="button"
-                        disabled={index === 0}
-                        onClick={() => handleMoveColumn(index, 'up')}
-                        className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-25 rounded-xl transition cursor-pointer"
-                        title="Di chuyển lên"
-                      >
-                        <MoveUp className="h-3.5 w-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        disabled={index === config.columns.length - 1}
-                        onClick={() => handleMoveColumn(index, 'down')}
-                        className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-25 rounded-xl transition cursor-pointer"
-                        title="Di chuyển xuống"
-                      >
-                        <MoveDown className="h-3.5 w-3.5" />
-                      </button>
-
-                      {/* Formula Edit Button */}
-                      {column.type === 'FORMULA' && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditingColumn({
-                              id: column.key,
-                              key: column.key,
-                              header: column.label,
-                              type: 'FORMULA',
-                              formula: column.formula || '',
-                              decimals: column.decimals ?? 1,
-                              align: column.align,
-                              visible: column.visible !== false,
-                            });
-                            setIsFormulaModalOpen(true);
-                          }}
-                          className="p-1 text-blue-600 hover:text-blue-700 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer"
-                          title="Chỉnh sửa công thức"
-                        >
-                          <Edit2 className="h-3.5 w-3.5" />
-                        </button>
-                      )}
-
-                      {/* Delete Column Button */}
-                      {column.type === 'FORMULA' && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const nextCols = config.columns.filter((_, idx) => idx !== index);
-                            updateConfig({ ...config, columns: nextCols });
-                          }}
-                          className="p-1 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/60 transition cursor-pointer"
-                          title="Xóa cột này"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      )}
-                    </div>
-
-                    {/* Formula Pill Preview */}
-                    {column.type === 'FORMULA' && column.formula && (
-                      <div className="flex items-center gap-1.5 pl-6 text-type-helper text-slate-500">
-                        <span className="ui-pill text-type-helper font-medium px-2 py-0.5 rounded-full border border-blue-300 text-blue-700 dark:border-blue-700 dark:text-blue-400">
-                          Công thức
-                        </span>
-                        <span className="truncate" title={column.formula}>
-                          {column.formula}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Quick Add Standard Variables */}
-              <div className="p-3 bg-slate-50/70 dark:bg-slate-850/50 rounded-xl border border-slate-100 dark:border-slate-800">
-                <p className="text-type-helper font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  + Thêm nhanh trường dữ liệu gốc:
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {STANDARD_REPORT_VARIABLES.filter(
-                    (v) => !config.columns.some((c) => c.key === v.key)
-                  ).map((v) => (
+              {/* Section 4: Chân trang & Chữ ký */}
+              {config && (
+                <div className="pt-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
+                      Chân trang & Chữ ký
+                    </span>
                     <button
-                      key={v.key}
                       type="button"
-                      onClick={() => handleAddStandardField(v.key, v.label)}
-                      className="inline-flex items-center gap-1 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1 text-type-helper font-medium text-slate-700 dark:text-slate-200 hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer shadow-2xs"
+                      onClick={() => {
+                        const nextSigners = [...(config.footer.signers || [])];
+                        nextSigners.push({ title: 'CHỨC DANH', subtitle: '(Ký, ghi rõ họ tên)' });
+                        updateConfig({ ...config, footer: { ...config.footer, signers: nextSigners } });
+                      }}
+                      className="text-type-helper font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 cursor-pointer"
                     >
-                      + {v.label}
+                      + Thêm người ký
                     </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
+                  </div>
 
-          {/* Tab 3: Danh Sách Mẫu Biểu */}
-          {activeTab === 'templates' && (
-            <div className="space-y-4">
-              <div className="relative">
+                  <div className="space-y-2.5">
+                    <FormInput
+                      label="Ghi chú cuối trang"
+                      value={config.footer.note}
+                      onChange={(v) =>
+                        updateConfig({
+                          ...config,
+                          footer: { ...config.footer, note: v },
+                        })
+                      }
+                      placeholder="Ghi chú cuối trang..."
+                    />
+
+                    <div className="space-y-2 pt-1">
+                      {config.footer.signers.map((signer, sIdx) => (
+                        <div key={sIdx} className="flex items-center gap-2">
+                          <div className="flex-1 space-y-1.5">
+                            <input
+                              value={signer.title}
+                              onChange={(e) => {
+                                const nextSigners = clone(config.footer.signers);
+                                nextSigners[sIdx].title = e.target.value;
+                                updateConfig({
+                                  ...config,
+                                  footer: { ...config.footer, signers: nextSigners },
+                                });
+                              }}
+                              placeholder="Chức danh"
+                              className="h-9 w-full rounded-xl border border-slate-200/60 bg-white px-2.5 text-type-body font-medium text-slate-900 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-100"
+                            />
+                            <input
+                              value={signer.subtitle || ''}
+                              onChange={(e) => {
+                                const nextSigners = clone(config.footer.signers);
+                                nextSigners[sIdx].subtitle = e.target.value;
+                                updateConfig({
+                                  ...config,
+                                  footer: { ...config.footer, signers: nextSigners },
+                                });
+                              }}
+                              placeholder="Ghi chú ký"
+                              className="h-9 w-full rounded-xl border border-slate-200/60 bg-white px-2.5 text-type-body font-normal text-slate-700 outline-none focus:border-blue-600 dark:border-slate-700 dark:bg-slate-850 dark:text-slate-300"
+                            />
+                          </div>
+                          {config.footer.signers.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const nextSigners = config.footer.signers.filter((_, idx) => idx !== sIdx);
+                                updateConfig({
+                                  ...config,
+                                  footer: { ...config.footer, signers: nextSigners },
+                                });
+                              }}
+                              className="rounded-xl p-2 text-slate-400 hover:text-rose-600 cursor-pointer transition"
+                              title="Xóa người ký"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+            {/* Tab 2: Danh Sách Mẫu Biểu (Ghim chính xác theo kích thước của Tab 1 bằng absolute inset-0) */}
+            {activeTab === 'columns' && (
+              <div className="absolute inset-0 flex flex-col space-y-3 overflow-hidden">
+              <div className="relative shrink-0">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                 <input
                   value={searchQuery}
@@ -1088,18 +947,21 @@ export default function DocumentTemplatesPage() {
                 />
               </div>
 
-              <div className="space-y-2 max-h-[520px] overflow-y-auto custom-scrollbar">
+              {/* Vùng cuộn danh sách mẫu: trọn vẹn 100% chiều cao của Tab 1 */}
+              <div className="flex-1 min-h-0 space-y-2 overflow-y-auto custom-scrollbar pr-1">
                 {filteredTemplates.map((template) => {
                   const isSelected = template.id === selectedId;
                   return (
                     <div
                       key={template.id}
-                      onClick={() => setSelectedId(template.id)}
-                      className={`group relative rounded-xl border p-3 transition cursor-pointer ${
-                        isSelected
+                      onClick={() => {
+                        setSelectedId(template.id);
+                        setActiveTab('settings');
+                      }}
+                      className={`group relative rounded-xl border p-3 transition cursor-pointer ${isSelected
                           ? 'border-blue-500 bg-blue-50/40 dark:border-blue-500/80 dark:bg-blue-950/20'
                           : 'border-slate-200/60 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-850'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1 min-w-0">
@@ -1114,7 +976,7 @@ export default function DocumentTemplatesPage() {
                             )}
                           </div>
                           <p className="text-type-helper text-slate-500 truncate mt-0.5">
-                            {sourceLabels[template.dataSource] || template.dataSource}
+                            {sourceLabels[template.dataSource] || template.dataSource} ({template.code})
                           </p>
                         </div>
 
@@ -1136,55 +998,72 @@ export default function DocumentTemplatesPage() {
             </div>
           )}
         </div>
+      </div>
 
-        {/* Cột Phải: 1 Khung Live Virtual Paper Sheet Preview Duy Nhất */}
-        <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-2xs dark:border-slate-800 dark:bg-slate-900 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-3 dark:border-slate-800">
-            <div className="flex items-center gap-2">
+        {/* Cột Phải: Studio Canvas In Ấn Hiện Đại (Tự động co giãn bằng 100% Cột Trái) */}
+        <div className="w-full flex flex-col rounded-2xl border border-slate-200/80 bg-slate-100/70 shadow-2xs dark:border-slate-800 dark:bg-slate-950/70 overflow-hidden">
+          {/* Top Bar Trong Suốt Liền Mạch (Bỏ hoàn toàn dải nền trắng) */}
+          <div className="flex items-center justify-between px-4 py-3 bg-slate-100/90 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60 shrink-0 z-10 sticky top-0">
+            <div className="flex items-center gap-2.5">
               <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
                 Xem trước trang in
               </span>
-              <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full border border-slate-300 text-slate-700 dark:border-slate-600 dark:text-slate-300">
-                {config?.page.size || 'A4'} - {config?.page.orientation === 'landscape' ? 'Khổ ngang' : 'Khổ dọc'}
+              <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full border border-slate-200/90 bg-transparent text-slate-700 dark:border-slate-700 dark:text-slate-300">
+                {config?.page.size || 'A4'} | {config?.page.orientation === 'landscape' ? 'Khổ ngang' : 'Khổ dọc'} | Lề {config?.page.marginMm || 15}mm
               </span>
             </div>
 
-            {/* Scale Zoom Controls */}
+            {/* Controls: Nút In Mẫu (Icon Không Nền Không Khung) + Stepper Zoom */}
             <div className="flex items-center gap-2">
-              <div className="inline-flex rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850 p-0.5 text-type-body-sm font-medium">
+              {/* Nút In Mẫu: Ghost button tinh gọn */}
+              <button
+                type="button"
+                onClick={testPrint}
+                disabled={!draft || !config}
+                className="h-8 inline-flex items-center gap-1.5 px-3 rounded-xl text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition cursor-pointer text-type-body font-medium disabled:opacity-30 disabled:cursor-not-allowed shadow-2xs border border-transparent hover:border-slate-200/60 dark:hover:border-slate-700"
+                title="In thử nghiệm biểu mẫu này (PDF / Máy in)"
+              >
+                <Printer className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                <span>In mẫu</span>
+              </button>
+
+              <div className="h-4 w-px bg-slate-200/80 dark:bg-slate-700" />
+
+              {/* Scale Zoom Controls - Phẳng nguyên khối trong suốt */}
+              <div className="inline-flex items-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-transparent p-0.5 shadow-2xs text-type-body font-medium">
                 <button
                   type="button"
                   onClick={() => setZoomScale((s) => Math.max(50, s - 10))}
-                  className="p-1 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-400 transition cursor-pointer"
+                  className="p-1 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition cursor-pointer"
                   title="Thu nhỏ"
                 >
-                  <ZoomOut className="h-4 w-4" />
+                  <ZoomOut className="h-3.5 w-3.5" />
                 </button>
-                <span className="px-2 py-0.5 tabular-nums text-type-helper text-slate-700 dark:text-slate-300 font-medium">
+                <span className="px-1.5 py-0.5 tabular-nums text-type-helper text-slate-700 dark:text-slate-300 font-medium">
                   {zoomScale}%
                 </span>
                 <button
                   type="button"
                   onClick={() => setZoomScale((s) => Math.min(150, s + 10))}
-                  className="p-1 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-400 transition cursor-pointer"
+                  className="p-1 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition cursor-pointer"
                   title="Phóng to"
                 >
-                  <ZoomIn className="h-4 w-4" />
+                  <ZoomIn className="h-3.5 w-3.5" />
                 </button>
                 <button
                   type="button"
                   onClick={() => setZoomScale(95)}
-                  className="p-1 rounded-xl text-slate-600 hover:text-slate-900 dark:text-slate-400 transition cursor-pointer"
-                  title="Đặt lại zoom"
+                  className="p-1 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition cursor-pointer"
+                  title="Đặt lại kích thước mặc định (95%)"
                 >
-                  <RotateCcw className="h-4 w-4" />
+                  <RotateCcw className="h-3.5 w-3.5" />
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Virtual Paper Sheet Container */}
-          <div className="flex justify-center overflow-auto rounded-xl bg-slate-100/70 p-4 dark:bg-slate-950/60 custom-scrollbar min-h-[560px]">
+          {/* Canvas Viewport: Trực tiếp đặt trang in trên Canvas Studio */}
+          <div className="flex-1 min-h-0 flex justify-center items-start overflow-auto p-6 lg:p-8 custom-scrollbar">
             {draft && config ? (
               <div
                 style={{
@@ -1201,7 +1080,7 @@ export default function DocumentTemplatesPage() {
                     padding: `${config.page.marginMm || 15}mm`,
                     fontFamily: '"Times New Roman", Times, serif',
                   }}
-                  className="bg-white text-slate-950 shadow-md transition-all dark:bg-white dark:text-slate-950 text-left"
+                  className="bg-white text-slate-950 shadow-[0_10px_35px_-5px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.06)] rounded-xs transition-all dark:bg-white dark:text-slate-950 text-left"
                 >
                   {config.templateType === 'EXAM_PAPER' ? (
                     /* EXAM PAPER FORMAT */
@@ -1397,9 +1276,8 @@ export default function DocumentTemplatesPage() {
                                       style={{
                                         textAlign: c.align || (c.key === 'index' ? 'center' : 'left'),
                                       }}
-                                      className={`border border-slate-700 p-2 font-normal text-type-body ${
-                                        c.type === 'FORMULA' ? 'text-blue-700 font-medium' : ''
-                                      }`}
+                                      className={`border border-slate-700 p-2 font-normal text-type-body ${c.type === 'FORMULA' ? 'text-blue-700 font-medium' : ''
+                                        }`}
                                     >
                                       {renderCellValue(c, row)}
                                     </td>
@@ -1456,18 +1334,6 @@ export default function DocumentTemplatesPage() {
           </div>
         </div>
       </div>
-
-      {/* Formula Editor Modal */}
-      <FormulaEditorModal
-        isOpen={isFormulaModalOpen}
-        onClose={() => {
-          setIsFormulaModalOpen(false);
-          setEditingColumn(null);
-        }}
-        onSave={handleSaveFormulaColumn}
-        initialColumn={editingColumn}
-        customVariables={customVariables}
-      />
 
       {/* Toast Notification */}
       {toast && (
