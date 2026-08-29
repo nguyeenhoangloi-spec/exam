@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { X, ArrowLeftRight, Check, Minus, Search, ShieldAlert, Users, Building2, BookOpen } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { FilterSelect } from '../ui/FilterSelect';
 
 interface PermissionCompareModalProps {
   isOpen: boolean;
@@ -151,36 +152,40 @@ export function PermissionCompareModal({
               <label className="text-type-body font-medium text-slate-700 dark:text-slate-300">
                 👤 Tài khoản thứ nhất (A)
               </label>
-              <select
+              <FilterSelect
                 value={userAId}
                 onChange={(e) => setUserAId(e.target.value)}
-                className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body font-normal text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-              >
-                <option value="">-- Chọn tài khoản A --</option>
-                {users.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {getDisplayName(u)} ({u.username} – {u.role})
-                  </option>
-                ))}
-              </select>
+                fullWidth
+                fitTriggerWidth
+                placeholder="-- Chọn tài khoản A --"
+                options={[
+                  { value: '', label: '-- Chọn tài khoản A --' },
+                  ...users.map((u) => ({
+                    value: String(u.id),
+                    label: `${getDisplayName(u)} (${u.username} – ${u.role})`,
+                  })),
+                ]}
+              />
             </div>
 
             <div className="space-y-1.5">
               <label className="text-type-body font-medium text-slate-700 dark:text-slate-300">
                 👤 Tài khoản thứ hai (B)
               </label>
-              <select
+              <FilterSelect
                 value={userBId}
                 onChange={(e) => setUserBId(e.target.value)}
-                className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body font-normal text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-              >
-                <option value="">-- Chọn tài khoản B --</option>
-                {users.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {getDisplayName(u)} ({u.username} – {u.role})
-                  </option>
-                ))}
-              </select>
+                fullWidth
+                fitTriggerWidth
+                placeholder="-- Chọn tài khoản B --"
+                options={[
+                  { value: '', label: '-- Chọn tài khoản B --' },
+                  ...users.map((u) => ({
+                    value: String(u.id),
+                    label: `${getDisplayName(u)} (${u.username} – ${u.role})`,
+                  })),
+                ]}
+              />
             </div>
           </div>
 

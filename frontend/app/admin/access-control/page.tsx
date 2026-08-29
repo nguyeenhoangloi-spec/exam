@@ -49,6 +49,7 @@ import { PermissionSimulatorModal } from '../../../components/access-control/Per
 import { PermissionFilterPopover } from '../../../components/access-control/PermissionFilterPopover';
 import { UserRoleFilterPopover } from '../../../components/access-control/UserRoleFilterPopover';
 import { AccessHistoryFilterPopover, AccessHistoryFilterState } from '../../../components/access-control/AccessHistoryFilterPopover';
+import { PermissionOverrideSelect } from '../../../components/access-control/PermissionOverrideSelect';
 
 type Role = 'ADMIN' | 'TEACHER' | 'STUDENT';
 type Tab = 'matrix' | 'users' | 'history';
@@ -1522,35 +1523,13 @@ export default function AccessControlPage() {
                                     className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-type-body text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                                   />
                                   <div className="flex items-center gap-2">
-                                    <select
+                                    <PermissionOverrideSelect
                                       value={overrideCode}
-                                      onChange={(e) => setOverrideCode(e.target.value)}
-                                      className="h-10 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-type-body font-normal text-slate-800 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 shadow-2xs"
-                                    >
-                                      <option value="">-- Chọn quyền cần gán ngoại lệ --</option>
-                                      {availableOverridePermissions.filter((p) => !selectedUserRolePermissionCodes.has(p.code)).length > 0 && (
-                                        <optgroup label="Quyền mở rộng (Có thể cấp thêm)">
-                                          {availableOverridePermissions
-                                            .filter((p) => !selectedUserRolePermissionCodes.has(p.code))
-                                            .map((p) => (
-                                              <option key={p.code} value={p.code}>
-                                                + [{p.module}] {p.name} ({p.code})
-                                              </option>
-                                            ))}
-                                        </optgroup>
-                                      )}
-                                      {availableOverridePermissions.filter((p) => selectedUserRolePermissionCodes.has(p.code)).length > 0 && (
-                                        <optgroup label="Quyền hiện có theo vai trò (Có thể chặn)">
-                                          {availableOverridePermissions
-                                            .filter((p) => selectedUserRolePermissionCodes.has(p.code))
-                                            .map((p) => (
-                                              <option key={p.code} value={p.code}>
-                                                - [{p.module}] {p.name} ({p.code})
-                                              </option>
-                                            ))}
-                                        </optgroup>
-                                      )}
-                                    </select>
+                                      onChange={(code) => setOverrideCode(code)}
+                                      permissions={availableOverridePermissions}
+                                      rolePermissionCodes={selectedUserRolePermissionCodes}
+                                      disabled={saving}
+                                    />
 
                                     <Button
                                       variant="primary"
