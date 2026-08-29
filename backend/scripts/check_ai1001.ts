@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { ExamArrangementService } from './src/exam-arrangement/exam-arrangement.service';
-import { AuditService } from './src/audit/audit.service';
+import { ExamArrangementService } from '../src/exam-arrangement/exam-arrangement.service';
+import { AuditService } from '../src/audit/audit.service';
 
 const prisma = new PrismaClient();
 const audit = new AuditService(prisma as any);
