@@ -118,17 +118,18 @@ export default function SystemSettingsPage() {
   const [deleting, setDeleting] = useState<StorageTarget | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  const load = async () => {
+  const load = async (force = false) => {
     try {
       if (!cachedSettings && !settings.storageTargets.length) setLoading(true);
+      const params = force ? { params: { noCache: true } } : undefined;
       const [settingsResponse, overviewResponse] = await Promise.all([
-        api.get<BackupSettings>('/backups/settings', { params: { noCache: true } }),
-        api.get<{ storage?: StorageStatus }>('/backups/overview', { params: { noCache: true } }),
+        api.get<BackupSettings>('/backups/settings', params),
+        api.get<{ storage?: StorageStatus }>('/backups/overview', params),
       ]);
       const [policiesResult, archiveResult, archiveConfigResult] = await Promise.allSettled([
-        api.get<AuditRetentionPolicy[]>('/security-audit/policies', { params: { noCache: true } }),
-        api.get<AuditArchiveStatus>('/security-audit/archive-status', { params: { noCache: true } }),
-        api.get<ExamArchiveConfig>('/exam-archives/config', { params: { noCache: true } }),
+        api.get<AuditRetentionPolicy[]>('/security-audit/policies', params),
+        api.get<AuditArchiveStatus>('/security-audit/archive-status', params),
+        api.get<ExamArchiveConfig>('/exam-archives/config', params),
       ]);
       setSettings({
         ...defaults,

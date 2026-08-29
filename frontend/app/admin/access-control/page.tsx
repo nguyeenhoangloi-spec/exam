@@ -1816,7 +1816,7 @@ export default function AccessControlPage() {
                 </div>
               )}
 
-              <div className="overflow-hidden rounded-2xl border border-slate-200/60 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
+              <div className="overflow-hidden min-h-[400px] rounded-2xl border border-slate-200/60 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
                 <div className="divide-y divide-slate-100 dark:divide-slate-800">
                   {paginatedHistory.length ? (
                     paginatedHistory.map((item) => (

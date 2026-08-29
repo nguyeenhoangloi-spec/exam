@@ -188,7 +188,8 @@ export default function StudentResultsPage() {
     }
   }, []);
 
-  const [myAppeals, setMyAppeals] = useState<any[]>([]);
+  const cachedAppeals = typeof window !== 'undefined' ? getCachedData<any[]>('/grade-appeals/my-appeals') : null;
+  const [myAppeals, setMyAppeals] = useState<any[]>(cachedAppeals || []);
 
   const fetchMyAppeals = useCallback(async () => {
     try {

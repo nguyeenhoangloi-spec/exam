@@ -129,7 +129,7 @@ function TeacherEssayGradingContent() {
     }
 
     try {
-      const res = await api.get(`/essay/grading/attempts/${id}`, { params: { noCache: true } });
+      const res = await api.get(`/essay/grading/attempts/${id}`);
       const attemptData = res.data;
       setSelected(attemptData);
 

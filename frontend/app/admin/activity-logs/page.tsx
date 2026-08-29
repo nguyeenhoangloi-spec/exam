@@ -321,20 +321,22 @@ function ActivityLogsContent() {
     };
 
     /* ── Security Audit State ── */
-    const [secEvents, setSecEvents] = useState<SecurityEvent[]>([]);
-    const [secIntegrity, setSecIntegrity] = useState<{ checked: number; valid: boolean } | null>(null);
-    const [secLoading, setSecLoading] = useState<boolean>(true);
+    const cachedSecEvents = typeof window !== 'undefined' ? getCachedData<{ items: SecurityEvent[] }>('/security-audit/events')?.items : null;
+    const cachedSecIntegrity = typeof window !== 'undefined' ? getCachedData<any>('/security-audit/integrity') : null;
+    const [secEvents, setSecEvents] = useState<SecurityEvent[]>(cachedSecEvents || []);
+    const [secIntegrity, setSecIntegrity] = useState<{ checked: number; valid: boolean } | null>(cachedSecIntegrity || null);
+    const [secLoading, setSecLoading] = useState<boolean>(!cachedSecEvents);
     const [secSearch, setSecSearch] = useState<string>('');
     const [secCategory, setSecCategory] = useState<string>('');
     const [secOutcome, setSecOutcome] = useState<string>('');
     const [secPage, setSecPage] = useState<number>(1);
     const [secLimit, setLimitSec] = useState<number>(15);
-    const [secTotal, setSecTotal] = useState<number>(0);
+    const [secTotal, setSecTotal] = useState<number>(cachedSecEvents ? cachedSecEvents.length : 0);
     const [legalHoldModalEvent, setLegalHoldModalEvent] = useState<SecurityEvent | null>(null);
     const [legalHoldLoading, setLegalHoldLoading] = useState<boolean>(false);
 
     const loadSecurityAudit = useCallback(async () => {
-        setSecLoading(true);
+        if (!secEvents.length && !cachedSecEvents) setSecLoading(true);
         try {
             const [eventResponse, integrityResponse] = await Promise.all([
                 api.get('/security-audit/events', {
@@ -684,7 +686,7 @@ function ActivityLogsContent() {
             ========================================================================= */}
             {activeTab === 'activity' && (
                 <div className="space-y-4">
-                    <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+                    <div className="ui-table-wrap min-h-[420px] rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
                         {loading && logs.length === 0 ? (
                             <div className="py-24 text-center">
                                 <div className="inline-block h-7 w-7 animate-spin rounded-full border-2 border-blue-600 border-t-transparent mb-2" />
@@ -815,7 +817,7 @@ function ActivityLogsContent() {
             ========================================================================= */}
             {activeTab === 'security' && (
                 <div className="space-y-4">
-                    <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+                    <div className="ui-table-wrap min-h-[420px] rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
                         {secLoading && secEvents.length === 0 ? (
                             <div className="py-24 text-center">
                                 <div className="inline-block h-7 w-7 animate-spin rounded-full border-2 border-blue-600 border-t-transparent mb-2" />

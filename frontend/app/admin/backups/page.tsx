@@ -266,12 +266,11 @@ export default function BackupsPage() {
         else if (silent) setRefreshing(true);
         try {
             const [overviewResponse, jobsResponse, restoreResponse] = await Promise.all([
-                api.get<Overview>('/backups/overview', { params: { noCache: true } }),
+                api.get<Overview>('/backups/overview'),
                 api.get<{ items: BackupJob[] }>('/backups/jobs', {
                     params: {
                         page: 1,
                         limit: 100,
-                        noCache: true,
                         type: filterType || undefined,
                         status: filterStatus || undefined,
                         isScheduled: filterMode === 'SCHEDULED' ? 'true' : filterMode === 'MANUAL' ? 'false' : undefined,
@@ -280,7 +279,7 @@ export default function BackupsPage() {
                         search: search.trim() || undefined,
                     },
                 }),
-                api.get<RestoreRequest[]>('/backups/restore-requests', { params: { noCache: true } }),
+                api.get<RestoreRequest[]>('/backups/restore-requests'),
             ]);
             setOverview(overviewResponse.data);
             setJobs(jobsResponse.data.items || []);

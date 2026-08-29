@@ -216,12 +216,13 @@ export default function ExamReportsPage() {
   );
 
   const cachedSchedules = typeof window !== 'undefined' ? getCachedData<ExamSchedule[]>('/exam-reports/schedules') : null;
+  const cachedSummary = typeof window !== 'undefined' ? getCachedData<SummaryData>('/exam-reports/summary') : null;
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [schedules, setSchedules] = useState<ExamSchedule[]>(cachedSchedules || []);
   const [selectedScheduleId, setSelectedScheduleId] = useState<string>('');
   const [report, setReport] = useState<GradeReportResponse | null>(null);
-  const [summary, setSummary] = useState<SummaryData | null>(null);
-  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summary, setSummary] = useState<SummaryData | null>(cachedSummary);
+  const [summaryLoading, setSummaryLoading] = useState(!cachedSummary);
   const [summaryFilters, setSummaryFilters] = useState({
     examPeriodId: searchParams.get('examPeriodId') || 'ALL',
     subjectId: searchParams.get('subjectId') || 'ALL',
@@ -400,7 +401,7 @@ export default function ExamReportsPage() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const fetchSummary = useCallback(async () => {
-    setSummaryLoading(true);
+    if (!summary && !cachedSummary) setSummaryLoading(true);
     try {
       const params = new URLSearchParams();
       Object.entries(summaryFilters).forEach(([key, value]) => {
@@ -429,7 +430,7 @@ export default function ExamReportsPage() {
   }, [fetchSummary]);
 
   const fetchSchedules = useCallback(async () => {
-    setLoadingSchedules(true);
+    if (!schedules.length && !cachedSchedules) setLoadingSchedules(true);
     try {
       const response = await api.get<ExamSchedule[]>('/exam-reports/schedules');
       const data = response.data || [];
