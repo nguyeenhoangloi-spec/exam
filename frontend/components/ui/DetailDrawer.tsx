@@ -18,6 +18,7 @@ export interface DetailDrawerProps {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   badge?: React.ReactNode;
+  showAvatar?: boolean;
   avatarText?: string;
   avatarIcon?: React.ReactNode;
   headerActions?: React.ReactNode;
@@ -61,6 +62,7 @@ export function DetailDrawer({
   title,
   subtitle,
   badge,
+  showAvatar = true,
   avatarText,
   avatarIcon,
   headerActions,
@@ -84,6 +86,7 @@ export function DetailDrawer({
     title,
     subtitle,
     badge,
+    showAvatar,
     avatarText,
     avatarIcon,
     headerActions,
@@ -101,6 +104,7 @@ export function DetailDrawer({
         title,
         subtitle,
         badge,
+        showAvatar,
         avatarText,
         avatarIcon,
         headerActions,
@@ -131,6 +135,7 @@ export function DetailDrawer({
     title,
     subtitle,
     badge,
+    showAvatar,
     avatarText,
     avatarIcon,
     headerActions,
@@ -159,6 +164,7 @@ export function DetailDrawer({
         title,
         subtitle,
         badge,
+        showAvatar,
         avatarText,
         avatarIcon,
         headerActions,
@@ -219,19 +225,21 @@ export function DetailDrawer({
         >
           {/* Header */}
           <div
-            className={`relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/60 dark:border-slate-800 p-5 shrink-0 ${headerClassName}`}
+            className={`relative bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 p-5 shrink-0 ${headerClassName}`}
           >
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3.5 min-w-0 flex-1">
                 {/* Avatar Monogram hoặc Icon */}
-                {active.avatarIcon ? (
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold shadow-sm shadow-blue-500/25 border border-blue-400/30">
-                    {active.avatarIcon}
-                  </div>
-                ) : (
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
-                    {shortAvatar}
-                  </div>
+                {active.showAvatar !== false && (active.avatarIcon || active.avatarText !== undefined) && (
+                  active.avatarIcon ? (
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                      {active.avatarIcon}
+                    </div>
+                  ) : active.avatarText ? (
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
+                      {shortAvatar}
+                    </div>
+                  ) : null
                 )}
 
                 <div className="min-w-0 flex-1">

@@ -4,7 +4,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
   KeyRound,
   Download,
-  Printer,
   RotateCcw,
   Award,
   Search,
@@ -27,9 +26,9 @@ import { QuestionMediaPlayer } from '../exam/QuestionMediaPlayer';
 import { getImageUrl } from '../../lib/media-utils';
 import { DynamicImage } from '../ui/DynamicImage';
 import { ImageLightboxModal } from '../ImageLightboxModal';
-import { printExamPaper, getPublishedTemplatesMap } from '../../lib/export-print';
 import { StatusBadge } from '../common/StatusBadge';
 import { FillBlankInlineContent } from '../../lib/fill-blank-helper';
+import { getPaperCodeRange } from './ExamPaperTable';
 
 export interface ExamPaperDetailDrawerProps {
   paper: ExamPaper | null;
@@ -162,25 +161,31 @@ export function ExamPaperDetailDrawer({
       <DetailDrawer
         isOpen={isOpen && Boolean(paper)}
         onClose={onClose}
-        title={paper ? (paper.paperCode || `Đề thi #${paper.id}`) : ''}
-        subtitle={
-          paper
-            ? `${subjectName} — ${periodName}`
-            : undefined
+        showAvatar={false}
+        title={
+          <div className="flex items-center gap-2.5 flex-wrap min-w-0">
+            <span className="text-type-card font-semibold text-slate-950 dark:text-white">
+              {paper ? (getPaperCodeRange(paper).rangeText || paper.paperCode || `Đề thi #${paper.id}`) : ''}
+            </span>
+            {paper && <StatusBadge status={paper.status} />}
+            <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
+            <span className="text-type-body-sm font-medium text-slate-600 dark:text-slate-400 truncate">
+              {subjectName} — {periodName}
+            </span>
+          </div>
         }
-        badge={paper ? <StatusBadge status={paper.status} /> : undefined}
-        avatarText={paper?.paperCode?.substring(0, 3)?.toUpperCase() || 'ĐT'}
         maxWidth="3xl"
         headerExtra={
           paper ? (
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-              <div className="flex items-center gap-1.5 flex-wrap">
+              {/* Segmented Control - Phẳng, Gọn Gàng, Không Màu Mè */}
+              <div className="inline-flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/80 text-type-helper font-medium text-slate-600 dark:text-slate-400">
                 <button
                   type="button"
                   onClick={() => setActiveFilter('ALL')}
-                  className={`px-3 py-1 text-type-helper font-semibold rounded-xl transition cursor-pointer border ${activeFilter === 'ALL'
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200/80 dark:border-slate-700 hover:bg-slate-50'
+                  className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${activeFilter === 'ALL'
+                    ? 'bg-white dark:bg-slate-900 text-slate-950 dark:text-white shadow-2xs font-semibold'
+                    : 'hover:text-slate-900 dark:hover:text-white'
                     }`}
                 >
                   Tất cả ({questionCount})
@@ -188,9 +193,9 @@ export function ExamPaperDetailDrawer({
                 <button
                   type="button"
                   onClick={() => setActiveFilter('EASY')}
-                  className={`px-3 py-1 text-type-helper font-semibold rounded-xl transition cursor-pointer border ${activeFilter === 'EASY'
-                    ? 'bg-emerald-600 text-white border-emerald-600'
-                    : 'bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 border-slate-200/80 dark:border-slate-700 hover:bg-emerald-50/50'
+                  className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${activeFilter === 'EASY'
+                    ? 'bg-white dark:bg-slate-900 text-slate-950 dark:text-white shadow-2xs font-semibold'
+                    : 'hover:text-slate-900 dark:hover:text-white'
                     }`}
                 >
                   Dễ ({difficultyCount.easy})
@@ -198,9 +203,9 @@ export function ExamPaperDetailDrawer({
                 <button
                   type="button"
                   onClick={() => setActiveFilter('MEDIUM')}
-                  className={`px-3 py-1 text-type-helper font-semibold rounded-xl transition cursor-pointer border ${activeFilter === 'MEDIUM'
-                    ? 'bg-amber-600 text-white border-amber-600'
-                    : 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-400 border-slate-200/80 dark:border-slate-700 hover:bg-amber-50/50'
+                  className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${activeFilter === 'MEDIUM'
+                    ? 'bg-white dark:bg-slate-900 text-slate-950 dark:text-white shadow-2xs font-semibold'
+                    : 'hover:text-slate-900 dark:hover:text-white'
                     }`}
                 >
                   TB ({difficultyCount.medium})
@@ -208,72 +213,42 @@ export function ExamPaperDetailDrawer({
                 <button
                   type="button"
                   onClick={() => setActiveFilter('HARD')}
-                  className={`px-3 py-1 text-type-helper font-semibold rounded-xl transition cursor-pointer border ${activeFilter === 'HARD'
-                    ? 'bg-rose-600 text-white border-rose-600'
-                    : 'bg-white dark:bg-slate-800 text-rose-700 dark:text-rose-400 border-slate-200/80 dark:border-slate-700 hover:bg-rose-50/50'
+                  className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${activeFilter === 'HARD'
+                    ? 'bg-white dark:bg-slate-900 text-slate-950 dark:text-white shadow-2xs font-semibold'
+                    : 'hover:text-slate-900 dark:hover:text-white'
                     }`}
                 >
                   Khó ({difficultyCount.hard})
                 </button>
               </div>
 
-              {/* Action Toolbar */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <Button
+              {/* Action Toolbar - Icon Đơn Thuần Không Viền */}
+              <div className="flex items-center gap-1">
+                {/* Nút Hiện / Ẩn Đáp Án Icon-Only Không Viền */}
+                <button
                   type="button"
-                  variant="secondary"
-                  size="sm"
                   onClick={onToggleShowAnswers}
-                  leftIcon={showAnswers ? <EyeOff className="w-3.5 h-3.5 text-blue-600" /> : <Eye className="w-3.5 h-3.5" />}
-                  className="shadow-2xs text-type-helper font-semibold"
+                  className={`flex items-center justify-center w-8 h-8 rounded-xl transition cursor-pointer ${
+                    showAnswers
+                      ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                  title={showAnswers ? 'Ẩn đáp án' : 'Hiện đáp án'}
+                  aria-label={showAnswers ? 'Ẩn đáp án' : 'Hiện đáp án'}
                 >
-                  {showAnswers ? 'Ẩn đáp án' : 'Hiện đáp án'}
-                </Button>
+                  {showAnswers ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
 
-                <Button
+                {/* Nút In / Xuất Đề Thi Icon-Only Không Viền (Mở Popup Tùy Chọn) */}
+                <button
                   type="button"
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => {
-                    const questionsForPrint = rawQuestions.map((item, idx) => {
-                      const q = item.question || item;
-                      return {
-                        index: idx + 1,
-                        content: q.content || '',
-                        score: item.score || q.score || 1,
-                        type: q.type || 'MULTIPLE_CHOICE',
-                        difficulty: q.difficulty,
-                        options: questionChoices(q),
-                        correctAnswer: showAnswers ? (q.answer || q.correctAnswer) : undefined,
-                        answerExplanation: showAnswers ? q.explanation : undefined,
-                      };
-                    });
-
-                    printExamPaper({
-                      subjectName,
-                      subjectCode: (paper.examSchedule?.subject as any)?.subjectCode || (paper.examSchedule as any)?.subjectCode || 'MH',
-                      paperCode: paper.paperCode || `DE_${paper.id}`,
-                      durationMinutes: (paper.examSchedule as any)?.durationMinutes || 60,
-                      totalScore: paper.totalScore || 10,
-                      questions: questionsForPrint,
-                    });
-                  }}
-                  leftIcon={<Printer className="w-3.5 h-3.5 text-blue-600" />}
-                  className="shadow-2xs text-type-helper font-semibold"
-                >
-                  In đề thi
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
                   onClick={() => onExportWord(paper, showAnswers)}
-                  leftIcon={<Download className="w-3.5 h-3.5 text-emerald-600" />}
-                  className="shadow-2xs text-type-helper font-semibold"
+                  className="flex items-center justify-center w-8 h-8 rounded-xl transition cursor-pointer text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
+                  title="Xuất hoặc in đề thi"
+                  aria-label="Xuất hoặc in đề thi"
                 >
-                  Xuất Word
-                </Button>
+                  <Download className="w-4 h-4" />
+                </button>
               </div>
             </div>
           ) : undefined
