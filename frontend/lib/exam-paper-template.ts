@@ -455,11 +455,16 @@ export function generateUnifiedExamPaperHtml(
   if (!papers || papers.length === 0) return '';
 
   const firstPaper = papers[0];
-  const isEssay = firstPaper.examType === 'TU_LUAN' || customOptions?.examType === 'TU_LUAN';
-  const isAnonymizedCut = customOptions?.essayHeaderMode === 'ANONYMIZED_CUT' || isEssay;
-
   // Đọc cấu hình mẫu published từ document-templates nếu có
   const examTemplate = globalPublishedTemplates['EXAM_PAPER_OFFICIAL'] || globalPublishedTemplates['EXAM_PAPER'] || null;
+
+  const isEssay = firstPaper.examType === 'TU_LUAN' || customOptions?.examType === 'TU_LUAN';
+  const isAnonymizedCut =
+    customOptions?.essayHeaderMode === 'ANONYMIZED_CUT' ||
+    (customOptions?.essayHeaderMode !== 'STANDARD' &&
+      (firstPaper.essayHeaderMode === 'ANONYMIZED_CUT' ||
+        examTemplate?.examInfo?.essayHeaderMode === 'ANONYMIZED_CUT' ||
+        isEssay));
 
   const institutionName = customOptions?.institutionName || firstPaper.institutionName || examTemplate?.header?.institutionName || 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ';
   const facultyName = customOptions?.facultyName || firstPaper.facultyName || firstPaper.departmentName || examTemplate?.header?.facultyName || 'KHOA CÔNG NGHỆ THÔNG TIN';
@@ -474,6 +479,7 @@ export function generateUnifiedExamPaperHtml(
 
   const logoUrl = customOptions?.logoUrl || firstPaper.logoUrl || examTemplate?.header?.logoUrl || getSchoolLogoUrl();
   const showLogo = customOptions?.showLogo !== undefined ? customOptions.showLogo : (firstPaper.showLogo !== undefined ? firstPaper.showLogo : (examTemplate?.header?.showLogo !== false));
+  const showScoreBox = customOptions?.showScoreBox !== undefined ? customOptions.showScoreBox : (firstPaper.showScoreBox !== undefined ? firstPaper.showScoreBox : (examTemplate?.examInfo?.showScoreBox !== false));
 
   const headerConfig = {
     showLogo,
@@ -484,7 +490,7 @@ export function generateUnifiedExamPaperHtml(
     title,
     subtitle,
     instructionText,
-    showScoreBox: customOptions?.showScoreBox,
+    showScoreBox,
   };
 
   const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F'];

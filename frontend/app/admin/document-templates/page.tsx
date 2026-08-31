@@ -74,6 +74,9 @@ type Config = {
     showScoreBox?: boolean;
     showInstructions?: boolean;
     instructionText?: string;
+    essayHeaderMode?: 'STANDARD' | 'ANONYMIZED_CUT';
+    duplexPrinting?: boolean;
+    phachCodePrefix?: string;
   };
   columns: Column[];
   footer: {
@@ -835,8 +838,8 @@ export default function DocumentTemplatesPage() {
                   </div>
 
                   {config.templateType === 'EXAM_PAPER' && (
-                    <div className="pt-2 space-y-2">
-                      <div className="flex items-center gap-4">
+                    <div className="pt-3 space-y-3 border-t border-slate-100 dark:border-slate-800">
+                      <div className="flex flex-wrap items-center gap-4">
                         <label className="flex items-center gap-2 cursor-pointer text-type-body font-medium text-slate-800 dark:text-slate-200">
                           <input
                             type="checkbox"
@@ -856,6 +859,7 @@ export default function DocumentTemplatesPage() {
                           <span>Quy chế phòng thi</span>
                         </label>
                       </div>
+
                       {config.examInfo?.showInstructions !== false && (
                         <FormInput
                           label="Nội dung quy chế"
@@ -1218,154 +1222,359 @@ export default function DocumentTemplatesPage() {
                 >
                   {config.templateType === 'EXAM_PAPER' ? (
                     /* EXAM PAPER FORMAT */
-                    <div className="space-y-4 text-type-body leading-relaxed">
-                      {/* Header 2 Columns or 1 Column */}
-                      {Boolean(config.header.motto?.trim()) ? (
-                        <div className="grid grid-cols-2 gap-4 text-center">
-                          <div className="flex items-center justify-center gap-2.5">
-                            {config.header.showLogo !== false && (
-                              <DynamicImage
-                                src={config.header.logoUrl || DEFAULT_DNC_LOGO_DATA_URL}
-                                alt="Logo trường"
-                                className="h-11 w-11 object-contain shrink-0"
-                              />
-                            )}
+                    <div className="space-y-3.5 text-type-body leading-relaxed">
+                      {/* 1. NẾU LÀ ĐỀ THI TỰ LUẬN RỌC PHÁCH 120MM */}
+                      {config.examInfo?.essayHeaderMode === 'ANONYMIZED_CUT' ? (
+                        <>
+                          {/* Header 2 Cột Chuẩn Trường & Quốc hiệu */}
+                          <div className="grid grid-cols-2 gap-4 text-center">
+                            <div className="flex items-center justify-center gap-2.5">
+                              {config.header.showLogo !== false && (
+                                <DynamicImage
+                                  src={config.header.logoUrl || DEFAULT_DNC_LOGO_DATA_URL}
+                                  alt="Logo trường"
+                                  className="h-11 w-11 object-contain shrink-0"
+                                />
+                              )}
+                              <div>
+                                <div className="font-semibold text-type-body">
+                                  {config.header.institutionName || 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ'}
+                                </div>
+                                {config.header.facultyName && (
+                                  <div className="font-medium text-type-helper mt-0.5">
+                                    {config.header.facultyName}
+                                  </div>
+                                )}
+                                <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                              </div>
+                            </div>
                             <div>
                               <div className="font-semibold text-type-body">
-                                {config.header.institutionName || 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ'}
+                                {config.header.motto?.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM'}
                               </div>
-                              {config.header.facultyName && (
-                                <div className="font-medium text-type-helper mt-0.5">
-                                  {config.header.facultyName}
-                                </div>
-                              )}
+                              <div className="font-medium italic text-type-helper mt-0.5">
+                                {config.header.motto?.split('\n')[1] || 'Độc lập - Tự do - Hạnh phúc'}
+                              </div>
                               <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
                             </div>
                           </div>
-                          <div>
-                            <div className="font-semibold text-type-body">
-                              {config.header.motto?.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM'}
-                            </div>
-                            <div className="font-medium italic text-type-helper mt-0.5">
-                              {config.header.motto?.split('\n')[1] || 'Độc lập - Tự do - Hạnh phúc'}
-                            </div>
-                            <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-center gap-2.5 text-center">
-                          {config.header.showLogo !== false && (
-                            <DynamicImage
-                              src={config.header.logoUrl || DEFAULT_DNC_LOGO_DATA_URL}
-                              alt="Logo trường"
-                              className="h-11 w-11 object-contain shrink-0"
-                            />
-                          )}
-                          <div>
-                            <div className="font-semibold text-type-body">
-                              {config.header.institutionName || 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ'}
-                            </div>
-                            {config.header.facultyName && (
-                              <div className="font-medium text-type-helper mt-0.5">
-                                {config.header.facultyName}
+
+                          {/* Tiêu đề & Mã đề */}
+                          <div className="text-center pt-1 relative">
+                            <h2 className="text-type-page font-semibold">
+                              {config.header.title || 'ĐỀ THI KẾT THÚC HỌC PHẦN'}
+                            </h2>
+                            {config.header.subtitle && (
+                              <div className="italic text-type-helper mt-0.5 font-normal text-slate-600">
+                                {config.header.subtitle}
                               </div>
                             )}
-                            <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                            <div className="text-right text-type-body-sm font-semibold mt-1">
+                              MÃ ĐỀ THI: <strong>101</strong>
+                            </div>
                           </div>
-                        </div>
-                      )}
 
-                      {/* Exam Title */}
-                      <div className="text-center pt-2">
-                        <h2 className="text-type-page font-semibold">
-                          {config.header.title || 'ĐỀ THI KẾT THÚC HỌC PHẦN'}
-                        </h2>
-                        {config.header.subtitle && (
-                          <div className="italic text-type-helper mt-0.5 font-normal">
-                            {config.header.subtitle}
+                          {/* Khung thông tin học phần */}
+                          <div className="border border-slate-900 p-2.5 space-y-1 text-type-body-sm">
+                            <div className="grid grid-cols-2 gap-2">
+                              <div><strong>Môn học:</strong> {config.examInfo?.subjectName || 'Lập trình Web Nâng cao'}</div>
+                              <div><strong>Mã học phần:</strong> {config.examInfo?.subjectCode || 'IT4409'}</div>
+                              <div><strong>Thời gian làm bài:</strong> {config.examInfo?.durationMinutes || 60} phút</div>
+                              <div><strong>Thang điểm:</strong> {config.examInfo?.totalScore || 10} điểm</div>
+                            </div>
                           </div>
-                        )}
-                      </div>
 
-                      {/* Exam Meta Info Box */}
-                      <div className="border border-slate-800 p-3 space-y-1.5 text-type-body-sm">
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <strong>Môn thi:</strong> {config.examInfo?.subjectName || 'Lập trình Web Nâng cao'}
-                          </div>
-                          <div>
-                            <strong>Mã học phần:</strong> {config.examInfo?.subjectCode || 'IT4409'}
-                          </div>
-                          <div>
-                            <strong>Thời gian làm bài:</strong> {config.examInfo?.durationMinutes || 60} phút
-                          </div>
-                          <div>
-                            <strong>Thang điểm:</strong> {config.examInfo?.totalScore || 10} điểm
-                          </div>
-                        </div>
-                        {config.examInfo?.showInstructions !== false && (
-                          <div className="pt-1 italic text-type-helper border-t border-slate-300 font-normal">
-                            {config.examInfo?.instructionText ||
-                              '(Thí sinh không được sử dụng tài liệu. Cán bộ coi thi không giải thích gì thêm.)'}
-                          </div>
-                        )}
-                      </div>
+                          {/* Bảng Thông tin thí sinh & Ô Số Phách 1 in sẵn */}
+                          <table className="w-full border-collapse border border-slate-900 text-type-body-sm">
+                            <tbody>
+                              <tr>
+                                <td colSpan={2} className="border border-slate-900 p-1.5 w-[54%]">
+                                  <strong>Họ và tên thí sinh:</strong> ................................................................
+                                </td>
+                                <td className="border border-slate-900 p-1.5 w-[23%]">
+                                  <strong>MSSV:</strong> ...................................
+                                </td>
+                                <td rowSpan={3} className="border border-slate-900 p-2 text-center align-middle bg-slate-50 w-[23%]">
+                                  <div className="text-type-helper font-semibold">SỐ PHÁCH</div>
+                                  <div className="text-type-tiny italic text-slate-500">(Phách 1)</div>
+                                  <div className="mt-1 tabular-nums text-type-body font-semibold tracking-wider border border-dashed border-slate-900 px-2 py-0.5 bg-white inline-block rounded">
+                                    P101-001
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td className="border border-slate-900 p-1.5 w-[28%]"><strong>Lớp HP:</strong> ............................</td>
+                                <td className="border border-slate-900 p-1.5 w-[26%]"><strong>Phòng thi:</strong> ................</td>
+                                <td className="border border-slate-900 p-1.5 w-[23%]"><strong>SBD:</strong> ........................</td>
+                              </tr>
+                              <tr>
+                                <td className="border border-slate-900 p-1.5 w-[28%]"><strong>Ngày thi:</strong> ...../...../202...</td>
+                                <td className="border border-slate-900 p-1.5 w-[26%]"><strong>Ca thi:</strong> ................</td>
+                                <td className="border border-slate-900 p-1.5 w-[23%]"><strong>Chữ ký SV:</strong> ................</td>
+                              </tr>
+                            </tbody>
+                          </table>
 
-                      {/* Questions List */}
-                      <div className="space-y-4 pt-2">
-                        <div>
-                          <p className="font-semibold">
-                            Câu 1 (2.0 điểm): Trình bày sự khác biệt giữa Server-Side Rendering (SSR) và Client-Side Rendering (CSR).
-                          </p>
-                          <div className="pl-4 pt-1 space-y-1 text-slate-700 italic font-normal">
-                            [Phần làm bài của thí sinh...]
-                          </div>
-                        </div>
+                          {/* Khung Cán bộ coi thi (54px) */}
+                          <table className="w-full border-collapse border border-slate-900 text-type-body-sm">
+                            <thead>
+                              <tr>
+                                <th className="border border-slate-900 p-1 text-center font-medium w-1/2">CÁN BỘ COI THI 1</th>
+                                <th className="border border-slate-900 p-1 text-center font-medium w-1/2">CÁN BỘ COI THI 2</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td className="border border-slate-900 h-14 p-1 text-center align-top text-type-helper italic text-slate-600">
+                                  (Ký và ghi rõ họ tên)
+                                </td>
+                                <td className="border border-slate-900 h-14 p-1 text-center align-top text-type-helper italic text-slate-600">
+                                  (Ký và ghi rõ họ tên)
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
 
-                        <div>
-                          <p className="font-semibold">
-                            Câu 2 (3.0 điểm): Cho biết đặc điểm của kiến trúc Microservices so với Monolith?
-                          </p>
-                          <div className="pl-4 pt-1 space-y-1 font-normal">
-                            <div>A. Dễ mở rộng độc lập từng module</div>
-                            <div>B. Triển khai phức tạp hơn qua mạng</div>
-                            <div>C. Độc lập về công nghệ và CSDL</div>
-                            <div>D. Tất cả các phương án trên</div>
+                          {/* Đường cắt phách */}
+                          <div className="pt-2 text-center text-type-helper font-semibold border-t-2 border-dashed border-slate-900 tracking-wider">
+                            ✂ ─── ĐƯỜNG CẮT PHÁCH (RỌC PHÁCH TRƯỚC KHI CHẤM BÀI) ─── ✂
                           </div>
-                        </div>
 
-                        <div>
-                          <p className="font-semibold">
-                            Câu 3 (5.0 điểm): Viết API Endpoint xử lý đăng ký môn học và kiểm tra trùng lịch thi bằng Prisma ORM.
-                          </p>
-                          <div className="pl-4 pt-1 space-y-1 text-slate-700 italic font-normal">
-                            [Phần làm bài của thí sinh...]
+                          {/* Thanh Mini-Header môn thi */}
+                          <div className="flex justify-between items-center text-type-helper font-semibold pt-1">
+                            <div>MÔN THI: {config.examInfo?.subjectName || 'LẬP TRÌNH WEB NÂNG CAO'} ({config.examInfo?.subjectCode || 'IT4409'})</div>
+                            <div>MÃ ĐỀ THI: 101 | THỜI GIAN: {config.examInfo?.durationMinutes || 60} PHÚT</div>
                           </div>
-                        </div>
-                      </div>
 
-                      {/* Signers */}
-                      {config.footer.signers.length > 0 && (
-                        <div className="pt-6">
-                          <div
-                            className="grid gap-4 text-center"
-                            style={{
-                              gridTemplateColumns: `repeat(${Math.min(4, Math.max(1, config.footer.signers.length))}, minmax(0, 1fr))`,
-                            }}
-                          >
-                            {config.footer.signers.map((s, idx) => (
-                              <div key={idx} className="space-y-1">
-                                <div className="font-semibold text-type-body">{s.title}</div>
-                                <div className="italic text-type-helper text-slate-600 min-h-[45px] font-normal">
-                                  {s.subtitle || ''}
+                          {/* Bảng Khớp Phách 2 & Chấm điểm 5 cột của Giám khảo */}
+                          <table className="w-full border-collapse border border-slate-900 text-type-body-sm">
+                            <thead>
+                              <tr className="bg-slate-50">
+                                <th className="border border-slate-900 p-1.5 text-center font-medium w-[20%]">SỐ PHÁCH (Phách 2)</th>
+                                <th className="border border-slate-900 p-1.5 text-center font-medium w-[16%]">ĐIỂM (Số)</th>
+                                <th className="border border-slate-900 p-1.5 text-center font-medium w-[24%]">ĐIỂM (Chữ)</th>
+                                <th className="border border-slate-900 p-1.5 text-center font-medium w-[20%]">CÁN BỘ CHẤM 1</th>
+                                <th className="border border-slate-900 p-1.5 text-center font-medium w-[20%]">CÁN BỘ CHẤM 2</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td className="border border-slate-900 h-14 p-1 text-center align-middle bg-slate-50">
+                                  <div className="tabular-nums text-type-body font-semibold tracking-wider border border-dashed border-slate-900 px-2 py-0.5 bg-white inline-block rounded">
+                                    P101-001
+                                  </div>
+                                </td>
+                                <td className="border border-slate-900 h-14 p-1 text-center align-middle font-semibold text-type-title"></td>
+                                <td className="border border-slate-900 h-14 p-1.5 align-top text-type-helper italic text-slate-600">
+                                  Điểm chữ: .............................
+                                </td>
+                                <td className="border border-slate-900 h-14 p-1 text-center align-top text-type-helper italic text-slate-600">
+                                  (Ký, ghi rõ họ tên)
+                                </td>
+                                <td className="border border-slate-900 h-14 p-1 text-center align-top text-type-helper italic text-slate-600">
+                                  (Ký, ghi rõ họ tên)
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+
+                          {/* Khối đề bài tự luận */}
+                          <div className="border border-slate-900 p-3 space-y-2 text-type-body-sm">
+                            <div className="font-semibold text-type-body">ĐỀ BÀI:</div>
+                            <div className="space-y-1.5">
+                              <div><strong>Câu 1 (3.0 điểm):</strong> Phân tích mô hình kiến trúc Next.js App Router và Server Components.</div>
+                              <div><strong>Câu 2 (3.0 điểm):</strong> Trình bày quy trình bảo mật phân quyền RBAC và kiểm soát truy cập trong hệ thống khảo thí.</div>
+                              <div><strong>Câu 3 (4.0 điểm):</strong> Thiết kế cấu trúc bảng cơ sở dữ liệu và viết truy vấn tổng hợp điểm thi kết thúc học phần.</div>
+                            </div>
+                            <div className="text-center italic text-type-tiny text-slate-500 pt-1 border-t border-dashed border-slate-400">
+                              ── (HẾT ĐỀ THI) ──
+                            </div>
+                          </div>
+
+                          {/* Vùng làm bài */}
+                          <div className="space-y-1.5 pt-1">
+                            <div className="font-semibold text-type-body-sm">BÀI LÀM:</div>
+                            <div className="space-y-3">
+                              {[1, 2, 3, 4, 5, 6].map((i) => (
+                                <div key={i} className="border-b border-dashed border-slate-400 h-5" />
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        /* 2. MẪU ĐỀ THI TIÊU CHUẨN (NON-CUT) */
+                        <>
+                          {/* Header 2 Cột Chuẩn */}
+                          <div className="grid grid-cols-2 gap-4 text-center">
+                            <div className="flex items-center justify-center gap-2.5">
+                              {config.header.showLogo !== false && (
+                                <DynamicImage
+                                  src={config.header.logoUrl || DEFAULT_DNC_LOGO_DATA_URL}
+                                  alt="Logo trường"
+                                  className="h-11 w-11 object-contain shrink-0"
+                                />
+                              )}
+                              <div>
+                                <div className="font-semibold text-type-body">
+                                  {config.header.institutionName || 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ'}
                                 </div>
-                                <div className="text-slate-400 font-normal">
-                                  ...................................
-                                </div>
+                                {config.header.facultyName && (
+                                  <div className="font-medium text-type-helper mt-0.5">
+                                    {config.header.facultyName}
+                                  </div>
+                                )}
+                                <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
                               </div>
-                            ))}
+                            </div>
+                            <div>
+                              <div className="font-semibold text-type-body">
+                                {config.header.motto?.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM'}
+                              </div>
+                              <div className="font-medium italic text-type-helper mt-0.5">
+                                {config.header.motto?.split('\n')[1] || 'Độc lập - Tự do - Hạnh phúc'}
+                              </div>
+                              <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                            </div>
                           </div>
-                        </div>
+
+                          {/* Tiêu đề đề thi */}
+                          <div className="text-center pt-1">
+                            <h2 className="text-type-page font-semibold">
+                              {config.header.title || 'ĐỀ THI KẾT THÚC HỌC PHẦN'}
+                            </h2>
+                            {config.header.subtitle && (
+                              <div className="italic text-type-helper mt-0.5 font-normal text-slate-600">
+                                {config.header.subtitle}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Khung thông tin học phần */}
+                          <div className="border border-slate-900 p-2.5 space-y-1 text-type-body-sm">
+                            <div className="grid grid-cols-2 gap-2">
+                              <div><strong>Môn học:</strong> {config.examInfo?.subjectName || 'Lập trình Web Nâng cao'}</div>
+                              <div><strong>Mã học phần:</strong> {config.examInfo?.subjectCode || 'IT4409'}</div>
+                              <div><strong>Thời gian làm bài:</strong> {config.examInfo?.durationMinutes || 60} phút</div>
+                              <div><strong>Thang điểm:</strong> {config.examInfo?.totalScore || 10} điểm</div>
+                            </div>
+                            {config.examInfo?.showInstructions !== false && (
+                              <div className="pt-1 italic text-type-helper border-t border-dashed border-slate-400 font-normal">
+                                {config.examInfo?.instructionText ||
+                                  '(Thí sinh không được sử dụng tài liệu. Cán bộ coi thi không giải thích gì thêm.)'}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Bảng thông tin thí sinh 1 dòng chuẩn */}
+                          <table className="w-full border-collapse border border-slate-900 text-type-body-sm">
+                            <tbody>
+                              <tr>
+                                <td colSpan={2} className="border border-slate-900 p-1.5 w-[68%]">
+                                  <strong>Họ và tên thí sinh:</strong> ................................................................
+                                </td>
+                                <td className="border border-slate-900 p-1.5 w-[32%]">
+                                  <strong>MSSV:</strong> ...................................
+                                </td>
+                              </tr>
+                              <tr>
+                                <td className="border border-slate-900 p-1.5 w-[36%]"><strong>Lớp HP:</strong> ............................</td>
+                                <td className="border border-slate-900 p-1.5 w-[32%]"><strong>Phòng thi:</strong> ................</td>
+                                <td className="border border-slate-900 p-1.5 w-[32%]"><strong>SBD:</strong> ........................</td>
+                              </tr>
+                              <tr>
+                                <td className="border border-slate-900 p-1.5 w-[36%]"><strong>Ngày thi:</strong> ...../...../202...</td>
+                                <td className="border border-slate-900 p-1.5 w-[32%]"><strong>Ca thi:</strong> ................</td>
+                                <td className="border border-slate-900 p-1.5 w-[32%]"><strong>Chữ ký SV:</strong> ................</td>
+                              </tr>
+                            </tbody>
+                          </table>
+
+                          {/* Khung Giám thị và Chấm điểm (56px) */}
+                          {config.examInfo?.showScoreBox !== false && (
+                            <table className="w-full border-collapse border border-slate-900 text-type-body-sm">
+                              <thead>
+                                <tr>
+                                  <th className="border border-slate-900 p-1 text-center font-medium w-[24%]">CÁN BỘ COI THI 1</th>
+                                  <th className="border border-slate-900 p-1 text-center font-medium w-[24%]">CÁN BỘ COI THI 2</th>
+                                  <th className="border border-slate-900 p-1 text-center font-medium w-[22%]">ĐIỂM (Số)</th>
+                                  <th className="border border-slate-900 p-1 text-center font-medium w-[30%]">ĐIỂM (Chữ) &amp; CB CHẤM</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td className="border border-slate-900 h-14 p-1 text-center align-top text-type-helper italic text-slate-600">
+                                    (Ký và ghi rõ họ tên)
+                                  </td>
+                                  <td className="border border-slate-900 h-14 p-1 text-center align-top text-type-helper italic text-slate-600">
+                                    (Ký và ghi rõ họ tên)
+                                  </td>
+                                  <td className="border border-slate-900 h-14 p-1 text-center align-middle font-semibold text-type-title"></td>
+                                  <td className="border border-slate-900 h-14 p-1.5 align-top text-type-helper text-slate-700">
+                                    <em>Điểm chữ: .............................</em><br />
+                                    <em>CB Chấm: .............................</em>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          )}
+
+                          {/* Danh sách câu hỏi */}
+                          <div className="space-y-3 pt-2">
+                            <div>
+                              <p className="font-semibold text-type-body">
+                                Câu 1 (2.0 điểm): Trình bày sự khác biệt giữa Server-Side Rendering (SSR) và Client-Side Rendering (CSR).
+                              </p>
+                              <div className="pl-4 pt-1 space-y-1 text-slate-700 italic font-normal text-type-body-sm">
+                                [Phần làm bài của thí sinh...]
+                              </div>
+                            </div>
+
+                            <div>
+                              <p className="font-semibold text-type-body">
+                                Câu 2 (3.0 điểm): Cho biết đặc điểm của kiến trúc Microservices so với Monolith?
+                              </p>
+                              <div className="pl-4 pt-1 space-y-1 font-normal text-type-body-sm">
+                                <div>A. Dễ mở rộng độc lập từng module</div>
+                                <div>B. Triển khai phức tạp hơn qua mạng</div>
+                                <div>C. Độc lập về công nghệ và CSDL</div>
+                                <div>D. Tất cả các phương án trên</div>
+                              </div>
+                            </div>
+
+                            <div>
+                              <p className="font-semibold text-type-body">
+                                Câu 3 (5.0 điểm): Viết API Endpoint xử lý đăng ký môn học và kiểm tra trùng lịch thi bằng Prisma ORM.
+                              </p>
+                              <div className="pl-4 pt-1 space-y-1 text-slate-700 italic font-normal text-type-body-sm">
+                                [Phần làm bài của thí sinh...]
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Khung chữ ký duyệt đề */}
+                          {config.footer.signers.length > 0 && (
+                            <div className="pt-6">
+                              <div
+                                className="grid gap-4 text-center"
+                                style={{
+                                  gridTemplateColumns: `repeat(${Math.min(4, Math.max(1, config.footer.signers.length))}, minmax(0, 1fr))`,
+                                }}
+                              >
+                                {config.footer.signers.map((s, idx) => (
+                                  <div key={idx} className="space-y-1">
+                                    <div className="font-semibold text-type-body">{s.title}</div>
+                                    <div className="italic text-type-helper text-slate-600 min-h-[45px] font-normal">
+                                      {s.subtitle || ''}
+                                    </div>
+                                    <div className="text-slate-400 font-normal">
+                                      ...................................
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   ) : (

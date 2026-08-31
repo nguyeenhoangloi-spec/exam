@@ -143,6 +143,8 @@ export async function exportExamPaperToWord(data: ExamPaperExportData, includeAn
   await exportBulkExamPapersToWord([data], includeAnswerKey, data.subjectCode);
 }
 
+import { getPublishedTemplatesMap } from './export-print';
+
 /** Xuất trọn bộ N mã đề thi và Bảng đáp án ma trận tổng hợp ra 1 file Word (.doc) duy nhất */
 export async function exportBulkExamPapersToWord(
   papers: ExamPaperExportData[],
@@ -151,6 +153,13 @@ export async function exportBulkExamPapersToWord(
   customOptions?: Partial<ExamPaperExportModel>
 ): Promise<void> {
   if (!papers || papers.length === 0) return;
+
+  // Tự động tải template mới nhất từ Document Templates Studio nếu có
+  try {
+    await getPublishedTemplatesMap();
+  } catch {
+    // Ignore fallback to local cache
+  }
 
   const rawLogoUrl = customOptions?.logoUrl || getSchoolLogoUrl();
   const embeddedLogoUrl = await resolveImageAsBase64(rawLogoUrl);

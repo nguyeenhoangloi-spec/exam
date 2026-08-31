@@ -59,6 +59,7 @@ export interface PrintExamPaperOptions {
   signers?: Array<{ title: string; subtitle?: string }>;
   footerNotes?: string;
   pageSize?: 'A4' | 'A5';
+  phachCode?: string;
 }
 
 const escapeHtml = (value: unknown) => String(value ?? '')
@@ -215,6 +216,9 @@ export function printExamPaper(options: PrintExamPaperOptions): boolean {
 export function printBulkExamPapers(papersList: PrintExamPaperOptions[]): boolean {
   if (!papersList || papersList.length === 0) return false;
 
+  // Kích hoạt fetch template published nếu chưa có
+  getPublishedTemplatesMap().catch(() => {});
+
   const printable = window.open('', '_blank', 'width=980,height=780');
   if (!printable) return false;
 
@@ -241,6 +245,7 @@ export function printBulkExamPapers(papersList: PrintExamPaperOptions[]): boolea
     footerNotes: p.footerNotes,
     pageSize: p.pageSize,
     signers: p.signers,
+    phachCode: p.phachCode,
     questions: p.questions.map((q) => ({
       index: q.index,
       content: q.content,

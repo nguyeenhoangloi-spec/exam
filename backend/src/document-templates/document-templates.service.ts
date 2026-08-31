@@ -17,6 +17,8 @@ type TemplateConfig = {
     title?: string;
     subtitle?: string;
     motto?: string;
+    logoUrl?: string;
+    showLogo?: boolean;
   };
   examInfo?: {
     subjectName?: string;
@@ -26,6 +28,9 @@ type TemplateConfig = {
     showScoreBox?: boolean;
     showInstructions?: boolean;
     instructionText?: string;
+    essayHeaderMode?: 'STANDARD' | 'ANONYMIZED_CUT';
+    duplexPrinting?: boolean;
+    phachCodePrefix?: string;
   };
   columns?: TemplateColumn[];
   footer?: { note?: string; signers?: Array<{ title: string; subtitle?: string }> };
