@@ -95,7 +95,7 @@ export function RolePresetsModal({
       <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
 
       <div
-        className="relative z-[101] w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/60 dark:border-slate-800 overflow-hidden flex flex-col max-h-[calc(100dvh-1.5rem)] animate-in zoom-in-95 duration-200 sm:max-h-[calc(100dvh-2rem)]"
+        className="relative z-[101] w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-apple-modal border border-slate-200/90 dark:border-slate-800 overflow-hidden flex flex-col max-h-[calc(100dvh-1.5rem)] animate-in zoom-in-95 duration-200 sm:max-h-[calc(100dvh-2rem)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -105,11 +105,11 @@ export function RolePresetsModal({
               <Sparkles className="h-4 w-4" />
             </div>
             <div>
-              <h3 id="presets-modal-title" className="text-type-section font-semibold text-slate-900 dark:text-slate-100">
-                Hồ Sơ Mẫu Vị Trí Chuyên Trách (Security Presets)
+              <h3 id="presets-modal-title" className="text-type-card font-semibold text-slate-900 dark:text-slate-100">
+                Áp dụng Mẫu Vai trò Có sẵn
               </h3>
-              <p className="text-type-helper text-slate-500 font-normal">
-                Áp dụng nhanh gói quyền hạn chuẩn xác định sẵn cho giảng viên hoặc cán bộ
+              <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">
+                Chọn một mẫu chuẩn để cấu hình nhanh danh sách quyền hạn
               </p>
             </div>
           </div>
@@ -117,7 +117,8 @@ export function RolePresetsModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+            aria-label="Đóng cửa sổ mẫu vai trò"
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
           >
             <X className="h-5 w-5" />
           </button>
@@ -135,10 +136,10 @@ export function RolePresetsModal({
                 <div
                   key={preset.id}
                   onClick={() => setSelectedPresetId(preset.id)}
-                  className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+                  className={`p-3.5 rounded-2xl transition-all cursor-pointer flex flex-col justify-between ${
                     isSelected
-                      ? 'border-blue-600 bg-blue-50/60 dark:bg-blue-950/40 shadow-xs'
-                      : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300'
+                      ? 'ui-option-selected'
+                      : 'ui-option-unselected'
                   }`}
                 >
                   <div className="space-y-1.5">

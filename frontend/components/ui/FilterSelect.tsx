@@ -252,7 +252,7 @@ export const FilterSelect = React.forwardRef<HTMLSelectElement, FilterSelectProp
             ref={menuRef}
             style={menuStyle}
             role="listbox"
-            className="w-max rounded-2xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-2xl animate-popover-in will-change-transform"
+            className="w-max rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-1.5 shadow-apple-modal animate-popover-in will-change-transform"
           >
             <div className="space-y-1 max-h-60 overflow-y-auto custom-scrollbar">
               {parsedOptions.map((opt) => {

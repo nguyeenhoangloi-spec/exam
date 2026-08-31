@@ -179,7 +179,7 @@ export function RoomSelectorPopover({
           <div
             ref={popoverRef}
             style={popoverStyle}
-            className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl animate-in fade-in-50 zoom-in-95 duration-150 flex flex-col overflow-hidden text-left"
+            className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-modal animate-in fade-in-50 zoom-in-95 duration-150 flex flex-col overflow-hidden text-left"
           >
             {/* Header */}
             <div className="shrink-0 flex items-center justify-between px-3.5 py-2.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40">

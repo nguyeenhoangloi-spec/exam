@@ -153,7 +153,7 @@ export function StudentScheduleCalendarView({
   const todayKey = formatDateKey(new Date());
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+    <div className="overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card">
       {/* ── 1. Weekly Timetable Header Toolbar ── */}
       <div className="flex flex-col gap-3.5 border-b border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">

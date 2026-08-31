@@ -398,7 +398,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
       />
 
       {/* Main Modal Container */}
-      <div className="relative z-[101] w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl flex flex-col max-h-[calc(100dvh-1.5rem)] overflow-hidden border border-slate-200 dark:border-slate-800 animate-modal-dialog will-change-transform sm:max-h-[calc(100dvh-2rem)]">
+      <div className="relative z-[101] w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl shadow-apple-modal flex flex-col max-h-[calc(100dvh-1.5rem)] overflow-hidden border border-slate-200/90 dark:border-slate-800 animate-modal-dialog will-change-transform sm:max-h-[calc(100dvh-2rem)]">
         {/* ── 1. Clean Flat Modal Header ── */}
         <div className="bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/60 dark:border-slate-800 px-6 py-4 shrink-0">
           <div className="flex items-start justify-between gap-4">

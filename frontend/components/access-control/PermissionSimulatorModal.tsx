@@ -154,7 +154,7 @@ export function PermissionSimulatorModal({
 
       {/* Dialog Box */}
       <div
-        className="relative z-[101] w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/60 dark:border-slate-800 overflow-hidden flex flex-col max-h-[calc(100dvh-1.5rem)] animate-in zoom-in-95 duration-200 sm:max-h-[calc(100dvh-2rem)]"
+        className="relative z-[101] w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-apple-modal border border-slate-200/90 dark:border-slate-800 overflow-hidden flex flex-col max-h-[calc(100dvh-1.5rem)] animate-in zoom-in-95 duration-200 sm:max-h-[calc(100dvh-2rem)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

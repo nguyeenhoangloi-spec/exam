@@ -137,7 +137,7 @@ export function ColumnToggleDropdown({
           <div
             ref={menuRef}
             style={menuStyle}
-            className="w-56 rounded-2xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-2xl animate-popover-in will-change-transform space-y-2"
+            className="w-56 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 shadow-apple-modal animate-popover-in will-change-transform space-y-2"
           >
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
               <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-helper">{title}</span>

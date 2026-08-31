@@ -122,7 +122,7 @@ export function DutyAvailabilityModal({ isOpen, onClose, onSuccess }: DutyAvaila
       <div className="fixed inset-0 bg-slate-950/55 backdrop-blur-[2px] transition-opacity" onClick={onClose} />
 
       {/* Modal Box */}
-      <div className="relative w-full max-w-md rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-md rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-modal overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header với Tab lồng mượt mà */}
         <div className="shrink-0 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-5 py-3.5 bg-white dark:bg-slate-900">
           <div className="flex items-center gap-2.5">
