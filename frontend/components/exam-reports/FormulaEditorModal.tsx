@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { Modal } from '../Modal';
 import { Button } from '../ui/Button';
 import {
@@ -9,7 +10,7 @@ import {
   validateFormula,
   evaluateFormula,
 } from '../../lib/formula-engine';
-import { CheckCircle2, AlertCircle, Variable, Code2, Plus } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Variable, Code2, Plus, ChevronDown, Check } from 'lucide-react';
 
 export interface DynamicColumnDefinition {
   id: string;
@@ -48,6 +49,107 @@ interface RuleOption {
   defaultAlign: 'left' | 'center' | 'right';
   description: string;
 }
+
+interface RuleCategoryItem {
+  value: RuleType;
+  title: string;
+  shortTag: string;
+  description: string;
+  defaultHeader: string;
+  defaultAlign: 'left' | 'center' | 'right';
+}
+
+interface RuleCategory {
+  categoryTitle: string;
+  items: RuleCategoryItem[];
+}
+
+const RULE_CATEGORIES: RuleCategory[] = [
+  {
+    categoryTitle: 'Đánh giá & xếp loại',
+    items: [
+      {
+        value: 'PASS_FAIL',
+        title: 'Kết quả Đạt / Không đạt',
+        shortTag: 'Ngưỡng điểm tùy chọn',
+        description: 'Thiết lập ngưỡng điểm xét đạt môn tùy chọn',
+        defaultHeader: 'Kết quả',
+        defaultAlign: 'center',
+      },
+      {
+        value: 'MOET_5_LEVELS',
+        title: 'Xếp loại Học lực 5 mức',
+        shortTag: 'Chuẩn Bộ GD&ĐT',
+        description: 'Xuất sắc, Giỏi, Khá, Trung bình, Yếu (Chuẩn Bộ GD&ĐT)',
+        defaultHeader: 'Xếp loại',
+        defaultAlign: 'center',
+      },
+    ],
+  },
+  {
+    categoryTitle: 'Tính điểm tổng kết học phần',
+    items: [
+      {
+        value: 'WEIGHTED_2',
+        title: 'Điểm tổng kết 2 thành phần',
+        shortTag: 'Thi % + Quá trình %',
+        description: 'Thi cuối kỳ (%) + Điểm quá trình (%)',
+        defaultHeader: 'Điểm tổng kết',
+        defaultAlign: 'right',
+      },
+      {
+        value: 'WEIGHTED_3',
+        title: 'Điểm tổng kết 3 thành phần',
+        shortTag: 'Thi % + Giữa kỳ % + Chuyên cần %',
+        description: 'Thi cuối kỳ (%) + Điểm giữa kỳ (%) + Chuyên cần (%)',
+        defaultHeader: 'Điểm tổng kết HP',
+        defaultAlign: 'right',
+      },
+    ],
+  },
+  {
+    categoryTitle: 'Quy đổi thang điểm',
+    items: [
+      {
+        value: 'LETTER_GRADE',
+        title: 'Quy đổi Điểm Chữ hệ tín chỉ',
+        shortTag: 'A, B+, B, C, D, F',
+        description: 'Thang chữ: A, B+, B, C+, C, D+, D, F',
+        defaultHeader: 'Điểm chữ',
+        defaultAlign: 'center',
+      },
+      {
+        value: 'GRADE_4',
+        title: 'Quy đổi Thang điểm 4.0',
+        shortTag: 'Thang 4.0 chuẩn',
+        description: 'Chuyển đổi hệ 10 sang hệ 4 (4.0, 3.5, 3.0, 2.5...)',
+        defaultHeader: 'Điểm hệ 4',
+        defaultAlign: 'center',
+      },
+      {
+        value: 'RATE',
+        title: 'Tỷ lệ sinh viên nộp bài',
+        shortTag: 'Số bài nộp / Tổng SV',
+        description: 'Tỷ lệ bài nộp / tổng sinh viên phân công (%)',
+        defaultHeader: 'Tỷ lệ nộp bài',
+        defaultAlign: 'right',
+      },
+    ],
+  },
+  {
+    categoryTitle: 'Tùy biến công thức',
+    items: [
+      {
+        value: 'CUSTOM',
+        title: 'Tự nhập công thức tự do',
+        shortTag: 'Hỗ trợ chèn biến & hàm',
+        description: 'Chèn biến & hàm toán học',
+        defaultHeader: 'Cột tính toán tùy biến',
+        defaultAlign: 'center',
+      },
+    ],
+  },
+];
 
 const RULE_OPTIONS: RuleOption[] = [
   {
@@ -145,7 +247,87 @@ export function FormulaEditorModal({
   const [attendWeight3, setAttendWeight3] = useState<number>(20);
   const [customFormula, setCustomFormula] = useState<string>('');
 
+  const [isMethodDropdownOpen, setIsMethodDropdownOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const methodDropdownButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [coords, setCoords] = useState<{ top: number; left: number; width: number; maxHeight: number; openUp: boolean }>({
+    top: 0,
+    left: 0,
+    width: 320,
+    maxHeight: 380,
+    openUp: false,
+  });
+
   const formulaInputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const updatePosition = useCallback(() => {
+    if (!methodDropdownButtonRef.current) return;
+    const rect = methodDropdownButtonRef.current.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom - 16;
+    const spaceAbove = rect.top - 16;
+    const openUp = spaceBelow < 280 && spaceAbove > spaceBelow;
+    const maxHeight = Math.min(380, Math.max(200, openUp ? spaceAbove : spaceBelow));
+    const width = rect.width;
+    const left = Math.max(16, Math.min(rect.left, window.innerWidth - width - 16));
+    const top = openUp ? rect.top - 8 : rect.bottom + 8;
+
+    setCoords({
+      top,
+      left,
+      width,
+      maxHeight,
+      openUp,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isMethodDropdownOpen) return;
+    updatePosition();
+
+    const handleScroll = (e: Event) => {
+      // Không đóng menu nếu cuộn bên trong menu popover
+      if (menuRef.current && (e.target === menuRef.current || menuRef.current.contains(e.target as Node))) {
+        return;
+      }
+      setIsMethodDropdownOpen(false);
+    };
+
+    const handleResize = () => updatePosition();
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsMethodDropdownOpen(false);
+    };
+
+    window.addEventListener('scroll', handleScroll, true);
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll, true);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isMethodDropdownOpen, updatePosition]);
+
+  useEffect(() => {
+    if (!isMethodDropdownOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(e.target as Node) &&
+        methodDropdownButtonRef.current &&
+        !methodDropdownButtonRef.current.contains(e.target as Node)
+      ) {
+        setIsMethodDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMethodDropdownOpen]);
 
   useEffect(() => {
     if (initialColumn) {
@@ -390,22 +572,109 @@ export function FormulaEditorModal({
           </div>
         </div>
 
-        {/* ── HÀNG 2: CHỌN QUY CHUẨN ĐÁNH GIÁ ── */}
-        <div className="space-y-1.5">
+        {/* ── HÀNG 2: CHỌN QUY CHUẨN ĐÁNH GIÁ (SMART POPOVER PORTAL CÁCH 1) ── */}
+        <div className="space-y-1.5 relative">
           <label className="text-type-body font-medium text-slate-900 dark:text-slate-100 block">
             Quy chuẩn đánh giá / Phương pháp tính <span className="text-rose-500">*</span>
           </label>
-          <select
-            value={ruleType}
-            onChange={(e) => handleSelectRuleType(e.target.value as RuleType)}
-            className="h-11 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3.5 text-type-body font-medium text-slate-900 dark:text-slate-100 outline-none focus:border-blue-500 transition shadow-2xs cursor-pointer"
+
+          {/* Trigger Button */}
+          <button
+            ref={methodDropdownButtonRef}
+            type="button"
+            aria-expanded={isMethodDropdownOpen}
+            aria-haspopup="menu"
+            onClick={() => setIsMethodDropdownOpen((prev) => !prev)}
+            className={`w-full h-11 px-3.5 rounded-xl border transition cursor-pointer flex items-center justify-between text-left select-none ${
+              isMethodDropdownOpen
+                ? 'border-blue-500 ring-2 ring-blue-500/20 bg-white dark:bg-slate-900'
+                : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'
+            }`}
           >
-            {RULE_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+            <div className="flex items-center gap-2 min-w-0 pr-2">
+              <span className="text-type-body font-medium text-slate-900 dark:text-slate-100 truncate">
+                {RULE_OPTIONS.find((o) => o.value === ruleType)?.label || 'Chọn phương pháp tính...'}
+              </span>
+            </div>
+            <ChevronDown
+              className={`h-4 w-4 text-slate-400 dark:text-slate-500 shrink-0 transition-transform duration-200 ${
+                isMethodDropdownOpen ? 'rotate-180 text-blue-600 dark:text-blue-400' : ''
+              }`}
+            />
+          </button>
+
+          {/* Smart Positioning & Anti-Clipping Popover via createPortal */}
+          {isMethodDropdownOpen &&
+            mounted &&
+            createPortal(
+              <div
+                ref={menuRef}
+                role="menu"
+                style={{
+                  position: 'fixed',
+                  top: coords.openUp ? 'auto' : `${coords.top}px`,
+                  bottom: coords.openUp ? `${window.innerHeight - coords.top}px` : 'auto',
+                  left: `${coords.left}px`,
+                  width: `${coords.width}px`,
+                  maxHeight: `${coords.maxHeight}px`,
+                }}
+                className="z-[99999] rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl p-2 overflow-y-auto space-y-1 custom-scrollbar animate-in fade-in zoom-in-95 duration-150 text-left select-none"
+              >
+                {RULE_CATEGORIES.map((cat, idx) => (
+                  <div key={idx} className="space-y-0.5">
+                    {/* Đường phân cách giữa các nhóm */}
+                    {idx > 0 && <div className="border-t border-slate-100 dark:border-slate-800 my-1.5" />}
+
+                    {/* Category Header */}
+                    <div className="px-3 pt-1.5 pb-1">
+                      <span className="text-type-tiny font-semibold text-slate-400 dark:text-slate-500 tracking-wide">
+                        {cat.categoryTitle}
+                      </span>
+                    </div>
+
+                    {/* Category Options */}
+                    <div className="space-y-1">
+                      {cat.items.map((item) => {
+                        const isSelected = item.value === ruleType;
+                        return (
+                          <button
+                            key={item.value}
+                            type="button"
+                            onClick={() => {
+                              handleSelectRuleType(item.value);
+                              setIsMethodDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-3.5 py-2.5 rounded-2xl transition cursor-pointer flex items-center justify-between gap-3 ${
+                              isSelected
+                                ? 'border-2 border-blue-500 bg-white dark:bg-slate-900 shadow-2xs'
+                                : 'border border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/60 bg-white dark:bg-slate-900'
+                            }`}
+                          >
+                            <div className="space-y-0.5 min-w-0">
+                              <span
+                                className={`text-type-body block leading-5 text-slate-900 dark:text-slate-100 ${
+                                  isSelected ? 'font-semibold' : 'font-medium'
+                                }`}
+                              >
+                                {item.title}
+                              </span>
+                              <p className="text-type-helper leading-4 text-slate-500 dark:text-slate-400 font-normal">
+                                {item.description}
+                              </p>
+                            </div>
+
+                            {isSelected && (
+                              <Check className="h-5 w-5 text-blue-600 dark:text-blue-400 shrink-0" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>,
+              document.body
+            )}
         </div>
 
         {/* ── HÀNG 3: CARD CẤU HÌNH THÔNG SỐ & DÒNG KẾT QUẢ THỬ NGHIỆM ĐÚNG THEO MẪU ── */}
