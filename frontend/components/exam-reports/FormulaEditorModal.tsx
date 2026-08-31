@@ -196,6 +196,9 @@ export function FormulaEditorModal({
       setHeader(opt.defaultHeader);
       setAlign(opt.defaultAlign);
     }
+    if (newType === 'CUSTOM' && !customFormula) {
+      setCustomFormula('ROUND({examScore} * 0.5 + {midtermScore} * 0.3 + {attendanceScore} * 0.2, 2)');
+    }
   };
 
   // Chèn chuỗi vào ô nhập công thức tại vị trí con trỏ
@@ -571,177 +574,221 @@ export function FormulaEditorModal({
           )}
 
           {ruleType === 'CUSTOM' && (
-            <div className="space-y-3">
+            <div className="space-y-4">
+              {/* Tiêu đề & phụ đề phần công thức */}
               <div className="space-y-1">
-                <label className="text-type-body font-medium text-slate-900 dark:text-slate-100 flex items-center justify-between">
-                  <span>Nhập biểu thức công thức tính toán:</span>
-                  <span className="text-type-tiny text-slate-500">Gõ hoặc bấm các nút bên dưới để chèn nhanh</span>
-                </label>
+                <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100 block">
+                  Biểu thức tính toán <span className="text-rose-500">*</span>
+                </span>
+                <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal">
+                  Gõ công thức hoặc chọn nhanh các biến và hàm bên dưới
+                </p>
+              </div>
+
+              {/* Khung nhập công thức tích hợp kèm dòng kiểm tra & kết quả thử nghiệm */}
+              <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60 p-3.5 space-y-2.5">
                 <textarea
                   ref={formulaInputRef}
                   rows={3}
                   value={customFormula}
                   onChange={(e) => setCustomFormula(e.target.value)}
-                  placeholder='Ví dụ: ROUND({examScore} * 0.5 + {midtermScore} * 0.3 + {attendanceScore} * 0.2, 2)'
-                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-type-body text-slate-900 dark:text-slate-100 outline-none focus:border-blue-500 shadow-2xs leading-relaxed"
+                  placeholder="ROUND({examScore} * 0.5 + {midtermScore} * 0.3 + {attendanceScore} * 0.2, 2)"
+                  className="w-full bg-transparent border-0 p-0 text-type-body font-medium text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none resize-none leading-relaxed shadow-none focus:ring-0"
                 />
+
+                {/* Dòng trạng thái kiểm tra cú pháp và kết quả inline ngay trong card */}
+                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-type-helper">
+                  <div className="flex items-center gap-1.5">
+                    {validationResult.valid ? (
+                      <>
+                        <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                        <span className="font-medium text-emerald-600 dark:text-emerald-400">
+                          Cú pháp hợp lệ
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle className="h-4 w-4 text-rose-500 shrink-0" />
+                        <span className="font-medium text-rose-600 dark:text-rose-400">
+                          {validationResult.error || 'Cú pháp chưa đúng'}
+                        </span>
+                      </>
+                    )}
+                  </div>
+
+                  {validationResult.valid && (
+                    <div className="text-slate-500 dark:text-slate-400 font-normal">
+                      Mẫu thử (8.5, 7.0, 9.0) ={' '}
+                      <span className="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
+                        {String(validationResult.sampleResult ?? '—')}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* ── BẢNG DANH MỤC BIẾN (CLICK-TO-INSERT CHIPS) ── */}
-              <div className="space-y-1.5 pt-1">
-                <div className="flex items-center gap-1.5 text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
-                  <Variable className="h-4 w-4 text-blue-600" />
-                  <span>Bấm để chèn biến dữ liệu vào công thức:</span>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
+              {/* Đường kẻ ngang hairline phân tách */}
+              <div className="border-t border-slate-100 dark:border-slate-800" />
+
+              {/* ── BIẾN DỮ LIỆU (CLICK ĐỂ CHÈN) ── */}
+              <div className="space-y-2">
+                <span className="block text-type-body-sm font-semibold text-slate-800 dark:text-slate-200">
+                  BIẾN DỮ LIỆU (CLICK ĐỂ CHÈN)
+                </span>
+                <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
                     onClick={() => insertAtCursor('{examScore}')}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/70 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 text-type-helper font-medium hover:bg-blue-100 dark:hover:bg-blue-900/60 transition cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700/80 text-slate-900 dark:text-slate-100 text-type-helper font-medium inline-flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-2xs"
                     title="Điểm bài thi kết thúc học phần (0 - 10)"
                   >
-                    <Plus className="h-3 w-3" /> Điểm thi <span className="text-type-tiny text-blue-500">{"{examScore}"}</span>
+                    <span>Điểm thi</span>
+                    <span className="text-type-tiny text-slate-400 dark:text-slate-500 font-normal">exam</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => insertAtCursor('{midtermScore}')}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/70 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 text-type-helper font-medium hover:bg-blue-100 dark:hover:bg-blue-900/60 transition cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700/80 text-slate-900 dark:text-slate-100 text-type-helper font-medium inline-flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-2xs"
                     title="Điểm giữa kỳ / bài tập lớn / thực hành (0 - 10)"
                   >
-                    <Plus className="h-3 w-3" /> Điểm giữa kỳ <span className="text-type-tiny text-blue-500">{"{midtermScore}"}</span>
+                    <span>Giữa kỳ</span>
+                    <span className="text-type-tiny text-slate-400 dark:text-slate-500 font-normal">mid</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => insertAtCursor('{attendanceScore}')}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/70 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 text-type-helper font-medium hover:bg-blue-100 dark:hover:bg-blue-900/60 transition cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700/80 text-slate-900 dark:text-slate-100 text-type-helper font-medium inline-flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-2xs"
                     title="Điểm chuyên cần / thái độ học tập (0 - 10)"
                   >
-                    <Plus className="h-3 w-3" /> Chuyên cần <span className="text-type-tiny text-blue-500">{"{attendanceScore}"}</span>
+                    <span>Chuyên cần</span>
+                    <span className="text-type-tiny text-slate-400 dark:text-slate-500 font-normal">att</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => insertAtCursor('{practiceScore}')}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/70 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 text-type-helper font-medium hover:bg-blue-100 dark:hover:bg-blue-900/60 transition cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700/80 text-slate-900 dark:text-slate-100 text-type-helper font-medium inline-flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-2xs"
                     title="Điểm thực hành / thí nghiệm"
                   >
-                    <Plus className="h-3 w-3" /> Thực hành <span className="text-type-tiny text-blue-500">{"{practiceScore}"}</span>
+                    <span>Thực hành</span>
+                    <span className="text-type-tiny text-slate-400 dark:text-slate-500 font-normal">prac</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => insertAtCursor('{violationCount}')}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-amber-200 dark:border-amber-900 bg-amber-50/70 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 text-type-helper font-medium hover:bg-amber-100 transition cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700/80 text-slate-900 dark:text-slate-100 text-type-helper font-medium inline-flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-2xs"
                     title="Số lần vi phạm quy chế"
                   >
-                    <Plus className="h-3 w-3" /> Vi phạm <span className="text-type-tiny text-amber-600">{"{violationCount}"}</span>
+                    <span>Vi phạm</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => insertAtCursor('{submitted}')}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-type-helper font-medium hover:bg-slate-100 transition cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700/80 text-slate-900 dark:text-slate-100 text-type-helper font-medium inline-flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-2xs"
                     title="Số bài thi đã nộp"
                   >
-                    <Plus className="h-3 w-3" /> Đã nộp <span className="text-type-tiny text-slate-500">{"{submitted}"}</span>
+                    <span>Đã nộp</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => insertAtCursor('{assigned}')}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-type-helper font-medium hover:bg-slate-100 transition cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700/80 text-slate-900 dark:text-slate-100 text-type-helper font-medium inline-flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-2xs"
                     title="Tổng số sinh viên được gán"
                   >
-                    <Plus className="h-3 w-3" /> Tổng SV <span className="text-type-tiny text-slate-500">{"{assigned}"}</span>
+                    <span>Tổng SV</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => insertAtCursor('{absent}')}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-type-helper font-medium hover:bg-slate-100 transition cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700/80 text-slate-900 dark:text-slate-100 text-type-helper font-medium inline-flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-2xs"
                     title="Số sinh viên vắng thi"
                   >
-                    <Plus className="h-3 w-3" /> Vắng thi <span className="text-type-tiny text-slate-500">{"{absent}"}</span>
+                    <span>Vắng thi</span>
                   </button>
                 </div>
               </div>
 
-              {/* ── BẢNG DANH MỤC HÀM TOÁN HỌC & QUY ĐỔI ── */}
-              <div className="space-y-1.5 pt-1">
-                <div className="flex items-center gap-1.5 text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
-                  <Code2 className="h-4 w-4 text-emerald-600" />
-                  <span>Bấm để chèn hàm tính toán / quy đổi:</span>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
+              {/* ── HÀM TÍNH TOÁN / QUY ĐỔI ── */}
+              <div className="space-y-2">
+                <span className="block text-type-body-sm font-semibold text-slate-800 dark:text-slate-200">
+                  HÀM TÍNH TOÁN / QUY ĐỔI
+                </span>
+                <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    onClick={() => insertAtCursor('IF({examScore} >= 5, "ĐẠT", "HỌC LẠI")')}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-type-helper font-medium hover:bg-emerald-100 transition cursor-pointer"
-                    title="Hàm điều kiện IF(điều_kiện, đúng, sai)"
-                  >
-                    <Plus className="h-3 w-3" /> Hàm IF(...)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertAtCursor('ROUND({examScore} * 0.7 + {attendanceScore} * 0.3, 2)')}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-type-helper font-medium hover:bg-emerald-100 transition cursor-pointer"
+                    onClick={() => insertAtCursor('ROUND(, 2)')}
+                    className="px-3 py-1.5 rounded-xl border border-blue-200 dark:border-blue-800/80 bg-blue-50/40 dark:bg-blue-950/30 hover:bg-blue-100/70 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 text-type-helper font-semibold inline-flex items-center justify-center transition cursor-pointer active:scale-95 shadow-2xs"
                     title="Làm tròn số ROUND(số, chữ_số_thập_phân)"
                   >
-                    <Plus className="h-3 w-3" /> Làm tròn ROUND(...)
+                    ROUND()
                   </button>
                   <button
                     type="button"
-                    onClick={() => insertAtCursor('GRADE4({examScore})')}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-type-helper font-medium hover:bg-emerald-100 transition cursor-pointer"
+                    onClick={() => insertAtCursor('IF(, "", "")')}
+                    className="px-3 py-1.5 rounded-xl border border-blue-200 dark:border-blue-800/80 bg-blue-50/40 dark:bg-blue-950/30 hover:bg-blue-100/70 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 text-type-helper font-semibold inline-flex items-center justify-center transition cursor-pointer active:scale-95 shadow-2xs"
+                    title="Hàm điều kiện IF(điều_kiện, đúng, sai)"
+                  >
+                    IF()
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => insertAtCursor('GRADE4()')}
+                    className="px-3 py-1.5 rounded-xl border border-blue-200 dark:border-blue-800/80 bg-blue-50/40 dark:bg-blue-950/30 hover:bg-blue-100/70 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 text-type-helper font-semibold inline-flex items-center justify-center transition cursor-pointer active:scale-95 shadow-2xs"
                     title="Quy đổi sang thang điểm 4.0"
                   >
-                    <Plus className="h-3 w-3" /> Thang điểm 4 GRADE4(...)
+                    GRADE4()
                   </button>
                   <button
                     type="button"
-                    onClick={() => insertAtCursor('LETTER_GRADE({examScore})')}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-type-helper font-medium hover:bg-emerald-100 transition cursor-pointer"
+                    onClick={() => insertAtCursor('LETTER_GRADE()')}
+                    className="px-3 py-1.5 rounded-xl border border-blue-200 dark:border-blue-800/80 bg-blue-50/40 dark:bg-blue-950/30 hover:bg-blue-100/70 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 text-type-helper font-semibold inline-flex items-center justify-center transition cursor-pointer active:scale-95 shadow-2xs"
                     title="Quy đổi sang điểm chữ (A, B+, B, C, D, F)"
                   >
-                    <Plus className="h-3 w-3" /> Điểm chữ LETTER_GRADE(...)
+                    LETTER_GRADE()
                   </button>
                   <button
                     type="button"
-                    onClick={() => insertAtCursor('CLASSIFICATION({examScore})')}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-type-helper font-medium hover:bg-emerald-100 transition cursor-pointer"
+                    onClick={() => insertAtCursor('CLASSIFICATION()')}
+                    className="px-3 py-1.5 rounded-xl border border-blue-200 dark:border-blue-800/80 bg-blue-50/40 dark:bg-blue-950/30 hover:bg-blue-100/70 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 text-type-helper font-semibold inline-flex items-center justify-center transition cursor-pointer active:scale-95 shadow-2xs"
                     title="Xếp loại học lực 5 mức chuẩn Bộ GD&ĐT"
                   >
-                    <Plus className="h-3 w-3" /> Xếp loại CLASSIFICATION(...)
+                    CLASSIFICATION()
                   </button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* ── ĐƯỜNG KẺ NGANG & DÒNG TRẠNG THÁI / KẾT QUẢ THỬ NGHIỆM INLINE PHẲNG ĐÚNG MẪU ── */}
-          <div className="border-t border-slate-100 dark:border-slate-800 pt-2.5 flex items-center justify-between text-type-helper">
-            <div className="flex items-center gap-1.5">
-              {validationResult.valid ? (
-                <>
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                  <span className="font-medium text-emerald-600 dark:text-emerald-400">
-                    Cú pháp hợp lệ
+          {/* ── ĐƯỜNG KẺ NGANG & DÒNG TRẠNG THÁI / KẾT QUẢ THỬ NGHIỆM CHO CÁC MẪU CỐ ĐỊNH ── */}
+          {ruleType !== 'CUSTOM' && (
+            <div className="border-t border-slate-100 dark:border-slate-800 pt-2.5 flex items-center justify-between text-type-helper">
+              <div className="flex items-center gap-1.5">
+                {validationResult.valid ? (
+                  <>
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <span className="font-medium text-emerald-600 dark:text-emerald-400">
+                      Cú pháp hợp lệ
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="h-4 w-4 text-rose-500 shrink-0" />
+                    <span className="font-medium text-rose-600 dark:text-rose-400">
+                      {validationResult.error || 'Cú pháp chưa đúng'}
+                    </span>
+                  </>
+                )}
+              </div>
+
+              {validationResult.valid && (
+                <div className="text-slate-500 dark:text-slate-400 font-normal">
+                  Thử nghiệm (8.5):{' '}
+                  <span className="font-semibold text-blue-600 dark:text-blue-400 tabular-nums">
+                    {String(validationResult.sampleResult ?? '—')}
                   </span>
-                </>
-              ) : (
-                <>
-                  <AlertCircle className="h-4 w-4 text-rose-500 shrink-0" />
-                  <span className="font-medium text-rose-600 dark:text-rose-400">
-                    {validationResult.error || 'Cú pháp chưa đúng'}
-                  </span>
-                </>
+                </div>
               )}
             </div>
-
-            {validationResult.valid && (
-              <div className="text-slate-500 dark:text-slate-400 font-normal">
-                Thử nghiệm (8.5):{' '}
-                <span className="font-semibold text-blue-600 dark:text-blue-400 tabular-nums">
-                  {String(validationResult.sampleResult ?? '—')}
-                </span>
-              </div>
-            )}
-          </div>
+          )}
         </div>
 
         {/* ── FOOTER ACTIONS (BUTTON HIERARCHY 2026) ── */}
