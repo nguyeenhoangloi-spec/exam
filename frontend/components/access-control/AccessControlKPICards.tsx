@@ -37,7 +37,7 @@ export function AccessControlKPICards({
       subtext: 'Ghi đè ngoại lệ so với vai trò mặc định',
       progressPercent: totalUsersWithOverrides > 0 ? 100 : 0,
       icon: ShieldAlert,
-      color: totalUsersWithOverrides > 0 ? 'amber' : 'blue',
+      color: 'blue',
       loading,
     },
     {
@@ -46,7 +46,7 @@ export function AccessControlKPICards({
       subtext: 'Tài khoản bị ràng buộc theo Khoa, Lớp, Môn',
       progressPercent: totalUsersWithScopes > 0 ? 100 : 0,
       icon: UsersRound,
-      color: 'emerald',
+      color: 'blue',
       loading,
     },
     {

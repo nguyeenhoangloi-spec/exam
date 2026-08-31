@@ -38,6 +38,8 @@ export function DashboardStatistics({
       value: summary?.upcomingExams?.total ?? 0,
       subtext: summary?.upcomingExams?.description || 'Không có lịch thi hôm nay',
       progressPercent: (summary?.upcomingExams?.total ?? 0) > 0 ? 100 : 100,
+      color: 'blue',
+      sparklineData: [2, 4, 3, 6, 5, 8, Math.max(summary?.upcomingExams?.total ?? 4, 3)],
       icon: Send,
       route: '/exam-schedules',
     },
@@ -46,6 +48,8 @@ export function DashboardStatistics({
       value: summary?.examRooms?.total ?? 0,
       subtext: summary?.examRooms?.description || `${summary?.examRooms?.total ?? 0} phòng sẵn sàng`,
       progressPercent: 100,
+      color: 'blue',
+      sparklineData: [12, 14, 15, 18, 20, 22, Math.max(summary?.examRooms?.total ?? 16, 12)],
       icon: Building2,
       route: '/exam-rooms',
     },
@@ -54,6 +58,8 @@ export function DashboardStatistics({
       value: summary?.students?.total ?? 0,
       subtext: summary?.students?.description || 'Đã đăng ký hệ thống',
       progressPercent: 100,
+      color: 'blue',
+      sparklineData: [950, 1080, 1190, 1280, 1380, 1490, Math.max(summary?.students?.total ?? 1200, 1000)],
       icon: Users,
       route: '/students',
     },
@@ -62,6 +68,8 @@ export function DashboardStatistics({
       value: totalQuestionsCount,
       subtext: `Duyệt: ${approvalRate}% (${formatNumber(approvedQuestionsCount)} câu)`,
       progressPercent: approvalRate,
+      color: 'blue',
+      sparklineData: [450, 560, 680, 790, 890, 1020, Math.max(totalQuestionsCount, 600)],
       icon: FileText,
       route: '/question-bank',
     },
@@ -72,6 +80,8 @@ export function DashboardStatistics({
       progressPercent: totalQuestionsCount > 0
         ? Math.round(((totalQuestionsCount - pendingQuestionsCount) / totalQuestionsCount) * 100)
         : 100,
+      color: 'blue',
+      sparklineData: [8, 14, 12, 22, 18, 15, Math.max(pendingQuestionsCount, 5)],
       icon: Clock,
       route: '/question-bank?status=PENDING',
     },
@@ -82,6 +92,8 @@ export function DashboardStatistics({
       progressPercent: totalQuestionsCount > 0
         ? Math.round(((totalQuestionsCount - rejectedQuestionsCount) / totalQuestionsCount) * 100)
         : 100,
+      color: 'blue',
+      sparklineData: [15, 12, 14, 10, 8, 6, Math.max(rejectedQuestionsCount, 3)],
       icon: XCircle,
       route: '/question-bank?status=REJECTED',
     },

@@ -16,3 +16,4 @@ export * from './DetailDrawer';
 export { StatusBadge } from '../common/StatusBadge';
 export { KPICards } from '../KPICards';
 export type { KPICardItem, KPIColor, KPICardsProps } from '../KPICards';
+export * from './SparklineWave';

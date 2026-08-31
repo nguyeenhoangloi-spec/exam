@@ -4,6 +4,8 @@ import React from 'react';
 import { LucideIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+import { SparklineWave } from './ui/SparklineWave';
+
 export type KPIColor = 'blue' | 'sky' | 'emerald' | 'amber' | 'rose' | 'slate';
 
 export interface KPICardItem {
@@ -13,6 +15,9 @@ export interface KPICardItem {
   icon: LucideIcon;
   color?: KPIColor;
   progressPercent?: number;
+  showProgressBar?: boolean;
+  sparklineData?: number[];
+  showSparkline?: boolean;
   unit?: string;
   trend?: string;
   route?: string;
@@ -25,6 +30,7 @@ export interface KPICardsProps {
   items: KPICardItem[];
   columns?: 2 | 3 | 4 | 5 | 6;
   className?: string;
+  showSparkline?: boolean;
 }
 
 const colorStyles: Record<KPIColor, { bg: string; text: string; border: string; bar: string }> = {
@@ -74,7 +80,7 @@ const columnGridStyles: Record<number, string> = {
   6: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-6',
 };
 
-export const KPICards: React.FC<KPICardsProps> = ({ items, columns, className = '' }) => {
+export const KPICards: React.FC<KPICardsProps> = ({ items, columns, className = '', showSparkline = true }) => {
   const router = useRouter();
 
   const effectiveColumns = columns || (items.length >= 6 ? 6 : items.length === 5 ? 5 : items.length === 3 ? 3 : items.length === 2 ? 2 : 4);
@@ -86,6 +92,7 @@ export const KPICards: React.FC<KPICardsProps> = ({ items, columns, className = 
         const Icon = item.icon;
         const style = colorStyles[item.color || 'blue'] || colorStyles.blue;
         const isClickable = Boolean(item.route || item.onClick);
+        const isSparklineEnabled = item.showSparkline ?? showSparkline ?? true;
 
         const handleClick = () => {
           if (item.onClick) {
@@ -114,63 +121,75 @@ export const KPICards: React.FC<KPICardsProps> = ({ items, columns, className = 
             tabIndex={isClickable ? 0 : undefined}
             onClick={isClickable ? handleClick : undefined}
             onKeyDown={isClickable ? handleKeyDown : undefined}
-            className={`group relative flex flex-col justify-between rounded-2xl border p-4 shadow-2xs transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+            className={`group relative flex flex-col justify-between rounded-2xl border p-4 shadow-2xs transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-md overflow-hidden ${
               item.selected
                 ? 'bg-blue-50/40 dark:bg-blue-950/30 border-blue-500 ring-2 ring-blue-500/20'
                 : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300/90 dark:hover:border-slate-700'
             } ${isClickable ? 'cursor-pointer' : ''}`}
           >
-            {/* Top Row: Title + Big Value on Left, Icon on Right */}
-            <div className="flex items-start justify-between gap-3">
-              <div className="space-y-1 min-w-0">
-                <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
-                  {item.title}
-                </span>
-                <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
-                  {item.loading ? '...' : formattedValue}
-                  {item.unit ? <span className="text-type-body font-medium ml-0.5 text-slate-500 dark:text-slate-400">{item.unit}</span> : null}
+            {/* Subtle Area Wave Sparkline Background Layer */}
+            {isSparklineEnabled && (
+              <SparklineWave
+                data={item.sparklineData}
+                color={item.color || 'blue'}
+                height={46}
+              />
+            )}
+
+            {/* Content Layer (relative z-10) */}
+            <div className="relative z-10 space-y-2.5">
+              {/* Top Row: Title + Big Value on Left, Icon on Right */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-1 min-w-0">
+                  <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
+                    {item.title}
+                  </span>
+                  <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
+                    {item.loading ? '...' : formattedValue}
+                    {item.unit ? <span className="text-type-body font-medium ml-0.5 text-slate-500 dark:text-slate-400">{item.unit}</span> : null}
+                  </div>
+                </div>
+
+                <div
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-semibold transition-transform duration-200 group-hover:scale-105 ${
+                    item.selected
+                      ? 'bg-blue-600 text-white'
+                      : `${style.bg} ${style.text} group-hover:bg-blue-600 group-hover:text-white`
+                  }`}
+                >
+                  <Icon className="h-5 w-5 stroke-[2.2]" />
                 </div>
               </div>
 
-              <div
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-semibold transition-transform duration-200 group-hover:scale-105 ${
-                  item.selected
-                    ? 'bg-blue-600 text-white'
-                    : `${style.bg} ${style.text} group-hover:bg-blue-600 group-hover:text-white`
-                }`}
-              >
-                <Icon className="h-5 w-5 stroke-[2.2]" />
-              </div>
+              {/* Optional Micro Progress Track */}
+              {item.showProgressBar && typeof item.progressPercent === 'number' && (
+                <div className="w-full bg-slate-100 dark:bg-slate-800 h-0.5 rounded-full overflow-hidden">
+                  <div
+                    className={`${style.bar} h-full rounded-full transition-[width] duration-500`}
+                    style={{ width: `${Math.min(Math.max(item.progressPercent, 5), 100)}%` }}
+                  />
+                </div>
+              )}
+
+              {/* Bottom Subtext / Trend */}
+              {(item.subtext || item.trend) && (
+                <div className="flex items-center justify-between gap-2 pt-0.5">
+                  {item.subtext && (
+                    <span
+                      title={item.subtext}
+                      className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300"
+                    >
+                      {item.subtext}
+                    </span>
+                  )}
+                  {item.trend && (
+                    <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 block shrink-0">
+                      {item.trend}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
-
-            {/* Optional Micro Progress Track */}
-            {typeof item.progressPercent === 'number' && (
-              <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
-                <div
-                  className={`${style.bar} h-full rounded-full transition-[width] duration-500`}
-                  style={{ width: `${Math.min(Math.max(item.progressPercent, 5), 100)}%` }}
-                />
-              </div>
-            )}
-
-            {/* Bottom Subtext / Trend */}
-            {(item.subtext || item.trend) && (
-              <div className="mt-2.5 flex items-center justify-between gap-2">
-                {item.subtext && (
-                  <span
-                    title={item.subtext}
-                    className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300"
-                  >
-                    {item.subtext}
-                  </span>
-                )}
-                {item.trend && (
-                  <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400 block shrink-0">
-                    {item.trend}
-                  </span>
-                )}
-              </div>
-            )}
           </div>
         );
       })}
