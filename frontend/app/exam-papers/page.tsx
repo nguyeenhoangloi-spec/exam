@@ -846,7 +846,7 @@ export default function ExamPapersPage() {
   };
 
   if (loading && !papers.length) {
-    return <PageSkeleton hasKPIs={true} variant="table" />;
+    return <PageSkeleton hasKPIs={true} kpiCount={5} variant="table" />;
   }
 
   return (

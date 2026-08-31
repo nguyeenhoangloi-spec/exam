@@ -833,7 +833,7 @@ export default function ExamArrangementPage() {
   const currentSchedule = schedules.find((s) => s.id.toString() === selectedScheduleId);
 
   if (isLoadingSchedule && !schedules.length) {
-    return <PageSkeleton hasKPIs={true} variant="table" />;
+    return <PageSkeleton hasKPIs={true} kpiCount={5} variant="table" />;
   }
 
   return (

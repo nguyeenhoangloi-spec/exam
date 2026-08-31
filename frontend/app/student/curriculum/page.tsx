@@ -386,7 +386,7 @@ export default function StudentCurriculumPage() {
   }
 
   if (loading && !curriculumList.length) {
-    return <PageSkeleton hasKPIs={true} variant="table" />;
+    return <PageSkeleton hasKPIs={true} kpiCount={5} variant="table" />;
   }
 
   return (

@@ -420,7 +420,7 @@ export default function SubjectsPage() {
   }, [drawerEnrollments]);
 
   if (loading && !subjects.length) {
-    return <PageSkeleton hasKPIs={true} variant="table" />;
+    return <PageSkeleton hasKPIs={true} kpiCount={5} variant="table" />;
   }
 
   return (

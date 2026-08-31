@@ -353,7 +353,7 @@ export default function ClassesPage() {
   };
 
   if (loading && !classes.length) {
-    return <PageSkeleton hasKPIs={true} variant="table" />;
+    return <PageSkeleton hasKPIs={true} kpiCount={5} variant="table" />;
   }
 
   return (

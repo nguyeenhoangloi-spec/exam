@@ -401,7 +401,7 @@ export default function DepartmentsPage() {
   };
 
   if (loading && !departments.length) {
-    return <PageSkeleton hasKPIs={true} variant="table" />;
+    return <PageSkeleton hasKPIs={true} kpiCount={5} variant="table" />;
   }
 
   return (

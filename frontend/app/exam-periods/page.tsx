@@ -301,7 +301,7 @@ export default function ExamPeriodsPage() {
   };
 
   if (loading && !periods.length) {
-    return <PageSkeleton hasKPIs={true} variant="table" />;
+    return <PageSkeleton hasKPIs={true} kpiCount={5} variant="table" />;
   }
 
   return (

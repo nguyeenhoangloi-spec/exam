@@ -448,7 +448,7 @@ export default function ExamSchedulesPage() {
   };
 
   if (loading && !schedules.length) {
-    return <PageSkeleton hasKPIs={true} variant="table" />;
+    return <PageSkeleton hasKPIs={true} kpiCount={5} variant="table" />;
   }
 
   return (
