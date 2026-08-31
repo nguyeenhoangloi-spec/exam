@@ -22,6 +22,7 @@ import {
 import { ExamPaper } from '../../types';
 import { Button } from '../ui/Button';
 import { DetailDrawer } from '../ui/DetailDrawer';
+import { SlidingSegmentedControl } from '../ui/SlidingSegmentedControl';
 import { QuestionMediaPlayer } from '../exam/QuestionMediaPlayer';
 import { getImageUrl } from '../../lib/media-utils';
 import { DynamicImage } from '../ui/DynamicImage';
@@ -231,49 +232,18 @@ export function ExamPaperDetailDrawer({
         headerExtra={
           paper ? (
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-              {/* Segmented Control - Phẳng, Gọn Gàng, Không Màu Mè */}
-              <div className="inline-flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/80 text-type-helper font-medium text-slate-600 dark:text-slate-400">
-                <button
-                  type="button"
-                  onClick={() => setActiveFilter('ALL')}
-                  className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${activeFilter === 'ALL'
-                    ? 'bg-white dark:bg-slate-900 text-slate-950 dark:text-white shadow-2xs font-semibold'
-                    : 'hover:text-slate-900 dark:hover:text-white'
-                    }`}
-                >
-                  Tất cả ({questionCount})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveFilter('EASY')}
-                  className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${activeFilter === 'EASY'
-                    ? 'bg-white dark:bg-slate-900 text-slate-950 dark:text-white shadow-2xs font-semibold'
-                    : 'hover:text-slate-900 dark:hover:text-white'
-                    }`}
-                >
-                  Dễ ({difficultyCount.easy})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveFilter('MEDIUM')}
-                  className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${activeFilter === 'MEDIUM'
-                    ? 'bg-white dark:bg-slate-900 text-slate-950 dark:text-white shadow-2xs font-semibold'
-                    : 'hover:text-slate-900 dark:hover:text-white'
-                    }`}
-                >
-                  TB ({difficultyCount.medium})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveFilter('HARD')}
-                  className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${activeFilter === 'HARD'
-                    ? 'bg-white dark:bg-slate-900 text-slate-950 dark:text-white shadow-2xs font-semibold'
-                    : 'hover:text-slate-900 dark:hover:text-white'
-                    }`}
-                >
-                  Khó ({difficultyCount.hard})
-                </button>
-              </div>
+              {/* Sliding Segmented Control - Chuẩn Toàn Hệ Thống 2026 */}
+              <SlidingSegmentedControl<'ALL' | 'EASY' | 'MEDIUM' | 'HARD'>
+                value={activeFilter}
+                onChange={(val) => setActiveFilter(val)}
+                size="md"
+                options={[
+                  { value: 'ALL', label: 'Tất cả', count: questionCount },
+                  { value: 'EASY', label: 'Dễ', count: difficultyCount.easy },
+                  { value: 'MEDIUM', label: 'Trung bình', count: difficultyCount.medium },
+                  { value: 'HARD', label: 'Khó', count: difficultyCount.hard },
+                ]}
+              />
 
               {/* Action Toolbar - Icon Đơn Thuần Không Viền */}
               <div className="flex items-center gap-1">

@@ -576,10 +576,11 @@ export default function DocumentTemplatesPage() {
           <div className="relative flex-1">
             {/* Tab 1: Thiết lập In ấn (Luôn giữ nguyên trong layout flow để định hình độ dài chuẩn bất biến) */}
             <div
-              className={`space-y-5 divide-y divide-slate-100 dark:divide-slate-800 ${activeTab === 'settings'
+              className={`space-y-5 divide-y divide-slate-100 dark:divide-slate-800 ${
+                activeTab === 'settings'
                   ? 'opacity-100'
-                  : 'invisible pointer-events-none select-none aria-hidden'
-                }`}
+                  : 'invisible opacity-0 pointer-events-none select-none aria-hidden'
+              }`}
             >
               {/* Section 1: Đơn vị & Tiêu đề */}
               <div className="space-y-3">
@@ -651,7 +652,7 @@ export default function DocumentTemplatesPage() {
                                   setHeader('logoUrl', '');
                                   setToast({ message: 'Đã đặt lại logo mặc định của trường (DNC)', type: 'success' });
                                 }}
-                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100/80 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800 text-type-body font-medium active:scale-[0.96] transition-all duration-150 ease-out cursor-pointer select-none"
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100/80 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800 text-type-body font-medium active:scale-[0.96] transition-colors duration-150 ease-out cursor-pointer select-none"
                                 title="Đặt lại logo mặc định DNC"
                               >
                                 <RotateCcw className="h-3.5 w-3.5" />
@@ -659,7 +660,7 @@ export default function DocumentTemplatesPage() {
                               </button>
                             )}
 
-                            <label className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200/90 hover:border-slate-300 dark:border-slate-700 dark:hover:border-slate-600 bg-white hover:bg-slate-50/80 dark:bg-slate-900 dark:hover:bg-slate-800 text-type-body font-medium text-slate-800 dark:text-slate-200 cursor-pointer shadow-xs active:scale-[0.96] transition-all duration-150 ease-out select-none">
+                            <label className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200/90 hover:border-slate-300 dark:border-slate-700 dark:hover:border-slate-600 bg-white hover:bg-slate-50/80 dark:bg-slate-900 dark:hover:bg-slate-800 text-type-body font-medium text-slate-800 dark:text-slate-200 cursor-pointer shadow-xs active:scale-[0.96] transition-colors duration-150 ease-out select-none">
                               <Upload className="h-3.5 w-3.5 text-slate-600 dark:text-slate-400" />
                               <span>Đổi logo</span>
                               <input
@@ -1069,7 +1070,7 @@ export default function DocumentTemplatesPage() {
 
             {/* Tab 2: Danh Sách Mẫu Biểu (Lấp đầy trọn vẹn 100% không gian theo đúng độ dài của Tab 1) */}
             {activeTab === 'columns' && (
-              <div className="absolute inset-0 flex flex-col space-y-3">
+              <div className="absolute inset-0 flex flex-col space-y-3 bg-white dark:bg-slate-900 z-10">
                 <div className="relative shrink-0">
                   <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                   <input

@@ -72,11 +72,11 @@ export function SlidingSegmentedControl<T extends string = string>({
     return () => window.removeEventListener('resize', handleResize);
   }, [updateIndicator]);
 
-  // Kích thước chuẩn Design System 2026: Rộng rãi, thoáng đãng, sang trọng
+  // Kích thước chuẩn Design System 2026: Rộng rãi, thoáng đãng, thoải mái
   const heightClass =
-    size === 'sm' ? 'h-10 text-type-body-sm' : size === 'lg' ? 'h-13.5 text-type-body' : 'h-12 text-type-body';
+    size === 'sm' ? 'h-10 text-type-body-sm' : size === 'lg' ? 'h-13 text-type-body' : 'h-11 text-type-body';
   const paddingClass =
-    size === 'sm' ? 'px-4 py-2' : size === 'lg' ? 'px-6 py-3' : 'px-5 py-2.5';
+    size === 'sm' ? 'px-4.5 py-1.5' : size === 'lg' ? 'px-6 py-3' : 'px-5 py-2';
   const iconSizeClass = size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-5 w-5' : 'h-4.5 w-4.5';
 
   const isDock = variant === 'dock';
@@ -160,12 +160,12 @@ export function SlidingSegmentedControl<T extends string = string>({
 
             {typeof option.count === 'number' && (
               <span
-                className={`ui-pill inline-flex items-center justify-center rounded-full px-2 py-0.5 text-type-helper font-medium tabular-nums transition-colors duration-200 ${
+                className={`inline-flex items-center justify-center rounded-full px-2 py-0.5 min-w-[22px] text-type-helper font-medium tabular-nums transition-colors duration-200 ${
                   isActive
                     ? isPrimary
                       ? 'ui-pill-solid bg-white/20 text-white'
                       : 'ui-pill-solid bg-blue-600 text-white shadow-2xs'
-                    : 'text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/80'
+                    : 'bg-slate-200/70 dark:bg-slate-700/70 text-slate-700 dark:text-slate-300'
                 }`}
               >
                 {option.count.toLocaleString('vi-VN')}
