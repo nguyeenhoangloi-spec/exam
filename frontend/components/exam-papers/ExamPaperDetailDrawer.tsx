@@ -369,7 +369,20 @@ export function ExamPaperDetailDrawer({
             </div>
 
             {/* Questions List */}
-            {filteredQuestions.length === 0 ? (
+            {isBusy && rawQuestions.length === 0 ? (
+              <div className="space-y-4 animate-pulse">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-3">
+                    <div className="h-4 w-1/3 bg-slate-200 dark:bg-slate-800 rounded-lg" />
+                    <div className="h-8 bg-slate-100 dark:bg-slate-850 rounded-xl" />
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <div className="h-8 bg-slate-100 dark:bg-slate-850 rounded-lg" />
+                      <div className="h-8 bg-slate-100 dark:bg-slate-850 rounded-lg" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredQuestions.length === 0 ? (
               <div className="py-16 text-center">
                 <FileText className="w-10 h-10 text-slate-300 mx-auto mb-2" />
                 <p className="text-type-body-sm font-semibold text-slate-500">Không tìm thấy câu hỏi nào phù hợp với bộ lọc.</p>

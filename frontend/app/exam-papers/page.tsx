@@ -600,6 +600,11 @@ export default function ExamPapersPage() {
   };
 
   const openDetail = async (id: number) => {
+    const existing = paginatedPapers.find((p) => p.id === id) || filteredPapers.find((p) => p.id === id);
+    if (existing) {
+      setSelectedPaper(existing);
+      setShowAnswers(false);
+    }
     setBusyId(id);
     try {
       const response = await api.get<ExamPaper>(`/exam-papers/${id}`);

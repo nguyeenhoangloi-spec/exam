@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { IdentifierBadge } from './IdentifierBadge';
@@ -33,6 +33,7 @@ export interface DetailDrawerProps {
   bodyClassName?: string;
   headerClassName?: string;
   ariaLabel?: string;
+  isLoading?: boolean;
 }
 
 /**
@@ -52,8 +53,9 @@ function getSmartMonogram(titleNode: React.ReactNode, fallback = 'CT'): string {
 
 /**
  * DetailDrawer - Component Drawer trượt bên phải dùng chung chuẩn mực toàn hệ thống
- * - Tự động đệm và đóng băng (freeze) nội dung trong suốt 300ms trượt ra, chống đổi chữ/nhảy layout
- * - Hoạt ảnh 60 FPS mượt mà cubic-bezier(0.16, 1, 0.3, 1) + will-change-transform
+ * - Tự động đóng băng (freeze) snapshot nội dung khi đóng, chống trắng xóa/nhấp nháy layout
+ * - Hoạt ảnh 60 FPS mượt mà GPU-accelerated với đường cong cubic-bezier(0.32, 0.72, 0, 1)
+ * - Tách biệt vòng đời Animation với Props update để tránh re-trigger khi props thay đổi
  * - Hỗ trợ Header, Subtitle, Badges, Tabs liền mạch, Footer cố định, phím ESC và SSR Portal
  */
 export function DetailDrawer({
@@ -77,12 +79,27 @@ export function DetailDrawer({
   bodyClassName = '',
   headerClassName = '',
   ariaLabel = 'Thông tin chi tiết',
+  isLoading = false,
 }: DetailDrawerProps) {
-  const [shouldRender, setShouldRender] = useState(isOpen);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isMounted, setIsMounted] = useState(isOpen);
+  const [isAnimated, setIsAnimated] = useState(false);
 
-  // Bộ đệm (caching) dữ liệu khi mở để giữ nguyên 100% nội dung khi đóng
-  const [cachedProps, setCachedProps] = useState({
+  // Snapshot Ref lưu giữ dữ liệu hợp lệ cuối cùng khi đang mở
+  const lastValidSnapshotRef = useRef<{
+    title: React.ReactNode;
+    subtitle?: React.ReactNode;
+    badge?: React.ReactNode;
+    showAvatar?: boolean;
+    avatarText?: string;
+    avatarIcon?: React.ReactNode;
+    headerActions?: React.ReactNode;
+    headerExtra?: React.ReactNode;
+    tabs?: DetailDrawerTab[];
+    activeTab?: string;
+    footer?: React.ReactNode;
+    children: React.ReactNode;
+    maxWidth?: 'md' | 'lg' | 'xl' | '2xl' | '3xl' | string;
+  }>({
     title,
     subtitle,
     badge,
@@ -98,54 +115,48 @@ export function DetailDrawer({
     maxWidth,
   });
 
+  // Khi đang mở, liên tục cập nhật snapshot mới nhất
+  if (isOpen) {
+    lastValidSnapshotRef.current = {
+      title,
+      subtitle,
+      badge,
+      showAvatar,
+      avatarText,
+      avatarIcon,
+      headerActions,
+      headerExtra,
+      tabs,
+      activeTab,
+      footer,
+      children,
+      maxWidth,
+    };
+  }
+
+  // Quản lý vòng đời mở / đóng với Hardware Acceleration
   useEffect(() => {
+    let animFrame: number;
+    let exitTimer: NodeJS.Timeout;
+
     if (isOpen) {
-      setCachedProps({
-        title,
-        subtitle,
-        badge,
-        showAvatar,
-        avatarText,
-        avatarIcon,
-        headerActions,
-        headerExtra,
-        tabs,
-        activeTab,
-        footer,
-        children,
-        maxWidth,
+      setIsMounted(true);
+      // Đảm bảo DOM đã gắn trước khi kích hoạt transition
+      animFrame = requestAnimationFrame(() => {
+        setIsAnimated(true);
       });
-      setShouldRender(true);
-      const raf1 = requestAnimationFrame(() => {
-        const raf2 = requestAnimationFrame(() => {
-          setIsVisible(true);
-        });
-        return () => cancelAnimationFrame(raf2);
-      });
-      return () => cancelAnimationFrame(raf1);
     } else {
-      setIsVisible(false);
-      const timer = setTimeout(() => {
-        setShouldRender(false);
+      setIsAnimated(false);
+      exitTimer = setTimeout(() => {
+        setIsMounted(false);
       }, 300);
-      return () => clearTimeout(timer);
     }
-  }, [
-    isOpen,
-    title,
-    subtitle,
-    badge,
-    showAvatar,
-    avatarText,
-    avatarIcon,
-    headerActions,
-    headerExtra,
-    tabs,
-    activeTab,
-    footer,
-    children,
-    maxWidth,
-  ]);
+
+    return () => {
+      cancelAnimationFrame(animFrame);
+      clearTimeout(exitTimer);
+    };
+  }, [isOpen]);
 
   // Phím ESC để đóng mượt mà
   useEffect(() => {
@@ -158,7 +169,7 @@ export function DetailDrawer({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Sử dụng dữ liệu hiện tại khi đang mở, dùng dữ liệu đã đệm khi đang trượt đóng
+  // Khi đang mở dùng props hiện tại; khi đang đóng dùng snapshot để giữ nguyên 100% nội dung trượt ra
   const active = isOpen
     ? {
         title,
@@ -175,7 +186,7 @@ export function DetailDrawer({
         children,
         maxWidth,
       }
-    : cachedProps;
+    : lastValidSnapshotRef.current;
 
   // Xử lý độ rộng
   const widthClass = useMemo(() => {
@@ -195,7 +206,7 @@ export function DetailDrawer({
     }
   }, [active.maxWidth]);
 
-  if (!shouldRender || typeof document === 'undefined') return null;
+  if (!isMounted || typeof document === 'undefined') return null;
 
   const shortAvatar = getSmartMonogram(active.title, active.avatarText || 'CT');
   const isIdentifierSubtitle =
@@ -208,19 +219,23 @@ export function DetailDrawer({
       aria-label={ariaLabel}
       className={`fixed inset-0 z-[100] overflow-hidden ${className}`}
     >
-      {/* Backdrop mờ nền */}
+      {/* Backdrop mờ nền với hiệu ứng fade 60 FPS */}
       <div
-        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isVisible ? 'opacity-100' : 'opacity-0'
+        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+          isAnimated ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={onClose}
       />
 
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
         <div
-          className={`w-screen ${widthClass} bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/60 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
-            isVisible ? 'translate-x-0' : 'translate-x-full'
+          className={`w-screen ${widthClass} bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/60 dark:border-slate-800 pointer-events-auto transform-gpu transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] will-change-transform ${
+            isAnimated ? 'translate-x-0' : 'translate-x-full'
           }`}
+          style={{
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+          }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -344,7 +359,15 @@ export function DetailDrawer({
           <div
             className={`flex-1 overflow-y-auto p-5 space-y-6 bg-white dark:bg-slate-900 custom-scrollbar ${bodyClassName}`}
           >
-            {active.children}
+            {isLoading ? (
+              <div className="space-y-4 animate-pulse">
+                <div className="h-20 rounded-2xl bg-slate-100 dark:bg-slate-800" />
+                <div className="h-40 rounded-2xl bg-slate-100 dark:bg-slate-800" />
+                <div className="h-32 rounded-2xl bg-slate-100 dark:bg-slate-800" />
+              </div>
+            ) : (
+              active.children
+            )}
           </div>
 
           {/* Footer (nếu có) */}
