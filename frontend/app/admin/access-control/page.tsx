@@ -927,7 +927,7 @@ export default function AccessControlPage() {
           return (
             <div
               key={item.title}
-              className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer"
+              className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1 min-w-0">
@@ -1004,7 +1004,7 @@ export default function AccessControlPage() {
                     placeholder="Tìm theo tên chức năng, mã quyền..."
                     value={matrixSearch}
                     onChange={(e) => setMatrixSearch(e.target.value)}
-                    className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+                    className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
                   />
 
                   {/* Embedded actions on right edge of search input */}
@@ -1216,7 +1216,7 @@ export default function AccessControlPage() {
 
           {/* ══════════ TAB 2: TÀI KHOẢN & PHẠM VI TRUY CẬP ══════════ */}
           {tab === 'users' && (
-            <section className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+            <section className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
               <div className="grid grid-cols-1 xl:grid-cols-[340px_minmax(0,1fr)] xl:divide-x divide-slate-200/90 dark:divide-slate-800">
                 {/* Left Column: User Master List */}
                 <div className="flex flex-col bg-white dark:bg-slate-900 h-full">
@@ -1694,7 +1694,7 @@ export default function AccessControlPage() {
                       setHistorySearch(e.target.value);
                       setHistoryPage(1);
                     }}
-                    className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+                    className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
                   />
 
                   {/* Embedded actions on right edge of search input */}
@@ -1816,7 +1816,7 @@ export default function AccessControlPage() {
                 </div>
               )}
 
-              <div className="overflow-hidden min-h-[400px] rounded-2xl border border-slate-200/60 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
+              <div className="overflow-hidden min-h-[400px] rounded-2xl border border-slate-200/90 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
                 <div className="divide-y divide-slate-100 dark:divide-slate-800">
                   {paginatedHistory.length ? (
                     paginatedHistory.map((item) => (

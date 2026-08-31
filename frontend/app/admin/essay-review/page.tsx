@@ -607,7 +607,7 @@ function AdminEssayReviewContent() {
           }`}
         >
           <div className="w-full lg:w-[340px]">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-2xs overflow-hidden flex flex-col">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs overflow-hidden flex flex-col">
               {/* Header: Title + Neutral Reload Button + Filter Reset */}
               <div className="p-3.5 space-y-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40">
                 <div className="flex items-center justify-between h-7">
@@ -828,7 +828,7 @@ function AdminEssayReviewContent() {
         {/* Right Panel: Detail & Admin Controls (Single Unified Container) */}
         <div className="flex-1 min-w-0 space-y-4">
           {!selected ? (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 p-12 text-center text-slate-400 text-type-helper font-medium shadow-2xs space-y-3">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-12 text-center text-slate-400 text-type-helper font-medium shadow-2xs space-y-3">
               <p>Vui lòng chọn bài thi từ danh sách bên trái để xem chi tiết và duyệt điểm.</p>
               {collapseList && (
                 <div className="pt-1">
@@ -839,7 +839,7 @@ function AdminEssayReviewContent() {
               )}
             </div>
           ) : (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 p-5 space-y-5 shadow-2xs">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 space-y-5 shadow-2xs">
               {/* Sticky Header: Candidate Meta + Navigation */}
               <div className="sticky top-0 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md -mx-5 -mt-5 p-5 border-b border-slate-100 dark:border-slate-800 rounded-t-2xl shadow-xs flex justify-between items-center flex-wrap gap-3">
                 <div className="flex items-center gap-2.5">
@@ -1082,7 +1082,7 @@ function AdminEssayReviewContent() {
                   return (
                     <div
                       key={q.questionId || idx}
-                      className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 p-5 space-y-4 shadow-2xs"
+                      className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 space-y-4 shadow-2xs"
                     >
                       {/* Question Header & Rubric Trigger */}
                       <div className="flex justify-between items-start gap-4 border-b border-slate-100 dark:border-slate-800 pb-3.5">
@@ -1258,7 +1258,7 @@ function AdminEssayReviewContent() {
                                         <p className="text-type-helper text-slate-500 mt-0.5 font-normal leading-relaxed">{r.description}</p>
                                       )}
                                     </div>
-                                    <span className="tabular-nums text-type-helper font-medium text-slate-500 shrink-0 px-2 py-0.5 ui-pill rounded-full border border-slate-200/60 dark:border-slate-700">
+                                    <span className="tabular-nums text-type-helper font-medium text-slate-500 shrink-0 px-2 py-0.5 ui-pill rounded-full border border-slate-200/90 dark:border-slate-700">
                                       Tối đa {r.maxScore}đ
                                     </span>
                                   </div>

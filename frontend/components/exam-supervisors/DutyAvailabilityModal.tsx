@@ -192,7 +192,7 @@ export function DutyAvailabilityModal({ isOpen, onClose, onSuccess }: DutyAvaila
                     type="date"
                     value={examDate}
                     onChange={(e) => setExamDate(e.target.value)}
-                    className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                    className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                     required
                   />
                 </div>
@@ -205,7 +205,7 @@ export function DutyAvailabilityModal({ isOpen, onClose, onSuccess }: DutyAvaila
                     <select
                       value={status}
                       onChange={(e) => setStatus(e.target.value as any)}
-                      className="h-10 w-full appearance-none rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-3 pr-8 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
+                      className="h-10 w-full appearance-none rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-3 pr-8 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs cursor-pointer"
                     >
                       <option value="AVAILABLE">Sẵn sàng coi thi</option>
                       <option value="UNAVAILABLE">Báo bận / Vắng</option>
@@ -242,7 +242,7 @@ export function DutyAvailabilityModal({ isOpen, onClose, onSuccess }: DutyAvaila
                         className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition cursor-pointer ${
                           isSelected
                             ? 'border-blue-600 bg-blue-50/70 text-blue-900 dark:border-blue-500 dark:bg-blue-950/50 dark:text-blue-200 ring-1 ring-blue-500/20'
-                            : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                            : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                         }`}
                       >
                         <span className="text-type-body-sm font-semibold">{preset.label}</span>
@@ -265,7 +265,7 @@ export function DutyAvailabilityModal({ isOpen, onClose, onSuccess }: DutyAvaila
                         type="time"
                         value={startTime}
                         onChange={(e) => setStartTime(e.target.value)}
-                        className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                        className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                         required
                       />
                     </div>
@@ -277,7 +277,7 @@ export function DutyAvailabilityModal({ isOpen, onClose, onSuccess }: DutyAvaila
                         type="time"
                         value={endTime}
                         onChange={(e) => setEndTime(e.target.value)}
-                        className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                        className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                         required
                       />
                     </div>
@@ -295,7 +295,7 @@ export function DutyAvailabilityModal({ isOpen, onClose, onSuccess }: DutyAvaila
                   placeholder="Ví dụ: Ưu tiên coi thi tòa A, có việc bận sau 17h..."
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs resize-none"
+                  className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs resize-none"
                 />
               </div>
 
@@ -330,7 +330,7 @@ export function DutyAvailabilityModal({ isOpen, onClose, onSuccess }: DutyAvaila
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-slate-100 dark:divide-slate-800 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
+                <div className="divide-y divide-slate-100 dark:divide-slate-800 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
                   {availabilities.map((item, idx) => (
                     <div
                       key={item.id || idx}

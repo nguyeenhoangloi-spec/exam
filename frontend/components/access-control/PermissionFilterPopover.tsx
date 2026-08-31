@@ -172,7 +172,7 @@ export function PermissionFilterPopover({
           <div
             ref={popoverRef}
             style={popoverStyle}
-            className="flex flex-col overflow-hidden rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/10 dark:shadow-slate-950/50 animate-in fade-in zoom-in-95 duration-150"
+            className="flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-modal animate-in fade-in zoom-in-95 duration-150"
           >
             {/* Popover Header */}
             <div className="shrink-0 flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40">
@@ -222,7 +222,7 @@ export function PermissionFilterPopover({
                   className={`flex w-full items-center justify-between rounded-xl border p-2.5 text-left transition cursor-pointer ${
                     onlySensitive
                       ? 'border-blue-600 dark:border-blue-500 ring-1 ring-blue-600/20 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs'
-                      : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40'
+                      : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/40'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">

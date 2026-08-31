@@ -290,7 +290,7 @@ export function TeacherAssignmentCalendarView({
                       }`}
                     >
                       {cellAssignments.length === 0 ? (
-                        <div className="h-full min-h-[90px] flex items-center justify-center rounded-xl border border-dashed border-slate-200/60 dark:border-slate-800/80 text-type-body text-slate-400 dark:text-slate-600 font-normal select-none">
+                        <div className="h-full min-h-[90px] flex items-center justify-center rounded-xl border border-dashed border-slate-200/90 dark:border-slate-800/80 text-type-body text-slate-400 dark:text-slate-600 font-normal select-none">
                           —
                         </div>
                       ) : (
@@ -307,7 +307,7 @@ export function TeacherAssignmentCalendarView({
                               <div
                                 key={item.id}
                                 onClick={() => onDetail(item)}
-                                className="group relative rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-850 p-2.5 shadow-2xs hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-500 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer space-y-1.5"
+                                className="group relative rounded-xl border border-slate-200/90 dark:border-slate-800/60 bg-white dark:bg-slate-850 p-2.5 shadow-2xs hover:shadow-apple-card-hover hover:border-blue-400 dark:hover:border-blue-500 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer space-y-1.5"
                               >
                                 {/* Top row: Mã môn và StatusBadge siêu gọn */}
                                 <div className="flex items-center justify-between gap-1.5 min-w-0">

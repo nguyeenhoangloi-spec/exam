@@ -510,7 +510,7 @@ export function ExamPaperDetailDrawer({
                                   className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg font-semibold text-type-helper tabular-nums select-none ${
                                     showAnswers && isCorrect
                                       ? 'bg-emerald-600 text-white shadow-2xs'
-                                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700'
+                                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/90 dark:border-slate-700'
                                   }`}
                                 >
                                   {choice.label}

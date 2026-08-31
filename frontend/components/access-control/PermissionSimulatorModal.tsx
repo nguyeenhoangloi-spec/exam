@@ -348,7 +348,7 @@ export function PermissionSimulatorModal({
               </div>
 
               {/* Step-by-step Evaluation Trace */}
-              <div className="space-y-2 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+              <div className="space-y-2 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
                 <h5 className="text-type-body font-medium text-slate-900 dark:text-slate-100 pb-1 border-b border-slate-100 dark:border-slate-800">
                   Chi tiết chuỗi đánh giá quyền hạn (Evaluation Trace)
                 </h5>
@@ -381,7 +381,7 @@ export function PermissionSimulatorModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-200/60 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 flex justify-end">
+        <div className="p-4 border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 flex justify-end">
           <Button variant="secondary" size="md" onClick={onClose}>
             Đóng trình mô phỏng
           </Button>

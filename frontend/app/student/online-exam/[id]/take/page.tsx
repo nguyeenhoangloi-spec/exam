@@ -475,7 +475,7 @@ export default function StudentExamTakePage() {
   if ((error || !attemptData) && !isSubmitted && !submitting) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex items-center justify-center p-6">
-        <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700 p-8 rounded-2xl max-w-md w-full text-center shadow-xl space-y-4">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700 p-8 rounded-2xl max-w-md w-full text-center shadow-xl space-y-4">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 border border-rose-200 mx-auto shadow-2xs">
             <AlertTriangle className="w-8 h-8" />
           </div>
@@ -588,7 +588,7 @@ export default function StudentExamTakePage() {
         {/* Main Question Content Area */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto max-w-4xl mx-auto w-full">
           {currentQ && (
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700 rounded-2xl p-6 sm:p-8 shadow-2xs space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700 rounded-2xl p-6 sm:p-8 shadow-2xs space-y-6">
               {/* Question Header Status */}
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                 <div className="flex items-center space-x-3">
@@ -741,7 +741,7 @@ export default function StudentExamTakePage() {
                           onClick={() => handleSelectOption(currentQ.questionId, opt.id, isMulti)}
                           className={`p-4 rounded-xl border cursor-pointer transition flex items-start space-x-3.5 ${isSelected
                             ? 'bg-blue-50/80 border-blue-600 text-blue-700 shadow-2xs font-medium ring-2 ring-blue-500/20'
-                            : 'bg-slate-50/60 dark:bg-slate-800/60 border-slate-200/60 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                            : 'bg-slate-50/60 dark:bg-slate-800/60 border-slate-200/90 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100/90 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                           }`}
                         >
                           <div
@@ -786,7 +786,7 @@ export default function StudentExamTakePage() {
           </main>
 
           {/* Sidebar Question Navigator */}
-          <aside className="w-full lg:w-80 bg-white dark:bg-slate-900 border-l border-slate-200/60 dark:border-slate-700 p-6 flex flex-col shrink-0 space-y-4">
+          <aside className="w-full lg:w-80 bg-white dark:bg-slate-900 border-l border-slate-200/90 dark:border-slate-700 p-6 flex flex-col shrink-0 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <h3 className="text-type-section font-semibold text-slate-900 dark:text-slate-100">Danh sách câu hỏi</h3>
               <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">{answeredCount}/{totalCount} đã hoàn thành</span>
@@ -983,9 +983,9 @@ export default function StudentExamTakePage() {
   {/* ── MODAL 1: CẢNH BÁO VI PHẠM QUY CHẾ THI ── */}
   {violationModal.isOpen && (
     <div role="dialog" aria-modal="true" aria-label="Cảnh báo vi phạm quy chế thi" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-700 shadow-2xl overflow-hidden animate-modal-dialog will-change-transform">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-apple-modal overflow-hidden animate-modal-dialog will-change-transform">
         {/* Header */}
-        <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/60 dark:border-slate-700 flex items-center gap-3.5">
+        <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/90 dark:border-slate-700 flex items-center gap-3.5">
           <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200/80 dark:border-blue-800 flex items-center justify-center shrink-0 text-blue-600 dark:text-blue-400">
             <Shield className="w-5 h-5" />
           </div>
@@ -1037,9 +1037,9 @@ export default function StudentExamTakePage() {
   {/* ── MODAL 2: BÀI THI ĐÃ ĐƯỢC NỘP TỰ ĐỘNG DO VI PHẠM ── */}
   {violationSubmittedModal.isOpen && (
     <div role="dialog" aria-modal="true" aria-label="Bài thi đã bị khóa" className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-modal-backdrop">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-700 shadow-2xl overflow-hidden animate-modal-dialog will-change-transform">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-apple-modal overflow-hidden animate-modal-dialog will-change-transform">
         {/* Header */}
-        <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/60 dark:border-slate-700 flex items-center gap-3.5">
+        <div className="px-6 py-4 bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/90 dark:border-slate-700 flex items-center gap-3.5">
           <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200/80 dark:border-blue-800 flex items-center justify-center shrink-0 text-blue-600 dark:text-blue-400">
             <Shield className="w-5 h-5" />
           </div>

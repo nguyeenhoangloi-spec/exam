@@ -117,7 +117,7 @@ export function CreateAssignmentModal({
           </label>
 
           {isPreselectedSingleRoom ? (
-            <div className="flex items-center justify-between h-10 px-3.5 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-type-helper font-semibold text-slate-800 dark:text-slate-200">
+            <div className="flex items-center justify-between h-10 px-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-type-helper font-semibold text-slate-800 dark:text-slate-200">
               <span className="flex items-center gap-2">
                 <span className="font-semibold text-blue-600">{selectedRoomName}</span>
                 {selectedRoomCap && <span className="text-slate-400 font-normal">{selectedRoomCap}</span>}
@@ -170,7 +170,7 @@ export function CreateAssignmentModal({
           </div>
 
           {/* Giám thị 2 */}
-          <div className="space-y-1.5 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-3">
+          <div className="space-y-1.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-3">
             <label className="flex items-center justify-between text-type-body font-medium text-slate-900 dark:text-slate-100">
               <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
                 <UserCheck className="h-4 w-4 text-slate-500" />
@@ -197,7 +197,7 @@ export function CreateAssignmentModal({
             onChange={(e) => setNote(e.target.value)}
             placeholder="Nhập ghi chú phân công hoặc yêu cầu đặc biệt..."
             rows={2}
-            className="w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-type-body text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none shadow-2xs"
+            className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-type-body text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none shadow-2xs"
           />
         </div>
 

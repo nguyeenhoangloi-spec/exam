@@ -64,7 +64,7 @@ export function QuestionStatusChart({ data }: { data?: DashboardOverview['questi
   });
 
   return (
-    <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs h-full flex flex-col justify-between space-y-4">
+    <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-apple-card h-full flex flex-col justify-between space-y-4">
       {/* ── 1. Header & Filter (Clean, Flat & Informative) ── */}
       <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <div className="flex items-center gap-2.5">

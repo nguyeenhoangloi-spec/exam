@@ -694,7 +694,7 @@ export default function ForgotPasswordPage() {
                       className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-type-body outline-none transition ${
                         isDark
                           ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                          : 'border-slate-200/60 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                          : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                       }`}
                     />
                   </div>
@@ -763,7 +763,7 @@ export default function ForgotPasswordPage() {
                                 ? 'border-blue-600 dark:border-blue-500 bg-blue-50/30 dark:bg-blue-950/30 text-slate-900 dark:text-white shadow-xs'
                                 : isDark
                                 ? 'border-slate-700 bg-slate-800/80 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                                : 'border-slate-200/60 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15 focus:bg-white'
+                                : 'border-slate-200/90 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15 focus:bg-white'
                             }`}
                           />
                         );
@@ -800,7 +800,7 @@ export default function ForgotPasswordPage() {
                                 ? 'border-blue-600 dark:border-blue-500 bg-blue-50/30 dark:bg-blue-950/30 text-slate-900 dark:text-white shadow-xs'
                                 : isDark
                                 ? 'border-slate-700 bg-slate-800/80 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                                : 'border-slate-200/60 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15 focus:bg-white'
+                                : 'border-slate-200/90 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15 focus:bg-white'
                             }`}
                           />
                         );
@@ -830,7 +830,7 @@ export default function ForgotPasswordPage() {
                     className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:cursor-not-allowed transition cursor-pointer flex items-center gap-2"
                   >
                     {resendCountdown > 0 ? (
-                      <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700">
+                      <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full text-slate-600 dark:text-slate-300 border border-slate-200/90 dark:border-slate-700">
                         {/* Circular Progress SVG Ring */}
                         <svg className="h-3.5 w-3.5 -rotate-90" viewBox="0 0 24 24">
                           <circle
@@ -913,7 +913,7 @@ export default function ForgotPasswordPage() {
                       className={`w-full h-[44px] rounded-2xl border pl-12 pr-11 text-type-body outline-none transition ${
                         isDark
                           ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                          : 'border-slate-200/60 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                          : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                       }`}
                     />
                     <button
@@ -947,7 +947,7 @@ export default function ForgotPasswordPage() {
                       className={`w-full h-[44px] rounded-2xl border pl-12 pr-4 text-type-body outline-none transition ${
                         isDark
                           ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                          : 'border-slate-200/60 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                          : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                       }`}
                     />
                   </div>

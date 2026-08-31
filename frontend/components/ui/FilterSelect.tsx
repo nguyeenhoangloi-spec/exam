@@ -207,7 +207,7 @@ export const FilterSelect = React.forwardRef<HTMLSelectElement, FilterSelectProp
   const variantClasses =
     variant === 'ghost'
       ? 'border-none bg-transparent text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 shadow-none'
-      : 'border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 shadow-2xs';
+      : 'border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 shadow-2xs';
 
   const isFullWidth = fullWidth || Boolean(containerClassName && containerClassName.includes('w-full')) || Boolean(className && className.includes('w-full'));
 

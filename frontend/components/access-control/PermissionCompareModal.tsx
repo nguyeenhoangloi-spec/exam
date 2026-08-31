@@ -318,7 +318,7 @@ export function PermissionCompareModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-200/60 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 flex justify-end">
+        <div className="p-4 border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 flex justify-end">
           <Button variant="secondary" size="md" onClick={onClose}>
             Đóng bảng so sánh
           </Button>

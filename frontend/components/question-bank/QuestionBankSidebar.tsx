@@ -46,8 +46,8 @@ export function QuestionBankSidebar({
   return (
     <div className="space-y-4">
       {/* Card 1: Tổng quan ngân hàng */}
-      <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-2xs space-y-3">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+      <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-apple-card space-y-3">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
           <h3 className="text-type-card font-semibold text-slate-900">Tổng quan ngân hàng</h3>
           <div className="relative">
             <FilterSelect className="h-9 appearance-none rounded-xl border border-slate-200 bg-white px-3 pr-7 text-type-body font-normal text-slate-700 outline-none hover:bg-slate-50 cursor-pointer shadow-2xs">
@@ -105,8 +105,8 @@ export function QuestionBankSidebar({
       </div>
 
       {/* Card 2: Phân bố độ khó */}
-      <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-2xs space-y-3">
-        <h3 className="text-type-card font-semibold text-slate-900 border-b border-slate-100 pb-2.5">
+      <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-apple-card space-y-3">
+        <h3 className="text-type-card font-semibold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2.5">
           Phân bố độ khó
         </h3>
 
@@ -132,8 +132,8 @@ export function QuestionBankSidebar({
       </div>
 
       {/* Card 3: Phân bố loại câu hỏi */}
-      <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-2xs space-y-3">
-        <h3 className="text-type-card font-semibold text-slate-900 border-b border-slate-100 pb-2.5">
+      <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-apple-card space-y-3">
+        <h3 className="text-type-card font-semibold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2.5">
           Phân bố loại câu hỏi
         </h3>
 
@@ -184,8 +184,8 @@ export function QuestionBankSidebar({
       </div>
 
       {/* Card 4: Thao tác nhanh */}
-      <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-2xs space-y-2.5">
-        <h3 className="text-type-card font-semibold text-slate-900 border-b border-slate-100 pb-2.5">
+      <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-apple-card space-y-2.5">
+        <h3 className="text-type-card font-semibold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2.5">
           Thao tác nhanh
         </h3>
 

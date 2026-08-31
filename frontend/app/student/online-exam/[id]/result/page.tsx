@@ -82,11 +82,11 @@ export default function StudentExamResultPage() {
           </div>
           <div className="p-6 sm:p-7 space-y-5">
             <div className="bg-slate-50/70 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 p-5 rounded-xl space-y-3">
-              <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-700">
+              <div className="flex justify-between py-1 border-b border-slate-200/90 dark:border-slate-700">
                 <Skeleton className="h-4 w-20 rounded" />
                 <Skeleton className="h-4 w-40 rounded" />
               </div>
-              <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-700">
+              <div className="flex justify-between py-1 border-b border-slate-200/90 dark:border-slate-700">
                 <Skeleton className="h-4 w-32 rounded" />
                 <Skeleton className="h-4 w-36 rounded" />
               </div>
@@ -135,7 +135,7 @@ export default function StudentExamResultPage() {
         {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
         {/* ── Seamless Single White Card (Full-Bleed Header) ── */}
-        <div className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-700 shadow-xl overflow-hidden">
+        <div className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-xl overflow-hidden">
           
           {/* Full-Bleed Header Banner: Primary Vivid Blue Gradient */}
           <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 p-6 sm:p-7 text-white shrink-0 shadow-xs">
@@ -167,7 +167,7 @@ export default function StudentExamResultPage() {
             {/* Metadata Info Box */}
             <div className="bg-slate-50/70 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 p-5 rounded-xl space-y-3">
               {result.subjectName && (
-                <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-700 pb-2.5 text-type-body">
+                <div className="flex items-center justify-between border-b border-slate-200/90 dark:border-slate-700 pb-2.5 text-type-body">
                   <span className="text-slate-500 dark:text-slate-400 font-semibold text-type-body-sm">Môn thi:</span>
                   <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-body text-right">
                     {result.subjectName} {result.subjectCode ? `(${result.subjectCode})` : ''}
@@ -175,14 +175,14 @@ export default function StudentExamResultPage() {
                 </div>
               )}
 
-              <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-700 pb-2.5 text-type-body">
+              <div className="flex items-center justify-between border-b border-slate-200/90 dark:border-slate-700 pb-2.5 text-type-body">
                 <span className="text-slate-500 dark:text-slate-400 font-semibold text-type-body-sm">Thời điểm nộp bài:</span>
                 <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-body tabular-nums">
                   {result.submittedAt ? new Date(result.submittedAt).toLocaleString('vi-VN') : 'Vừa xong'}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-700 pb-2.5 text-type-body">
+              <div className="flex items-center justify-between border-b border-slate-200/90 dark:border-slate-700 pb-2.5 text-type-body">
                 <span className="text-slate-500 dark:text-slate-400 font-semibold text-type-body-sm">Trạng thái bài thi:</span>
                 <StatusBadge status={result.status} />
               </div>
@@ -231,7 +231,7 @@ export default function StudentExamResultPage() {
         {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
         {/* ── Seamless Single White Card Architecture (Full-Bleed Header) ── */}
-        <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-700 shadow-xl overflow-hidden">
+        <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-xl overflow-hidden">
 
           {/* Full-Bleed Header Banner: Primary Vivid Blue Gradient */}
           <div className={`bg-gradient-to-r ${isUnderReview ? 'from-amber-600 via-amber-700 to-orange-700' : 'from-blue-600 via-blue-700 to-blue-800'} p-6 sm:p-7 text-white shrink-0 shadow-xs`}>
@@ -264,14 +264,14 @@ export default function StudentExamResultPage() {
           <div className="p-6 sm:p-8 space-y-6">
             <div className="space-y-4">
               <div className="bg-slate-50/70 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 p-5 rounded-xl space-y-2.5">
-                <div className="flex justify-between border-b border-slate-200/60 dark:border-slate-700 pb-2.5 text-type-body">
+                <div className="flex justify-between border-b border-slate-200/90 dark:border-slate-700 pb-2.5 text-type-body">
                   <span className="text-slate-500 dark:text-slate-400 font-semibold text-type-body-sm leading-5 tracking-wide">Trạng thái bài thi:</span>
                   <StatusBadge status={result.status} />
                   <span className="sr-only">
                     {result.status === 'UNDER_REVIEW' ? 'Đang được xem xét' : result.status === 'GRADED' ? 'Đã chấm điểm' : result.status === 'SUBMITTED' ? 'Đã nộp bài' : 'Chưa xác định'}
                   </span>
                 </div>
-                <div className="flex justify-between border-b border-slate-200/60 dark:border-slate-700 pb-2.5 text-type-body">
+                <div className="flex justify-between border-b border-slate-200/90 dark:border-slate-700 pb-2.5 text-type-body">
                   <span className="text-slate-500 dark:text-slate-400 font-semibold text-type-body-sm leading-5 tracking-wide">Thời điểm nộp bài:</span>
                   <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-body leading-6 tabular-nums">
                     {result.submittedAt ? new Date(result.submittedAt).toLocaleString('vi-VN') : 'Mới đây'}

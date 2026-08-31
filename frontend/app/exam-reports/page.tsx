@@ -896,7 +896,7 @@ export default function ExamReportsPage() {
                               setSelectedScheduleId(String(s.id));
                               setShowSchedulePicker(false);
                             }}
-                            className="w-full text-left p-3.5 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-500/60 hover:bg-blue-50/20 dark:hover:bg-blue-950/20 transition cursor-pointer flex flex-col gap-2 pt-3"
+                            className="w-full text-left p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-500/60 hover:bg-blue-50/20 dark:hover:bg-blue-950/20 transition cursor-pointer flex flex-col gap-2 pt-3"
                           >
                             <div className="flex items-center justify-between gap-3">
                               <span className="font-semibold text-slate-900 dark:text-white">
@@ -964,7 +964,7 @@ export default function ExamReportsPage() {
                     setSearch(e.target.value);
                     setPage(1);
                   }}
-                  className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                  className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                 />
 
                 {/* Embedded actions on right edge of search input */}
@@ -1021,7 +1021,7 @@ export default function ExamReportsPage() {
                 ))}
               </div>
             ) : !paginatedCandidates.length ? (
-              <div className="rounded-2xl border border-slate-200/60 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
+              <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
                 Không tìm thấy thí sinh phù hợp trong ca thi này.
               </div>
             ) : (

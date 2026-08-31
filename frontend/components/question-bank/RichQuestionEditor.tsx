@@ -35,7 +35,7 @@ export function RichQuestionEditor({
  };
 
  return (
- <div className="overflow-hidden rounded-xl border border-slate-200/60 bg-white shadow-2xs">
+ <div className="overflow-hidden rounded-xl border border-slate-200/90 bg-white shadow-2xs">
  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 bg-slate-50/80 px-3 py-2">
  <div className="flex items-center gap-1">
  <button

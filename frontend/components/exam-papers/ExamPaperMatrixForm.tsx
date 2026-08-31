@@ -387,7 +387,7 @@ export function ExamPaperMatrixForm({
               />
 
               <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-none">
-                <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden animate-modal-dialog will-change-transform">
+                <div className="pointer-events-auto w-full max-w-2xl rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-apple-modal overflow-hidden animate-modal-dialog will-change-transform">
                   <div className="flex items-center justify-between px-6 py-4 bg-slate-50/90 dark:bg-slate-800/90 border-b border-slate-100 dark:border-slate-800">
                     <div>
                       <p className="text-type-card font-semibold text-slate-900 dark:text-white tracking-tight">Chọn ca thi / lịch thi</p>
@@ -726,7 +726,7 @@ export function ExamPaperMatrixForm({
                             <div
                               ref={customMenuRef}
                               style={customMenuStyle}
-                              className="w-52 rounded-2xl border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl p-3 z-[99999] animate-popover-in will-change-transform"
+                              className="w-52 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-apple-modal p-3 z-[99999] animate-popover-in will-change-transform"
                             >
                               <div className="text-type-body font-semibold text-slate-800 dark:text-slate-200 px-1 pb-1.5">
                                 Chọn số lượt phát

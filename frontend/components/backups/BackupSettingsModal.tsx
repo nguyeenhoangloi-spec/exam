@@ -169,7 +169,7 @@ export function BackupSettingsModal({
                   type="time"
                   value={backupTime}
                   onChange={(e) => setBackupTime(e.target.value)}
-                  className="w-full h-10 rounded-xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-type-body text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                  className="w-full h-10 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-type-body text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
                 />
               </div>
             </div>
@@ -245,7 +245,7 @@ export function BackupSettingsModal({
             </div>
 
             {dualStorageEnabled && (
-              <div className="flex items-center justify-between gap-3 text-type-body-sm pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+              <div className="flex items-center justify-between gap-3 text-type-body-sm pt-2 border-t border-slate-200/90 dark:border-slate-700/60">
                 <span className="font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2 shrink-0 whitespace-nowrap">
                   <FolderSync className="h-4 w-4 text-emerald-600 shrink-0" />
                   Kho dự phòng

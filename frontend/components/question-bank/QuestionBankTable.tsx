@@ -305,7 +305,7 @@ export function QuestionBankTable({
                                       setLightboxUrl(m.url);
                                     }
                                   }}
-                                  className="group relative flex h-[130px] w-full max-w-[240px] items-center justify-center overflow-hidden rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-900/95 p-1 transition duration-200 hover:border-blue-400 dark:hover:border-blue-500 cursor-zoom-in shadow-2xs shrink-0 select-none"
+                                  className="group relative flex h-[130px] w-full max-w-[240px] items-center justify-center overflow-hidden rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-900/95 p-1 transition duration-200 hover:border-blue-400 dark:hover:border-blue-500 cursor-zoom-in shadow-2xs shrink-0 select-none"
                                   title="Bấm để phóng to xem ảnh"
                                 >
                                   <DynamicImage
@@ -322,7 +322,7 @@ export function QuestionBankTable({
                               if (isVid) return (
                                 <div
                                   key={m.id || idx}
-                                  className="h-[130px] w-full max-w-[240px] shrink-0 overflow-hidden rounded-xl border border-slate-200/60 dark:border-slate-800 bg-black shadow-2xs"
+                                  className="h-[130px] w-full max-w-[240px] shrink-0 overflow-hidden rounded-xl border border-slate-200/90 dark:border-slate-800 bg-black shadow-2xs"
                                   onClick={(e) => e.stopPropagation()}
                                 >
                                   <QuestionMediaPlayer
@@ -338,7 +338,7 @@ export function QuestionBankTable({
                               if (isAud) return (
                                 <div
                                   key={m.id || idx}
-                                  className="h-[130px] w-full max-w-[240px] shrink-0 overflow-hidden rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-900 shadow-2xs"
+                                  className="h-[130px] w-full max-w-[240px] shrink-0 overflow-hidden rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-900 shadow-2xs"
                                   onClick={(e) => e.stopPropagation()}
                                 >
                                   <QuestionMediaPlayer

@@ -568,7 +568,7 @@ export default function StudentResultsPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
             />
 
             {/* Embedded actions on right edge of search input */}
@@ -654,12 +654,12 @@ export default function StudentResultsPage() {
 
         {/* ── 5. Standard Content (List / Grid / Compact) ── */}
         {loading ? (
-          <div className="rounded-2xl border border-slate-200/60 bg-white shadow-2xs p-12 flex flex-col items-center gap-3">
+          <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs p-12 flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
             <p className="text-type-helper font-semibold text-slate-500">Đang tải kết quả thi sinh viên...</p>
           </div>
         ) : totalItems === 0 ? (
-          <div className="rounded-2xl border border-slate-200/60 bg-white shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
+          <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs p-12 flex flex-col items-center gap-3 text-center">
             <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
               <Award className="w-7 h-7 text-slate-400" />
             </div>
@@ -911,7 +911,7 @@ export default function StudentResultsPage() {
               content: (
                 <div className="space-y-3">
                   {detailItem.score !== null ? (
-                    <div className="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 p-3.5 space-y-2">
+                    <div className="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700 p-3.5 space-y-2">
                       {detailItem.mcqScore !== null && (
                         <div className="flex items-center justify-between text-type-helper text-slate-700 dark:text-slate-300">
                           <span className="font-medium">Trắc nghiệm</span>
@@ -1039,7 +1039,7 @@ export default function StudentResultsPage() {
                 value={appealReason}
                 onChange={(e) => setAppealReason(e.target.value)}
                 placeholder="Nhập chi tiết lý do đề nghị chấm lại bài thi..."
-                className="w-full min-h-[100px] rounded-xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none transition shadow-2xs"
+                className="w-full min-h-[100px] rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none transition shadow-2xs"
               />
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">

@@ -379,7 +379,6 @@ export default function ContactSupportPage() {
             </button>
 
             {currentUser ? (
-              /* Compact return action for authenticated users */
               <Link
                 href={dashboardRoute}
                 title={`Quay lại không gian làm việc (${currentDisplayName})`}
@@ -389,7 +388,6 @@ export default function ContactSupportPage() {
                 <ArrowLeft className="h-4.5 w-4.5 transition-transform duration-200 group-hover:-translate-x-0.5" strokeWidth={1.9} />
               </Link>
             ) : (
-              /* Compact primary action for visitors */
               <Link
                 href="/login"
                 title="Đăng nhập"
@@ -430,7 +428,7 @@ export default function ContactSupportPage() {
                 onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Tìm kiếm quy chế thi, xử lý rớt mạng, phúc khảo..."
-                className="w-full h-14 rounded-2xl border border-slate-200/60 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 py-3 pl-12 pr-12 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/15 transition shadow-sm backdrop-blur-sm"
+                className="w-full h-14 rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 py-3 pl-12 pr-12 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/15 transition shadow-sm backdrop-blur-sm"
               />
               {searchQuery && (
                 <button
@@ -445,7 +443,7 @@ export default function ContactSupportPage() {
 
             {/* Autocomplete Search Suggestions Dropdown */}
             {(isSearchFocused || searchQuery.trim().length > 0) && (
-              <div className="absolute left-0 right-0 top-full z-30 mt-2 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 shadow-2xl space-y-2 text-left animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl">
+              <div className="absolute left-0 right-0 top-full z-30 mt-2 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 shadow-apple-modal space-y-2 text-left animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl">
                 <div className="flex items-center justify-between px-2 text-type-helper font-semibold text-slate-400 dark:text-slate-500 tracking-wider">
                   <span>{searchQuery.trim() ? 'Gợi ý bài viết phù hợp' : 'Tìm kiếm phổ biến nhất'}</span>
                   <span>{searchSuggestions.length} kết quả</span>
@@ -501,7 +499,7 @@ export default function ContactSupportPage() {
 
         {/* 3 Direct Support Contact Cards */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="rounded-[28px] border border-slate-200/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-6 shadow-2xs space-y-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-800 group">
+          <div className="rounded-[28px] border border-slate-200/90 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-6 shadow-apple-card space-y-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-apple-card-hover hover:border-blue-200 dark:hover:border-blue-800 group">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-semibold transition-transform duration-200 group-hover:scale-105">
               <Phone className="h-6 w-6" />
             </div>
@@ -512,7 +510,7 @@ export default function ContactSupportPage() {
             </div>
           </div>
 
-          <div className="rounded-[28px] border border-slate-200/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-6 shadow-2xs space-y-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-800 group">
+          <div className="rounded-[28px] border border-slate-200/90 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-6 shadow-apple-card space-y-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-apple-card-hover hover:border-blue-200 dark:hover:border-blue-800 group">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-semibold transition-transform duration-200 group-hover:scale-105">
               <Mail className="h-6 w-6" />
             </div>
@@ -523,7 +521,7 @@ export default function ContactSupportPage() {
             </div>
           </div>
 
-          <div className="rounded-[28px] border border-slate-200/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-6 shadow-2xs space-y-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-800 group">
+          <div className="rounded-[28px] border border-slate-200/90 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-6 shadow-apple-card space-y-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-apple-card-hover hover:border-blue-200 dark:hover:border-blue-800 group">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-semibold transition-transform duration-200 group-hover:scale-105">
               <Building2 className="h-6 w-6" />
             </div>
@@ -567,7 +565,7 @@ export default function ContactSupportPage() {
             </div>
           </div>
 
-          <div className="divide-y divide-slate-100 dark:divide-slate-800 rounded-[28px] border border-slate-200/60 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 overflow-hidden shadow-sm">
+          <div className="divide-y divide-slate-100 dark:divide-slate-800 rounded-[28px] border border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 overflow-hidden shadow-sm">
             {filteredFaqs.length > 0 ? (
               filteredFaqs.map((faq) => {
                 const isExpanded = expandedFaqId === faq.id;
@@ -665,7 +663,7 @@ export default function ContactSupportPage() {
         </section>
 
         {/* Submit Support Ticket Form Section */}
-        <section className="rounded-[32px] border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 sm:p-10 shadow-lg shadow-blue-500/5 space-y-6">
+        <section className="rounded-[32px] border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 sm:p-10 shadow-lg shadow-blue-500/5 space-y-6">
           <div className="space-y-2">
             <h2 className="text-type-section sm:text-type-section font-semibold text-slate-900 dark:text-white flex items-center gap-2.5">
               <Headphones className="h-6 w-6 text-blue-600" />
@@ -691,7 +689,7 @@ export default function ContactSupportPage() {
                   className={`w-full h-11 rounded-xl border px-4 text-type-body outline-none transition ${
                     isDark
                       ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                      : 'border-slate-200/60 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                      : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                   }`}
                 />
               </div>
@@ -709,7 +707,7 @@ export default function ContactSupportPage() {
                   className={`w-full h-11 rounded-xl border px-4 text-type-body outline-none transition ${
                     isDark
                       ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                      : 'border-slate-200/60 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                      : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                   }`}
                 />
               </div>
@@ -726,7 +724,7 @@ export default function ContactSupportPage() {
                   className={`w-full h-11 rounded-xl border px-4 text-type-body outline-none transition cursor-pointer ${
                     isDark
                       ? 'border-slate-700 bg-slate-800 text-slate-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                      : 'border-slate-200/60 bg-white text-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                      : 'border-slate-200/90 bg-white text-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                   }`}
                 >
                   <option value="STUDENT">Sinh viên</option>
@@ -749,7 +747,7 @@ export default function ContactSupportPage() {
                 className={`w-full rounded-xl border p-4 text-type-body outline-none transition ${
                   isDark
                     ? 'border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20'
-                    : 'border-slate-200/60 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+                    : 'border-slate-200/90 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
                 }`}
               />
             </div>
@@ -868,7 +866,7 @@ export default function ContactSupportPage() {
             <span className="absolute -right-0.5 -top-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-400 dark:border-slate-950" aria-label="Trợ lý đang trực tuyến" />
           </button>
         ) : (
-          <div className="w-[calc(100vw-2rem)] sm:w-96 rounded-3xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col h-[min(560px,calc(100vh-6.5rem))] animate-in fade-in zoom-in-95 slide-in-from-bottom-3 duration-200">
+          <div className="w-[calc(100vw-2rem)] sm:w-96 rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col h-[min(560px,calc(100vh-6.5rem))] animate-in fade-in zoom-in-95 slide-in-from-bottom-3 duration-200">
             {/* Widget Header */}
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 text-white flex items-center justify-between">
               <div className="flex items-center gap-2.5">
@@ -999,7 +997,7 @@ export default function ContactSupportPage() {
       </div>
 
       {/* ── Page Bottom Footer ── */}
-      <footer className="mt-auto relative z-10 w-full py-6 shrink-0 text-center text-type-helper text-slate-500 dark:text-slate-400 space-y-1 border-t border-slate-200/60 dark:border-slate-800/60">
+      <footer className="mt-auto relative z-10 w-full py-6 shrink-0 text-center text-type-helper text-slate-500 dark:text-slate-400 space-y-1 border-t border-slate-200/90 dark:border-slate-800/60">
         <p className="flex items-center justify-center gap-2 font-medium text-slate-700 dark:text-slate-300 text-type-helper">
           <ShieldCheck className="h-4 w-4 text-blue-600" />
           <span>Hệ thống khảo thí an toàn – Minh bạch – Hiệu quả</span>

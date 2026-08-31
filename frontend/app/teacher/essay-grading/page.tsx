@@ -730,7 +730,7 @@ function TeacherEssayGradingContent() {
           }`}
         >
           <div className="w-full lg:w-[340px]">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-2xs overflow-hidden flex flex-col">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs overflow-hidden flex flex-col">
               {/* Header & Controls Section */}
               <div className="p-3.5 space-y-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40">
                 {/* Header Title */}
@@ -775,7 +775,7 @@ function TeacherEssayGradingContent() {
                     placeholder="Tìm mã SV, tên SV, môn..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full h-9 bg-white dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-800/60 rounded-xl pl-9 pr-8 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                    className="w-full h-9 bg-white dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-800/60 rounded-xl pl-9 pr-8 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:outline-none transition shadow-2xs"
                   />
                   {searchQuery ? (
                     <button
@@ -994,7 +994,7 @@ function TeacherEssayGradingContent() {
         {/* Right Panel: Grading Question Content (Smooth flex-1 auto fill) */}
         <div className="flex-1 min-w-0 space-y-4">
           {!selected ? (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 p-12 text-center text-slate-400 text-type-helper font-medium shadow-2xs space-y-3">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-12 text-center text-slate-400 text-type-helper font-medium shadow-2xs space-y-3">
               <p>Vui lòng chọn bài thi từ danh sách bên trái để chấm điểm.</p>
               {collapseList && (
                 <div className="pt-1">
@@ -1009,7 +1009,7 @@ function TeacherEssayGradingContent() {
               )}
             </div>
           ) : (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 p-5 space-y-5 shadow-2xs">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 space-y-5 shadow-2xs">
               {/* Header Information & Fast Student Navigation */}
               <div className="sticky top-0 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md -mx-5 -mt-5 p-5 border-b border-slate-100 dark:border-slate-800 rounded-t-2xl shadow-xs flex justify-between items-center flex-wrap gap-3">
                 <div className="flex items-center gap-2.5">
@@ -1238,7 +1238,7 @@ function TeacherEssayGradingContent() {
                         className={`rounded-2xl border p-5 bg-white dark:bg-slate-900/90 shadow-2xs space-y-4 transition duration-200 ${
                           isBeingGradedByAi
                             ? 'border-blue-400 dark:border-blue-500 ring-2 ring-blue-400/30 shadow-md'
-                            : 'border-slate-200/60 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                            : 'border-slate-200/90 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                         }`}
                       >
                         {/* Question Header & Action */}
@@ -1394,7 +1394,7 @@ function TeacherEssayGradingContent() {
                                         <p className="text-type-helper text-slate-500 mt-0.5 font-normal leading-relaxed">{r.description}</p>
                                       )}
                                     </div>
-                                    <span className="tabular-nums text-type-helper font-medium text-slate-500 shrink-0 px-2 py-0.5 ui-pill rounded-full border border-slate-200/60 dark:border-slate-700">
+                                    <span className="tabular-nums text-type-helper font-medium text-slate-500 shrink-0 px-2 py-0.5 ui-pill rounded-full border border-slate-200/90 dark:border-slate-700">
                                       Tối đa {r.maxScore}đ
                                     </span>
                                   </div>
@@ -1463,7 +1463,7 @@ function TeacherEssayGradingContent() {
                                 <span className="font-semibold text-type-body-sm text-slate-900 dark:text-slate-100">Chấm điểm câu hỏi</span>
                                 <p className="text-type-helper text-slate-500 mt-0.5 font-normal leading-relaxed">Nhập điểm cho câu tự luận này</p>
                               </div>
-                              <span className="tabular-nums text-type-helper font-medium text-slate-500 shrink-0 px-2 py-0.5 ui-pill rounded-full border border-slate-200/60 dark:border-slate-700">
+                              <span className="tabular-nums text-type-helper font-medium text-slate-500 shrink-0 px-2 py-0.5 ui-pill rounded-full border border-slate-200/90 dark:border-slate-700">
                                 Tối đa {q.score}đ
                               </span>
                             </div>

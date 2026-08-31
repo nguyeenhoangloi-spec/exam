@@ -77,7 +77,7 @@ export function NotificationDetailModal({
         </div>
 
         {/* Message Content */}
-        <div className="p-4 rounded-xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 space-y-2">
+        <div className="p-4 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 space-y-2">
           <label className="ui-label block text-type-body font-medium text-slate-700 dark:text-slate-300">
             Nội dung thông báo
           </label>

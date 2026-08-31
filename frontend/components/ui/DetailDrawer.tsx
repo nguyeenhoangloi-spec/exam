@@ -316,7 +316,7 @@ export function DetailDrawer({
             </div>
 
             {active.headerExtra && (
-              <div className="mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800">
+              <div className="mt-3 pt-3 border-t border-slate-200/90 dark:border-slate-800">
                 {active.headerExtra}
               </div>
             )}

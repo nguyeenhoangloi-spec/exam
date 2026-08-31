@@ -987,7 +987,7 @@ export default function ExamArrangementPage() {
 
           {/* ── KHU VỰC SƠ ĐỒ / KẾT QUẢ ── */}
           {isLoadingSchedule ? (
-            <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-16 text-center shadow-2xs flex flex-col items-center justify-center space-y-3">
+            <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-16 text-center shadow-2xs flex flex-col items-center justify-center space-y-3">
               <div className="h-12 w-12 rounded-2xl bg-blue-50 dark:bg-blue-950 flex items-center justify-center text-blue-600 dark:text-blue-400">
                 <Loader2 className="h-6 w-6 animate-spin" />
               </div>
@@ -1304,7 +1304,7 @@ export default function ExamArrangementPage() {
                                     className={`rounded-xl border p-2.5 transition text-left flex flex-col justify-between min-h-[72px] ${
                                       student
                                         ? 'bg-white dark:bg-slate-900 border-slate-200/70 dark:border-slate-800 hover:border-blue-500/80 hover:bg-slate-50/50 dark:hover:bg-slate-850 cursor-pointer select-none'
-                                        : 'bg-slate-50/30 dark:bg-slate-850/20 border-dashed border-slate-200/60 dark:border-slate-800/60 select-none'
+                                        : 'bg-slate-50/30 dark:bg-slate-850/20 border-dashed border-slate-200/90 dark:border-slate-800/60 select-none'
                                     }`}
                                   >
                                     {/* Hàng 1: Số ghế + Lớp học phần */}

@@ -153,11 +153,11 @@ export function ExamScheduleCalendarView({
   const todayKey = formatDateKey(new Date());
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+    <div className="overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card">
       {/* ── 1. Weekly Timetable Header Toolbar ── */}
       <div className="flex flex-col gap-3.5 border-b border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60 shadow-2xs">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60 shadow-apple-card">
             <CalendarIcon className="h-5 w-5 stroke-[2.2]" />
           </div>
           <div className="min-w-0">
@@ -286,7 +286,7 @@ export function ExamScheduleCalendarView({
                       }`}
                     >
                       {cellSchedules.length === 0 ? (
-                        <div className="h-full min-h-[90px] flex items-center justify-center rounded-xl border border-dashed border-slate-200/60 dark:border-slate-800/80 text-type-body text-slate-400 dark:text-slate-600 font-normal select-none">
+                        <div className="h-full min-h-[90px] flex items-center justify-center rounded-xl border border-dashed border-slate-200/90 dark:border-slate-800/80 text-type-body text-slate-400 dark:text-slate-600 font-normal select-none">
                           —
                         </div>
                       ) : (
@@ -300,7 +300,7 @@ export function ExamScheduleCalendarView({
                               <div
                                 key={s.id}
                                 onClick={() => onDetail(s)}
-                                className="group relative rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-850 p-2.5 shadow-2xs hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-500 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer space-y-1.5"
+                                className="group relative rounded-xl border border-slate-200/90 dark:border-slate-800/60 bg-white dark:bg-slate-850 p-2.5 shadow-2xs hover:shadow-apple-card-hover hover:border-blue-400 dark:hover:border-blue-500 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer space-y-1.5"
                               >
                                 <div className="flex flex-wrap items-center justify-between gap-1.5 min-w-0">
                                   <IdentifierBadge tone="neutral" size="sm" title={codeText}>

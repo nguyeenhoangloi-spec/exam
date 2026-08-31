@@ -47,7 +47,7 @@ function OptionItem({
   isCorrect: boolean;
   showAnswer: boolean;
 }) {
-  let containerCls = 'border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-850 text-slate-800 dark:text-slate-200';
+  let containerCls = 'border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-850 text-slate-800 dark:text-slate-200';
   let badgeEl = null;
 
   if (showAnswer) {
@@ -149,9 +149,9 @@ function QuestionCard({
       ? isCorrect
         ? 'border-emerald-200 dark:border-emerald-900/60'
         : selectedIds.length === 0
-        ? 'border-slate-200/60 dark:border-slate-800'
+        ? 'border-slate-200/90 dark:border-slate-800'
         : 'border-rose-200 dark:border-rose-900/60'
-      : 'border-slate-200/60 dark:border-slate-800';
+      : 'border-slate-200/90 dark:border-slate-800';
 
   const typeLabel =
     q.type === 'ESSAY'
@@ -282,7 +282,7 @@ function QuestionCard({
           )}
 
           {q.type === 'FILL_BLANK' && (
-            <div className="space-y-2 bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 p-4 rounded-xl">
+            <div className="space-y-2 bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700 p-4 rounded-xl">
               <p className="text-type-helper font-semibold text-slate-700 dark:text-slate-300 tracking-wider">
                 Bài làm điền khuyết của sinh viên:
               </p>
@@ -296,7 +296,7 @@ function QuestionCard({
                     return (
                       <div
                         key={bIdx}
-                        className="flex flex-wrap items-center justify-between gap-2 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700 p-3 rounded-xl text-type-helper shadow-2xs"
+                        className="flex flex-wrap items-center justify-between gap-2 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700 p-3 rounded-xl text-type-helper shadow-2xs"
                       >
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-blue-600">Ô #{bIdx}:</span>
@@ -321,7 +321,7 @@ function QuestionCard({
           {q.type === 'ESSAY' && (
             <div className="space-y-2">
               <p className="text-type-helper font-semibold text-slate-700 dark:text-slate-300 tracking-wider">Bài làm tự luận của sinh viên:</p>
-              <div className="rounded-xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 text-type-body text-slate-900 dark:text-slate-100 whitespace-pre-wrap leading-relaxed min-h-[60px] shadow-2xs">
+              <div className="rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 text-type-body text-slate-900 dark:text-slate-100 whitespace-pre-wrap leading-relaxed min-h-[60px] shadow-2xs">
                 {sel?.textAnswer || <span className="italic font-normal text-slate-400">Sinh viên không nộp câu tự luận này</span>}
               </div>
               {showAnswer && sel?.teacherComment && (
@@ -400,7 +400,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
       {/* Main Modal Container */}
       <div className="relative z-[101] w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl shadow-apple-modal flex flex-col max-h-[calc(100dvh-1.5rem)] overflow-hidden border border-slate-200/90 dark:border-slate-800 animate-modal-dialog will-change-transform sm:max-h-[calc(100dvh-2rem)]">
         {/* ── 1. Clean Flat Modal Header ── */}
-        <div className="bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/60 dark:border-slate-800 px-6 py-4 shrink-0">
+        <div className="bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/90 dark:border-slate-800 px-6 py-4 shrink-0">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-3.5 min-w-0 flex-1">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white font-semibold text-type-body shadow-2xs">
@@ -460,7 +460,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
             <>
               {/* 4 Metric KPI Cards */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-                <div className="rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/60 dark:border-slate-800 p-4 text-center shadow-2xs">
+                <div className="rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/90 dark:border-slate-800 p-4 text-center shadow-2xs">
                   <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block mb-1">
                     Tổng điểm
                   </span>
@@ -470,7 +470,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
                   </p>
                 </div>
 
-                <div className="rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/60 dark:border-slate-800 p-4 text-center shadow-2xs">
+                <div className="rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/90 dark:border-slate-800 p-4 text-center shadow-2xs">
                   <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block mb-1">
                     Câu đúng
                   </span>
@@ -480,7 +480,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
                   </p>
                 </div>
 
-                <div className="rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/60 dark:border-slate-800 p-4 text-center shadow-2xs">
+                <div className="rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/90 dark:border-slate-800 p-4 text-center shadow-2xs">
                   <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block mb-1">
                     Câu sai
                   </span>
@@ -490,7 +490,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
                   </p>
                 </div>
 
-                <div className="rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/60 dark:border-slate-800 p-4 text-center shadow-2xs">
+                <div className="rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/90 dark:border-slate-800 p-4 text-center shadow-2xs">
                   <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block mb-1">
                     Bỏ qua
                   </span>
@@ -575,7 +575,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
         </div>
 
         {/* ── 3. Standard Footer ── */}
-        <div className="border-t border-slate-200/60 dark:border-slate-800 px-6 py-4 shrink-0 flex items-center justify-between gap-3 bg-slate-50/80 dark:bg-slate-850/80">
+        <div className="border-t border-slate-200/90 dark:border-slate-800 px-6 py-4 shrink-0 flex items-center justify-between gap-3 bg-slate-50/80 dark:bg-slate-850/80">
           {hasEssay ? (
             <a href={`/teacher/essay-grading?attemptId=${attemptId}`}>
               <Button variant="primary" size="md" leftIcon={<ExternalLink className="w-4 h-4" />}>

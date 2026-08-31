@@ -455,7 +455,7 @@ export default function SubjectsPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
             />
 
             {/* Embedded actions on right edge of search input */}
@@ -532,7 +532,7 @@ export default function SubjectsPage() {
             {[1, 2, 3, 4, 5].map((i) => <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-100" />)}
           </div>
         ) : !paginatedSubjects.length ? (
-          <div className="rounded-2xl border border-slate-200/60 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
             Không tìm thấy môn học phù hợp.
           </div>
         ) : (
@@ -969,7 +969,7 @@ export default function SubjectsPage() {
                 placeholder="Lọc theo học kỳ..."
                 value={drawerFilterSemester}
                 onChange={(e) => setDrawerFilterSemester(e.target.value)}
-                className="h-10 flex-1 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-semibold text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none"
+                className="h-10 flex-1 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-semibold text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none"
               />
             </div>
 

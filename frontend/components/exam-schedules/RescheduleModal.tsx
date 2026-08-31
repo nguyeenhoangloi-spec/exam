@@ -142,7 +142,7 @@ export function RescheduleModal({
     >
       <div className="space-y-4 text-type-body">
         {/* Current Schedule Summary (Bố cục phẳng inline) */}
-        <div className="rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3 space-y-1.5">
+        <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-3 space-y-1.5">
           <div className="text-type-helper font-medium text-slate-500 dark:text-slate-400">
             Lịch thi hiện tại:
           </div>
@@ -179,7 +179,7 @@ export function RescheduleModal({
                 setNewExamDate(e.target.value);
                 setCheckResult(null);
               }}
-              className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
             />
           </div>
 
@@ -193,7 +193,7 @@ export function RescheduleModal({
                 setNewRoomId(e.target.value);
                 setCheckResult(null);
               }}
-              className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
             >
               <option value="">Giữ nguyên phòng hiện tại</option>
               {rooms.map((r) => (
@@ -241,7 +241,7 @@ export function RescheduleModal({
                   className={`h-11 px-2.5 rounded-xl border text-center transition cursor-pointer flex flex-col items-center justify-center ${
                     active
                       ? 'border-blue-600 bg-blue-50/80 dark:bg-blue-950/50 text-blue-900 dark:text-blue-200 font-semibold shadow-2xs'
-                      : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                      : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                   }`}
                 >
                   <span className="text-type-body-sm font-semibold">{shift.label}</span>
@@ -262,7 +262,7 @@ export function RescheduleModal({
                   setNewStartTime(e.target.value);
                   setCheckResult(null);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
               />
             </div>
 
@@ -275,7 +275,7 @@ export function RescheduleModal({
                   setNewEndTime(e.target.value);
                   setCheckResult(null);
                 }}
-                className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
               />
             </div>
           </div>
@@ -306,7 +306,7 @@ export function RescheduleModal({
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Nhập lý do dời lịch thi hoặc chọn gợi ý bên trên..."
-            className="w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+            className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
           />
           <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400">
             * Lý do sẽ được ghi nhận vào nhật ký kiểm toán và gửi thông báo trực tiếp đến sinh viên / giám thị.

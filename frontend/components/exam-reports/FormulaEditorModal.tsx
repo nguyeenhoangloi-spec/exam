@@ -618,7 +618,7 @@ export function FormulaEditorModal({
                   width: `${coords.width}px`,
                   maxHeight: `${coords.maxHeight}px`,
                 }}
-                className="z-[99999] rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl p-2 overflow-y-auto space-y-1 custom-scrollbar animate-in fade-in zoom-in-95 duration-150 text-left select-none"
+                className="z-[99999] rounded-2xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-apple-modal p-2 overflow-y-auto space-y-1 custom-scrollbar animate-in fade-in zoom-in-95 duration-150 text-left select-none"
               >
                 {RULE_CATEGORIES.map((cat, idx) => (
                   <div key={idx} className="space-y-0.5">
@@ -866,7 +866,7 @@ export function FormulaEditorModal({
                 />
 
                 {/* Dòng trạng thái kiểm tra cú pháp và kết quả inline ngay trong card */}
-                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-type-helper">
+                <div className="pt-2 border-t border-slate-200/90 dark:border-slate-800 flex items-center justify-between text-type-helper">
                   <div className="flex items-center gap-1.5">
                     {validationResult.valid ? (
                       <>

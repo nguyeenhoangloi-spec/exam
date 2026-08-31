@@ -469,7 +469,7 @@ export default function ExamSupervisorsPage() {
             </div>
             <div className="space-y-2">
               {changeRequests.filter((request) => request.status === 'PENDING').map((request) => (
-                <div key={request.id} className="flex flex-col gap-3 rounded-xl border border-slate-200/60 p-3 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800">
+                <div key={request.id} className="flex flex-col gap-3 rounded-xl border border-slate-200/90 p-3 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800">
                   <div className="min-w-0">
                     <p className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">{request.requesterTeacher?.fullName} <span className="font-normal text-slate-500">({request.examSupervisor?.examScheduleRoom?.examSchedule?.subject?.subjectName})</span></p>
                     <p className="text-type-helper text-slate-600 dark:text-slate-400">Phòng {request.examSupervisor?.examScheduleRoom?.room?.roomCode} – Lý do: {request.reason}</p>

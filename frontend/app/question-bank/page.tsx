@@ -384,7 +384,7 @@ export default function QuestionBankPage() {
                 setPage(1);
               }}
               placeholder="Tìm theo nội dung, mã câu hỏi..."
-              className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
+              className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition-all shadow-2xs"
             />
 
             {/* Right embedded action container inside input */}
@@ -489,7 +489,7 @@ export default function QuestionBankPage() {
             </button>
           </div>
         ) : !questions.length ? (
-          <div className="rounded-2xl border border-slate-200/60 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center text-slate-500 font-semibold shadow-2xs">
             Không tìm thấy câu hỏi phù hợp.
           </div>
         ) : (

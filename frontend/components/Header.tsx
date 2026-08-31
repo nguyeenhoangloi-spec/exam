@@ -327,7 +327,7 @@ export const Header: React.FC<HeaderProps> = ({
 
               {/* Notifications Dropdown Panel */}
               {openPanel === 'notifications' && (
-                <div className="absolute right-0 top-[calc(100%+8px)] w-[min(24rem,calc(100vw-1.5rem))] sm:w-[24rem] rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-4 shadow-[0_16px_48px_-8px_rgba(0,0,0,0.16)] dark:shadow-[0_16px_48px_-8px_rgba(0,0,0,0.65)] text-type-body z-50 animate-in fade-in-0 zoom-in-[0.96] slide-in-from-top-2 duration-200 ease-out">
+                <div className="absolute right-0 top-[calc(100%+8px)] w-[min(24rem,calc(100vw-1.5rem))] sm:w-[24rem] rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-4 shadow-apple-modal text-type-body z-50 animate-in fade-in-0 zoom-in-[0.96] slide-in-from-top-2 duration-200 ease-out">
                   <div className="mb-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-2.5">
                     <p className="font-semibold text-slate-900 dark:text-slate-100 text-type-body flex items-center gap-1.5">
                       <Bell className="w-4 h-4 text-blue-600" strokeWidth={1.5} />
@@ -505,10 +505,10 @@ export const Header: React.FC<HeaderProps> = ({
                   id="user-account-dropdown"
                   role="menu"
                   aria-orientation="vertical"
-                  className="absolute right-0 top-[calc(100%+8px)] w-[min(17rem,calc(100vw-1.5rem))] origin-top-right rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-1.5 shadow-xl shadow-slate-950/10 dark:shadow-slate-950/60 z-50 animate-in fade-in-0 zoom-in-[0.96] slide-in-from-top-2 duration-200 ease-out"
+                  className="absolute right-0 top-[calc(100%+8px)] w-[min(17rem,calc(100vw-1.5rem))] origin-top-right rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-1.5 shadow-apple-modal z-50 animate-in fade-in-0 zoom-in-[0.96] slide-in-from-top-2 duration-200 ease-out"
                 >
                   {/* Subtle Top Pointer Tip */}
-                  <div className="absolute -top-1.5 right-6 h-3 w-3 rotate-45 border-l border-t border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 z-10" />
+                  <div className="absolute -top-1.5 right-6 h-3 w-3 rotate-45 border-l border-t border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 z-10" />
 
                   {/* Account Header: Clean Flat Identity */}
                   <div className="px-3 pt-2.5 pb-2.5 border-b border-slate-100 dark:border-slate-800">

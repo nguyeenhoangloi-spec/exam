@@ -198,7 +198,7 @@ function AvatarCropperModal({ isOpen, imageSrc, onClose, onApply }: AvatarCroppe
 
   return createPortal(
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in-0 duration-150">
-      <div className="w-full max-w-[360px] sm:max-w-[380px] rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="w-full max-w-[360px] sm:max-w-[380px] rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-apple-modal overflow-hidden animate-in zoom-in-95 duration-200">
         {/* Header Tinh gọn với Nút Lưu & Nút Đóng */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2">
@@ -672,7 +672,7 @@ export function AccountSettingsModal({
       <div className="absolute inset-0" onClick={onClose} />
 
       {/* ════════════════════ PREMIUM 2026 SETTINGS MODAL ════════════════════ */}
-      <div className="relative z-10 my-auto flex flex-col md:flex-row w-full max-w-[920px] h-[600px] max-h-[92vh] bg-white dark:bg-slate-900 rounded-3xl shadow-[0_25px_70px_-15px_rgba(0,0,0,0.15)] border border-slate-200/60 dark:border-slate-800 overflow-hidden animate-in zoom-in-95 duration-150">
+      <div className="relative z-10 my-auto flex flex-col md:flex-row w-full max-w-[920px] h-[600px] max-h-[92vh] bg-white dark:bg-slate-900 rounded-3xl shadow-apple-modal border border-slate-200/90 dark:border-slate-800 overflow-hidden animate-in zoom-in-95 duration-150">
 
         {/* ── CỘT DỌC BÊN TRÁI: MINIMALIST FLAT SIDEBAR ── */}
         <aside className="w-full md:w-[270px] shrink-0 h-full bg-slate-50/60 dark:bg-slate-950/40 border-b md:border-b-0 md:border-r border-slate-200/70 dark:border-slate-800/80 flex flex-col justify-between p-6 pt-7 overflow-y-auto">
@@ -701,7 +701,7 @@ export function AccountSettingsModal({
             </div>
 
             {/* Subtle Divider */}
-            <div className="border-t border-slate-200/60 dark:border-slate-800/60" />
+            <div className="border-t border-slate-200/90 dark:border-slate-800/60" />
 
             {/* Flat Minimal Navigation (Không Dùng Nút Viên Thuốc Thô) */}
             <nav className="space-y-1" role="tablist">
@@ -782,7 +782,7 @@ export function AccountSettingsModal({
             {activeTab === 'profile' && (
               <div className="space-y-6 animate-in fade-in-0 duration-150">
                 {/* Hero Profile Banner & Avatar Studio */}
-                <div className="space-y-4 p-5 rounded-3xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/60 dark:border-slate-800">
+                <div className="space-y-4 p-5 rounded-3xl bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/90 dark:border-slate-800">
                   <div className="flex items-center gap-5">
                     {/* Clickable Avatar with Soft Glow Ring */}
                     <div

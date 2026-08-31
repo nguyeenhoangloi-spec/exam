@@ -653,7 +653,7 @@ export default function BackupsPage() {
                         placeholder="Tìm theo Snapshot ID, mã lỗi..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
+                        className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-20 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition shadow-2xs"
                     />
                     {/* Embedded actions on right edge of search input */}
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
@@ -734,7 +734,7 @@ export default function BackupsPage() {
 
             {/* Main Snapshot Table */}
             {loading ? (
-                <div className="space-y-3 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xs">
+                <div className="space-y-3 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xs">
                     <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                         <div className="h-5 w-48 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
                         <div className="h-5 w-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
@@ -744,7 +744,7 @@ export default function BackupsPage() {
                     ))}
                 </div>
             ) : sortedJobs.length === 0 ? (
-                <div className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 shadow-2xs text-center space-y-5">
+                <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 shadow-2xs text-center space-y-5">
                     <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/40">
                         <DatabaseBackup className="h-8 w-8" />
                     </div>
@@ -1167,7 +1167,7 @@ export default function BackupsPage() {
                                     <button
                                         type="button"
                                         onClick={() => handleCopyChecksum(detailJob.checksum)}
-                                        className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-type-helper font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50"
+                                        className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-type-helper font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50"
                                     >
                                         {copiedChecksum ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-slate-500" />}
                                         <span>{copiedChecksum ? 'Đã sao chép!' : 'Sao chép SHA-256'}</span>
@@ -1175,7 +1175,7 @@ export default function BackupsPage() {
                                 )}
                             </div>
 
-                            <div className="rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850/60 p-4 text-type-helper font-normal leading-relaxed text-slate-800 dark:text-slate-200 tabular-nums break-all">
+                            <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850/60 p-4 text-type-helper font-normal leading-relaxed text-slate-800 dark:text-slate-200 tabular-nums break-all">
                                 {detailJob.checksum || 'Chưa có checksum cho snapshot này'}
                             </div>
                         </div>

@@ -122,7 +122,7 @@ export function CancelScheduleModal({
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Nhập lý do hủy ca thi hoặc chọn gợi ý bên trên..."
-            className="w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-rose-500 focus:outline-none transition shadow-2xs"
+            className="w-full rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 text-type-body font-normal text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-rose-500 focus:outline-none transition shadow-2xs"
           />
         </div>
 

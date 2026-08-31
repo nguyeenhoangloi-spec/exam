@@ -62,7 +62,7 @@ export function ScopeTagPicker({
   const isAllSelected = options.length > 0 && selectedIds.length === options.length;
 
   return (
-    <div className="space-y-2.5 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40 p-3.5 flex flex-col h-full">
+    <div className="space-y-2.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40 p-3.5 flex flex-col h-full">
       {/* Header: Label + Select All / Clear Actions */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
@@ -102,7 +102,7 @@ export function ScopeTagPicker({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           disabled={disabled}
-          className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-900 pl-8 pr-20 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+          className="h-10 w-full rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 pl-8 pr-20 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none transition shadow-2xs"
         />
 
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
