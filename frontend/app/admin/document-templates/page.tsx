@@ -986,8 +986,8 @@ export default function DocumentTemplatesPage() {
                   />
                 </div>
 
-                {/* Danh sách 26 mẫu: Thiết kế phẳng siêu gọn, bỏ chữ Mặc định và khung thô */}
-                <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 divide-y divide-slate-100 dark:divide-slate-800">
+                {/* Danh sách mẫu: Thiết kế phẳng thanh lịch, bo góc mềm mại rounded-xl, thanh chỉ báo active */}
+                <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1 space-y-1">
                   {filteredTemplates.map((template) => {
                     const isSelected = template.id === selectedId;
                     return (
@@ -997,18 +997,31 @@ export default function DocumentTemplatesPage() {
                           setSelectedId(template.id);
                           setActiveTab('settings');
                         }}
-                        className={`group relative flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg transition cursor-pointer ${
+                        className={`group relative flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl transition cursor-pointer select-none ${
                           isSelected
-                            ? 'bg-blue-50/80 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 font-semibold'
+                            ? 'bg-blue-50/90 dark:bg-blue-950/40 text-blue-950 dark:text-blue-100'
                             : 'hover:bg-slate-100/70 text-slate-800 dark:text-slate-200 dark:hover:bg-slate-800/60'
                         }`}
                       >
-                        <div className="flex-1 min-w-0">
-                          <span className={`block text-type-body truncate ${isSelected ? 'font-semibold text-blue-700 dark:text-blue-400' : 'font-medium text-slate-900 dark:text-slate-100'}`}>
+                        {/* Thanh chỉ báo xanh bo tròn mép trái khi Active */}
+                        {isSelected && (
+                          <div className="absolute left-0 top-2.5 bottom-2.5 w-1 bg-blue-600 rounded-r-full" />
+                        )}
+
+                        <div className={`flex-1 min-w-0 space-y-0.5 ${isSelected ? 'pl-2' : ''}`}>
+                          <span
+                            className={`block text-type-body-sm truncate ${
+                              isSelected
+                                ? 'font-semibold text-blue-700 dark:text-blue-400'
+                                : 'font-semibold text-slate-900 dark:text-slate-100'
+                            }`}
+                          >
                             {template.name}
                           </span>
-                          <p className="text-type-helper text-slate-600 dark:text-slate-400 truncate mt-0.5 font-normal">
-                            {sourceLabels[template.dataSource] || template.dataSource} | {template.code}
+                          <p className="text-type-helper text-slate-500 dark:text-slate-400 truncate font-normal">
+                            {sourceLabels[template.dataSource] || template.dataSource}{' '}
+                            <span className="text-slate-300 dark:text-slate-700">|</span>{' '}
+                            <span className="tabular-nums">{template.code}</span>
                           </p>
                         </div>
 
@@ -1016,7 +1029,7 @@ export default function DocumentTemplatesPage() {
                           <button
                             type="button"
                             onClick={(e) => handleDeleteTemplate(template.id, e)}
-                            className="rounded-xl p-1 text-slate-400 hover:text-rose-600 transition opacity-0 group-hover:opacity-100 shrink-0"
+                            className="rounded-xl p-1.5 text-slate-400 hover:text-rose-600 transition opacity-0 group-hover:opacity-100 shrink-0 cursor-pointer"
                             title="Xóa mẫu"
                           >
                             <Trash2 className="h-3.5 w-3.5" />

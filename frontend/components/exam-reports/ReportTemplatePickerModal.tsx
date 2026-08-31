@@ -152,77 +152,75 @@ export function ReportTemplatePickerModal({
         />
 
         {activeTab === 'picker' ? (
-          <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1 custom-scrollbar">
+          <div className="max-h-[440px] overflow-y-auto pr-1 custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800">
             {allTemplates.map((tpl) => {
               const isCurrent = currentTemplateName === tpl.name;
               return (
                 <div
                   key={tpl.id}
-                  className={`p-4 rounded-2xl border transition-all ${
+                  className={`p-3.5 transition-colors flex items-start justify-between gap-3 ${
                     isCurrent
-                      ? 'border-blue-500 bg-blue-50/30 dark:bg-blue-950/20 shadow-2xs'
-                      : 'border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300'
+                      ? 'bg-blue-50/70 dark:bg-blue-950/30'
+                      : 'hover:bg-slate-50/70 dark:hover:bg-slate-850/50'
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="space-y-1 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
-                          {tpl.name}
-                        </h4>
-                        {tpl.isSystemPreset ? (
-                          <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full border border-slate-300 text-slate-700 dark:border-slate-600 dark:text-slate-300">
-                            Mẫu hệ thống
-                          </span>
-                        ) : (
-                          <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full border border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-300">
-                            Mẫu riêng đã lưu
-                          </span>
-                        )}
-                        {isCurrent && (
-                          <span className="ui-pill text-type-helper font-medium px-2.5 py-0.5 rounded-full border border-blue-300 text-blue-700 dark:border-blue-700 dark:text-blue-300">
-                            Đang áp dụng
-                          </span>
-                        )}
-                      </div>
-
-                      {tpl.description && (
-                        <p className="text-type-body-sm text-slate-500 dark:text-slate-400 font-normal">
-                          {tpl.description}
-                        </p>
+                  <div className="space-y-1 flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
+                        {tpl.name}
+                      </h4>
+                      {tpl.isSystemPreset ? (
+                        <span className="ui-pill text-type-helper font-medium px-2 py-0.5 rounded-full border border-slate-300 text-slate-700 dark:border-slate-600 dark:text-slate-300">
+                          Mẫu hệ thống
+                        </span>
+                      ) : (
+                        <span className="ui-pill text-type-helper font-medium px-2 py-0.5 rounded-full border border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-300">
+                          Mẫu riêng đã lưu
+                        </span>
                       )}
-
-                      <div className="flex items-center gap-2 text-type-helper text-slate-500 dark:text-slate-400 pt-1 flex-wrap">
-                        <span>{tpl.columns.length} cột</span>
-                        <span className="text-slate-300 dark:text-slate-700">|</span>
-                        <span>{tpl.signers.length} người ký</span>
-                        <span className="text-slate-300 dark:text-slate-700">|</span>
-                        <span className="truncate max-w-xs">{tpl.headerConfig.title}</span>
-                      </div>
+                      {isCurrent && (
+                        <span className="ui-pill ui-pill-solid text-type-helper font-medium px-2 py-0.5 rounded-full bg-blue-600 text-white">
+                          Đang áp dụng
+                        </span>
+                      )}
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      {!tpl.isSystemPreset && (
-                        <button
-                          type="button"
-                          onClick={() => onDeleteTemplate(tpl.id)}
-                          className="p-2 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition"
-                          title="Xóa mẫu riêng này"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      )}
-                      <Button
-                        variant={isCurrent ? 'secondary' : 'primary'}
-                        size="sm"
-                        onClick={() => {
-                          onSelectTemplate(tpl);
-                          onClose();
-                        }}
+                    {tpl.description && (
+                      <p className="text-type-body-sm text-slate-500 dark:text-slate-400 font-normal">
+                        {tpl.description}
+                      </p>
+                    )}
+
+                    <div className="flex items-center gap-2 text-type-helper text-slate-500 dark:text-slate-400 pt-0.5 flex-wrap">
+                      <span>{tpl.columns.length} cột</span>
+                      <span className="text-slate-300 dark:text-slate-700">|</span>
+                      <span>{tpl.signers.length} người ký</span>
+                      <span className="text-slate-300 dark:text-slate-700">|</span>
+                      <span className="truncate max-w-xs">{tpl.headerConfig.title}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0 self-center">
+                    {!tpl.isSystemPreset && (
+                      <button
+                        type="button"
+                        onClick={() => onDeleteTemplate(tpl.id)}
+                        className="p-2 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/60 transition cursor-pointer"
+                        title="Xóa mẫu riêng này"
                       >
-                        {isCurrent ? 'Đang dùng' : 'Áp dụng mẫu này'}
-                      </Button>
-                    </div>
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
+                    <Button
+                      variant={isCurrent ? 'secondary' : 'primary'}
+                      size="sm"
+                      onClick={() => {
+                        onSelectTemplate(tpl);
+                        onClose();
+                      }}
+                    >
+                      {isCurrent ? 'Đang dùng' : 'Áp dụng'}
+                    </Button>
                   </div>
                 </div>
               );
