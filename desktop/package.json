@@ -68,7 +68,7 @@
     "linux": {
       "icon": "assets/icon.png",
       "target": [
-        "tar.gz",
+        "zip",
         "dir"
       ],
       "category": "Education",
