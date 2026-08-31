@@ -649,9 +649,9 @@ function TrashPageContent() {
                                       closeMenu();
                                       handleRestore(item);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 dark:hover:bg-blue-950/50 text-blue-600 dark:text-blue-400 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
                                   >
-                                    <RotateCcw className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
+                                    <RotateCcw className="h-4 w-4 text-slate-500 shrink-0" />
                                     <span>Khôi phục dữ liệu</span>
                                   </button>
 
@@ -663,9 +663,9 @@ function TrashPageContent() {
                                       closeMenu();
                                       handleHardDelete(item);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
                                   >
-                                    <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400 shrink-0" />
+                                    <Trash2 className="h-4 w-4 text-slate-500 shrink-0" />
                                     <span>Xóa vĩnh viễn</span>
                                   </button>
                                 </>
