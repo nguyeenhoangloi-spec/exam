@@ -48,17 +48,50 @@ export function generateShuffledPaperVariants(
 
   for (let v = 0; v < count; v++) {
     const variantCode = String(startCode + v);
-    // Xáo trộn thứ tự câu hỏi
-    const shuffledQuestions = shuffleArray(basePaper.questions);
+
+    // Mã gốc v === 0 giữ nguyên thứ tự câu hỏi và phương án A, B, C, D
+    if (v === 0) {
+      variants.push({
+        ...basePaper,
+        paperCode: variantCode,
+        title: `${basePaper.title} (Mã đề ${variantCode})`,
+        questions: basePaper.questions.map((q, qIdx) => ({
+          order: qIdx + 1,
+          code: q.code,
+          content: q.content,
+          score: q.score,
+          type: q.type,
+          fillBlankAnswers: q.fillBlankAnswers ? [...q.fillBlankAnswers] : [],
+          correctAnswer: q.correctAnswer,
+          sampleAnswer: q.sampleAnswer,
+          options: q.options ? q.options.map((opt) => ({ ...opt })) : [],
+          explanation: q.explanation,
+        })),
+      });
+      continue;
+    }
+
+    // Các mã đảo v > 0: Deep clone để không làm đột biến dữ liệu gốc
+    const clonedQuestions = basePaper.questions.map((q) => ({
+      ...q,
+      fillBlankAnswers: q.fillBlankAnswers ? [...q.fillBlankAnswers] : [],
+      options: q.options ? q.options.map((opt) => ({ ...opt })) : [],
+    }));
+
+    const shuffledQuestions = shuffleArray(clonedQuestions);
 
     const formattedQuestions = shuffledQuestions.map((q, qIdx) => {
-      // Xáo trộn thứ tự các phương án A, B, C, D
-      const shuffledOptions = q.options && q.options.length > 0 ? shuffleArray(q.options) : [];
+      const isMultipleChoice = q.options && q.options.length > 0;
+      const shuffledOptions = isMultipleChoice ? shuffleArray(q.options) : [];
       const relabeledOptions = shuffledOptions.map((opt, oIdx) => ({
         label: optionLetters[oIdx] || String(oIdx + 1),
         content: opt.content,
         isCorrect: opt.isCorrect,
       }));
+
+      // Cập nhật correctAnswer khớp với chữ cái mới sau khi xáo trộn
+      const correctOpt = relabeledOptions.find((o) => o.isCorrect);
+      const updatedCorrectAnswer = correctOpt ? correctOpt.label : q.correctAnswer;
 
       return {
         order: qIdx + 1,
@@ -67,7 +100,7 @@ export function generateShuffledPaperVariants(
         score: q.score,
         type: q.type,
         fillBlankAnswers: q.fillBlankAnswers,
-        correctAnswer: q.correctAnswer,
+        correctAnswer: updatedCorrectAnswer,
         sampleAnswer: q.sampleAnswer,
         options: relabeledOptions,
         explanation: q.explanation,

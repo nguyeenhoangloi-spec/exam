@@ -64,8 +64,9 @@ export function getGlobalPublishedTemplates(): Record<string, any> {
 
 /**
  * Thẻ ngắt trang tương thích tuyệt đối 100% cho Microsoft Word (.doc) và Trình duyệt In (Print / PDF)
+ * Dùng page-break đơn giản thay vì section-break để đảm bảo mọi trang trong Word có cùng kích thước khổ giấy A4
  */
-const WORD_PAGE_BREAK = '<br clear="all" style="page-break-before:always; mso-break-type:section-break;" />';
+const WORD_PAGE_BREAK = '<br clear="all" style="page-break-before:always;" />';
 
 /**
  * Tạo danh sách dòng kẻ chấm làm bài tự do dưới dạng bảng Table Rows (Word không bao giờ bị collapse mất dòng)
@@ -113,9 +114,6 @@ export function generateUnifiedExamPaperHtml(
 
   // 1. Render từng mã đề thi
   const papersHtml = papers.map((paper, paperIndex) => {
-    const pageBreakClass = paperIndex > 0 ? 'page-break-before' : '';
-    const wordSectionBreak = paperIndex > 0 ? WORD_PAGE_BREAK : '';
-
     // NẾU LÀ ĐỀ THI TỰ LUẬN KẾT HỢP ĐẦU PHÁCH RỌC PHÁCH 2 MẶT (GOM ĐỀ + BÀI LÀM TỰ DO)
     if (isEssay && isAnonymizedCut) {
       // 1.1 Khối gom toàn bộ câu hỏi tự luận (Luôn sạch sẽ không kèm đáp án trực tiếp trong đề thi)
@@ -131,9 +129,9 @@ export function generateUnifiedExamPaperHtml(
       }).join('');
 
       return `
-        ${wordSectionBreak}
+        ${paperIndex > 0 ? WORD_PAGE_BREAK : ''}
         <!-- ======================= MẶT 1 (TRANG TRƯỚC) ======================= -->
-        <div class="paper-page ${pageBreakClass} duplex-front" style="page-break-inside:avoid;">
+        <div class="paper-page duplex-front">
           <!-- HEADER TRƯỜNG & QUỐC HIỆU CHUẨN GỐC -->
           <table class="header-grid" style="width:100%; border-collapse:collapse; margin-bottom:6px; table-layout:fixed;">
             <tr>
@@ -273,7 +271,7 @@ export function generateUnifiedExamPaperHtml(
 
         ${WORD_PAGE_BREAK}
         <!-- ======================= MẶT 2 (TRANG SAU - DUPLEX) ======================= -->
-        <div class="paper-page page-break-before duplex-backside" style="page-break-before:always;">
+        <div class="paper-page duplex-backside">
           <!-- 1. KHUNG KHÓA VÙNG PHÁCH BẢO MẬT (55MM - KHỚP TỌA ĐỘ VỚI ĐẦU PHÁCH MẶT 1) -->
           <table style="width:100%; height:55mm; border:1px dashed #000000; margin-bottom:4px; background:transparent; table-layout:fixed;">
             <tr>
@@ -373,8 +371,8 @@ export function generateUnifiedExamPaperHtml(
     }).join('');
 
     return `
-      ${wordSectionBreak}
-      <div class="paper-page ${pageBreakClass}" style="page-break-before: ${paperIndex > 0 ? 'always' : 'auto'};">
+      ${paperIndex > 0 ? WORD_PAGE_BREAK : ''}
+      <div class="paper-page">
         <!-- HEADER TRƯỜNG & QUỐC HIỆU -->
         <table class="header-grid" style="width:100%; border-collapse:collapse; margin-bottom:6px; table-layout:fixed;">
           <tr>
@@ -475,17 +473,8 @@ export function generateUnifiedExamPaperHtml(
           </tr>
         </table>` : ''}
 
-        <!-- ĐƯỜNG CẮT PHÁCH (RỌC PHÁCH) -->
-        <table class="perforated-cut-table" style="width:100%; border-collapse:collapse; margin:8pt 0 10pt; table-layout:fixed;">
-          <tr>
-            <td style="border:none; border-top:2px dashed #000000; text-align:center; padding-top:4pt; font-size:9.5pt; font-weight:bold; color:#000000; letter-spacing:0.5px;">
-              ✂ &nbsp; &mdash; &mdash; &mdash; &mdash; ĐƯỜNG CẮT PHÁCH (RỌC PHÁCH TRƯỚC KHI CHẤM BÀI) &mdash; &mdash; &mdash; &mdash; &nbsp; ✂
-            </td>
-          </tr>
-        </table>
-
         <!-- NỘI DUNG CÁC CÂU HỎI -->
-        <div class="questions-container">
+        <div class="questions-container" style="margin-top:8px;">
           ${questionsHtml}
         </div>
 
@@ -525,7 +514,7 @@ export function generateUnifiedExamPaperHtml(
 
       matrixAnswerKeyHtml = `
         ${WORD_PAGE_BREAK}
-        <div class="paper-page page-break-before answer-key-section" style="page-break-before:always;">
+        <div class="paper-page answer-key-section">
           <div class="matrix-header" style="margin-bottom:12px;">
             <h2 style="text-align:center; font-size:14pt; font-weight:bold; text-transform:uppercase; margin-bottom:3px;">
               HƯỚNG DẪN CHẤM &amp; ĐÁP ÁN CHI TIẾT
@@ -554,8 +543,9 @@ export function generateUnifiedExamPaperHtml(
       const maxQuestions = Math.max(...papers.map((p) => p.questions.length));
       const paperCodes = papers.map((p) => p.paperCode || '101');
 
+      const colWidthPercent = ((100 - 18) / Math.max(1, paperCodes.length)).toFixed(2);
       const tableHeaderCols = paperCodes
-        .map((code) => `<th style="border:1px solid #000000; padding:6px 10px; background:transparent; font-weight:bold; text-align:center;">Mã đề ${escapeHtml(code)}</th>`)
+        .map((code) => `<th style="width:${colWidthPercent}%; border:1px solid #000000; padding:6px 6px; background:transparent; font-weight:bold; text-align:center;">Mã đề ${escapeHtml(code)}</th>`)
         .join('');
 
       let tableRows = '';
@@ -585,12 +575,12 @@ export function generateUnifiedExamPaperHtml(
           return '<td style="border:1px solid #000000; padding:6px 10px; text-align:center;">(Tự luận)</td>';
         }).join('');
 
-        tableRows += `<tr><th style="border:1px solid #000000; padding:6px 10px; background:transparent; font-weight:bold; text-align:center;">Câu ${questionNum}</th>${rowCols}</tr>`;
+        tableRows += `<tr><th style="width:18%; border:1px solid #000000; padding:6px 6px; background:transparent; font-weight:bold; text-align:center;">Câu ${questionNum}</th>${rowCols}</tr>`;
       }
 
       matrixAnswerKeyHtml = `
         ${WORD_PAGE_BREAK}
-        <div class="paper-page page-break-before answer-key-section" style="page-break-before:always;">
+        <div class="paper-page answer-key-section">
           <div class="matrix-header" style="margin-bottom:14px;">
             <h2 style="text-align:center; font-size:14pt; font-weight:bold; text-transform:uppercase; margin-bottom:4px;">
               BẢNG MA TRẬN ĐÁP ÁN TỔNG HỢP
@@ -602,10 +592,10 @@ export function generateUnifiedExamPaperHtml(
               <strong>Môn thi: ${escapeHtml(firstPaper.subjectName)} (${escapeHtml(firstPaper.subjectCode)})</strong>
             </p>
           </div>
-          <table class="matrix-table" style="border-collapse:collapse; width:100%; margin-top:10px; font-size:10.5pt; table-layout:fixed;">
+          <table class="matrix-table" style="border-collapse:collapse; width:100% !important; margin-top:10px; font-size:10.5pt; table-layout:fixed;">
             <thead>
               <tr>
-                <th style="width:120px; border:1px solid #000000; padding:6px 10px; background:transparent; font-weight:bold; text-align:center;">Câu hỏi</th>
+                <th style="width:18%; border:1px solid #000000; padding:6px 6px; background:transparent; font-weight:bold; text-align:center;">Câu hỏi</th>
                 ${tableHeaderCols}
               </tr>
             </thead>
@@ -633,14 +623,15 @@ export function generateUnifiedExamPaperHtml(
   <![endif]-->
   <title>${escapeHtml(title)} - ${escapeHtml(firstPaper.subjectName)}</title>
   <style>
+    @page { size: 210mm 297mm; margin: 15mm 20mm 15mm 20mm; mso-page-orientation: portrait; }
     @page Section1 { size: 595.3pt 841.9pt; margin: 28.3pt 35.4pt 28.3pt 35.4pt; mso-header-margin: 28.3pt; mso-footer-margin: 28.3pt; mso-paper-source: 0; }
-    div.Section1 { page: Section1; }
+    div.Section1 { page: Section1; width: 100%; }
     * { box-sizing: border-box; }
     body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; color: #000000; line-height: 1.3; margin: 0; padding: 0; }
     p.MsoNormal, div.MsoNormal { margin: 0cm; margin-bottom: .0001pt; }
-    .page-break-before { page-break-before: always; mso-break-type: section-break; }
-    table { width: 100%; border-collapse: collapse; box-sizing: border-box; mso-table-lspace: 0pt; mso-table-rspace: 0pt; mso-table-tspace: 0pt; mso-table-bspace: 0pt; }
-    .paper-page { width: 100%; max-width: 800px; margin: 0 auto; box-sizing: border-box; }
+    .page-break-before { page-break-before: always; }
+    table { width: 100% !important; max-width: 100%; border-collapse: collapse; box-sizing: border-box; mso-table-lspace: 0pt; mso-table-rspace: 0pt; mso-table-tspace: 0pt; mso-table-bspace: 0pt; }
+    .paper-page { width: 100%; margin: 0 auto; box-sizing: border-box; }
     .header-grid { width: 100%; border-collapse: collapse; margin-bottom: 4px; table-layout: fixed; }
     .header-grid td { vertical-align: top; border: none; padding: 0; }
     .inst-box { text-align: center; font-size: 10.5pt; font-weight: bold; width: 50%; }
