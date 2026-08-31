@@ -240,99 +240,101 @@ function renderUnifiedPaperHeader(
     phachCode,
   } = config;
 
-  // 1. NẾU LÀ ĐẦU PHÁCH CỦA ĐỀ THI TỰ LUẬN RỌC PHÁCH (ĐẦU PHÁCH 120MM MẶT 1)
+  // 1. NẾU LÀ ĐẦU PHÁCH CỦA ĐỀ THI TỰ LUẬN RỌC PHÁCH (CHUẨN 120MM MẶT 1)
   if (isEssayCut) {
     return `
     <!-- HEADER TRƯỜNG & QUỐC HIỆU CHUẨN GỐC -->
-    <table class="header-grid" style="width:100%; border-collapse:collapse; margin-bottom:3px; table-layout:fixed;">
+    <table class="header-grid" style="width:100%; border-collapse:collapse; margin-bottom:5px; table-layout:fixed;">
       <tr>
-        <td class="inst-box" style="width:50%; text-align:center; vertical-align:top; font-size:10.5pt; font-weight:bold; border:none; padding:0;">
+        <td class="inst-box" style="width:50%; text-align:center; vertical-align:top; font-size:11.5pt; font-weight:bold; border:none; padding:0;">
           <table style="border-collapse:collapse; margin:0 auto; border:none; width:auto;">
             <tr>
               ${showLogo && logoUrl ? `
-                <td style="vertical-align:middle; padding-right:6px; border:none; width:48px; text-align:center;">
-                  <img src="${logoUrl}" alt="Logo" width="48" height="48" style="width:48px; height:48px; max-width:48px; max-height:48px; display:block; margin:0 auto;" />
+                <td style="vertical-align:middle; padding-right:8px; border:none; width:52px; text-align:center;">
+                  <img src="${logoUrl}" alt="Logo" width="52" height="52" style="width:52px; height:52px; max-width:52px; max-height:52px; display:block; margin:0 auto;" />
                 </td>
               ` : ''}
               <td style="vertical-align:middle; text-align:center; border:none;">
                 <div>${escapeHtml(institutionName)}</div>
-                <div style="font-weight:normal; font-size:10pt;">${escapeHtml(facultyName)}</div>
-                <div class="inst-underline" style="border-top:1px solid #000000; display:inline-block; width:115px; margin-top:2px;"></div>
+                <div style="font-weight:normal; font-size:10.5pt; margin-top:1px;">${escapeHtml(facultyName)}</div>
+                <div class="inst-underline" style="border-top:1px solid #000000; display:inline-block; width:130px; margin-top:2px;"></div>
               </td>
             </tr>
           </table>
         </td>
-        <td class="motto-box" style="width:50%; text-align:center; vertical-align:top; font-size:10.5pt; font-weight:bold; border:none; padding:0;">
+        <td class="motto-box" style="width:50%; text-align:center; vertical-align:top; font-size:11.5pt; font-weight:bold; border:none; padding:0;">
           <div>${escapeHtml(motto.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM')}</div>
-          <em style="display:block; font-style:italic; font-size:10pt; margin-top:1px; font-weight:normal;">${escapeHtml(motto.split('\n')[1] || 'Độc lập - Tự do - Hạnh phúc')}</em>
-          <div class="inst-underline" style="border-top:1px solid #000000; display:inline-block; width:115px; margin-top:2px;"></div>
+          <em style="display:block; font-style:italic; font-size:11pt; margin-top:1px; font-weight:normal;">${escapeHtml(motto.split('\n')[1] || 'Độc lập - Tự do - Hạnh phúc')}</em>
+          <div class="inst-underline" style="border-top:1px solid #000000; display:inline-block; width:130px; margin-top:2px;"></div>
         </td>
       </tr>
     </table>
 
-    <!-- TIÊU ĐỀ ĐỀ THI & MÃ ĐỀ -->
-    <table style="width:100%; border-collapse:collapse; border:none; margin:2px 0 3px;">
+    <!-- TIÊU ĐỀ ĐỀ THI & HUY HIỆU MÃ ĐỀ -->
+    <table style="width:100%; border-collapse:collapse; border:none; margin:3px 0 4px;">
       <tr>
-        <td style="width:72%; text-align:center; border:none; padding:0 0 0 14%;">
-          <h1 class="title" style="font-size:13pt; font-weight:bold; text-transform:uppercase; margin:0; line-height:1.2;">
+        <td style="text-align:center; border:none; padding:0;">
+          <h1 class="title" style="font-size:14pt; font-weight:bold; text-transform:uppercase; margin:0; line-height:1.2;">
             ${escapeHtml(title)}
           </h1>
-          <div class="subtitle" style="font-style:italic; font-size:10pt; color:#475569; margin:1px 0 0;">
+          <div class="subtitle" style="font-style:italic; font-size:11pt; color:#475569; margin:2px 0 0;">
             ${escapeHtml(subtitle)}
           </div>
         </td>
-        <td style="width:28%; text-align:right; font-size:10.5pt; border:none; padding:0; vertical-align:middle;">
+      </tr>
+      <tr>
+        <td style="text-align:right; font-size:11pt; border:none; padding:2px 0 0;">
           MÃ ĐỀ THI: <strong>${escapeHtml(paper.paperCode)}</strong>
         </td>
       </tr>
     </table>
 
     <!-- KHUNG THÔNG TIN HỌC PHẦN (CHUẨN BẢNG 100%) -->
-    <table class="exam-info-box" style="width:100%; border-collapse:collapse; border:1px solid #000000; margin:3px 0; font-size:10.5pt; background:transparent; table-layout:fixed;">
+    <table class="exam-info-box" style="width:100%; border-collapse:collapse; border:1px solid #000000; margin:4px 0; font-size:11pt; background:transparent; table-layout:fixed;">
       <tr>
-        <td style="width:50%; border:none; padding:3px 8px;"><strong>Môn học:</strong> ${escapeHtml(paper.subjectName)}</td>
-        <td style="width:50%; border:none; padding:3px 8px;"><strong>Mã học phần:</strong> ${escapeHtml(paper.subjectCode)}</td>
+        <td style="width:50%; border:none; padding:4px 8px;"><strong>Môn học:</strong> ${escapeHtml(paper.subjectName)}</td>
+        <td style="width:50%; border:none; padding:4px 8px;"><strong>Mã học phần:</strong> ${escapeHtml(paper.subjectCode)}</td>
       </tr>
       <tr>
-        <td style="width:50%; border:none; padding:3px 8px;"><strong>Thời gian làm bài:</strong> ${paper.durationMinutes} phút</td>
-        <td style="width:50%; border:none; padding:3px 8px;"><strong>Thang điểm:</strong> ${paper.totalScore || 10} điểm</td>
+        <td style="width:50%; border:none; padding:4px 8px;"><strong>Thời gian làm bài:</strong> ${paper.durationMinutes} phút</td>
+        <td style="width:50%; border:none; padding:4px 8px;"><strong>Thang điểm:</strong> ${paper.totalScore || 10} điểm</td>
       </tr>
     </table>
 
-    <!-- BẢNG THÔNG TIN THÍ SINH & Ô SỐ PHÁCH 1 (IN SẴN MÃ PHÁCH) -->
-    <table class="student-info-table" style="width:100%; border-collapse:collapse; margin:3px 0; border:1px solid #000000; font-size:10.5pt; table-layout:fixed;">
+    <!-- BẢNG THÔNG TIN THÍ SINH & Ô SỐ PHÁCH 1 (RỘNG RÃI & RÕ NÉT) -->
+    <table class="student-info-table" style="width:100%; border-collapse:collapse; margin:4px 0; border:1px solid #000000; font-size:11pt; table-layout:fixed;">
       <tr>
-        <td colspan="2" style="width:55%; border:1px solid #000000; padding:4px 8px;"><strong>Họ và tên thí sinh:</strong> ............................................................</td>
-        <td style="width:25%; border:1px solid #000000; padding:4px 8px;"><strong>MSSV:</strong> ..............................</td>
-        <td rowspan="3" style="width:20%; border:1px solid #000000; padding:4px; text-align:center; vertical-align:middle; background:#f8fafc;">
-          <div style="font-size:9pt; font-weight:bold; text-transform:uppercase; color:#000000;">SỐ PHÁCH</div>
-          <div style="font-size:8pt; font-style:italic; color:#475569;">(Phách 1)</div>
-          <div style="margin:4px auto; font-size:12pt; font-weight:bold; font-family:Courier New, monospace; letter-spacing:1px; border:1px dashed #000000; padding:3px 6px; background:#ffffff; display:inline-block;">
+        <td colspan="2" style="width:54%; border:1px solid #000000; padding:5px 8px;"><strong>Họ và tên thí sinh:</strong> ................................................................</td>
+        <td style="width:23%; border:1px solid #000000; padding:5px 8px;"><strong>MSSV:</strong> ...................................</td>
+        <td rowspan="3" style="width:23%; border:1px solid #000000; padding:6px 4px; text-align:center; vertical-align:middle; background:#f8fafc;">
+          <div style="font-size:10pt; font-weight:bold; text-transform:uppercase; color:#000000; letter-spacing:0.5px;">SỐ PHÁCH</div>
+          <div style="font-size:8.5pt; font-style:italic; color:#475569; margin-bottom:3px;">(Phách 1)</div>
+          <div style="margin:2px auto; font-size:13.5pt; font-weight:bold; font-family:Courier New, monospace; letter-spacing:1.5px; border:1.5px dashed #000000; padding:4px 8px; background:#ffffff; display:inline-block; border-radius:4px;">
             ${escapeHtml(phachCode || 'P-001')}
           </div>
         </td>
       </tr>
       <tr>
-        <td style="width:30%; border:1px solid #000000; padding:4px 8px;"><strong>Lớp HP:</strong> ........................</td>
-        <td style="width:25%; border:1px solid #000000; padding:4px 8px;"><strong>Phòng thi:</strong> ............</td>
-        <td style="width:25%; border:1px solid #000000; padding:4px 8px;"><strong>SBD:</strong> ................</td>
+        <td style="width:28%; border:1px solid #000000; padding:5px 8px;"><strong>Lớp HP:</strong> ............................</td>
+        <td style="width:26%; border:1px solid #000000; padding:5px 8px;"><strong>Phòng thi:</strong> ................</td>
+        <td style="width:23%; border:1px solid #000000; padding:5px 8px;"><strong>SBD:</strong> ........................</td>
       </tr>
       <tr>
-        <td style="width:30%; border:1px solid #000000; padding:4px 8px;"><strong>Ngày thi:</strong> ...../...../202...</td>
-        <td style="width:25%; border:1px solid #000000; padding:4px 8px;"><strong>Ca thi:</strong> ............</td>
-        <td style="width:25%; border:1px solid #000000; padding:4px 8px;"><strong>Chữ ký SV:</strong> ................</td>
+        <td style="width:28%; border:1px solid #000000; padding:5px 8px;"><strong>Ngày thi:</strong> ...../...../202...</td>
+        <td style="width:26%; border:1px solid #000000; padding:5px 8px;"><strong>Ca thi:</strong> ................</td>
+        <td style="width:23%; border:1px solid #000000; padding:5px 8px;"><strong>Chữ ký SV:</strong> ................</td>
       </tr>
     </table>
 
-    <!-- KHUNG CÁN BỘ COI THI (Ở ĐẦU PHÁCH) -->
-    <table class="proctor-table" style="width:100%; border-collapse:collapse; margin:2px 0 0; border:1px solid #000000; table-layout:fixed;">
+    <!-- KHUNG CÁN BỘ COI THI (ĐỦ CHIỀU CAO 54PX ĐỂ KÝ VÀ GHI RÕ HỌ TÊN) -->
+    <table class="proctor-table" style="width:100%; border-collapse:collapse; margin:4px 0 0; border:1px solid #000000; table-layout:fixed;">
       <tr>
-        <th style="width:50%; border:1px solid #000000; padding:2px 6px; text-align:center; font-size:9.5pt; background:transparent;">CÁN BỘ COI THI 1</th>
-        <th style="width:50%; border:1px solid #000000; padding:2px 6px; text-align:center; font-size:9.5pt; background:transparent;">CÁN BỘ COI THI 2</th>
+        <th style="width:50%; border:1px solid #000000; padding:4px 6px; text-align:center; font-size:10.5pt; background:transparent;">CÁN BỘ COI THI 1</th>
+        <th style="width:50%; border:1px solid #000000; padding:4px 6px; text-align:center; font-size:10.5pt; background:transparent;">CÁN BỘ COI THI 2</th>
       </tr>
       <tr>
-        <td style="width:50%; border:1px solid #000000; vertical-align:top; font-size:9pt; height:34px; text-align:center; padding:2px;"><em>(Ký và ghi rõ họ tên)</em></td>
-        <td style="width:50%; border:1px solid #000000; vertical-align:top; font-size:9pt; height:34px; text-align:center; padding:2px;"><em>(Ký và ghi rõ họ tên)</em></td>
+        <td style="width:50%; border:1px solid #000000; vertical-align:top; font-size:9.5pt; height:54px; text-align:center; padding:4px;"><em>(Ký và ghi rõ họ tên)</em></td>
+        <td style="width:50%; border:1px solid #000000; vertical-align:top; font-size:9.5pt; height:54px; text-align:center; padding:4px;"><em>(Ký và ghi rõ họ tên)</em></td>
       </tr>
     </table>
     `;
@@ -402,39 +404,40 @@ function renderUnifiedPaperHeader(
       </tr>
     </table>
 
-    <!-- KHUNG ĐIỀN THÔNG TIN THÍ SINH (CHUẨN BẢNG 100%) -->
-    <table class="student-info-table" style="width:100%; border-collapse:collapse; margin:5px 0; border:1px solid #000000; font-size:11pt; table-layout:fixed;">
+    <!-- KHUNG ĐIỀN THÔNG TIN THÍ SINH (CHUẨN BẢNG 100% - KHÔNG BỊ TRÀN DÒNG) -->
+    <table class="student-info-table" style="width:100%; border-collapse:collapse; margin:4px 0; border:1px solid #000000; font-size:11pt; table-layout:fixed;">
       <tr>
-        <td colspan="2" style="width:65%; border:1px solid #000000; padding:5px 8px;"><strong>Họ và tên thí sinh:</strong> ....................................................................................................</td>
-        <td style="width:35%; border:1px solid #000000; padding:5px 8px;"><strong>MSSV:</strong> ............................................</td>
+        <td colspan="2" style="width:68%; border:1px solid #000000; padding:5px 8px;"><strong>Họ và tên thí sinh:</strong> ................................................................</td>
+        <td style="width:32%; border:1px solid #000000; padding:5px 8px;"><strong>MSSV:</strong> ...................................</td>
       </tr>
       <tr>
-        <td style="width:35%; border:1px solid #000000; padding:5px 8px;"><strong>Lớp học phần:</strong> ....................................</td>
-        <td style="width:30%; border:1px solid #000000; padding:5px 8px;"><strong>Phòng thi số:</strong> ....................</td>
-        <td style="width:35%; border:1px solid #000000; padding:5px 8px;"><strong>Số báo danh (SBD):</strong> ....................</td>
+        <td style="width:36%; border:1px solid #000000; padding:5px 8px;"><strong>Lớp HP:</strong> ............................</td>
+        <td style="width:32%; border:1px solid #000000; padding:5px 8px;"><strong>Phòng thi:</strong> ................</td>
+        <td style="width:32%; border:1px solid #000000; padding:5px 8px;"><strong>SBD:</strong> ........................</td>
       </tr>
       <tr>
-        <td style="width:35%; border:1px solid #000000; padding:5px 8px;"><strong>Ngày thi:</strong> ......./......./202...</td>
-        <td style="width:30%; border:1px solid #000000; padding:5px 8px;"><strong>Ca thi:</strong> ....................</td>
-        <td style="width:35%; border:1px solid #000000; padding:5px 8px;"><strong>Chữ ký thí sinh:</strong> ............................</td>
+        <td style="width:36%; border:1px solid #000000; padding:5px 8px;"><strong>Ngày thi:</strong> ...../...../202...</td>
+        <td style="width:32%; border:1px solid #000000; padding:5px 8px;"><strong>Ca thi:</strong> ................</td>
+        <td style="width:32%; border:1px solid #000000; padding:5px 8px;"><strong>Chữ ký SV:</strong> ................</td>
       </tr>
     </table>
 
-    <!-- KHUNG GIÁM THỊ VÀ CHẤM ĐIỂM (CHUẨN BẢNG 100%) -->
+    <!-- KHUNG GIÁM THỊ VÀ CHẤM ĐIỂM (ĐỒNG BỘ CHIỀU CAO 56PX RỘNG RÃI) -->
     ${showScoreBox !== false ? `
-    <table class="score-table" style="width:100%; border-collapse:collapse; margin:5px 0 0; border:1px solid #000000; table-layout:fixed;">
+    <table class="score-table" style="width:100%; border-collapse:collapse; margin:4px 0 0; border:1px solid #000000; table-layout:fixed;">
       <tr>
-        <th style="width:25%; border:1px solid #000000; padding:4px 6px; text-align:center; font-size:10.5pt; background:transparent;">Cán bộ coi thi 1</th>
-        <th style="width:25%; border:1px solid #000000; padding:4px 6px; text-align:center; font-size:10.5pt; background:transparent;">Cán bộ coi thi 2</th>
-        <th style="width:25%; border:1px solid #000000; padding:4px 6px; text-align:center; font-size:10.5pt; background:transparent;">Điểm bài thi (Số)</th>
-        <th style="width:25%; border:1px solid #000000; padding:4px 6px; text-align:center; font-size:10.5pt; background:transparent;">Điểm (Chữ) &amp; Cán bộ chấm</th>
+        <th style="width:24%; border:1px solid #000000; padding:4px 6px; text-align:center; font-size:10.5pt; background:transparent;">CÁN BỘ COI THI 1</th>
+        <th style="width:24%; border:1px solid #000000; padding:4px 6px; text-align:center; font-size:10.5pt; background:transparent;">CÁN BỘ COI THI 2</th>
+        <th style="width:22%; border:1px solid #000000; padding:4px 6px; text-align:center; font-size:10.5pt; background:transparent;">ĐIỂM (Số)</th>
+        <th style="width:30%; border:1px solid #000000; padding:4px 6px; text-align:center; font-size:10.5pt; background:transparent;">ĐIỂM (Chữ) &amp; CB CHẤM</th>
       </tr>
       <tr>
-        <td style="width:25%; border:1px solid #000000; vertical-align:top; font-size:9.5pt; height:46px; text-align:center;"><em>(Ký, ghi rõ họ tên)</em></td>
-        <td style="width:25%; border:1px solid #000000; vertical-align:top; font-size:9.5pt; height:46px; text-align:center;"><em>(Ký, ghi rõ họ tên)</em></td>
-        <td style="width:25%; border:1px solid #000000; vertical-align:middle; text-align:center; font-size:13.5pt; font-weight:bold; height:46px;"></td>
-        <td style="width:25%; border:1px solid #000000; vertical-align:top; font-size:9.5pt; text-align:left; padding:2px 6px; height:46px;">
-          <em>Điểm chữ: ............................</em><br><em>CB Chấm: ............................</em>
+        <td style="width:24%; border:1px solid #000000; vertical-align:top; font-size:9.5pt; height:56px; text-align:center; padding:4px;"><em>(Ký và ghi rõ họ tên)</em></td>
+        <td style="width:24%; border:1px solid #000000; vertical-align:top; font-size:9.5pt; height:56px; text-align:center; padding:4px;"><em>(Ký và ghi rõ họ tên)</em></td>
+        <td style="width:22%; border:1px solid #000000; vertical-align:middle; text-align:center; font-size:15pt; font-weight:bold; height:56px;"></td>
+        <td style="width:30%; border:1px solid #000000; vertical-align:top; font-size:10pt; text-align:left; padding:4px 8px; height:56px;">
+          <em>Điểm chữ: .............................</em><br>
+          <em>CB Chấm: .............................</em>
         </td>
       </tr>
     </table>` : ''}
@@ -539,37 +542,42 @@ export function generateUnifiedExamPaperHtml(
             </tr>
           </table>
 
-          <!-- BẢNG KHỚP PHÁCH 2 & CHẤM ĐIỂM CỦA GIÁM KHẢO (ĐẦU THÂN BÀI THI) -->
-          <table class="essay-grading-score-box" style="width:100%; border-collapse:collapse; margin:3px 0 6px; border:1px solid #000000; table-layout:fixed;">
+          <!-- BẢNG KHỚP PHÁCH 2 & CHẤM ĐIỂM CỦA GIÁM KHẢO (CHUẨN 5 CỘT RỘNG RÃI) -->
+          <table class="essay-grading-score-box" style="width:100%; border-collapse:collapse; margin:5px 0 10px; border:1px solid #000000; table-layout:fixed;">
             <tr>
-              <th style="width:22%; border:1px solid #000000; padding:3px 6px; text-align:center; font-size:9.5pt; background:#f8fafc;">
+              <th style="width:20%; border:1px solid #000000; padding:5px 4px; text-align:center; font-size:10.5pt; font-weight:bold; background:#f8fafc;">
                 SỐ PHÁCH (Phách 2)
               </th>
-              <th style="width:20%; border:1px solid #000000; padding:3px 6px; text-align:center; font-size:9.5pt; background:transparent;">
-                ĐIỂM SỐ
+              <th style="width:16%; border:1px solid #000000; padding:5px 4px; text-align:center; font-size:10.5pt; font-weight:bold; background:transparent;">
+                ĐIỂM (Số)
               </th>
-              <th style="width:28%; border:1px solid #000000; padding:3px 6px; text-align:center; font-size:9.5pt; background:transparent;">
-                ĐIỂM CHỮ
+              <th style="width:24%; border:1px solid #000000; padding:5px 4px; text-align:center; font-size:10.5pt; font-weight:bold; background:transparent;">
+                ĐIỂM (Chữ)
               </th>
-              <th style="width:30%; border:1px solid #000000; padding:3px 6px; text-align:center; font-size:9.5pt; background:transparent;">
-                CÁN BỘ CHẤM THI
+              <th style="width:20%; border:1px solid #000000; padding:5px 4px; text-align:center; font-size:10.5pt; font-weight:bold; background:transparent;">
+                CÁN BỘ CHẤM 1
+              </th>
+              <th style="width:20%; border:1px solid #000000; padding:5px 4px; text-align:center; font-size:10.5pt; font-weight:bold; background:transparent;">
+                CÁN BỘ CHẤM 2
               </th>
             </tr>
             <tr>
-              <td style="width:22%; border:1px solid #000000; vertical-align:middle; text-align:center; padding:3px; background:#f8fafc;">
-                <div style="font-size:12pt; font-weight:bold; font-family:Courier New, monospace; letter-spacing:1px; border:1px dashed #000000; padding:3px 6px; background:#ffffff; display:inline-block;">
+              <td style="width:20%; border:1px solid #000000; vertical-align:middle; text-align:center; padding:6px 4px; background:#f8fafc; height:58px;">
+                <div style="font-size:13.5pt; font-weight:bold; font-family:Courier New, monospace; letter-spacing:1.5px; border:1.5px dashed #000000; padding:4px 8px; background:#ffffff; display:inline-block; border-radius:4px;">
                   ${escapeHtml(phachCode || 'P-001')}
                 </div>
               </td>
-              <td style="width:20%; border:1px solid #000000; vertical-align:middle; text-align:center; font-size:13pt; font-weight:bold;">
+              <td style="width:16%; border:1px solid #000000; vertical-align:middle; text-align:center; font-size:15pt; font-weight:bold; height:58px;">
                 &nbsp;
               </td>
-              <td style="width:28%; border:1px solid #000000; vertical-align:top; font-size:9.5pt; padding:3px 6px; text-align:left;">
-                <em>(Ghi bằng chữ)</em>
+              <td style="width:24%; border:1px solid #000000; vertical-align:top; font-size:10.5pt; padding:6px 8px; text-align:left; height:58px;">
+                <em>Điểm chữ: .............................</em>
               </td>
-              <td style="width:30%; border:1px solid #000000; vertical-align:top; font-size:9pt; padding:3px 6px; text-align:left;">
-                CB1: .................................<br>
-                CB2: .................................
+              <td style="width:20%; border:1px solid #000000; vertical-align:top; font-size:9.5pt; padding:4px 6px; text-align:center; height:58px;">
+                <em>(Ký, ghi rõ họ tên)</em>
+              </td>
+              <td style="width:20%; border:1px solid #000000; vertical-align:top; font-size:9.5pt; padding:4px 6px; text-align:center; height:58px;">
+                <em>(Ký, ghi rõ họ tên)</em>
               </td>
             </tr>
           </table>
