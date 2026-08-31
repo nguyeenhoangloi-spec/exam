@@ -36,7 +36,7 @@ import { TabBar, TabItem } from '../ui/TabBar';
 import { DataActionsDropdown } from '../ui/DataActionsDropdown';
 import { Button } from '../ui/Button';
 import { PaginationBar } from '../ui/PaginationBar';
-import { DynamicColumnDefinition } from './FormulaEditorModal';
+import { FormulaEditorModal, DynamicColumnDefinition } from './FormulaEditorModal';
 import { evaluateFormula, FormulaVariable } from '../../lib/formula-engine';
 
 export interface SummaryScheduleRow {
@@ -221,6 +221,11 @@ export function ExamReportSummaryTab({
     rate: false,
   });
 
+  // Cột công thức do người dùng tự tạo tùy biến
+  const [userDefinedColumns, setUserDefinedColumns] = useState<DynamicColumnDefinition[]>([]);
+  const [isFormulaEditorOpen, setIsFormulaEditorOpen] = useState<boolean>(false);
+  const [editingFormulaCol, setEditingFormulaCol] = useState<DynamicColumnDefinition | null>(null);
+
   // Tự động sinh danh sách cột tính toán dựa trên cấu hình ở Sidebar
   const customFormulaColumns: DynamicColumnDefinition[] = useMemo(() => {
     const list: DynamicColumnDefinition[] = [];
@@ -305,8 +310,15 @@ export function ExamReportSummaryTab({
       });
     }
 
+    // Ghép các cột công thức tùy biến người dùng tự thêm
+    userDefinedColumns.forEach((c) => {
+      if (c.visible !== false) {
+        list.push(c);
+      }
+    });
+
     return list;
-  }, [enabledRules, passThreshold, examWeight, bonusWeight]);
+  }, [enabledRules, passThreshold, examWeight, bonusWeight, userDefinedColumns]);
 
   // Tự động thêm các cột được tích chọn vào columns hiển thị
   useEffect(() => {
@@ -1210,7 +1222,75 @@ export function ExamReportSummaryTab({
                             Cột Thang điểm 4.0
                           </span>
                         </label>
+
+                        {/* Các cột công thức tự tạo của người dùng */}
+                        {userDefinedColumns.map((col) => (
+                          <div
+                            key={col.id}
+                            className="flex items-center justify-between gap-2 py-1 group/item hover:bg-slate-50/70 dark:hover:bg-slate-800/40 px-1 rounded-xl transition"
+                          >
+                            <label className="flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={col.visible !== false}
+                                onChange={(e) => {
+                                  setUserDefinedColumns((prev) =>
+                                    prev.map((c) => (c.id === col.id ? { ...c, visible: e.target.checked } : c))
+                                  );
+                                }}
+                                className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500/20 cursor-pointer shrink-0 accent-blue-600"
+                              />
+                              <span
+                                className={`text-type-body-sm truncate ${
+                                  col.visible !== false
+                                    ? 'font-medium text-slate-900 dark:text-slate-100'
+                                    : 'text-slate-600 dark:text-slate-400'
+                                }`}
+                              >
+                                {col.header} <span className="text-type-tiny text-blue-600 dark:text-blue-400 font-medium">(Tùy biến)</span>
+                              </span>
+                            </label>
+
+                            <div className="flex items-center gap-1 shrink-0 transition">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditingFormulaCol(col);
+                                  setIsFormulaEditorOpen(true);
+                                }}
+                                className="p-1 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition cursor-pointer"
+                                title="Chỉnh sửa công thức này"
+                              >
+                                <Edit2 className="h-3.5 w-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setUserDefinedColumns((prev) => prev.filter((c) => c.id !== col.id));
+                                  setColumns((prev) => prev.filter((k) => k !== col.key));
+                                }}
+                                className="p-1 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800 transition cursor-pointer"
+                                title="Xóa cột công thức này"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
                       </div>
+
+                      {/* Nút thêm công thức tùy biến mới */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingFormulaCol(null);
+                          setIsFormulaEditorOpen(true);
+                        }}
+                        className="w-full mt-2.5 py-2 px-3 rounded-xl border border-dashed border-blue-300 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 text-type-body-sm font-medium hover:bg-blue-100/60 dark:hover:bg-blue-900/40 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                      >
+                        <Plus className="h-4 w-4" />
+                        <span>Thêm công thức tùy biến...</span>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1692,6 +1772,29 @@ export function ExamReportSummaryTab({
         </div>
       )}
 
+      {/* Modal soạn thảo & tạo công thức tính toán tùy biến */}
+      <FormulaEditorModal
+        isOpen={isFormulaEditorOpen}
+        onClose={() => {
+          setIsFormulaEditorOpen(false);
+          setEditingFormulaCol(null);
+        }}
+        initialColumn={editingFormulaCol}
+        onSave={(newCol) => {
+          setUserDefinedColumns((prev) => {
+            const exists = prev.some((c) => c.id === newCol.id);
+            if (exists) {
+              return prev.map((c) => (c.id === newCol.id ? newCol : c));
+            }
+            return [...prev, newCol];
+          });
+          setColumns((prev) => Array.from(new Set([...prev, newCol.key])));
+          setNotice({
+            type: 'success',
+            message: `Đã áp dụng cột công thức "${newCol.header}" vào bảng tính toán.`,
+          });
+        }}
+      />
     </div>
   );
 }

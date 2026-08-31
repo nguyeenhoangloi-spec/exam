@@ -12,17 +12,23 @@ export interface FormulaVariable {
 }
 
 export const STANDARD_REPORT_VARIABLES: FormulaVariable[] = [
-  { key: 'totalScore', label: 'Điểm tổng kết (Thang 10)', type: 'number', sampleValue: 8.5 },
-  { key: 'maxScore', label: 'Điểm tối đa', type: 'number', sampleValue: 10 },
-  { key: 'violationCount', label: 'Số lần vi phạm', type: 'number', sampleValue: 0 },
-  { key: 'studentCode', label: 'Mã số sinh viên (MSSV)', type: 'string', sampleValue: 'SV2025001' },
-  { key: 'fullName', label: 'Họ và tên thí sinh', type: 'string', sampleValue: 'Nguyễn Văn An' },
-  { key: 'className', label: 'Lớp sinh hoạt', type: 'string', sampleValue: 'CNTT-K48A' },
-  { key: 'status', label: 'Trạng thái nộp bài', type: 'string', sampleValue: 'SUBMITTED' },
-  { key: 'subjectCode', label: 'Mã học phần', type: 'string', sampleValue: 'CS101' },
-  { key: 'subjectName', label: 'Tên học phần', type: 'string', sampleValue: 'Lập trình Căn bản' },
-  { key: 'bonusScore', label: 'Điểm cộng / Điểm chuyên cần', type: 'number', sampleValue: 1.0 },
-  { key: 'penaltyScore', label: 'Điểm trừ vi phạm', type: 'number', sampleValue: 0 },
+  { key: 'examScore', label: 'Điểm thi kết thúc ({examScore})', type: 'number', sampleValue: 8.5 },
+  { key: 'totalScore', label: 'Điểm tổng kết ({totalScore})', type: 'number', sampleValue: 8.5 },
+  { key: 'midtermScore', label: 'Điểm giữa kỳ / BTL ({midtermScore})', type: 'number', sampleValue: 7.5 },
+  { key: 'attendanceScore', label: 'Điểm chuyên cần ({attendanceScore})', type: 'number', sampleValue: 9.0 },
+  { key: 'practiceScore', label: 'Điểm thực hành ({practiceScore})', type: 'number', sampleValue: 8.0 },
+  { key: 'bonusScore', label: 'Điểm cộng / Điểm thưởng ({bonusScore})', type: 'number', sampleValue: 1.0 },
+  { key: 'penaltyScore', label: 'Điểm trừ vi phạm ({penaltyScore})', type: 'number', sampleValue: 0 },
+  { key: 'violationCount', label: 'Số lần vi phạm ({violationCount})', type: 'number', sampleValue: 0 },
+  { key: 'studentCode', label: 'Mã số sinh viên ({studentCode})', type: 'string', sampleValue: 'SV2025001' },
+  { key: 'fullName', label: 'Họ và tên ({fullName})', type: 'string', sampleValue: 'Nguyễn Văn An' },
+  { key: 'className', label: 'Lớp sinh hoạt ({className})', type: 'string', sampleValue: 'CNTT-K48A' },
+  { key: 'status', label: 'Trạng thái bài thi ({status})', type: 'string', sampleValue: 'SUBMITTED' },
+  { key: 'submitted', label: 'Số bài đã nộp ({submitted})', type: 'number', sampleValue: 48 },
+  { key: 'assigned', label: 'Tổng SV được gán ({assigned})', type: 'number', sampleValue: 50 },
+  { key: 'absent', label: 'Số SV vắng thi ({absent})', type: 'number', sampleValue: 2 },
+  { key: 'passCount', label: 'Số SV đạt ({passCount})', type: 'number', sampleValue: 45 },
+  { key: 'avgScore', label: 'Điểm trung bình ({avgScore})', type: 'number', sampleValue: 7.6 },
 ];
 
 export const FORMULA_FUNCTIONS_HELP = [
@@ -387,7 +393,20 @@ export function evaluateAST(node: ASTNode, context: Record<string, any>): any {
   }
 
   if (node.type === 'Variable') {
-    const val = context[node.name];
+    const key = node.name;
+    let val = context[key];
+    if (val === undefined || val === null) {
+      if (key === 'examScore') val = context.totalScore ?? context.score;
+      else if (key === 'totalScore') val = context.examScore ?? context.score;
+      else if (key === 'midtermScore') val = context.midtermScore ?? context.processScore ?? context.bonusScore;
+      else if (key === 'attendanceScore') val = context.attendanceScore ?? context.bonusScore;
+      else if (key === 'practiceScore') val = context.practiceScore ?? context.midtermScore;
+      else if (key === 'assigned') val = context.totalAssigned ?? context.assigned;
+      else if (key === 'submitted') val = context.totalSubmitted ?? context.submitted;
+      else if (key === 'absent') val = context.totalAbsent ?? context.absent;
+      else if (key === 'passCount') val = context.passCount;
+      else if (key === 'avgScore') val = context.avgScore;
+    }
     if (val === undefined || val === null) {
       return null;
     }
