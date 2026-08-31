@@ -1084,7 +1084,7 @@ export default function AccessControlPage() {
               </div>
 
               {/* Matrix Table (6 Cột Rõ Ràng + Checkbox Tick Chuẩn Xác) */}
-              <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/60 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
+              <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-apple-card dark:border-slate-800 dark:bg-slate-900">
                 <table className="ui-table min-w-[900px] w-full text-left border-collapse">
                   <thead className="bg-slate-50/70 text-type-body-sm font-medium text-slate-600 dark:bg-slate-850/50 dark:text-slate-300 border-b border-slate-100 dark:border-slate-800">
                     <tr>

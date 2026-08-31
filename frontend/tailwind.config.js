@@ -79,13 +79,16 @@ module.exports = {
         '3xl': '20px',
       },
       boxShadow: {
-        '2xs': '0 1px 2px 0 rgb(15 23 42 / 0.04)',
-        xs: '0 1px 2px 0 rgb(15 23 42 / 0.05)',
-        sm: '0 1px 3px 0 rgb(15 23 42 / 0.08), 0 1px 2px -1px rgb(15 23 42 / 0.04)',
-        md: '0 4px 6px -1px rgb(15 23 42 / 0.08), 0 2px 4px -2px rgb(15 23 42 / 0.04)',
-        lg: '0 10px 15px -3px rgb(15 23 42 / 0.08), 0 4px 6px -4px rgb(15 23 42 / 0.04)',
-        'soft': '0 2px 16px -2px rgb(15 23 42 / 0.06), 0 0 0 1px rgb(15 23 42 / 0.02)',
+        '2xs': '0 2px 8px -2px rgb(15 23 42 / 0.04), 0 1px 2px 0 rgb(15 23 42 / 0.02)',
+        xs: '0 2px 10px -2px rgb(15 23 42 / 0.05), 0 1px 3px 0 rgb(15 23 42 / 0.03)',
+        sm: '0 3px 12px -2px rgb(15 23 42 / 0.06), 0 1px 3px 0 rgb(15 23 42 / 0.03)',
+        md: '0 6px 18px -3px rgb(15 23 42 / 0.07), 0 2px 6px -2px rgb(15 23 42 / 0.04)',
+        lg: '0 12px 28px -4px rgb(15 23 42 / 0.08), 0 4px 8px -2px rgb(15 23 42 / 0.03)',
+        'soft': '0 4px 20px -2px rgb(15 23 42 / 0.06), 0 1px 3px 0 rgb(15 23 42 / 0.02)',
         'glow-blue': '0 0 0 4px rgb(37 99 235 / 0.12)',
+        'apple-card': '0 2px 12px -2px rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.02)',
+        'apple-card-hover': '0 12px 28px -4px rgb(15 23 42 / 0.08), 0 4px 8px -2px rgb(15 23 42 / 0.03)',
+        'apple-modal': '0 24px 54px -12px rgb(15 23 42 / 0.16), 0 8px 20px -4px rgb(15 23 42 / 0.06)',
       },
       keyframes: {
         'fade-in': {

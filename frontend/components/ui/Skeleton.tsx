@@ -55,7 +55,7 @@ export function KPICardsSkeleton({ count = 4, columns }: { count?: number; colum
             {Array.from({ length: count }).map((_, idx) => (
                 <div
                     key={idx}
-                    className="flex flex-col justify-between rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs h-[110px]"
+                    className="flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-apple-card h-[110px]"
                 >
                     <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1.5 flex-1 min-w-0">
@@ -74,7 +74,7 @@ export function KPICardsSkeleton({ count = 4, columns }: { count?: number; colum
 /** Unified Table Skeleton for data lists (Teachers, Students, Schedules, Papers, etc.). */
 export function TableSkeleton({ rows = 6 }: { rows?: number }) {
     return (
-        <div className="space-y-4 rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-2xs" aria-hidden="true">
+        <div className="space-y-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-apple-card" aria-hidden="true">
             {/* Toolbar row */}
             <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-2">
@@ -89,13 +89,13 @@ export function TableSkeleton({ rows = 6 }: { rows?: number }) {
             {/* Table Rows */}
             <div className="space-y-3 pt-1">
                 {Array.from({ length: rows }).map((_, idx) => (
-                    <div key={idx} className="flex items-center gap-4 py-2.5 border-b border-slate-100 dark:border-slate-800/80 last:border-0">
-                        <Skeleton className="h-4 w-8 rounded" />
-                        <Skeleton className="h-4 w-28 rounded" />
-                        <Skeleton className="h-4 w-48 flex-1 rounded" />
-                        <Skeleton className="h-4 w-24 rounded" />
-                        <Skeleton className="h-4 w-28 rounded" />
-                        <Skeleton className="h-7 w-16 rounded-lg" />
+                    <div key={idx} className="flex items-center gap-4 py-2 border-b border-slate-50 dark:border-slate-800/60 last:border-0">
+                        <Skeleton className="h-4 w-6 rounded" />
+                        <Skeleton className="h-4 w-40 rounded flex-1" />
+                        <Skeleton className="h-4 w-28 rounded hidden sm:block" />
+                        <Skeleton className="h-4 w-20 rounded hidden md:block" />
+                        <Skeleton className="h-6 w-16 rounded-full" />
+                        <Skeleton className="h-8 w-16 rounded-lg ml-auto" />
                     </div>
                 ))}
             </div>
@@ -108,13 +108,17 @@ export function PageSkeleton({
     hasKPIs = true,
     kpiCount = 4,
     kpiColumns,
+    showKpi,
     variant = 'table',
 }: {
     hasKPIs?: boolean;
     kpiCount?: number;
     kpiColumns?: 2 | 3 | 4 | 5 | 6;
+    showKpi?: boolean;
     variant?: 'table' | 'cards' | 'form';
 }) {
+    const shouldShowKPIs = showKpi !== undefined ? showKpi : hasKPIs;
+
     return (
         <div className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen" aria-busy="true" aria-live="polite">
             {/* Page Header Skeleton */}
@@ -130,14 +134,14 @@ export function PageSkeleton({
             </div>
 
             {/* Optional KPI Metrics (1:1 with real KPICards) */}
-            {hasKPIs && <KPICardsSkeleton count={kpiCount} columns={kpiColumns} />}
+            {shouldShowKPIs && <KPICardsSkeleton count={kpiCount} columns={kpiColumns} />}
 
             {/* Main Content Area Skeleton */}
             {variant === 'table' && <TableSkeleton rows={6} />}
             {variant === 'cards' && (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {Array.from({ length: 6 }).map((_, idx) => (
-                        <div key={idx} className="rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-3 shadow-2xs">
+                        <div key={idx} className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-3 shadow-apple-card">
                             <Skeleton className="h-5 w-40 rounded-lg" />
                             <Skeleton className="h-3 w-full rounded" />
                             <Skeleton className="h-3 w-2/3 rounded" />
@@ -150,7 +154,7 @@ export function PageSkeleton({
                 </div>
             )}
             {variant === 'form' && (
-                <div className="rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-5 shadow-2xs max-w-4xl">
+                <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-5 shadow-apple-card max-w-4xl">
                     <div className="space-y-2 pb-4 border-b border-slate-100 dark:border-slate-800">
                         <Skeleton className="h-6 w-48 rounded-lg" />
                         <Skeleton className="h-3.5 w-80 rounded" />

@@ -567,7 +567,7 @@ export default function TeacherAssignmentsPage() {
           />
         ) : (
           /* ── 5.2 List View Mode (Dạng bảng danh sách chi tiết) ── */
-          <div className="ui-table-wrap rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+          <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card overflow-hidden">
             <div className="overflow-x-auto">
               <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
                 <thead>

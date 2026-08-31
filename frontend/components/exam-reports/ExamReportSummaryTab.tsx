@@ -866,7 +866,7 @@ export function ExamReportSummaryTab({
           </div>
 
           {/* Bảng Ca thi gần đây (Khung Bảng Duy Nhất, phẳng và liền mạch) */}
-          <div className="ui-table-wrap rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+          <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card overflow-hidden">
             <table className="ui-table w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/50 text-type-body-sm font-medium text-slate-600 dark:text-slate-400">

@@ -733,7 +733,7 @@ export default function DepartmentsPage() {
           )}
 
           {/* Danh sách môn */}
-          <div className="ui-table-wrap rounded-xl border border-slate-200 overflow-hidden">
+          <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card overflow-hidden">
             {loadingCurriculum ? (
               <div className="p-8 text-center text-type-helper text-slate-400">Đang tải danh sách học phần...</div>
             ) : curriculumList.length === 0 ? (

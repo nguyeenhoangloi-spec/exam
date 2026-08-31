@@ -102,7 +102,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   return createPortal(
     <div role="dialog" aria-modal="true" aria-label={title} className="fixed inset-0 z-[9999] flex min-h-dvh items-center justify-center p-3 overflow-y-auto overscroll-contain bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop sm:p-4">
-      <div className="relative w-full max-w-sm max-h-[calc(100dvh-1.5rem)] my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl shadow-slate-950/20 border border-slate-200/60 dark:border-slate-700 animate-modal-dialog will-change-transform sm:max-h-[calc(100dvh-2rem)]">
+      <div className="relative w-full max-w-sm max-h-[calc(100dvh-1.5rem)] my-auto overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-apple-modal border border-slate-200/90 dark:border-slate-700 animate-modal-dialog will-change-transform sm:max-h-[calc(100dvh-2rem)]">
         <div className="flex items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 px-4 py-3 sm:px-5 sm:py-3.5 shrink-0">
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border shadow-2xs ${iconConfig.iconShell}`}>

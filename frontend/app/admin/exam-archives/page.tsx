@@ -539,7 +539,7 @@ export default function ExamArchivesPage() {
       {!selectedSchedule ? (
         /* View 1: Danh sách các ca thi đã lưu trữ */
         <>
-          <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+          <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card">
             <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
               <thead className="bg-slate-50/60 dark:bg-slate-800/60 text-type-body-sm font-medium text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
                 <tr>
@@ -648,7 +648,7 @@ export default function ExamArchivesPage() {
       ) : (
         /* View 2: Danh sách bài thi của sinh viên trong ca thi đã chọn */
         <>
-          <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+          <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card">
             <table className="ui-table w-full text-left text-type-body text-slate-700 dark:text-slate-300 border-collapse">
               <thead className="bg-slate-50/60 dark:bg-slate-800/60 text-type-body-sm font-medium text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
                 <tr>

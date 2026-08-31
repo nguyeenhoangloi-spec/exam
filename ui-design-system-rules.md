@@ -784,5 +784,57 @@ Nhằm đảm bảo giao diện luôn mạch lạc, phẳng, thoáng đãng và 
   - Khi tab Active: Nền đậm `bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900`.
   - Khi tab Inactive: Nền trung tính `bg-slate-500/90 text-white dark:bg-slate-600 dark:text-white`.
 
+## 24. Quy Chuẩn Hệ Thống Khung Viền & Đổ Bóng Nổi Chuẩn Apple Cupertino (Apple Human Interface Elevation & Frame System)
+
+Nhằm đảm bảo giao diện luôn đạt độ sâu tinh xảo, bề mặt kính phẳng cao cấp (macOS Window & iOS Panel styling) và hoàn toàn xóa bỏ cảm giác phẳng lì, chìm màu hay xỉn viền trên toàn hệ thống:
+
+### 24.1 Dải Đổ Bóng Đa Tầng Ambient Apple (Multi-layer Ambient Shadows)
+Thay thế các bóng đổ đơn lớp phẳng hoặc xám xịt cũ bằng dải đổ bóng đa lớp khuếch tán quang học:
+- **`shadow-apple-card` (Bóng card/khung mặc định)**:
+  `0 2px 12px -2px rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.02)`
+  - *Áp dụng*: Toàn bộ thẻ card (`.ui-card`), khung bảng dữ liệu (`.ui-table-wrap`), thẻ KPI (`KPICards`), panel tạo nhanh, lịch biểu.
+- **`shadow-apple-card-hover` (Bóng nâng nổi tương tác)**:
+  `0 12px 28px -4px rgb(15 23 42 / 0.08), 0 4px 8px -2px rgb(15 23 42 / 0.03)`
+  - *Áp dụng*: Thẻ KPI khi hover (`hover:-translate-y-1 hover:shadow-apple-card-hover hover:border-blue-400/50`), quick actions bar.
+- **`shadow-apple-modal` (Bóng cửa sổ/hộp thoại/ngăn kéo nổi bổng)**:
+  `0 24px 54px -12px rgb(15 23 42 / 0.16), 0 8px 20px -4px rgb(15 23 42 / 0.06)`
+  - *Áp dụng*: Tất cả `Modal`, `ConfirmModal`, `CriticalConfirmModal`, `DetailDrawer`, `SearchModal`, `Sidebar` flyout submenu và toàn bộ bảng `Popover` bộ lọc.
+
+### 24.2 Viền Hairline Tinh Xảo Chống Chìm (Crisp Hairline Borders)
+- Nâng cấp viền bao bọc từ các độ trong mờ nhạt nhòa (`border-slate-200/60`, `border-slate-200/70`) sang **`border-slate-200/90 dark:border-slate-800`** (hoặc `dark:border-slate-700` cho modal).
+- Độ tương phản của viền hairline `border-slate-200/90` kết hợp cùng `shadow-apple-card` tạo nên cảm giác phân cách rõ ràng, nổi khối sắc nét trên nền `bg-slate-50/50` mà không hề bị nặng nề.
+
+---
+
+## 25. Quy Chuẩn Mục Chọn Nổi Khối Tỏa Sáng 3D Quang Học (3D Tactile Highlight Selection System - Phương án 1A)
+
+Áp dụng đồng nhất cho mọi thao tác lựa chọn dạng thẻ, ô chọn danh sách, dropdown tùy chỉnh, modal chọn mẫu vai trò, chọn ca thi, chọn lớp và chọn phòng thi trong toàn hệ thống:
+
+### 25.1 Quy cách Thị giác Mục Đang Chọn (Active / Selected Option)
+- **Nền (Background)**: Giữ **Nền trắng thuần khiết (`bg-white dark:bg-slate-900`)**, tuyệt đối không bôi mảng nền xanh hay nền xám đặc làm xỉn hoặc chói mắt.
+- **Khung viền (Border)**: **Viền xanh thương hiệu 2px (`border-2 border-blue-500`)** với bo góc `rounded-2xl` (16px) hoặc `rounded-xl` (12px).
+- **Hào quang & Đổ bóng Nổi khối 3D (Tactile Glow & Elevation)**:
+  `ring-4 ring-blue-500/10 shadow-sm shadow-blue-500/10`
+  - Giúp mục được chọn lập tức "nổi" bổng lên khỏi mặt phẳng nền trắng của popup, tạo cảm giác xúc giác (tactile feeling) chân thực và định vị thị giác ngay tức thì.
+- **Typography**: Chữ Deep Ink sắc nét (`text-slate-900 dark:text-slate-100 font-semibold`) với tương phản cao.
+- **Biểu tượng Xác nhận (Check Icon)**: Icon `<Check className="h-5 w-5 text-blue-600 dark:text-blue-400" />` đặt ngay ngắn ở góc phải.
+
+### 25.2 Quy cách Thị giác Mục Chưa Chọn (Inactive Option)
+- **Nền & Viền**: Nền trắng `bg-white dark:bg-slate-900`, viền mảnh `border border-slate-200/90 dark:border-slate-800`.
+- **Hover**: Nền `hover:bg-slate-50/80 dark:hover:bg-slate-800/60`, viền `hover:border-slate-300 dark:hover:border-slate-700`.
+- **Typography**: Chữ `text-slate-700 dark:text-slate-200 font-medium`.
+
+### 25.3 Danh sách Áp dụng Chuẩn Mực
+1. Menu chọn phương pháp tính & ma trận ([FormulaEditorModal.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/exam-reports/FormulaEditorModal.tsx)).
+2. Dropdown chọn bộ lọc danh mục ([components/ui/FilterSelect.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/ui/FilterSelect.tsx)).
+3. Dropdown ẩn/hiện cột dữ liệu ([components/ui/ColumnToggleDropdown.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/ui/ColumnToggleDropdown.tsx)).
+4. Modal chọn mẫu phân quyền vai trò ([components/access-control/RolePresetsModal.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/access-control/RolePresetsModal.tsx)).
+5. Modal chọn ca thi phân công ([components/exam-supervisors/SchedulePickerModal.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/exam-supervisors/SchedulePickerModal.tsx)).
+6. Modal chọn ca thi xếp phòng ([components/exam-arrangement/ArrangementSchedulePickerModal.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/exam-arrangement/ArrangementSchedulePickerModal.tsx)).
+7. Popover chọn lớp học phần ([components/exam-arrangement/ClassSelectorPopover.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/exam-arrangement/ClassSelectorPopover.tsx)).
+8. Popover chọn phòng thi ([components/exam-arrangement/RoomSelectorPopover.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/exam-arrangement/RoomSelectorPopover.tsx)).
+9. Danh sách chọn biểu mẫu tài liệu in ấn ([app/admin/document-templates/page.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/app/admin/document-templates/page.tsx)).
+
+
 
 

@@ -451,7 +451,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, user 
       <div className="fixed inset-0 -z-10" onClick={onClose} />
 
       {/* Modal Container: Raycast / Linear Pro Design */}
-      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col animate-modal-dialog will-change-transform">
+      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-apple-modal overflow-hidden flex flex-col animate-modal-dialog will-change-transform">
         {/* ── 1. Search Header Bar (Xám không nền, không viền xanh) ── */}
         <div className="flex items-center px-5 py-4 border-b border-slate-100 dark:border-slate-800 gap-3 bg-transparent">
           <Search className="h-5 w-5 shrink-0 text-slate-400 dark:text-slate-500" />

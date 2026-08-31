@@ -551,15 +551,24 @@ html.dark {
   }
 
   .ui-card {
-    @apply rounded-2xl border border-slate-200/50 bg-white shadow-2xs dark:border-slate-800/60 dark:bg-slate-900;
+    @apply rounded-2xl border border-slate-200/90 bg-white shadow-apple-card dark:border-slate-800/80 dark:bg-slate-900;
   }
 
   .ui-card-header {
-    @apply border-b border-slate-100/80 px-5 py-4 dark:border-slate-800/50;
+    @apply border-b border-slate-100/80 px-5 py-4 dark:border-slate-800/80;
   }
 
   .ui-table-wrap {
-    @apply overflow-x-auto rounded-2xl border border-slate-200/50 bg-white shadow-2xs dark:border-slate-800/60 dark:bg-slate-900;
+    @apply overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-apple-card dark:border-slate-800/80 dark:bg-slate-900;
+  }
+
+  /* 3D Tactile Highlight Selection Classes (Option 1A) */
+  .ui-option-selected {
+    @apply bg-white dark:bg-slate-900 border-2 border-blue-500 ring-4 ring-blue-500/10 shadow-sm shadow-blue-500/10;
+  }
+
+  .ui-option-unselected {
+    @apply bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:bg-slate-50/80 dark:hover:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700;
   }
 
   .ui-table {

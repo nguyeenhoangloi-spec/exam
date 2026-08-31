@@ -234,7 +234,7 @@ export function StudentResultFilterPopover({
             style={popoverStyle}
             role="dialog"
             aria-label="Bảng bộ lọc kết quả thi sinh viên"
-            className="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl animate-in fade-in-50 zoom-in-95 duration-150 flex flex-col overflow-hidden"
+            className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-modal animate-in fade-in-50 zoom-in-95 duration-150 flex flex-col overflow-hidden"
           >
             {/* 1. Header chuẩn sắc xanh chủ đạo */}
             <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40">

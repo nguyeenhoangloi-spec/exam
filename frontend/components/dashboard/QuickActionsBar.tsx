@@ -48,7 +48,7 @@ export function QuickActionsBar() {
             key={act.id}
             type="button"
             onClick={() => router.push(act.route)}
-            className="group flex items-center justify-between gap-3 p-3.5 rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs hover:-translate-y-1 hover:border-blue-400/50 dark:hover:border-blue-500/40 hover:shadow-lg hover:shadow-slate-200/70 dark:hover:shadow-slate-950/70 outline-none focus:outline-none ring-0 focus:ring-0 transition-all duration-300 ease-out text-left cursor-pointer active:scale-[0.99]"
+            className="group flex items-center justify-between gap-3 p-3.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card hover:-translate-y-1 hover:border-blue-400/50 dark:hover:border-blue-500/40 hover:shadow-apple-card-hover outline-none focus:outline-none ring-0 focus:ring-0 transition-all duration-300 ease-out text-left cursor-pointer active:scale-[0.99]"
           >
             <div className="flex items-center gap-3 min-w-0">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100/60 dark:border-blue-900/60 transition-all duration-300 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">

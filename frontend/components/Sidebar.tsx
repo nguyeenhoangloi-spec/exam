@@ -641,7 +641,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         hoveredNav.item.children && hoveredNav.item.children.length > 0 ? (
           /* Submenu Floating Card */
           <div
-            className="fixed left-[76px] z-50 w-52 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl shadow-2xl p-2 select-none pointer-events-auto animate-in fade-in-0 slide-in-from-left-2 duration-150"
+            className="fixed left-[76px] z-50 w-52 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-apple-modal p-2 select-none pointer-events-auto animate-in fade-in-0 slide-in-from-left-2 duration-150"
             style={{
               top: typeof window !== 'undefined'
                 ? Math.min(Math.max(hoveredNav.top - 8, 12), window.innerHeight - 260)

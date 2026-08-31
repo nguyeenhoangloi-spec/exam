@@ -45,7 +45,7 @@ export function ExamSupervisorTable({
 
   /* Standard List / Table View */
   return (
-    <div className="ui-table-wrap overflow-hidden rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+    <div className="ui-table-wrap overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card">
       <div className="overflow-x-auto">
         <table className="ui-table w-full text-left text-type-body text-slate-600 dark:text-slate-300">
           <thead className="border-b border-slate-200/60 dark:border-slate-800 bg-slate-50/75 dark:bg-slate-800/75 font-medium text-slate-700 dark:text-slate-200">

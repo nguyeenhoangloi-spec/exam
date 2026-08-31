@@ -233,7 +233,7 @@ export function DetailDrawer({
 
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
         <div
-          className={`w-screen ${widthClass} bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/60 dark:border-slate-800 pointer-events-auto transform-gpu transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${isAnimated ? 'translate-x-0' : 'translate-x-full'
+          className={`w-screen ${widthClass} bg-white dark:bg-slate-900 shadow-apple-modal flex flex-col border-l border-slate-200/90 dark:border-slate-800 pointer-events-auto transform-gpu transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${isAnimated ? 'translate-x-0' : 'translate-x-full'
             }`}
           style={{
             backfaceVisibility: 'hidden',

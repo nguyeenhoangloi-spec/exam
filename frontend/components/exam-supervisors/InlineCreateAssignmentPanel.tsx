@@ -96,7 +96,7 @@ export function InlineCreateAssignmentPanel({
   const t2 = teachers.find((t) => String(t.id) === String(supervisor2Id));
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 sm:p-5 rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-4">
+    <form onSubmit={handleSubmit} className="p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card space-y-4">
       {/* ── 1. Header tinh gọn, phẳng ── */}
       <div className="flex items-center gap-2 flex-wrap pb-2 border-b border-slate-100 dark:border-slate-800">
         <span className="h-3.5 w-1 rounded-full bg-blue-600 shrink-0" />

@@ -770,7 +770,7 @@ export default function BackupsPage() {
                     </div>
                 </div>
             ) : (
-                <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+                <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card">
                     <table className="ui-table w-full text-left border-collapse text-slate-700 dark:text-slate-300 text-type-body">
                         <thead className="bg-slate-50 dark:bg-slate-800 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
                             <tr>
@@ -948,7 +948,7 @@ export default function BackupsPage() {
                         </p>
                     </div>
 
-                    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+                    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card">
                         <table className="ui-table w-full text-left border-collapse text-slate-700 dark:text-slate-300 text-type-body">
                             <thead>
                                 <tr className="bg-slate-50 dark:bg-slate-800 text-type-body-sm font-medium tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">

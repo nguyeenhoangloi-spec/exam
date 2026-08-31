@@ -41,7 +41,7 @@ export function DepartmentTable({
   const allSelected = departments.length > 0 && selected.length === departments.length;
 
   return (
-    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/60 bg-white shadow-2xs">
+    <div className="ui-table-wrap overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card">
       <table className="ui-table w-full text-left text-type-body text-slate-700 border-collapse">
         <thead className="bg-slate-50 text-type-body-sm font-medium tracking-wider text-slate-600 border-b border-slate-200">
           <tr>
