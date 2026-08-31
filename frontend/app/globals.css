@@ -206,28 +206,31 @@ html.dark {
 
 @layer utilities {
 
-  /* Shared interaction motion: small, predictable and safe for touch input. */
+  /* Shared interaction motion: distinct tactile click feedback (Apple 2026 Style) */
   .ui-pressable {
     transform-origin: center;
+    transition-property: background-color, border-color, box-shadow, color, opacity, transform !important;
+    transition-duration: 150ms !important;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 
   .ui-pressable:active:not(:disabled):not([aria-disabled='true']) {
-    transform: scale(0.98);
+    transform: scale(0.96) !important;
   }
 
   /* Raw controls that have not migrated to a shared primitive still receive
-   * the same press and transition contract. */
+   * the same tactile press and transition contract. */
   button:not(.no-motion):not([data-no-press]),
   [role='button']:not(.no-motion):not([data-no-press]) {
     transform-origin: center;
     transition-property: background-color, border-color, box-shadow, color, opacity, transform !important;
-    transition-duration: var(--ui-motion-fast) !important;
-    transition-timing-function: ease-out !important;
+    transition-duration: 150ms !important;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 
   button:not(:disabled):not([aria-disabled='true']):not(.no-motion):not([data-no-press]):active,
   [role='button']:not([aria-disabled='true']):not(.no-motion):not([data-no-press]):active {
-    transform: scale(0.98) !important;
+    transform: scale(0.96) !important;
   }
 
   :where(input, select, textarea):not(.no-motion) {

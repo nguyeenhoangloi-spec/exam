@@ -556,7 +556,7 @@ export function QuestionImportWizard({
                 1. Tải lên tệp Đề cương / Bài giảng làm căn cứ (PDF, Word, TXT):
               </label>
               <label className="inline-flex items-center gap-3 cursor-pointer">
-                <span className="rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white font-semibold text-type-helper transition shadow-xs">Choose File</span>
+                <span className="rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-[0.96] active:translate-y-0 px-4 py-2 text-white font-semibold text-type-helper transition-all duration-150 ease-out shadow-xs select-none cursor-pointer">Chọn tệp</span>
                 <span className="text-type-helper font-semibold text-slate-700 truncate max-w-[320px]">
                   {file ? file.name : 'Chưa đính kèm tệp (.docx, .pdf, .txt)...'}
                 </span>
@@ -638,7 +638,7 @@ export function QuestionImportWizard({
             <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
               <div className="flex items-center gap-3 flex-1 min-w-[280px]">
                 <label className="inline-flex items-center gap-3 cursor-pointer">
-                  <span className="rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white font-semibold text-type-helper transition shadow-xs">Choose File</span>
+                  <span className="rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-[0.96] active:translate-y-0 px-4 py-2 text-white font-semibold text-type-helper transition-all duration-150 ease-out shadow-xs select-none cursor-pointer">Chọn tệp</span>
                   <span className="text-type-helper font-semibold text-slate-700 truncate max-w-[320px]">
                     {file ? file.name : mode === 'table' ? 'Chưa chọn tệp (.csv, .xlsx)...' : 'Chưa chọn tệp (.docx, .pdf)...'}
                   </span>
