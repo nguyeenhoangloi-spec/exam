@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { BloomLevel, Prisma, QuestionDifficulty, QuestionHistoryAction, QuestionStatus, QuestionType } from '@prisma/client';
 import { createHash } from 'node:crypto';
 import { mkdir, unlink, writeFile } from 'node:fs/promises';
@@ -20,7 +20,9 @@ const include = {
 };
 
 @Injectable()
-export class QuestionsService {
+export class QuestionsService implements OnModuleInit {
+  private readonly logger = new Logger(QuestionsService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
@@ -29,6 +31,36 @@ export class QuestionsService {
       assertSubjectScope: async () => undefined,
     } as unknown as AccessPolicyService,
   ) {}
+
+  async onModuleInit() {
+    await this.syncQuestionSequence();
+  }
+
+  /**
+   * Đồng bộ sequence question_code_seq trong PostgreSQL với mã câu hỏi lớn nhất hiện tại
+   * để ngăn chặn 100% tình trạng lệch sequence gây lỗi P2002 Unique Constraint Violation.
+   */
+  public async syncQuestionSequence(tx?: Prisma.TransactionClient) {
+    const client = tx || this.prisma;
+    try {
+      // Đảm bảo sequence đã tồn tại
+      await client.$executeRaw`CREATE SEQUENCE IF NOT EXISTS "question_code_seq" START WITH 1 INCREMENT BY 1;`;
+
+      const result = await client.$queryRaw<Array<{ max_num: bigint | number | null }>>`
+        SELECT MAX(NULLIF(regexp_replace(code, '\D', '', 'g'), '')::bigint) as max_num
+        FROM questions
+      `;
+      const maxNum = Number(result[0]?.max_num || 0);
+      const nextVal = Math.max(1, maxNum + 1);
+
+      await client.$executeRaw`
+        SELECT setval('question_code_seq', ${nextVal}, false)
+      `;
+      this.logger.log(`[QUESTIONS_SERVICE] Đã đồng bộ question_code_seq thành công (nextval = ${nextVal}).`);
+    } catch (err: any) {
+      this.logger.warn(`[QUESTIONS_SERVICE] Không thể đồng bộ question_code_seq: ${err?.message || err}`);
+    }
+  }
   private access(a: Actor) { if (!['ADMIN', 'TEACHER'].includes(a.role)) throw new ForbiddenException('Không có quyền truy cập.'); }
   private async teacherDepartmentId(a: Actor) {
     if (a.role !== 'TEACHER') return null;
@@ -122,9 +154,29 @@ export class QuestionsService {
     const fileName = basename(media.url); await unlink(join(this.mediaRoot(), fileName)).catch(() => undefined);
     return { success: true };
   }
-  private async code(tx: Prisma.TransactionClient) {
-    const r = await tx.$queryRaw<Array<{ value: bigint }>>`SELECT nextval('question_code_seq') value`;
-    return `Q${Number(r[0].value).toString().padStart(6, '0')}`;
+  private async code(tx: Prisma.TransactionClient): Promise<string> {
+    // 1. Thử lấy mã từ sequence và kiểm tra va chạm
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const r = await tx.$queryRaw<Array<{ value: bigint }>>`SELECT nextval('question_code_seq') value`;
+      const candidate = `Q${Number(r[0].value).toString().padStart(6, '0')}`;
+      const existing = await tx.question.findUnique({
+        where: { code: candidate },
+        select: { id: true },
+      });
+      if (!existing) {
+        return candidate;
+      }
+    }
+
+    // 2. Nếu sau 5 lần thử vẫn va chạm (do dữ liệu cũ/seed có mã lớn), tự động đồng bộ sequence lên MAX + 1
+    const maxResult = await tx.$queryRaw<Array<{ max_num: bigint | number | null }>>`
+      SELECT MAX(NULLIF(regexp_replace(code, '\D', '', 'g'), '')::bigint) as max_num
+      FROM questions
+    `;
+    const currentMax = Number(maxResult[0]?.max_num || 0);
+    const safeNext = currentMax + 1;
+    await tx.$executeRaw`SELECT setval('question_code_seq', ${safeNext + 1}, false)`;
+    return `Q${safeNext.toString().padStart(6, '0')}`;
   }
   private async duplicates(content: string, exclude = '') {
     const normalized = normalizeQuestionContent(content);
@@ -529,5 +581,6 @@ export class QuestionsService {
       }
       return rows;
     });
+    return created;
   }
 }

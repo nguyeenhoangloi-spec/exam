@@ -69,4 +69,18 @@ describe('QuestionsService integrity rules', () => {
       }),
     );
   });
+
+  it('tự động đồng bộ question_code_seq khi khởi tạo module', async () => {
+    const prisma: any = {
+      $executeRaw: jest.fn().mockResolvedValue(1),
+      $queryRaw: jest.fn().mockResolvedValue([{ max_num: BigInt(42) }]),
+    };
+    const service = new QuestionsService(prisma, { write: jest.fn() } as any);
+
+    await service.onModuleInit();
+
+    expect(prisma.$executeRaw).toHaveBeenCalled();
+    expect(prisma.$queryRaw).toHaveBeenCalled();
+  });
 });
+
