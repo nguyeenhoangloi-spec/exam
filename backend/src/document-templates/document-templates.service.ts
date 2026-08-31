@@ -765,6 +765,122 @@ export class DocumentTemplatesService {
     const availableCols = (code && templateCodeColumns[code]) || sourceColumns[dataSource] || [];
 
     // Specific configurations per document type
+    if (code === 'EXAM_SCHEDULE_LIST') {
+      return {
+        templateType: 'TABLE',
+        page: { size: 'A4', orientation: 'landscape', marginMm: 12 },
+        header: {
+          institutionName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ',
+          facultyName: 'KHOA CÔNG NGHỆ THÔNG TIN',
+          title: 'LỊCH THI KẾT THÚC HỌC PHẦN THEO CA',
+          subtitle: 'Học kỳ 1 - Năm học 2025 - 2026',
+          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+        },
+        examInfo: {},
+        columns: availableCols,
+        footer: {
+          note: 'Lịch thi chính thức. Sinh viên có mặt trước giờ thi 15 phút và mang theo Thẻ sinh viên hoặc CCCD.',
+          signers: [
+            { title: 'NGƯỜI LẬP BẢNG', subtitle: '(Ký, ghi rõ họ tên)' },
+            { title: 'TRƯỞNG PHÒNG ĐÀO TẠO & KHẢO THÍ', subtitle: '(Ký, đóng dấu)' },
+          ],
+        },
+      };
+    }
+
+    if (code === 'ROOM_DOOR_LIST') {
+      return {
+        templateType: 'TABLE',
+        page: { size: 'A4', orientation: 'portrait', marginMm: 12 },
+        header: {
+          institutionName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ',
+          facultyName: 'KHOA CÔNG NGHỆ THÔNG TIN',
+          title: 'DANH SÁCH THÍ SINH DỰ THI PHÒNG THI',
+          subtitle: 'Học kỳ 1 - Năm học 2025 - 2026',
+          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+        },
+        examInfo: {},
+        columns: availableCols,
+        footer: {
+          note: 'Bảng niêm phong dán tại cửa phòng thi trước giờ thi 30 phút.',
+          signers: [
+            { title: 'CÁN BỘ COI THI 1', subtitle: '(Ký, ghi rõ họ tên)' },
+            { title: 'TRƯỞNG ĐIỂM THI', subtitle: '(Ký, đóng dấu)' },
+          ],
+        },
+      };
+    }
+
+    if (code === 'ROOM_ATTENDANCE_SHEET') {
+      return {
+        templateType: 'TABLE',
+        page: { size: 'A4', orientation: 'portrait', marginMm: 12 },
+        header: {
+          institutionName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ',
+          facultyName: 'KHOA CÔNG NGHỆ THÔNG TIN',
+          title: 'DANH SÁCH THÍ SINH KÝ NỘP BÀI THI',
+          subtitle: 'Học kỳ 1 - Năm học 2025 - 2026',
+          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+        },
+        examInfo: {},
+        columns: availableCols,
+        footer: {
+          note: 'Thí sinh phải kiểm tra số tờ giấy thi và ký tên xác nhận khi nộp bài thi.',
+          signers: [
+            { title: 'CÁN BỘ COI THI 1', subtitle: '(Ký, ghi rõ họ tên)' },
+            { title: 'CÁN BỘ COI THI 2', subtitle: '(Ký, ghi rõ họ tên)' },
+          ],
+        },
+      };
+    }
+
+    if (code === 'SUPERVISOR_ASSIGNMENT') {
+      return {
+        templateType: 'TABLE',
+        page: { size: 'A4', orientation: 'portrait', marginMm: 12 },
+        header: {
+          institutionName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ',
+          facultyName: 'HỘI ĐỒNG KHẢO THÍ & ĐBCL',
+          title: 'LỊCH PHÂN CÔNG CÁN BỘ COI THI',
+          subtitle: 'Học kỳ 1 - Năm học 2025 - 2026',
+          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+        },
+        examInfo: {},
+        columns: availableCols,
+        footer: {
+          note: 'Cán bộ coi thi có mặt trước giờ thi 30 phút để nhận đề thi và làm thủ tục phòng thi.',
+          signers: [
+            { title: 'NGƯỜI LẬP BẢNG', subtitle: '(Ký, ghi rõ họ tên)' },
+            { title: 'CHỦ TỊCH HỘI ĐỒNG KHẢO THÍ', subtitle: '(Ký, đóng dấu)' },
+          ],
+        },
+      };
+    }
+
+    if (code === 'GRADE_REPORT') {
+      return {
+        templateType: 'TABLE',
+        page: { size: 'A4', orientation: 'portrait', marginMm: 12 },
+        header: {
+          institutionName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ',
+          facultyName: 'KHOA CÔNG NGHỆ THÔNG TIN',
+          title: 'BẢNG TỔNG HỢP ĐIỂM THI HỌC PHẦN',
+          subtitle: 'Học kỳ 1 - Năm học 2025 - 2026',
+          motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+        },
+        examInfo: {},
+        columns: availableCols,
+        footer: {
+          note: 'Bảng điểm chính thức dùng để xét duyệt điểm học phần và tích lũy chương trình đào tạo.',
+          signers: [
+            { title: 'CÁN BỘ CHẤM THI', subtitle: '(Ký, ghi rõ họ tên)' },
+            { title: 'TRƯỞNG BỘ MÔN', subtitle: '(Ký, ghi rõ họ tên)' },
+            { title: 'TRƯỞNG KHOA', subtitle: '(Ký, đóng dấu)' },
+          ],
+        },
+      };
+    }
+
     if (code === 'EXAM_BAG_LABEL') {
       return {
         templateType: 'TABLE',

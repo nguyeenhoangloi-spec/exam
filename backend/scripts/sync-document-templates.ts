@@ -113,6 +113,8 @@ async function main() {
             ...header,
             institutionName: newInstitution,
             facultyName: newFaculty,
+            subtitle: header.subtitle?.trim() ? header.subtitle : 'Học kỳ 1 - Năm học 2025 - 2026',
+            motto: header.motto?.trim() ? header.motto : 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
           },
         };
 

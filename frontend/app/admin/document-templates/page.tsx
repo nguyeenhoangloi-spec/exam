@@ -311,7 +311,33 @@ export default function DocumentTemplatesPage() {
       setDraft(clone(selected));
       const latestVersion = selected.versions[0];
       if (latestVersion && latestVersion.config) {
-        setConfig(clone(latestVersion.config));
+        const loadedConfig = clone(latestVersion.config);
+        if (!loadedConfig.header) {
+          loadedConfig.header = {
+            institutionName: 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ',
+            facultyName: 'KHOA CÔNG NGHỆ THÔNG TIN',
+            title: selected.name.toUpperCase(),
+            subtitle: 'Học kỳ 1 - Năm học 2025 - 2026',
+            motto: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+          };
+        } else {
+          if (!loadedConfig.header.institutionName?.trim()) {
+            loadedConfig.header.institutionName = 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ';
+          }
+          if (!loadedConfig.header.facultyName?.trim()) {
+            loadedConfig.header.facultyName = 'KHOA CÔNG NGHỆ THÔNG TIN';
+          }
+          if (!loadedConfig.header.title?.trim()) {
+            loadedConfig.header.title = selected.name.toUpperCase();
+          }
+          if (!loadedConfig.header.subtitle?.trim()) {
+            loadedConfig.header.subtitle = 'Học kỳ 1 - Năm học 2025 - 2026';
+          }
+          if (!loadedConfig.header.motto?.trim()) {
+            loadedConfig.header.motto = 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc';
+          }
+        }
+        setConfig(loadedConfig);
       }
     } else {
       setDraft(null);
@@ -589,12 +615,40 @@ export default function DocumentTemplatesPage() {
                       onChange={(v) => setHeader('subtitle', v)}
                       placeholder="Học kỳ 1 - Năm học 2025 - 2026..."
                     />
-                    <FormInput
-                      label="Quốc hiệu / Khẩu hiệu"
-                      value={config.header.motto || ''}
-                      onChange={(v) => setHeader('motto', v)}
-                      placeholder="CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM..."
-                    />
+                    {/* Quốc hiệu / Tiêu ngữ chuẩn */}
+                    <div className="pt-1.5 space-y-2">
+                      <label className="flex items-center gap-2.5 cursor-pointer select-none group">
+                        <input
+                          type="checkbox"
+                          checked={Boolean(config.header.motto?.trim())}
+                          onChange={(e) => {
+                            const enabled = e.target.checked;
+                            setHeader(
+                              'motto',
+                              enabled
+                                ? 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc'
+                                : ''
+                            );
+                          }}
+                          className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer accent-blue-600 shrink-0"
+                        />
+                        <span className="text-type-body font-medium text-slate-800 dark:text-slate-200 group-hover:text-slate-950 dark:group-hover:text-white transition-colors">
+                          Hiển thị Quốc hiệu & Tiêu ngữ chuẩn (NĐ 30/2020)
+                        </span>
+                      </label>
+
+                      {Boolean(config.header.motto?.trim()) && (
+                        <div className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/50 text-center space-y-0.5 select-none">
+                          <p className="text-type-helper font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+                            CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+                          </p>
+                          <p className="text-type-helper font-medium italic text-slate-700 dark:text-slate-300">
+                            Độc lập – Tự do – Hạnh phúc
+                          </p>
+                          <div className="w-16 h-px bg-slate-400 dark:bg-slate-500 mx-auto mt-1" />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
@@ -1058,9 +1112,32 @@ export default function DocumentTemplatesPage() {
                   {config.templateType === 'EXAM_PAPER' ? (
                     /* EXAM PAPER FORMAT */
                     <div className="space-y-4 text-type-body leading-relaxed">
-                      {/* Header 2 Columns */}
-                      <div className="grid grid-cols-2 gap-4 text-center">
-                        <div>
+                      {/* Header 2 Columns or 1 Column */}
+                      {Boolean(config.header.motto?.trim()) ? (
+                        <div className="grid grid-cols-2 gap-4 text-center">
+                          <div>
+                            <div className="font-semibold text-type-body">
+                              {config.header.institutionName || 'HỆ THỐNG QUẢN LÝ KHẢO THÍ'}
+                            </div>
+                            {config.header.facultyName && (
+                              <div className="font-medium text-type-helper mt-0.5">
+                                {config.header.facultyName}
+                              </div>
+                            )}
+                            <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-type-body">
+                              {config.header.motto?.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM'}
+                            </div>
+                            <div className="font-medium italic text-type-helper mt-0.5">
+                              {config.header.motto?.split('\n')[1] || 'Độc lập - Tự do - Hạnh phúc'}
+                            </div>
+                            <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center">
                           <div className="font-semibold text-type-body">
                             {config.header.institutionName || 'HỆ THỐNG QUẢN LÝ KHẢO THÍ'}
                           </div>
@@ -1071,16 +1148,7 @@ export default function DocumentTemplatesPage() {
                           )}
                           <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
                         </div>
-                        <div>
-                          <div className="font-semibold text-type-body">
-                            {config.header.motto?.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM'}
-                          </div>
-                          <div className="font-medium italic text-type-helper mt-0.5">
-                            {config.header.motto?.split('\n')[1] || 'Độc lập - Tự do - Hạnh phúc'}
-                          </div>
-                          <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
-                        </div>
-                      </div>
+                      )}
 
                       {/* Exam Title */}
                       <div className="text-center pt-2">
@@ -1178,9 +1246,32 @@ export default function DocumentTemplatesPage() {
                   ) : (
                     /* TABULAR REPORT FORMAT (SCHEDULES, ROOMS, GRADES, DYNAMIC FORMULAS) */
                     <div className="space-y-3 text-type-body leading-relaxed">
-                      {/* Header 2 Columns */}
-                      <div className="grid grid-cols-2 gap-4 text-center">
-                        <div>
+                      {/* Header 2 Columns or 1 Column */}
+                      {Boolean(config.header.motto?.trim()) ? (
+                        <div className="grid grid-cols-2 gap-4 text-center">
+                          <div>
+                            <div className="font-semibold text-type-body">
+                              {config.header.institutionName || 'HỆ THỐNG QUẢN LÝ KHẢO THÍ'}
+                            </div>
+                            {config.header.facultyName && (
+                              <div className="font-medium text-type-helper mt-0.5">
+                                {config.header.facultyName}
+                              </div>
+                            )}
+                            <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-type-body">
+                              {config.header.motto?.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM'}
+                            </div>
+                            <div className="font-medium italic text-type-helper mt-0.5">
+                              {config.header.motto?.split('\n')[1] || 'Độc lập - Tự do - Hạnh phúc'}
+                            </div>
+                            <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center">
                           <div className="font-semibold text-type-body">
                             {config.header.institutionName || 'HỆ THỐNG QUẢN LÝ KHẢO THÍ'}
                           </div>
@@ -1191,16 +1282,7 @@ export default function DocumentTemplatesPage() {
                           )}
                           <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
                         </div>
-                        <div>
-                          <div className="font-semibold text-type-body">
-                            {config.header.motto?.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM'}
-                          </div>
-                          <div className="font-medium italic text-type-helper mt-0.5">
-                            {config.header.motto?.split('\n')[1] || 'Độc lập - Tự do - Hạnh phúc'}
-                          </div>
-                          <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
-                        </div>
-                      </div>
+                      )}
 
                       {/* Title */}
                       <div className="text-center pt-2">
