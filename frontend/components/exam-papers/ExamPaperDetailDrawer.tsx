@@ -203,30 +203,40 @@ export function ExamPaperDetailDrawer({
       <DetailDrawer
         isOpen={isOpen && Boolean(paper)}
         onClose={onClose}
-        showAvatar={false}
+        showAvatar={true}
+        avatarIcon={<FileText className="h-5 w-5 text-white" />}
         title={
-          <div className="flex items-center gap-2.5 flex-wrap min-w-0">
-            <span className="text-type-card font-semibold text-slate-950 dark:text-white">
-              {paper ? (getPaperCodeRange(paper).rangeText || paper.paperCode || `Đề thi #${paper.id}`) : ''}
+          <div className="flex items-center gap-2 flex-wrap min-w-0">
+            <span className="text-type-card font-semibold text-slate-950 dark:text-white tracking-tight">
+              {subjectName || 'Đề thi kết thúc học phần'}
             </span>
-            {paper && <StatusBadge status={paper.status} />}
-            {subjectName && (
-              <>
-                <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
-                <span className="text-type-body-sm font-medium text-slate-700 dark:text-slate-300 truncate">
-                  {subjectName}
-                </span>
-              </>
-            )}
-            {periodName && (
-              <>
-                <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
-                <span className="text-type-body-sm font-medium text-slate-500 dark:text-slate-400 truncate">
-                  {periodName}
-                </span>
-              </>
+            {paper && (
+              <span className="text-type-body font-normal text-slate-500 dark:text-slate-400 tabular-nums">
+                ({getPaperCodeRange(paper).rangeText || paper.paperCode || paper.id})
+              </span>
             )}
           </div>
+        }
+        badge={paper ? <StatusBadge status={paper.status} variant="pill" /> : undefined}
+        subtitle={
+          periodName ? (
+            <div className="flex items-center gap-2 text-type-helper text-slate-600 dark:text-slate-400 font-medium">
+              <CalendarDays className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+              <span className="text-slate-800 dark:text-slate-200">{periodName}</span>
+              {paper?.totalQuestions ? (
+                <>
+                  <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
+                  <span>{paper.totalQuestions} câu hỏi</span>
+                </>
+              ) : null}
+              {paper?.durationMinutes ? (
+                <>
+                  <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
+                  <span>{paper.durationMinutes} phút</span>
+                </>
+              ) : null}
+            </div>
+          ) : undefined
         }
         maxWidth="3xl"
         headerExtra={
