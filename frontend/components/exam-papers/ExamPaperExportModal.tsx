@@ -119,12 +119,14 @@ export function ExamPaperExportModal({
           content: q.content,
           score: q.score,
           type: q.type,
+          media: (q as any).media,
           fillBlankAnswers: q.fillBlankAnswers,
           correctAnswer: q.correctAnswer,
           options: q.options.map((opt, oIdx) => ({
             key: opt.label || optionLetters[oIdx] || String(oIdx + 1),
             text: opt.content,
             isCorrect: opt.isCorrect,
+            media: (opt as any).media,
           })),
           answerExplanation: q.explanation,
         })),
@@ -210,12 +212,12 @@ export function ExamPaperExportModal({
         {/* Tuỳ chọn rọc phách cho đề Tự luận */}
         {isEssay && (
           <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
-            <label className="flex items-center gap-2 cursor-pointer select-none">
+            <label className="flex items-center gap-2.5 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={duplexCutLine}
                 onChange={(e) => setDuplexCutLine(e.target.checked)}
-                className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                className="h-4.5 w-4.5 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-0 cursor-pointer accent-blue-600 shrink-0"
               />
               <span className="text-type-body font-medium text-slate-800 dark:text-slate-200">
                 Đầu phách rọc phách bảo mật &amp; In 2 mặt (Khóa vùng phách)
@@ -226,12 +228,12 @@ export function ExamPaperExportModal({
 
         {/* Checkbox kèm bảng ma trận đáp án */}
         <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
-          <label className="flex items-center gap-2 cursor-pointer select-none">
+          <label className="flex items-center gap-2.5 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={includeAnswerKey}
               onChange={(e) => setIncludeAnswerKey(e.target.checked)}
-              className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+              className="h-4.5 w-4.5 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-0 cursor-pointer accent-blue-600 shrink-0"
             />
             <span className="text-type-body font-medium text-slate-800 dark:text-slate-200">
               Kèm bảng ma trận đáp án ở cuối file

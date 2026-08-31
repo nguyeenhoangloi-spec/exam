@@ -72,7 +72,7 @@ export function ExamPaperTable({
                 type="checkbox"
                 checked={allSelected}
                 onChange={(e) => onSelectAll(e.target.checked)}
-                className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600"
               />
             </th>
             {visibleColumns.paperCode !== false && <th scope="col" className="p-3.5 whitespace-nowrap">Mã đề thi</th>}
@@ -106,7 +106,7 @@ export function ExamPaperTable({
                     type="checkbox"
                     checked={isChecked}
                     onChange={(e) => onSelect(p.id, e.target.checked)}
-                    className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600"
                   />
                 </td>
 

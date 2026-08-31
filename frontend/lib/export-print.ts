@@ -28,10 +28,11 @@ export interface ExamQuestionPrintItem {
   content: string;
   score?: number;
   type?: 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'ESSAY' | 'TRUE_FALSE' | 'FILL_BLANK' | string;
-  options?: Array<{ key?: string; text: string; isCorrect?: boolean }>;
+  options?: Array<{ key?: string; text: string; isCorrect?: boolean; media?: any[] }>;
   fillBlankAnswers?: Array<{ blankIndex?: number; answer?: string; score?: number }>;
   correctAnswer?: string;
   answerExplanation?: string;
+  media?: any[];
 }
 
 export interface PrintExamPaperOptions {
@@ -245,10 +246,12 @@ export function printBulkExamPapers(papersList: PrintExamPaperOptions[]): boolea
       content: q.content,
       score: q.score,
       type: q.type,
+      media: q.media,
       options: q.options?.map((opt) => ({
         key: opt.key,
         text: opt.text,
         isCorrect: opt.isCorrect,
+        media: opt.media,
       })),
       fillBlankAnswers: q.fillBlankAnswers,
       correctAnswer: q.correctAnswer,
@@ -256,7 +259,26 @@ export function printBulkExamPapers(papersList: PrintExamPaperOptions[]): boolea
     })),
   }));
 
-  const fullHtml = generateUnifiedExamPaperHtml(mappedPapers, showAnswers);
+  const firstPaper = papersList[0];
+  const effectiveOptions: Partial<ExamPaperExportModel> = {
+    examType: firstPaper?.examType,
+    essayHeaderMode: firstPaper?.essayHeaderMode,
+    duplexPrinting: firstPaper?.duplexPrinting,
+    institutionName: firstPaper?.institutionName,
+    facultyName: firstPaper?.facultyName,
+    motto: firstPaper?.motto,
+    subtitle: firstPaper?.subtitle,
+    logoUrl: firstPaper?.logoUrl,
+    showLogo: firstPaper?.showLogo,
+    instructionText: firstPaper?.instructionText,
+    showScoreBox: firstPaper?.showScoreBox,
+    showInstructions: firstPaper?.showInstructions,
+    footerNotes: firstPaper?.footerNotes,
+    pageSize: firstPaper?.pageSize,
+    signers: firstPaper?.signers,
+  };
+
+  const fullHtml = generateUnifiedExamPaperHtml(mappedPapers, showAnswers, effectiveOptions);
   const printReadyHtml = fullHtml.replace(
     '</body>',
     '<script>window.onload=()=>setTimeout(()=>window.print(),300)</script></body>'
