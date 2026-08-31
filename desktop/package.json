@@ -51,32 +51,28 @@
       }
     ],
     "win": {
+      "icon": "assets/icon.ico",
       "target": [
-        {
-          "target": "nsis",
-          "arch": ["x64"]
-        },
-        {
-          "target": "portable",
-          "arch": ["x64"]
-        }
-      ],
-      "artifactName": "ExamManagement-Setup-${version}.${ext}"
+        "nsis",
+        "zip"
+      ]
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Exam Management System"
+      "shortcutName": "Exam Management System",
+      "artifactName": "ExamManagement-Setup-${version}.${ext}"
     },
     "linux": {
+      "icon": "assets/icon.png",
       "target": [
-        "AppImage",
-        "deb"
+        "tar.gz",
+        "dir"
       ],
       "category": "Education",
-      "artifactName": "ExamManagement-${version}.${ext}"
+      "artifactName": "ExamManagement-${version}-linux.${ext}"
     }
   },
   "dependencies": {

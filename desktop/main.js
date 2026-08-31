@@ -102,16 +102,19 @@ function stopServices() {
   }
 }
 
+const iconPath = path.join(__dirname, 'assets', 'icon.png');
+
 function createSplashWindow() {
   splashWindow = new BrowserWindow({
-    width: 440,
-    height: 320,
+    width: 460,
+    height: 340,
     frame: false,
-    transparent: false,
+    transparent: true,
     alwaysOnTop: true,
     center: true,
     resizable: false,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#00000000',
+    icon: iconPath,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true
@@ -128,8 +131,9 @@ async function createMainWindow() {
     minWidth: 1024,
     minHeight: 680,
     show: false,
-    title: 'Hệ Thống Quản Lý Khảo Thí (Exam Management System)',
-    backgroundColor: '#ffffff',
+    title: 'Hệ Thống Quản Lý Khảo Thí - Exam Management System',
+    backgroundColor: '#f8fafc',
+    icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -167,6 +171,7 @@ async function createMainWindow() {
             const { dialog } = require('electron');
             dialog.showMessageBox(mainWindow, {
               type: 'info',
+              icon: iconPath,
               title: 'Exam Management System',
               message: 'Hệ Thống Quản Lý Khảo Thí Sinh Viên v1.0.0',
               detail: 'Ứng dụng Native Desktop phục vụ tổ chức thi và quản lý khảo thí toàn diện.\nPhát triển trên nền tảng NestJS, Next.js và Electron.'
