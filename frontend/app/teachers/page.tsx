@@ -27,6 +27,7 @@ import { TeacherTable } from '../../components/teachers/TeacherTable';
 import { TeacherPaginationBar } from '../../components/teachers/TeacherPaginationBar';
 import { TeacherBulkAction } from '../../components/teachers/TeacherBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
+import { DetailDrawer } from '../../components/ui/DetailDrawer';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { PageSkeleton } from '../../components/ui/Skeleton';
 
@@ -96,6 +97,8 @@ export default function TeachersPage() {
       setDrawerVisible(false);
       const timer = setTimeout(() => {
         setDrawerOpenTeacher(null);
+        setDrawerTab('info');
+        setDrawerAssignments([]);
       }, 300);
       return () => clearTimeout(timer);
     }
@@ -804,231 +807,170 @@ export default function TeachersPage() {
       />
 
       {/* Custom Profile Drawer with 3 Tabs — Chuẩn Design System & Hoạt ảnh 60 FPS */}
-      {drawerOpenTeacher && typeof document !== 'undefined' && createPortal(
-        <div role="dialog" aria-modal="true" aria-label="Thông tin giảng viên" className="fixed inset-0 z-[100] overflow-hidden">
-          {/* Backdrop mờ nền */}
-          <div
-            className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${drawerVisible ? 'opacity-100' : 'opacity-0'
-              }`}
-            onClick={() => setDrawerTeacher(null)}
-          />
-
-          <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
-            <div
-              className={`w-screen max-w-md bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/60 dark:border-slate-800 pointer-events-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${drawerVisible ? 'translate-x-0' : 'translate-x-full'
-                }`}
+      <DetailDrawer
+        isOpen={Boolean(drawerTeacher)}
+        onClose={() => setDrawerTeacher(null)}
+        title={drawerTeacher?.fullName || ''}
+        subtitle={
+          drawerTeacher?.department?.name
+            ? `Khoa ${drawerTeacher.department.name.replace(/^Khoa\s+/i, '')}`
+            : 'Chưa phân khoa'
+        }
+        badge={
+          drawerTeacher?.teacherCode ? (
+            <IdentifierBadge tone="neutral" title="Mã cán bộ">
+              {drawerTeacher.teacherCode}
+            </IdentifierBadge>
+          ) : undefined
+        }
+        avatarText={drawerTeacher?.fullName || 'GV'}
+        maxWidth="md"
+        tabs={[
+          { id: 'info', label: 'Hồ sơ', icon: UserIcon },
+          { id: 'assignments', label: 'Lịch coi thi', icon: GraduationCap },
+          { id: 'department', label: 'Khoa', icon: Building2 },
+        ]}
+        activeTab={drawerTab}
+        onTabChange={(tabId) => setDrawerTab(tabId as any)}
+        footer={
+          <div className="flex items-center justify-end">
+            <Button
+              type="button"
+              variant="secondary"
+              size="md"
+              onClick={() => setDrawerTeacher(null)}
             >
-              {/* Header — Tương phản cao, Phân cấp chuẩn mực */}
-              <div className="relative bg-slate-50/90 dark:bg-slate-850/90 border-b border-slate-200/60 dark:border-slate-800 p-6 shrink-0">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3.5 min-w-0 flex-1">
-                    {/* Avatar thương hiệu */}
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold text-type-body shadow-sm shadow-blue-500/25 border border-blue-400/30">
-                      {getSmartMonogram(drawerOpenTeacher.fullName, 'GV')}
-                    </div>
-
-                    <div className="min-w-0 flex-1 space-y-1">
-                      {/* Dòng 1: Họ tên + Mã cán bộ (Ngang hàng) */}
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h2 className="text-type-card font-semibold leading-snug text-slate-900 dark:text-white break-words" title={drawerOpenTeacher.fullName}>
-                          {drawerOpenTeacher.fullName}
-                        </h2>
-                        <IdentifierBadge tone="neutral" title="Mã cán bộ">
-                          {drawerOpenTeacher.teacherCode}
-                        </IdentifierBadge>
-                      </div>
-
-                      {/* Dòng 2: Khoa trực thuộc với icon Building2 nhẹ nhàng, không lặp học vị, không rớt chữ */}
-                      <div className="flex items-center gap-1.5 text-type-helper font-medium text-slate-600 dark:text-slate-400 min-w-0">
-                        <Building2 className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
-                        <span className="truncate" title={drawerOpenTeacher.department?.name || 'Chưa phân khoa'}>
-                          {drawerOpenTeacher.department?.name ? `Khoa ${drawerOpenTeacher.department.name.replace(/^Khoa\s+/i, '')}` : 'Chưa phân khoa'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Nút Đóng */}
-                  <button
-                    type="button"
-                    onClick={() => setDrawerTeacher(null)}
-                    className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition cursor-pointer"
-                    title="Đóng chi tiết"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
+              Đóng
+            </Button>
+          </div>
+        }
+      >
+        {/* --- TAB INFO --- */}
+        {drawerTab === 'info' && drawerTeacher && (
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+                <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
+                  Thông tin giảng viên
+                </h3>
               </div>
 
-              <div className="flex border-b border-slate-200/60 dark:border-slate-800 px-6 shrink-0 bg-white dark:bg-slate-900 overflow-x-auto">
+              <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
                 {[
-                  { id: 'info', label: 'Hồ sơ', icon: UserIcon },
-                  { id: 'assignments', label: 'Lịch coi thi', icon: GraduationCap },
-                  { id: 'department', label: 'Khoa', icon: Building2 },
-                ].map((tab) => {
-                  const Icon = tab.icon;
-                  const isActive = drawerTab === tab.id;
+                  { label: 'Mã cán bộ', value: <IdentifierBadge tone="neutral">{drawerTeacher.teacherCode}</IdentifierBadge>, icon: UserIcon },
+                  { label: 'Học vị / Học hàm', value: drawerTeacher.degree || 'Thạc sĩ / Tiến sĩ', icon: GraduationCap },
+                  { label: 'Khoa trực thuộc', value: drawerTeacher.department?.name || '---', icon: Building2 },
+                  { label: 'Email công vụ', value: drawerTeacher.email, icon: Mail },
+                  { label: 'Số điện thoại', value: drawerTeacher.phone || '---', icon: Phone },
+                ].map((r, idx) => {
+                  const Icon = r.icon;
                   return (
-                    <button
-                      key={tab.id}
-                      onClick={() => setDrawerTab(tab.id as any)}
-                      className={`whitespace-nowrap border-b-2 px-4 py-3 text-type-body transition cursor-pointer flex items-center gap-2 ${isActive
-                          ? 'border-blue-600 text-blue-600 font-semibold'
-                          : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-semibold'
-                        }`}
+                    <div
+                      key={idx}
+                      className="py-3 px-3 -mx-3 rounded-xl flex items-center justify-between gap-4 transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40 group"
                     >
-                      <Icon className="h-4 w-4" />
-                      {tab.label}
-                    </button>
+                      <span className="flex items-center gap-3 text-slate-700 dark:text-slate-200 text-type-body font-semibold shrink-0">
+                        {Icon && (
+                          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100/70 dark:border-blue-900/50 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            <Icon className="h-4 w-4" />
+                          </span>
+                        )}
+                        <span>{r.label}</span>
+                      </span>
+
+                      <span className="font-semibold text-slate-900 dark:text-white text-right text-type-body leading-snug break-words max-w-[62%]">
+                        {r.value}
+                      </span>
+                    </div>
                   );
                 })}
               </div>
-
-              {/* Tab Content — Black-forward Palette, Không khung lồng */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white dark:bg-slate-900">
-                {/* --- TAB INFO --- */}
-                {drawerTab === 'info' && (
-                  <div className="space-y-6">
-                    <div>
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                        <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
-                          Thông tin giảng viên
-                        </h3>
-                      </div>
-
-                      <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
-                        {[
-                          { label: 'Mã cán bộ', value: <IdentifierBadge tone="neutral">{drawerOpenTeacher.teacherCode}</IdentifierBadge>, icon: UserIcon },
-                          { label: 'Học vị / Học hàm', value: drawerOpenTeacher.degree || 'Thạc sĩ / Tiến sĩ', icon: GraduationCap },
-                          { label: 'Khoa trực thuộc', value: drawerOpenTeacher.department?.name || '---', icon: Building2 },
-                          { label: 'Email công vụ', value: drawerOpenTeacher.email, icon: Mail },
-                          { label: 'Số điện thoại', value: drawerOpenTeacher.phone || '---', icon: Phone },
-                        ].map((r, idx) => {
-                          const Icon = r.icon;
-                          return (
-                            <div
-                              key={idx}
-                              className="py-3 px-3 -mx-3 rounded-xl flex items-center justify-between gap-4 transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40 group"
-                            >
-                              <span className="flex items-center gap-3 text-slate-700 dark:text-slate-200 text-type-body font-semibold shrink-0">
-                                {Icon && (
-                                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100/70 dark:border-blue-900/50 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                    <Icon className="h-4 w-4" />
-                                  </span>
-                                )}
-                                <span>{r.label}</span>
-                              </span>
-
-                              <span className="font-semibold text-slate-900 dark:text-white text-right text-type-body leading-snug break-words max-w-[62%]">
-                                {r.value}
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* --- TAB ASSIGNMENTS --- */}
-                {drawerTab === 'assignments' && (
-                  <div className="space-y-4">
-                    {loadingAssignments ? (
-                      <div className="flex justify-center py-10">
-                        <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-                      </div>
-                    ) : drawerAssignments.length === 0 ? (
-                      <div className="text-center py-12">
-                        <Info className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                        <p className="text-slate-500 font-semibold text-type-body">Không có lịch phân công coi thi.</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {drawerAssignments.map((assignment: any, index: number) => {
-                          const sched = assignment.examScheduleRoom?.examSchedule;
-                          const room = assignment.examScheduleRoom?.room;
-                          const subject = sched?.subject;
-                          return (
-                            <div key={index} className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:border-blue-300 transition-colors space-y-2.5">
-                              <div className="flex justify-between items-start gap-3">
-                                <div>
-                                  <h4 className="font-semibold text-slate-900 dark:text-white text-type-body">
-                                    {subject?.subjectName || 'Môn thi'}
-                                  </h4>
-                                  {subject?.subjectCode && (
-                                    <div className="mt-1">
-                                      <IdentifierBadge tone="neutral">{subject.subjectCode}</IdentifierBadge>
-                                    </div>
-                                  )}
-                                </div>
-                                <span className={`px-2.5 py-1 ui-pill rounded-full text-type-helper font-medium shrink-0 ${assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1'
-                                    ? 'bg-blue-50 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60'
-                                    : 'bg-slate-100 text-slate-700 dark:text-slate-300'
-                                  }`}>
-                                  {assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ'}
-                                </span>
-                              </div>
-                              <div className="space-y-1.5 text-type-helper text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2 font-medium">
-                                <div className="flex justify-between">
-                                  <span className="text-slate-500">Phòng thi:</span>
-                                  <span className="font-semibold text-slate-900 dark:text-white">{room?.roomName || room?.roomCode || '---'} {room?.building ? `(${room.building})` : ''}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-slate-500">Ngày thi:</span>
-                                  <span className="font-semibold text-slate-900 dark:text-white">
-                                    {sched?.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'}
-                                  </span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-slate-500">Thời gian:</span>
-                                  <span className="font-semibold text-slate-900 dark:text-white">
-                                    {sched?.startTime && sched?.endTime ? `${sched.startTime} - ${sched.endTime}` : '---'}
-                                  </span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                  <span className="text-slate-500">Trạng thái:</span>
-                                  <StatusBadge status={assignment.status || 'CONFIRMED'} customLabel={assignment.status === 'CONFIRMED' ? 'Đã xác nhận' : assignment.status === 'CHANGE_REQUESTED' ? 'Đề nghị thay đổi' : assignment.status || 'Đã phân công'} />
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* --- TAB DEPARTMENT --- */}
-                {drawerTab === 'department' && (
-                  <div className="rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 text-center space-y-2">
-                    <div className="w-14 h-14 mx-auto bg-blue-50 dark:bg-blue-950/60 rounded-2xl border border-blue-100 dark:border-blue-900/60 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-2">
-                      <Building2 className="w-7 h-7" />
-                    </div>
-                    <h3 className="text-type-card font-semibold text-slate-900 dark:text-white">{drawerOpenTeacher.department?.name || 'Chưa phân khoa'}</h3>
-                    <div className="pt-1">
-                      <IdentifierBadge tone="neutral">{drawerOpenTeacher.department?.code || 'N/A'}</IdentifierBadge>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Footer — Nút 40px chuẩn Design token */}
-              <div className="border-t border-slate-200/60 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-4 flex items-center justify-end shrink-0">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="md"
-                  onClick={() => setDrawerTeacher(null)}
-                >
-                  Đóng
-                </Button>
-              </div>
             </div>
           </div>
-        </div>,
-        document.body
-      )}
+        )}
+
+        {/* --- TAB ASSIGNMENTS --- */}
+        {drawerTab === 'assignments' && (
+          <div className="space-y-4">
+            {loadingAssignments ? (
+              <div className="flex justify-center py-10">
+                <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+              </div>
+            ) : drawerAssignments.length === 0 ? (
+              <div className="text-center py-12">
+                <Info className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                <p className="text-slate-500 font-semibold text-type-body">Không có lịch phân công coi thi.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {drawerAssignments.map((assignment: any, index: number) => {
+                  const sched = assignment.examScheduleRoom?.examSchedule;
+                  const room = assignment.examScheduleRoom?.room;
+                  const subject = sched?.subject;
+                  return (
+                    <div key={index} className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs hover:border-blue-300 transition-colors space-y-2.5">
+                      <div className="flex justify-between items-start gap-3">
+                        <div>
+                          <h4 className="font-semibold text-slate-900 dark:text-white text-type-body">
+                            {subject?.subjectName || 'Môn thi'}
+                          </h4>
+                          {subject?.subjectCode && (
+                            <div className="mt-1">
+                              <IdentifierBadge tone="neutral">{subject.subjectCode}</IdentifierBadge>
+                            </div>
+                          )}
+                        </div>
+                        <span className={`px-2.5 py-1 ui-pill rounded-full text-type-helper font-medium shrink-0 ${assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1'
+                            ? 'bg-blue-50 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60'
+                            : 'bg-slate-100 text-slate-700 dark:text-slate-300'
+                          }`}>
+                          {assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ'}
+                        </span>
+                      </div>
+                      <div className="space-y-1.5 text-type-helper text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2 font-medium">
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">Phòng thi:</span>
+                          <span className="font-semibold text-slate-900 dark:text-white">{room?.roomName || room?.roomCode || '---'} {room?.building ? `(${room.building})` : ''}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">Ngày thi:</span>
+                          <span className="font-semibold text-slate-900 dark:text-white">
+                            {sched?.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">Thời gian:</span>
+                          <span className="font-semibold text-slate-900 dark:text-white">
+                            {sched?.startTime && sched?.endTime ? `${sched.startTime} - ${sched.endTime}` : '---'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-slate-500">Trạng thái:</span>
+                          <StatusBadge status={assignment.status || 'CONFIRMED'} customLabel={assignment.status === 'CONFIRMED' ? 'Đã xác nhận' : assignment.status === 'CHANGE_REQUESTED' ? 'Đề nghị thay đổi' : assignment.status || 'Đã phân công'} />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* --- TAB DEPARTMENT --- */}
+        {drawerTab === 'department' && drawerTeacher && (
+          <div className="rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 text-center space-y-2">
+            <div className="w-14 h-14 mx-auto bg-blue-50 dark:bg-blue-950/60 rounded-2xl border border-blue-100 dark:border-blue-900/60 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-2">
+              <Building2 className="w-7 h-7" />
+            </div>
+            <h3 className="text-type-card font-semibold text-slate-900 dark:text-white">{drawerTeacher.department?.name || 'Chưa phân khoa'}</h3>
+            <div className="pt-1">
+              <IdentifierBadge tone="neutral">{drawerTeacher.department?.code || 'N/A'}</IdentifierBadge>
+            </div>
+          </div>
+        )}
+      </DetailDrawer>
 
       {/* Confirm Modal */}
       <ConfirmModal

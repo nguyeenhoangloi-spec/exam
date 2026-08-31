@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import api, { getCachedData } from '../../../lib/api';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Button } from '../../../components/ui/Button';
+import { DetailDrawer } from '../../../components/ui/DetailDrawer';
 import { TabBar, TabItem } from '../../../components/ui/TabBar';
 import { DataActionsDropdown } from '../../../components/ui/DataActionsDropdown';
 import { PaginationBar } from '../../../components/ui/PaginationBar';
@@ -39,6 +40,7 @@ import {
     ArrowUpRight,
     Lock,
     ShieldCheck,
+    Shield,
     Info,
     Calendar,
     User,
@@ -175,7 +177,7 @@ function ActivityLogsContent() {
             return () => cancelAnimationFrame(raf);
         } else {
             setDrawerVisible(false);
-            const timer = setTimeout(() => setDrawerOpenLog(null), 250);
+            const timer = setTimeout(() => setDrawerOpenLog(null), 300);
             return () => clearTimeout(timer);
         }
     }, [selectedLog]);
@@ -978,172 +980,143 @@ function ActivityLogsContent() {
             )}
 
             {/* ── 4. Metadata Inspector Drawer (100% Tiếng Việt & Diễn giải ngữ cảnh) ── */}
-            {drawerOpenLog && typeof document !== 'undefined' && createPortal(
-                <div role="dialog" aria-modal="true" aria-label="Chi tiết nhật ký" className="fixed inset-0 z-[100] overflow-hidden">
-                    <div
-                        className={`fixed inset-0 bg-slate-950/40 backdrop-blur-[2px] transition-opacity duration-200 ${drawerVisible ? 'opacity-100' : 'opacity-0'
-                            }`}
-                        onClick={() => setSelectedLog(null)}
-                    />
+            <DetailDrawer
+                isOpen={Boolean(selectedLog)}
+                onClose={() => setSelectedLog(null)}
+                title="Chi tiết nhật ký thao tác"
+                subtitle={
+                    selectedLog
+                        ? formatDateTime2Tier(selectedLog.createdAt).fullTooltip
+                        : undefined
+                }
+                avatarIcon={<FileText className="h-5 w-5 text-white" />}
+                maxWidth="max-w-[500px]"
+                footer={
+                    <div className="flex justify-end">
+                        <Button variant="secondary" size="sm" onClick={() => setSelectedLog(null)}>
+                            Đóng
+                        </Button>
+                    </div>
+                }
+            >
+                {selectedLog && (
+                    <div className="space-y-5">
+                        {/* Khối 1: Tóm tắt ngữ cảnh thao tác */}
+                        <div className="p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/50 space-y-2.5">
+                            <div className="flex items-center gap-2 text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
+                                <Info className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
+                                <span>Diễn giải thao tác</span>
+                            </div>
+                            <p className="text-type-body-sm text-slate-800 dark:text-slate-200 leading-relaxed">
+                                {formatDetailedAuditDescription(selectedLog)}
+                            </p>
+                        </div>
 
-                    <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
-                        <div
-                            className={`w-screen max-w-[500px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col pointer-events-auto transition-transform duration-250 ease-out will-change-transform ${drawerVisible ? 'translate-x-0' : 'translate-x-full'
-                                }`}
-                        >
-                            {/* Drawer Header (18px) */}
-                            <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800">
-                                <div>
-                                    <h2 className="text-type-title-sm font-semibold text-slate-900 dark:text-slate-100">
-                                        Chi tiết nhật ký thao tác
-                                    </h2>
-                                    <p className="text-type-meta text-slate-500 dark:text-slate-400 tabular-nums mt-0.5">
-                                        {formatDateTime2Tier(drawerOpenLog.createdAt).fullTooltip}
-                                    </p>
+                        {/* Khối 2: Thông tin định danh & Người thực hiện */}
+                        <div>
+                            <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                                Thông tin định danh
+                            </h3>
+                            <div className="divide-y divide-slate-100 dark:divide-slate-800 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
+                                <div className="py-2.5 px-3.5 flex items-center justify-between gap-3 text-type-body-sm">
+                                    <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                                        <FileText className="h-3.5 w-3.5 text-slate-400" />
+                                        <span>Hành động:</span>
+                                    </span>
+                                    <span className="font-semibold text-slate-900 dark:text-slate-100">
+                                        {getActionLabel(selectedLog.action)}
+                                    </span>
                                 </div>
+                                <div className="py-2.5 px-3.5 flex items-center justify-between gap-3 text-type-body-sm">
+                                    <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                                        <Shield className="h-3.5 w-3.5 text-slate-400" />
+                                        <span>Đối tượng:</span>
+                                    </span>
+                                    <span className="font-semibold text-slate-900 dark:text-slate-100">
+                                        {getEntityLabel(selectedLog.entityType)} {selectedLog.entityId ? `(#${selectedLog.entityId})` : ''}
+                                    </span>
+                                </div>
+                                <div className="py-2.5 px-3.5 flex items-center justify-between gap-3 text-type-body-sm">
+                                    <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                                        <User className="h-3.5 w-3.5 text-slate-400" />
+                                        <span>Người thực hiện:</span>
+                                    </span>
+                                    <div className="text-right">
+                                        <p className="font-semibold text-slate-900 dark:text-slate-100">{selectedLog.actor?.username || 'Hệ thống'}</p>
+                                        <p className="text-type-meta text-slate-500 dark:text-slate-400 font-normal">
+                                            {selectedLog.actor?.role ? (USER_ROLE_LABELS[selectedLog.actor.role] || selectedLog.actor.role) : 'N/A'}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="py-2.5 px-3.5 flex items-center justify-between gap-3 text-type-body-sm">
+                                    <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                                        <Globe className="h-3.5 w-3.5 text-slate-400" />
+                                        <span>Địa chỉ IP:</span>
+                                    </span>
+                                    <span className="text-type-meta font-semibold text-slate-800 dark:text-slate-200 tabular-nums">
+                                        {(selectedLog as any).ipAddress || '127.0.0.1 (Nội bộ)'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 
+                        {/* Khối 3: Bảng biến động dữ liệu chi tiết (Human-friendly Field Diff) */}
+                        {selectedLog.metadata && typeof selectedLog.metadata === 'object' && (
+                            <div>
+                                <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                                    Chi tiết tham số thay đổi
+                                </h3>
+                                <div className="divide-y divide-slate-100 dark:divide-slate-800 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden text-type-body-sm">
+                                    {Object.entries(selectedLog.metadata).map(([key, val]) => (
+                                        <div key={key} className="py-2.5 px-3.5 flex items-start justify-between gap-3">
+                                            <span className="text-slate-500 dark:text-slate-400 font-medium shrink-0 pt-0.5">
+                                                {translateMetadataKey(key)}:
+                                            </span>
+                                            <span className="font-semibold text-slate-900 dark:text-slate-100 text-right break-words max-w-[65%]">
+                                                {typeof val === 'object' && val !== null ? (
+                                                    <pre className="text-type-meta bg-slate-50 dark:bg-slate-800 p-2 rounded-lg text-left overflow-x-auto">
+                                                        {JSON.stringify(val, null, 2)}
+                                                    </pre>
+                                                ) : typeof val === 'boolean' ? (
+                                                    val ? 'Có / Bật' : 'Không / Tắt'
+                                                ) : (
+                                                    String(val ?? '---')
+                                                )}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Khối 4: Raw JSON Metadata Inspector */}
+                        <div>
+                            <div className="flex items-center justify-between mb-2">
+                                <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
+                                    Mã kỹ thuật (Raw JSON)
+                                </h3>
                                 <button
                                     type="button"
-                                    onClick={() => setSelectedLog(null)}
-                                    className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
-                                    aria-label="Đóng"
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(JSON.stringify(selectedLog.metadata || {}, null, 2)).then(() => {
+                                            setCopied(true);
+                                            setTimeout(() => setCopied(false), 2000);
+                                        });
+                                    }}
+                                    className="inline-flex items-center gap-1 text-type-meta font-medium text-slate-500 hover:text-blue-600 dark:text-slate-400 cursor-pointer"
                                 >
-                                    <X className="h-5 w-5" />
+                                    {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                                    <span>{copied ? 'Đã sao chép' : 'Sao chép JSON'}</span>
                                 </button>
                             </div>
 
-                            {/* Drawer Body */}
-                            <div className="flex-1 space-y-5 overflow-y-auto p-5 custom-scrollbar">
-                                {/* Khối 1: Tóm tắt ngữ cảnh thao tác (Human-readable Context Card) */}
-                                <div className="p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/50 space-y-2.5">
-                                    <div className="flex items-center gap-2 text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
-                                        <Info className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
-                                        <span>Diễn giải thao tác</span>
-                                    </div>
-                                    <p className="text-type-body-sm text-slate-800 dark:text-slate-200 leading-relaxed">
-                                        {formatDetailedAuditDescription(drawerOpenLog)}
-                                    </p>
-                                </div>
-
-                                {/* Khối 2: Thông tin định danh & Người thực hiện */}
-                                <div>
-                                    <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 mb-2">
-                                        Thông tin định danh
-                                    </h3>
-                                    <div className="divide-y divide-slate-100 dark:divide-slate-800 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
-                                        <div className="py-2.5 px-3.5 flex items-center justify-between gap-3 text-type-body-sm">
-                                            <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                                                <FileText className="h-3.5 w-3.5 text-slate-400" />
-                                                <span>Hành động:</span>
-                                            </span>
-                                            <span className="font-semibold text-slate-900 dark:text-slate-100">
-                                                {getActionLabel(drawerOpenLog.action)}
-                                            </span>
-                                        </div>
-                                        <div className="py-2.5 px-3.5 flex items-center justify-between gap-3 text-type-body-sm">
-                                            <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                                                <User className="h-3.5 w-3.5 text-slate-400" />
-                                                <span>Người thực hiện:</span>
-                                            </span>
-                                            <span className="font-medium text-slate-900 dark:text-slate-100">
-                                                {drawerOpenLog.actor?.username || 'Hệ thống'}
-                                                {drawerOpenLog.actor?.role ? ` (${USER_ROLE_LABELS[drawerOpenLog.actor.role] || drawerOpenLog.actor.role})` : ''}
-                                            </span>
-                                        </div>
-                                        <div className="py-2.5 px-3.5 flex items-center justify-between gap-3 text-type-body-sm">
-                                            <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                                                <Layers className="h-3.5 w-3.5 text-slate-400" />
-                                                <span>Phân hệ / Thực thể:</span>
-                                            </span>
-                                            <span className="font-medium text-blue-600 dark:text-blue-400">
-                                                {getEntityLabel(drawerOpenLog.entityType)}
-                                            </span>
-                                        </div>
-                                        {drawerOpenLog.entityId && (
-                                            <div className="py-2.5 px-3.5 flex items-center justify-between gap-3 text-type-body-sm">
-                                                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                                                    <Globe className="h-3.5 w-3.5 text-slate-400" />
-                                                    <span>Mã ID đối tượng:</span>
-                                                </span>
-                                                <span className="text-type-meta text-slate-900 dark:text-slate-100 break-all tabular-nums font-medium">
-                                                    #{drawerOpenLog.entityId}
-                                                </span>
-                                            </div>
-                                        )}
-                                        <div className="py-2.5 px-3.5 flex items-center justify-between gap-3 text-type-body-sm">
-                                            <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                                                <Calendar className="h-3.5 w-3.5 text-slate-400" />
-                                                <span>Thời gian ghi nhận:</span>
-                                            </span>
-                                            <span className="text-type-meta text-slate-700 dark:text-slate-300 tabular-nums">
-                                                {formatDateTime2Tier(drawerOpenLog.createdAt).absolute}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Khối 3: Bảng thuộc tính Metadata (Đã dịch nghĩa) */}
-                                {drawerOpenLog.metadata && typeof drawerOpenLog.metadata === 'object' && Object.keys(drawerOpenLog.metadata).length > 0 && (
-                                    <div>
-                                        <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 mb-2">
-                                            Thuộc tính chi tiết đính kèm
-                                        </h3>
-                                        <div className="divide-y divide-slate-100 dark:divide-slate-800 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
-                                            {Object.entries(drawerOpenLog.metadata).map(([key, val]) => (
-                                                <div key={key} className="py-2 px-3.5 flex items-start justify-between gap-3 text-type-body-sm">
-                                                    <span className="text-slate-500 dark:text-slate-400 shrink-0 font-normal">
-                                                        {translateMetadataKey(key)}:
-                                                    </span>
-                                                    <span className="text-slate-900 dark:text-slate-100 text-right break-all font-medium">
-                                                        {typeof val === 'object' && val !== null
-                                                            ? JSON.stringify(val)
-                                                            : String(val ?? '—')}
-                                                    </span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Khối 4: Metadata JSON Thô */}
-                                <div>
-                                    <div className="flex items-center justify-between mb-1.5">
-                                        <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
-                                            Dữ liệu JSON gốc
-                                        </h3>
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                const jsonStr = JSON.stringify(drawerOpenLog.metadata || {}, null, 2);
-                                                navigator.clipboard.writeText(jsonStr).then(() => {
-                                                    setCopied(true);
-                                                    setTimeout(() => setCopied(false), 2000);
-                                                });
-                                            }}
-                                            className="inline-flex items-center gap-1 text-type-meta font-medium text-slate-500 hover:text-blue-600 dark:text-slate-400 cursor-pointer"
-                                        >
-                                            {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
-                                            <span>{copied ? 'Đã sao chép' : 'Sao chép JSON'}</span>
-                                        </button>
-                                    </div>
-
-                                    <pre className="overflow-x-auto rounded-xl bg-slate-950 p-3.5 text-type-meta leading-relaxed text-emerald-400 custom-scrollbar border border-slate-800">
-                                        {JSON.stringify(drawerOpenLog.metadata || { ghi_chu: 'Không có dữ liệu metadata' }, null, 2)}
-                                    </pre>
-                                </div>
-                            </div>
-
-                            {/* Drawer Footer */}
-                            <div className="p-4 border-t border-slate-100 dark:border-slate-800 flex justify-end bg-slate-50/50 dark:bg-slate-900">
-                                <Button variant="secondary" size="sm" onClick={() => setSelectedLog(null)}>
-                                    Đóng
-                                </Button>
-                            </div>
+                            <pre className="overflow-x-auto rounded-xl bg-slate-950 p-3.5 text-type-meta leading-relaxed text-emerald-400 custom-scrollbar border border-slate-800">
+                                {JSON.stringify(selectedLog.metadata || { ghi_chu: 'Không có dữ liệu metadata' }, null, 2)}
+                            </pre>
                         </div>
                     </div>
-                </div>,
-                document.body
-            )}
+                )}
+            </DetailDrawer>
 
             {/* Legal Hold Confirmation Modal */}
             {legalHoldModalEvent && (
