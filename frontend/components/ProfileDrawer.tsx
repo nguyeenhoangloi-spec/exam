@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { StatusBadge } from './common/StatusBadge';
 import { Button } from './ui/Button';
@@ -62,12 +63,12 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  if (!shouldRender) return null;
+  if (!shouldRender || typeof document === 'undefined') return null;
 
   const shortAvatar = getSmartMonogram(title, avatarText);
   const isIdentifierSubtitle = typeof subtitle === 'string' && /(^|\s)(mã|id|code|snapshot)/i.test(subtitle);
 
-  return (
+  return createPortal(
     <div role="dialog" aria-modal="true" aria-label="Thông tin chi tiết" className="fixed inset-0 z-[100] overflow-hidden">
       {/* Backdrop mờ nền với hiệu ứng Fade-in / Fade-out */}
       <div
@@ -230,6 +231,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

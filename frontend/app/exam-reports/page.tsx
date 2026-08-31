@@ -2,6 +2,7 @@
 import { FilterSelect } from '../../components/ui/FilterSelect';
 
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
@@ -787,7 +788,7 @@ export default function ExamReportsPage() {
             })()}
 
             {/* Modal popup */}
-            {showSchedulePicker && (
+            {showSchedulePicker && typeof document !== 'undefined' && createPortal(
               <div role="dialog" aria-modal="true" aria-label="Chọn Lịch thi để xem Báo cáo" className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                 <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm animate-modal-backdrop" onClick={() => setShowSchedulePicker(false)} />
                 <div className="relative z-[101] w-full max-w-3xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[calc(100dvh-1.5rem)] animate-modal-dialog will-change-transform sm:max-h-[calc(100dvh-2rem)]">
@@ -810,132 +811,82 @@ export default function ExamReportsPage() {
                     </button>
                   </div>
 
-                  {/* Filter Controls Bar: Clean & Minimalist */}
-                  <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 space-y-3">
-                    {/* Search Input */}
-                    <div className="relative">
+                  {/* Filter Toolbar */}
+                  <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/40 flex flex-wrap gap-2.5 items-center">
+                    <div className="relative flex-1 min-w-[200px]">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                       <input
                         type="text"
-                        placeholder="Tìm kiếm theo Tên môn, Mã môn, Kỳ thi..."
+                        placeholder="Tìm theo môn thi, phòng thi..."
                         value={modalSearch}
                         onChange={(e) => setModalSearch(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2 text-type-body font-normal text-slate-800 dark:text-slate-100 focus:border-blue-500 focus:outline-none transition shadow-2xs"
+                        className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-type-body font-medium text-slate-800 dark:text-slate-100 focus:outline-none placeholder-slate-400"
                       />
-                      {modalSearch && (
-                        <button
-                          type="button"
-                          onClick={() => setModalSearch('')}
-                          className="absolute right-3 top-2 text-type-helper text-slate-400 hover:text-slate-600 cursor-pointer"
-                        >
-                          Xóa
-                        </button>
-                      )}
                     </div>
 
-                    {/* Row 1: Status Tabs */}
-                    <TabBar
-                      tabs={[
-                        { key: 'ALL', label: 'Tất cả', count: modeCounts.all },
-                        { key: 'OFFICIAL', label: 'Chính thức', count: modeCounts.official },
-                        { key: 'MOCK', label: 'Thi thử', count: modeCounts.mock },
-                        ...(modeCounts.retake > 0 ? [{ key: 'RETAKE', label: 'Thi lại', count: modeCounts.retake }] : []),
-                      ]}
-                      active={modalModeFilter}
-                      onChange={(key) => setModalModeFilter(key as any)}
-                    />
+                    <FilterSelect
+                      value={modalModeFilter}
+                      onChange={(e) => setModalModeFilter(e.target.value as any)}
+                      className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-type-body font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
+                    >
+                      <option value="ALL">Dạng thi: Tất cả</option>
+                      <option value="OFFICIAL">Thi chính thức</option>
+                      <option value="MOCK">Thi thử</option>
+                    </FilterSelect>
 
-                    {/* Row 2: Secondary Dropdown Filters */}
-                    <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
-                      <FilterSelect
-                        value={modalFormatFilter}
-                        onChange={(e) => setModalFormatFilter(e.target.value as any)}
-                        className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-type-body font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
+                    <FilterSelect
+                      value={modalSubjectFilter}
+                      onChange={(e) => setModalSubjectFilter(e.target.value)}
+                      className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-type-body font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[200px]"
+                    >
+                      <option value="ALL">Môn học: Tất cả</option>
+                      {availableSubjects.map((sb) => (
+                        <option key={sb.code} value={sb.code}>
+                          [{sb.code}] {sb.name}
+                        </option>
+                      ))}
+                    </FilterSelect>
+
+                    <FilterSelect
+                      value={modalStatusFilter}
+                      onChange={(e) => setModalStatusFilter(e.target.value as any)}
+                      className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-type-body font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
+                    >
+                      <option value="ALL">Trạng thái: Tất cả</option>
+                      <option value="ONGOING">Đang diễn ra</option>
+                      <option value="UPCOMING">Sắp diễn ra</option>
+                      <option value="COMPLETED">Đã kết thúc</option>
+                    </FilterSelect>
+
+                    {(modalSearch || modalModeFilter !== 'ALL' || modalSubjectFilter !== 'ALL' || modalStatusFilter !== 'ALL') && (
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => {
+                          setModalSearch('');
+                          setModalModeFilter('ALL');
+                          setModalSubjectFilter('ALL');
+                          setModalStatusFilter('ALL');
+                        }}
                       >
-                        <option value="ALL">Hình thức: Tất cả</option>
-                        <option value="TRAC_NGHIEM">Hình thức: Trắc nghiệm</option>
-                        <option value="TU_LUAN">Hình thức: Tự luận</option>
-                        <option value="FILL_BLANK">Hình thức: Điền khuyết</option>
-                        <option value="HON_HOP">Hình thức: Hỗn hợp</option>
-                        <option value="THUC_HANH">Hình thức: Thực hành</option>
-                      </FilterSelect>
-
-                      <FilterSelect
-                        value={modalSubjectFilter}
-                        onChange={(e) => setModalSubjectFilter(e.target.value)}
-                        className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-type-body font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[200px]"
-                      >
-                        <option value="ALL">Môn học: Tất cả</option>
-                        {availableSubjects.map((sb) => (
-                          <option key={sb.code} value={sb.code}>
-                            [{sb.code}] {sb.name}
-                          </option>
-                        ))}
-                      </FilterSelect>
-
-                      <FilterSelect
-                        value={modalStatusFilter}
-                        onChange={(e) => setModalStatusFilter(e.target.value as any)}
-                        className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-type-body font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
-                      >
-                        <option value="ALL">Trạng thái: Tất cả</option>
-                        <option value="ONGOING">Đang diễn ra</option>
-                        <option value="UPCOMING">Sắp diễn ra</option>
-                        <option value="COMPLETED">Đã kết thúc</option>
-                      </FilterSelect>
-
-                      {(modalSearch || modalModeFilter !== 'ALL' || modalFormatFilter !== 'ALL' || modalSubjectFilter !== 'ALL' || modalStatusFilter !== 'ALL') && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setModalSearch('');
-                            setModalModeFilter('ALL');
-                            setModalFormatFilter('ALL');
-                            setModalSubjectFilter('ALL');
-                            setModalStatusFilter('ALL');
-                          }}
-                          className="p-1 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer select-none ml-auto"
-                          title="Đặt lại bộ lọc"
-                        >
-                          <RotateCcw className="h-3.5 w-3.5" />
-                        </button>
-                      )}
-                    </div>
+                        Đặt lại
+                      </Button>
+                    )}
                   </div>
 
-                  {/* List of filtered schedules */}
-                  <div className="flex-1 overflow-y-auto p-4 space-y-2">
-                    <div className="flex items-center justify-between text-type-helper font-semibold text-slate-400 px-1">
-                      <span>
-                        Hiển thị {modalFilteredSchedules.length} / {schedules.length} ca thi
-                      </span>
-                    </div>
-
+                  {/* List of Schedules */}
+                  <div className="flex-1 overflow-y-auto p-4 space-y-2 divide-y divide-slate-100 dark:divide-slate-800">
                     {modalFilteredSchedules.length === 0 ? (
-                      <div className="py-12 text-center">
-                        <p className="text-type-helper font-semibold text-slate-500">Không tìm thấy ca thi phù hợp với bộ lọc hiện tại.</p>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setModalSearch('');
-                            setModalModeFilter('ALL');
-                            setModalFormatFilter('ALL');
-                            setModalSubjectFilter('ALL');
-                            setModalStatusFilter('ALL');
-                          }}
-                          className="mt-2 text-type-helper font-semibold text-blue-600 hover:underline cursor-pointer"
-                        >
-                          Xóa bộ lọc để xem tất cả
-                        </button>
+                      <div className="py-12 text-center text-slate-400 font-semibold">
+                        Không tìm thấy lịch thi nào phù hợp với bộ lọc.
                       </div>
                     ) : (
                       modalFilteredSchedules.map((s: any) => {
-                        const isActive = selectedScheduleId === String(s.id);
+                        const statusBadge = getScheduleStatusBadge(s);
                         const typeBadge = getScheduleTypeBadge(s);
                         const formatBadge = getExamFormatBadge(s);
-                        const statusBadge = getScheduleStatusBadge(s);
-                        const code = s.subjectCode || s.subject?.subjectCode || 'MH';
-                        const name = s.subjectName || s.subject?.subjectName || 'Môn học';
-                        const period = s.periodName || s.examPeriod?.name || 'Kỳ thi chung';
+                        const subj = s.subject || {};
+                        const period = s.periodName || '---';
 
                         return (
                           <button
@@ -943,40 +894,26 @@ export default function ExamReportsPage() {
                             type="button"
                             onClick={() => {
                               setSelectedScheduleId(String(s.id));
-                              setPage(1);
                               setShowSchedulePicker(false);
                             }}
-                            className={`w-full text-left p-3 rounded-xl border transition cursor-pointer flex flex-col gap-1.5 ${isActive
-                              ? 'bg-blue-50/50 dark:bg-blue-950/40 border-blue-500 border-l-4 shadow-2xs'
-                              : 'bg-white dark:bg-slate-900 border-slate-200/60 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50/60 dark:hover:bg-slate-800/60'
-                              }`}
+                            className="w-full text-left p-3.5 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-500/60 hover:bg-blue-50/20 dark:hover:bg-blue-950/20 transition cursor-pointer flex flex-col gap-2 pt-3"
                           >
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="flex items-center gap-2">
-                                <span className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">{name}</span>
-                                <span className="text-type-helper tabular-nums font-medium text-slate-500 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded">
-                                  {code}
-                                </span>
-                              </div>
-
-                              <div className="flex items-center gap-1.5 shrink-0">
-                                <StatusBadge status={statusBadge.key} customLabel={statusBadge.label} />
-                              </div>
+                            <div className="flex items-center justify-between gap-3">
+                              <span className="font-semibold text-slate-900 dark:text-white">
+                                {s.subjectName || subj.subjectName || 'Môn thi'} ({s.subjectCode || subj.subjectCode || '---'})
+                              </span>
+                              <StatusBadge status={statusBadge.key} customLabel={statusBadge.label} />
                             </div>
 
-                            <div className="flex flex-wrap items-center justify-between text-type-helper text-slate-500 dark:text-slate-400 gap-2">
-                              <div className="flex items-center gap-1.5">
+                            <div className="flex items-center justify-between text-type-body-sm text-slate-500 dark:text-slate-400">
+                              <div className="flex items-center gap-2">
                                 <span className={`px-2 py-0.5 rounded text-type-helper ${typeBadge.badgeClass}`}>
                                   {typeBadge.label}
                                 </span>
                                 <span className={`px-2 py-0.5 rounded text-type-helper ${formatBadge.badgeClass}`}>
                                   {formatBadge.label}
                                 </span>
-                                <span className="text-slate-400 dark:text-slate-500">| {period}</span>
                               </div>
-                              <span className="font-semibold text-slate-700 dark:text-slate-200">
-                                {s.startTime}–{s.endTime}{s.examDate ? ` | ${new Date(s.examDate).toLocaleDateString('vi-VN')}` : ''}
-                              </span>
                             </div>
                           </button>
                         );
@@ -994,7 +931,8 @@ export default function ExamReportsPage() {
                     </Button>
                   </div>
                 </div>
-              </div>
+              </div>,
+              document.body
             )}
 
             {/* ── 4. Candidate Status Tabs ── */}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { getAuthUser } from '../../lib/auth';
@@ -835,7 +836,7 @@ export default function SubjectsPage() {
       </Modal>
 
       {/* Subject Detail Drawer — Chuẩn Design System & Hoạt ảnh 60 FPS */}
-      {drawerOpenSubject && (
+      {drawerOpenSubject && typeof document !== 'undefined' && createPortal(
         <div role="dialog" aria-modal="true" aria-label="Chi tiết môn học" className="fixed inset-0 z-[100] overflow-hidden">
           {/* Backdrop mờ nền */}
           <div
@@ -1114,7 +1115,8 @@ export default function SubjectsPage() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <ConfirmModal

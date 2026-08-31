@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { ArrowLeftRight, Calendar, Clock, MapPin, AlertCircle, X, Search, Check, UserCheck, ShieldAlert } from 'lucide-react';
 import api from '../../lib/api';
 import { Button } from '../ui';
@@ -107,7 +108,9 @@ export function ReviewSupervisorChangeModal({
     }
   };
 
-  return (
+  if (!isOpen || !request || typeof document === 'undefined') return null;
+
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div className="fixed inset-0 bg-slate-950/55 backdrop-blur-[2px] transition-opacity" onClick={onClose} />
@@ -356,6 +359,7 @@ export function ReviewSupervisorChangeModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

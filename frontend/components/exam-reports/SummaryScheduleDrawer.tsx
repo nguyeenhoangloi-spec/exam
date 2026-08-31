@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { createPortal } from 'react-dom';
 import {
   X,
   BookOpen,
@@ -36,14 +37,14 @@ export function SummaryScheduleDrawer({
   onExportSingleExcel,
   onPrintSingle,
 }: SummaryScheduleDrawerProps) {
-  if (!isOpen || !schedule) return null;
+  if (!isOpen || !schedule || typeof document === 'undefined') return null;
 
   const passRate =
     schedule.graded > 0 ? Math.round((schedule.passCount / schedule.graded) * 100) : 0;
   const participationRate =
     schedule.assigned > 0 ? Math.round((schedule.submitted / schedule.assigned) * 100) : 0;
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -248,6 +249,7 @@ export function SummaryScheduleDrawer({
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

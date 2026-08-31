@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import {
   X,
   Play,
@@ -134,10 +135,11 @@ export function PermissionSimulatorModal({
   };
 
   const simulationResult = authoritativeResult;
-
   const getDisplayName = (u: any) => u.teacher?.fullName || u.student?.fullName || u.username;
 
-  return (
+  if (!isOpen || typeof document === 'undefined') return null;
+
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -385,6 +387,7 @@ export function PermissionSimulatorModal({
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

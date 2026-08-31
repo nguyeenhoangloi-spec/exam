@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Calendar, Clock, AlertCircle, X, ChevronDown, Check } from 'lucide-react';
 import api from '../../lib/api';
 import { Button } from '../ui';
@@ -113,9 +114,9 @@ export function DutyAvailabilityModal({ isOpen, onClose, onSuccess }: DutyAvaila
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === 'undefined') return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div className="fixed inset-0 bg-slate-950/55 backdrop-blur-[2px] transition-opacity" onClick={onClose} />
@@ -368,6 +369,7 @@ export function DutyAvailabilityModal({ isOpen, onClose, onSuccess }: DutyAvaila
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

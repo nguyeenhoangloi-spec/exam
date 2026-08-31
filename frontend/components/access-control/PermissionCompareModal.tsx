@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ArrowLeftRight, Check, Minus, Search, ShieldAlert, Users, Building2, BookOpen } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { FilterSelect } from '../ui/FilterSelect';
@@ -104,9 +105,9 @@ export function PermissionCompareModal({
     });
   }, [permissions, permsA, permsB, filterMode, search]);
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === 'undefined') return null;
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -323,6 +324,7 @@ export function PermissionCompareModal({
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

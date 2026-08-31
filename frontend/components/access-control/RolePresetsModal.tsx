@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Sparkles, Check, GraduationCap, FileCheck, Shield, BookOpen, AlertCircle } from 'lucide-react';
 import { Button } from '../ui/Button';
 
@@ -70,7 +71,6 @@ export function RolePresetsModal({
   const [targetUserId, setTargetUserId] = useState<string>('');
 
   if (!isOpen) return null;
-
   const currentPreset = PRESET_TEMPLATES.find((p) => p.id === selectedPresetId) || PRESET_TEMPLATES[0];
   const getDisplayName = (u: any) => u.teacher?.fullName || u.student?.fullName || u.username;
 
@@ -83,7 +83,9 @@ export function RolePresetsModal({
     onClose();
   };
 
-  return (
+  if (!isOpen || typeof document === 'undefined') return null;
+
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -208,6 +210,7 @@ export function RolePresetsModal({
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

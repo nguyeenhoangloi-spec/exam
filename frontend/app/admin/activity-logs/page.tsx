@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import React, { useCallback, useEffect, useMemo, useState, useRef, Suspense } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api, { getCachedData } from '../../../lib/api';
 import { usePageTitle } from '../../../components/PageTitleContext';
@@ -977,7 +978,7 @@ function ActivityLogsContent() {
             )}
 
             {/* ── 4. Metadata Inspector Drawer (100% Tiếng Việt & Diễn giải ngữ cảnh) ── */}
-            {drawerOpenLog && (
+            {drawerOpenLog && typeof document !== 'undefined' && createPortal(
                 <div role="dialog" aria-modal="true" aria-label="Chi tiết nhật ký" className="fixed inset-0 z-[100] overflow-hidden">
                     <div
                         className={`fixed inset-0 bg-slate-950/40 backdrop-blur-[2px] transition-opacity duration-200 ${drawerVisible ? 'opacity-100' : 'opacity-0'
@@ -1140,7 +1141,8 @@ function ActivityLogsContent() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* Legal Hold Confirmation Modal */}

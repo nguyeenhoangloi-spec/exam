@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   X,
   KeyRound,
@@ -152,13 +153,13 @@ export function ExamPaperDetailDrawer({
     });
   }, [rawQuestions, searchTerm, activeFilter]);
 
-  if (!paper) return null;
+  if (!paper || typeof document === 'undefined') return null;
 
   const subjectName = (paper as any).subjectName || (paper.examSchedule as any)?.subjectName || (paper.examSchedule?.subject as any)?.subjectName || 'Môn thi';
   const periodName = (paper.examSchedule as any)?.periodName || (paper.examSchedule as any)?.examPeriod?.name || 'Kỳ thi chính thức';
   const isBusy = busyId === Number(paper.id);
 
-  return (
+  return createPortal(
     <div role="dialog" aria-modal="true" aria-label="Chi tiết đề thi" className={`fixed inset-0 z-[100] overflow-hidden ${isOpen ? '' : 'pointer-events-none'}`}>
       <div
         className={`fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity duration-300 ease-out ${isOpen ? 'opacity-100' : 'opacity-0'}`}
@@ -494,6 +495,7 @@ export function ExamPaperDetailDrawer({
           onClose={() => setLightboxUrl(null)}
         />
       )}
-    </div>
+    </div>,
+    document.body
   );
 }

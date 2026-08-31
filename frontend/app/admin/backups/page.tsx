@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import {
     AlertCircle,
@@ -1067,7 +1068,7 @@ export default function BackupsPage() {
 
 
             {/* ── SNAPSHOT DETAIL DRAWER: Chuẩn Design System & Hoạt ảnh 60 FPS ── */}
-            {drawerOpenJob && (
+            {drawerOpenJob && typeof document !== 'undefined' && createPortal(
                 <div role="dialog" aria-modal="true" aria-label="Chi tiết bản sao lưu" className="fixed inset-0 z-[100] overflow-hidden">
                     {/* Backdrop mờ nền */}
                     <div
@@ -1234,7 +1235,8 @@ export default function BackupsPage() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* Initial Restore Creation Modal */}

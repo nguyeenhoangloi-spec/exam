@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
 import { cachedGet, invalidateCache } from '../../lib/api-cache';
@@ -803,7 +804,7 @@ export default function TeachersPage() {
       />
 
       {/* Custom Profile Drawer with 3 Tabs — Chuẩn Design System & Hoạt ảnh 60 FPS */}
-      {drawerOpenTeacher && (
+      {drawerOpenTeacher && typeof document !== 'undefined' && createPortal(
         <div role="dialog" aria-modal="true" aria-label="Thông tin giảng viên" className="fixed inset-0 z-[100] overflow-hidden">
           {/* Backdrop mờ nền */}
           <div
@@ -1025,7 +1026,8 @@ export default function TeachersPage() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Confirm Modal */}

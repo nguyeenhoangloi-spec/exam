@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import {
   X,
   ShieldCheck,
@@ -137,9 +138,9 @@ export function ExamArchiveDetailModal({ attemptId, isOpen, onClose }: ExamArchi
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === 'undefined') return null;
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/55 backdrop-blur-[2px]"
       onClick={onClose}
@@ -469,6 +470,7 @@ export function ExamArchiveDetailModal({ attemptId, isOpen, onClose }: ExamArchi
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
