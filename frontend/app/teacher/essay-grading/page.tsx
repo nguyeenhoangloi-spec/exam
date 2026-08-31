@@ -734,17 +734,18 @@ function TeacherEssayGradingContent() {
               {/* Header & Controls Section */}
               <div className="p-3.5 space-y-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40">
                 {/* Header Title */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                    <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
+                <div className="flex items-center justify-between h-7">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="h-3.5 w-1 rounded-full bg-blue-600 shrink-0" />
+                    <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
                       Danh sách bài thi
                     </h3>
-                    <span className="text-type-helper font-medium text-blue-700 dark:text-blue-300 px-2 py-0.5 ui-pill rounded-full border border-blue-200/60 dark:border-blue-800/60 tabular-nums">
+                    <span className="ui-pill inline-flex items-center text-type-helper font-medium text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full border border-blue-200/60 dark:border-blue-800/60 tabular-nums shrink-0">
                       {filteredRows.length}/{rows.length}
                     </span>
                   </div>
 
+                  <div className="w-7 h-7 flex items-center justify-end shrink-0">
                     {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || dateFilter !== 'ALL' || scheduleFilter !== 'ALL' || searchQuery) && (
                       <button
                         type="button"
@@ -756,13 +757,14 @@ function TeacherEssayGradingContent() {
                           setSearchQuery('');
                         }}
                         disabled={loading}
-                        className="p-1 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                        className="h-7 w-7 inline-flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer select-none"
                         title="Đặt lại bộ lọc"
                       >
                         <RotateCcw className="h-3.5 w-3.5" />
                       </button>
                     )}
                   </div>
+                </div>
 
                 {/* Search Bar */}
                 <div className="relative w-full">

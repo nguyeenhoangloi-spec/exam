@@ -91,17 +91,17 @@ export function TabBar<T extends string = string>({
       <div
         ref={containerRef}
         role="tablist"
-        className={`relative flex items-center gap-1 p-1 bg-slate-100/90 dark:bg-slate-800/80 rounded-xl overflow-x-auto no-scrollbar scroll-smooth w-full select-none border border-slate-200/50 dark:border-slate-700/50 ${className}`}
+        className={`relative flex items-center gap-1 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-full overflow-x-auto no-scrollbar scroll-smooth w-full select-none border border-slate-200/70 dark:border-slate-700/70 ${className}`}
       >
         {/* Sliding Background Indicator Pill */}
         <div
-          className="absolute top-1 bottom-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 shadow-xs shadow-slate-900/5 dark:shadow-black/20 pointer-events-none will-change-[transform,width]"
+          className="absolute top-1 bottom-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 shadow-[0_4px_14px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.4)] pointer-events-none will-change-[transform,width]"
           style={{
             transform: `translateX(${indicatorStyle.left}px)`,
             width: `${indicatorStyle.width}px`,
             opacity: indicatorStyle.opacity,
             transition: isReady
-              ? 'transform 300ms cubic-bezier(0.16, 1, 0.3, 1), width 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease'
+              ? 'transform 300ms cubic-bezier(0.16, 1, 0.3, 1), width 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease'
               : 'none',
           }}
         />
@@ -125,15 +125,17 @@ export function TabBar<T extends string = string>({
                   onChange(tab.key);
                 });
               }}
-              className={`group relative z-10 flex items-center justify-center gap-1.5 flex-1 min-w-fit px-2.5 sm:px-3 py-1.5 text-type-body-sm font-semibold rounded-xl focus-visible:outline-none motion-safe:transition-colors duration-200 ease-out cursor-pointer whitespace-nowrap shrink-0 select-none active:scale-[0.98] ${isActive
-                  ? 'text-slate-900 dark:text-slate-100 font-semibold'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'
-                }`}
+              className={`group relative z-10 flex items-center justify-center gap-1.5 flex-1 min-w-fit px-3 py-1.5 text-type-body-sm rounded-full focus-visible:outline-none motion-safe:transition-colors duration-200 ease-out cursor-pointer whitespace-nowrap shrink-0 select-none active:scale-[0.98] ${
+                isActive
+                  ? 'text-slate-950 dark:text-white font-semibold'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white font-medium'
+              }`}
             >
               {tab.icon && (
                 <span
-                  className={`shrink-0 transition-colors duration-200 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'
-                    }`}
+                  className={`shrink-0 transition-colors duration-200 ${
+                    isActive ? 'text-slate-950 dark:text-white' : 'text-slate-400 dark:text-slate-500'
+                  }`}
                 >
                   {tab.icon}
                 </span>
@@ -141,10 +143,11 @@ export function TabBar<T extends string = string>({
               <span className="shrink-0">{tab.label}</span>
               {typeof tab.count === 'number' && (
                 <span
-                  className={`ui-pill rounded-full border px-1.5 py-0.5 text-type-helper font-medium transition-all duration-200 tabular-nums shrink-0 ${isActive
-                      ? 'ui-pill-solid bg-blue-600 text-white border-blue-600 shadow-2xs'
-                      : 'text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 group-hover:border-slate-400'
-                    }`}
+                  className={`ui-pill inline-flex items-center justify-center rounded-full px-2 py-0.5 text-type-helper font-medium tabular-nums shrink-0 transition-colors duration-200 ${
+                    isActive
+                      ? 'ui-pill-solid bg-blue-600 text-white shadow-2xs'
+                      : 'text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/80'
+                  }`}
                 >
                   {tab.count.toLocaleString('vi-VN')}
                 </span>

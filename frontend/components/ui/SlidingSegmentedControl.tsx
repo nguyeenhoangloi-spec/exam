@@ -160,12 +160,12 @@ export function SlidingSegmentedControl<T extends string = string>({
 
             {typeof option.count === 'number' && (
               <span
-                className={`ui-pill ui-pill-solid inline-flex items-center justify-center rounded-full px-2 py-0.5 text-type-helper font-medium tabular-nums transition-colors duration-200 ${
+                className={`ui-pill inline-flex items-center justify-center rounded-full px-2 py-0.5 text-type-helper font-medium tabular-nums transition-colors duration-200 ${
                   isActive
                     ? isPrimary
-                      ? 'bg-white/20 text-white'
-                      : 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
-                    : 'bg-slate-500/90 text-white dark:bg-slate-600 dark:text-white'
+                      ? 'ui-pill-solid bg-white/20 text-white'
+                      : 'ui-pill-solid bg-blue-600 text-white shadow-2xs'
+                    : 'text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/80'
                 }`}
               >
                 {option.count.toLocaleString('vi-VN')}

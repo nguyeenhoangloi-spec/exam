@@ -610,18 +610,18 @@ function AdminEssayReviewContent() {
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-2xs overflow-hidden flex flex-col">
               {/* Header: Title + Neutral Reload Button + Filter Reset */}
               <div className="p-3.5 space-y-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
-                    <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100">
+                <div className="flex items-center justify-between h-7">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="h-3.5 w-1 rounded-full bg-blue-600 shrink-0" />
+                    <h3 className="text-type-body-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
                       Danh sách bài thi
                     </h3>
-                    <span className="ui-pill inline-flex items-center text-type-helper font-medium text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full border border-blue-200/60 dark:border-blue-800/60 tabular-nums">
+                    <span className="ui-pill inline-flex items-center text-type-helper font-medium text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full border border-blue-200/60 dark:border-blue-800/60 tabular-nums shrink-0">
                       {filteredRows.length}/{rows.length}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1">
+                  <div className="w-7 h-7 flex items-center justify-end shrink-0">
                     {(statusFilter !== 'ALL' || subjectFilter !== 'ALL' || dateFilter !== 'ALL' || scheduleFilter !== 'ALL' || searchQuery) && (
                       <button
                         type="button"
@@ -632,10 +632,10 @@ function AdminEssayReviewContent() {
                           setScheduleFilter('ALL');
                           setSearchQuery('');
                         }}
-                        className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer select-none"
+                        className="h-7 w-7 inline-flex items-center justify-center text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors duration-200 cursor-pointer select-none"
                         title="Đặt lại tất cả bộ lọc"
                       >
-                        <X className="h-3.5 w-3.5" />
+                        <X className="h-4 w-4 transition-transform duration-200 hover:scale-110 active:scale-95" />
                       </button>
                     )}
                   </div>
