@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Modal } from '@/components/Modal';
-import { Button } from '@/components/ui/Button';
-import { FileText, Printer, Download, Sparkles } from 'lucide-react';
-import { ExamPaperExportData, generateShuffledPaperVariants, exportBulkExamPapersToWord } from '@/lib/export-docx';
+import { Printer, Shuffle } from 'lucide-react';
+import { Modal } from '../Modal';
+import { Button } from '../ui/Button';
+import { ExamPaperExportData, generateShuffledPaperVariants } from '@/lib/export-docx';
 import { printBulkExamPapers, PrintExamPaperOptions } from '@/lib/export-print';
 
 interface ExamPaperExportModalProps {
@@ -14,34 +14,23 @@ interface ExamPaperExportModalProps {
   defaultVariantCount?: number;
 }
 
-function getPaperTypeSummary(basePaper: ExamPaperExportData | null): string {
-  if (!basePaper) return 'Trắc nghiệm';
-  const questions = basePaper.questions || [];
-  if (questions.length === 0) {
-    if (basePaper.examType === 'TU_LUAN') return 'Tự luận';
-    if (basePaper.examType === 'DIEN_KHUYET' || basePaper.examType === 'DIEN_LO' || basePaper.examType === 'FILL_BLANK') return 'Điền khuyết';
-    return 'Trắc nghiệm';
-  }
+function getExamTypeLabel(paper: ExamPaperExportData | null): string {
+  if (!paper) return 'Đề thi';
+  if (paper.examType === 'TU_LUAN') return 'Tự luận';
+  if (paper.examType === 'TRAC_NGHIEM') return 'Trắc nghiệm';
 
-  const typeSet = new Set(
-    questions.map((q) => {
-      const t = (q.type || '').toUpperCase();
-      if (t === 'FILL_BLANK' || t === 'DIEN_KHUYET' || t === 'DIEN_LO' || t === 'DIEN_KHUYES' || t === 'DIEN') return 'FILL_BLANK';
-      if (t === 'ESSAY' || t === 'TU_LUAN') return 'ESSAY';
-      if (t === 'TRUE_FALSE' || t === 'DUNG_SAI') return 'TRUE_FALSE';
-      return 'MULTIPLE_CHOICE';
-    })
-  );
-
+  const typeSet = new Set(paper.questions.map((q) => q.type));
+  if (typeSet.size === 0) return 'Đề thi';
   if (typeSet.size === 1) {
+    if (typeSet.has('MULTIPLE_CHOICE') || typeSet.has('SINGLE_CHOICE')) return 'Trắc nghiệm';
     if (typeSet.has('FILL_BLANK')) return 'Điền khuyết';
-    if (typeSet.has('ESSAY')) return 'Tự luận';
     if (typeSet.has('TRUE_FALSE')) return 'Đúng/Sai';
+    if (typeSet.has('ESSAY')) return 'Tự luận';
     return 'Trắc nghiệm';
   }
 
   const names: string[] = [];
-  if (typeSet.has('MULTIPLE_CHOICE')) names.push('Trắc nghiệm');
+  if (typeSet.has('MULTIPLE_CHOICE') || typeSet.has('SINGLE_CHOICE')) names.push('Trắc nghiệm');
   if (typeSet.has('FILL_BLANK')) names.push('Điền khuyết');
   if (typeSet.has('TRUE_FALSE')) names.push('Đúng/Sai');
   if (typeSet.has('ESSAY')) names.push('Tự luận');
@@ -81,22 +70,6 @@ export function ExamPaperExportModal({
 
   // Danh sách các mã đề dự kiến sinh ra
   const codeRangeLabel = count === 1 ? `${startNum}` : `${startNum} - ${endNum}`;
-
-  const handleExportWord = async () => {
-    try {
-      setIsProcessing(true);
-      const targetPapers = count === 1 ? [basePaper] : generateShuffledPaperVariants(basePaper, count, startNum);
-      const customOpts = {
-        examType: isEssay ? 'TU_LUAN' : 'TRAC_NGHIEM',
-        essayHeaderMode: (duplexCutLine ? 'ANONYMIZED_CUT' : 'STANDARD') as 'ANONYMIZED_CUT' | 'STANDARD',
-        duplexPrinting: duplexCutLine,
-      };
-      await exportBulkExamPapersToWord(targetPapers, includeAnswerKey, basePaper.subjectCode, customOpts);
-      onClose();
-    } finally {
-      setIsProcessing(false);
-    }
-  };
 
   const handlePrint = async () => {
     try {
@@ -143,73 +116,83 @@ export function ExamPaperExportModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Xuất và in đề thi"
-      size="sm"
+      title="In đề thi & Xuất PDF"
+      size="md"
     >
-      <div className="space-y-4 py-1">
-        {/* Tóm tắt môn học 1 dòng không dùng dấu chấm */}
-        <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-slate-800 text-type-helper text-slate-600 dark:text-slate-400">
-          <div className="truncate font-medium">
-            <span className="font-semibold text-slate-900 dark:text-slate-100">{basePaper.subjectName}</span> ({basePaper.subjectCode})
+      <div className="space-y-4">
+        {/* Tóm tắt thông tin đề thi */}
+        <div className="rounded-xl border border-slate-200/80 bg-slate-50/60 p-3 dark:border-slate-800 dark:bg-slate-900/40">
+          <div className="flex items-center justify-between gap-2">
+            <div className="font-semibold text-slate-900 dark:text-slate-100 text-type-title-sm">
+              {basePaper.subjectName} ({basePaper.subjectCode})
+            </div>
+            <span className="inline-flex items-center rounded-xl bg-blue-50 px-2 py-0.5 text-type-helper font-medium text-blue-700 dark:bg-blue-950/60 dark:text-blue-400">
+              {getExamTypeLabel(basePaper)}
+            </span>
           </div>
-          <span className="shrink-0 font-normal">
-            {basePaper.questions.length} câu | {basePaper.durationMinutes} phút | {getPaperTypeSummary(basePaper)}
-          </span>
+          <div className="mt-1 flex items-center gap-2 text-type-helper text-slate-500 dark:text-slate-400">
+            <span>Mã gốc: <strong className="text-slate-800 dark:text-slate-200">{basePaper.paperCode}</strong></span>
+            <span>|</span>
+            <span>{basePaper.questions.length} câu</span>
+            <span>|</span>
+            <span>{basePaper.durationMinutes} phút</span>
+          </div>
         </div>
 
-        {/* Cấu hình Số lượng & Mã bắt đầu (Chỉ hiển thị cho đề Trắc nghiệm có trộn đề) */}
+        {/* Tùy chọn sinh mã đảo đề thi (Dành cho Trắc nghiệm) */}
         {!isEssay && (
-          <div className="space-y-3">
-            {/* Số lượng mã đề */}
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-type-body font-medium text-slate-800 dark:text-slate-200">
-                Số lượng mã đề
+          <div className="space-y-3 pt-1">
+            <div className="flex items-center justify-between">
+              <label className="text-type-body font-medium text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                <Shuffle className="h-4 w-4 text-blue-600" />
+                Số lượng mã đề đảo
+              </label>
+              <span className="text-type-helper text-slate-400">
+                (Tối đa {maxAvailableVariants} mã)
               </span>
-              <div className="inline-flex items-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-0.5">
-                <button
-                  type="button"
-                  onClick={() => setVariantCount(Math.max(1, count - 1))}
-                  disabled={count <= 1}
-                  className="h-7 w-7 rounded-xl text-slate-700 dark:text-slate-300 font-semibold hover:bg-white dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer flex items-center justify-center text-type-body-sm"
-                >
-                  −
-                </button>
-                <span className="min-w-[3rem] px-2 text-center text-type-body font-semibold text-slate-900 dark:text-slate-100">
-                  {count} <span className="font-normal text-slate-400">/ {maxAvailableVariants}</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setVariantCount(Math.min(maxAvailableVariants, count + 1))}
-                  disabled={count >= maxAvailableVariants}
-                  className="h-7 w-7 rounded-xl text-slate-700 dark:text-slate-300 font-semibold hover:bg-white dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer flex items-center justify-center text-type-body-sm"
-                >
-                  +
-                </button>
+            </div>
+
+            {/* Stepper chọn số lượng mã đảo phẳng và tinh gọn */}
+            <div className="flex items-center gap-3">
+              <div className="inline-flex rounded-xl border border-slate-200/90 bg-slate-50/50 p-0.5 dark:border-slate-800 dark:bg-slate-900">
+                {[1, 2, 3, 4].filter((n) => n <= maxAvailableVariants).map((num) => (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => setVariantCount(num)}
+                    className={`px-3.5 py-1.5 rounded-xl text-type-body font-medium transition cursor-pointer ${
+                      count === num
+                        ? 'bg-white text-blue-600 shadow-2xs dark:bg-slate-800 dark:text-blue-400'
+                        : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    {num} mã
+                  </button>
+                ))}
+              </div>
+
+              <div className="text-type-helper text-slate-500 dark:text-slate-400">
+                Dải mã: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{codeRangeLabel}</strong>
               </div>
             </div>
 
-            {/* Mã khởi đầu & Dải mã xem trước */}
+            {/* Ô nhập mã đề bắt đầu */}
             <div className="flex items-center justify-between gap-3 pt-1">
-              <span className="text-type-body font-medium text-slate-800 dark:text-slate-200">
-                Mã khởi đầu
+              <span className="text-type-body font-medium text-slate-700 dark:text-slate-300">
+                Mã bắt đầu:
               </span>
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={startCode}
-                  onChange={(e) => setStartCode(e.target.value)}
-                  placeholder="101"
-                  className="w-16 h-8 text-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-type-body font-semibold focus:border-slate-400 dark:focus:border-slate-500 focus:outline-none transition"
-                />
-                <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">
-                  (Dải mã: <span className="font-semibold text-slate-800 dark:text-slate-200">{codeRangeLabel}</span>)
-                </span>
-              </div>
+              <input
+                type="text"
+                value={startCode}
+                onChange={(e) => setStartCode(e.target.value.replace(/\D/g, ''))}
+                className="w-24 rounded-xl border border-slate-200 px-2.5 py-1 text-center font-medium text-slate-900 focus:border-blue-500 focus:outline-none dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
+                placeholder="101"
+              />
             </div>
           </div>
         )}
 
-        {/* Tuỳ chọn rọc phách cho đề Tự luận */}
+        {/* Tùy chọn Đầu phách & In 2 mặt (Duplex) */}
         {isEssay && (
           <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
             <label className="flex items-center gap-2.5 cursor-pointer select-none">
@@ -236,39 +219,27 @@ export function ExamPaperExportModal({
               className="h-4.5 w-4.5 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-0 cursor-pointer accent-blue-600 shrink-0"
             />
             <span className="text-type-body font-medium text-slate-800 dark:text-slate-200">
-              Kèm bảng ma trận đáp án ở cuối file
+              Kèm bảng ma trận đáp án ở cuối trang
             </span>
           </label>
         </div>
 
-        {/* 2 Nút hành động cân đối và tinh gọn */}
-        <div className="grid grid-cols-2 gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            onClick={handlePrint}
-            disabled={isProcessing}
-            leftIcon={<Printer className="h-4 w-4 text-slate-700 dark:text-slate-300" />}
-            className="w-full justify-center"
-          >
-            In đề thi
-          </Button>
-
+        {/* Nút In đề thi chính duy nhất */}
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
           <Button
             type="button"
             variant="primary"
-            size="md"
-            onClick={handleExportWord}
+            size="lg"
+            onClick={handlePrint}
             disabled={isProcessing}
-            leftIcon={<Download className="h-4 w-4 text-white" />}
+            isLoading={isProcessing}
+            leftIcon={<Printer className="h-4 w-4 text-white" />}
             className="w-full justify-center"
           >
-            {isProcessing ? 'Đang xuất...' : 'Tải file Word'}
+            In đề thi / Lưu PDF
           </Button>
         </div>
       </div>
     </Modal>
   );
 }
-

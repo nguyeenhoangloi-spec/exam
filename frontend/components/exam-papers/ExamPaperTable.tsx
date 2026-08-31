@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, Send, Archive, RotateCcw, Trash2, Download, Clock, BookOpen, HelpCircle, Award, MoreVertical, Calendar, KeyRound } from 'lucide-react';
+import { Eye, Send, Archive, RotateCcw, Trash2, Download, Printer, Clock, BookOpen, HelpCircle, Award, MoreVertical, Calendar, KeyRound } from 'lucide-react';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { StatusBadge } from '../common/StatusBadge';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
@@ -197,9 +197,9 @@ export function ExamPaperTable({
                       type="button"
                       onClick={() => onExportWord(p)}
                       className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white transition cursor-pointer"
-                      title="Xuất hoặc in đề thi"
+                      title="In đề thi / PDF"
                     >
-                      <Download className="h-4 w-4" />
+                      <Printer className="h-4 w-4" />
                     </button>
 
                     <ActionDropdownPortal>
@@ -225,8 +225,8 @@ export function ExamPaperTable({
                             }}
                             className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap"
                           >
-                            <Download className="h-3.5 w-3.5 text-slate-500 shrink-0" />
-                            <span>Xuất đề thi</span>
+                            <Printer className="h-3.5 w-3.5 text-slate-500 shrink-0" />
+                            <span>In đề thi / PDF</span>
                           </button>
 
                           {onChangePassword && (p.examScheduleId || p.examSchedule?.id || sched.id) && (

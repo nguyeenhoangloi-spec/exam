@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
   KeyRound,
   Download,
+  Printer,
   RotateCcw,
   Award,
   Search,
@@ -291,15 +292,15 @@ export function ExamPaperDetailDrawer({
                   {showAnswers ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
 
-                {/* Nút In / Xuất Đề Thi Icon-Only Không Viền (Mở Popup Tùy Chọn) */}
+                {/* Nút In Đề Thi Icon-Only Không Viền (Mở Popup Tùy Chọn) */}
                 <button
                   type="button"
                   onClick={() => onExportWord(paper, showAnswers)}
                   className="flex items-center justify-center w-8 h-8 rounded-xl transition cursor-pointer text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
-                  title="Xuất hoặc in đề thi"
-                  aria-label="Xuất hoặc in đề thi"
+                  title="In đề thi / PDF"
+                  aria-label="In đề thi / PDF"
                 >
-                  <Download className="w-4 h-4" />
+                  <Printer className="w-4 h-4" />
                 </button>
               </div>
             </div>
