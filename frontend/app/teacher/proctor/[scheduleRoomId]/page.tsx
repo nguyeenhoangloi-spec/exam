@@ -47,6 +47,7 @@ import { onlineExamService } from '@/lib/services/online-exam.service';
 import { ProctorFilterPopover } from '@/components/proctor/ProctorFilterPopover';
 import { ProctorBulkAction } from '@/components/exam-supervisors/ProctorBulkAction';
 import { ProfileDrawer } from '@/components/ProfileDrawer';
+import { PageSkeleton } from '@/components/ui/Skeleton';
 
 const EMPTY_STUDENTS: any[] = [];
 
@@ -433,12 +434,7 @@ export default function ProctorDashboardPage() {
 
   /* ── Loading ── */
   if (loading) {
-    return (
-      <main className="w-full px-6 py-6 min-h-screen bg-slate-50/50 flex flex-col items-center justify-center gap-3">
-        <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-        <p className="text-type-helper font-semibold text-slate-500">Đang kết nối bảng điều khiển giám thị trực tiếp...</p>
-      </main>
-    );
+    return <PageSkeleton hasKPIs={true} kpiCount={5} variant="table" />;
   }
 
   /* ── Error ── */

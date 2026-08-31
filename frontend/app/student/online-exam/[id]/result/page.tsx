@@ -11,6 +11,7 @@ import { StatusBadge } from '@/components/common/StatusBadge';
 import { Button } from '@/components/ui/Button';
 import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
 import { ProfileDrawer } from '@/components/ProfileDrawer';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { BookOpen, Clock, Shield, Layers } from 'lucide-react';
 
 export default function StudentExamResultPage() {
@@ -68,10 +69,34 @@ export default function StudentExamResultPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-          <p className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">Đang tải thông tin kết quả...</p>
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4 sm:p-6" aria-busy="true" aria-label="Đang tải kết quả bài thi">
+        <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-xl overflow-hidden">
+          <div className="p-6 sm:p-8 space-y-4 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-center gap-4">
+              <Skeleton className="h-14 w-14 rounded-2xl shrink-0" />
+              <div className="space-y-2 flex-1">
+                <Skeleton className="h-6 w-48 rounded-lg" />
+                <Skeleton className="h-4 w-72 rounded" />
+              </div>
+            </div>
+          </div>
+          <div className="p-6 sm:p-7 space-y-5">
+            <div className="bg-slate-50/70 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 p-5 rounded-xl space-y-3">
+              <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-700">
+                <Skeleton className="h-4 w-20 rounded" />
+                <Skeleton className="h-4 w-40 rounded" />
+              </div>
+              <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-700">
+                <Skeleton className="h-4 w-32 rounded" />
+                <Skeleton className="h-4 w-36 rounded" />
+              </div>
+              <div className="flex justify-between py-1">
+                <Skeleton className="h-4 w-28 rounded" />
+                <Skeleton className="h-6 w-20 rounded-full" />
+              </div>
+            </div>
+            <Skeleton className="h-16 w-full rounded-xl" />
+          </div>
         </div>
       </div>
     );

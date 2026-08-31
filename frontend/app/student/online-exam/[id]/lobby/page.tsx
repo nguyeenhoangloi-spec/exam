@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
 import { ProfileDrawer } from '@/components/ProfileDrawer';
 import { Modal } from '@/components/Modal';
+import { Skeleton } from '@/components/ui/Skeleton';
 import {
   Eye,
   EyeOff,
@@ -293,10 +294,46 @@ export default function StudentExamLobbyPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-4">
-        <div className="animate-spin rounded-full h-12 w-12 border-2 border-blue-500/20 border-t-blue-500"></div>
-        <h3 className="mt-4 text-type-body font-semibold text-slate-200 dark:text-slate-200">Đang kiểm tra điều kiện dự thi...</h3>
-        <p className="text-type-helper text-slate-400 dark:text-slate-400 mt-1">Vui lòng chờ trong giây lát</p>
+      <div className="min-h-screen bg-slate-50/70 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-between py-5 px-4 sm:px-8" aria-busy="true" aria-label="Đang kiểm tra điều kiện dự thi">
+        {/* Header skeleton */}
+        <header className="w-full max-w-7xl mx-auto flex items-center justify-between pb-5 border-b border-slate-200/80 dark:border-slate-800">
+          <div className="flex items-center gap-3">
+            <Skeleton className="w-10 h-10 rounded-2xl" />
+            <div className="space-y-1">
+              <Skeleton className="h-4 w-36 rounded" />
+              <Skeleton className="h-3 w-20 rounded" />
+            </div>
+          </div>
+          <Skeleton className="h-9 w-32 rounded-xl" />
+        </header>
+
+        {/* 2-column main area */}
+        <main className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto py-8">
+          <div className="lg:col-span-7 space-y-4">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/70 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-2xs">
+              <Skeleton className="h-6 w-56 rounded-lg" />
+              <div className="grid grid-cols-2 gap-3.5">
+                <Skeleton className="h-20 rounded-2xl" />
+                <Skeleton className="h-20 rounded-2xl" />
+                <Skeleton className="h-20 rounded-2xl" />
+                <Skeleton className="h-20 rounded-2xl" />
+              </div>
+              <Skeleton className="h-24 rounded-2xl" />
+            </div>
+          </div>
+          <div className="lg:col-span-5 space-y-4">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/70 dark:border-slate-800 p-6 space-y-4 shadow-2xs">
+              <Skeleton className="h-5 w-40 rounded-lg" />
+              <Skeleton className="h-16 rounded-2xl" />
+              <Skeleton className="h-16 rounded-2xl" />
+              <Skeleton className="h-12 w-full rounded-xl" />
+            </div>
+          </div>
+        </main>
+
+        <footer className="w-full max-w-7xl mx-auto pt-4 border-t border-slate-200/80 dark:border-slate-800 text-center">
+          <Skeleton className="h-3.5 w-64 mx-auto rounded" />
+        </footer>
       </div>
     );
   }

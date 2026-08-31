@@ -383,7 +383,7 @@ export default function ExamArchivesPage() {
   };
 
   if (loading && !schedules.length) {
-    return <PageSkeleton hasKPIs={true} variant="table" />;
+    return <PageSkeleton hasKPIs={false} variant="table" />;
   }
 
   return (
