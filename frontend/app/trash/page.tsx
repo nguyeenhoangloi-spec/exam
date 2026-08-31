@@ -23,6 +23,7 @@ import { FilterSelect } from '../../components/ui/FilterSelect';
 import { SortDropdown } from '../../components/ui/SortDropdown';
 import { ColumnToggleDropdown } from '../../components/ui/ColumnToggleDropdown';
 import { PageSkeleton } from '../../components/ui/Skeleton';
+import { ActionDropdownPortal } from '../../components/common/ActionDropdownPortal';
 
 interface TrashItem {
   id: number | string;
@@ -625,29 +626,51 @@ function TrashPageContent() {
                         </td>
                       )}
                       {visibleColumns.actions && (
-                        <td className="px-5 text-right whitespace-nowrap py-3.5">
-                          <div className="inline-flex items-center gap-1 justify-end">
-                            <button
-                              onClick={() => setDetailItem(item)}
-                              title="Xem chi tiết"
-                              className="p-1.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer select-none"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleRestore(item)}
-                              title="Khôi phục dữ liệu"
-                              className="p-1.5 rounded-xl text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60 transition cursor-pointer active:scale-95 select-none"
-                            >
-                              <RotateCcw className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleHardDelete(item)}
-                              title="Xóa vĩnh viễn"
-                              className="p-1.5 rounded-xl text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 transition cursor-pointer active:scale-95 select-none"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                        <td className="px-5 text-right whitespace-nowrap py-3.5 relative">
+                          <div className="flex items-center justify-end">
+                            <ActionDropdownPortal>
+                              {(closeMenu) => (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      closeMenu();
+                                      setDetailItem(item);
+                                    }}
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
+                                  >
+                                    <Eye className="h-4 w-4 text-slate-500 shrink-0" />
+                                    <span>Xem chi tiết</span>
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      closeMenu();
+                                      handleRestore(item);
+                                    }}
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 dark:hover:bg-blue-950/50 text-blue-600 dark:text-blue-400 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
+                                  >
+                                    <RotateCcw className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
+                                    <span>Khôi phục dữ liệu</span>
+                                  </button>
+
+                                  <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      closeMenu();
+                                      handleHardDelete(item);
+                                    }}
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
+                                  >
+                                    <Trash2 className="h-4 w-4 text-rose-600 dark:text-rose-400 shrink-0" />
+                                    <span>Xóa vĩnh viễn</span>
+                                  </button>
+                                </>
+                              )}
+                            </ActionDropdownPortal>
                           </div>
                         </td>
                       )}

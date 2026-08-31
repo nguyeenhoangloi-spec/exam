@@ -1047,32 +1047,35 @@ export default function DocumentTemplatesPage() {
         {/* Cột Phải: Studio Canvas Cố Định 95% - Bằng Đáy Khít Với Cột Trái */}
         <div className="flex flex-col bg-slate-100/70 dark:bg-slate-950/70 overflow-hidden h-full min-h-0">
           {/* Top Bar Tinh Gọn - Tối Giản Nút & Chữ */}
+          {/* Top Bar Tinh Gọn & Đẳng Cấp 2026 */}
           <div className="flex items-center justify-between px-4 py-2.5 bg-slate-100/90 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60 shrink-0 z-10 sticky top-0">
+            {/* Header Bên Trái: Blue Pill + Title + Metadata */}
             <div className="flex items-center gap-2">
+              <div className="h-3.5 w-1 bg-blue-600 rounded-full shrink-0" />
               <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
                 Xem trước
               </span>
-              <span className="text-type-helper text-slate-500 font-normal">
+              <span className="text-type-helper text-slate-500 dark:text-slate-400 font-normal">
                 ({config?.page.size || 'A4'} | {config?.page.orientation === 'landscape' ? 'Khổ ngang' : 'Khổ dọc'})
               </span>
             </div>
 
-            {/* Controls: Hoàn toàn không nền, không khung, phẳng tuyệt đối */}
-            <div className="flex items-center gap-1.5">
-              {/* Stepper Zoom: Không nền, không khung */}
-              <div className="inline-flex items-center text-type-body font-medium">
+            {/* Controls Bên Phải: Hoàn toàn không nền, dùng hiệu ứng bấm co giãn Tactile Scaling */}
+            <div className="flex items-center gap-2">
+              {/* Stepper Zoom: Không nền, hiệu ứng scale khi bấm */}
+              <div className="inline-flex items-center gap-1 select-none">
                 <button
                   type="button"
                   onClick={() => setZoomScale((s) => Math.max(50, s - 5))}
-                  className="p-1.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
-                  title="Thu nhỏ"
+                  className="p-1 rounded-xl text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:scale-120 active:scale-80 transition-all duration-150 cursor-pointer"
+                  title="Thu nhỏ (-5%)"
                 >
                   <ZoomOut className="h-4 w-4" />
                 </button>
                 <button
                   type="button"
                   onClick={() => setZoomScale(95)}
-                  className="px-1.5 py-0.5 tabular-nums text-type-helper text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 font-semibold cursor-pointer transition"
+                  className="px-1.5 py-0.5 tabular-nums text-type-helper text-slate-800 hover:text-blue-600 dark:text-slate-200 dark:hover:text-blue-400 font-semibold cursor-pointer hover:scale-110 active:scale-90 transition-all duration-150 select-none"
                   title="Bấm để đặt lại chuẩn 95%"
                 >
                   {zoomScale}%
@@ -1080,24 +1083,25 @@ export default function DocumentTemplatesPage() {
                 <button
                   type="button"
                   onClick={() => setZoomScale((s) => Math.min(150, s + 5))}
-                  className="p-1.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
-                  title="Phóng to"
+                  className="p-1 rounded-xl text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:scale-120 active:scale-80 transition-all duration-150 cursor-pointer"
+                  title="Phóng to (+5%)"
                 >
                   <ZoomIn className="h-4 w-4" />
                 </button>
               </div>
 
-              <div className="h-3.5 w-px bg-slate-200 dark:bg-slate-800 mx-0.5" />
+              <div className="h-3.5 w-px bg-slate-200/80 dark:bg-slate-800 mx-0.5" />
 
-              {/* Nút In Mẫu: Chỉ icon, không nền, không khung */}
+              {/* Nút In Thử Nghiệm: Không nền, hiệu ứng nhấn co giãn mượt mà */}
               <button
                 type="button"
                 onClick={testPrint}
                 disabled={!draft || !config}
-                className="p-1.5 rounded-xl text-slate-600 hover:text-blue-600 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-blue-400 dark:hover:bg-slate-800 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-1.5 px-1.5 py-1 rounded-xl text-type-body-sm font-semibold text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 hover:scale-105 active:scale-95 transition-all duration-150 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed select-none"
                 title="In thử nghiệm biểu mẫu này (PDF / Máy in)"
               >
                 <Printer className="h-4 w-4" />
+                <span>In thử</span>
               </button>
             </div>
           </div>
