@@ -121,10 +121,10 @@ export const KPICards: React.FC<KPICardsProps> = ({ items, columns, className = 
             tabIndex={isClickable ? 0 : undefined}
             onClick={isClickable ? handleClick : undefined}
             onKeyDown={isClickable ? handleKeyDown : undefined}
-            className={`group relative flex flex-col justify-between rounded-2xl border p-4 shadow-2xs transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-md overflow-hidden ${
+            className={`group relative flex flex-col justify-between rounded-2xl border p-4 transition-all duration-300 ease-out overflow-hidden ${
               item.selected
-                ? 'bg-blue-50/40 dark:bg-blue-950/30 border-blue-500 ring-2 ring-blue-500/20'
-                : 'border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300/90 dark:hover:border-slate-700'
+                ? 'bg-blue-50/40 dark:bg-blue-950/30 border-blue-500 ring-2 ring-blue-500/20 shadow-sm'
+                : 'border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs hover:-translate-y-1 hover:border-blue-400/50 dark:hover:border-blue-500/40 hover:shadow-lg hover:shadow-slate-200/70 dark:hover:shadow-slate-950/70'
             } ${isClickable ? 'cursor-pointer' : ''}`}
           >
             {/* Subtle Area Wave Sparkline Background Layer */}
