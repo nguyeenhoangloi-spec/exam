@@ -177,20 +177,20 @@ export function DetailDrawer({
   // Khi đang mở dùng props hiện tại; khi đang đóng dùng snapshot để giữ nguyên 100% nội dung trượt ra
   const active = isOpen
     ? {
-        title,
-        subtitle,
-        badge,
-        showAvatar,
-        avatarText,
-        avatarIcon,
-        headerActions,
-        headerExtra,
-        tabs,
-        activeTab,
-        footer,
-        children,
-        maxWidth,
-      }
+      title,
+      subtitle,
+      badge,
+      showAvatar,
+      avatarText,
+      avatarIcon,
+      headerActions,
+      headerExtra,
+      tabs,
+      activeTab,
+      footer,
+      children,
+      maxWidth,
+    }
     : lastValidSnapshotRef.current;
 
   // Xử lý độ rộng
@@ -226,17 +226,15 @@ export function DetailDrawer({
     >
       {/* Backdrop mờ nền với hiệu ứng fade 60 FPS */}
       <div
-        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isAnimated ? 'opacity-100' : 'opacity-0'
-        }`}
+        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isAnimated ? 'opacity-100' : 'opacity-0'
+          }`}
         onClick={onClose}
       />
 
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
         <div
-          className={`w-screen ${widthClass} bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/60 dark:border-slate-800 pointer-events-auto transform-gpu transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
-            isAnimated ? 'translate-x-0' : 'translate-x-full'
-          }`}
+          className={`w-screen ${widthClass} bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/60 dark:border-slate-800 pointer-events-auto transform-gpu transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${isAnimated ? 'translate-x-0' : 'translate-x-full'
+            }`}
           style={{
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
@@ -284,8 +282,8 @@ export function DetailDrawer({
                       {active.subtitle && (
                         <div className="min-w-0 flex-1 shrink truncate flex items-center">
                           {typeof active.subtitle === 'string' &&
-                          (/(^|\s)(mã|id|code|snapshot)\s*:\s*/i.test(active.subtitle) ||
-                            isIdentifierSubtitle) ? (
+                            (/(^|\s)(mã|id|code|snapshot)\s*:\s*/i.test(active.subtitle) ||
+                              isIdentifierSubtitle) ? (
                             <IdentifierBadge tone="neutral" title={active.subtitle} className="max-w-full">
                               {active.subtitle.replace(/^(?:mã(?:\s+[a-zà-ỹ]+)*|id|code|snapshot)\s*:\s*/i, '').trim()}
                             </IdentifierBadge>
@@ -335,21 +333,19 @@ export function DetailDrawer({
                     key={tab.id}
                     type="button"
                     onClick={() => onTabChange?.(tab.id)}
-                    className={`flex items-center gap-2 py-3 px-3 border-b-2 text-type-body-sm font-semibold whitespace-nowrap transition cursor-pointer ${
-                      isActive
+                    className={`flex items-center gap-2 py-3 px-3 border-b-2 text-type-body-sm font-semibold whitespace-nowrap transition cursor-pointer ${isActive
                         ? 'border-blue-600 text-blue-600 dark:text-blue-400'
                         : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                    }`}
+                      }`}
                   >
                     {Icon && <Icon className="h-4 w-4 shrink-0" />}
                     <span>{tab.label}</span>
                     {tab.badge !== undefined && (
                       <span
-                        className={`ui-pill ui-pill-solid rounded-full px-2 py-0.5 text-type-helper font-medium tabular-nums ${
-                          isActive
+                        className={`ui-pill ui-pill-solid rounded-full px-2 py-0.5 text-type-helper font-medium tabular-nums ${isActive
                             ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300'
                             : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-                        }`}
+                          }`}
                       >
                         {tab.badge}
                       </span>

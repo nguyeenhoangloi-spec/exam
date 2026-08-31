@@ -43,6 +43,7 @@ export interface ExamPaperExportModel {
   pageSize?: 'A4' | 'A5';
   essayHeaderMode?: 'STANDARD' | 'ANONYMIZED_CUT';
   duplexPrinting?: boolean;
+  phachCode?: string;
   signers?: Array<{ title: string; subtitle?: string }>;
   questions: ExamQuestionExportItem[];
 }
@@ -221,6 +222,8 @@ function renderUnifiedPaperHeader(
     subtitle: string;
     instructionText: string;
     showScoreBox?: boolean;
+    isEssayCut?: boolean;
+    phachCode?: string;
   }
 ): string {
   const {
@@ -233,7 +236,107 @@ function renderUnifiedPaperHeader(
     subtitle,
     instructionText,
     showScoreBox,
+    isEssayCut,
+    phachCode,
   } = config;
+
+  // 1. NẾU LÀ ĐẦU PHÁCH CỦA ĐỀ THI TỰ LUẬN RỌC PHÁCH (ĐẦU PHÁCH 120MM MẶT 1)
+  if (isEssayCut) {
+    return `
+    <!-- HEADER TRƯỜNG & QUỐC HIỆU CHUẨN GỐC -->
+    <table class="header-grid" style="width:100%; border-collapse:collapse; margin-bottom:3px; table-layout:fixed;">
+      <tr>
+        <td class="inst-box" style="width:50%; text-align:center; vertical-align:top; font-size:10.5pt; font-weight:bold; border:none; padding:0;">
+          <table style="border-collapse:collapse; margin:0 auto; border:none; width:auto;">
+            <tr>
+              ${showLogo && logoUrl ? `
+                <td style="vertical-align:middle; padding-right:6px; border:none; width:48px; text-align:center;">
+                  <img src="${logoUrl}" alt="Logo" width="48" height="48" style="width:48px; height:48px; max-width:48px; max-height:48px; display:block; margin:0 auto;" />
+                </td>
+              ` : ''}
+              <td style="vertical-align:middle; text-align:center; border:none;">
+                <div>${escapeHtml(institutionName)}</div>
+                <div style="font-weight:normal; font-size:10pt;">${escapeHtml(facultyName)}</div>
+                <div class="inst-underline" style="border-top:1px solid #000000; display:inline-block; width:115px; margin-top:2px;"></div>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td class="motto-box" style="width:50%; text-align:center; vertical-align:top; font-size:10.5pt; font-weight:bold; border:none; padding:0;">
+          <div>${escapeHtml(motto.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM')}</div>
+          <em style="display:block; font-style:italic; font-size:10pt; margin-top:1px; font-weight:normal;">${escapeHtml(motto.split('\n')[1] || 'Độc lập - Tự do - Hạnh phúc')}</em>
+          <div class="inst-underline" style="border-top:1px solid #000000; display:inline-block; width:115px; margin-top:2px;"></div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- TIÊU ĐỀ ĐỀ THI & MÃ ĐỀ -->
+    <table style="width:100%; border-collapse:collapse; border:none; margin:2px 0 3px;">
+      <tr>
+        <td style="width:72%; text-align:center; border:none; padding:0 0 0 14%;">
+          <h1 class="title" style="font-size:13pt; font-weight:bold; text-transform:uppercase; margin:0; line-height:1.2;">
+            ${escapeHtml(title)}
+          </h1>
+          <div class="subtitle" style="font-style:italic; font-size:10pt; color:#475569; margin:1px 0 0;">
+            ${escapeHtml(subtitle)}
+          </div>
+        </td>
+        <td style="width:28%; text-align:right; font-size:10.5pt; border:none; padding:0; vertical-align:middle;">
+          MÃ ĐỀ THI: <strong>${escapeHtml(paper.paperCode)}</strong>
+        </td>
+      </tr>
+    </table>
+
+    <!-- KHUNG THÔNG TIN HỌC PHẦN (CHUẨN BẢNG 100%) -->
+    <table class="exam-info-box" style="width:100%; border-collapse:collapse; border:1px solid #000000; margin:3px 0; font-size:10.5pt; background:transparent; table-layout:fixed;">
+      <tr>
+        <td style="width:50%; border:none; padding:3px 8px;"><strong>Môn học:</strong> ${escapeHtml(paper.subjectName)}</td>
+        <td style="width:50%; border:none; padding:3px 8px;"><strong>Mã học phần:</strong> ${escapeHtml(paper.subjectCode)}</td>
+      </tr>
+      <tr>
+        <td style="width:50%; border:none; padding:3px 8px;"><strong>Thời gian làm bài:</strong> ${paper.durationMinutes} phút</td>
+        <td style="width:50%; border:none; padding:3px 8px;"><strong>Thang điểm:</strong> ${paper.totalScore || 10} điểm</td>
+      </tr>
+    </table>
+
+    <!-- BẢNG THÔNG TIN THÍ SINH & Ô SỐ PHÁCH 1 (IN SẴN MÃ PHÁCH) -->
+    <table class="student-info-table" style="width:100%; border-collapse:collapse; margin:3px 0; border:1px solid #000000; font-size:10.5pt; table-layout:fixed;">
+      <tr>
+        <td colspan="2" style="width:55%; border:1px solid #000000; padding:4px 8px;"><strong>Họ và tên thí sinh:</strong> ............................................................</td>
+        <td style="width:25%; border:1px solid #000000; padding:4px 8px;"><strong>MSSV:</strong> ..............................</td>
+        <td rowspan="3" style="width:20%; border:1px solid #000000; padding:4px; text-align:center; vertical-align:middle; background:#f8fafc;">
+          <div style="font-size:9pt; font-weight:bold; text-transform:uppercase; color:#000000;">SỐ PHÁCH</div>
+          <div style="font-size:8pt; font-style:italic; color:#475569;">(Phách 1)</div>
+          <div style="margin:4px auto; font-size:12pt; font-weight:bold; font-family:Courier New, monospace; letter-spacing:1px; border:1px dashed #000000; padding:3px 6px; background:#ffffff; display:inline-block;">
+            ${escapeHtml(phachCode || 'P-001')}
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="width:30%; border:1px solid #000000; padding:4px 8px;"><strong>Lớp HP:</strong> ........................</td>
+        <td style="width:25%; border:1px solid #000000; padding:4px 8px;"><strong>Phòng thi:</strong> ............</td>
+        <td style="width:25%; border:1px solid #000000; padding:4px 8px;"><strong>SBD:</strong> ................</td>
+      </tr>
+      <tr>
+        <td style="width:30%; border:1px solid #000000; padding:4px 8px;"><strong>Ngày thi:</strong> ...../...../202...</td>
+        <td style="width:25%; border:1px solid #000000; padding:4px 8px;"><strong>Ca thi:</strong> ............</td>
+        <td style="width:25%; border:1px solid #000000; padding:4px 8px;"><strong>Chữ ký SV:</strong> ................</td>
+      </tr>
+    </table>
+
+    <!-- KHUNG CÁN BỘ COI THI (Ở ĐẦU PHÁCH) -->
+    <table class="proctor-table" style="width:100%; border-collapse:collapse; margin:2px 0 0; border:1px solid #000000; table-layout:fixed;">
+      <tr>
+        <th style="width:50%; border:1px solid #000000; padding:2px 6px; text-align:center; font-size:9.5pt; background:transparent;">CÁN BỘ COI THI 1</th>
+        <th style="width:50%; border:1px solid #000000; padding:2px 6px; text-align:center; font-size:9.5pt; background:transparent;">CÁN BỘ COI THI 2</th>
+      </tr>
+      <tr>
+        <td style="width:50%; border:1px solid #000000; vertical-align:top; font-size:9pt; height:34px; text-align:center; padding:2px;"><em>(Ký và ghi rõ họ tên)</em></td>
+        <td style="width:50%; border:1px solid #000000; vertical-align:top; font-size:9pt; height:34px; text-align:center; padding:2px;"><em>(Ký và ghi rõ họ tên)</em></td>
+      </tr>
+    </table>
+    `;
+  }
 
   return `
     <!-- HEADER TRƯỜNG & QUỐC HIỆU CHUẨN GỐC -->
@@ -385,6 +488,10 @@ export function generateUnifiedExamPaperHtml(
 
   // 1. Render từng mã đề thi
   const papersHtml = papers.map((paper, paperIndex) => {
+    // Tự động sinh hoặc gán mã phách in sẵn đồng nhất giữa Đầu phách và Thân bài thi
+    const cleanCode = (paper.paperCode || 'TL').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    const phachCode = paper.phachCode || customOptions?.phachCode || `P${cleanCode}-${String(paperIndex + 1).padStart(3, '0')}`;
+
     // NẾU LÀ ĐỀ THI TỰ LUẬN KẾT HỢP ĐẦU PHÁCH RỌC PHÁCH 2 MẶT (GOM ĐỀ + BÀI LÀM TỰ DO)
     if (isEssay && isAnonymizedCut) {
       // 1.1 Khối gom toàn bộ câu hỏi tự luận (Luôn sạch sẽ không kèm đáp án trực tiếp trong đề thi)
@@ -395,7 +502,7 @@ export function generateUnifiedExamPaperHtml(
         const mediaHtml = renderQuestionMediaForPrint(q.media);
 
         return `
-          <div class="essay-question-item" style="margin:5px 0; font-size:11.5pt; line-height:1.4;">
+          <div class="essay-question-item" style="margin:4px 0; font-size:11pt; line-height:1.4;">
             <strong>Câu ${questionIndex}${scoreText}:</strong> ${formattedContent}
             ${mediaHtml}
           </div>
@@ -408,29 +515,76 @@ export function generateUnifiedExamPaperHtml(
         <div class="paper-page duplex-front${paperIndex > 0 ? ' page-break-before' : ''}">
           <!-- KHỐI ĐẦU PHÁCH CHUẨN ĐỒNG BỘ 100% VỚI HỆ THỐNG (120MM) -->
           <div class="anonymized-cut-header" style="height:120mm; max-height:120mm; box-sizing:border-box; overflow:hidden;">
-            ${renderUnifiedPaperHeader(paper, headerConfig)}
+            ${renderUnifiedPaperHeader(paper, { ...headerConfig, isEssayCut: true, phachCode })}
           </div>
 
           <!-- ĐƯỜNG CẮT PHÁCH MẶT 1 (TẠI ĐÚNG MỐC 120MM) -->
-          <table class="perforated-cut-table" style="width:100%; border-collapse:collapse; margin:6px 0 8px; table-layout:fixed;">
+          <table class="perforated-cut-table" style="width:100%; border-collapse:collapse; margin:5px 0 6px; table-layout:fixed;">
             <tr>
-              <td style="border:none; border-top:2px dashed #000000; text-align:center; padding-top:4px; font-size:9.5pt; font-weight:bold; color:#000000; letter-spacing:0.5px;">
+              <td style="border:none; border-top:2px dashed #000000; text-align:center; padding-top:3px; font-size:9.5pt; font-weight:bold; color:#000000; letter-spacing:0.5px;">
                 ✂ &nbsp; &mdash; &mdash; &mdash; &mdash; ĐƯỜNG CẮT PHÁCH (RỌC PHÁCH TRƯỚC KHI CHẤM BÀI) &mdash; &mdash; &mdash; &mdash; &nbsp; ✂
               </td>
             </tr>
           </table>
 
-          <!-- KHỐI ĐỀ BÀI (GOM TẬP TRUNG TẤT CẢ CÂU HỎI TỰ LUẬN) -->
-          <table class="gathered-exam-questions" style="width:100%; border-collapse:collapse; border:1px solid #000000; margin:6px 0; background:transparent; table-layout:fixed;">
+          <!-- THANH MINI-HEADER ĐỊNH DANH MÔN THI & MÃ ĐỀ -->
+          <table style="width:100%; border-collapse:collapse; border:none; margin:2px 0 4px; font-size:10pt; font-weight:bold; table-layout:fixed;">
             <tr>
-              <td style="padding:6px 8px; border:none;">
-                <div style="font-weight:bold; font-size:11.5pt; text-transform:uppercase; margin-bottom:4px; color:#000000;">
+              <td style="border:none; padding:0; text-align:left;">
+                MÔN THI: <span style="text-transform:uppercase;">${escapeHtml(paper.subjectName)}</span> (${escapeHtml(paper.subjectCode)})
+              </td>
+              <td style="border:none; padding:0; text-align:right;">
+                MÃ ĐỀ THI: <strong>${escapeHtml(paper.paperCode)}</strong> | THỜI GIAN: ${paper.durationMinutes} PHÚT
+              </td>
+            </tr>
+          </table>
+
+          <!-- BẢNG KHỚP PHÁCH 2 & CHẤM ĐIỂM CỦA GIÁM KHẢO (ĐẦU THÂN BÀI THI) -->
+          <table class="essay-grading-score-box" style="width:100%; border-collapse:collapse; margin:3px 0 6px; border:1px solid #000000; table-layout:fixed;">
+            <tr>
+              <th style="width:22%; border:1px solid #000000; padding:3px 6px; text-align:center; font-size:9.5pt; background:#f8fafc;">
+                SỐ PHÁCH (Phách 2)
+              </th>
+              <th style="width:20%; border:1px solid #000000; padding:3px 6px; text-align:center; font-size:9.5pt; background:transparent;">
+                ĐIỂM SỐ
+              </th>
+              <th style="width:28%; border:1px solid #000000; padding:3px 6px; text-align:center; font-size:9.5pt; background:transparent;">
+                ĐIỂM CHỮ
+              </th>
+              <th style="width:30%; border:1px solid #000000; padding:3px 6px; text-align:center; font-size:9.5pt; background:transparent;">
+                CÁN BỘ CHẤM THI
+              </th>
+            </tr>
+            <tr>
+              <td style="width:22%; border:1px solid #000000; vertical-align:middle; text-align:center; padding:3px; background:#f8fafc;">
+                <div style="font-size:12pt; font-weight:bold; font-family:Courier New, monospace; letter-spacing:1px; border:1px dashed #000000; padding:3px 6px; background:#ffffff; display:inline-block;">
+                  ${escapeHtml(phachCode || 'P-001')}
+                </div>
+              </td>
+              <td style="width:20%; border:1px solid #000000; vertical-align:middle; text-align:center; font-size:13pt; font-weight:bold;">
+                &nbsp;
+              </td>
+              <td style="width:28%; border:1px solid #000000; vertical-align:top; font-size:9.5pt; padding:3px 6px; text-align:left;">
+                <em>(Ghi bằng chữ)</em>
+              </td>
+              <td style="width:30%; border:1px solid #000000; vertical-align:top; font-size:9pt; padding:3px 6px; text-align:left;">
+                CB1: .................................<br>
+                CB2: .................................
+              </td>
+            </tr>
+          </table>
+
+          <!-- KHỐI ĐỀ BÀI (GOM TẬP TRUNG TẤT CẢ CÂU HỎI TỰ LUẬN) -->
+          <table class="gathered-exam-questions" style="width:100%; border-collapse:collapse; border:1px solid #000000; margin:4px 0; background:transparent; table-layout:fixed;">
+            <tr>
+              <td style="padding:5px 8px; border:none;">
+                <div style="font-weight:bold; font-size:11pt; text-transform:uppercase; margin-bottom:3px; color:#000000;">
                   ĐỀ BÀI:
                 </div>
                 <div class="questions-list">
                   ${questionsListHtml}
                 </div>
-                <div style="text-align:center; font-size:10pt; font-style:italic; color:#475569; margin-top:4px; border-top:1px dashed #000000; padding-top:3px;">
+                <div style="text-align:center; font-size:9.5pt; font-style:italic; color:#475569; margin-top:3px; border-top:1px dashed #000000; padding-top:2px;">
                   &mdash; &mdash; &mdash; (HẾT ĐỀ THI) &mdash; &mdash; &mdash;
                 </div>
               </td>
@@ -438,8 +592,8 @@ export function generateUnifiedExamPaperHtml(
           </table>
 
           <!-- KHỐI BÀI LÀM (DÒNG KẺ CHẤM TỰ DO MẶT 1) -->
-          <div class="freeform-answer-zone" style="margin-top:6px; width:100%;">
-            <div style="font-weight:bold; font-size:11pt; margin-bottom:3px; color:#000000;">
+          <div class="freeform-answer-zone" style="margin-top:4px; width:100%;">
+            <div style="font-weight:bold; font-size:10.5pt; margin-bottom:2px; color:#000000;">
               BÀI LÀM:
             </div>
             <div class="dotted-lines-container">
@@ -465,17 +619,17 @@ export function generateUnifiedExamPaperHtml(
           </table>
 
           <!-- 2. ĐƯỜNG RỌC PHÁCH MẶT 2 (KHỚP TỌA ĐỘ VỚI MẶT 1) -->
-          <table class="perforated-cut-table" style="width:100%; border-collapse:collapse; margin:6px 0 8px; table-layout:fixed;">
+          <table class="perforated-cut-table" style="width:100%; border-collapse:collapse; margin:5px 0 6px; table-layout:fixed;">
             <tr>
-              <td style="border:none; border-top:2px dashed #000000; text-align:center; padding-top:4px; font-size:9.5pt; font-weight:bold; color:#000000; letter-spacing:0.5px;">
+              <td style="border:none; border-top:2px dashed #000000; text-align:center; padding-top:3px; font-size:9.5pt; font-weight:bold; color:#000000; letter-spacing:0.5px;">
                 ✂ &nbsp; &mdash; &mdash; &mdash; &mdash; ĐƯỜNG CẮT PHÁCH (MẶT SAU) &mdash; &mdash; &mdash; &mdash; &nbsp; ✂
               </td>
             </tr>
           </table>
 
           <!-- 3. KHỐI BÀI LÀM TIẾP THEO (MẶT 2 TOÀN TRANG DÒNG KẺ CHẤM) -->
-          <div class="freeform-answer-zone-back" style="font-size:11pt; width:100%; margin-top:6px;">
-            <div style="font-weight:bold; font-size:11pt; margin-bottom:4px; color:#000000;">
+          <div class="freeform-answer-zone-back" style="font-size:11pt; width:100%; margin-top:4px;">
+            <div style="font-weight:bold; font-size:10.5pt; margin-bottom:3px; color:#000000;">
               BÀI LÀM (Tiếp theo):
             </div>
             <div class="dotted-lines-container">

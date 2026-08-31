@@ -103,9 +103,8 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
               return (
                 <div
                   key={idx}
-                  className={`p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/40 space-y-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60 ${
-                    item.fullWidth ? 'sm:col-span-2' : ''
-                  }`}
+                  className={`p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/40 space-y-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60 ${item.fullWidth ? 'sm:col-span-2' : ''
+                    }`}
                 >
                   <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     {Icon && <Icon className="h-4 w-4 shrink-0 text-blue-600 dark:text-blue-400" />}
