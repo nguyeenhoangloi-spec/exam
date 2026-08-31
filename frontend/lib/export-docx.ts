@@ -85,19 +85,46 @@ export function generateShuffledPaperVariants(
   return variants;
 }
 
+import { getSchoolLogoUrl } from './school-logo';
+
+async function resolveImageAsBase64(url?: string): Promise<string | undefined> {
+  if (!url) return undefined;
+  if (url.startsWith('data:')) return url;
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = () => resolve(url);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return url;
+  }
+}
+
 /** Xuất 1 mã đề thi ra file Word (.doc) */
-export function exportExamPaperToWord(data: ExamPaperExportData, includeAnswerKey = false) {
-  exportBulkExamPapersToWord([data], includeAnswerKey, data.subjectCode);
+export async function exportExamPaperToWord(data: ExamPaperExportData, includeAnswerKey = false) {
+  await exportBulkExamPapersToWord([data], includeAnswerKey, data.subjectCode);
 }
 
 /** Xuất trọn bộ N mã đề thi và Bảng đáp án ma trận tổng hợp ra 1 file Word (.doc) duy nhất */
-export function exportBulkExamPapersToWord(
+export async function exportBulkExamPapersToWord(
   papers: ExamPaperExportData[],
   includeAnswerKey = false,
   customFileName?: string,
   customOptions?: Partial<ExamPaperExportModel>
-): void {
+): Promise<void> {
   if (!papers || papers.length === 0) return;
+
+  const rawLogoUrl = customOptions?.logoUrl || getSchoolLogoUrl();
+  const embeddedLogoUrl = await resolveImageAsBase64(rawLogoUrl);
+
+  const effectiveOptions: Partial<ExamPaperExportModel> = {
+    ...customOptions,
+    logoUrl: embeddedLogoUrl || rawLogoUrl,
+  };
 
   const mappedPapers: ExamPaperExportModel[] = papers.map((p) => ({
     paperCode: p.paperCode || '101',
@@ -109,7 +136,7 @@ export function exportBulkExamPapersToWord(
     examType: p.examType,
     departmentName: p.departmentName,
     schoolName: p.schoolName,
-    ...customOptions,
+    ...effectiveOptions,
     questions: p.questions.map((q) => ({
       order: q.order,
       code: q.code,
@@ -129,7 +156,7 @@ export function exportBulkExamPapersToWord(
   }));
 
   // Dùng chung 100% template HTML với bản In/PDF
-  const html = generateUnifiedExamPaperHtml(mappedPapers, includeAnswerKey, customOptions);
+  const html = generateUnifiedExamPaperHtml(mappedPapers, includeAnswerKey, effectiveOptions);
 
   const blob = new Blob(['\ufeff' + html], { type: 'application/msword;charset=utf-8' });
   const link = document.createElement('a');

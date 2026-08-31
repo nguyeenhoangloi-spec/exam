@@ -14,6 +14,41 @@ interface ExamPaperExportModalProps {
   defaultVariantCount?: number;
 }
 
+function getPaperTypeSummary(basePaper: ExamPaperExportData | null): string {
+  if (!basePaper) return 'Trắc nghiệm';
+  const questions = basePaper.questions || [];
+  if (questions.length === 0) {
+    if (basePaper.examType === 'TU_LUAN') return 'Tự luận';
+    if (basePaper.examType === 'DIEN_KHUYET' || basePaper.examType === 'DIEN_LO' || basePaper.examType === 'FILL_BLANK') return 'Điền khuyết';
+    return 'Trắc nghiệm';
+  }
+
+  const typeSet = new Set(
+    questions.map((q) => {
+      const t = (q.type || '').toUpperCase();
+      if (t === 'FILL_BLANK' || t === 'DIEN_KHUYET' || t === 'DIEN_LO' || t === 'DIEN_KHUYES' || t === 'DIEN') return 'FILL_BLANK';
+      if (t === 'ESSAY' || t === 'TU_LUAN') return 'ESSAY';
+      if (t === 'TRUE_FALSE' || t === 'DUNG_SAI') return 'TRUE_FALSE';
+      return 'MULTIPLE_CHOICE';
+    })
+  );
+
+  if (typeSet.size === 1) {
+    if (typeSet.has('FILL_BLANK')) return 'Điền khuyết';
+    if (typeSet.has('ESSAY')) return 'Tự luận';
+    if (typeSet.has('TRUE_FALSE')) return 'Đúng/Sai';
+    return 'Trắc nghiệm';
+  }
+
+  const names: string[] = [];
+  if (typeSet.has('MULTIPLE_CHOICE')) names.push('Trắc nghiệm');
+  if (typeSet.has('FILL_BLANK')) names.push('Điền khuyết');
+  if (typeSet.has('TRUE_FALSE')) names.push('Đúng/Sai');
+  if (typeSet.has('ESSAY')) names.push('Tự luận');
+
+  return names.join(' + ');
+}
+
 export function ExamPaperExportModal({
   isOpen,
   onClose,
@@ -56,7 +91,7 @@ export function ExamPaperExportModal({
         essayHeaderMode: (duplexCutLine ? 'ANONYMIZED_CUT' : 'STANDARD') as 'ANONYMIZED_CUT' | 'STANDARD',
         duplexPrinting: duplexCutLine,
       };
-      exportBulkExamPapersToWord(targetPapers, includeAnswerKey, basePaper.subjectCode, customOpts);
+      await exportBulkExamPapersToWord(targetPapers, includeAnswerKey, basePaper.subjectCode, customOpts);
       onClose();
     } finally {
       setIsProcessing(false);
@@ -113,10 +148,10 @@ export function ExamPaperExportModal({
         {/* Tóm tắt môn học 1 dòng không dùng dấu chấm */}
         <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-slate-800 text-type-helper text-slate-600 dark:text-slate-400">
           <div className="truncate font-medium">
-            <strong className="font-semibold text-slate-900 dark:text-slate-100">{basePaper.subjectName}</strong> ({basePaper.subjectCode})
+            <span className="font-semibold text-slate-900 dark:text-slate-100">{basePaper.subjectName}</span> ({basePaper.subjectCode})
           </div>
           <span className="shrink-0 font-normal">
-            {basePaper.questions.length} câu ({basePaper.durationMinutes} phút) | {isEssay ? 'Tự luận' : 'Trắc nghiệm'}
+            {basePaper.questions.length} câu | {basePaper.durationMinutes} phút | {getPaperTypeSummary(basePaper)}
           </span>
         </div>
 
@@ -137,8 +172,8 @@ export function ExamPaperExportModal({
                 >
                   −
                 </button>
-                <span className="min-w-[3rem] px-2 text-center text-type-body font-semibold text-blue-600 dark:text-blue-400">
-                  {count} / {maxAvailableVariants}
+                <span className="min-w-[3rem] px-2 text-center text-type-body font-semibold text-slate-900 dark:text-slate-100">
+                  {count} <span className="font-normal text-slate-400">/ {maxAvailableVariants}</span>
                 </span>
                 <button
                   type="button"
@@ -162,10 +197,10 @@ export function ExamPaperExportModal({
                   value={startCode}
                   onChange={(e) => setStartCode(e.target.value)}
                   placeholder="101"
-                  className="w-16 h-8 text-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-type-body font-semibold focus:border-blue-500 focus:outline-none transition"
+                  className="w-16 h-8 text-center rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-type-body font-semibold focus:border-slate-400 dark:focus:border-slate-500 focus:outline-none transition"
                 />
                 <span className="text-type-helper font-medium text-slate-500 dark:text-slate-400">
-                  (Dải mã: <span className="font-semibold text-blue-600 dark:text-blue-400">{codeRangeLabel}</span>)
+                  (Dải mã: <span className="font-semibold text-slate-800 dark:text-slate-200">{codeRangeLabel}</span>)
                 </span>
               </div>
             </div>

@@ -208,10 +208,22 @@ export function ExamPaperDetailDrawer({
               {paper ? (getPaperCodeRange(paper).rangeText || paper.paperCode || `Đề thi #${paper.id}`) : ''}
             </span>
             {paper && <StatusBadge status={paper.status} />}
-            <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
-            <span className="text-type-body-sm font-medium text-slate-600 dark:text-slate-400 truncate">
-              {subjectName} — {periodName}
-            </span>
+            {subjectName && (
+              <>
+                <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
+                <span className="text-type-body-sm font-medium text-slate-700 dark:text-slate-300 truncate">
+                  {subjectName}
+                </span>
+              </>
+            )}
+            {periodName && (
+              <>
+                <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
+                <span className="text-type-body-sm font-medium text-slate-500 dark:text-slate-400 truncate">
+                  {periodName}
+                </span>
+              </>
+            )}
           </div>
         }
         maxWidth="3xl"

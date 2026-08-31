@@ -196,8 +196,8 @@ export function ExamPaperTable({
                     <button
                       type="button"
                       onClick={() => onExportWord(p)}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-primary-50 hover:text-primary-600 transition cursor-pointer"
-                      title="Xuất Word (.doc)"
+                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white transition cursor-pointer"
+                      title="Xuất hoặc in đề thi"
                     >
                       <Download className="h-4 w-4" />
                     </button>
@@ -226,7 +226,7 @@ export function ExamPaperTable({
                             className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap"
                           >
                             <Download className="h-3.5 w-3.5 text-slate-500 shrink-0" />
-                            <span>Xuất Word (.doc)</span>
+                            <span>Xuất đề thi</span>
                           </button>
 
                           {onChangePassword && (p.examScheduleId || p.examSchedule?.id || sched.id) && (
@@ -236,9 +236,9 @@ export function ExamPaperTable({
                                 closeMenu();
                                 onChangePassword(p);
                               }}
-                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-blue-50 dark:hover:bg-blue-950/50 text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer whitespace-nowrap"
+                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap"
                             >
-                              <KeyRound className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                              <KeyRound className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400 shrink-0" />
                               <span>Đổi mật khẩu</span>
                             </button>
                           )}
@@ -252,7 +252,7 @@ export function ExamPaperTable({
                               }}
                               className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
                             >
-                              <Send className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                              <Send className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400 shrink-0" />
                               <span>Phát hành</span>
                             </button>
                           )}
@@ -281,9 +281,9 @@ export function ExamPaperTable({
                                     closeMenu();
                                     onAction(p, 'restore');
                                   }}
-                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-blue-600 dark:text-blue-400 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
+                                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer whitespace-nowrap text-type-body font-medium select-none"
                                 >
-                                  <RotateCcw className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                                  <RotateCcw className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400 shrink-0" />
                                   <span>Khôi phục</span>
                                 </button>
                               )}

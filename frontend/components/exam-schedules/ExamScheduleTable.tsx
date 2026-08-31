@@ -344,9 +344,9 @@ export function ExamScheduleTable({
                                       closeMenu();
                                       onRestore?.(s.id);
                                     }}
-                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-blue-600 dark:text-blue-400 cursor-pointer text-type-body font-medium transition select-none"
+                                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 cursor-pointer text-type-body font-medium transition select-none"
                                   >
-                                    <RotateCcw className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                                    <RotateCcw className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0" />
                                     <span>Khôi phục</span>
                                   </button>
                                   <div className="my-1 border-t border-slate-100 dark:border-slate-800" />

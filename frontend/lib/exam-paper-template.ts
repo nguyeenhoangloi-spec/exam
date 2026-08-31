@@ -138,14 +138,20 @@ export function generateUnifiedExamPaperHtml(
           <table class="header-grid" style="width:100%; border-collapse:collapse; margin-bottom:6px; table-layout:fixed;">
             <tr>
               <td class="inst-box" style="width:50%; text-align:center; vertical-align:top; font-size:11pt; font-weight:bold; border:none; padding:0;">
-                <div style="display:inline-flex; align-items:center; justify-content:center; gap:8px; text-align:center;">
-                  ${showLogo && logoUrl ? `<img src="${logoUrl}" alt="Logo" style="height:52px; width:52px; object-fit:contain; flex-shrink:0;" />` : ''}
-                  <div>
-                    <div>${escapeHtml(institutionName)}</div>
-                    <div style="font-weight:normal; font-size:10pt;">${escapeHtml(facultyName)}</div>
-                    <div class="inst-underline" style="border-top:1px solid #000000; display:inline-block; width:120px; margin-top:2px;"></div>
-                  </div>
-                </div>
+                <table style="border-collapse:collapse; margin:0 auto; border:none; width:auto;">
+                  <tr>
+                    ${showLogo && logoUrl ? `
+                      <td style="vertical-align:middle; padding-right:8px; border:none; width:52px; text-align:center;">
+                        <img src="${logoUrl}" alt="Logo" width="52" height="52" style="width:52px; height:52px; max-width:52px; max-height:52px; display:block; margin:0 auto;" />
+                      </td>
+                    ` : ''}
+                    <td style="vertical-align:middle; text-align:center; border:none;">
+                      <div>${escapeHtml(institutionName)}</div>
+                      <div style="font-weight:normal; font-size:10pt;">${escapeHtml(facultyName)}</div>
+                      <div class="inst-underline" style="border-top:1px solid #000000; display:inline-block; width:120px; margin-top:2px;"></div>
+                    </td>
+                  </tr>
+                </table>
               </td>
               <td class="motto-box" style="width:50%; text-align:center; vertical-align:top; font-size:11pt; font-weight:bold; border:none; padding:0;">
                 <div>${escapeHtml(motto.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM')}</div>
@@ -373,14 +379,20 @@ export function generateUnifiedExamPaperHtml(
         <table class="header-grid" style="width:100%; border-collapse:collapse; margin-bottom:6px; table-layout:fixed;">
           <tr>
             <td class="inst-box" style="width:50%; text-align:center; vertical-align:top; font-size:11pt; font-weight:bold; border:none; padding:0;">
-              <div style="display:inline-flex; align-items:center; justify-content:center; gap:8px; text-align:center;">
-                ${showLogo && logoUrl ? `<img src="${logoUrl}" alt="Logo" style="height:52px; width:52px; object-fit:contain; flex-shrink:0;" />` : ''}
-                <div>
-                  <div>${escapeHtml(institutionName)}</div>
-                  <div style="font-weight:normal; font-size:10pt;">${escapeHtml(facultyName)}</div>
-                  <div class="inst-underline" style="border-top:1px solid #000000; display:inline-block; width:120px; margin-top:2px;"></div>
-                </div>
-              </div>
+              <table style="border-collapse:collapse; margin:0 auto; border:none; width:auto;">
+                <tr>
+                  ${showLogo && logoUrl ? `
+                    <td style="vertical-align:middle; padding-right:8px; border:none; width:52px; text-align:center;">
+                      <img src="${logoUrl}" alt="Logo" width="52" height="52" style="width:52px; height:52px; max-width:52px; max-height:52px; display:block; margin:0 auto;" />
+                    </td>
+                  ` : ''}
+                  <td style="vertical-align:middle; text-align:center; border:none;">
+                    <div>${escapeHtml(institutionName)}</div>
+                    <div style="font-weight:normal; font-size:10pt;">${escapeHtml(facultyName)}</div>
+                    <div class="inst-underline" style="border-top:1px solid #000000; display:inline-block; width:120px; margin-top:2px;"></div>
+                  </td>
+                </tr>
+              </table>
             </td>
             <td class="motto-box" style="width:50%; text-align:center; vertical-align:top; font-size:11pt; font-weight:bold; border:none; padding:0;">
               <div>${escapeHtml(motto.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM')}</div>
@@ -632,6 +644,8 @@ export function generateUnifiedExamPaperHtml(
     .header-grid { width: 100%; border-collapse: collapse; margin-bottom: 4px; table-layout: fixed; }
     .header-grid td { vertical-align: top; border: none; padding: 0; }
     .inst-box { text-align: center; font-size: 10.5pt; font-weight: bold; width: 50%; }
+    .inst-box table { width: auto; margin: 0 auto; border-collapse: collapse; }
+    .inst-box img, img[alt="Logo"] { width: 52px !important; height: 52px !important; max-width: 52px !important; max-height: 52px !important; }
     .inst-box div { margin-bottom: 1px; }
     .inst-underline { border-top: 1px solid #000000; display: inline-block; width: 120px; margin-top: 2px; }
     .motto-box { text-align: center; font-size: 10.5pt; font-weight: bold; width: 50%; }
