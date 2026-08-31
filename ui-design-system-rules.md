@@ -765,4 +765,24 @@ Nhằm đảm bảo giao diện luôn mạch lạc, phẳng, thoáng đãng và 
   - Dòng 1: Họ tên hoặc Tên tài khoản (`font-medium text-slate-900`).
   - Dòng 2: Nhãn vai trò (`table-meta text-slate-500`) + Email/MSSV.
 
+## 23. Quy Chuẩn Thanh Chuyển Đổi Tab Trượt (Sliding Segmented Control 2026)
+
+Áp dụng cho mọi thanh chuyển tab dạng phân đoạn (Segmented Control / Tab Switcher) trong toàn hệ thống:
+
+### 23.1 Khung rãnh ngoài (Outer Track)
+- **Bo góc**: `rounded-2xl` mềm mại.
+- **Nền & Viền**: Nền xám nhạt trung tính `bg-slate-100/90 dark:bg-slate-800/90`, viền mảnh `border border-slate-200/60 dark:border-slate-700/60`, padding `p-1`.
+
+### 23.2 Viên trượt Active (Active Sliding Pill)
+- **Hình dạng**: Dạng viên thuốc `rounded-full`, padding `py-2 px-3.5`.
+- **Nền & Đổ bóng**: Nền trắng phẳng `bg-white dark:bg-slate-900` kèm đổ bóng nhẹ `shadow-xs dark:shadow-none`.
+- **Màu chữ**: Chữ màu xanh đen đậm Deep Ink (`text-slate-950 dark:text-white` hoặc `#020617` / `#F8FAFC`) với độ đậm `font-semibold` (`text-type-body`).
+
+### 23.3 Tab Inactive & Badge số đếm (Inactive Tab & Pill Badge)
+- **Tab Inactive**: Chữ Deep Ink phụ (`text-slate-700 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white font-medium`).
+- **Badge số đếm**: Nhỏ gọn dạng viên thuốc `rounded-full px-2 py-0.5 text-type-badge font-semibold tabular-nums leading-none`:
+  - Khi tab Active: Nền đậm `bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900`.
+  - Khi tab Inactive: Nền trung tính `bg-slate-500/90 text-white dark:bg-slate-600 dark:text-white`.
+
+
 

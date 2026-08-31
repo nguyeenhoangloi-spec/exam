@@ -19,6 +19,7 @@ import api, { getCachedData } from '../../../lib/api';
 import { usePageTitle } from '../../../components/PageTitleContext';
 import { Button } from '../../../components/ui/Button';
 import { FilterSelect } from '../../../components/ui/FilterSelect';
+import { SlidingSegmentedControl } from '../../../components/ui/SlidingSegmentedControl';
 import { Toast } from '../../../components/Toast';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import { printReport, printExamPaper } from '../../../lib/export-print';
@@ -273,7 +274,7 @@ export default function DocumentTemplatesPage() {
   const [config, setConfig] = useState<Config | null>(null);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [zoomScale, setZoomScale] = useState<number>(95);
-  const [activeTab, setActiveTab] = useState<'settings' | 'columns' | 'templates'>('settings');
+  const [activeTab, setActiveTab] = useState<'settings' | 'columns'>('settings');
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteTemplateId, setDeleteTemplateId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -525,29 +526,17 @@ export default function DocumentTemplatesPage() {
       <div className="w-full rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 shadow-sm overflow-hidden grid grid-cols-1 lg:grid-cols-[500px_minmax(0,1fr)] items-stretch">
         {/* Cột Trái: Sidebar Cấu hình */}
         <div className="flex flex-col p-5 space-y-4 border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900">
-          {/* Segmented Tab Switcher Đúng 2 Nút Phẳng */}
-          <div className="flex rounded-xl bg-slate-100/80 p-0.5 dark:bg-slate-800/80 shrink-0">
-            <button
-              type="button"
-              onClick={() => setActiveTab('settings')}
-              className={`flex-1 rounded-xl py-2 text-type-body font-medium transition cursor-pointer text-center ${activeTab === 'settings'
-                ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-900 dark:text-slate-100'
-                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
-                }`}
-            >
-              Thiết lập in ấn
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('columns')}
-              className={`flex-1 rounded-xl py-2 text-type-body font-medium transition cursor-pointer text-center ${activeTab === 'columns'
-                ? 'bg-white text-slate-900 shadow-2xs dark:bg-slate-900 dark:text-slate-100'
-                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
-                }`}
-            >
-              Danh sách Mẫu ({templates.length})
-            </button>
-          </div>
+          {/* Sliding Segmented Control với Animation Trượt Mượt Mà */}
+          <SlidingSegmentedControl<'settings' | 'columns'>
+            value={activeTab}
+            onChange={(val) => setActiveTab(val)}
+            fullWidth
+            size="md"
+            options={[
+              { value: 'settings', label: 'Thiết lập in ấn' },
+              { value: 'columns', label: 'Danh sách Mẫu', count: templates.length },
+            ]}
+          />
 
           {/* Vùng Nội Dung Cấu Hình Cột Trái: Tab Thiết lập in ấn LUÔN LUÔN là khung chuẩn master duy nhất */}
           <div className="relative flex-1">

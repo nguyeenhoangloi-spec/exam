@@ -24,6 +24,8 @@ import {
   X,
   Edit2,
   Calculator,
+  Minus,
+  Plus,
 } from 'lucide-react';
 import api from '../../lib/api';
 import { printReport } from '../../lib/export-print';
@@ -562,6 +564,15 @@ export function ExamReportSummaryTab({
     }
   }, [columns, customFormulaColumns, customLabels, passThreshold, requestFilters, scoreRounding, title, type]);
 
+  // Auto-load preview when catalog is ready or tab is builder
+  const initialAutoLoadedRef = useRef(false);
+  useEffect(() => {
+    if (catalog.length > 0 && !preview && !busy && !initialAutoLoadedRef.current) {
+      initialAutoLoadedRef.current = true;
+      loadPreview();
+    }
+  }, [catalog, preview, busy, loadPreview]);
+
   const choose = (item: CatalogItem) => {
     setType(item.type);
     setTitle(item.name);
@@ -775,8 +786,8 @@ export function ExamReportSummaryTab({
                 type="button"
                 onClick={() => setOpenTemplateMenu((v) => !v)}
                 className={`h-9 inline-flex items-center gap-1.5 px-2.5 rounded-xl text-type-body font-medium transition cursor-pointer select-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none ${openTemplateMenu
-                    ? 'text-slate-900 dark:text-white font-semibold'
-                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                  ? 'text-slate-900 dark:text-white font-semibold'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 title="Chọn mẫu báo cáo"
               >
@@ -902,20 +913,20 @@ export function ExamReportSummaryTab({
 
       {/* ── TAB 2: TẠO BÁO CÁO THEO MẪU (1 KHUNG DUY NHẤT CHIA 2 BÊN LIỀN NHAU) ── */}
       {tab === 'builder' && (
-        <div className="w-full rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden flex flex-col xl:flex-row">
+        <div className="w-full rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden flex flex-col xl:flex-row h-auto xl:h-[calc(100vh-215px)] xl:min-h-[640px] xl:max-h-[860px]">
           {/* CỘT TRÁI: Cấu hình báo cáo (Sliding drawer êm ái, nội dung giữ nguyên kích thước cố định để chống giật chữ và tràn bóng) */}
           <aside
             aria-label="Cấu hình báo cáo"
-            className={`transition-[width,opacity] duration-300 ease-in-out shrink-0 bg-white dark:bg-slate-900 overflow-hidden flex flex-col justify-between ${collapseConfig
-                ? 'w-0 opacity-0 pointer-events-none'
-                : 'w-full xl:w-[320px] 2xl:w-[340px] opacity-100 border-b xl:border-b-0 xl:border-r border-slate-100 dark:border-slate-800'
+            className={`transition-[width,opacity] duration-300 ease-in-out shrink-0 bg-white dark:bg-slate-900 overflow-hidden flex flex-col h-full ${collapseConfig
+              ? 'w-0 opacity-0 pointer-events-none'
+              : 'w-full xl:w-[320px] 2xl:w-[340px] opacity-100 border-b xl:border-b-0 xl:border-r border-slate-100 dark:border-slate-800'
               }`}
           >
             {/* Lớp bọc bên trong có kích thước cố định, chống bóp méo text và tràn shadow khi thu phóng */}
-            <div className="w-[320px] 2xl:w-[340px] flex flex-col justify-between min-h-full shrink-0">
-              <div className="flex flex-col space-y-4">
+            <div className="w-[320px] 2xl:w-[340px] flex flex-col h-full shrink-0">
+              <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
                 {/* Header Cột Trái: Cùng padding top pt-4 để thẳng hàng với Cột Phải */}
-                <div className="px-5 pt-4 pb-0 shrink-0">
+                <div className="px-5 pt-4 pb-3 shrink-0 border-b border-slate-100 dark:border-slate-800">
                   <h2 className="text-type-section font-semibold text-slate-900 dark:text-white truncate leading-6">
                     Cấu hình báo cáo
                   </h2>
@@ -924,8 +935,8 @@ export function ExamReportSummaryTab({
                   </p>
                 </div>
 
-                {/* Form fields */}
-                <div className="px-5 space-y-4">
+                {/* Form fields with custom scrollbar */}
+                <div className="px-5 py-4 space-y-4 overflow-y-auto custom-scrollbar flex-1">
                   <Select
                     label="Loại báo cáo"
                     value={type}
@@ -992,15 +1003,21 @@ export function ExamReportSummaryTab({
                     />
                   </div>
 
-                  {/* ── TIÊU CHUẨN ĐÁNH GIÁ & QUY CÁCH TÍNH (TRỰC TIẾP TẠI SIDEBAR) ── */}
-                  <div className="pt-3 space-y-3 border-t border-slate-100 dark:border-slate-800">
-                    <span className="block text-type-body font-semibold text-slate-900 dark:text-slate-100">
-                      Tiêu chuẩn đánh giá
-                    </span>
+                  {/* ── TIÊU CHUẨN ĐÁNH GIÁ & QUY CÁCH TÍNH (PHẲNG, CHUẨN DESIGN SYSTEM, KHÔNG ICON) ── */}
+                  <div className="pt-4 space-y-3.5 border-t border-slate-100 dark:border-slate-800">
+                    {/* Header */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
+                        Tiêu chuẩn đánh giá
+                      </span>
+                      <span className="text-type-helper font-medium text-slate-500 tabular-nums">
+                        {Object.values(enabledRules).filter(Boolean).length}/5 cột
+                      </span>
+                    </div>
 
-                    {/* Mức điểm đạt */}
-                    <div className="space-y-1">
-                      <span className="block text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+                    {/* Khối 1: Điểm đạt tối thiểu */}
+                    <div className="space-y-1.5">
+                      <span className="block text-type-body-sm font-medium text-slate-900 dark:text-slate-100">
                         Điểm đạt tối thiểu
                       </span>
                       <div className="flex items-center gap-2">
@@ -1010,108 +1027,197 @@ export function ExamReportSummaryTab({
                           min="0"
                           max="10"
                           value={passThreshold}
-                          onChange={(e) => setPassThreshold(Number(e.target.value) || 5.0)}
-                          className="h-10 w-24 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-type-body font-semibold text-blue-600 outline-none focus:border-blue-500 transition shadow-2xs"
+                          onChange={(e) => setPassThreshold(Number(e.target.value) || 0)}
+                          className="h-10 w-24 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-type-body font-semibold text-blue-600 outline-none focus:border-blue-500 shadow-2xs transition"
                         />
-                        <span className="text-type-helper text-slate-400 font-normal">/ 10 điểm</span>
+                        <span className="text-type-helper text-slate-500 font-normal">/ 10 điểm</span>
                       </div>
                     </div>
 
-                    {/* Tỷ lệ điểm hệ số */}
-                    <div className="space-y-1">
-                      <span className="block text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
-                        Tỷ lệ điểm hệ số (%)
-                      </span>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="flex items-center gap-1.5">
-                          <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value={examWeight}
-                            onChange={(e) => {
-                              const val = Number(e.target.value) || 0;
-                              setExamWeight(val);
-                              setBonusWeight(Math.max(0, 100 - val));
-                            }}
-                            className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 text-type-body font-semibold text-blue-600 outline-none focus:border-blue-500 transition shadow-2xs"
-                          />
-                          <span className="text-type-helper text-slate-500">% Thi</span>
+                    {/* Khối 2: Tỷ lệ điểm hệ số (%) */}
+                    <div className="pt-2 space-y-2.5 border-t border-slate-100 dark:border-slate-800">
+                      <div>
+                        <span className="block text-type-body-sm font-medium text-slate-900 dark:text-slate-100">
+                          Tỷ lệ điểm hệ số (%)
+                        </span>
+                        <p className="text-type-helper text-slate-500 font-normal mt-0.5">
+                          Hệ số tương ứng: Thi ({examWeight}%), Cần ({bonusWeight}%)
+                        </p>
+                      </div>
+
+                      {/* 2 cột Thi và Cần */}
+                      <div className="grid grid-cols-2 gap-3 pt-0.5">
+                        {/* Cột Thi */}
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+                              Thi
+                            </span>
+                            <span className="h-8 min-w-[50px] px-2 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-center text-type-body-sm font-semibold text-slate-900 dark:text-white tabular-nums shadow-2xs">
+                              {examWeight}%
+                            </span>
+                          </div>
+                          <div className="pt-0.5">
+                            <input
+                              type="range"
+                              min="0"
+                              max="100"
+                              step="5"
+                              value={examWeight}
+                              onChange={(e) => {
+                                const val = Number(e.target.value);
+                                setExamWeight(val);
+                                setBonusWeight(100 - val);
+                              }}
+                              className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-xl appearance-none cursor-pointer accent-blue-600"
+                            />
+                            <span className="block text-center text-type-helper text-slate-400 font-normal tabular-nums mt-0.5">
+                              {examWeight}%
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                          <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value={bonusWeight}
-                            onChange={(e) => {
-                              const val = Number(e.target.value) || 0;
-                              setBonusWeight(val);
-                              setExamWeight(Math.max(0, 100 - val));
-                            }}
-                            className="h-10 w-full rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 text-type-body font-semibold text-blue-600 outline-none focus:border-blue-500 transition shadow-2xs"
-                          />
-                          <span className="text-type-helper text-slate-500">% Cần</span>
+
+                        {/* Cột Cần */}
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="text-type-body-sm font-medium text-slate-800 dark:text-slate-200">
+                              Cần
+                            </span>
+                            <span className="h-8 min-w-[50px] px-2 rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-center text-type-body-sm font-semibold text-slate-900 dark:text-white tabular-nums shadow-2xs">
+                              {bonusWeight}%
+                            </span>
+                          </div>
+                          <div className="pt-0.5">
+                            <input
+                              type="range"
+                              min="0"
+                              max="100"
+                              step="5"
+                              value={bonusWeight}
+                              onChange={(e) => {
+                                const val = Number(e.target.value);
+                                setBonusWeight(val);
+                                setExamWeight(100 - val);
+                              }}
+                              className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-xl appearance-none cursor-pointer accent-blue-600"
+                            />
+                            <span className="block text-center text-type-helper text-slate-400 font-normal tabular-nums mt-0.5">
+                              {bonusWeight}%
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Danh sách các cột đánh giá nhanh */}
-                    <div className="space-y-2 pt-1">
-                      <span className="block text-type-helper font-medium text-slate-600 dark:text-slate-400">
+                    {/* Khối 3: Cột bổ sung vào bảng với Dấu tick [✓] */}
+                    <div className="pt-2 space-y-2 border-t border-slate-100 dark:border-slate-800">
+                      <span className="block text-type-body-sm font-medium text-slate-900 dark:text-slate-100">
                         Cột bổ sung vào bảng:
                       </span>
-                      <label className="flex items-center gap-2 text-type-body font-medium text-slate-800 dark:text-slate-200 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          checked={enabledRules.passFail}
-                          onChange={(e) => setEnabledRules((prev) => ({ ...prev, passFail: e.target.checked }))}
-                          className="h-4 w-4 rounded accent-blue-600"
-                        />
-                        <span>Cột Kết quả (Đạt / Không đạt)</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-type-body font-medium text-slate-800 dark:text-slate-200 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          checked={enabledRules.moetLevels}
-                          onChange={(e) => setEnabledRules((prev) => ({ ...prev, moetLevels: e.target.checked }))}
-                          className="h-4 w-4 rounded accent-blue-600"
-                        />
-                        <span>Cột Xếp loại học lực (Bộ GD&ĐT)</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-type-body font-medium text-slate-800 dark:text-slate-200 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          checked={enabledRules.weighted}
-                          onChange={(e) => setEnabledRules((prev) => ({ ...prev, weighted: e.target.checked }))}
-                          className="h-4 w-4 rounded accent-blue-600"
-                        />
-                        <span>Cột Điểm tổng kết hệ số</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-type-body font-medium text-slate-800 dark:text-slate-200 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          checked={enabledRules.letterGrade}
-                          onChange={(e) => setEnabledRules((prev) => ({ ...prev, letterGrade: e.target.checked }))}
-                          className="h-4 w-4 rounded accent-blue-600"
-                        />
-                        <span>Cột Điểm Chữ (A, B, C, D, F)</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-type-body font-medium text-slate-800 dark:text-slate-200 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          checked={enabledRules.grade4}
-                          onChange={(e) => setEnabledRules((prev) => ({ ...prev, grade4: e.target.checked }))}
-                          className="h-4 w-4 rounded accent-blue-600"
-                        />
-                        <span>Cột Thang điểm 4.0</span>
-                      </label>
+
+                      <div className="space-y-1.5">
+                        {/* 1. Cột Kết quả (Đạt / Không đạt) */}
+                        <label className="flex items-center gap-2.5 py-1 cursor-pointer select-none group/item hover:text-blue-600 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={enabledRules.passFail}
+                            onChange={(e) => setEnabledRules((prev) => ({ ...prev, passFail: e.target.checked }))}
+                            className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500/20 cursor-pointer shrink-0 accent-blue-600"
+                          />
+                          <span
+                            className={`text-type-body-sm truncate ${
+                              enabledRules.passFail
+                                ? 'font-medium text-slate-900 dark:text-slate-100'
+                                : 'text-slate-600 dark:text-slate-400'
+                            }`}
+                          >
+                            Cột Kết quả (Đạt / Không đạt)
+                          </span>
+                        </label>
+
+                        {/* 2. Cột Xếp loại học lực (Bộ GD&ĐT) */}
+                        <label className="flex items-center gap-2.5 py-1 cursor-pointer select-none group/item hover:text-blue-600 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={enabledRules.moetLevels}
+                            onChange={(e) => setEnabledRules((prev) => ({ ...prev, moetLevels: e.target.checked }))}
+                            className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500/20 cursor-pointer shrink-0 accent-blue-600"
+                          />
+                          <span
+                            className={`text-type-body-sm truncate ${
+                              enabledRules.moetLevels
+                                ? 'font-medium text-slate-900 dark:text-slate-100'
+                                : 'text-slate-600 dark:text-slate-400'
+                            }`}
+                          >
+                            Cột Xếp loại học lực (Bộ GD&ĐT)
+                          </span>
+                        </label>
+
+                        {/* 3. Cột Điểm tổng kết hệ số */}
+                        <label className="flex items-center gap-2.5 py-1 cursor-pointer select-none group/item hover:text-blue-600 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={enabledRules.weighted}
+                            onChange={(e) => setEnabledRules((prev) => ({ ...prev, weighted: e.target.checked }))}
+                            className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500/20 cursor-pointer shrink-0 accent-blue-600"
+                          />
+                          <span
+                            className={`text-type-body-sm truncate ${
+                              enabledRules.weighted
+                                ? 'font-medium text-slate-900 dark:text-slate-100'
+                                : 'text-slate-600 dark:text-slate-400'
+                            }`}
+                          >
+                            Cột Điểm tổng kết hệ số
+                          </span>
+                        </label>
+
+                        {/* 4. Cột Điểm Chữ (A, B, C, D, F) */}
+                        <label className="flex items-center gap-2.5 py-1 cursor-pointer select-none group/item hover:text-blue-600 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={enabledRules.letterGrade}
+                            onChange={(e) => setEnabledRules((prev) => ({ ...prev, letterGrade: e.target.checked }))}
+                            className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500/20 cursor-pointer shrink-0 accent-blue-600"
+                          />
+                          <span
+                            className={`text-type-body-sm truncate ${
+                              enabledRules.letterGrade
+                                ? 'font-medium text-slate-900 dark:text-slate-100'
+                                : 'text-slate-600 dark:text-slate-400'
+                            }`}
+                          >
+                            Cột Điểm Chữ (A, B, C, D, F)
+                          </span>
+                        </label>
+
+                        {/* 5. Cột Thang điểm 4.0 */}
+                        <label className="flex items-center gap-2.5 py-1 cursor-pointer select-none group/item hover:text-blue-600 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={enabledRules.grade4}
+                            onChange={(e) => setEnabledRules((prev) => ({ ...prev, grade4: e.target.checked }))}
+                            className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500/20 cursor-pointer shrink-0 accent-blue-600"
+                          />
+                          <span
+                            className={`text-type-body-sm truncate ${
+                              enabledRules.grade4
+                                ? 'font-medium text-slate-900 dark:text-slate-100'
+                                : 'text-slate-600 dark:text-slate-400'
+                            }`}
+                          >
+                            Cột Thang điểm 4.0
+                          </span>
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="p-5 pt-4">
+              {/* Sticky footer for CTA button (Phẳng liền mạch, không đường cắt ngang) */}
+              <div className="px-5 pb-5 pt-2 bg-white dark:bg-slate-900 shrink-0 z-10">
                 <Button
                   type="button"
                   variant="primary"
@@ -1127,9 +1233,9 @@ export function ExamReportSummaryTab({
           </aside>
 
           {/* CỘT PHẢI: Bảng xem trước dữ liệu (Dính liền trong khung) */}
-          <div className="flex-1 min-w-0 flex flex-col bg-white dark:bg-slate-900">
-            {/* Header Toolbar phẳng nền trắng tinh gọn không đường cắt dưới */}
-            <div className="flex flex-wrap justify-between items-center gap-3 px-5 py-4 bg-white dark:bg-slate-900 shrink-0">
+          <div className="flex-1 min-w-0 flex flex-col h-full bg-white dark:bg-slate-900 overflow-hidden">
+            {/* Header Toolbar phẳng nền trắng tinh gọn ghim cố định ở đỉnh */}
+            <div className="flex flex-wrap justify-between items-center gap-3 px-5 py-3.5 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 shrink-0 z-20">
               <div className="flex items-center gap-2.5 min-w-0">
                 <button
                   type="button"
@@ -1170,8 +1276,8 @@ export function ExamReportSummaryTab({
                       type="button"
                       onClick={() => setOpenColumnMenu((v) => !v)}
                       className={`h-9 inline-flex items-center gap-1.5 px-2 rounded-xl text-type-body-sm font-medium transition cursor-pointer select-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none ${openColumnMenu
-                          ? 'text-slate-900 dark:text-white font-semibold'
-                          : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                        ? 'text-slate-900 dark:text-white font-semibold'
+                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                         }`}
                       title="Tùy chỉnh cột xuất file"
                     >
@@ -1279,11 +1385,10 @@ export function ExamReportSummaryTab({
                                         className="flex items-center min-w-0 flex-1 cursor-pointer select-none"
                                       >
                                         <span
-                                          className={`text-type-body-sm truncate ${
-                                            isChecked
-                                              ? 'font-medium text-slate-900 dark:text-slate-100'
-                                              : 'text-slate-400 dark:text-slate-500 font-normal'
-                                          }`}
+                                          className={`text-type-body-sm truncate ${isChecked
+                                            ? 'font-medium text-slate-900 dark:text-slate-100'
+                                            : 'text-slate-400 dark:text-slate-500 font-normal'
+                                            }`}
                                         >
                                           {currentLabel}
                                         </span>
@@ -1355,19 +1460,21 @@ export function ExamReportSummaryTab({
             </div>
 
             {!preview ? (
-              <div className="flex min-h-96 flex-col items-center justify-center p-8 text-center">
+              <div className="flex flex-1 flex-col items-center justify-center p-8 text-center">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 mb-3 border border-slate-200/60 dark:border-slate-700">
                   <FileText className="h-6 w-6" />
                 </div>
                 <p className="font-semibold text-type-body text-slate-900 dark:text-white">
-                  Chưa có bản xem trước
+                  {busy === 'preview' ? 'Đang tạo bản xem trước...' : 'Chưa có bản xem trước'}
                 </p>
                 <p className="mt-1 max-w-md text-type-helper text-slate-400">
-                  Vui lòng chọn loại báo cáo và các điều kiện lọc bên trái, sau đó nhấn &ldquo;Xem trước báo cáo&rdquo; để kiểm tra dữ liệu trước khi xuất file.
+                  {busy === 'preview'
+                    ? 'Hệ thống đang tổng hợp dữ liệu báo cáo...'
+                    : 'Vui lòng chọn loại báo cáo và các điều kiện lọc bên trái, sau đó nhấn "Xem trước báo cáo" để kiểm tra dữ liệu trước khi xuất file.'}
                 </p>
               </div>
             ) : (
-              <>
+              <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
                 {/* Thông báo thanh mảnh khi có cột bị ẩn */}
                 {columns.length < allColumns.length && (
                   <div className="px-5 py-2 bg-slate-50/80 dark:bg-slate-800/40 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-type-helper text-slate-600 dark:text-slate-400 shrink-0">
@@ -1385,9 +1492,9 @@ export function ExamReportSummaryTab({
                 )}
 
                 {/* Bảng xem trước dữ liệu phẳng tràn viền */}
-                <div className="w-full overflow-x-auto max-h-[640px] custom-scrollbar flex-1">
+                <div className="w-full flex-1 overflow-auto custom-scrollbar">
                   <table className="ui-table w-full min-w-[760px] text-type-body text-left border-collapse">
-                    <thead className="sticky top-0 bg-slate-50 dark:bg-slate-800 z-10">
+                    <thead className="sticky top-0 bg-slate-50 dark:bg-slate-800 z-10 shadow-2xs">
                       <tr className="border-b border-slate-200/90 dark:border-slate-700">
                         {allColumns
                           .filter((c) => columns.includes(c.key))
@@ -1441,7 +1548,7 @@ export function ExamReportSummaryTab({
                     </p>
                   )}
                 </div>
-              </>
+              </div>
             )}
           </div>
         </div>
@@ -1512,8 +1619,8 @@ export function ExamReportSummaryTab({
                     <td className="py-3.5 px-5 text-center whitespace-nowrap">
                       <span
                         className={`table-badge inline-flex items-center px-2.5 py-0.5 rounded-full ui-pill text-type-helper font-medium ${item.format === 'XLSX'
-                            ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800'
-                            : 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800'
+                          : 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800'
                           }`}
                       >
                         {item.format}

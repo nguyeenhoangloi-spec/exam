@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Modal } from '../Modal';
 import { Button } from '../ui/Button';
+import { SlidingSegmentedControl } from '../ui/SlidingSegmentedControl';
 import { DynamicColumnDefinition } from './FormulaEditorModal';
 import {
   Bookmark,
@@ -138,32 +139,17 @@ export function ReportTemplatePickerModal({
       size="xl"
     >
       <div className="space-y-4 py-1">
-        {/* Navigation Tabs */}
-        <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
-          <button
-            type="button"
-            onClick={() => setActiveTab('picker')}
-            className={`px-3 py-1.5 rounded-xl text-type-body-sm font-medium transition ${
-              activeTab === 'picker'
-                ? 'bg-blue-50 text-blue-700 font-semibold dark:bg-blue-950/60 dark:text-blue-300'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-            }`}
-          >
-            Danh sách Mẫu ({allTemplates.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('save_new')}
-            className={`px-3 py-1.5 rounded-xl text-type-body-sm font-medium transition flex items-center gap-1.5 ${
-              activeTab === 'save_new'
-                ? 'bg-blue-50 text-blue-700 font-semibold dark:bg-blue-950/60 dark:text-blue-300'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-            }`}
-          >
-            <Plus className="h-4 w-4" />
-            Lưu cấu hình hiện tại thành Mẫu mới
-          </button>
-        </div>
+        {/* Navigation Tabs (Sliding Segmented Control) */}
+        <SlidingSegmentedControl<'picker' | 'save_new'>
+          value={activeTab}
+          onChange={(val) => setActiveTab(val)}
+          fullWidth
+          size="md"
+          options={[
+            { value: 'picker', label: 'Danh sách Mẫu', count: allTemplates.length },
+            { value: 'save_new', label: 'Lưu cấu hình thành Mẫu mới', icon: Plus },
+          ]}
+        />
 
         {activeTab === 'picker' ? (
           <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1 custom-scrollbar">

@@ -72,12 +72,12 @@ export function SlidingSegmentedControl<T extends string = string>({
     return () => window.removeEventListener('resize', handleResize);
   }, [updateIndicator]);
 
-  // Kích thước chuẩn Design System 2026
+  // Kích thước chuẩn Design System 2026: Rộng rãi, thoáng đãng, sang trọng
   const heightClass =
-    size === 'sm' ? 'h-9.5 text-type-body-sm' : size === 'lg' ? 'h-12 text-type-body' : 'h-10.5 text-type-body';
+    size === 'sm' ? 'h-10 text-type-body-sm' : size === 'lg' ? 'h-13.5 text-type-body' : 'h-12 text-type-body';
   const paddingClass =
-    size === 'sm' ? 'px-3.5 py-1.5' : size === 'lg' ? 'px-5 py-2.5' : 'px-4 py-2';
-  const iconSizeClass = size === 'sm' ? 'h-3.5 w-3.5' : size === 'lg' ? 'h-5 w-5' : 'h-4 w-4';
+    size === 'sm' ? 'px-4 py-2' : size === 'lg' ? 'px-6 py-3' : 'px-5 py-2.5';
+  const iconSizeClass = size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-5 w-5' : 'h-4.5 w-4.5';
 
   const isDock = variant === 'dock';
   const isPrimary = variant === 'primary';
@@ -89,7 +89,7 @@ export function SlidingSegmentedControl<T extends string = string>({
 
   const containerBgClass = isDock
     ? 'bg-white/95 dark:bg-slate-900/95 border border-slate-200/60 dark:border-slate-800/60 backdrop-blur-2xl shadow-[0_20px_50px_-12px_rgba(15,23,42,0.25)] ring-1 ring-white/80 dark:ring-white/10'
-    : 'bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/70';
+    : 'bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/70 dark:border-slate-700/70';
 
   const containerWidthClass = fullWidth ? 'w-full flex' : 'inline-flex w-fit max-w-full';
 
@@ -97,22 +97,23 @@ export function SlidingSegmentedControl<T extends string = string>({
     <div
       ref={containerRef}
       role="tablist"
-      className={`relative items-center gap-1 ${shapeContainerClass} ${containerBgClass} ${containerWidthClass} p-0.5 select-none ${heightClass} ${className}`}
+      className={`relative items-center gap-1 ${shapeContainerClass} ${containerBgClass} ${containerWidthClass} p-1 select-none ${heightClass} ${className}`}
     >
       {/* Sliding Background Indicator Pill - Chuẩn Apple HIG / Linear: Viên trượt trắng tinh khiết nổi 3D nhẹ */}
       <div
-        className={`absolute top-0.5 bottom-0.5 left-0 ${shapePillClass} pointer-events-none will-change-[transform,width] ${isPrimary
+        className={`absolute top-1 bottom-1 left-0 ${shapePillClass} pointer-events-none will-change-[transform,width] ${
+          isPrimary
             ? 'bg-blue-600 shadow-[0_4px_14px_rgba(37,99,235,0.4)] ring-1 ring-white/20'
             : isDock
               ? 'bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 shadow-xs'
-              : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80 shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.4)]'
-          }`}
+              : 'bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 shadow-[0_4px_14px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.4)]'
+        }`}
         style={{
           transform: `translateX(${indicatorStyle.left}px)`,
           width: `${indicatorStyle.width}px`,
           opacity: indicatorStyle.opacity,
           transition: isReady
-            ? 'transform 260ms cubic-bezier(0.16, 1, 0.3, 1), width 260ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease'
+            ? 'transform 300ms cubic-bezier(0.16, 1, 0.3, 1), width 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease'
             : 'none',
         }}
       />
@@ -132,22 +133,25 @@ export function SlidingSegmentedControl<T extends string = string>({
             role="tab"
             aria-selected={isActive}
             onClick={() => onChange(option.value)}
-            className={`relative z-10 flex items-center justify-center gap-2 ${shapePillClass} ${fullWidth ? 'flex-1 min-w-0' : equalWidth ? 'w-[145px] shrink-0' : 'flex-initial shrink-0'
-              } transition-colors duration-150 cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 active:scale-[0.98] ${paddingClass} ${isActive
+            className={`relative z-10 flex items-center justify-center gap-2 ${shapePillClass} ${
+              fullWidth ? 'flex-1 min-w-0' : equalWidth ? 'w-[145px] shrink-0' : 'flex-initial shrink-0'
+            } transition-colors duration-200 cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 active:scale-[0.98] ${paddingClass} ${
+              isActive
                 ? isPrimary
                   ? 'text-white font-semibold'
-                  : 'text-blue-700 dark:text-blue-400 font-semibold'
+                  : 'text-slate-950 dark:text-white font-semibold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
-              }`}
+            }`}
           >
             {Icon && (
               <Icon
-                className={`${iconSizeClass} shrink-0 transition-transform duration-200 ${isActive
+                className={`${iconSizeClass} shrink-0 transition-transform duration-200 ${
+                  isActive
                     ? isPrimary
                       ? 'scale-105 stroke-[2] text-white'
-                      : 'scale-105 stroke-[2] text-blue-600 dark:text-blue-400'
+                      : 'scale-105 stroke-[2] text-slate-950 dark:text-white'
                     : 'opacity-70 stroke-[1.8]'
-                  }`}
+                }`}
               />
             )}
             <span className="whitespace-nowrap tracking-tight">
@@ -156,12 +160,13 @@ export function SlidingSegmentedControl<T extends string = string>({
 
             {typeof option.count === 'number' && (
               <span
-                className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-type-helper font-semibold tabular-nums transition-colors duration-200 ${isActive
+                className={`ui-pill ui-pill-solid inline-flex items-center justify-center rounded-full px-2 py-0.5 text-type-helper font-medium tabular-nums transition-colors duration-200 ${
+                  isActive
                     ? isPrimary
                       ? 'bg-white/20 text-white'
-                      : 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60'
-                    : 'bg-slate-200/70 text-slate-600 dark:bg-slate-700/60 dark:text-slate-400'
-                  }`}
+                      : 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
+                    : 'bg-slate-500/90 text-white dark:bg-slate-600 dark:text-white'
+                }`}
               >
                 {option.count.toLocaleString('vi-VN')}
               </span>
