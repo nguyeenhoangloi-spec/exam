@@ -26,9 +26,9 @@ export function formatFillBlankForPrint(
 
     if (showAnswers && fillBlankAnswers && fillBlankAnswers.length > 0) {
       const found = fillBlankAnswers.find(
-        (a) => (a.blankIndex || 1) === blankIndex
+        (a) => Number(a.blankIndex || 1) === blankIndex
       );
-      const ansText = found?.answer || (found as any)?.text || '';
+      const ansText = found?.answer || (found as any)?.text || (found as any)?.content || '';
       if (ansText) {
         return `(${blankIndex}) [${ansText}]`;
       }
@@ -66,27 +66,27 @@ export function FillBlankInlineContent({
   return (
     <span className={`inline leading-relaxed break-words ${className}`}>
       {tokens.map((token, idx) => {
-        const isBlankTag = /^[\{\[]?blank_\d+[\}\]]?$/i.test(token.trim());
         const matchNum = token.match(/blank_(\d+)/i);
+        const isBlankTag = Boolean(matchNum && /[\{\[]+blank_\d+[\}\]]+/i.test(token.trim()));
 
         if (isBlankTag && matchNum) {
           const blankIndex = Number(matchNum[1]);
           const found = fillBlankAnswers.find(
-            (a) => (a.blankIndex || 1) === blankIndex
+            (a) => Number(a.blankIndex || 1) === blankIndex
           );
-          const ansText = found?.answer || (found as any)?.text || '';
+          const ansText = found?.answer || (found as any)?.text || (found as any)?.content || '';
 
-          if (showAnswers && ansText) {
+          if (showAnswers) {
             return (
               <span
                 key={idx}
-                className="inline-flex items-center gap-1.5 mx-1 px-2.5 py-0.5 rounded-lg border border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 font-semibold text-emerald-900 dark:text-emerald-200 text-type-body align-baseline shadow-2xs"
-                title={`Đáp án đúng cho ô #${blankIndex}: ${ansText}`}
+                className="inline-flex items-center gap-1.5 mx-1 px-2.5 py-0.5 rounded-lg border border-emerald-400 dark:border-emerald-600 bg-emerald-50/90 dark:bg-emerald-950/70 font-semibold text-emerald-950 dark:text-emerald-100 text-type-body align-baseline shadow-2xs"
+                title={`Đáp án đúng cho ô #${blankIndex}: ${ansText || 'Chưa thiết lập'}`}
               >
-                <span className="text-type-helper text-emerald-600 dark:text-emerald-400 font-semibold">
+                <span className="text-type-helper text-emerald-700 dark:text-emerald-400 font-semibold">
                   [{blankIndex}]
                 </span>
-                <span>{ansText}</span>
+                <span>{ansText || '(Chưa có đáp án)'}</span>
               </span>
             );
           }
@@ -100,7 +100,7 @@ export function FillBlankInlineContent({
               <span className="text-type-helper text-slate-500 dark:text-slate-400 font-semibold">
                 [{blankIndex}]
               </span>
-              <span className="tracking-widest text-slate-400">
+              <span className="tracking-widest text-slate-400 select-none">
                 ..........
               </span>
             </span>

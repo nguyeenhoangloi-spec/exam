@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import { ExamPaper } from '../../types';
 import { Button } from '../ui/Button';
-import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { DetailDrawer } from '../ui/DetailDrawer';
 import { QuestionMediaPlayer } from '../exam/QuestionMediaPlayer';
 import { getImageUrl } from '../../lib/media-utils';
@@ -46,6 +45,10 @@ export interface ExamPaperDetailDrawerProps {
 }
 
 function questionChoices(q: any) {
+  if (!q) return [];
+  const rawCorrect = q.correctAnswer ?? q.answer ?? q.sampleAnswer ?? '';
+  const correctKey = String(rawCorrect).trim().toUpperCase();
+
   let opts = q.options;
   if (typeof opts === 'string') {
     try {
@@ -54,32 +57,69 @@ function questionChoices(q: any) {
       opts = [];
     }
   }
+
   if (Array.isArray(opts) && opts.length > 0) {
     return opts
-      .map((option: any, index: number) => ({
-        label: option.label || String.fromCharCode(65 + index),
-        text: option.content || option.text || option.answer || '',
-        isCorrect: Boolean(option.isCorrect),
-      }))
+      .map((option: any, index: number) => {
+        const label = String(option.label || option.key || String.fromCharCode(65 + index)).trim().toUpperCase();
+        const text = option.content || option.text || option.answer || '';
+        const isOptCorrect = option.isCorrect === true || option.isCorrect === 1 || String(option.isCorrect).toLowerCase() === 'true';
+        const isKeyMatch = Boolean(correctKey && (label === correctKey || String(text).trim().toUpperCase() === correctKey));
+        return {
+          label,
+          text,
+          isCorrect: Boolean(isOptCorrect || isKeyMatch),
+        };
+      })
       .filter((option: any) => option.text);
   }
+
   return [
-    { label: 'A', text: q.optionA, isCorrect: q.correctAnswer === 'A' },
-    { label: 'B', text: q.optionB, isCorrect: q.correctAnswer === 'B' },
-    { label: 'C', text: q.optionC, isCorrect: q.correctAnswer === 'C' },
-    { label: 'D', text: q.optionD, isCorrect: q.correctAnswer === 'D' },
+    { label: 'A', text: q.optionA, isCorrect: Boolean(q.optionA && (correctKey === 'A' || String(q.optionA).trim().toUpperCase() === correctKey)) },
+    { label: 'B', text: q.optionB, isCorrect: Boolean(q.optionB && (correctKey === 'B' || String(q.optionB).trim().toUpperCase() === correctKey)) },
+    { label: 'C', text: q.optionC, isCorrect: Boolean(q.optionC && (correctKey === 'C' || String(q.optionC).trim().toUpperCase() === correctKey)) },
+    { label: 'D', text: q.optionD, isCorrect: Boolean(q.optionD && (correctKey === 'D' || String(q.optionD).trim().toUpperCase() === correctKey)) },
   ].filter((option) => option.text);
+}
+
+function extractFillBlankAnswers(q: any): any[] {
+  if (!q) return [];
+  let raw = q.fillBlankAnswers ?? q.answers ?? q.correctAnswers ?? (q.type === 'FILL_BLANK' ? (q.correctAnswer ?? q.answer) : undefined);
+  if (typeof raw === 'string') {
+    try {
+      raw = JSON.parse(raw);
+    } catch {
+      if (raw.includes(',') || raw.includes('|') || raw.includes(';')) {
+        const parts = raw.split(/[,|;]/).map((p: string) => p.trim()).filter(Boolean);
+        return parts.map((ans: string, idx: number) => ({ blankIndex: idx + 1, answer: ans }));
+      }
+      return [{ blankIndex: 1, answer: raw.trim() }];
+    }
+  }
+  if (Array.isArray(raw)) {
+    return raw.map((item: any, idx: number) => {
+      if (typeof item === 'string') {
+        return { blankIndex: idx + 1, answer: item };
+      }
+      return {
+        blankIndex: Number(item.blankIndex || item.index || item.order || idx + 1),
+        answer: item.answer || item.text || item.content || item.value || '',
+        score: item.score,
+      };
+    });
+  }
+  return [];
 }
 
 function getDifficultyLabel(diff?: string) {
   switch (diff?.toUpperCase()) {
     case 'EASY':
-      return { text: 'Dễ', color: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60' };
+      return { text: 'Dễ', className: 'text-emerald-600 dark:text-emerald-400 font-medium' };
     case 'HARD':
-      return { text: 'Khó', color: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200/80 dark:border-rose-800/60' };
+      return { text: 'Khó', className: 'text-rose-600 dark:text-rose-400 font-medium' };
     case 'MEDIUM':
     default:
-      return { text: 'Trung bình', color: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200/80 dark:border-amber-800/60' };
+      return { text: 'Trung bình', className: 'text-amber-600 dark:text-amber-400 font-medium' };
   }
 }
 
@@ -322,163 +362,211 @@ export function ExamPaperDetailDrawer({
                 <p className="text-type-body-sm font-semibold text-slate-500">Không tìm thấy câu hỏi nào phù hợp với bộ lọc.</p>
               </div>
             ) : (
-              filteredQuestions.map(({ detail, originalIndex }, displayIndex) => {
-                const q = detail.question || detail;
-                const choices = questionChoices(q);
-                const isEssay = q.type?.toUpperCase() === 'ESSAY';
-                const isFillBlank = q.type?.toUpperCase() === 'FILL_BLANK';
-                const diffBadge = getDifficultyLabel(q.difficulty);
-                const score = detail.score || q.score || 1;
-                const answerText = q.answer || q.correctAnswer || (q.explanation ? `Hướng dẫn: ${q.explanation}` : '');
+              <div className="space-y-4">
+                {filteredQuestions.map(({ detail, originalIndex }, displayIndex) => {
+                  const rawQ = detail.question || detail;
+                  const q = { ...(detail.question || {}), ...detail, ...rawQ, options: (detail.question?.options || detail.options || rawQ.options) };
+                  const choices = questionChoices(q);
+                  const isEssay = q.type?.toUpperCase() === 'ESSAY';
+                  const isFillBlank = q.type?.toUpperCase() === 'FILL_BLANK';
+                  const fillBlankAnswers = extractFillBlankAnswers(q);
+                  const diff = getDifficultyLabel(q.difficulty);
+                  const score = detail.score || q.score || 1;
+                  const answerText = q.answer || q.correctAnswer || (q.explanation ? `Hướng dẫn: ${q.explanation}` : '');
 
-                return (
-                  <div
-                    key={detail.id || originalIndex}
-                    className="p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-3.5 hover:border-slate-300 dark:hover:border-slate-700 transition"
-                  >
-                    {/* Header câu hỏi */}
-                    <div className="flex items-center justify-between gap-3 flex-wrap">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-blue-600 text-white font-semibold text-type-helper shadow-xs">
-                          {displayIndex + 1}
-                        </span>
-                        <IdentifierBadge tone="neutral">{q.code || `Q${originalIndex + 1}`}</IdentifierBadge>
-                        <span className="ui-pill rounded-full px-2.5 py-0.5 text-type-helper font-medium border border-slate-200/90 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                          {getTypeLabel(q.type)}
-                        </span>
-                        <span className={`ui-pill rounded-full px-2.5 py-0.5 text-type-helper font-medium border ${diffBadge.color}`}>
-                          {diffBadge.text}
-                        </span>
+                  return (
+                    <div
+                      key={detail.id || originalIndex}
+                      className="p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-3.5"
+                    >
+                      {/* Header câu hỏi - Màu sắc nhã nhặn, thanh lịch */}
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2 flex-wrap text-type-helper text-slate-500 dark:text-slate-400">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold text-type-helper tabular-nums border border-slate-200/80 dark:border-slate-700">
+                            {displayIndex + 1}
+                          </span>
+                          <span className="font-semibold text-slate-900 dark:text-slate-100">
+                            {q.code || `Q${originalIndex + 1}`}
+                          </span>
+                          <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
+                          <span className="text-slate-600 dark:text-slate-300">{getTypeLabel(q.type)}</span>
+                          <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
+                          <span className={diff.className}>{diff.text}</span>
+                          <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
+                          <span className="font-semibold text-blue-600 dark:text-blue-400 tabular-nums">
+                            {score} điểm
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1">
+                          {isEssay && onRubric && (
+                            <button
+                              type="button"
+                              onClick={() => onRubric({ id: q.id, code: q.code, content: q.content, score })}
+                              className="px-2.5 py-1 text-type-helper font-medium text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition cursor-pointer"
+                            >
+                              Rubric
+                            </button>
+                          )}
+
+                          {onSwapQuestion && paper?.status === 'DRAFT' && (
+                            <button
+                              type="button"
+                              onClick={() => onSwapQuestion(originalIndex, q)}
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-type-helper font-medium text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition cursor-pointer"
+                              title="Đổi câu hỏi khác từ ngân hàng"
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" />
+                              <span>Đổi</span>
+                            </button>
+                          )}
+                        </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <span className="text-type-helper font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-900/50 rounded-xl px-2.5 py-1 tabular-nums">
-                          {score} điểm
-                        </span>
-
-                        {isEssay && onRubric && (
-                          <Button
-                            type="button"
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => onRubric({ id: q.id, code: q.code, content: q.content, score })}
-                            className="shadow-2xs text-type-helper"
-                          >
-                            Rubric
-                          </Button>
-                        )}
-
-                        {onSwapQuestion && paper?.status === 'DRAFT' && (
-                          <Button
-                            type="button"
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => onSwapQuestion(originalIndex, q)}
-                            leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
-                            className="shadow-2xs text-type-helper"
-                            title="Đổi câu hỏi khác từ ngân hàng"
-                          >
-                            Đổi
-                          </Button>
+                      {/* Nội dung câu hỏi */}
+                      <div className="text-type-body-sm font-medium text-slate-900 dark:text-slate-100 leading-relaxed">
+                        {isFillBlank ? (
+                          <FillBlankInlineContent
+                            content={q.content}
+                            fillBlankAnswers={fillBlankAnswers}
+                            showAnswers={showAnswers}
+                          />
+                        ) : (
+                          <div dangerouslySetInnerHTML={{ __html: q.content }} />
                         )}
                       </div>
-                    </div>
 
-                    {/* Nội dung câu hỏi */}
-                    <div className="text-type-body-sm font-medium text-slate-900 dark:text-slate-100 leading-relaxed">
-                      {isFillBlank ? (
-                        <FillBlankInlineContent
-                          content={q.content}
-                          fillBlankAnswers={q.fillBlankAnswers}
-                          showAnswers={showAnswers}
-                        />
-                      ) : (
-                        <div dangerouslySetInnerHTML={{ __html: q.content }} />
-                      )}
-                    </div>
+                      {/* Media Attachments */}
+                      {q.media?.length ? (
+                        <div className="flex flex-wrap gap-2.5 pt-1">
+                          {q.media.map((m: any) => {
+                            const fullUrl = getImageUrl(m.url);
+                            if (m.type === 'IMAGE') {
+                              return (
+                                <div
+                                  key={m.id || m.url}
+                                  onClick={() => setLightboxUrl(fullUrl)}
+                                  className="relative group w-24 h-24 rounded-xl overflow-hidden border border-slate-200 cursor-pointer shadow-2xs"
+                                >
+                                  <DynamicImage
+                                    src={m.url}
+                                    alt="Hình câu hỏi"
+                                    width={96}
+                                    height={96}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition"
+                                  />
+                                  <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                    <Maximize2 className="w-4 h-4 text-white" />
+                                  </div>
+                                </div>
+                              );
+                            }
+                            return null;
+                          })}
+                        </div>
+                      ) : null}
 
-                    {/* Media Attachments */}
-                    {q.media?.length ? (
-                      <div className="flex flex-wrap gap-2.5 pt-1">
-                        {q.media.map((m: any) => {
-                          const fullUrl = getImageUrl(m.url);
-                          if (m.type === 'IMAGE') {
+                      {/* Lựa chọn trắc nghiệm - Khung đáp án hài hòa, tinh tế */}
+                      {!isEssay && !isFillBlank && choices.length > 0 && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                          {choices.map((choice) => {
+                            const isCorrect = choice.isCorrect;
                             return (
                               <div
-                                key={m.id || m.url}
-                                onClick={() => setLightboxUrl(fullUrl)}
-                                className="relative group w-24 h-24 rounded-xl overflow-hidden border border-slate-200 cursor-pointer shadow-2xs"
+                                key={choice.label}
+                                className={`flex items-start gap-2.5 p-3 rounded-xl border text-type-body-sm transition ${
+                                  showAnswers && isCorrect
+                                    ? 'border-emerald-400 dark:border-emerald-600 bg-emerald-50/80 dark:bg-emerald-950/50 text-emerald-950 dark:text-emerald-100 shadow-2xs ring-1 ring-emerald-400/30'
+                                    : 'border-slate-200/80 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-850/40 hover:bg-slate-50 dark:hover:bg-slate-850 text-slate-800 dark:text-slate-200'
+                                }`}
                               >
-                                <DynamicImage
-                                  src={m.url}
-                                  alt="Hình câu hỏi"
-                                  width={96}
-                                  height={96}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition"
-                                />
-                                <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                                  <Maximize2 className="w-4 h-4 text-white" />
-                                </div>
+                                <span
+                                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg font-semibold text-type-helper tabular-nums select-none ${
+                                    showAnswers && isCorrect
+                                      ? 'bg-emerald-600 text-white shadow-2xs'
+                                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700'
+                                  }`}
+                                >
+                                  {choice.label}
+                                </span>
+                                <span className={`pt-0.5 leading-snug break-words font-medium ${showAnswers && isCorrect ? 'font-semibold text-emerald-950 dark:text-emerald-100' : ''}`}>
+                                  {choice.text}
+                                </span>
+                                {showAnswers && isCorrect && (
+                                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 ml-auto self-center" />
+                                )}
                               </div>
                             );
-                          }
-                          return null;
-                        })}
-                      </div>
-                    ) : null}
+                          })}
+                        </div>
+                      )}
 
-                    {/* Lựa chọn trắc nghiệm */}
-                    {!isEssay && !isFillBlank && choices.length > 0 && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                        {choices.map((choice) => {
-                          const isCorrect = choice.isCorrect;
-                          return (
-                            <div
-                              key={choice.label}
-                              className={`flex items-start gap-2.5 p-3 rounded-xl border text-type-body-sm transition ${showAnswers && isCorrect
-                                ? 'border-emerald-300 dark:border-emerald-800 bg-emerald-50/70 dark:bg-emerald-950/40'
-                                : 'border-slate-200/70 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/40'
-                                }`}
-                            >
-                              <span
-                                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg font-semibold text-type-helper ${showAnswers && isCorrect
-                                  ? 'bg-emerald-600 text-white'
-                                  : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-                                  }`}
-                              >
-                                {choice.label}
-                              </span>
-                              <span className={`pt-0.5 leading-snug break-words ${showAnswers && isCorrect ? 'font-semibold text-emerald-900 dark:text-emerald-200' : 'text-slate-800 dark:text-slate-200'}`}>
-                                {choice.text}
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {/* Gợi ý đáp án tự luận */}
-                    {isEssay && (
-                      <div className="text-type-body pt-1 space-y-2">
-                        {showAnswers ? (
-                          <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/70 dark:bg-emerald-950/40 p-3.5 space-y-2 text-emerald-900 dark:text-emerald-200">
-                            <p className="font-semibold text-emerald-800 dark:text-emerald-300 text-type-helper flex items-center gap-1.5">
-                              <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Gợi ý Đáp án &amp; Thang điểm Tự luận:
-                            </p>
-                            <p className="font-medium whitespace-pre-wrap leading-relaxed text-type-body-sm">
-                              {answerText || 'Chưa có đáp án mẫu hoặc hướng dẫn chấm cho câu hỏi này.'}
-                            </p>
-                          </div>
-                        ) : (
-                          <p className="text-type-helper italic font-medium text-slate-400 pl-0.5">
-                            (Nhấn &quot;Hiện đáp án&quot; phía trên để xem đáp án gợi ý &amp; thang điểm)
+                      {/* Chi tiết đáp án điền khuyết khi bật hiện đáp án */}
+                      {showAnswers && isFillBlank && (
+                        <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/30 p-3.5 space-y-2 text-type-body-sm text-emerald-950 dark:text-emerald-200">
+                          <p className="font-semibold text-emerald-800 dark:text-emerald-300 text-type-helper flex items-center gap-1.5">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                            <span>Đáp án các vị trí điền khuyết:</span>
                           </p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })
+                          <div className="flex flex-wrap gap-2 pt-0.5">
+                            {fillBlankAnswers.length > 0 ? (
+                              fillBlankAnswers.map((item, bIdx) => (
+                                <span
+                                  key={bIdx}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white dark:bg-slate-900 border border-emerald-300 dark:border-emerald-700 text-type-helper font-semibold text-emerald-900 dark:text-emerald-200 shadow-2xs"
+                                >
+                                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Ô [{item.blankIndex}]:</span>
+                                  <span>{item.answer}</span>
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-type-helper italic text-slate-500">Chưa có đáp án mẫu được lưu cho câu hỏi này.</span>
+                            )}
+                          </div>
+                          {q.explanation && (
+                            <p className="text-type-body-sm font-medium leading-relaxed pt-1 text-emerald-950 dark:text-emerald-200 border-t border-emerald-200/60 dark:border-emerald-800/60">
+                              <span className="font-semibold text-emerald-800 dark:text-emerald-300">Giải thích:</span> {q.explanation}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Giải thích / Hướng dẫn giải cho câu trắc nghiệm khi bật hiện đáp án */}
+                      {showAnswers && !isEssay && !isFillBlank && q.explanation && (
+                        <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/30 p-3.5 space-y-1 text-type-body-sm text-emerald-950 dark:text-emerald-200">
+                          <p className="font-semibold text-emerald-800 dark:text-emerald-300 text-type-helper flex items-center gap-1.5">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                            <span>Giải thích / Hướng dẫn giải:</span>
+                          </p>
+                          <p className="font-medium leading-relaxed whitespace-pre-wrap">
+                            {q.explanation}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Gợi ý đáp án tự luận */}
+                      {isEssay && (
+                        <div className="text-type-body pt-1 space-y-2">
+                          {showAnswers ? (
+                            <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/70 dark:bg-emerald-950/40 p-3.5 space-y-2 text-emerald-900 dark:text-emerald-200">
+                              <p className="font-semibold text-emerald-800 dark:text-emerald-300 text-type-helper flex items-center gap-1.5">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Gợi ý đáp án &amp; Thang điểm:
+                              </p>
+                              <p className="font-medium whitespace-pre-wrap leading-relaxed text-type-body-sm">
+                                {answerText || 'Chưa có đáp án mẫu hoặc hướng dẫn chấm.'}
+                              </p>
+                            </div>
+                          ) : (
+                            <p className="text-type-helper italic font-medium text-slate-400 pl-0.5">
+                              (Nhấn &quot;Hiện đáp án&quot; phía trên để xem đáp án gợi ý &amp; thang điểm)
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </div>
         )}
