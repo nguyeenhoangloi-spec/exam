@@ -51,10 +51,10 @@ export function QuestionDetailDialog({
 
   const creatorName = question
     ? question.createdByName ||
-      (question.createdBy as any)?.teacher?.fullName ||
-      question.createdBy?.fullName ||
-      question.createdBy?.username ||
-      (question.createdById ? `User #${question.createdById}` : 'Hệ thống')
+    (question.createdBy as any)?.teacher?.fullName ||
+    question.createdBy?.fullName ||
+    question.createdBy?.username ||
+    (question.createdById ? `User #${question.createdById}` : 'Hệ thống')
     : '';
 
   const scoreText = question?.score !== undefined && question?.score !== null ? `${question.score} điểm` : '1.0 điểm';
@@ -196,18 +196,16 @@ export function QuestionDetailDialog({
                     return (
                       <div
                         key={opt.id || idx}
-                        className={`flex items-start gap-3 p-3.5 rounded-2xl border transition-all ${
-                          isCorrect
+                        className={`flex items-start gap-3 p-3.5 rounded-2xl border transition-all ${isCorrect
                             ? 'border-emerald-200/90 dark:border-emerald-800/80 bg-emerald-50/50 dark:bg-emerald-950/30'
                             : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/60'
-                        }`}
+                          }`}
                       >
                         <span
-                          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-xl font-semibold text-type-helper transition ${
-                            isCorrect
+                          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-xl font-semibold text-type-helper transition ${isCorrect
                               ? 'bg-emerald-600 text-white shadow-xs'
                               : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
-                          }`}
+                            }`}
                         >
                           {letter}
                         </span>

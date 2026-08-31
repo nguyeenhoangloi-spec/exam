@@ -53,8 +53,9 @@ function getSmartMonogram(titleNode: React.ReactNode, fallback = 'CT'): string {
 
 /**
  * DetailDrawer - Component Drawer trượt bên phải dùng chung chuẩn mực toàn hệ thống
+ * - Double RAF đảm bảo 100% trình duyệt paint frame ban đầu trước khi kích hoạt transition
  * - Tự động đóng băng (freeze) snapshot nội dung khi đóng, chống trắng xóa/nhấp nháy layout
- * - Hoạt ảnh 60 FPS mượt mà GPU-accelerated với đường cong cubic-bezier(0.32, 0.72, 0, 1)
+ * - Hoạt ảnh 60 FPS mượt mà GPU-accelerated với đường cong cubic-bezier(0.16, 1, 0.3, 1)
  * - Tách biệt vòng đời Animation với Props update để tránh re-trigger khi props thay đổi
  * - Hỗ trợ Header, Subtitle, Badges, Tabs liền mạch, Footer cố định, phím ESC và SSR Portal
  */
@@ -64,7 +65,7 @@ export function DetailDrawer({
   title,
   subtitle,
   badge,
-  showAvatar = true,
+  showAvatar = false,
   avatarText,
   avatarIcon,
   headerActions,
@@ -73,7 +74,7 @@ export function DetailDrawer({
   activeTab,
   onTabChange,
   footer,
-  maxWidth = 'md',
+  maxWidth = 'lg',
   children,
   className = '',
   bodyClassName = '',
@@ -134,26 +135,30 @@ export function DetailDrawer({
     };
   }
 
-  // Quản lý vòng đời mở / đóng với Hardware Acceleration
+  // Quản lý vòng đời mở / đóng với Double RAF đảm bảo 60 FPS CSS Transition
   useEffect(() => {
-    let animFrame: number;
+    let animFrame1: number;
+    let animFrame2: number;
     let exitTimer: NodeJS.Timeout;
 
     if (isOpen) {
       setIsMounted(true);
-      // Đảm bảo DOM đã gắn trước khi kích hoạt transition
-      animFrame = requestAnimationFrame(() => {
-        setIsAnimated(true);
+      // Double RAF: Frame 1 render DOM gắn vào body (translate-x-full), Frame 2 kích hoạt transition (translate-x-0)
+      animFrame1 = requestAnimationFrame(() => {
+        animFrame2 = requestAnimationFrame(() => {
+          setIsAnimated(true);
+        });
       });
     } else {
       setIsAnimated(false);
       exitTimer = setTimeout(() => {
         setIsMounted(false);
-      }, 300);
+      }, 320);
     }
 
     return () => {
-      cancelAnimationFrame(animFrame);
+      cancelAnimationFrame(animFrame1);
+      cancelAnimationFrame(animFrame2);
       clearTimeout(exitTimer);
     };
   }, [isOpen]);
@@ -221,7 +226,7 @@ export function DetailDrawer({
     >
       {/* Backdrop mờ nền với hiệu ứng fade 60 FPS */}
       <div
-        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+        className={`fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isAnimated ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={onClose}
@@ -229,7 +234,7 @@ export function DetailDrawer({
 
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
         <div
-          className={`w-screen ${widthClass} bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/60 dark:border-slate-800 pointer-events-auto transform-gpu transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] will-change-transform ${
+          className={`w-screen ${widthClass} bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/60 dark:border-slate-800 pointer-events-auto transform-gpu transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
             isAnimated ? 'translate-x-0' : 'translate-x-full'
           }`}
           style={{
@@ -245,7 +250,7 @@ export function DetailDrawer({
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3.5 min-w-0 flex-1">
                 {/* Avatar Monogram hoặc Icon */}
-                {active.showAvatar !== false && (active.avatarIcon || active.avatarText !== undefined) && (
+                {active.showAvatar && (active.avatarIcon || active.avatarText !== undefined) && (
                   active.avatarIcon ? (
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white font-semibold shadow-sm shadow-blue-500/25 border border-blue-400/30">
                       {active.avatarIcon}

@@ -230,11 +230,10 @@ export function RegradeReviewDrawer({
                 <button
                   type="button"
                   onClick={() => setReviewStatus('APPROVED_REGRADE')}
-                  className={`flex items-center justify-center gap-2 rounded-xl py-2 px-3 text-type-helper font-semibold transition cursor-pointer ${
-                    reviewStatus === 'APPROVED_REGRADE'
+                  className={`flex items-center justify-center gap-2 rounded-xl py-2 px-3 text-type-helper font-semibold transition cursor-pointer ${reviewStatus === 'APPROVED_REGRADE'
                       ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs ring-1 ring-emerald-500/30'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                  }`}
+                    }`}
                 >
                   <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                   <span>Chấp nhận &amp; Đổi điểm</span>
@@ -243,11 +242,10 @@ export function RegradeReviewDrawer({
                 <button
                   type="button"
                   onClick={() => setReviewStatus('REJECTED')}
-                  className={`flex items-center justify-center gap-2 rounded-xl py-2 px-3 text-type-helper font-semibold transition cursor-pointer ${
-                    reviewStatus === 'REJECTED'
+                  className={`flex items-center justify-center gap-2 rounded-xl py-2 px-3 text-type-helper font-semibold transition cursor-pointer ${reviewStatus === 'REJECTED'
                       ? 'bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 shadow-xs ring-1 ring-rose-500/30'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                  }`}
+                    }`}
                 >
                   <AlertCircle className="h-4 w-4 text-rose-500" />
                   <span>Từ chối phúc khảo</span>

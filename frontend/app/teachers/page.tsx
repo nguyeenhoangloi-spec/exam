@@ -922,8 +922,8 @@ export default function TeachersPage() {
                           )}
                         </div>
                         <span className={`px-2.5 py-1 ui-pill rounded-full text-type-helper font-medium shrink-0 ${assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1'
-                            ? 'bg-blue-50 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60'
-                            : 'bg-slate-100 text-slate-700 dark:text-slate-300'
+                          ? 'bg-blue-50 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60'
+                          : 'bg-slate-100 text-slate-700 dark:text-slate-300'
                           }`}>
                           {assignment.role === 'CHINH' || assignment.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ'}
                         </span>
