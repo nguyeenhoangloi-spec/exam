@@ -4,12 +4,15 @@ import {
   ExamPaperExportModel,
   setGlobalPublishedTemplates,
 } from './exam-paper-template';
+import { getSchoolLogoUrl } from './school-logo';
 
 export interface PrintReportOptions {
   title: string;
   subtitle?: string;
   institutionName?: string;
   facultyName?: string;
+  logoUrl?: string;
+  showLogo?: boolean;
   metaInfo?: Array<{ label: string; value: string }>;
   columns: Array<{ header: string; width?: string; align?: 'left' | 'center' | 'right' }>;
   rows: Array<Array<string | number>>;
@@ -37,6 +40,8 @@ export interface PrintExamPaperOptions {
   motto?: string;
   paperTitle?: string;
   subtitle?: string;
+  logoUrl?: string;
+  showLogo?: boolean;
   subjectName: string;
   subjectCode: string;
   paperCode?: string;
@@ -183,9 +188,17 @@ export function printReport(options: PrintReportOptions): boolean {
 
   const signerHtml = `<table class="signers"><tr>${signers.map((s: any) => `<td><strong>${escapeHtml(s.title)}</strong><em>${escapeHtml(s.subtitle || '')}</em><div class="sig-line">...................................</div></td>`).join('')}</tr></table>`;
   const footerNotes = options.footerNotes || published?.footer?.note || '';
+
+  const logoUrl = options.logoUrl || published?.header?.logoUrl || getSchoolLogoUrl();
+  const showLogo = options.showLogo !== undefined ? options.showLogo : (published?.header?.showLogo !== false);
+
+  const logoHtml = showLogo && logoUrl
+    ? `<img src="${logoUrl}" alt="Logo" style="height:52px;width:52px;object-fit:contain;flex-shrink:0;" />`
+    : '';
+
   const headerTableHtml = motto?.trim()
-    ? `<table class="header-table"><tr><td class="inst-box"><div>${escapeHtml(institutionName)}</div>${facultyName ? `<span>${escapeHtml(facultyName)}</span>` : ''}<div style="border-top:1px solid #000;display:inline-block;padding-top:2px;width:110px;margin-top:2px"></div></td><td class="motto-box"><div>${escapeHtml(motto.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM')}</div><em>${escapeHtml(motto.split('\n')[1] || 'Độc lập - Tự do - Hạnh phúc')}</em><div style="border-top:1px solid #000;display:inline-block;padding-top:2px;width:110px;margin-top:2px"></div></td></tr></table>`
-    : `<table class="header-table"><tr><td class="inst-box" style="width:100%"><div>${escapeHtml(institutionName)}</div>${facultyName ? `<span>${escapeHtml(facultyName)}</span>` : ''}<div style="border-top:1px solid #000;display:inline-block;padding-top:2px;width:110px;margin-top:2px"></div></td></tr></table>`;
+    ? `<table class="header-table"><tr><td class="inst-box"><div style="display:inline-flex;align-items:center;justify-content:center;gap:8px;text-align:center;">${logoHtml}<div><div>${escapeHtml(institutionName)}</div>${facultyName ? `<span>${escapeHtml(facultyName)}</span>` : ''}<div style="border-top:1px solid #000;display:inline-block;padding-top:2px;width:110px;margin-top:2px"></div></div></div></td><td class="motto-box"><div>${escapeHtml(motto.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM')}</div><em>${escapeHtml(motto.split('\n')[1] || 'Độc lập - Tự do - Hạnh phúc')}</em><div style="border-top:1px solid #000;display:inline-block;padding-top:2px;width:110px;margin-top:2px"></div></td></tr></table>`
+    : `<table class="header-table"><tr><td class="inst-box" style="width:100%"><div style="display:inline-flex;align-items:center;justify-content:center;gap:8px;text-align:center;">${logoHtml}<div><div>${escapeHtml(institutionName)}</div>${facultyName ? `<span>${escapeHtml(facultyName)}</span>` : ''}<div style="border-top:1px solid #000;display:inline-block;padding-top:2px;width:110px;margin-top:2px"></div></div></div></td></tr></table>`;
 
   printable.document.write(`<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>${escapeHtml(options.title)}</title><style>*{box-sizing:border-box}body{font-family:'Times New Roman',Times,serif;font-size:11pt;color:#000000;padding:15px;margin:0}.header-table{width:100%;border-collapse:collapse;margin-bottom:10px;table-layout:fixed}.header-table td{vertical-align:top;border:none;padding:0}.inst-box{font-weight:bold;font-size:10.5pt;text-align:center;width:50%}.inst-box span{display:block;font-weight:normal;font-size:10pt;margin-top:1px}.motto-box{font-weight:bold;font-size:10.5pt;text-align:center;width:50%}.motto-box em{display:block;font-weight:bold;font-size:10pt;font-style:italic;margin-top:1px}.title{text-align:center;font-size:14pt;font-weight:bold;text-transform:uppercase;margin:10px 0 2px}.subtitle{text-align:center;font-style:italic;margin-bottom:8px;font-size:10pt;color:#000000}.meta{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0;border-bottom:1px solid #000000;padding-bottom:6px;font-size:10pt;color:#000000}table.data{width:100%;border-collapse:collapse;margin:8px 0;table-layout:fixed;page-break-inside:auto}table.data thead{display:table-header-group}table.data tr{page-break-inside:avoid;page-break-after:auto}table.data th{background:transparent;font-weight:bold;font-size:${tableFontSize};border:1px solid #000000;padding:${tableCellPadding};text-align:center;color:#000000}table.data td{border:1px solid #000000;padding:${tableCellPadding};font-size:${tableFontSize};color:#000000}.signers{width:100%;margin-top:28px;border-collapse:collapse;border:none;table-layout:fixed;page-break-inside:avoid}.signers td{text-align:center;vertical-align:top;border:none;width:${100 / (signers.length || 1)}%}.signers strong{font-size:10.5pt;display:block;color:#000000}.signers em{display:block;margin-top:2px;min-height:50px;color:#000000;font-size:9.5pt}.sig-line{color:#000000;margin-top:4px}@media print{body{padding:0}@page{size:${pageSize} ${orientation};margin:${marginMm}mm}}</style></head><body>${headerTableHtml}<h1 class="title">${escapeHtml(options.title)}</h1>${options.subtitle ? `<div class="subtitle">${escapeHtml(options.subtitle)}</div>` : ''}${metaHtml}<table class="data"><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>${footerNotes ? `<p style="margin-top:8px;font-style:italic;font-size:9.5pt"><em>* ${escapeHtml(footerNotes)}</em></p>` : ''}<p style="text-align:right;font-style:italic;margin-top:14px;font-size:10.5pt">Ngày ${new Date().getDate()} tháng ${new Date().getMonth() + 1} năm ${new Date().getFullYear()}</p>${signerHtml}<script>window.onload=()=>setTimeout(()=>window.print(),300)</script></body></html>`);
   printable.document.close();
@@ -219,6 +232,8 @@ export function printBulkExamPapers(papersList: PrintExamPaperOptions[]): boolea
     facultyName: p.facultyName,
     motto: p.motto,
     subtitle: p.subtitle,
+    logoUrl: p.logoUrl,
+    showLogo: p.showLogo,
     instructionText: p.instructionText,
     showScoreBox: p.showScoreBox,
     showInstructions: p.showInstructions,
@@ -264,6 +279,12 @@ export function printArchivedDossier(data: any): boolean {
   const title = published?.header?.title || 'HỒ SƠ LƯU TRỮ BÀI THI KẾT THÚC HỌC PHẦN';
   const subtitle = published?.header?.subtitle || '(Bản trích lục niêm phong lưu trữ đào tạo)';
   const marginMm = published?.page?.marginMm || 12;
+
+  const logoUrl = published?.header?.logoUrl || getSchoolLogoUrl();
+  const showLogo = published?.header?.showLogo !== false;
+  const logoHtml = showLogo && logoUrl
+    ? `<img src="${logoUrl}" alt="Logo" style="height:52px;width:52px;object-fit:contain;flex-shrink:0;" />`
+    : '';
 
   const [mottoTop, mottoBottom] = motto.split('\n');
 
@@ -382,9 +403,14 @@ export function printArchivedDossier(data: any): boolean {
       <table class="header-table">
         <tr>
           <td style="width: 50%; text-align: center;">
-            <div style="font-weight: bold; font-size: 10.5pt;">${escapeHtml(institutionName)}</div>
-            <div style="font-size: 10pt;">${escapeHtml(facultyName)}</div>
-            <div style="border-top: 1px solid #000; display: inline-block; width: 110px; margin-top: 2px;"></div>
+            <div style="display:inline-flex;align-items:center;justify-content:center;gap:8px;text-align:center;">
+              ${logoHtml}
+              <div>
+                <div style="font-weight: bold; font-size: 10.5pt;">${escapeHtml(institutionName)}</div>
+                <div style="font-size: 10pt;">${escapeHtml(facultyName)}</div>
+                <div style="border-top: 1px solid #000; display: inline-block; width: 110px; margin-top: 2px;"></div>
+              </div>
+            </div>
           </td>
           <td style="width: 50%; text-align: center;">
             <div style="font-weight: bold; font-size: 10.5pt;">${escapeHtml(mottoTop || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM')}</div>

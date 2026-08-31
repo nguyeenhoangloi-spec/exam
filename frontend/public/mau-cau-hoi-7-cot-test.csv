@@ -1,6 +1,0 @@
-Nội dung câu hỏi,Đáp án A,Đáp án B,Đáp án C,Đáp án D
-"ISO/IEC 27001 là tiêu chuẩn quản lý quốc tế về lĩnh vực nào?","Hệ thống Quản lý An toàn Thông tin (ISMS)","Hệ thống Quản lý Chất lượng (QMS)","Hệ thống Quản lý Môi trường (EMS)","Hệ thống Quản lý Dịch vụ IT (ITSM)"
-"Trong hệ điều hành, tiến trình (Process) được định nghĩa là gì?","Một tệp tin thực thi (.exe) lưu trên đĩa cứng","Một chương trình đang trong quá trình thực thi trong bộ nhớ","Một đoạn mã nguồn chưa qua biên dịch","Một thiết bị ngoại vi kết nối với máy tính"
-"Giao thức nào sau đây sử dụng cổng mặc định là 443?","HTTP","FTP","HTTPS","SSH"
-"Cấu trúc dữ liệu nào hoạt động theo nguyên tắc LIFO (Last In First Out)?","Hàng đợi (Queue)","Ngăn xếp (Stack)","Danh sách liên kết (LinkedList)","Cây nhị phân (Binary Tree)"
-"Thuật toán mã hóa RSA thuộc loại mật mã nào?","Mật mã đối xứng (Symmetric Encryption)","Mật mã bất đối xứng (Asymmetric Encryption)","Mã hóa một chiều không thể giải mã","Mã hóa luồng dữ liệu (Stream Cipher)"

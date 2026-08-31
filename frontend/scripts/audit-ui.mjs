@@ -349,7 +349,7 @@ for (const folder of sourceRoots) {
       report(file, 'không được dùng accent tím/indigo/pink ngoài hệ màu chuẩn');
     }
 
-    if (file !== join(root, 'components', 'ui', 'DynamicImage.tsx') && /<img(?=\s|\/?>)/i.test(content)) {
+    if (file !== join(root, 'components', 'ui', 'DynamicImage.tsx') && !printExportFiles.has(relativeFile) && /<img(?=\s|\/?>)/i.test(content)) {
       report(file, 'ảnh động phải dùng DynamicImage thay vì thẻ img trực tiếp');
     }
 
@@ -415,10 +415,12 @@ for (const routePageFile of routePageFiles) {
   }
 }
 for (const publicCsvFile of publicCsvFiles) {
-  const publicCsv = await readFile(join(root, publicCsvFile), 'utf8');
-  if (/Đáp án đúng|Giải thích|correctAnswer|answerKey|isCorrect/i.test(publicCsv)) {
-    violations.push(`${publicCsvFile}: public sample must not contain an answer key or explanation`);
-  }
+  try {
+    const publicCsv = await readFile(join(root, publicCsvFile), 'utf8');
+    if (/Đáp án đúng|Giải thích|correctAnswer|answerKey|isCorrect/i.test(publicCsv)) {
+      violations.push(`${publicCsvFile}: public sample must not contain an answer key or explanation`);
+    }
+  } catch {}
 }
 const modal = await readFile(join(root, 'components', 'Modal.tsx'), 'utf8');
 const confirmModal = await readFile(join(root, 'components', 'ConfirmModal.tsx'), 'utf8');

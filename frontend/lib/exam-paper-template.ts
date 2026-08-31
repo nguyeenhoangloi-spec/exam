@@ -1,4 +1,5 @@
 import { formatFillBlankForPrint, FillBlankAnswerItem } from './fill-blank-helper';
+import { getSchoolLogoUrl } from './school-logo';
 
 export interface ExamQuestionExportItem {
   index?: number;
@@ -31,6 +32,8 @@ export interface ExamPaperExportModel {
   facultyName?: string;
   motto?: string;
   subtitle?: string;
+  logoUrl?: string;
+  showLogo?: boolean;
   instructionText?: string;
   showScoreBox?: boolean;
   showInstructions?: boolean;
@@ -103,6 +106,9 @@ export function generateUnifiedExamPaperHtml(
     { title: 'TRƯỞNG BỘ MÔN DUYỆT', subtitle: '(Ký, ghi rõ họ tên)' },
   ];
 
+  const logoUrl = customOptions?.logoUrl || firstPaper.logoUrl || examTemplate?.header?.logoUrl || getSchoolLogoUrl();
+  const showLogo = customOptions?.showLogo !== undefined ? customOptions.showLogo : (firstPaper.showLogo !== undefined ? firstPaper.showLogo : (examTemplate?.header?.showLogo !== false));
+
   const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
 
   // 1. Render từng mã đề thi
@@ -132,9 +138,14 @@ export function generateUnifiedExamPaperHtml(
           <table class="header-grid" style="width:100%; border-collapse:collapse; margin-bottom:6px; table-layout:fixed;">
             <tr>
               <td class="inst-box" style="width:50%; text-align:center; vertical-align:top; font-size:11pt; font-weight:bold; border:none; padding:0;">
-                <div>${escapeHtml(institutionName)}</div>
-                <div style="font-weight:normal; font-size:10pt;">${escapeHtml(facultyName)}</div>
-                <div class="inst-underline" style="border-top:1px solid #000000; display:inline-block; width:120px; margin-top:2px;"></div>
+                <div style="display:inline-flex; align-items:center; justify-content:center; gap:8px; text-align:center;">
+                  ${showLogo && logoUrl ? `<img src="${logoUrl}" alt="Logo" style="height:52px; width:52px; object-fit:contain; flex-shrink:0;" />` : ''}
+                  <div>
+                    <div>${escapeHtml(institutionName)}</div>
+                    <div style="font-weight:normal; font-size:10pt;">${escapeHtml(facultyName)}</div>
+                    <div class="inst-underline" style="border-top:1px solid #000000; display:inline-block; width:120px; margin-top:2px;"></div>
+                  </div>
+                </div>
               </td>
               <td class="motto-box" style="width:50%; text-align:center; vertical-align:top; font-size:11pt; font-weight:bold; border:none; padding:0;">
                 <div>${escapeHtml(motto.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM')}</div>
@@ -362,9 +373,14 @@ export function generateUnifiedExamPaperHtml(
         <table class="header-grid" style="width:100%; border-collapse:collapse; margin-bottom:6px; table-layout:fixed;">
           <tr>
             <td class="inst-box" style="width:50%; text-align:center; vertical-align:top; font-size:11pt; font-weight:bold; border:none; padding:0;">
-              <div>${escapeHtml(institutionName)}</div>
-              <div style="font-weight:normal; font-size:10pt;">${escapeHtml(facultyName)}</div>
-              <div class="inst-underline" style="border-top:1px solid #000000; display:inline-block; width:120px; margin-top:2px;"></div>
+              <div style="display:inline-flex; align-items:center; justify-content:center; gap:8px; text-align:center;">
+                ${showLogo && logoUrl ? `<img src="${logoUrl}" alt="Logo" style="height:52px; width:52px; object-fit:contain; flex-shrink:0;" />` : ''}
+                <div>
+                  <div>${escapeHtml(institutionName)}</div>
+                  <div style="font-weight:normal; font-size:10pt;">${escapeHtml(facultyName)}</div>
+                  <div class="inst-underline" style="border-top:1px solid #000000; display:inline-block; width:120px; margin-top:2px;"></div>
+                </div>
+              </div>
             </td>
             <td class="motto-box" style="width:50%; text-align:center; vertical-align:top; font-size:11pt; font-weight:bold; border:none; padding:0;">
               <div>${escapeHtml(motto.split('\n')[0] || 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM')}</div>

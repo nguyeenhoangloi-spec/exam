@@ -14,6 +14,7 @@ import {
   MoveDown,
   Calculator,
   RotateCcw,
+  Upload,
 } from 'lucide-react';
 import api, { getCachedData } from '../../../lib/api';
 import { usePageTitle } from '../../../components/PageTitleContext';
@@ -24,6 +25,8 @@ import { Toast } from '../../../components/Toast';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import { printReport, printExamPaper } from '../../../lib/export-print';
 import { PageSkeleton } from '../../../components/ui/Skeleton';
+import { DynamicImage } from '../../../components/ui/DynamicImage';
+import { DEFAULT_DNC_LOGO_DATA_URL } from '../../../lib/school-logo';
 
 type DataSource =
   | 'EXAM_SCHEDULE_LIST'
@@ -39,9 +42,9 @@ type TemplateType = 'TABLE' | 'EXAM_PAPER';
 type Column = {
   key: string;
   label: string;
-  align?: 'left' | 'center' | 'right';
+  align: 'left' | 'center' | 'right';
   width?: string;
-  visible?: boolean;
+  visible: boolean;
   type?: 'FIELD' | 'FORMULA';
   formula?: string;
   decimals?: number;
@@ -55,6 +58,8 @@ type Config = {
     marginMm: number;
   };
   header: {
+    logoUrl?: string;
+    showLogo?: boolean;
     institutionName: string;
     facultyName?: string;
     title: string;
@@ -349,7 +354,7 @@ export default function DocumentTemplatesPage() {
     setConfig(next);
   };
 
-  const setHeader = (field: keyof Config['header'], value: string) => {
+  const setHeader = (field: keyof Config['header'], value: any) => {
     if (!config) return;
     updateConfig({
       ...config,
@@ -597,6 +602,91 @@ export default function DocumentTemplatesPage() {
                       onChange={(v) => setHeader('institutionName', v)}
                       placeholder="TRƯỜNG ĐẠI HỌC NAM CẦN THƠ..."
                     />
+
+                    {/* Logo Trường / Đơn vị Đào tạo */}
+                    <div className="pt-1 pb-1 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <label className="flex items-center gap-2 cursor-pointer select-none group">
+                          <input
+                            type="checkbox"
+                            checked={config.header.showLogo !== false}
+                            onChange={(e) => setHeader('showLogo', e.target.checked)}
+                            className="h-4 w-4 rounded accent-blue-600 cursor-pointer shrink-0"
+                          />
+                          <span className="text-type-body font-medium text-slate-800 dark:text-slate-200">
+                            Hiển thị Logo trường trên phôi in
+                          </span>
+                        </label>
+                      </div>
+
+                      {config.header.showLogo !== false && (
+                        <div className="flex items-center justify-between gap-4 py-0.5">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="h-11 w-11 shrink-0 flex items-center justify-center overflow-hidden">
+                              <DynamicImage
+                                src={config.header.logoUrl || DEFAULT_DNC_LOGO_DATA_URL}
+                                alt="Logo trường"
+                                className="h-full w-full object-contain"
+                              />
+                            </div>
+
+                            <div className="min-w-0 space-y-0.5">
+                              <div className="text-type-body font-semibold text-slate-900 dark:text-slate-100 truncate">
+                                ĐH Nam Cần Thơ (DNC)
+                              </div>
+                              <div className="text-type-helper text-slate-500 dark:text-slate-400 font-normal truncate">
+                                {config.header.logoUrl ? 'Logo tùy chỉnh đã tải lên' : 'Logo mặc định hệ thống (PNG, JPG, SVG)'}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            {Boolean(config.header.logoUrl) && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setHeader('logoUrl', '');
+                                  setToast({ message: 'Đã đặt lại logo mặc định của trường (DNC)', type: 'success' });
+                                }}
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100/80 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800 text-type-body font-medium active:scale-[0.96] transition-all duration-150 ease-out cursor-pointer select-none"
+                                title="Đặt lại logo mặc định DNC"
+                              >
+                                <RotateCcw className="h-3.5 w-3.5" />
+                                <span>Mặc định</span>
+                              </button>
+                            )}
+
+                            <label className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200/90 hover:border-slate-300 dark:border-slate-700 dark:hover:border-slate-600 bg-white hover:bg-slate-50/80 dark:bg-slate-900 dark:hover:bg-slate-800 text-type-body font-medium text-slate-800 dark:text-slate-200 cursor-pointer shadow-xs active:scale-[0.96] transition-all duration-150 ease-out select-none">
+                              <Upload className="h-3.5 w-3.5 text-slate-600 dark:text-slate-400" />
+                              <span>Đổi logo</span>
+                              <input
+                                type="file"
+                                accept="image/png, image/jpeg, image/svg+xml"
+                                className="hidden"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (!file) return;
+                                  if (file.size > 2 * 1024 * 1024) {
+                                    setToast({ message: 'Dung lượng ảnh logo không được vượt quá 2MB', type: 'error' });
+                                    return;
+                                  }
+                                  const reader = new FileReader();
+                                  reader.onload = (uploadEvt) => {
+                                    const base64 = uploadEvt.target?.result as string;
+                                    if (base64) {
+                                      setHeader('logoUrl', base64);
+                                      setToast({ message: 'Đã tải lên logo trường thành công', type: 'success' });
+                                    }
+                                  };
+                                  reader.readAsDataURL(file);
+                                }}
+                              />
+                            </label>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
                     <FormInput
                       label="Khoa / Đơn vị tổ chức"
                       value={config.header.facultyName || ''}
@@ -1132,16 +1222,25 @@ export default function DocumentTemplatesPage() {
                       {/* Header 2 Columns or 1 Column */}
                       {Boolean(config.header.motto?.trim()) ? (
                         <div className="grid grid-cols-2 gap-4 text-center">
-                          <div>
-                            <div className="font-semibold text-type-body">
-                              {config.header.institutionName || 'HỆ THỐNG QUẢN LÝ KHẢO THÍ'}
-                            </div>
-                            {config.header.facultyName && (
-                              <div className="font-medium text-type-helper mt-0.5">
-                                {config.header.facultyName}
-                              </div>
+                          <div className="flex items-center justify-center gap-2.5">
+                            {config.header.showLogo !== false && (
+                              <DynamicImage
+                                src={config.header.logoUrl || DEFAULT_DNC_LOGO_DATA_URL}
+                                alt="Logo trường"
+                                className="h-11 w-11 object-contain shrink-0"
+                              />
                             )}
-                            <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                            <div>
+                              <div className="font-semibold text-type-body">
+                                {config.header.institutionName || 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ'}
+                              </div>
+                              {config.header.facultyName && (
+                                <div className="font-medium text-type-helper mt-0.5">
+                                  {config.header.facultyName}
+                                </div>
+                              )}
+                              <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                            </div>
                           </div>
                           <div>
                             <div className="font-semibold text-type-body">
@@ -1154,16 +1253,25 @@ export default function DocumentTemplatesPage() {
                           </div>
                         </div>
                       ) : (
-                        <div className="text-center">
-                          <div className="font-semibold text-type-body">
-                            {config.header.institutionName || 'HỆ THỐNG QUẢN LÝ KHẢO THÍ'}
-                          </div>
-                          {config.header.facultyName && (
-                            <div className="font-medium text-type-helper mt-0.5">
-                              {config.header.facultyName}
-                            </div>
+                        <div className="flex items-center justify-center gap-2.5 text-center">
+                          {config.header.showLogo !== false && (
+                            <DynamicImage
+                              src={config.header.logoUrl || DEFAULT_DNC_LOGO_DATA_URL}
+                              alt="Logo trường"
+                              className="h-11 w-11 object-contain shrink-0"
+                            />
                           )}
-                          <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                          <div>
+                            <div className="font-semibold text-type-body">
+                              {config.header.institutionName || 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ'}
+                            </div>
+                            {config.header.facultyName && (
+                              <div className="font-medium text-type-helper mt-0.5">
+                                {config.header.facultyName}
+                              </div>
+                            )}
+                            <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                          </div>
                         </div>
                       )}
 
@@ -1266,16 +1374,25 @@ export default function DocumentTemplatesPage() {
                       {/* Header 2 Columns or 1 Column */}
                       {Boolean(config.header.motto?.trim()) ? (
                         <div className="grid grid-cols-2 gap-4 text-center">
-                          <div>
-                            <div className="font-semibold text-type-body">
-                              {config.header.institutionName || 'HỆ THỐNG QUẢN LÝ KHẢO THÍ'}
-                            </div>
-                            {config.header.facultyName && (
-                              <div className="font-medium text-type-helper mt-0.5">
-                                {config.header.facultyName}
-                              </div>
+                          <div className="flex items-center justify-center gap-2.5">
+                            {config.header.showLogo !== false && (
+                              <DynamicImage
+                                src={config.header.logoUrl || DEFAULT_DNC_LOGO_DATA_URL}
+                                alt="Logo trường"
+                                className="h-11 w-11 object-contain shrink-0"
+                              />
                             )}
-                            <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                            <div>
+                              <div className="font-semibold text-type-body">
+                                {config.header.institutionName || 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ'}
+                              </div>
+                              {config.header.facultyName && (
+                                <div className="font-medium text-type-helper mt-0.5">
+                                  {config.header.facultyName}
+                                </div>
+                              )}
+                              <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                            </div>
                           </div>
                           <div>
                             <div className="font-semibold text-type-body">
@@ -1288,16 +1405,25 @@ export default function DocumentTemplatesPage() {
                           </div>
                         </div>
                       ) : (
-                        <div className="text-center">
-                          <div className="font-semibold text-type-body">
-                            {config.header.institutionName || 'HỆ THỐNG QUẢN LÝ KHẢO THÍ'}
-                          </div>
-                          {config.header.facultyName && (
-                            <div className="font-medium text-type-helper mt-0.5">
-                              {config.header.facultyName}
-                            </div>
+                        <div className="flex items-center justify-center gap-2.5 text-center">
+                          {config.header.showLogo !== false && (
+                            <DynamicImage
+                              src={config.header.logoUrl || DEFAULT_DNC_LOGO_DATA_URL}
+                              alt="Logo trường"
+                              className="h-11 w-11 object-contain shrink-0"
+                            />
                           )}
-                          <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                          <div>
+                            <div className="font-semibold text-type-body">
+                              {config.header.institutionName || 'TRƯỜNG ĐẠI HỌC NAM CẦN THƠ'}
+                            </div>
+                            {config.header.facultyName && (
+                              <div className="font-medium text-type-helper mt-0.5">
+                                {config.header.facultyName}
+                              </div>
+                            )}
+                            <div className="mx-auto mt-1 w-24 border-t border-slate-800" />
+                          </div>
                         </div>
                       )}
 
