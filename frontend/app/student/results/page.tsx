@@ -186,6 +186,8 @@ export default function StudentResultsPage() {
     } finally {
       setLoading(false);
     }
+  // Cache and result count are initial loading hints; including them would refetch after state updates.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const cachedAppeals = typeof window !== 'undefined' ? getCachedData<any[]>('/grade-appeals/my-appeals') : null;

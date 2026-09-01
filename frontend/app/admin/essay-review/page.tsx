@@ -289,6 +289,8 @@ function AdminEssayReviewContent() {
     } finally {
       setLoading(false);
     }
+  // Cache and row count are only initial-render hints and must not retrigger assignment loading.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attemptIdParam, openAttempt]);
 
   useEffect(() => {

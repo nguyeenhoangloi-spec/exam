@@ -223,10 +223,10 @@ export function ExamPaperDetailDrawer({
             <div className="flex items-center gap-2 text-type-helper text-slate-600 dark:text-slate-400 font-medium">
               <CalendarDays className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
               <span className="text-slate-800 dark:text-slate-200">{periodName}</span>
-              {paper?.totalQuestions ? (
+              {paper?.questionCount ? (
                 <>
                   <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
-                  <span>{paper.totalQuestions} câu hỏi</span>
+                  <span>{paper.questionCount} câu hỏi</span>
                 </>
               ) : null}
               {paper?.durationMinutes ? (

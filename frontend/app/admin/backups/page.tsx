@@ -293,6 +293,8 @@ export default function BackupsPage() {
             setLoading(false);
             setRefreshing(false);
         }
+    // Current data only controls the initial spinner; including it would recreate the polling callback after every response.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [router, filterType, filterStatus, filterMode, fromDate, toDate, search]);
 
     useEffect(() => {

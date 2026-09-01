@@ -193,6 +193,8 @@ function TeacherEssayGradingContent() {
     } finally {
       setLoading(false);
     }
+  // Cache and row count are initial loading hints; including them would refetch after state updates.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attemptIdParam, openAttempt]);
 
   useEffect(() => {

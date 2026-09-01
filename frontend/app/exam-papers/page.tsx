@@ -397,6 +397,8 @@ export default function ExamPapersPage() {
     } finally {
       if (!silent) setLoading(false);
     }
+  // Paper count is an initial spinner hint and must not recreate the loader after setPapers.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

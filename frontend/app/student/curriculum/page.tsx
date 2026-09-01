@@ -161,6 +161,8 @@ export default function StudentCurriculumPage() {
     } finally {
       setLoading(false);
     }
+  // Cache and list length are initial loading hints; including them would refetch after state updates.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

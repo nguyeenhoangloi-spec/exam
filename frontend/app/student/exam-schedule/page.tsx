@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
@@ -57,17 +57,7 @@ export default function StudentExamSchedulePage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
 
-  useEffect(() => {
-    const u = getAuthUser();
-    if (!u) {
-      router.push('/login');
-      return;
-    }
-    setCurrentUser(u);
-    fetchMySchedule();
-  }, [router]);
-
-  const fetchMySchedule = async () => {
+  const fetchMySchedule = useCallback(async () => {
     try {
       if (!schedules.length && !cachedSchedules) setLoading(true);
       const [scheduleRes, profileRes] = await Promise.allSettled([
@@ -85,7 +75,17 @@ export default function StudentExamSchedulePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [cachedSchedules, schedules.length]);
+
+  useEffect(() => {
+    const u = getAuthUser();
+    if (!u) {
+      router.push('/login');
+      return;
+    }
+    setCurrentUser(u);
+    fetchMySchedule();
+  }, [fetchMySchedule, router]);
 
   const exportCsv = () => {
     const headers = 'Kỳ thi,Mã môn,Tên môn thi,Ngày thi,Thời gian,Phòng thi,SBD,Số ghế\n';

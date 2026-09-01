@@ -86,6 +86,8 @@ function AvatarCropperModal({ isOpen, imageSrc, onClose, onApply }: AvatarCroppe
       draw();
     };
     img.src = imageSrc;
+  // The image load should run only when the source changes; draw depends on crop state and would reload the image.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageSrc]);
 
   const draw = useCallback(() => {

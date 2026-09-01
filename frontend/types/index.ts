@@ -204,6 +204,7 @@ export interface ExamPaper {
   paperCode: string;
   title: string;
   durationMinutes: number;
+  questionCount: number;
   totalScore: number;
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   publishedAt?: string;

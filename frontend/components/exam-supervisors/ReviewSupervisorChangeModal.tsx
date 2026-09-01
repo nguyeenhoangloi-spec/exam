@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowLeftRight, Calendar, Clock, MapPin, AlertCircle, X, Search, Check, UserCheck, ShieldAlert } from 'lucide-react';
 import api from '../../lib/api';
@@ -28,18 +28,7 @@ export function ReviewSupervisorChangeModal({
   const [actionType, setActionType] = useState<'APPROVE' | 'REJECT'>('APPROVE');
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    if (isOpen && request) {
-      setSelectedTeacherId(null);
-      setReviewNote('');
-      setSearch('');
-      setError('');
-      setActionType('APPROVE');
-      void fetchCandidates();
-    }
-  }, [isOpen, request]);
-
-  const fetchCandidates = async () => {
+  const fetchCandidates = useCallback(async () => {
     if (!request) return;
     try {
       setLoadingCandidates(true);
@@ -51,7 +40,18 @@ export function ReviewSupervisorChangeModal({
     } finally {
       setLoadingCandidates(false);
     }
-  };
+  }, [request]);
+
+  useEffect(() => {
+    if (isOpen && request) {
+      setSelectedTeacherId(null);
+      setReviewNote('');
+      setSearch('');
+      setError('');
+      setActionType('APPROVE');
+      void fetchCandidates();
+    }
+  }, [fetchCandidates, isOpen, request]);
 
   const filteredCandidates = useMemo(() => {
     if (!search.trim()) return candidates;

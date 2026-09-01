@@ -43,6 +43,8 @@ export default function ReportsPage() {
       setLoading(false);
       setIsRefreshing(false);
     }
+  // Cached data is an initial-render hint and must not recreate the loader after setData.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

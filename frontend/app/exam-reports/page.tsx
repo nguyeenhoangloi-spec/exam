@@ -415,6 +415,8 @@ export default function ExamReportsPage() {
     } finally {
       setSummaryLoading(false);
     }
+  // Cache is an initial-render hint; summary changes are driven explicitly by summaryFilters.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [summaryFilters]);
 
   useEffect(() => {
@@ -441,6 +443,8 @@ export default function ExamReportsPage() {
     } finally {
       setLoadingSchedules(false);
     }
+  // Schedule count/cache only control the initial spinner and must not create a fetch loop.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchReport = useCallback(async (scheduleId: string) => {

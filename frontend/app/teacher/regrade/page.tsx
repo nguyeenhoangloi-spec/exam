@@ -90,6 +90,8 @@ export default function RegradeManagementPage() {
     } finally {
       setLoading(false);
     }
+  // Cache and appeal count are initial loading hints; including them would recreate the loader after setAppeals.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   useEffect(() => {

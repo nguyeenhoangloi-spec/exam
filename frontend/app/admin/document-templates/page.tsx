@@ -304,6 +304,8 @@ export default function DocumentTemplatesPage() {
     } finally {
       setLoading(false);
     }
+  // Use the initial cache snapshot for the first-load spinner; template updates must not trigger a fetch loop.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

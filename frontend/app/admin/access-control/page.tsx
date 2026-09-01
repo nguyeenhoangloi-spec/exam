@@ -452,6 +452,8 @@ export default function AccessControlPage() {
     } finally {
       if (showSpinner) setLoading(false);
     }
+  // Keep the initial cache/loading snapshot stable; adding mutable list state here would refetch after every response.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

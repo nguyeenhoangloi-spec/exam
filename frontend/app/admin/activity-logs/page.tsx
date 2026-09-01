@@ -204,6 +204,8 @@ function ActivityLogsContent() {
         } finally {
             setLoading(false);
         }
+    // Cache and list length are intentionally read from the render snapshot to avoid a refetch loop after setLogs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, limit, search, entityFilter]);
 
     useEffect(() => {
@@ -364,6 +366,8 @@ function ActivityLogsContent() {
         } finally {
             setSecLoading(false);
         }
+    // Cache and list length are intentionally read from the render snapshot to avoid a refetch loop after setSecEvents.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [secPage, secLimit, secSearch, secCategory, secOutcome]);
 
     // Tải trước số lượng tổng cho cả 2 tab ngay khi trang khởi tạo

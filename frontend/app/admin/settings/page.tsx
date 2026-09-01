@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ArrowDown,
   ArrowUp,
@@ -118,7 +118,7 @@ export default function SystemSettingsPage() {
   const [deleting, setDeleting] = useState<StorageTarget | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  const load = async (force = false) => {
+  const load = useCallback(async (force = false) => {
     try {
       if (!cachedSettings && !settings.storageTargets.length) setLoading(true);
       const params = force ? { params: { noCache: true } } : undefined;
@@ -147,7 +147,7 @@ export default function SystemSettingsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [cachedSettings, settings.storageTargets.length]);
 
   useEffect(() => {
     void load();
@@ -156,7 +156,7 @@ export default function SystemSettingsPage() {
       setToast({ message: 'Đã kết nối Google Drive thành công.', type: 'success' });
     if (params.get('googleDrive') === 'error')
       setToast({ message: params.get('message') || 'Không thể kết nối Google Drive.', type: 'error' });
-  }, []);
+  }, [load]);
 
   const statusById = useMemo(
     () => new Map((storage.targets || []).map((item) => [item.id, item])),

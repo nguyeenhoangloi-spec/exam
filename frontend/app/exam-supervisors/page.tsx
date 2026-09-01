@@ -180,6 +180,8 @@ export default function ExamSupervisorsPage() {
     } finally {
       if (!background) setLoading(false);
     }
+  // Schedule count is only an initial loading hint; the query selection drives this loader.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scheduleIdFromQuery]);
 
   useEffect(() => {

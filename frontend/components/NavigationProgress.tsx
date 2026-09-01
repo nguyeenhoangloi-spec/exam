@@ -24,7 +24,7 @@ export const NavigationProgress: React.FC = () => {
       }, 200);
       return () => clearTimeout(timer);
     }
-  }, [pathname, searchParams]);
+  }, [pathname, searchParams, visible]);
 
   // Intercept click on navigation links to start progress immediately
   useEffect(() => {
@@ -85,4 +85,3 @@ export const NavigationProgress: React.FC = () => {
     </div>
   );
 };
-

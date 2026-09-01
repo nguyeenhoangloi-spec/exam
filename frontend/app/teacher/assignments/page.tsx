@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import api, { getCachedData } from '../../../lib/api';
 import { getAuthUser } from '../../../lib/auth';
@@ -80,6 +80,18 @@ export default function TeacherAssignmentsPage() {
   const [limit, setLimit] = useState(10);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  const fetchMyAssignments = useCallback(async () => {
+    try {
+      if (!assignments.length && !cachedAssignments) setLoading(true);
+      const res = await api.get('/teachers/my-assignments');
+      setAssignments(res.data || []);
+    } catch (err: any) {
+      setToast({ message: err.message || 'Lỗi tải lịch coi thi', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  }, [assignments.length, cachedAssignments]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
@@ -125,19 +137,7 @@ export default function TeacherAssignmentsPage() {
     }
     setCurrentUser(u);
     fetchMyAssignments();
-  }, [router]);
-
-  const fetchMyAssignments = async () => {
-    try {
-      if (!assignments.length && !cachedAssignments) setLoading(true);
-      const res = await api.get('/teachers/my-assignments');
-      setAssignments(res.data || []);
-    } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi tải lịch coi thi', type: 'error' });
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [fetchMyAssignments, router]);
 
   const handleUpdateStatus = (id: number, status: string) => {
     const item = assignments.find((a) => a.id === id);

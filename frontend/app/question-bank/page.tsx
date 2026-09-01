@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import api from '../../lib/api';
 import { invalidateCache } from '../../lib/api-cache';
@@ -115,7 +115,7 @@ export default function QuestionBankPage() {
     setConfirmConfig((prev) => ({ ...prev, isOpen: false }));
   };
 
-  const load = async () => {
+  const load = useCallback(async () => {
     try {
       if (!questions.length && !initialQList.length) setLoading(true);
       setError('');
@@ -158,11 +158,11 @@ export default function QuestionBankPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterValues, initialQList.length, limit, page, questions.length, sortOrder]);
 
   useEffect(() => {
     void load();
-  }, [page, limit, sortOrder, filterValues]);
+  }, [load]);
 
   const handleRefresh = () => {
     invalidateCache('/questions');
