@@ -203,7 +203,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
     // 2. While checking session on protected routes, show clean loading state
     if (!authLoaded) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950" aria-live="polite">
+            <div className="flex min-h-screen items-center justify-center ui-page" aria-live="polite">
                 <div className="flex flex-col items-center gap-3 text-type-body text-slate-700 dark:text-slate-300">
                     <div className="h-8 w-8 animate-spin rounded-full border-3 border-blue-600 border-t-transparent" />
                     <span>Đang tải hệ thống khảo thí...</span>
@@ -215,7 +215,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
     // 3. If unauthenticated on a protected route, show redirecting state
     if (!user) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950" aria-live="polite">
+            <div className="flex min-h-screen items-center justify-center ui-page" aria-live="polite">
                 <div className="flex flex-col items-center gap-3 text-type-body text-slate-700 dark:text-slate-300">
                     <div className="h-8 w-8 animate-spin rounded-full border-3 border-blue-600 border-t-transparent" />
                     <span>Đang chuyển hướng tới trang đăng nhập...</span>
@@ -227,7 +227,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
     // 4. While permissions are loading for the authenticated user
     if (!permissionsReady) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950" aria-live="polite">
+            <div className="flex min-h-screen items-center justify-center ui-page" aria-live="polite">
                 <div className="flex flex-col items-center gap-3 text-type-body text-slate-700 dark:text-slate-300">
                     <div className="h-8 w-8 animate-spin rounded-full border-3 border-blue-600 border-t-transparent" />
                     <span>Đang thiết lập quyền truy cập...</span>
@@ -244,7 +244,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
     // 6. While redirecting to the workspace if user cannot access current path
     if (!canAccessPath(user.role, pathname, effectivePermissions)) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950" aria-live="polite">
+            <div className="flex min-h-screen items-center justify-center ui-page" aria-live="polite">
                 <div className="flex flex-col items-center gap-3 text-type-body text-slate-700 dark:text-slate-300">
                     <div className="h-8 w-8 animate-spin rounded-full border-3 border-blue-600 border-t-transparent" />
                     <span>Đang chuyển đến không gian làm việc...</span>
@@ -254,7 +254,7 @@ export const RouteShell: React.FC<{ children: React.ReactNode }> = ({ children }
     }
 
     return (
-        <div className="min-h-screen overflow-x-clip bg-slate-50 dark:bg-slate-950">
+        <div className="min-h-screen overflow-x-clip ui-page">
             {mobileOpen && (
                 <button
                     type="button"

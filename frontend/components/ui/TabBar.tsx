@@ -91,7 +91,7 @@ export function TabBar<T extends string = string>({
       <div
         ref={containerRef}
         role="tablist"
-        className={`relative flex items-center gap-1 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-full overflow-x-auto no-scrollbar scroll-smooth w-full select-none border border-slate-200/90 dark:border-slate-700/70 ${className}`}
+        className={`relative flex items-center gap-1 p-1 bg-slate-100/70 dark:bg-slate-800/80 rounded-full overflow-x-auto no-scrollbar scroll-smooth w-full select-none border border-slate-200/80 dark:border-slate-700/70 ${className}`}
       >
         {/* Sliding Background Indicator Pill */}
         <div

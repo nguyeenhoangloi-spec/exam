@@ -334,7 +334,7 @@ export default function ExamRoomsPage() {
 
   return (
     <>
-      <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen ">
+      <main className="w-full px-6 py-6 space-y-5 min-h-screen text-slate-900 dark:text-slate-100">
         {/* Header */}
         <ExamRoomHeader
           onAdd={openAddModal}

@@ -389,7 +389,7 @@ export default function ExamArchivesPage() {
   }
 
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 ">
+    <main className="w-full px-6 py-6 space-y-5 min-h-screen text-slate-900 dark:text-slate-100">
       {/* Header chuẩn hóa toàn hệ thống - Đồng bộ 100% với ExamReportHeader, TeacherHeader */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-1">
         <div className="space-y-0.5">

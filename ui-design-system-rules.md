@@ -835,6 +835,23 @@ Thay thế các bóng đổ đơn lớp phẳng hoặc xám xịt cũ bằng d�
 8. Popover chọn phòng thi ([components/exam-arrangement/RoomSelectorPopover.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/components/exam-arrangement/RoomSelectorPopover.tsx)).
 9. Danh sách chọn biểu mẫu tài liệu in ấn ([app/admin/document-templates/page.tsx](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/frontend/app/admin/document-templates/page.tsx)).
 
+---
 
+## 26. Quy Chuẩn Nền Trắng Sáng Toàn Hệ Thống (Apple Crisp White Canvas & Visual Hierarchy - Phương án 1 + 3)
 
+Nhằm mang lại cảm giác không gian thoáng đãng, sáng sủa, hiện đại, loại bỏ cảm giác mờ sương/xỉn màu do nền xám đục gây ra, đồng thời bảo toàn chiều sâu phân cấp thị giác rõ nét:
 
+### 26.1 Phân cấp Nền & Bề mặt (Canvas & Surface Scale)
+1. **Nền toàn trang (Page Canvas)**:
+   - **Màu sắc**: `#FBFBFD` (Apple Crisp White Canvas / `var(--ui-page)`) ở Light mode, `#020617` ở Dark mode.
+   - **Cơ chế**: Được thiết lập thống nhất từ `--ui-page` trong `globals.css` và `.ui-page`.
+   - **Quy tắc**: Không đặt các mảng `bg-slate-50/50` hay `bg-slate-100` phủ lên `<main>` hoặc vùng nội dung chính.
+2. **Thẻ Card, Bảng, Input, Popover & Dropdown (Content Surfaces)**:
+   - **Màu sắc**: Nền trắng thuần khiết `#FFFFFF` (`bg-white dark:bg-slate-900`).
+   - **Phân tách**: Dùng viền hairline sắc nét `border border-slate-200/90 dark:border-slate-800` kết hợp đổ bóng `shadow-apple-card`.
+3. **Tiêu đề Bảng (Table Head - thead)**:
+   - **Màu sắc**: Nền trắng `#FFFFFF` (`dark:bg-slate-800/80`) đi kèm đường kẻ ngang phân tách `border-b border-slate-200/90 dark:border-slate-800`.
+   - **Hiệu ứng hàng**: Khi hover dòng dữ liệu dùng `hover:bg-slate-50/50 dark:hover:bg-slate-800/40`.
+4. **Vùng điều khiển trượt (Segmented Tracks)**:
+   - **Khung rãnh**: Dùng `bg-slate-100/70 dark:bg-slate-800/80 border border-slate-200/80` dịu mắt.
+   - **Viên trượt**: Nền trắng `#FFFFFF` nổi khối 3D quang học nhẹ.

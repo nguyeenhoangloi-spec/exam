@@ -324,7 +324,7 @@ export function DetailDrawer({
 
           {/* Navigation Tabs (nếu có) */}
           {active.tabs && active.tabs.length > 0 && (
-            <div className="px-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/50 shrink-0 flex items-center gap-2 overflow-x-auto no-scrollbar">
+            <div className="px-5 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0 flex items-center gap-2 overflow-x-auto no-scrollbar">
               {active.tabs.map((tab) => {
                 const isActive = (active.activeTab || active.tabs![0].id) === tab.id;
                 const Icon = tab.icon;
@@ -373,7 +373,7 @@ export function DetailDrawer({
 
           {/* Footer (nếu có) */}
           {active.footer && (
-            <div className="border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/90 px-5 py-3.5 shrink-0">
+            <div className="border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-5 py-3.5 shrink-0">
               {active.footer}
             </div>
           )}

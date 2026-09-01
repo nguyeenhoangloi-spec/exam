@@ -440,7 +440,7 @@ export default function ProctorDashboardPage() {
   /* ── Error ── */
   if (error || !data) {
     return (
-      <main className="w-full px-6 py-6 min-h-screen bg-slate-50/50 flex items-center justify-center">
+      <main className="w-full px-6 py-6 min-h-screen flex items-center justify-center">
         <div className="bg-white border border-slate-200/90 p-8 rounded-2xl max-w-md w-full text-center shadow-2xs space-y-4">
           <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto">
             <AlertTriangle className="w-6 h-6 text-rose-600" />
@@ -530,7 +530,7 @@ export default function ProctorDashboardPage() {
   };
 
   return (
-    <main className="w-full min-w-0 max-w-full overflow-x-hidden px-4 sm:px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100">
+    <main className="w-full min-w-0 max-w-full overflow-x-hidden px-4 sm:px-6 py-6 space-y-5 min-h-screen text-slate-900 dark:text-slate-100">
       {/* ── 1. Standard Page Header ── */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-1">
         <div className="flex items-start sm:items-center gap-3 min-w-0">

@@ -81,6 +81,6 @@ describe('QuestionsService integrity rules', () => {
 
     expect(prisma.$executeRaw).toHaveBeenCalled();
     expect(prisma.$queryRaw).toHaveBeenCalled();
+    expect(prisma.$queryRaw.mock.calls[0][0].join('')).toContain("regexp_replace(code, '[^0-9]', '', 'g')");
   });
 });
-

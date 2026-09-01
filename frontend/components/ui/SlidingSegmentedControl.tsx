@@ -89,7 +89,7 @@ export function SlidingSegmentedControl<T extends string = string>({
 
   const containerBgClass = isDock
     ? 'bg-white/95 dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800/60 backdrop-blur-2xl shadow-[0_20px_50px_-12px_rgba(15,23,42,0.25)] ring-1 ring-white/80 dark:ring-white/10'
-    : 'bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/70';
+    : 'bg-slate-100/70 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/70';
 
   const containerWidthClass = fullWidth ? 'w-full flex' : 'inline-flex w-fit max-w-full';
 

@@ -46,9 +46,9 @@ html.dark {
   --fs-otp: 24px;
   --lh-otp: 30px;
   --lh-table-content: 22px;
-  --ui-page: #f8fafc;
+  --ui-page: #fbfbfd;
   --ui-surface: #ffffff;
-  --ui-surface-muted: #f1f5f9;
+  --ui-surface-muted: #f8fafc;
   /* Deep Ink neutral hierarchy for the web UI. Keep the steps close
    * enough for a calm interface while preventing body/table content from
    * looking washed out. */
@@ -114,7 +114,7 @@ html.dark {
   }
 
   body {
-    @apply bg-slate-50 text-slate-900 subpixel-antialiased;
+    background-color: var(--ui-page);
     color: var(--ui-text-body);
     overflow-x: clip;
     font-family: var(--font-ui);
@@ -546,7 +546,8 @@ html.dark {
   }
 
   .ui-page {
-    @apply min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+    min-height: 100vh;
+    background-color: var(--ui-page);
     color: var(--ui-text-body);
   }
 
@@ -580,7 +581,7 @@ html.dark {
   .ui-table thead {
     font-size: var(--fs-body-sm);
     line-height: var(--lh-body-sm);
-    @apply bg-slate-50 font-medium tracking-wide dark:bg-slate-800 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800;
+    @apply bg-white font-medium tracking-wide dark:bg-slate-800/80 dark:text-slate-400 border-b border-slate-200/90 dark:border-slate-800;
     color: var(--ui-text-secondary);
   }
 
@@ -595,7 +596,7 @@ html.dark {
   }
 
   .ui-table tbody tr {
-    @apply transition-colors hover:bg-slate-50/60 dark:hover:bg-slate-800/40;
+    @apply transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/40;
   }
 
   /* EDU Typography System Scale Classes */

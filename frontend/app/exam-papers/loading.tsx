@@ -1,6 +1,6 @@
 export default function ExamPapersLoading() {
   return (
-    <div className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950/50 min-h-screen animate-pulse">
+    <div className="w-full px-6 py-6 space-y-5 min-h-screen animate-pulse">
       {/* Header Skeleton */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
         <div className="space-y-2">

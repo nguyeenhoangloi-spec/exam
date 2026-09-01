@@ -47,7 +47,7 @@ export class QuestionsService implements OnModuleInit {
       await client.$executeRaw`CREATE SEQUENCE IF NOT EXISTS "question_code_seq" START WITH 1 INCREMENT BY 1;`;
 
       const result = await client.$queryRaw<Array<{ max_num: bigint | number | null }>>`
-        SELECT MAX(NULLIF(regexp_replace(code, '\D', '', 'g'), '')::bigint) as max_num
+        SELECT MAX(NULLIF(regexp_replace(code, '[^0-9]', '', 'g'), '')::bigint) as max_num
         FROM questions
       `;
       const maxNum = Number(result[0]?.max_num || 0);
@@ -170,7 +170,7 @@ export class QuestionsService implements OnModuleInit {
 
     // 2. Nếu sau 5 lần thử vẫn va chạm (do dữ liệu cũ/seed có mã lớn), tự động đồng bộ sequence lên MAX + 1
     const maxResult = await tx.$queryRaw<Array<{ max_num: bigint | number | null }>>`
-      SELECT MAX(NULLIF(regexp_replace(code, '\D', '', 'g'), '')::bigint) as max_num
+      SELECT MAX(NULLIF(regexp_replace(code, '[^0-9]', '', 'g'), '')::bigint) as max_num
       FROM questions
     `;
     const currentMax = Number(maxResult[0]?.max_num || 0);

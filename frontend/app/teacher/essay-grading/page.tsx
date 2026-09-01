@@ -710,7 +710,7 @@ function TeacherEssayGradingContent() {
   }
 
   return (
-    <main className="w-full px-6 py-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 ">
+    <main className="w-full px-6 py-6 space-y-5 min-h-screen text-slate-900 dark:text-slate-100">
       {/* ── 1. Standard Page Header ── */}
       <div className="pb-1 space-y-0.5">
         <h1 className="text-type-page font-semibold leading-[36px] text-slate-900 dark:text-slate-100 tracking-tight">

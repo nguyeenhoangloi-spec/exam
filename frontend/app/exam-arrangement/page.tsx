@@ -838,7 +838,7 @@ export default function ExamArrangementPage() {
 
   return (
     <>
-      <main className="w-full px-4 sm:px-6 py-6 space-y-5 min-h-screen bg-slate-50/50 dark:bg-slate-950 ">
+      <main className="w-full px-4 sm:px-6 py-6 space-y-5 min-h-screen text-slate-900 dark:text-slate-100">
         <ExamArrangementHeader
           onPrintDoorList={handlePrintDoorList}
           onPrintAttendance={handlePrintAttendanceSheet}
