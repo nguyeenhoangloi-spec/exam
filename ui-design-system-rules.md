@@ -64,7 +64,7 @@ Không dùng trong Web UI:
 
 ## 4. Cỡ chữ chuẩn & Line-height (Typography & Line Spacing Scale)
 
-Hệ thống có 8 cỡ chữ semantic chính trên desktop đi kèm **Line-height (Chiều cao dòng)** tương ứng nhằm đảm bảo khoảng cách dòng tối ưu, chống đè dấu tiếng Việt và căn giữa chuẩn xác:
+Hệ thống chỉ có 8 cỡ chữ semantic trên desktop đi kèm **Line-height (Chiều cao dòng)** tương ứng nhằm đảm bảo khoảng cách dòng tối ưu, chống đè dấu tiếng Việt và căn giữa chuẩn xác. Không tạo thêm token cỡ chữ phụ hoặc alias theo từng màn hình; label dùng `fs-body`, header bảng dùng `fs-body-sm`, nội dung đọc dài dùng `fs-body`, còn OTP dùng `fs-section-title`.
 
 | Token | Cỡ chữ | Line-height | Tỷ lệ giãn dòng | Vai trò | Ví dụ |
 |---|---:|---:|---:|---|---|

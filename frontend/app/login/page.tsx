@@ -256,7 +256,7 @@ export default function LoginPage() {
         <section className="lg:col-span-7 flex flex-col justify-start space-y-8">
           {/* Main Large Headline with Gradient Text */}
           <div className="space-y-3.5">
-            <h1 className="text-type-page sm:text-type-display-sm lg:text-type-display font-semibold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-type-page font-semibold tracking-tight text-slate-900 dark:text-white">
               HỆ THỐNG <br />
               <span className="inline-block py-1 pb-1.5 bg-gradient-to-r from-blue-600 via-blue-700 to-sky-600 bg-clip-text text-transparent dark:from-blue-400 dark:via-sky-300 dark:to-blue-300">
                 KHẢO THÍ TRỰC TUYẾN
@@ -406,7 +406,7 @@ export default function LoginPage() {
                     {/* Option A (Selected) */}
                     <g transform="translate(0, 26)">
                       <rect x="0" y="0" width="14" height="14" rx="4" fill="var(--ui-primary)" />
-                      <text x="3" y="11" fill="var(--ui-surface)" fontSize="10" fontWeight="700" fontFamily="var(--font-inter)">A</text>
+                      <text x="3" y="11" fill="var(--ui-surface)" fontSize="12" fontWeight="700" fontFamily="var(--font-inter)">A</text>
                       <rect x="22" y="2" width="12" height="12" rx="3" fill="var(--ui-surface-muted)" stroke="var(--ui-primary)" strokeWidth="1.5" />
                       <path d="M25 8 L27 10 L31 5" stroke="var(--ui-primary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       <rect x="42" y="4" width="70" height="6" rx="2" fill="var(--ui-border)" />
@@ -415,7 +415,7 @@ export default function LoginPage() {
                     {/* Option B */}
                     <g transform="translate(0, 48)">
                       <rect x="0" y="0" width="14" height="14" rx="4" fill="var(--ui-border)" />
-                      <text x="3" y="11" fill="var(--ui-text-disabled)" fontSize="10" fontWeight="700" fontFamily="var(--font-inter)">B</text>
+                      <text x="3" y="11" fill="var(--ui-text-disabled)" fontSize="12" fontWeight="700" fontFamily="var(--font-inter)">B</text>
                       <rect x="22" y="2" width="12" height="12" rx="3" fill="var(--ui-surface)" stroke="var(--ui-border)" strokeWidth="1.5" />
                       <rect x="42" y="4" width="85" height="6" rx="2" fill="var(--ui-border)" />
                     </g>
@@ -423,7 +423,7 @@ export default function LoginPage() {
                     {/* Option C */}
                     <g transform="translate(0, 70)">
                       <rect x="0" y="0" width="14" height="14" rx="4" fill="var(--ui-border)" />
-                      <text x="3" y="11" fill="var(--ui-text-disabled)" fontSize="10" fontWeight="700" fontFamily="var(--font-inter)">C</text>
+                      <text x="3" y="11" fill="var(--ui-text-disabled)" fontSize="12" fontWeight="700" fontFamily="var(--font-inter)">C</text>
                       <rect x="22" y="2" width="12" height="12" rx="3" fill="var(--ui-surface)" stroke="var(--ui-border)" strokeWidth="1.5" />
                       <rect x="42" y="4" width="60" height="6" rx="2" fill="var(--ui-border)" />
                     </g>
@@ -447,7 +447,7 @@ export default function LoginPage() {
                     <rect x="12" y="26" width="35" height="4" rx="2" fill="var(--ui-border)" />
                     <rect x="12" y="34" width="45" height="4" rx="2" fill="var(--ui-border)" />
                     <circle cx="48" cy="62" r="17" fill="var(--ui-surface-muted)" stroke="var(--ui-primary)" strokeWidth="2" strokeDasharray="3 3" />
-                    <text x="38" y="68" fill="var(--ui-primary)" fontSize="16" fontWeight="700" fontFamily="var(--font-inter)">A+</text>
+                    <text x="38" y="68" fill="var(--ui-primary)" fontSize="15" fontWeight="700" fontFamily="var(--font-inter)">A+</text>
                   </g>
 
                   {/* 3D Stack of Academic Books at Bottom Right */}

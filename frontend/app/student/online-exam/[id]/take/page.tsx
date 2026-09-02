@@ -624,7 +624,7 @@ export default function StudentExamTakePage() {
                 )}
 
                 {/* Question Text / Rich Text Content */}
-                <div className="text-slate-900 dark:text-slate-100 text-type-reading font-semibold space-y-3">
+                <div className="text-slate-900 dark:text-slate-100 text-type-body font-semibold space-y-3">
                   {currentQ.type === 'FILL_BLANK' ? (
                     <FillBlankQuestionRenderer
                       content={currentQ.content}
@@ -712,7 +712,7 @@ export default function StudentExamTakePage() {
                     <textarea
                       value={currentAns.textAnswer || ''}
                       onChange={(e) => handleEssayChange(currentQ.questionId, e.target.value)}
-                      className="min-h-[220px] h-[260px] w-full resize-y rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4 text-type-reading font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-950/40"
+                      className="min-h-[220px] h-[260px] w-full resize-y rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4 text-type-body font-normal text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-950/40"
                       placeholder="Nhập trực tiếp câu trả lời tự luận của bạn vào đây..."
                     />
                     <div className="flex items-center justify-between text-type-helper text-slate-500 dark:text-slate-400">
@@ -752,7 +752,7 @@ export default function StudentExamTakePage() {
                           >
                             <span className="text-type-helper">{opt.label}</span>
                           </div>
-                          <div className="text-type-reading pt-0.5 font-normal text-slate-800 dark:text-slate-200">{opt.content}</div>
+                          <div className="text-type-body pt-0.5 font-normal text-slate-800 dark:text-slate-200">{opt.content}</div>
                         </div>
                       );
                     })}

@@ -25,26 +25,12 @@ html.dark {
   --lh-body: 24px;
   --fs-body-sm: 14px;
   --lh-body-sm: 20px;
-  --fs-table-body: 15px;
-  --lh-table-body: 22px;
-  --fs-table-header: 14px;
-  --lh-table-header: 20px;
-  --fs-label: 15px;
-  --lh-label: 24px;
   --fs-helper: 13px;
   --lh-helper: 18px;
   --fs-badge: 12px;
   --lh-badge: 18px;
   --fs-kpi: 32px;
   --lh-kpi: 38px;
-  --fs-reading: 16px;
-  --lh-reading: 26px;
-  --fs-display: 44px;
-  --lh-display: 52px;
-  --fs-display-sm: 36px;
-  --lh-display-sm: 44px;
-  --fs-otp: 24px;
-  --lh-otp: 30px;
   --lh-table-content: 22px;
   --ui-page: #fbfbfd;
   --ui-surface: #ffffff;
@@ -490,8 +476,8 @@ html.dark {
   }
 
   .typography-scale label {
-    font-size: var(--fs-label);
-    line-height: var(--lh-label);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
   }
 
   .typography-scale input:not([type='checkbox']):not([type='radio']),
@@ -502,22 +488,22 @@ html.dark {
   }
 
   .typography-scale table {
-    font-size: var(--fs-table-body);
-    line-height: var(--lh-table-body);
+    font-size: var(--fs-body);
+    line-height: var(--lh-table-content);
   }
 
   .typography-scale thead,
   .typography-scale thead tr,
   .typography-scale th {
-    font-size: var(--fs-table-header);
-    line-height: var(--lh-table-header);
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-body-sm);
   }
 
   .typography-scale tbody,
   .typography-scale tbody tr,
   .typography-scale td {
-    font-size: var(--fs-table-body);
-    line-height: var(--lh-table-body);
+    font-size: var(--fs-body);
+    line-height: var(--lh-table-content);
   }
 
   .typography-scale .table-badge {
@@ -531,8 +517,8 @@ html.dark {
   }
 
   .typography-scale .table-action {
-    font-size: var(--fs-table-body);
-    line-height: var(--lh-table-body);
+    font-size: var(--fs-body);
+    line-height: var(--lh-table-content);
   }
 
   .typography-scale .table-tooltip {
@@ -692,8 +678,8 @@ html.dark {
   }
 
   .edu-label {
-    font-size: var(--fs-label);
-    line-height: var(--lh-label);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
     @apply font-medium;
     color: var(--ui-text-secondary);
   }
@@ -705,8 +691,8 @@ html.dark {
   }
 
   .edu-reading {
-    font-size: var(--fs-reading);
-    line-height: var(--lh-reading);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
     @apply font-normal;
     color: var(--ui-text-body);
   }
@@ -1231,23 +1217,23 @@ html.dark body input:-webkit-autofill:focus {
 }
 
 .typography-scale :where(label) {
-  font-size: var(--fs-label) !important;
-  line-height: var(--lh-label) !important;
+  font-size: var(--fs-body) !important;
+  line-height: var(--lh-body) !important;
 }
 
 .typography-scale :where(table) {
-  font-size: var(--fs-table-body) !important;
-  line-height: var(--lh-table-body) !important;
+  font-size: var(--fs-body) !important;
+  line-height: var(--lh-table-content) !important;
 }
 
 .typography-scale :where(thead, thead tr, th) {
-  font-size: var(--fs-table-header) !important;
-  line-height: var(--lh-table-header) !important;
+  font-size: var(--fs-body-sm) !important;
+  line-height: var(--lh-body-sm) !important;
 }
 
 .typography-scale :where(tbody, tbody tr, td) {
-  font-size: var(--fs-table-body) !important;
-  line-height: var(--lh-table-body) !important;
+  font-size: var(--fs-body) !important;
+  line-height: var(--lh-table-content) !important;
 }
 
 /* Native actions are the final fallback for legacy raw buttons. Components

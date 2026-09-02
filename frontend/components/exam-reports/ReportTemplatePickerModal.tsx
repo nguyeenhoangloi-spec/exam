@@ -229,7 +229,7 @@ export function ReportTemplatePickerModal({
         ) : (
           <div className="space-y-3.5">
             <div className="space-y-1">
-              <label className="text-type-label font-medium text-slate-800 dark:text-slate-200">
+              <label className="text-type-body font-medium text-slate-800 dark:text-slate-200">
                 Tên Mẫu báo cáo <span className="text-rose-500">*</span>
               </label>
               <input
@@ -242,7 +242,7 @@ export function ReportTemplatePickerModal({
             </div>
 
             <div className="space-y-1">
-              <label className="text-type-label font-medium text-slate-800 dark:text-slate-200">
+              <label className="text-type-body font-medium text-slate-800 dark:text-slate-200">
                 Mô tả mục đích sử dụng (tùy chọn)
               </label>
               <textarea

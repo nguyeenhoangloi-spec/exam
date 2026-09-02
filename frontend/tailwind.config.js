@@ -18,19 +18,14 @@ module.exports = {
         ],
       },
       fontSize: {
-        'type-display': ['var(--fs-display)', { lineHeight: 'var(--lh-display)' }],
-        'type-display-sm': ['var(--fs-display-sm)', { lineHeight: 'var(--lh-display-sm)' }],
         'type-page': ['var(--fs-page-title)', { lineHeight: 'var(--lh-page-title)' }],
         'type-section': ['var(--fs-section-title)', { lineHeight: 'var(--lh-section-title)' }],
         'type-card': ['var(--fs-card-title)', { lineHeight: 'var(--lh-card-title)' }],
-        'type-reading': ['var(--fs-reading)', { lineHeight: 'var(--lh-reading)' }],
         'type-body': ['var(--fs-body)', { lineHeight: 'var(--lh-body)' }],
         'type-body-sm': ['var(--fs-body-sm)', { lineHeight: 'var(--lh-body-sm)' }],
-        'type-label': ['var(--fs-label)', { lineHeight: 'var(--lh-label)' }],
         'type-helper': ['var(--fs-helper)', { lineHeight: 'var(--lh-helper)' }],
         'type-badge': ['var(--fs-badge)', { lineHeight: 'var(--lh-badge)' }],
         'type-kpi': ['var(--fs-kpi)', { lineHeight: 'var(--lh-kpi)' }],
-        'type-otp': ['var(--fs-otp)', { lineHeight: 'var(--lh-otp)' }],
       },
       colors: {
         primary: {

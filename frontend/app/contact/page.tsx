@@ -405,7 +405,7 @@ export default function ContactSupportPage() {
       <main className="relative z-10 max-w-[1240px] mx-auto px-6 sm:px-10 py-10 space-y-12 w-full">
         {/* Search Hero Section */}
         <section className="text-center space-y-5 max-w-3xl mx-auto pt-2">
-          <h1 className="text-type-page lg:text-type-display font-semibold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-type-page font-semibold tracking-tight text-slate-900 dark:text-white">
             Chúng tôi có thể giúp gì <br />
             <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-sky-300">
               cho kỳ thi của bạn?

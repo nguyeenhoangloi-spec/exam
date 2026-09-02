@@ -405,7 +405,7 @@ export default function ForgotPasswordPage() {
         <section className="lg:col-span-7 flex flex-col justify-start space-y-9">
           {/* Headline */}
           <div className="space-y-3.5">
-            <h1 className="text-type-page lg:text-type-display font-semibold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-type-page font-semibold tracking-tight text-slate-900 dark:text-white">
               KHÔI PHỤC <br />
               <span className="inline-block py-1 pb-1.5 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-sky-300">
                 MẬT KHẨU TÀI KHOẢN
@@ -756,7 +756,7 @@ export default function ForgotPasswordPage() {
                             onChange={(e) => handleDigitChange(idx, e.target.value)}
                             onKeyDown={(e) => handleDigitKeyDown(idx, e)}
                             onPaste={handleOtpPaste}
-                            className={`w-11 h-13 sm:w-12 sm:h-14 rounded-2xl border-2 text-center text-type-section sm:text-type-otp font-semibold tabular-nums outline-none transition-all duration-150 ${
+                            className={`w-11 h-13 sm:w-12 sm:h-14 rounded-2xl border-2 text-center text-type-section font-semibold tabular-nums outline-none transition-all duration-150 ${
                               isOtpShaking
                                 ? 'border-rose-500 bg-rose-50/50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'
                                 : val
@@ -793,7 +793,7 @@ export default function ForgotPasswordPage() {
                             onChange={(e) => handleDigitChange(idx, e.target.value)}
                             onKeyDown={(e) => handleDigitKeyDown(idx, e)}
                             onPaste={handleOtpPaste}
-                            className={`w-11 h-13 sm:w-12 sm:h-14 rounded-2xl border-2 text-center text-type-section sm:text-type-otp font-semibold tabular-nums outline-none transition-all duration-150 ${
+                            className={`w-11 h-13 sm:w-12 sm:h-14 rounded-2xl border-2 text-center text-type-section font-semibold tabular-nums outline-none transition-all duration-150 ${
                               isOtpShaking
                                 ? 'border-rose-500 bg-rose-50/50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'
                                 : val

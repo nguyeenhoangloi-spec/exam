@@ -269,6 +269,10 @@ for (const folder of sourceRoots) {
       report(file, 'fontSize inline của Web UI không được thấp hơn 12px');
     }
 
+    if (file.endsWith('.tsx') && /fontSize=["'](?!(?:12|13|14|15|18|20|28|32)["'])\d+(?:\.\d+)?["']/i.test(content)) {
+      report(file, 'SVG Web UI chỉ được dùng một trong 8 cỡ chữ semantic đã chuẩn hóa');
+    }
+
     if (/(?:<label|<input|<select|<textarea)[^<>]*\btext-xs\b/i.test(content)
       || /(?:<label|<input|<select|<textarea)[^<>]*text-\[12px\]/i.test(content)) {
       report(file, 'label/control size must be at least 15px');
@@ -525,11 +529,20 @@ if (!/--fs-page-title:\s*28px/.test(globalCss)
   || !/--fs-helper:\s*13px/.test(globalCss)
   || !/--fs-badge:\s*12px/.test(globalCss)
   || !/--fs-kpi:\s*32px/.test(globalCss)
-  || !/--fs-reading:\s*16px/.test(globalCss)
+  || !/'type-kpi':\s*\['var\(--fs-kpi\)'/.test(tailwindConfig)
   || !/'type-page':\s*\['var\(--fs-page-title\)'/.test(tailwindConfig)
+  || !/'type-section':\s*\['var\(--fs-section-title\)'/.test(tailwindConfig)
+  || !/'type-card':\s*\['var\(--fs-card-title\)'/.test(tailwindConfig)
   || !/'type-body':\s*\['var\(--fs-body\)'/.test(tailwindConfig)
+  || !/'type-body-sm':\s*\['var\(--fs-body-sm\)'/.test(tailwindConfig)
+  || !/'type-helper':\s*\['var\(--fs-helper\)'/.test(tailwindConfig)
   || !/'type-badge':\s*\['var\(--fs-badge\)'/.test(tailwindConfig)) {
-  violations.push('Tailwind/globals.css: semantic typography token chưa được cấu hình đầy đủ');
+  violations.push('Tailwind/globals.css: 8 semantic typography token chưa được cấu hình đầy đủ');
+}
+
+if (/--fs-(?:table-body|table-header|label|reading|display|display-sm|otp)\s*:/.test(globalCss)
+  || /'type-(?:display|display-sm|reading|label|otp)'\s*:/.test(tailwindConfig)) {
+  violations.push('Tailwind/globals.css: hệ thống chỉ được có 8 cỡ chữ semantic; không tạo token hoặc alias cỡ chữ phụ');
 }
 
 if (!/variant\s*=\s*['"]default['"]/.test(modal)

@@ -631,7 +631,7 @@ export default function SystemSettingsPage() {
 
               <div className="ui-table-wrap border-0 shadow-none rounded-none bg-transparent overflow-x-auto">
                 <table className="ui-table w-full text-left">
-                  <thead className="text-type-label font-medium text-slate-700 dark:text-slate-300 border-b border-slate-100 dark:border-slate-800">
+                  <thead className="text-type-body-sm font-medium text-slate-700 dark:text-slate-300 border-b border-slate-100 dark:border-slate-800">
                     <tr>
                       <th className="pb-3 pt-1 font-medium bg-transparent">Phân hệ nghiệp vụ</th>
                       <th className="pb-3 pt-1 font-medium text-center bg-transparent">Nóng (ngày)</th>
