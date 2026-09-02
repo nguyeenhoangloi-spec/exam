@@ -80,17 +80,16 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
         )
       }
     >
-      {/* Body — Bố cục danh sách thông tin chi tiết */}
-      <div className="space-y-6">
+      {/* Body — Bố cục danh sách thông tin chi tiết phẳng chuẩn Apple */}
+      <div className="space-y-5">
         <div>
-          <div className="flex items-center gap-2 mb-3.5">
-            <span className="h-4 w-1 rounded-full bg-blue-600 shrink-0" />
+          <div className="mb-1.5">
             <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">
               Thông tin chi tiết
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
             {(details || []).map((item, idx) => {
               const Icon = item.icon;
               const isIdentifier = /(^|\s)(mã|id|code|mssv|snapshot)/i.test(item.label);
@@ -99,15 +98,14 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
               return (
                 <div
                   key={idx}
-                  className={`p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/40 space-y-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60 ${item.fullWidth ? 'sm:col-span-2' : ''
-                    }`}
+                  className="py-3 px-2 -mx-2 rounded-xl flex items-start justify-between gap-4 transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40"
                 >
-                  <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                    {Icon && <Icon className="h-4 w-4 shrink-0 text-blue-600 dark:text-blue-400" />}
+                  <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 shrink-0 pt-0.5">
+                    {Icon && <Icon className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />}
                     <span className="text-type-helper font-medium">{item.label}</span>
                   </div>
 
-                  <div className="text-type-body font-semibold text-slate-950 dark:text-white break-words">
+                  <div className="text-type-body font-semibold text-slate-950 dark:text-white text-right break-words max-w-[65%]">
                     {isStatus && typeof item.value === 'string' ? (
                       <StatusBadge status={item.value} />
                     ) : isIdentifier && typeof item.value === 'string' ? (
@@ -124,18 +122,15 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
           </div>
         </div>
 
-        {/* Extra Sections */}
+        {/* Extra Sections — Phân tách phẳng bằng đường kẻ hairline */}
         {extraSections && extraSections.length > 0 && (
-          <div className="space-y-5 pt-2">
+          <div className="space-y-5 pt-1">
             {extraSections.map((sec, i) => (
-              <div key={i} className="p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="h-3.5 w-1 rounded-full bg-blue-600 shrink-0" />
-                  <h4 className="text-type-body font-semibold text-slate-900 dark:text-white">
-                    {sec.title}
-                  </h4>
-                </div>
-                <div className="text-type-body-sm font-medium text-slate-700 dark:text-slate-300">
+              <div key={i} className="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-2.5">
+                <h4 className="text-type-body font-semibold text-slate-900 dark:text-white">
+                  {sec.title}
+                </h4>
+                <div className="text-type-body-sm font-normal text-slate-700 dark:text-slate-300">
                   {sec.content}
                 </div>
               </div>
