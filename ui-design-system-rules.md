@@ -220,24 +220,22 @@ Mobile áp dụng vùng chạm tối thiểu 44px (touch target), kể cả khi 
 - Không dùng chữ IN HOA toàn bộ cho button thông thường.
 - Không dùng `rounded-full` cho button hành động thông thường (Lưu, Thêm, Xóa, Gửi...).
 
-### 7.1 Bảng phân cấp 5 bậc nút bấm (Button Hierarchy System 2026)
+### 7.1 Bảng phân cấp 4 bậc nút bấm (Button Hierarchy System 2026)
 
 | Bậc | Phân loại | Quy cách thị giác (Visual Specs) | Quy tắc Icon & Viền | Khi nào sử dụng (Use Cases) | Ví dụ thực tế |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Bậc 1** | **Primary CTA** *(Nút chính)* | • **Nền**: Xanh dương đậm `#2563EB` (`bg-primary-600 hover:bg-primary-700`)<br>• **Chữ**: Trắng `#FFFFFF` (`text-white font-semibold`)<br>• **Viền**: Không viền (`border-transparent`)<br>• **Đổ bóng**: `shadow-2xs` | • Có thể có icon dấu `+` hoặc icon xác nhận.<br>• **Chỉ có 1 nút Primary** trong 1 nhóm thao tác. | Hành động chủ đạo, quan trọng nhất của trang, form hoặc modal. | `[ + Phân công ]`<br>`[ + Thêm câu hỏi ]`<br>`[ Lưu thay đổi ]` |
-| **Bậc 2** | **Soft Accent** *(Phụ thông minh)* | • **Nền**: Xanh nhạt vừa vặn (`bg-blue-100 dark:bg-blue-900/40`, hover/active `bg-blue-200/90`)<br>• **Chữ**: Xanh đậm (`text-blue-700`, hover/active `text-blue-800 font-semibold`)<br>• **Viền**: **Không viền** (`border-transparent`) | • **KHÔNG DÙNG ICON** (thuần chữ thanh thoát).<br>• Đứng cạnh nút Primary mà không tranh chấp độ nổi bật. | Các tính năng bổ trợ đặc biệt, thuật toán, tự động hóa, sinh đề, xem trước. | `[ Tự động ]`<br>`[ Sinh ma trận ]`<br>`[ Xem trước ]` |
-| **Bậc 3** | **Secondary** *(Thao tác chuẩn)* | • **Nền**: Trắng / Xám rất nhạt (`bg-white hover:bg-slate-50 dark:bg-slate-900`)<br>• **Chữ**: Deep Ink (`text-slate-800 dark:text-slate-100 font-semibold`, được remap qua token)<br>• **Viền**: Viền mảnh (`border border-slate-200/90 dark:border-slate-700`) | • Thường đi kèm icon chức năng phía trước (Lọc, Cột, Excel, In). | Bộ lọc, Sắp xếp cột, Xuất Excel, In ấn, Tải mẫu biểu. | `[ Bộ lọc ]`<br>`[ Xuất Excel ]`<br>`[ Chọn cột ]` |
-| **Bậc 4** | **Ghost / Text** *(Phụ tối giản)* | • **Nền**: Trong suốt (`bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800`)<br>• **Chữ**: Xám trung tính (`text-slate-600 dark:text-slate-400 font-medium`)<br>• **Viền**: **Không viền** | • Không icon hoặc chỉ có icon đóng `✕`. | Đóng modal, Hủy thao tác, Quay lại, Đặt lại bộ lọc. | `[ Đóng ]`<br>`[ Hủy ]`<br>`[ Bỏ qua ]` |
-| **Bậc 5** | **Danger** *(Nguy hiểm)* | • **Nền**: Đỏ tươi `#EF4444` hoặc Nền trắng viền đỏ (`bg-white text-danger-600 border-rose-200`)<br>• **Chữ**: Trắng hoặc Đỏ đậm | • Icon thùng rác `Trash2` hoặc cảnh báo.<br>• Luôn đặt tách biệt để tránh bấm nhầm. | Xóa vĩnh viễn, Hủy phân công, Từ chối phúc khảo. | `[ Xóa ca thi ]`<br>`[ Hủy phân công ]` |
+| **Bậc 1** | **Primary CTA** *(Nút chính)* | • **Nền**: Xanh dương đậm `#2563EB` (`bg-primary-600 hover:bg-primary-700`)<br>• **Chữ**: Trắng `#FFFFFF` (`text-white font-semibold`)<br>• **Viền**: Không viền (`border-transparent`)<br>• **Đổ bóng**: `shadow-2xs` | • Có thể có icon dấu `+` hoặc icon xác nhận.<br>• **Chỉ có 1 nút Primary** trong 1 nhóm thao tác. | Hành động chủ đạo, quan trọng nhất của trang, form hoặc modal. | `[ + Phân công ]`<br>`[ + Thêm câu hỏi ]`<br>`[ Lưu thay đổi ]`<br>`[ 🔄 Khôi phục ]` |
+| **Bậc 2** | **Secondary** *(Thao tác chuẩn)* | • **Nền**: Trắng / Xám rất nhạt (`bg-white hover:bg-slate-50 dark:bg-slate-900`)<br>• **Chữ**: Deep Ink (`text-slate-800 dark:text-slate-100 font-semibold`, được remap qua token)<br>• **Viền**: Viền mảnh (`border border-slate-200/90 dark:border-slate-700`) | • Thường đi kèm icon chức năng phía trước (Lọc, Cột, Excel, In). | Bộ lọc, Sắp xếp cột, Xuất Excel, In ấn, Tải mẫu biểu trên Toolbar/Bảng. | `[ Bộ lọc ]`<br>`[ Xuất Excel ]`<br>`[ Chọn cột ]` |
+| **Bậc 3** | **Ghost / Text** *(Phụ tối giản)* | • **Nền**: Trong suốt (`bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800`)<br>• **Chữ**: Xám trung tính (`text-slate-600 dark:text-slate-400 font-medium`)<br>• **Viền**: **Không viền** (`border-transparent`) | • Không icon hoặc chỉ có icon đóng `✕`.<br>• **Bắt buộc dùng cho mọi nút Đóng / Hủy trong Modal / Drawer.** | Đóng modal, Hủy thao tác, Quay lại, Đặt lại bộ lọc. | `[ Đóng ]`<br>`[ Hủy ]`<br>`[ Bỏ qua ]` |
+| **Bậc 4** | **Danger** *(Nguy hiểm)* | • **Nền**: Đỏ tươi `#EF4444` hoặc Nền trắng viền đỏ (`bg-white text-danger-600 border-rose-200`)<br>• **Chữ**: Trắng hoặc Đỏ đậm | • Icon thùng rác `Trash2` hoặc cảnh báo.<br>• Luôn đặt tách biệt để tránh bấm nhầm. | Xóa vĩnh viễn, Hủy phân công, Từ chối phúc khảo. | `[ Xóa vĩnh viễn ]`<br>`[ Hủy phân công ]` |
 
 ### Variant màu Button.tsx
 
-- `primary`: nền xanh dương đậm, chữ trắng, dùng cho action chính.
-- `soft`: nền xanh nhạt (`bg-blue-100`), chữ xanh đậm (`text-blue-700`), hover/active sang `bg-blue-200 text-blue-800`, **không viền**, **không icon**, dùng cho tính năng tự động / hỗ trợ đặc biệt.
-- `secondary` / `outline`: nền trắng, viền nhẹ, chữ đậm.
-- `ghost`: nền trong suốt, dùng cho action phụ.
-- `danger`: đỏ, dùng cho xóa hoặc thao tác nguy hiểm.
-- `danger-outline`: nền trắng viền đỏ, chữ đỏ.
+- `primary`: nền xanh dương đậm, chữ trắng, dùng cho action chính (Bậc 1).
+- `secondary` / `outline`: nền trắng, viền nhẹ, chữ đậm, dùng cho Toolbar/Bảng (Bậc 2).
+- `ghost`: nền trong suốt, **không viền**, dùng cho Đóng/Hủy/Quay lại trong Modal/Drawer (Bậc 3).
+- `danger`: đỏ, dùng cho xóa hoặc thao tác nguy hiểm (Bậc 4).
+- `danger-outline`: nền trắng viền đỏ, chữ đỏ, dùng cho thao tác nguy hiểm ở chân Modal/Drawer (Bậc 4).
 - `success`: xanh lá, dùng cho xác nhận thành công.
 - `warning`: vàng hổ phách, dùng cho cảnh báo.
 

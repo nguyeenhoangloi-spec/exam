@@ -585,7 +585,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
           ) : (
             <div />
           )}
-          <Button variant="secondary" size="md" onClick={onClose}>
+          <Button variant="ghost" size="md" onClick={onClose}>
             Đóng
           </Button>
         </div>

@@ -2,6 +2,52 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import { X, Sparkles } from 'lucide-react';
 import { IdentifierBadge } from './ui/IdentifierBadge';
+import { Button, ButtonVariant } from './ui/Button';
+
+export interface ModalFooterProps {
+  onClose: () => void;
+  onConfirm?: () => void;
+  cancelText?: React.ReactNode;
+  confirmText?: React.ReactNode;
+  confirmIcon?: React.ReactNode;
+  confirmVariant?: Extract<ButtonVariant, 'primary' | 'danger' | 'success' | 'warning'>;
+  isLoading?: boolean;
+  disabled?: boolean;
+  confirmType?: 'button' | 'submit' | 'reset';
+  formId?: string;
+}
+
+/** Shared action footer for standard modals. */
+export const ModalFooter: React.FC<ModalFooterProps> = ({
+  onClose,
+  onConfirm,
+  cancelText = 'Hủy',
+  confirmText = 'Xác nhận',
+  confirmIcon,
+  confirmVariant = 'primary',
+  isLoading = false,
+  disabled = false,
+  confirmType = 'button',
+  formId,
+}) => (
+  <div className="flex shrink-0 items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/70 px-4 py-3 dark:border-slate-800 dark:bg-slate-800/60 sm:px-5">
+    <Button type="button" variant="ghost" size="md" onClick={onClose} disabled={isLoading}>
+      {cancelText}
+    </Button>
+    <Button
+      type={confirmType}
+      form={formId}
+      variant={confirmVariant}
+      size="md"
+      onClick={onConfirm}
+      isLoading={isLoading}
+      disabled={disabled}
+      leftIcon={confirmIcon}
+    >
+      {confirmText}
+    </Button>
+  </div>
+);
 
 interface ModalProps {
   isOpen: boolean;
@@ -15,6 +61,7 @@ interface ModalProps {
   subtitle?: React.ReactNode;
   badge?: React.ReactNode;
   variant?: 'default' | 'gradient';
+  footer?: React.ReactNode;
 }
 
 const sizeClasses: Record<string, string> = {
@@ -39,6 +86,7 @@ export const Modal: React.FC<ModalProps> = ({
   subtitle,
   badge,
   variant = 'default',
+  footer,
 }) => {
   React.useEffect(() => {
     if (!isOpen || typeof document === 'undefined') return;
@@ -133,6 +181,7 @@ export const Modal: React.FC<ModalProps> = ({
           </div>
         )}
         <div className="min-h-0 overflow-y-auto overscroll-contain p-4 sm:p-5">{children}</div>
+        {footer}
       </div>
     </div>,
     document.body,

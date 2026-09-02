@@ -563,7 +563,7 @@ export default function SystemSettingsPage() {
                         {/* Nút Kết nối Google OAuth */}
                         {target.provider === 'GOOGLE_DRIVE' && (
                           <Button
-                            variant="soft"
+                            variant="secondary"
                             size="sm"
                             onClick={() => void connectGoogle(target)}
                           >

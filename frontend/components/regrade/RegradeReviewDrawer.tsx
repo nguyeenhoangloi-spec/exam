@@ -105,7 +105,7 @@ export function RegradeReviewDrawer({
         maxWidth="max-w-[600px]"
         footer={
           <div className="flex items-center justify-end gap-3">
-            <Button type="button" variant="secondary" size="md" onClick={onClose}>
+            <Button type="button" variant="ghost" size="md" onClick={onClose}>
               Hủy bỏ
             </Button>
             <Button

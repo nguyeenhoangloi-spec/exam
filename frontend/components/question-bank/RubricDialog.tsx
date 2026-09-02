@@ -385,7 +385,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
               Tổng điểm ba-rem: <strong className="text-slate-900 dark:text-slate-100 font-semibold text-type-body-sm">{totalRubricScore}đ</strong> / {expectedScore}đ
             </div>
             <div className="flex gap-2.5 items-center">
-              <Button type="button" variant="secondary" size="md" onClick={onClose}>
+              <Button type="button" variant="ghost" size="md" onClick={onClose}>
                 Hủy bỏ
               </Button>
               <Button

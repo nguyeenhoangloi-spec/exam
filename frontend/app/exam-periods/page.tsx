@@ -634,7 +634,7 @@ export default function ExamPeriodsPage() {
               <div />
             )}
             <div className="flex items-center gap-2.5">
-              <Button variant="secondary" size="md" onClick={() => setIsModalOpen(false)}>
+              <Button variant="ghost" size="md" onClick={() => setIsModalOpen(false)}>
                 Hủy bỏ
               </Button>
               <Button variant="primary" size="md" type="submit">

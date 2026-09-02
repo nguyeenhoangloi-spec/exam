@@ -81,7 +81,7 @@ export function QuestionDetailDialog({
         footer={
           <div className="flex items-center justify-end gap-2.5">
             <Button
-              variant="secondary"
+              variant="ghost"
               size="md"
               onClick={onClose}
             >

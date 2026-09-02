@@ -259,7 +259,7 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
 
         {/* Footer */}
         <div className="flex justify-end pt-3.5 border-t border-slate-100 dark:border-slate-800">
-          <Button type="button" variant="secondary" size="md" onClick={onClose}>
+          <Button type="button" variant="ghost" size="md" onClick={onClose}>
             Đóng
           </Button>
         </div>

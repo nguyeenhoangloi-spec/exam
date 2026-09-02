@@ -215,7 +215,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
 
           {/* Footer Actions */}
           <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
-            <Button variant="secondary" size="md" onClick={onClose}>
+            <Button variant="ghost" size="md" onClick={onClose}>
               Hủy bỏ
             </Button>
             <Button

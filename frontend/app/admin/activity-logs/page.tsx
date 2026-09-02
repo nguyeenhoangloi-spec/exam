@@ -999,7 +999,7 @@ function ActivityLogsContent() {
                 maxWidth="max-w-[500px]"
                 footer={
                     <div className="flex justify-end">
-                        <Button variant="secondary" size="sm" onClick={() => setSelectedLog(null)}>
+                        <Button variant="ghost" size="sm" onClick={() => setSelectedLog(null)}>
                             Đóng
                         </Button>
                     </div>

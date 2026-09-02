@@ -151,7 +151,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         {/* Footer Actions */}
         <div className="flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 px-4 py-2.5 sm:px-5 sm:py-3">
           {Boolean(cancelText) && (
-            <Button variant="secondary" size="md" onClick={onClose} disabled={isLoading}>
+            <Button variant="ghost" size="md" onClick={onClose} disabled={isLoading}>
               {cancelText}
             </Button>
           )}

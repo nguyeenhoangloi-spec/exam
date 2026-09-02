@@ -2,9 +2,9 @@
 
 import React, { useState, FormEvent, useEffect } from 'react';
 import { KeyRound, Eye, EyeOff, ShieldCheck } from 'lucide-react';
-import { Modal } from '../Modal';
+import { Modal, ModalFooter } from '../Modal';
 import { Toast } from '../Toast';
-import { Button, IdentifierBadge } from '../ui';
+import { IdentifierBadge } from '../ui';
 import { ExamPaper } from '../../types';
 
 interface ChangeExamPasswordModalProps {
@@ -72,8 +72,23 @@ export function ChangeExamPasswordModal({
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} title="Cấu hình / Đổi mật khẩu ca thi">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Cấu hình / Đổi mật khẩu ca thi"
+        footer={(
+          <ModalFooter
+            onClose={onClose}
+            cancelText="Hủy bỏ"
+            confirmText="Cập nhật mật khẩu"
+            confirmIcon={<ShieldCheck className="h-4 w-4" />}
+            isLoading={submitting}
+            confirmType="submit"
+            formId="change-exam-password-form"
+          />
+        )}
+      >
+        <form id="change-exam-password-form" onSubmit={handleSubmit} className="space-y-4">
           {/* Info card */}
           <div className="rounded-xl border border-slate-200/90 bg-slate-50/80 p-3.5 space-y-1.5 dark:border-slate-700 dark:bg-slate-800/50">
             <div className="flex items-center justify-between">
@@ -153,27 +168,6 @@ export function ChangeExamPasswordModal({
             />
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              onClick={onClose}
-              disabled={submitting}
-            >
-              Hủy bỏ
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-              isLoading={submitting}
-              leftIcon={<ShieldCheck className="h-4 w-4" />}
-            >
-              Cập nhật mật khẩu
-            </Button>
-          </div>
         </form>
       </Modal>
       {error && <Toast message={error} type="error" onClose={() => setError(null)} />}

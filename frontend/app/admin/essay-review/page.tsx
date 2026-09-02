@@ -1101,7 +1101,7 @@ function AdminEssayReviewContent() {
                           {isEditMode && ans?.id && (
                             <Button
                               type="button"
-                              variant="soft"
+                              variant="secondary"
                               size="sm"
                               onClick={() => requestAiSuggestion(ans.id, q.questionId)}
                               isLoading={aiLoading === ans.id}

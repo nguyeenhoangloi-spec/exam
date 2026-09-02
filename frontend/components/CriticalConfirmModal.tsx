@@ -345,7 +345,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
           <div className="flex items-center justify-end gap-2.5 px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 shrink-0">
             <Button
               type="button"
-              variant="secondary"
+              variant="ghost"
               size="md"
               onClick={onClose}
               disabled={loading}

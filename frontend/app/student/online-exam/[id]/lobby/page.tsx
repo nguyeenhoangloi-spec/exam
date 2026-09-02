@@ -888,7 +888,7 @@ export default function StudentExamLobbyPage() {
 
           {/* Footer Actions */}
           <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-            <Button variant="secondary" size="md" onClick={() => setShowPasswordModal(false)}>
+            <Button variant="ghost" size="md" onClick={() => setShowPasswordModal(false)}>
               Hủy bỏ
             </Button>
             <Button
@@ -965,7 +965,7 @@ export default function StudentExamLobbyPage() {
               </div>
             </div>
 
-            <Button variant="secondary" size="md" onClick={() => setShowSeatMapModal(false)}>
+            <Button variant="ghost" size="md" onClick={() => setShowSeatMapModal(false)}>
               Đóng sơ đồ
             </Button>
           </div>

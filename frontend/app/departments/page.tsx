@@ -675,7 +675,7 @@ export default function DepartmentsPage() {
           </div>
 
           <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
-            <Button type="button" variant="secondary" onClick={() => setIsModalOpen(false)}>
+            <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)}>
               Hủy bỏ
             </Button>
             <Button type="submit" variant="primary">

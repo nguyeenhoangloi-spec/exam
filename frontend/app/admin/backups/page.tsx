@@ -1075,7 +1075,7 @@ export default function BackupsPage() {
                 maxWidth="max-w-[560px]"
                 footer={
                     <div className="flex justify-end">
-                        <Button variant="secondary" size="md" onClick={() => setDetailJob(null)}>
+                        <Button variant="ghost" size="md" onClick={() => setDetailJob(null)}>
                             Đóng
                         </Button>
                     </div>
@@ -1244,7 +1244,7 @@ export default function BackupsPage() {
                     </div>
 
                     <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                        <Button variant="secondary" size="md" onClick={() => setRestoreOpen(false)} disabled={actionLoading}>
+                        <Button variant="ghost" size="md" onClick={() => setRestoreOpen(false)} disabled={actionLoading}>
                             Hủy bỏ
                         </Button>
                         <Button size="md" onClick={() => void handleRequestRestore()} isLoading={actionLoading} leftIcon={<ArchiveRestore className="h-4 w-4" />}>

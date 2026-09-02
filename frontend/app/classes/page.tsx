@@ -634,7 +634,7 @@ export default function ClassesPage() {
           </div>
 
           <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
-            <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
               Hủy bỏ
             </Button>
             <Button variant="primary" type="submit">

@@ -479,9 +479,9 @@ export function DynamicReportBuilderTab({
                 </p>
               </div>
 
-              {/* Soft Accent Button (Tier 2) per Button Hierarchy 2026 */}
+              {/* Nút Thêm Cột Công Thức (Bậc 2 Secondary) */}
               <Button
-                variant="soft"
+                variant="secondary"
                 size="sm"
                 onClick={() => {
                   setEditingColumn(null);

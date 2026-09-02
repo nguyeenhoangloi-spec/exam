@@ -218,7 +218,7 @@ export function AutoProposalModal({
           </div>
 
           <div className="flex items-center gap-2.5">
-            <Button type="button" variant="secondary" size="md" onClick={onClose} disabled={loading}>
+            <Button type="button" variant="ghost" size="md" onClick={onClose} disabled={loading}>
               Hủy bỏ
             </Button>
             <Button

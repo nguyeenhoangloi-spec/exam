@@ -930,7 +930,7 @@ export default function ExamReportsPage() {
                     <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">
                       Đã chọn lịch thi ID: <strong className="text-slate-800 dark:text-slate-100">#{selectedScheduleId || '—'}</strong>
                     </span>
-                    <Button variant="secondary" size="md" onClick={() => setShowSchedulePicker(false)}>
+                    <Button variant="ghost" size="md" onClick={() => setShowSchedulePicker(false)}>
                       Đóng
                     </Button>
                   </div>

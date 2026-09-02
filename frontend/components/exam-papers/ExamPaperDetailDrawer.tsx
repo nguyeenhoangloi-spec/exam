@@ -293,7 +293,7 @@ export function ExamPaperDetailDrawer({
             <div className="flex items-center justify-end gap-2.5 w-full">
               <Button
                 type="button"
-                variant="secondary"
+                variant="ghost"
                 size="md"
                 onClick={onClose}
               >

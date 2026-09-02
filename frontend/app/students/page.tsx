@@ -882,7 +882,7 @@ export default function StudentsPage() {
         onTabChange={(tabId) => handleTabChange(tabId as any)}
         footer={
           <div className="flex items-center justify-end">
-            <Button type="button" variant="secondary" size="md" onClick={closeDrawer}>
+            <Button type="button" variant="ghost" size="md" onClick={closeDrawer}>
               Đóng
             </Button>
           </div>

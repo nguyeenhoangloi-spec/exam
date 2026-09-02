@@ -251,7 +251,7 @@ export function ArrangementSchedulePickerModal({
           <span className="text-type-helper text-slate-500">
             Hiển thị <strong>{filteredSchedules.length}</strong> ca thi
           </span>
-          <Button type="button" variant="secondary" size="md" onClick={onClose}>
+          <Button type="button" variant="ghost" size="md" onClick={onClose}>
             Đóng
           </Button>
         </div>
