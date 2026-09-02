@@ -519,6 +519,11 @@ if (!/\.typography-scale\s+:where\(h1\)\s*\{[\s\S]*?font-weight:\s*600/.test(glo
   violations.push('app/globals.css: page/card title phải dùng 600 và KPI mới dùng 700');
 }
 
+if (!/\.typography-scale \.table-meta\s*\{[\s\S]*?@apply font-medium;[\s\S]*?color:\s*var\(--ui-text-secondary\)/.test(globalCss)
+  || /\.text-slate-400[^\{]*\.font-semibold/.test(globalCss)) {
+  violations.push('app/globals.css: table metadata phải dùng 500; không được hạ semibold quan trọng xuống 400');
+}
+
 if (!/html:not\(\.dark\)\s+\.typography-scale\s+:where\(\.text-slate-300,\s*\.text-gray-300\)[\s\S]*?color:\s*var\(--ui-text-muted-soft\)/.test(globalCss)
   || !/\.ui-dark-surface\s+:where\(\.text-slate-300,\s*\.text-gray-300\)/.test(globalCss)) {
   violations.push('app/globals.css: light-theme neutral text must be readable with a dark-surface exception');
@@ -556,6 +561,8 @@ if (!/Deep Ink 4-Tier Typography System/.test(designSystemGuide)
   || !/`--ui-text-secondary` \| `#111827`/.test(designSystemGuide)
   || !/`--ui-text-muted-soft` \| `#1F2937`/.test(designSystemGuide)
   || !/`--ui-text-disabled` \| `#475569`/.test(designSystemGuide)
+  || !/\.table-meta.*metadata.*500/.test(designSystemGuide)
+  || !/Không dùng CSS toàn cục để hạ mọi `font-semibold`/.test(designSystemGuide)
   || !/`#020617` \| `#FFFFFF` \| `20\.17:1`/.test(designSystemGuide)
   || !/rgb\(2, 6, 23\).*#020617/.test(designSystemGuide)
   || !/npm run audit:ui:artifact/.test(designSystemGuide)

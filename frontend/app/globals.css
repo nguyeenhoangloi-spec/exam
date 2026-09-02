@@ -529,6 +529,9 @@ html.dark {
   .typography-scale .table-meta {
     font-size: var(--fs-body-sm);
     line-height: var(--lh-body-sm);
+    /* Frequent table metadata must remain scannable; helper text stays 400. */
+    @apply font-medium;
+    color: var(--ui-text-secondary);
   }
 
   .ui-page {
@@ -758,11 +761,10 @@ html.dark {
   border-color: transparent !important;
 }
 
-/* Muted neutral text must not become louder merely because a legacy
- * component attached a stronger utility. Status/action colors are excluded. */
-.typography-scale :where(.text-slate-400, .text-slate-500, .text-gray-400, .text-gray-500).font-semibold:not(:where(button, a, [role='button'])),
+/* Keep accidental bolding of muted text controlled, but preserve semibold
+ * for important labels and KPI metadata. Status/action colors are excluded. */
 .typography-scale :where(.text-slate-400, .text-slate-500, .text-gray-400, .text-gray-500).font-bold:not(:where(button, a, [role='button'])) {
-  font-weight: 400;
+  font-weight: 500;
 }
 
 /* Deep Ink neutral palette for the light theme. Existing neutral

@@ -160,6 +160,15 @@ Trong giai đoạn chuyển đổi, global CSS phải ánh xạ utility cũ vào
 - Chữ thường phải đạt WCAG AA tối thiểu; nội dung nhỏ ưu tiên tỷ lệ tương phản AAA khi có thể.
 - File xuất Word/PDF và Excel giữ quy chuẩn màu/font riêng, không áp dụng remap Web UI.
 
+### 6.4.1 Quy tắc độ đậm theo ngữ cảnh
+
+- Tiêu đề trang, tiêu đề khối và tên dữ liệu quan trọng dùng `font-semibold` (600).
+- Nội dung và ô dữ liệu thông thường dùng `font-normal` (400); không làm đậm toàn bộ bảng.
+- Nhãn biểu mẫu, tiêu đề cột, nút và metadata được đọc thường xuyên dùng `font-medium` (500).
+- `.table-meta` là metadata cần quét nhanh trong bảng nên mặc định dùng 500; ghi chú/hướng dẫn thật sự mới dùng `.edu-helper` và 400.
+- KPI và số liệu nổi bật dùng 700; badge/trạng thái dùng 500–600 theo mức nhấn mạnh.
+- Không dùng CSS toàn cục để hạ mọi `font-semibold` của chữ trung tính xuống 400; chỉ khống chế trường hợp `font-bold` đặt nhầm trên chữ phụ.
+
 ### 6.5 Tỷ lệ tương phản đã xác minh
 
 | Token | Nền kiểm tra | Tỷ lệ tương phản |
