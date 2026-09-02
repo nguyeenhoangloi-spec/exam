@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../lib/api';
@@ -15,6 +17,7 @@ import { DataActionsDropdown } from '../../../components/ui/DataActionsDropdown'
 import { FilterSelect } from '../../../components/ui/FilterSelect';
 import { IdentifierBadge } from '../../../components/ui/IdentifierBadge';
 import { KPICards, KPICardItem } from '../../../components/KPICards';
+import { formatTimeRange } from '../../../lib/format';
 import {
   BookMarked,
   Calendar,
@@ -94,7 +97,7 @@ export default function StudentExamSchedulePage() {
         (s) =>
           `"${s.periodName}","${s.subjectCode}","${s.subjectName}","${new Date(s.examDate).toLocaleDateString(
             'vi-VN',
-          )}","${s.startTime} - ${s.endTime}","${s.roomName || s.roomCode}","${s.examNumber || s.registrationNumber || ''}","${s.seatNumber || ''
+          )}","${formatTimeRange(s.startTime, s.endTime)}","${s.roomName || s.roomCode}","${s.examNumber || s.registrationNumber || ''}","${s.seatNumber || ''
           }"`,
       )
       .join('\n');
@@ -125,7 +128,7 @@ export default function StudentExamSchedulePage() {
         s.subjectCode,
         s.subjectName,
         new Date(s.examDate).toLocaleDateString('vi-VN'),
-        `${s.startTime} - ${s.endTime}`,
+        formatTimeRange(s.startTime, s.endTime),
         s.roomName || s.roomCode,
         `SBN-${s.seatNumber || idx + 1} (Ghế #${s.seatNumber || idx + 1})`,
       ]),
@@ -240,13 +243,13 @@ export default function StudentExamSchedulePage() {
             </h1>
             <div className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-1">
               <span>
-                Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || currentUser?.student?.fullName || (currentUser as any)?.fullName || currentUser?.username || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || currentUser?.student?.studentCode || currentUser?.code || currentUser?.username || '---'}</IdentifierBadge>
+                Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || currentUser?.student?.fullName || (currentUser as any)?.fullName || currentUser?.username || '—'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || currentUser?.student?.studentCode || currentUser?.code || currentUser?.username || '—'}</IdentifierBadge>
               </span>
               <span>
-                Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || currentUser?.student?.class?.name || currentUser?.student?.className || (currentUser as any)?.className || '---'}</strong>
+                Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || currentUser?.student?.class?.name || currentUser?.student?.className || (currentUser as any)?.className || '—'}</strong>
               </span>
               <span>
-                Khoa: <span className="text-slate-700 dark:text-slate-300 font-medium">{studentInfo?.departmentName || studentInfo?.departmentCode || currentUser?.student?.class?.department?.name || currentUser?.student?.departmentName || (currentUser as any)?.departmentName || '---'}</span>
+                Khoa: <span className="text-slate-700 dark:text-slate-300 font-medium">{studentInfo?.departmentName || studentInfo?.departmentCode || currentUser?.student?.class?.department?.name || currentUser?.student?.departmentName || (currentUser as any)?.departmentName || '—'}</span>
               </span>
             </div>
           </div>
@@ -399,7 +402,7 @@ export default function StudentExamSchedulePage() {
                       <span className="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
                         {new Date(item.examDate).toLocaleDateString('vi-VN')}
                       </span>
-                      <span className="text-slate-300 dark:text-slate-700 font-normal mx-2">|</span>
+                      <MetaSeparator />
                       <span className="text-blue-600 dark:text-blue-400 font-semibold tabular-nums">
                         {item.startTime} – {item.endTime}
                       </span>
@@ -415,9 +418,9 @@ export default function StudentExamSchedulePage() {
                       <span className="text-slate-900 dark:text-slate-100 font-semibold">
                         {item.examNumber || item.registrationNumber || (item.mode === 'MOCK' ? 'Tự do' : 'Chưa cấp')}
                       </span>
-                      <span className="text-slate-300 dark:text-slate-700 font-normal mx-2">|</span>
+                      <MetaSeparator />
                       <span className="text-slate-600 dark:text-slate-400">
-                        Ghế #{item.seatNumber || '---'}
+                        Ghế #{item.seatNumber || '—'}
                       </span>
                     </td>
 
@@ -474,11 +477,11 @@ export default function StudentExamSchedulePage() {
         } : undefined}
         details={[
           { label: 'Môn thi', value: drawerSchedule?.subjectName, icon: BookOpen },
-          { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{drawerSchedule?.subjectCode || '---'}</IdentifierBadge> },
+          { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{drawerSchedule?.subjectCode || '—'}</IdentifierBadge> },
           { label: 'Kỳ thi khảo thí', value: drawerSchedule?.periodName },
           { label: 'Hình thức thi', value: drawerSchedule?.mode === 'MOCK' ? 'Thi thử trực tuyến' : 'Thi chính thức' },
           { label: 'Ngày thi', value: drawerSchedule?.examDate ? new Date(drawerSchedule.examDate).toLocaleDateString('vi-VN') : '', icon: Calendar },
-          { label: 'Khung giờ làm bài', value: `${drawerSchedule?.startTime} - ${drawerSchedule?.endTime}`, icon: Clock },
+          { label: 'Khung giờ làm bài', value: formatTimeRange(drawerSchedule?.startTime, drawerSchedule?.endTime), icon: Clock },
           { label: 'Phòng thi', value: drawerSchedule?.roomName || (drawerSchedule?.roomCode ? <IdentifierBadge tone="neutral">{drawerSchedule.roomCode}</IdentifierBadge> : 'Tự do'), icon: DoorOpen },
           { label: 'Tòa nhà / Địa điểm', value: drawerSchedule?.building || 'Chưa cập nhật', icon: MapPin },
           { label: 'Số báo danh (SBD)', value: <IdentifierBadge tone="neutral">{drawerSchedule?.examNumber || drawerSchedule?.registrationNumber || (drawerSchedule?.mode === 'MOCK' ? 'Tự do' : 'Chưa cấp')}</IdentifierBadge>, icon: Ticket },

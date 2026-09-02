@@ -253,10 +253,10 @@ export default function RegradeManagementPage() {
         idx + 1,
         item.student.studentCode,
         item.student.fullName,
-        item.student.class?.code || '---',
-        item.attempt?.onlineExamConfig?.examSchedule?.subject?.subjectName || '---',
+        item.student.class?.code || '—',
+        item.attempt?.onlineExamConfig?.examSchedule?.subject?.subjectName || '—',
         item.originalScore.toFixed(1),
-        item.status === 'APPROVED_REGRADE' && item.revisedScore !== null ? item.revisedScore.toFixed(1) : '---',
+        item.status === 'APPROVED_REGRADE' && item.revisedScore !== null ? item.revisedScore.toFixed(1) : '—',
         item.status === 'APPROVED_REGRADE' ? 'Đã duyệt' : item.status === 'REJECTED' ? 'Từ chối' : 'Chờ xử lý',
         item.reason || '',
       ]),
@@ -475,10 +475,10 @@ export default function RegradeManagementPage() {
               const rows = selectedItems.map((a, idx) => [
                 idx + 1,
                 a.id,
-                a.student?.fullName || a.student?.studentCode || '---',
-                (a.attempt?.onlineExamConfig?.examSchedule?.subject as any)?.subjectName || '---',
+                a.student?.fullName || a.student?.studentCode || '—',
+                (a.attempt?.onlineExamConfig?.examSchedule?.subject as any)?.subjectName || '—',
                 a.originalScore,
-                a.revisedScore ?? '---',
+                a.revisedScore ?? '—',
                 a.status === 'APPROVED_REGRADE' ? 'Đã duyệt' : a.status === 'REJECTED' ? 'Từ chối' : 'Chờ duyệt',
               ]);
               exportToFormattedExcel({

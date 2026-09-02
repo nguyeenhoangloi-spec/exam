@@ -550,7 +550,7 @@ export default function ClassesPage() {
                 idx + 1,
                 c.code,
                 c.name,
-                c.department?.name || '---',
+                c.department?.name || '—',
                 String(c._count?.students ?? 0),
               ]),
             });

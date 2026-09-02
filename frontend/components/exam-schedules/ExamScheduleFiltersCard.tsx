@@ -73,10 +73,10 @@ export function ExamScheduleFiltersCard({
             onChange={(e) => handleChange('shift', e.target.value)}
           >
             <option value="">Tất cả ca thi</option>
-            <option value="CA_1">Ca 1 - Sáng (07:00 - 09:00)</option>
-            <option value="CA_2">Ca 2 - Sáng (09:30 - 11:30)</option>
-            <option value="CA_3">Ca 3 - Chiều (13:00 - 15:00)</option>
-            <option value="CA_4">Ca 4 - Chiều (15:30 - 17:30)</option>
+            <option value="CA_1">Ca 1 - Sáng (07:00 – 09:00)</option>
+            <option value="CA_2">Ca 2 - Sáng (09:30 – 11:30)</option>
+            <option value="CA_3">Ca 3 - Chiều (13:00 – 15:00)</option>
+            <option value="CA_4">Ca 4 - Chiều (15:30 – 17:30)</option>
           </FilterSelect>
         </div>
 

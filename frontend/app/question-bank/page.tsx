@@ -282,7 +282,7 @@ export default function QuestionBankPage() {
         filename: `Ngan_hang_cau_hoi_${new Date().toISOString().slice(0, 10)}.xls`,
         templateCode: 'QUESTION_BANK_DIRECTORY',
         title: 'NGÂN HÀNG CÂU HỎI THI',
-        subtitle: `Số lượng: ${questions.length} câu hỏi | Môn học: ${selectedSubject?.subjectName || 'Tất cả môn'}`,
+        subtitle: `Số lượng: ${questions.length} câu hỏi, môn học: ${selectedSubject?.subjectName || 'Tất cả môn'}`,
         columns: [
           { header: 'STT', align: 'center', width: 6 },
           { header: 'Mã câu hỏi', align: 'center', width: 14 },
@@ -299,7 +299,7 @@ export default function QuestionBankPage() {
           q.content,
           q.difficulty === 'EASY' ? 'Dễ' : q.difficulty === 'MEDIUM' ? 'Trung bình' : 'Khó',
           q.status === 'APPROVED' ? 'Đã duyệt' : q.status === 'PENDING' ? 'Chờ duyệt' : 'Bản nháp',
-          q.createdByName || q.createdBy?.fullName || '---',
+          q.createdByName || q.createdBy?.fullName || '—',
         ]),
       });
       setToast({ message: 'Đã xuất file Excel tự động định dạng thành công!', type: 'success' });

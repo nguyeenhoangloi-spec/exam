@@ -528,7 +528,7 @@ export default function ContactSupportPage() {
             <div>
               <h3 className="text-type-body font-semibold text-slate-900 dark:text-white">Văn phòng Khảo thí</h3>
               <p className="text-type-body-sm text-slate-800 dark:text-slate-200 font-semibold mt-1">Tòa nhà A1 - Trung tâm Khảo thí</p>
-              <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">07:30 - 17:00 (Thứ 2 đến Thứ 6)</p>
+              <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-0.5">07:30 – 17:00 (Thứ 2 đến Thứ 6)</p>
             </div>
           </div>
         </section>

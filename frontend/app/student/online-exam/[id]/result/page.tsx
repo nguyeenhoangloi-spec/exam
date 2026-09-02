@@ -375,15 +375,15 @@ export default function StudentExamResultPage() {
         isOpen={showProfileDrawer}
         onClose={() => setShowProfileDrawer(false)}
         title={result?.subjectName || result?.paperTitle || 'Kết quả bài thi'}
-        subtitle={`Môn thi: ${result?.subjectCode || '---'}`}
+        subtitle={`Môn thi: ${result?.subjectCode || '—'}`}
         avatarText={result?.subjectCode?.slice(0, 2)?.toUpperCase() || 'KQ'}
         badge={{
           label: result?.status === 'UNDER_REVIEW' ? 'Chờ xem xét' : result?.status === 'GRADED' ? 'Đã chấm điểm' : 'Đã nộp bài',
           status: result?.status || 'SUBMITTED',
         }}
         details={[
-          { label: 'Tên bài thi', value: result?.paperTitle || result?.subjectName || '---', icon: BookOpen },
-          { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{result?.subjectCode || '---'}</IdentifierBadge> },
+          { label: 'Tên bài thi', value: result?.paperTitle || result?.subjectName || '—', icon: BookOpen },
+          { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{result?.subjectCode || '—'}</IdentifierBadge> },
           { label: 'Trạng thái bài thi', value: <StatusBadge status={result?.status} /> },
           { label: 'Thời gian nộp bài', value: result?.submittedAt ? new Date(result.submittedAt).toLocaleString('vi-VN') : 'Mới đây', icon: Clock },
           ...(result?.totalScore !== undefined && result?.totalScore !== null ? [{

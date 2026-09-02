@@ -128,7 +128,7 @@ export class BackupStorageService {
       try { return await createStorageAdapter(target).get(key); }
       catch (error: any) { errors.push(`${target.name}: ${error?.message || error}`); }
     }
-    throw new Error(`Không thể đọc ${key} từ bất kỳ kho lưu trữ nào. ${errors.join(' | ')}`);
+    throw new Error(`Không thể đọc ${key} từ bất kỳ kho lưu trữ nào. ${errors.join('; ')}`);
   }
 
   async exists(key: string) {

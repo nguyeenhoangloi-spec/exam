@@ -135,7 +135,7 @@ export async function exportToFormattedExcel({
     ${metaInfo && metaInfo.length > 0 ? `
     <tr style="height:24px;">
       <td colspan="${totalCols}" style="font-family:'Times New Roman', Times, serif; font-size:10pt; font-style:italic; text-align:center; vertical-align:middle; color:#000000; background-color:transparent; border:1px solid #000000;">
-        ${escapeHtml(metaInfo.map(m => `${m.label}: ${m.value}`).join('   |   '))}
+        ${escapeHtml(metaInfo.map(m => `${m.label}: ${m.value}`).join('; '))}
       </td>
     </tr>` : ''}
     <tr style="height:10px;"><td colspan="${totalCols}" style="border:none;"></td></tr>

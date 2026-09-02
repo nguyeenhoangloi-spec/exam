@@ -731,7 +731,7 @@ export default function ExamRoomsPage() {
           { label: 'Tên phòng thi', value: drawerRoom?.roomName || drawerRoom?.name, icon: DoorOpen },
           { label: 'Mã phòng thi', value: drawerRoom?.roomCode || drawerRoom?.code, icon: Building },
           { label: 'Sức chứa tối đa', value: `${drawerRoom?.capacity ?? 0} chỗ ngồi`, icon: Users },
-          { label: 'Tòa nhà / Khu vực', value: drawerRoom?.building || drawerRoom?.location || '---', icon: Building },
+          { label: 'Tòa nhà / Khu vực', value: drawerRoom?.building || drawerRoom?.location || '—', icon: Building },
           { label: 'Loại phòng thi', value: drawerRoom?.roomType === 'COMPUTER_LAB' ? 'Phòng máy tính' : 'Phòng thi lý thuyết', icon: Monitor },
         ]}
       />

@@ -137,12 +137,59 @@ function inspectJsxElements(content) {
   return elements;
 }
 
+function inspectDataSeparators(content, scriptKind) {
+  const sourceFile = ts.createSourceFile('separator-audit.tsx', content, ts.ScriptTarget.Latest, true, scriptKind);
+  const findings = new Set();
+
+  function isTypeOrImportLiteral(node) {
+    let current = node.parent;
+    while (current) {
+      if (ts.isLiteralTypeNode(current)
+        || ts.isImportDeclaration(current)
+        || ts.isExportDeclaration(current)) return true;
+      current = current.parent;
+    }
+    return false;
+  }
+
+  function inspectText(value) {
+    if (/(^|\s)\|(?=\s|$)/.test(value)) findings.add('raw-pipe');
+    if (/(^|[^-])---([^-]|$)/.test(value)) findings.add('triple-dash');
+    if (/\b\d{1,2}:\d{2}\s-\s\d{1,2}:\d{2}\b/.test(value)) findings.add('ascii-time-range');
+  }
+
+  function visit(node) {
+    if (ts.isJsxText(node)) inspectText(node.getText(sourceFile));
+    if ((ts.isStringLiteralLike(node) || ts.isTemplateExpression(node)) && !isTypeOrImportLiteral(node)) {
+      inspectText(node.getText(sourceFile));
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return findings;
+}
+
 for (const folder of sourceRoots) {
   const files = await collectFiles(join(root, folder));
   for (const file of files) {
     const relativeFile = relative(root, file).replaceAll('\\', '/');
     if (skippedFiles.has(relativeFile)) continue;
     const content = await readFile(file, 'utf8');
+
+    if (file.endsWith('.ts') || file.endsWith('.tsx')) {
+      const scriptKind = file.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+      const separatorFindings = inspectDataSeparators(content, scriptKind);
+      if (separatorFindings.has('raw-pipe')) {
+        report(file, 'không dùng ký tự | làm phân cách nội dung; dùng InlineMeta/MetaSeparator hoặc văn bản tự nhiên');
+      }
+      if (separatorFindings.has('triple-dash')) {
+        report(file, 'giá trị trống phải dùng em dash —; không dùng ---');
+      }
+      if (separatorFindings.has('ascii-time-range')) {
+        report(file, 'khoảng thời gian phải dùng formatTimeRange và En dash –');
+      }
+    }
 
     if (file.endsWith('.tsx')) {
       for (const element of inspectJsxElements(content)) {
@@ -378,6 +425,8 @@ const packageJson = await readFile(join(root, 'package.json'), 'utf8');
 const artifactAudit = await readFile(join(root, 'scripts', 'audit-ui-artifact.mjs'), 'utf8');
 const designSystemGuide = await readFile(join(root, '..', 'ui-design-system-rules.md'), 'utf8');
 const agentGuide = await readFile(join(root, '..', 'GEMINI.md'), 'utf8');
+const inlineMeta = await readFile(join(root, 'components', 'ui', 'InlineMeta.tsx'), 'utf8');
+const formatHelpers = await readFile(join(root, 'lib', 'format.ts'), 'utf8');
 const middleware = await readFile(join(root, 'middleware.ts'), 'utf8');
 const accessRules = await readFile(join(root, 'lib', 'access.ts'), 'utf8');
 const publicCsvFiles = [
@@ -545,6 +594,16 @@ if (!/--fs-page-title:\s*28px/.test(globalCss)
   || !/'type-helper':\s*\['var\(--fs-helper\)'/.test(tailwindConfig)
   || !/'type-badge':\s*\['var\(--fs-badge\)'/.test(tailwindConfig)) {
   violations.push('Tailwind/globals.css: 8 semantic typography token chưa được cấu hình đầy đủ');
+}
+
+if (!/function MetaSeparator/.test(inlineMeta)
+  || !/aria-hidden="true"/.test(inlineMeta)
+  || !/function InlineMeta/.test(inlineMeta)
+  || !/function formatTimeRange/.test(formatHelpers)
+  || !/function formatDateRange/.test(formatHelpers)
+  || !/Giá trị trống duy nhất/.test(designSystemGuide)
+  || !/Cấm viết ký tự `\|` trực tiếp/.test(designSystemGuide)) {
+  violations.push('quy chuẩn phân tách dữ liệu Section 22 và shared InlineMeta/formatter chưa đầy đủ');
 }
 
 if (/--fs-(?:table-body|table-header|label|reading|display|display-sm|otp)\s*:/.test(globalCss)

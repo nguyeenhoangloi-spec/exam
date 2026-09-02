@@ -13,7 +13,7 @@ import { Modal } from '../../components/Modal';
 import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
-import { getSmartMonogram } from '../../lib/format';
+import { formatTimeRange, getSmartMonogram } from '../../lib/format';
 import { Button } from '../../components/ui/Button';
 import { Teacher, Department, User } from '../../types';
 import { Search, X, GraduationCap, Building2, Mail, Phone, User as UserIcon, ChevronDown, FileSpreadsheet, UserCheck, Info } from 'lucide-react';
@@ -367,8 +367,8 @@ export default function TeachersPage() {
       t.fullName,
       t.degree || 'ThS',
       t.email,
-      t.phone || '---',
-      t.department?.name || '---',
+      t.phone || '—',
+      t.department?.name || '—',
     ]);
 
     const metaInfo = [
@@ -624,9 +624,9 @@ export default function TeachersPage() {
                 t.teacherCode,
                 t.fullName,
                 t.degree || 'TS',
-                t.department?.name || '---',
+                t.department?.name || '—',
                 t.email,
-                t.phone || '---',
+                t.phone || '—',
               ]),
             });
           }}
@@ -860,9 +860,9 @@ export default function TeachersPage() {
                 {[
                   { label: 'Mã cán bộ', value: <IdentifierBadge tone="neutral">{drawerTeacher.teacherCode}</IdentifierBadge>, icon: UserIcon },
                   { label: 'Học vị / Học hàm', value: drawerTeacher.degree || 'Thạc sĩ / Tiến sĩ', icon: GraduationCap },
-                  { label: 'Khoa trực thuộc', value: drawerTeacher.department?.name || '---', icon: Building2 },
+                  { label: 'Khoa trực thuộc', value: drawerTeacher.department?.name || '—', icon: Building2 },
                   { label: 'Email công vụ', value: drawerTeacher.email, icon: Mail },
-                  { label: 'Số điện thoại', value: drawerTeacher.phone || '---', icon: Phone },
+                  { label: 'Số điện thoại', value: drawerTeacher.phone || '—', icon: Phone },
                 ].map((r, idx) => {
                   const Icon = r.icon;
                   return (
@@ -931,18 +931,18 @@ export default function TeachersPage() {
                       <div className="space-y-1.5 text-type-helper text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2 font-medium">
                         <div className="flex justify-between">
                           <span className="text-slate-500">Phòng thi:</span>
-                          <span className="font-semibold text-slate-900 dark:text-white">{room?.roomName || room?.roomCode || '---'} {room?.building ? `(${room.building})` : ''}</span>
+                          <span className="font-semibold text-slate-900 dark:text-white">{room?.roomName || room?.roomCode || '—'} {room?.building ? `(${room.building})` : ''}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-slate-500">Ngày thi:</span>
                           <span className="font-semibold text-slate-900 dark:text-white">
-                            {sched?.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'}
+                            {sched?.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '—'}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-slate-500">Thời gian:</span>
                           <span className="font-semibold text-slate-900 dark:text-white">
-                            {sched?.startTime && sched?.endTime ? `${sched.startTime} - ${sched.endTime}` : '---'}
+                            {formatTimeRange(sched?.startTime, sched?.endTime)}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">

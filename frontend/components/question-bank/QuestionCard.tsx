@@ -261,7 +261,7 @@ export function QuestionCard({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {(q.fillBlankAnswers && q.fillBlankAnswers.length > 0 ? q.fillBlankAnswers : [{ blankIndex: 1, answer: 'Chưa thiết lập' }]).map((ans: any, idx: number) => {
                 const bIdx = ans.blankIndex || idx + 1;
-                const mainAns = ans.answer || ans.value || ans.content || '---';
+                const mainAns = ans.answer || ans.value || ans.content || '—';
                 return (
                   <div
                     key={ans.id || idx}

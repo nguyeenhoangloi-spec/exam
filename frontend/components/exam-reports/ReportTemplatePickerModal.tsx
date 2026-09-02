@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import React, { useState } from 'react';
 import { Modal } from '../Modal';
 import { Button } from '../ui/Button';
@@ -193,9 +195,9 @@ export function ReportTemplatePickerModal({
 
                     <div className="flex items-center gap-2 text-type-helper text-slate-500 dark:text-slate-400 pt-0.5 flex-wrap">
                       <span>{tpl.columns.length} cột</span>
-                      <span className="text-slate-300 dark:text-slate-700">|</span>
+                      <MetaSeparator />
                       <span>{tpl.signers.length} người ký</span>
-                      <span className="text-slate-300 dark:text-slate-700">|</span>
+                      <MetaSeparator />
                       <span className="truncate max-w-xs">{tpl.headerConfig.title}</span>
                     </div>
                   </div>

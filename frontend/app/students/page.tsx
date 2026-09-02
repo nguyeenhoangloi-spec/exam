@@ -406,10 +406,10 @@ export default function StudentsPage() {
       s.studentCode,
       s.fullName,
       s.gender || 'Nam',
-      s.dateOfBirth ? new Date(s.dateOfBirth).toLocaleDateString('vi-VN') : '---',
-      s.class?.name || '---',
+      s.dateOfBirth ? new Date(s.dateOfBirth).toLocaleDateString('vi-VN') : '—',
+      s.class?.name || '—',
       s.email,
-      s.phone || '---',
+      s.phone || '—',
     ]);
 
     const metaInfo = [
@@ -627,9 +627,9 @@ export default function StudentsPage() {
               s.studentCode,
               s.fullName,
               s.gender === 'FEMALE' ? 'Nữ' : 'Nam',
-              s.class?.name || '---',
+              s.class?.name || '—',
               s.email,
-              s.phone || '---',
+              s.phone || '—',
             ]);
             exportToFormattedExcel({
               filename: 'Danh_sach_sinh_vien_da_chon.xls',
@@ -662,9 +662,9 @@ export default function StudentsPage() {
                 s.studentCode,
                 s.fullName,
                 s.gender === 'FEMALE' ? 'Nữ' : 'Nam',
-                s.class?.name || '---',
+                s.class?.name || '—',
                 s.email,
-                s.phone || '---',
+                s.phone || '—',
               ]),
             });
           }}
@@ -930,12 +930,12 @@ export default function StudentsPage() {
                   { label: 'Giới tính', value: drawerStudent.gender || 'Nam', icon: UserIcon },
                   {
                     label: 'Ngày sinh',
-                    value: drawerStudent.dateOfBirth ? new Date(drawerStudent.dateOfBirth).toLocaleDateString('vi-VN') : '---',
+                    value: drawerStudent.dateOfBirth ? new Date(drawerStudent.dateOfBirth).toLocaleDateString('vi-VN') : '—',
                     icon: Calendar,
                   },
-                  { label: 'Lớp sinh hoạt', value: drawerStudent.class?.name || '---', icon: School },
-                  { label: 'Email', value: drawerStudent.email || '---', icon: Mail },
-                  { label: 'Số điện thoại', value: drawerStudent.phone || '---', icon: Phone },
+                  { label: 'Lớp sinh hoạt', value: drawerStudent.class?.name || '—', icon: School },
+                  { label: 'Email', value: drawerStudent.email || '—', icon: Mail },
+                  { label: 'Số điện thoại', value: drawerStudent.phone || '—', icon: Phone },
                 ].map((r, idx) => {
                   const Icon = r.icon;
                   return (
@@ -980,7 +980,7 @@ export default function StudentsPage() {
                 <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-950/60 rounded-xl px-4 py-3 border border-blue-200/80 dark:border-blue-800/60 text-type-body-sm">
                   <span className="font-semibold text-blue-900 dark:text-blue-200">Tổng cộng:</span>
                   <span className="font-semibold text-blue-700 dark:text-blue-300">
-                    {drawerSubjects.length} môn | {drawerSubjects.reduce((acc: number, item: any) => acc + (item.subject?.credits || item.credits || 0), 0)} tín chỉ
+                    {drawerSubjects.length} môn, {drawerSubjects.reduce((acc: number, item: any) => acc + (item.subject?.credits || item.credits || 0), 0)} tín chỉ
                   </span>
                 </div>
 
@@ -1030,7 +1030,7 @@ export default function StudentsPage() {
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 text-blue-600" />
                         <span className="text-type-helper font-semibold text-slate-800 dark:text-slate-200">
-                          {sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '---'} ({sched.startTime || ''} – {sched.endTime || ''})
+                          {sched.examDate ? new Date(sched.examDate).toLocaleDateString('vi-VN') : '—'} ({sched.startTime || ''} – {sched.endTime || ''})
                         </span>
                       </div>
                       <span className="px-2.5 py-0.5 ui-pill rounded-full text-type-helper font-medium text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
@@ -1051,7 +1051,7 @@ export default function StudentsPage() {
                         </div>
                         <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-medium">
                           <UserIcon className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                          <span>SBD: <strong className="font-semibold text-blue-600">{sched.examNumber || '---'}</strong></span>
+                          <span>SBD: <strong className="font-semibold text-blue-600">{sched.examNumber || '—'}</strong></span>
                         </div>
                         <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-medium">
                           <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />

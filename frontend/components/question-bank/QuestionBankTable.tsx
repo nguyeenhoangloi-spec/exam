@@ -227,7 +227,7 @@ export function QuestionBankTable({
                               <div className="flex flex-wrap items-center gap-1.5 pt-1">
                                 {fbList.map((ans: any, aIdx: number) => {
                                   const bIdx = ans.blankIndex || aIdx + 1;
-                                  const mainAns = ans.answer || ans.value || ans.content || '---';
+                                  const mainAns = ans.answer || ans.value || ans.content || '—';
                                   return (
                                     <span
                                       key={ans.id || aIdx}

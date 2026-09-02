@@ -25,6 +25,7 @@ import { ExamPeriodBulkAction } from '../../components/exam-periods/ExamPeriodBu
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { ExamPeriodFilterPopover } from '../../components/exam-periods/ExamPeriodFilterPopover';
 import { PageSkeleton } from '../../components/ui/Skeleton';
+import { formatDateRange } from '../../lib/format';
 
 export default function ExamPeriodsPage() {
 
@@ -255,8 +256,8 @@ export default function ExamPeriodsPage() {
       p.name,
       p.semester,
       p.schoolYear,
-      p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : '---',
-      p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : '---',
+      p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : '—',
+      p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : '—',
       p.status === 'COMPLETED' ? 'Đã hoàn thành' : p.status === 'ONGOING' ? 'Đang diễn ra' : 'Sắp diễn ra',
     ]);
 
@@ -510,7 +511,7 @@ export default function ExamPeriodsPage() {
                 p.name,
                 p.semester,
                 p.schoolYear,
-                `${p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : ''} - ${p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : ''}`,
+                formatDateRange(p.startDate, p.endDate),
                 p.status === 'COMPLETED' ? 'Đã hoàn thành' : 'Sắp diễn ra',
               ]),
             });
@@ -685,12 +686,12 @@ export default function ExamPeriodsPage() {
           { label: 'Năm học', value: drawerPeriod?.schoolYear },
           {
             label: 'Thời gian bắt đầu',
-            value: drawerPeriod?.startDate ? new Date(drawerPeriod.startDate).toLocaleDateString('vi-VN') : '---',
+            value: drawerPeriod?.startDate ? new Date(drawerPeriod.startDate).toLocaleDateString('vi-VN') : '—',
             icon: Clock,
           },
           {
             label: 'Thời gian kết thúc',
-            value: drawerPeriod?.endDate ? new Date(drawerPeriod.endDate).toLocaleDateString('vi-VN') : '---',
+            value: drawerPeriod?.endDate ? new Date(drawerPeriod.endDate).toLocaleDateString('vi-VN') : '—',
             icon: Clock,
           },
         ]}

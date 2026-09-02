@@ -364,7 +364,7 @@ export function printArchivedDossier(data: any): boolean {
           ${escapeHtml(q.studentAnswer?.textAnswer || '(Không có nội dung văn bản)')}
         </div>
         <div style="margin-top: 4px; font-size: 10pt; font-style: italic;">
-          Điểm chấm: <strong>${q.studentAnswer?.finalScore}/${q.maxScore}</strong> | Nhận xét: ${escapeHtml(q.studentAnswer?.teacherComment || 'Đạt yêu cầu')}
+          Điểm chấm: <strong>${q.studentAnswer?.finalScore}/${q.maxScore}</strong>; nhận xét: ${escapeHtml(q.studentAnswer?.teacherComment || 'Đạt yêu cầu')}
         </div>
       `
           : q.type === 'FILL_BLANK' || (Array.isArray(q.fillBlankAnswers) && q.fillBlankAnswers.length > 0)
@@ -377,7 +377,7 @@ export function printArchivedDossier(data: any): boolean {
                 || q.studentAnswer?.textAnswer;
               return `
               <div style="margin: 3px 0;">
-                - Vị trí {{blank_${fb.blankIndex}}}: Thí sinh điền: <strong>${escapeHtml(String(studentFilled || '(Bỏ trống)'))}</strong> | Đáp án chuẩn: <span style="color: #047857; font-weight: bold;">${escapeHtml(fb.answer)}</span> (${fb.score}đ)
+                - Vị trí {{blank_${fb.blankIndex}}}: Thí sinh điền: <strong>${escapeHtml(String(studentFilled || '(Bỏ trống)'))}</strong>; đáp án chuẩn: <span style="color: #047857; font-weight: bold;">${escapeHtml(fb.answer)}</span> (${fb.score}đ)
               </div>`;
             })
             .join('')}
@@ -483,7 +483,7 @@ export function printArchivedDossier(data: any): boolean {
 
       <div class="seal-box">
         <strong>MÃ NIÊM PHONG SỐ (DIGITAL SEAL):</strong> ${escapeHtml(data.digitalSeal?.sealHash || '')}<br/>
-        <em>Trạng thái chứng thực:</em> Đã niêm phong lưu trữ đào tạo | Cán bộ duyệt: ${escapeHtml(data.submission?.approvedBy || 'Hội đồng khảo thí')}
+        <em>Trạng thái chứng thực:</em> Đã niêm phong lưu trữ đào tạo; cán bộ duyệt: ${escapeHtml(data.submission?.approvedBy || 'Hội đồng khảo thí')}
       </div>
 
       <div style="font-weight: bold; font-size: 11pt; border-bottom: 1px solid #000; padding-bottom: 4px; margin-bottom: 12px; text-transform: uppercase;">
@@ -574,7 +574,7 @@ export function printBatchArchivedDossier(data: any): boolean {
               ${escapeHtml(q.studentAnswer?.textAnswer || '(Không có nội dung văn bản)')}
             </div>
             <div style="margin-top: 3px; font-size: 9.5pt; font-style: italic;">
-              Điểm: <strong>${q.studentAnswer?.finalScore}/${q.maxScore}</strong> | Nhận xét: ${escapeHtml(q.studentAnswer?.teacherComment || 'Đạt')}
+              Điểm: <strong>${q.studentAnswer?.finalScore}/${q.maxScore}</strong>; nhận xét: ${escapeHtml(q.studentAnswer?.teacherComment || 'Đạt')}
             </div>
           `
               : `

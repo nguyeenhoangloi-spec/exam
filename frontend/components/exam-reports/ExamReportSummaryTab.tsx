@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
@@ -1341,7 +1343,7 @@ export function ExamReportSummaryTab({
                   </div>
                   <p className="text-type-helper text-slate-400 font-normal truncate mt-0.5 leading-5">
                     {preview
-                      ? `Tạo lúc ${new Date(preview.generatedAt).toLocaleString('vi-VN')} | Đang xuất ${columns.length}/${preview.columns.length} cột`
+                      ? `Tạo lúc ${new Date(preview.generatedAt).toLocaleString('vi-VN')}, đang xuất ${columns.length}/${preview.columns.length} cột`
                       : 'Thiết lập cấu hình bên trái rồi nhấn Xem trước báo cáo'}
                   </p>
                 </div>
@@ -1404,7 +1406,7 @@ export function ExamReportSummaryTab({
                                 >
                                   Chọn tất cả
                                 </button>
-                                <span className="text-slate-300 dark:text-slate-600 select-none text-type-helper">|</span>
+                                <MetaSeparator />
                                 <button
                                   type="button"
                                   onClick={() => setColumns([])}

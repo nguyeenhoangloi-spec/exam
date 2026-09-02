@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Printer,
@@ -116,10 +118,10 @@ const sourceLabels: Record<DataSource, string> = {
 
 const sampleRowsBySource: Record<DataSource, Array<Record<string, any>>> = {
   EXAM_SCHEDULE_LIST: [
-    { index: 1, period: 'Học kỳ 1 (2025-2026)', subject: 'IT4409 - Lập trình Web', date: '15/12/2025', time: '07:30 - 09:00', rooms: 'P.301, P.302' },
-    { index: 2, period: 'Học kỳ 1 (2025-2026)', subject: 'IT3080 - Mạng máy tính', date: '16/12/2025', time: '09:30 - 11:00', rooms: 'P.405' },
-    { index: 3, period: 'Học kỳ 1 (2025-2026)', subject: 'IT2000 - Cấu trúc dữ liệu', date: '18/12/2025', time: '13:30 - 15:00', rooms: 'P.201, P.202, P.203' },
-    { index: 4, period: 'Học kỳ 1 (2025-2026)', subject: 'MA1110 - Giải tích 1', date: '20/12/2025', time: '07:30 - 09:30', rooms: 'Hội trường C2' },
+    { index: 1, period: 'Học kỳ 1 (2025-2026)', subject: 'IT4409 - Lập trình Web', date: '15/12/2025', time: '07:30 – 09:00', rooms: 'P.301, P.302' },
+    { index: 2, period: 'Học kỳ 1 (2025-2026)', subject: 'IT3080 - Mạng máy tính', date: '16/12/2025', time: '09:30 – 11:00', rooms: 'P.405' },
+    { index: 3, period: 'Học kỳ 1 (2025-2026)', subject: 'IT2000 - Cấu trúc dữ liệu', date: '18/12/2025', time: '13:30 – 15:00', rooms: 'P.201, P.202, P.203' },
+    { index: 4, period: 'Học kỳ 1 (2025-2026)', subject: 'MA1110 - Giải tích 1', date: '20/12/2025', time: '07:30 – 09:30', rooms: 'Hội trường C2' },
   ],
   ROOM_DOOR_LIST: [
     { index: 1, examNumber: 'SBD-001', studentCode: 'SV20260001', student: 'Nguyễn Văn An', fullName: 'Nguyễn Văn An', dob: '12/05/2004', class: 'CNTT-K68A', className: 'CNTT-K68A', seatNumber: 1 },
@@ -231,7 +233,7 @@ const sampleRowsByCode: Record<string, Array<Record<string, any>>> = {
   EXAM_BAG_LABEL: [
     { index: 1, infoLabel: 'Kỳ thi & Học kỳ', infoValue: 'Kỳ thi Kết thúc Học kỳ 1 (2025-2026)' },
     { index: 2, infoLabel: 'Học phần / Môn thi', infoValue: 'Lập trình Web Nâng cao (IT4409)' },
-    { index: 3, infoLabel: 'Phòng thi / Ca thi', infoValue: 'P.301 - Tòa B1 | Ca: 07:30 - 09:00' },
+    { index: 3, infoLabel: 'Phòng thi / Ca thi', infoValue: 'P.301 (Tòa B1), ca: 07:30 – 09:00' },
     { index: 4, infoLabel: 'Số bài thi / Số tờ', infoValue: '38 bài thi / 76 tờ giấy thi' },
     { index: 5, infoLabel: 'Cán bộ coi thi 1 & 2', infoValue: 'TS. Trần Hải (CB1) - ThS. Lê Thu Hà (CB2)' },
   ],
@@ -256,9 +258,9 @@ const sampleRowsByCode: Record<string, Array<Record<string, any>>> = {
     { index: 3, studentCode: 'SV20260003', fullName: 'Lê Hoàng Cường', className: 'CNTT-K68B', totalScore: '6.5', sealShort: 'J9K0L1M2', approvedBy: 'Hội đồng Khảo thí' },
   ],
   EXAM_ARCHIVE_DOSSIER: [
-    { index: 1, item: '1. Thông tin thí sinh & Học phần', value: 'Nguyễn Văn An (SV20260001) | Lập trình Web Nâng cao (IT4409)', note: 'Khớp danh sách' },
+    { index: 1, item: '1. Thông tin thí sinh & Học phần', value: 'Nguyễn Văn An (SV20260001), Lập trình Web Nâng cao (IT4409)', note: 'Khớp danh sách' },
     { index: 2, item: '2. Mã niêm phong số (SHA-256)', value: '7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069', note: 'Toàn vẹn 100%' },
-    { index: 3, item: '3. Điểm số chính thức & Cán bộ chấm', value: '9.0 / 10.0 đ | Cán bộ chấm: TS. Trần Hải | Duyệt: Hội đồng Khảo thí', note: 'Đã công bố' },
+    { index: 3, item: '3. Điểm số chính thức & Cán bộ chấm', value: '9,0/10,0 điểm; cán bộ chấm: TS. Trần Hải; duyệt: Hội đồng Khảo thí', note: 'Đã công bố' },
     { index: 4, item: '4. Tình trạng lưu trữ đào tạo', value: 'Bản trích lục niêm phong lưu trữ đào tạo chính quy', note: 'Đạt chuẩn lưu trữ' },
   ],
 };
@@ -268,7 +270,7 @@ function clone<T>(val: T): T {
 }
 
 function renderCellValue(column: Column, row: Record<string, any>) {
-  return row[column.key] !== undefined && row[column.key] !== null ? String(row[column.key]) : '---';
+  return row[column.key] !== undefined && row[column.key] !== null ? String(row[column.key]) : '—';
 }
 
 export default function DocumentTemplatesPage() {
@@ -1116,7 +1118,7 @@ export default function DocumentTemplatesPage() {
                           </span>
                           <p className="text-type-helper text-slate-500 dark:text-slate-400 truncate font-normal">
                             {sourceLabels[template.dataSource] || template.dataSource}{' '}
-                            <span className="text-slate-300 dark:text-slate-700">|</span>{' '}
+                            <MetaSeparator />
                             <span className="tabular-nums">{template.code}</span>
                           </p>
                         </div>
@@ -1152,7 +1154,7 @@ export default function DocumentTemplatesPage() {
                 Xem trước
               </span>
               <span className="text-type-helper text-slate-500 dark:text-slate-400 font-normal">
-                ({config?.page.size || 'A4'} | {config?.page.orientation === 'landscape' ? 'Khổ ngang' : 'Khổ dọc'})
+                ({config?.page.size || 'A4'}, {config?.page.orientation === 'landscape' ? 'khổ ngang' : 'khổ dọc'})
               </span>
             </div>
 
@@ -1345,7 +1347,7 @@ export default function DocumentTemplatesPage() {
                           {/* Thanh Mini-Header môn thi */}
                           <div className="flex justify-between items-center text-type-helper font-semibold pt-1">
                             <div>MÔN THI: {config.examInfo?.subjectName || 'LẬP TRÌNH WEB NÂNG CAO'} ({config.examInfo?.subjectCode || 'IT4409'})</div>
-                            <div>MÃ ĐỀ THI: 101 | THỜI GIAN: {config.examInfo?.durationMinutes || 60} PHÚT</div>
+                            <div>MÃ ĐỀ THI: 101; THỜI GIAN: {config.examInfo?.durationMinutes || 60} PHÚT</div>
                           </div>
 
                           {/* Bảng Khớp Phách 2 & Chấm điểm 5 cột của Giám khảo */}

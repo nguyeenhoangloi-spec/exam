@@ -294,7 +294,7 @@ export default function StudentCurriculumPage() {
   const handlePrintReport = () => {
     printReport({
       title: 'KHUNG CHƯƠNG TRÌNH ĐÀO TẠO CÁ NHÂN',
-      subtitle: `Sinh viên: ${studentInfo?.fullName || ''} (${studentInfo?.studentCode || ''}) - Lớp: ${studentInfo?.className || ''} - Khoa: ${studentInfo?.departmentName || ''}`,
+      subtitle: `Sinh viên: ${studentInfo?.fullName || ''} (${studentInfo?.studentCode || ''}), lớp: ${studentInfo?.className || ''}, khoa: ${studentInfo?.departmentName || ''}`,
       facultyName: 'PHÒNG ĐÀO TẠO & KHẢO THÍ',
       metaInfo: [
         { label: 'Tổng số môn học', value: `${stats?.totalSubjects ?? 0} môn` },
@@ -402,13 +402,13 @@ export default function StudentCurriculumPage() {
             </h1>
             <div className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-1">
               <span>
-                Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '---'}</IdentifierBadge>
+                Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || '—'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '—'}</IdentifierBadge>
               </span>
               <span>
-                Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong>
+                Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || '—'}</strong>
               </span>
               <span>
-                Khoa: <span className="text-slate-700 dark:text-slate-300 font-medium">{studentInfo?.departmentName || studentInfo?.departmentCode || '---'}</span>
+                Khoa: <span className="text-slate-700 dark:text-slate-300 font-medium">{studentInfo?.departmentName || studentInfo?.departmentCode || '—'}</span>
               </span>
             </div>
           </div>
@@ -764,7 +764,7 @@ export default function StudentCurriculumPage() {
           }}
           details={[
             { label: 'Tên học phần', value: detailItem?.subjectName, icon: BookOpen },
-            { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{detailItem?.subjectCode || '---'}</IdentifierBadge>, icon: Info },
+            { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{detailItem?.subjectCode || '—'}</IdentifierBadge>, icon: Info },
             { label: 'Học kỳ đào tạo', value: detailItem ? `Học kỳ ${detailItem.recommendedSemester}` : '', icon: BookMarked },
             { label: 'Số tín chỉ', value: detailItem ? `${detailItem.credits} tín chỉ` : '', icon: Layers },
             { label: 'Phân loại học phần', value: detailItem?.type === 'MANDATORY' ? 'Môn học bắt buộc' : 'Môn học tự chọn', icon: Award },

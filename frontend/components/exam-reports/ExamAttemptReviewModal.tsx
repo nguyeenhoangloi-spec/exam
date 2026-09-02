@@ -307,7 +307,7 @@ function QuestionCard({
                         {showAnswer && (
                           <div className="inline-flex items-center gap-1.5 text-type-helper font-semibold text-emerald-700 dark:text-emerald-400">
                             <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-                            Đáp án đúng: <span className="font-semibold text-emerald-800 dark:text-emerald-300">{correctVal || '---'}</span>
+                            Đáp án đúng: <span className="font-semibold text-emerald-800 dark:text-emerald-300">{correctVal || '—'}</span>
                           </div>
                         )}
                       </div>
@@ -513,7 +513,7 @@ export function ExamAttemptReviewModal({ attemptId, onClose }: ExamAttemptReview
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-lg bg-white dark:bg-slate-800 px-3 py-1 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 shadow-2xs">
                   <Clock className="w-3.5 h-3.5 text-blue-600" />
-                  Nộp bài: {data.attemptInfo?.submittedAt ? new Date(data.attemptInfo.submittedAt).toLocaleString('vi-VN') : '---'}
+                  Nộp bài: {data.attemptInfo?.submittedAt ? new Date(data.attemptInfo.submittedAt).toLocaleString('vi-VN') : '—'}
                 </span>
               </div>
 

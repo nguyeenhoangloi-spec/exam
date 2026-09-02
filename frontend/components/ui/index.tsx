@@ -5,6 +5,7 @@ export * from './Badge';
 export * from './CategoryBadge';
 export * from './DeadlineBadge';
 export * from './IdentifierBadge';
+export * from './InlineMeta';
 export * from './Tabs';
 export * from './FilterSelect';
 export { TabBar } from './TabBar';

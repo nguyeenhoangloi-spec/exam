@@ -148,7 +148,7 @@ export function ExamScheduleTable({
   const allSelected = schedules.length > 0 && selected.length === schedules.length;
 
   const formatDate = (dateStr?: string) => {
-    if (!dateStr) return '---';
+    if (!dateStr) return '—';
     try {
       const d = new Date(dateStr);
       if (isNaN(d.getTime())) return dateStr;

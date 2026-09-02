@@ -607,7 +607,7 @@ function TrashPageContent() {
                       </td>
                       {visibleColumns.deletedAt && (
                         <td className="table-meta px-5 font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap py-3.5 text-type-body-sm">
-                          {item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '---'}
+                          {item.deletedAt ? new Date(item.deletedAt).toLocaleString('vi-VN') : '—'}
                         </td>
                       )}
                       {visibleColumns.expiresIn && (
@@ -721,9 +721,9 @@ function TrashPageContent() {
           label: 'Đã xóa tạm thời',
         }}
         details={[
-          { label: 'Danh mục dữ liệu', value: categoryLabelMap[detailItem?.type || ''] || detailItem?.type || '---' },
+          { label: 'Danh mục dữ liệu', value: categoryLabelMap[detailItem?.type || ''] || detailItem?.type || '—' },
           ...(detailItem?.subTitle ? [{ label: 'Mô tả / Kỳ thi', value: detailItem.subTitle }] : []),
-          { label: 'Thời điểm xóa', value: detailItem?.deletedAt ? new Date(detailItem.deletedAt).toLocaleString('vi-VN') : '---' },
+          { label: 'Thời điểm xóa', value: detailItem?.deletedAt ? new Date(detailItem.deletedAt).toLocaleString('vi-VN') : '—' },
           { label: 'Người thực hiện xóa', value: detailItem?.deletedBy || 'Hệ thống' },
         ]}
         extraSections={[

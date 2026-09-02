@@ -195,7 +195,7 @@ export function ReviewSupervisorChangeModal({
             <div className="flex items-center gap-3 text-type-helper text-slate-600 dark:text-slate-300 flex-wrap">
               <span className="flex items-center gap-1 font-medium">
                 <Calendar className="h-3.5 w-3.5 text-blue-500 shrink-0" />
-                <span>{schedule?.examDate ? new Date(schedule.examDate).toLocaleDateString('vi-VN') : '---'}</span>
+                <span>{schedule?.examDate ? new Date(schedule.examDate).toLocaleDateString('vi-VN') : '—'}</span>
               </span>
               <span className="flex items-center gap-1 font-medium text-blue-600 dark:text-blue-400">
                 <Clock className="h-3.5 w-3.5 shrink-0" />
@@ -203,7 +203,7 @@ export function ReviewSupervisorChangeModal({
               </span>
               <span className="flex items-center gap-1">
                 <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                <span>Phòng {room?.roomCode || '---'} {room?.building ? `(${room.building})` : ''}</span>
+                <span>Phòng {room?.roomCode || '—'} {room?.building ? `(${room.building})` : ''}</span>
               </span>
             </div>
 

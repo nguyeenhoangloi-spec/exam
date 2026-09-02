@@ -8,6 +8,7 @@ import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
 import { ProfileDrawer } from '@/components/ProfileDrawer';
 import { Modal } from '@/components/Modal';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { formatTimeRange } from '@/lib/format';
 import {
   Eye,
   EyeOff,
@@ -342,9 +343,9 @@ export default function StudentExamLobbyPage() {
   const studentCode = student?.studentCode || 'SV2024201';
   const studentClass = student?.className || student?.classCode || student?.class?.name || 'CNTT-K65';
   const rawExamNum = student?.examNumber || eligibility?.roomStudentInfo?.examNumber;
-  const examNumber = rawExamNum && rawExamNum !== 'Chưa cấp' && rawExamNum !== '---'
+  const examNumber = rawExamNum && rawExamNum !== 'Chưa cấp' && rawExamNum !== '—'
     ? rawExamNum
-    : `SBD-${studentCode !== '---' ? studentCode : 'SV2024201'}`;
+    : `SBD-${studentCode !== '—' ? studentCode : 'SV2024201'}`;
 
   const rawSeatNum = student?.seatNumber || eligibility?.roomStudentInfo?.seatNumber;
   const seatNumber = rawSeatNum && rawSeatNum !== '-' ? rawSeatNum : '12';
@@ -354,7 +355,7 @@ export default function StudentExamLobbyPage() {
   const roomName = rawRoom || 'P.302';
   const building = rawBuilding || 'Tòa A2';
 
-  const timeSlotStr = examInfo?.startTime && examInfo?.endTime ? `${examInfo.startTime} - ${examInfo.endTime}` : '13:10 - 14:10';
+  const timeSlotStr = formatTimeRange(examInfo?.startTime, examInfo?.endTime, '13:10 – 14:10');
   const durationMinutes = examInfo?.durationMinutes || schedule?.onlineExamConfig?.examPaper?.durationMinutes || 60;
 
   const currentExamType = examInfo?.examType || schedule?.examType || eligibilityData?.schedule?.examType || 'TRAC_NGHIEM';
@@ -986,7 +987,7 @@ export default function StudentExamLobbyPage() {
           { label: 'Họ và tên thí sinh', value: fullName, icon: User },
           { label: 'Mã số sinh viên', value: <IdentifierBadge tone="blue">{studentCode}</IdentifierBadge> },
           { label: 'Lớp sinh hoạt', value: studentClass, icon: GraduationCap },
-          { label: 'Môn thi', value: schedule?.subject?.subjectName || examInfo?.subjectName || '---', icon: BookOpen },
+          { label: 'Môn thi', value: schedule?.subject?.subjectName || examInfo?.subjectName || '—', icon: BookOpen },
           { label: 'Mã học phần', value: <IdentifierBadge tone="neutral">{cleanSubjectCode}</IdentifierBadge> },
           { label: 'Phòng thi', value: `${roomName} (${building})`, icon: MapPin },
           { label: 'Số báo danh (SBD)', value: <IdentifierBadge tone="neutral">{examNumber}</IdentifierBadge>, icon: Ticket },

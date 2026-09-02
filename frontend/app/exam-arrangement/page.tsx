@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
@@ -240,22 +242,22 @@ export default function ExamArrangementPage() {
               id: ers.id,
               examNumber: ers.examNumber || ers.student?.studentCode || 'SBN',
               seatNumber: ers.seatNumber,
-              studentCode: ers.student?.studentCode || '---',
-              fullName: ers.student?.fullName || '---',
+              studentCode: ers.student?.studentCode || '—',
+              fullName: ers.student?.fullName || '—',
               className,
               departmentName: deptName,
               requirementType: ers.requirementType || 'MANDATORY',
               requirementLabel: ers.requirementLabel || `${deptName} (Bắt buộc)`,
               roomCode: sr.room?.roomCode || sr.examRoom?.roomCode,
               roomName: sr.room?.roomName || sr.examRoom?.roomName || sr.room?.roomCode,
-              building: sr.room?.building || sr.examRoom?.building || '---',
+              building: sr.room?.building || sr.examRoom?.building || '—',
             });
           });
         });
 
         if (details.length > 0) {
-          const subjCode = currentSched?.subject?.subjectCode || fallbackSched?.subject?.subjectCode || '---';
-          const subjName = currentSched?.subject?.subjectName || fallbackSched?.subject?.subjectName || '---';
+          const subjCode = currentSched?.subject?.subjectCode || fallbackSched?.subject?.subjectCode || '—';
+          const subjName = currentSched?.subject?.subjectName || fallbackSched?.subject?.subjectName || '—';
           const exDate = currentSched?.examDate || fallbackSched?.examDate;
           const sTime = currentSched?.startTime || fallbackSched?.startTime || '';
           const eTime = currentSched?.endTime || fallbackSched?.endTime || '';
@@ -268,7 +270,7 @@ export default function ExamArrangementPage() {
               totalRoomsAssigned: res.data.length,
               subjectCode: subjCode,
               subjectName: subjName,
-              examDate: exDate ? new Date(exDate).toLocaleDateString('vi-VN') : '---',
+              examDate: exDate ? new Date(exDate).toLocaleDateString('vi-VN') : '—',
               timeSlot: `${sTime} - ${eTime}`,
             },
             details,
@@ -546,7 +548,7 @@ export default function ExamArrangementPage() {
       result.summary.examDate ||
       ((currentSched as any)?.examDate
         ? new Date((currentSched as any)?.examDate).toLocaleDateString('vi-VN')
-        : '---');
+        : '—');
     const timeSlot = result.summary.timeSlot || `${currentSched?.startTime || ''} – ${currentSched?.endTime || ''}`;
 
     const targetRoomCode = filterRoomCode === 'ALL' ? roomSummaries[0]?.roomCode || '' : filterRoomCode;
@@ -617,7 +619,7 @@ export default function ExamArrangementPage() {
 
         <div class="meta">
           <strong>Môn thi:</strong> ${escapeHtml(subjectName)} (${escapeHtml(subjectCode)})<br/>
-          <strong>Ngày thi:</strong> ${escapeHtml(examDate)} | <strong>Giờ thi:</strong> ${escapeHtml(timeSlot)}<br/>
+          <strong>Ngày thi:</strong> ${escapeHtml(examDate)}; <strong>Giờ thi:</strong> ${escapeHtml(timeSlot)}<br/>
           <strong>Tổng số thí sinh:</strong> ${filteredStudents.length} sinh viên
         </div>
 
@@ -869,7 +871,7 @@ export default function ExamArrangementPage() {
                   {currentSchedule?.subject?.subjectName || 'Chưa chọn ca thi'}
                 </h2>
                 <span className="text-type-helper font-medium text-slate-400 dark:text-slate-500">
-                  #{currentSchedule?.subject?.subjectCode || '---'}
+                  #{currentSchedule?.subject?.subjectCode || '—'}
                 </span>
                 <button
                   type="button"
@@ -889,11 +891,11 @@ export default function ExamArrangementPage() {
                 )}
                 {currentSchedule?.startTime && currentSchedule?.endTime && (
                   <>
-                    {currentSchedule.examDate && <span>|</span>}
+                    {currentSchedule.examDate && <MetaSeparator />}
                     <span>{currentSchedule.startTime} – {currentSchedule.endTime}</span>
                   </>
                 )}
-                <span>|</span>
+                <MetaSeparator />
                 <span className="font-medium text-slate-700 dark:text-slate-300">
                   {result?.summary?.totalRoomsAssigned || selectedRoomIds.length || 0} phòng thi
                 </span>
@@ -1267,7 +1269,7 @@ export default function ExamArrangementPage() {
                               <span className="text-type-helper text-slate-400 dark:text-slate-500">
                                 (Mã: {room.roomCode}{room.building ? `, Tòa ${room.building}` : ''})
                               </span>
-                              <span className="text-slate-300 dark:text-slate-600">|</span>
+                              <MetaSeparator />
                               <span className="text-type-helper text-slate-500 dark:text-slate-400">
                                 Ghép {classBreakdowns.length} lớp học phần
                               </span>
@@ -1440,9 +1442,9 @@ export default function ExamArrangementPage() {
           { label: 'Mã số sinh viên', value: drawerStudentDetail?.studentCode, icon: User },
           { label: 'Số báo danh (SBD)', value: drawerStudentDetail?.examNumber, icon: ShieldCheck },
           { label: 'Vị trí chỗ ngồi', value: `Ghế #${drawerStudentDetail?.seatNumber || '--'}`, icon: DoorOpen },
-          { label: 'Phòng thi', value: `${drawerStudentDetail?.roomName || drawerStudentDetail?.roomCode || '---'} ${drawerStudentDetail?.building ? `(${drawerStudentDetail.building})` : ''}`, icon: Building2 },
-          { label: 'Lớp sinh hoạt', value: drawerStudentDetail?.className || '---', icon: GraduationCap },
-          { label: 'Khoa / Viện', value: drawerStudentDetail?.departmentName || '---', icon: Building2 },
+          { label: 'Phòng thi', value: `${drawerStudentDetail?.roomName || drawerStudentDetail?.roomCode || '—'} ${drawerStudentDetail?.building ? `(${drawerStudentDetail.building})` : ''}`, icon: Building2 },
+          { label: 'Lớp sinh hoạt', value: drawerStudentDetail?.className || '—', icon: GraduationCap },
+          { label: 'Khoa / Viện', value: drawerStudentDetail?.departmentName || '—', icon: Building2 },
         ]}
       />
 

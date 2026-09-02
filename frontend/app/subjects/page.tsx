@@ -359,7 +359,7 @@ export default function SubjectsPage() {
       s.subjectCode,
       s.subjectName,
       `${s.credits} TC`,
-      s.department?.name || '---',
+      s.department?.name || '—',
       s._count?.studentSubjects || 0,
     ]);
 
@@ -612,7 +612,7 @@ export default function SubjectsPage() {
                 s.subjectCode,
                 s.name,
                 String(s.credits),
-                s.department?.name || '---',
+                s.department?.name || '—',
               ]),
             });
           }}
@@ -763,7 +763,7 @@ export default function SubjectsPage() {
                 <option value="">-- Chọn lớp để gán --</option>
                 {classes.map((c: any) => (
                   <option key={c.id} value={String(c.id)}>
-                    {c.name} ({c.code}){c.department?.name ? ` – ${c.department.name}` : ''} | {c._count?.students ?? c.students?.length ?? 0} SV
+                    {c.name} ({c.code}){c.department?.name ? ` – ${c.department.name}` : ''}, {c._count?.students ?? c.students?.length ?? 0} sinh viên
                   </option>
                 ))}
               </FilterSelect>

@@ -543,7 +543,7 @@ export function generateUnifiedExamPaperHtml(
                 MÔN THI: <span style="text-transform:uppercase;">${escapeHtml(paper.subjectName)}</span> (${escapeHtml(paper.subjectCode)})
               </td>
               <td style="border:none; padding:0; text-align:right;">
-                MÃ ĐỀ THI: <strong>${escapeHtml(paper.paperCode)}</strong> | THỜI GIAN: ${paper.durationMinutes} PHÚT
+                MÃ ĐỀ THI: <strong>${escapeHtml(paper.paperCode)}</strong>; THỜI GIAN: ${paper.durationMinutes} PHÚT
               </td>
             </tr>
           </table>

@@ -124,7 +124,7 @@ export function TeacherTable({
                   <td className="p-3.5 min-w-[160px]">
                     <div className="flex items-center gap-1.5">
                       <Building2 className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                      <span className="text-slate-700 font-normal">{t.department?.name || '---'}</span>
+                      <span className="text-slate-700 font-normal">{t.department?.name || '—'}</span>
                     </div>
                   </td>
                 )}
@@ -142,7 +142,7 @@ export function TeacherTable({
                   <td className="p-3.5 whitespace-nowrap">
                     <div className="flex items-center gap-1.5">
                       <Phone className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                      <span className="text-slate-600">{t.phone || '---'}</span>
+                      <span className="text-slate-600">{t.phone || '—'}</span>
                     </div>
                   </td>
                 )}

@@ -1,4 +1,6 @@
 'use client';
+
+import { MetaSeparator } from '@/components/ui/InlineMeta';
 import { FilterSelect } from '../ui/FilterSelect';
 
 import React, { FormEvent, useState, useRef, useEffect, useCallback } from 'react';
@@ -205,7 +207,7 @@ export function ExamPaperMatrixForm({
           >
             60 phút
           </button>
-          <span className="text-slate-300 dark:text-slate-700">|</span>
+          <MetaSeparator />
           <button
             type="button"
             onClick={() => handleDurationChange('90')}
@@ -392,7 +394,7 @@ export function ExamPaperMatrixForm({
                     <div>
                       <p className="text-type-card font-semibold text-slate-900 dark:text-white tracking-tight">Chọn ca thi / lịch thi</p>
                       <p className="text-type-helper font-normal text-slate-500 dark:text-slate-400 mt-0.5">
-                        {pending.length} ca chưa có đề | {created.length} ca đã có đề
+                        {pending.length} ca chưa có đề, {created.length} ca đã có đề
                       </p>
                     </div>
                     <button

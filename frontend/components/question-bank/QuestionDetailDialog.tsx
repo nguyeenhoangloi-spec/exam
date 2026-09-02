@@ -305,7 +305,7 @@ export function QuestionDetailDialog({
                   { label: 'Điểm số mặc định', value: scoreText, icon: Award },
                   { label: 'Chủ đề / Bài học', value: topicText, icon: BookOpen },
                   { label: 'Người tạo', value: creatorName, icon: User },
-                  { label: 'Ngày khởi tạo', value: question.createdAt ? new Date(question.createdAt).toLocaleDateString('vi-VN') : '---', icon: Calendar },
+                  { label: 'Ngày khởi tạo', value: question.createdAt ? new Date(question.createdAt).toLocaleDateString('vi-VN') : '—', icon: Calendar },
                 ].map((r) => {
                   const Icon = r.icon;
                   return (

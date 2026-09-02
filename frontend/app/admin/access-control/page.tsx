@@ -51,6 +51,7 @@ import { UserRoleFilterPopover } from '../../../components/access-control/UserRo
 import { AccessHistoryFilterPopover, AccessHistoryFilterState } from '../../../components/access-control/AccessHistoryFilterPopover';
 import { PermissionOverrideSelect } from '../../../components/access-control/PermissionOverrideSelect';
 import { PageSkeleton } from '../../../components/ui/Skeleton';
+import { InlineMeta } from '../../../components/ui/InlineMeta';
 
 type Role = 'ADMIN' | 'TEACHER' | 'STUDENT';
 type Tab = 'matrix' | 'users' | 'history';
@@ -1363,9 +1364,10 @@ export default function AccessControlPage() {
                                   {ROLE_LABEL[selectedUser.role]}
                                 </span>
                               </div>
-                              <p className="table-meta text-slate-400 font-normal truncate">
-                                {selectedUser.username} | {selectedUser.email} | {accountContext(selectedUser)}
-                              </p>
+                              <InlineMeta
+                                className="table-meta text-slate-400 font-normal"
+                                items={[selectedUser.username, selectedUser.email, accountContext(selectedUser)]}
+                              />
                             </div>
                           </div>
 
@@ -1468,7 +1470,7 @@ export default function AccessControlPage() {
                                 Hồ sơ sinh viên
                               </h3>
                               <p className="text-type-helper text-slate-500 dark:text-slate-400 font-normal leading-relaxed">
-                                {accountContext(selectedUser)} | Quyền truy cập được tự động xác định theo lịch đăng ký thi của sinh viên.
+                                {accountContext(selectedUser)}. Quyền truy cập được tự động xác định theo lịch đăng ký thi của sinh viên.
                               </p>
                             </div>
 

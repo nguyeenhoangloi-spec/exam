@@ -585,6 +585,10 @@ html.dark {
     @apply transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/40;
   }
 
+  .ui-meta-separator {
+    @apply mx-2 inline-block h-3.5 w-px shrink-0 bg-slate-200 align-middle dark:bg-slate-700;
+  }
+
   /* EDU Typography System Scale Classes */
   .edu-page-title {
     font-size: var(--fs-page-title);

@@ -29,6 +29,7 @@ import { SupervisorChangeRequestModal } from '../../../components/exam-superviso
 import { ViewModeSegmentedControl } from '../../../components/ui/ViewModeSegmentedControl';
 import { TeacherAssignmentCalendarView } from '../../../components/teacher/TeacherAssignmentCalendarView';
 import { PageSkeleton } from '../../../components/ui/Skeleton';
+import { formatTimeRange } from '../../../lib/format';
 import {
   ShieldCheck,
   Calendar,
@@ -146,8 +147,8 @@ export default function TeacherAssignmentsPage() {
       isOpen: true,
       title: isConfirm ? 'Xác nhận tham gia ca coi thi?' : 'Gửi yêu cầu đổi ca coi thi?',
       message: isConfirm
-        ? `Bạn có chắc chắn xác nhận tham gia ca coi thi môn ${item?.subjectName || ''} (${item?.startTime || ''} - ${item?.endTime || ''}, phòng ${item?.roomName || item?.roomCode || ''})?`
-        : `Bạn có chắc chắn gửi yêu cầu xin đổi ca coi thi môn ${item?.subjectName || ''} (${item?.startTime || ''} - ${item?.endTime || ''}, phòng ${item?.roomName || item?.roomCode || ''})?`,
+        ? `Bạn có chắc chắn xác nhận tham gia ca coi thi môn ${item?.subjectName || ''} (${formatTimeRange(item?.startTime, item?.endTime)}, phòng ${item?.roomName || item?.roomCode || ''})?`
+        : `Bạn có chắc chắn gửi yêu cầu xin đổi ca coi thi môn ${item?.subjectName || ''} (${formatTimeRange(item?.startTime, item?.endTime)}, phòng ${item?.roomName || item?.roomCode || ''})?`,
       type: isConfirm ? 'success' : 'warning',
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, isOpen: false }));
@@ -187,7 +188,7 @@ export default function TeacherAssignmentsPage() {
         metaInfo: [
           { label: 'Môn thi', value: `${data.schedule.subjectCode} - ${data.schedule.subjectName}` },
           { label: 'Ngày thi', value: new Date(data.schedule.examDate).toLocaleDateString('vi-VN') },
-          { label: 'Ca thi / Khung giờ', value: `${data.schedule.startTime} - ${data.schedule.endTime}` },
+          { label: 'Ca thi / Khung giờ', value: formatTimeRange(data.schedule.startTime, data.schedule.endTime) },
           { label: 'Phòng thi', value: `${data.room.roomCode} (${data.room.building || 'Nhà A'})` },
           { label: 'Cán bộ coi thi', value: data.role === 'SUPERVISOR_1' ? 'Giám thị 1 (Chính)' : 'Giám thị 2' },
           { label: 'Tổng số thí sinh', value: `${data.students?.length || 0} thí sinh` },
@@ -208,7 +209,7 @@ export default function TeacherAssignmentsPage() {
           st.seatNumber || idx + 1,
           st.studentCode,
           st.fullName,
-          st.className || '---',
+          st.className || '—',
           '',
           '',
         ]),
@@ -248,7 +249,7 @@ export default function TeacherAssignmentsPage() {
         a.role === 'SUPERVISOR_1' ? 'Cán bộ coi thi 1' : a.role === 'SUPERVISOR_2' ? 'Cán bộ coi thi 2' : 'Giám sát',
         a.status === 'CONFIRMED' ? 'Đã xác nhận' : a.status === 'CHANGE_REQUESTED' ? 'Xin đổi ca' : 'Chờ xác nhận',
         new Date(a.examDate).toLocaleDateString('vi-VN'),
-        `${a.startTime} - ${a.endTime}`,
+        formatTimeRange(a.startTime, a.endTime),
         a.roomName || a.roomCode,
         a.building || '',
       ]),
@@ -282,7 +283,7 @@ export default function TeacherAssignmentsPage() {
         a.subjectCode,
         a.subjectName,
         new Date(a.examDate).toLocaleDateString('vi-VN'),
-        `${a.startTime} - ${a.endTime}`,
+        formatTimeRange(a.startTime, a.endTime),
         a.roomName || a.roomCode,
         a.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
         a.status === 'CONFIRMED' ? 'Đã xác nhận' : a.status === 'CHANGE_REQUESTED' ? 'Xin đổi ca' : 'Chờ xác nhận',
@@ -730,9 +731,9 @@ export default function TeacherAssignmentsPage() {
               idx + 1,
               item.subjectCode,
               item.subjectName,
-              item.examDate ? new Date(item.examDate).toLocaleDateString('vi-VN') : '---',
-              `${item.startTime} - ${item.endTime}`,
-              item.roomName || '---',
+              item.examDate ? new Date(item.examDate).toLocaleDateString('vi-VN') : '—',
+              formatTimeRange(item.startTime, item.endTime),
+              item.roomName || '—',
               item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
               item.status === 'CONFIRMED' ? 'Đã xác nhận' : 'Chờ xác nhận',
             ]);
@@ -765,8 +766,8 @@ export default function TeacherAssignmentsPage() {
                 idx + 1,
                 item.subjectCode,
                 item.subjectName,
-                `${item.startTime}-${item.endTime} (${item.examDate ? new Date(item.examDate).toLocaleDateString('vi-VN') : ''})`,
-                item.roomName || '---',
+                `${formatTimeRange(item.startTime, item.endTime)} (${item.examDate ? new Date(item.examDate).toLocaleDateString('vi-VN') : '—'})`,
+                item.roomName || '—',
                 item.role === 'SUPERVISOR_1' ? 'Giám thị 1' : 'Giám thị 2',
               ]),
             });
@@ -802,7 +803,7 @@ export default function TeacherAssignmentsPage() {
             icon: CheckCircle2,
           },
           { label: 'Ngày thi', value: drawerDuty?.examDate ? new Date(drawerDuty.examDate).toLocaleDateString('vi-VN') : '', icon: Calendar },
-          { label: 'Thời gian làm bài', value: `${drawerDuty?.startTime} - ${drawerDuty?.endTime}`, icon: Clock },
+          { label: 'Thời gian làm bài', value: formatTimeRange(drawerDuty?.startTime, drawerDuty?.endTime), icon: Clock },
           { label: 'Phòng thi phân công', value: drawerDuty?.roomName || drawerDuty?.roomCode, icon: DoorOpen },
           { label: 'Tòa nhà / Địa điểm', value: drawerDuty?.building || 'Nhà A1', icon: MapPin },
         ]}

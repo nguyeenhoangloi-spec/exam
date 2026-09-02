@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   KeyRound,
@@ -225,13 +227,13 @@ export function ExamPaperDetailDrawer({
               <span className="text-slate-800 dark:text-slate-200">{periodName}</span>
               {paper?.questionCount ? (
                 <>
-                  <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
+                  <MetaSeparator />
                   <span>{paper.questionCount} câu hỏi</span>
                 </>
               ) : null}
               {paper?.durationMinutes ? (
                 <>
-                  <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
+                  <MetaSeparator />
                   <span>{paper.durationMinutes} phút</span>
                 </>
               ) : null}
@@ -394,11 +396,11 @@ export function ExamPaperDetailDrawer({
                           <span className="font-semibold text-slate-900 dark:text-slate-100">
                             {q.code || `Q${originalIndex + 1}`}
                           </span>
-                          <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
+                          <MetaSeparator />
                           <span className="text-slate-600 dark:text-slate-300">{getTypeLabel(q.type)}</span>
-                          <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
+                          <MetaSeparator />
                           <span className={diff.className}>{diff.text}</span>
-                          <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
+                          <MetaSeparator />
                           <span className="font-semibold text-blue-600 dark:text-blue-400 tabular-nums">
                             {score} điểm
                           </span>

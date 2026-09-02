@@ -386,7 +386,7 @@ export default function StudentResultsPage() {
         r.periodName,
         new Date(r.examDate).toLocaleDateString('vi-VN'),
         r.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm' : r.examType === 'TU_LUAN' ? 'Tự luận' : 'Hỗn hợp',
-        r.score !== null ? r.score.toFixed(1) : '---',
+        r.score !== null ? r.score.toFixed(1) : '—',
         r.status === 'PASSED' ? 'Đạt' : r.status === 'FAILED' ? 'Chưa đạt' : r.status === 'GRADING' ? 'Đang chấm' : 'Chờ công bố',
       ]),
     });
@@ -395,7 +395,7 @@ export default function StudentResultsPage() {
   const handlePrintReport = () => {
     printReport({
       title: 'BÁO CÁO KẾT QUẢ THI SINH VIÊN',
-      subtitle: `Sinh viên: ${studentInfo?.fullName || ''} (${studentInfo?.studentCode || ''}) - Lớp: ${studentInfo?.className || ''} - Khoa: ${studentInfo?.departmentName || ''}`,
+      subtitle: `Sinh viên: ${studentInfo?.fullName || ''} (${studentInfo?.studentCode || ''}), lớp: ${studentInfo?.className || ''}, khoa: ${studentInfo?.departmentName || ''}`,
       facultyName: 'PHÒNG ĐÀO TẠO & KHẢO THÍ',
       metaInfo: [
         { label: 'Số môn đã thi', value: `${stats.totalExams} môn` },
@@ -420,7 +420,7 @@ export default function StudentResultsPage() {
         r.periodName,
         new Date(r.examDate).toLocaleDateString('vi-VN'),
         r.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm' : r.examType === 'TU_LUAN' ? 'Tự luận' : 'Hỗn hợp',
-        r.score !== null ? r.score.toFixed(1) : '---',
+        r.score !== null ? r.score.toFixed(1) : '—',
         r.status === 'PASSED' ? 'Đạt' : r.status === 'FAILED' ? 'Chưa đạt' : r.status === 'GRADING' ? 'Đang chấm' : 'Chờ công bố',
       ]),
       signers: [
@@ -517,13 +517,13 @@ export default function StudentResultsPage() {
             </h1>
             <div className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-1">
               <span>
-                Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || '---'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '---'}</IdentifierBadge>
+                Sinh viên: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.fullName || '—'}</strong> <IdentifierBadge tone="neutral">{studentInfo?.studentCode || '—'}</IdentifierBadge>
               </span>
               <span>
-                Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || '---'}</strong>
+                Lớp: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{studentInfo?.className || studentInfo?.classCode || '—'}</strong>
               </span>
               <span>
-                Khoa: <span className="text-slate-700 dark:text-slate-300 font-medium">{studentInfo?.departmentName || studentInfo?.departmentCode || '---'}</span>
+                Khoa: <span className="text-slate-700 dark:text-slate-300 font-medium">{studentInfo?.departmentName || studentInfo?.departmentCode || '—'}</span>
               </span>
             </div>
           </div>
@@ -773,7 +773,7 @@ export default function StudentResultsPage() {
                               {item.score.toFixed(1)}
                             </span>
                           ) : (
-                            <span className="table-meta text-slate-400 font-normal text-type-body-sm leading-[22px] italic">---</span>
+                            <span className="table-meta text-slate-400 font-normal text-type-body-sm leading-[22px] italic">—</span>
                           )}
                         </td>
                       )}
@@ -844,8 +844,8 @@ export default function StudentResultsPage() {
               item.subjectName,
               item.credits,
               item.periodName,
-              item.examDate ? new Date(item.examDate).toLocaleDateString('vi-VN') : '---',
-              item.score !== null ? item.score.toFixed(1) : '---',
+              item.examDate ? new Date(item.examDate).toLocaleDateString('vi-VN') : '—',
+              item.score !== null ? item.score.toFixed(1) : '—',
               item.status === 'PASSED' ? 'Đạt' : item.status === 'FAILED' ? 'Chưa đạt' : 'Chờ điểm',
             ]);
             exportToFormattedExcel({
@@ -878,7 +878,7 @@ export default function StudentResultsPage() {
                 item.subjectCode,
                 item.subjectName,
                 String(item.credits),
-                item.score !== null ? item.score.toFixed(1) : '---',
+                item.score !== null ? item.score.toFixed(1) : '—',
                 item.status === 'PASSED' ? 'Đạt' : item.status === 'FAILED' ? 'Chưa đạt' : 'Chờ điểm',
               ]),
             });
@@ -899,13 +899,13 @@ export default function StudentResultsPage() {
           } : undefined}
           details={[
             { label: 'Môn thi', value: detailItem?.subjectName, icon: BookOpen },
-            { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{detailItem?.subjectCode || '---'}</IdentifierBadge> },
+            { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{detailItem?.subjectCode || '—'}</IdentifierBadge> },
             { label: 'Kỳ thi', value: `${detailItem?.schoolYear} – ${detailItem?.semester}` },
             { label: 'Số tín chỉ', value: `${detailItem?.credits} tín chỉ` },
             { label: 'Ngày thi', value: detailItem?.examDate ? new Date(detailItem.examDate).toLocaleDateString('vi-VN') : '', icon: Calendar },
             { label: 'Hình thức thi', value: detailItem ? formatExamType(detailItem.examType) : '', icon: GraduationCap },
             { label: 'Phòng thi', value: detailItem?.roomName ? <IdentifierBadge tone="neutral">{detailItem.roomName}</IdentifierBadge> : 'Tự do', icon: BookOpen },
-            { label: 'Thời gian nộp bài', value: detailItem?.submissionTime ? new Date(detailItem.submissionTime).toLocaleString('vi-VN') : '---', icon: Clock },
+            { label: 'Thời gian nộp bài', value: detailItem?.submissionTime ? new Date(detailItem.submissionTime).toLocaleString('vi-VN') : '—', icon: Clock },
           ]}
           extraSections={detailItem ? [
             {

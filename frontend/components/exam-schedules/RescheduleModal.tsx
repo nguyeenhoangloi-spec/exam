@@ -17,10 +17,10 @@ interface RescheduleModalProps {
 }
 
 const QUICK_SHIFTS = [
-  { label: 'Ca 1', time: '07:30 - 09:00', start: '07:30', end: '09:00' },
-  { label: 'Ca 2', time: '09:30 - 11:00', start: '09:30', end: '11:00' },
-  { label: 'Ca 3', time: '13:30 - 15:00', start: '13:30', end: '15:00' },
-  { label: 'Ca 4', time: '15:30 - 17:00', start: '15:30', end: '17:00' },
+  { label: 'Ca 1', time: '07:30 – 09:00', start: '07:30', end: '09:00' },
+  { label: 'Ca 2', time: '09:30 – 11:00', start: '09:30', end: '11:00' },
+  { label: 'Ca 3', time: '13:30 – 15:00', start: '13:30', end: '15:00' },
+  { label: 'Ca 4', time: '15:30 – 17:00', start: '15:30', end: '17:00' },
 ];
 
 const QUICK_REASONS = [
@@ -127,7 +127,7 @@ export function RescheduleModal({
 
   const oldDateFormatted = schedule.examDate
     ? new Date(schedule.examDate).toLocaleDateString('vi-VN')
-    : '---';
+    : '—';
 
   const isCurrentShift = (start: string, end: string) =>
     newStartTime === start && newEndTime === end;

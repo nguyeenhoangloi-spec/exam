@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 export const dynamic = 'force-dynamic';
 
 import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
@@ -622,7 +624,7 @@ export default function BackupsPage() {
                         )}
                     </div>
                     <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
-                        Vận hành an toàn database, file upload và {jobs.length} bản snapshot hệ thống{overview?.totalBytes ? ` | Dung lượng: ${formatBytes(overview.totalBytes)}` : ''}
+                        Vận hành an toàn database, file upload và {jobs.length} bản snapshot hệ thống{overview?.totalBytes ? `, dung lượng: ${formatBytes(overview.totalBytes)}` : ''}
                     </p>
                 </div>
 
@@ -1209,7 +1211,7 @@ export default function BackupsPage() {
                             {selectedJob?.snapshotId}
                         </p>
                         <p className="text-type-helper font-semibold text-slate-500 mt-0.5">
-                            {formatDate(selectedJob?.completedAt)} | {formatBytes(selectedJob?.sizeBytes)}
+                            {formatDate(selectedJob?.completedAt)} <MetaSeparator /> {formatBytes(selectedJob?.sizeBytes)}
                         </p>
                     </div>
 

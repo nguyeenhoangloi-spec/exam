@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import React, { useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import {
@@ -163,7 +165,7 @@ export function ExamArchiveDetailModal({ attemptId, isOpen, onClose }: ExamArchi
               </h3>
               <p className="text-type-meta text-slate-500 dark:text-slate-400 truncate mt-0.5">
                 {data
-                  ? `${data.student.fullName} (${data.student.studentCode}) | ${data.schedule.subjectName}`
+                  ? `${data.student.fullName} (${data.student.studentCode}), ${data.schedule.subjectName}`
                   : 'Đang nạp dữ liệu hồ sơ...'}
               </p>
             </div>
@@ -192,17 +194,17 @@ export function ExamArchiveDetailModal({ attemptId, isOpen, onClose }: ExamArchi
                   <div className="flex flex-wrap items-center gap-2 text-type-body font-medium text-slate-900 dark:text-slate-100">
                     <span className="font-semibold text-slate-900 dark:text-slate-100 text-type-title-sm">{data.student.fullName}</span>
                     <span className="text-type-meta tabular-nums text-slate-500 font-normal">({data.student.studentCode})</span>
-                    <span className="text-slate-300 dark:text-slate-700">|</span>
+                    <MetaSeparator />
                     <span className="text-type-meta text-slate-700 dark:text-slate-300 font-normal">{data.student.className}</span>
                     {data.student.departmentName && (
                       <>
-                        <span className="text-slate-300 dark:text-slate-700">|</span>
+                        <MetaSeparator />
                         <span className="text-type-meta text-slate-700 dark:text-slate-300 font-normal">{data.student.departmentName}</span>
                       </>
                     )}
                   </div>
                   <p className="text-type-meta text-slate-500 dark:text-slate-400">
-                    Học phần: <strong className="font-medium text-slate-900 dark:text-slate-100">{data.schedule.subjectName}</strong> ({data.schedule.subjectCode}) | Nộp bài lúc {data.submission.submittedAt ? new Date(data.submission.submittedAt).toLocaleTimeString('vi-VN') : '—'}, {data.submission.submittedAt ? new Date(data.submission.submittedAt).toLocaleDateString('vi-VN') : ''}
+                    Học phần: <strong className="font-medium text-slate-900 dark:text-slate-100">{data.schedule.subjectName}</strong> ({data.schedule.subjectCode}), nộp bài lúc {data.submission.submittedAt ? new Date(data.submission.submittedAt).toLocaleTimeString('vi-VN') : '—'}, {data.submission.submittedAt ? new Date(data.submission.submittedAt).toLocaleDateString('vi-VN') : ''}
                   </p>
                 </div>
 
@@ -269,7 +271,8 @@ export function ExamArchiveDetailModal({ attemptId, isOpen, onClose }: ExamArchi
                                 Câu {q.index}
                               </span>
                               <span className="text-type-meta tabular-nums text-slate-400">[{q.code}]</span>
-                              <span className="text-type-meta text-slate-500">| {q.maxScore} điểm</span>
+                              <MetaSeparator />
+                              <span className="text-type-meta text-slate-500">{q.maxScore} điểm</span>
                             </div>
                             <p className="text-type-body font-normal text-slate-900 dark:text-slate-100 whitespace-pre-wrap leading-relaxed">
                               {q.content}

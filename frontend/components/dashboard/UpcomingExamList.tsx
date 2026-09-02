@@ -7,6 +7,7 @@ import { StatusBadge } from '../common/StatusBadge';
 import type { DashboardOverview } from '../../types/dashboard';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { CardActionLink } from '../ui/CardActionLink';
+import { formatTimeRange } from '../../lib/format';
 
 export function UpcomingExamList({
   exams,
@@ -24,7 +25,7 @@ export function UpcomingExamList({
           const parts = ex.examDate.split('T')[0].split('-');
           return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : ex.examDate;
         })() : 'Chưa xếp',
-        time: ex.startTime ? `${ex.startTime} - ${ex.endTime}` : 'Tự do',
+        time: ex.startTime ? formatTimeRange(ex.startTime, ex.endTime) : 'Tự do',
         rooms: ex.roomCodes?.length ? ex.roomCodes.join(', ') : 'Chưa xếp phòng',
         students: ex.studentCount ?? 0,
         status: ex.status || 'UPCOMING',

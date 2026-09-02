@@ -500,7 +500,7 @@ export class ExamArrangementService {
 
     const busyMap = new Map<number, string>();
     overlappingScheduleRooms.forEach((osr) => {
-      const subjCode = osr.examSchedule.subject?.subjectCode || '---';
+      const subjCode = osr.examSchedule.subject?.subjectCode || '—';
       busyMap.set(osr.roomId, subjCode);
     });
 

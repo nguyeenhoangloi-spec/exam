@@ -1088,7 +1088,7 @@ export default function StudentExamTakePage() {
           status: 'IN_PROGRESS',
         }}
         details={[
-          { label: 'Tên đề thi', value: attemptData?.paperTitle || '---', icon: BookOpen },
+          { label: 'Tên đề thi', value: attemptData?.paperTitle || '—', icon: BookOpen },
           { label: 'Tổng số câu hỏi', value: `${questions?.length || 0} câu hỏi`, icon: Layers },
           { label: 'Tiến độ làm bài', value: `${answeredCount} / ${totalCount} câu đã trả lời` },
           { label: 'Thời gian còn lại', value: formatTime(remainingSeconds), icon: Clock },

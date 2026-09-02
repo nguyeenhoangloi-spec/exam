@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '../ui/Button';
 import {
@@ -292,7 +294,7 @@ export function DynamicReportBuilderTab({
       const rows = computedTableData.map((row) =>
         activeCols.map((c) => {
           const val = row[c.id] ?? row[c.key];
-          return val !== undefined && val !== null ? val : '---';
+          return val !== undefined && val !== null ? val : '—';
         })
       );
 
@@ -363,7 +365,7 @@ export function DynamicReportBuilderTab({
       const rows = computedTableData.map((row) =>
         activeCols.map((c) => {
           const val = row[c.id] ?? row[c.key];
-          return val !== undefined && val !== null ? val : '---';
+          return val !== undefined && val !== null ? val : '—';
         })
       );
 
@@ -717,7 +719,7 @@ export function DynamicReportBuilderTab({
                                 : 'text-slate-900 dark:text-slate-100'
                             }`}
                           >
-                            {val !== undefined && val !== null ? String(val) : '---'}
+                            {val !== undefined && val !== null ? String(val) : '—'}
                           </td>
                         );
                       })}
@@ -736,11 +738,11 @@ export function DynamicReportBuilderTab({
                       className="py-2.5 px-3 text-right text-slate-700 dark:text-slate-300 tabular-nums"
                     >
                       Điểm TB: <span className="font-semibold text-blue-600">{summaryStats.avg}</span>
-                      <span className="mx-2 text-slate-300 dark:text-slate-600">|</span>
+                      <MetaSeparator />
                       Cao nhất: <span className="font-semibold text-emerald-600">{summaryStats.max}</span>
-                      <span className="mx-2 text-slate-300 dark:text-slate-600">|</span>
+                      <MetaSeparator />
                       Thấp nhất: <span className="font-semibold text-rose-600">{summaryStats.min}</span>
-                      <span className="mx-2 text-slate-300 dark:text-slate-600">|</span>
+                      <MetaSeparator />
                       Đạt: <span className="font-semibold text-emerald-600">{summaryStats.passCount}/{summaryStats.total} ({summaryStats.passRate})</span>
                     </td>
                   </tr>

@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import React, { FormEvent, useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../lib/api';
@@ -793,7 +795,7 @@ export default function ExamPapersPage() {
     const rows = filteredPapers.map((p: any, idx) => [
       idx + 1,
       getPaperCodeRange(p).rangeText,
-      p.subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '---',
+      p.subjectName || (p.examSchedule as any)?.subjectName || (p.examSchedule?.subject as any)?.subjectName || '—',
       p.status === 'PUBLISHED' ? 'Đã phát hành' : p.status === 'DRAFT' ? 'Bản nháp' : p.status === 'ARCHIVED' ? 'Đã lưu trữ' : p.status === 'CANCELLED' ? 'Đã hủy' : 'Chưa xác định',
       p.questionCount ?? p.questions?.length ?? 0,
       `${p.durationMinutes} phút`,
@@ -1160,7 +1162,7 @@ export default function ExamPapersPage() {
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">Câu hỏi đang thay thế:</span>
                 <span className="px-2 py-0.5 ui-pill rounded-full text-type-helper font-medium text-slate-700 dark:text-slate-300">
-                  {swapModal.targetQuestion?.type === 'ESSAY' ? 'Tự luận' : swapModal.targetQuestion?.type === 'FILL_BLANK' ? 'Điền khuyết' : 'Trắc nghiệm'} | {swapModal.targetQuestion?.difficulty || 'Trung bình'}
+                  {swapModal.targetQuestion?.type === 'ESSAY' ? 'Tự luận' : swapModal.targetQuestion?.type === 'FILL_BLANK' ? 'Điền khuyết' : 'Trắc nghiệm'} <MetaSeparator /> {swapModal.targetQuestion?.difficulty || 'Trung bình'}
                 </span>
               </div>
               <p className="text-type-body-sm font-medium text-slate-900 dark:text-slate-100 leading-relaxed italic border-l-2 border-blue-500 pl-3">
@@ -1204,7 +1206,7 @@ export default function ExamPapersPage() {
                       <span className="flex items-center gap-1">
                         Mã: <IdentifierBadge tone="neutral" size="sm">#{altQ.id}</IdentifierBadge>
                       </span>
-                      <span>|</span>
+                      <MetaSeparator />
                       <span>Độ khó: {altQ.difficulty || 'Trung bình'}</span>
                     </div>
                   </div>

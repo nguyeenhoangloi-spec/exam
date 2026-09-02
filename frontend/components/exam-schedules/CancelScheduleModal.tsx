@@ -57,7 +57,7 @@ export function CancelScheduleModal({
 
   const dateFormatted = schedule.examDate
     ? new Date(schedule.examDate).toLocaleDateString('vi-VN')
-    : '---';
+    : '—';
 
   return (
     <Modal

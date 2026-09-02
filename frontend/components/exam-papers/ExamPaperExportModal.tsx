@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import React, { useState, useEffect } from 'react';
 import { Printer, Shuffle } from 'lucide-react';
 import { Modal } from '../Modal';
@@ -69,7 +71,7 @@ export function ExamPaperExportModal({
   const endNum = startNum + count - 1;
 
   // Danh sách các mã đề dự kiến sinh ra
-  const codeRangeLabel = count === 1 ? `${startNum}` : `${startNum} - ${endNum}`;
+  const codeRangeLabel = count === 1 ? `${startNum}` : `${startNum} – ${endNum}`;
 
   const handlePrint = async () => {
     try {
@@ -132,9 +134,9 @@ export function ExamPaperExportModal({
           </div>
           <div className="mt-1 flex items-center gap-2 text-type-helper text-slate-500 dark:text-slate-400">
             <span>Mã gốc: <strong className="text-slate-800 dark:text-slate-200">{basePaper.paperCode}</strong></span>
-            <span>|</span>
+            <MetaSeparator />
             <span>{basePaper.questions.length} câu</span>
-            <span>|</span>
+            <MetaSeparator />
             <span>{basePaper.durationMinutes} phút</span>
           </div>
         </div>

@@ -67,10 +67,10 @@ export function ExamPeriodTable({
   const allSelected = periods.length > 0 && selected.length === periods.length;
 
   const formatDate = (dateStr?: string) => {
-    if (!dateStr) return '---';
+    if (!dateStr) return '—';
     try {
       const d = new Date(dateStr);
-      if (Number.isNaN(d.getTime())) return '---';
+      if (Number.isNaN(d.getTime())) return '—';
       const dd = String(d.getDate()).padStart(2, '0');
       const mm = String(d.getMonth() + 1).padStart(2, '0');
       const yyyy = d.getFullYear();

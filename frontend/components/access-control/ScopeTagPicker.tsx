@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import React, { useState, useMemo } from 'react';
 import { Search, X, CheckSquare, Square } from 'lucide-react';
 
@@ -81,7 +83,7 @@ export function ScopeTagPicker({
           >
             Chọn tất cả
           </button>
-          <span className="text-slate-300 dark:text-slate-600">|</span>
+          <MetaSeparator />
           <button
             type="button"
             onClick={handleClearAll}

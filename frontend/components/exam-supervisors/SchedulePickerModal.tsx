@@ -225,8 +225,8 @@ export function SchedulePickerModal({
                       <span className="font-semibold text-slate-700 dark:text-slate-300">
                         {s.startTime} – {s.endTime}
                       </span>
-                      {dateStr && <span>| Ngày: {dateStr}</span>}
-                      <span>| {totalRooms} phòng thi</span>
+                      {dateStr && <span>Ngày: {dateStr}</span>}
+                      <span>{totalRooms} phòng thi</span>
                     </div>
                   </div>
 

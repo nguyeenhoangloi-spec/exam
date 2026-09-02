@@ -941,7 +941,7 @@ function TeacherEssayGradingContent() {
                         <div className="flex items-center justify-between gap-2 mt-1.5 text-type-helper text-slate-500 dark:text-slate-400">
                           <div className="flex items-center gap-1.5 min-w-0">
                             <IdentifierBadge tone={isCur ? 'blue' : 'neutral'}>
-                              {r.student?.studentCode || '---'}
+                              {r.student?.studentCode || '—'}
                             </IdentifierBadge>
                             <span
                               className="truncate max-w-[110px] font-normal"
@@ -1567,11 +1567,11 @@ function TeacherEssayGradingContent() {
           status: profileCandidate?.gradingStatus || 'NOT_SUBMITTED',
         }}
         details={[
-          { label: 'Họ và tên thí sinh', value: profileCandidate?.student?.fullName || '---' },
-          { label: 'Mã số sinh viên', value: <IdentifierBadge tone="blue">{profileCandidate?.student?.studentCode || '---'}</IdentifierBadge> },
+          { label: 'Họ và tên thí sinh', value: profileCandidate?.student?.fullName || '—' },
+          { label: 'Mã số sinh viên', value: <IdentifierBadge tone="blue">{profileCandidate?.student?.studentCode || '—'}</IdentifierBadge> },
           { label: 'Email sinh viên', value: profileCandidate?.student?.email || 'Chưa cập nhật' },
-          { label: 'Môn thi', value: profileCandidate?.onlineExamConfig?.examSchedule?.subject?.subjectName || profileCandidate?.subjectName || '---' },
-          { label: 'Mã học phần', value: <IdentifierBadge tone="neutral">{profileCandidate?.onlineExamConfig?.examSchedule?.subject?.subjectCode || profileCandidate?.subjectCode || '---'}</IdentifierBadge> },
+          { label: 'Môn thi', value: profileCandidate?.onlineExamConfig?.examSchedule?.subject?.subjectName || profileCandidate?.subjectName || '—' },
+          { label: 'Mã học phần', value: <IdentifierBadge tone="neutral">{profileCandidate?.onlineExamConfig?.examSchedule?.subject?.subjectCode || profileCandidate?.subjectCode || '—'}</IdentifierBadge> },
           { label: 'Trạng thái chấm bài', value: <StatusBadge status={profileCandidate?.gradingStatus || 'NOT_SUBMITTED'} /> },
           {
             label: 'Tổng điểm bài thi',
@@ -1597,7 +1597,7 @@ function TeacherEssayGradingContent() {
             label: 'Thời gian bắt đầu làm',
             value: profileCandidate?.startedAt
               ? new Date(profileCandidate.startedAt).toLocaleString('vi-VN')
-              : '---',
+              : '—',
           },
           {
             label: 'Thời gian nộp bài',

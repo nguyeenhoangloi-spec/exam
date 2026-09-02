@@ -244,10 +244,10 @@ export function ExamScheduleFilterPopover({
 
   const shiftList = [
     { value: '', label: 'Tất cả ca thi', desc: 'Mọi khung giờ ca thi trong ngày' },
-    { value: 'CA_1', label: 'Ca 1 - Sáng', desc: 'Khung giờ: 07:00 - 09:00' },
-    { value: 'CA_2', label: 'Ca 2 - Sáng', desc: 'Khung giờ: 09:30 - 11:30' },
-    { value: 'CA_3', label: 'Ca 3 - Chiều', desc: 'Khung giờ: 13:00 - 15:00' },
-    { value: 'CA_4', label: 'Ca 4 - Chiều', desc: 'Khung giờ: 15:30 - 17:30' },
+    { value: 'CA_1', label: 'Ca 1 - Sáng', desc: 'Khung giờ: 07:00 – 09:00' },
+    { value: 'CA_2', label: 'Ca 2 - Sáng', desc: 'Khung giờ: 09:30 – 11:30' },
+    { value: 'CA_3', label: 'Ca 3 - Chiều', desc: 'Khung giờ: 13:00 – 15:00' },
+    { value: 'CA_4', label: 'Ca 4 - Chiều', desc: 'Khung giờ: 15:30 – 17:30' },
   ];
 
   const applyPreset = (presetType: string) => {

@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { Calendar, Clock, AlertCircle, X, ChevronDown, Check } from 'lucide-react';
 import api from '../../lib/api';
 import { Button } from '../ui';
+import { formatTimeRange } from '../../lib/format';
 
 interface DutyAvailabilityItem {
   id?: number;
@@ -22,9 +23,9 @@ interface DutyAvailabilityModalProps {
 }
 
 const SHIFT_PRESETS = [
-  { id: 'morning', label: 'Ca Sáng', time: '07:30 - 11:30', start: '07:30', end: '11:30' },
-  { id: 'afternoon', label: 'Ca Chiều', time: '13:30 - 17:30', start: '13:30', end: '17:30' },
-  { id: 'all_day', label: 'Cả ngày', time: '07:30 - 17:30', start: '07:30', end: '17:30' },
+  { id: 'morning', label: 'Ca Sáng', time: '07:30 – 11:30', start: '07:30', end: '11:30' },
+  { id: 'afternoon', label: 'Ca Chiều', time: '13:30 – 17:30', start: '13:30', end: '17:30' },
+  { id: 'all_day', label: 'Cả ngày', time: '07:30 – 17:30', start: '07:30', end: '17:30' },
 ];
 
 export function DutyAvailabilityModal({ isOpen, onClose, onSuccess }: DutyAvailabilityModalProps) {
@@ -102,8 +103,8 @@ export function DutyAvailabilityModal({ isOpen, onClose, onSuccess }: DutyAvaila
       });
       onSuccess(
         status === 'AVAILABLE'
-          ? `Đã đăng ký sẵn sàng coi thi ngày ${new Date(examDate).toLocaleDateString('vi-VN')} (${startTime} - ${endTime}).`
-          : `Đã ghi nhận báo bận coi thi ngày ${new Date(examDate).toLocaleDateString('vi-VN')} (${startTime} - ${endTime}).`
+          ? `Đã đăng ký sẵn sàng coi thi ngày ${new Date(examDate).toLocaleDateString('vi-VN')} (${formatTimeRange(startTime, endTime)}).`
+          : `Đã ghi nhận báo bận coi thi ngày ${new Date(examDate).toLocaleDateString('vi-VN')} (${formatTimeRange(startTime, endTime)}).`
       );
       await fetchAvailabilities();
       setActiveTab('history');

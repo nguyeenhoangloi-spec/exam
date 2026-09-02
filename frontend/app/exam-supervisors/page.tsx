@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '../../lib/api';
@@ -27,6 +29,7 @@ import { InlineAutoProposalPanel } from '../../components/exam-supervisors/Inlin
 import { SchedulePickerModal } from '../../components/exam-supervisors/SchedulePickerModal';
 import { ReviewSupervisorChangeModal } from '../../components/exam-supervisors/ReviewSupervisorChangeModal';
 import { PageSkeleton } from '../../components/ui/Skeleton';
+import { formatTimeRange } from '../../lib/format';
 
 function getTeacherInitials(fullName?: string): string {
   if (!fullName) return 'GV';
@@ -371,7 +374,7 @@ export default function ExamSupervisorsPage() {
       filename: `Phan_Cong_Giam_Thi_${selectedSchedule?.subject?.subjectCode || 'CaThi'}_${new Date().toISOString().slice(0, 10)}.xlsx`,
       templateCode: 'SUPERVISOR_ASSIGNMENT',
       title: 'DANH SÁCH PHÂN CÔNG CÁN BỘ COI THI',
-      subtitle: `Ca thi: ${selectedSchedule?.subject?.subjectName || ''} (${selectedSchedule?.subject?.subjectCode || ''}) - Ngày thi: ${selectedSchedule?.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : '---'} - Khung giờ: ${selectedSchedule?.startTime || ''} - ${selectedSchedule?.endTime || ''}`,
+      subtitle: `Ca thi: ${selectedSchedule?.subject?.subjectName || ''} (${selectedSchedule?.subject?.subjectCode || ''}), ngày thi: ${selectedSchedule?.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : '—'}, khung giờ: ${formatTimeRange(selectedSchedule?.startTime, selectedSchedule?.endTime)}`,
       columns: [
         { header: 'STT', align: 'center', width: 6 },
         { header: 'Mã Cán Bộ', align: 'center', width: 14 },
@@ -522,11 +525,11 @@ export default function ExamSupervisorsPage() {
                     )}
                     {selectedSchedule.startTime && (
                       <>
-                        {selectedSchedule.examDate && <span>|</span>}
+                        {selectedSchedule.examDate && <MetaSeparator />}
                         <span>{selectedSchedule.startTime} – {selectedSchedule.endTime}</span>
                       </>
                     )}
-                    <span>|</span>
+                    <MetaSeparator />
                     <span className="font-medium text-slate-700 dark:text-slate-300">
                       {currentRooms.length} phòng thi
                     </span>
@@ -752,11 +755,11 @@ export default function ExamSupervisorsPage() {
           { label: 'Họ và tên cán bộ', value: drawerSupervisor?.teacher?.fullName, icon: GraduationCap },
           { label: 'Mã số cán bộ', value: <IdentifierBadge tone="neutral">{drawerSupervisor?.teacher?.teacherCode || 'GV'}</IdentifierBadge>, icon: GraduationCap },
           { label: 'Học vị / Học hàm', value: drawerSupervisor?.teacher?.degree || 'Thạc sĩ / Tiến sĩ', icon: GraduationCap },
-          { label: 'Khoa / Bộ môn', value: drawerSupervisor?.teacher?.department?.name || '---', icon: GraduationCap },
+          { label: 'Khoa / Bộ môn', value: drawerSupervisor?.teacher?.department?.name || '—', icon: GraduationCap },
           { label: 'Vai trò coi thi', value: drawerSupervisor?.role === 'CHINH' || drawerSupervisor?.role === 'SUPERVISOR_1' ? 'Giám thị chính' : 'Giám thị phụ', icon: ShieldCheck },
           { label: 'Phòng coi thi', value: `${drawerSupervisor?.examScheduleRoom?.room?.roomName || drawerSupervisor?.examScheduleRoom?.room?.roomCode || `Phòng #${drawerSupervisor?.examScheduleRoomId}`} ${drawerSupervisor?.examScheduleRoom?.room?.building ? `(${drawerSupervisor?.examScheduleRoom?.room?.building})` : ''}`, icon: DoorOpen },
-          { label: 'Môn thi', value: drawerSupervisor?.examScheduleRoom?.examSchedule?.subject?.subjectName || selectedSchedule?.subject?.subjectName || '---', icon: Calendar },
-          { label: 'Ngày thi', value: drawerSupervisor?.examScheduleRoom?.examSchedule?.examDate ? new Date(drawerSupervisor?.examScheduleRoom?.examSchedule?.examDate).toLocaleDateString('vi-VN') : selectedSchedule?.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : '---', icon: Calendar },
+          { label: 'Môn thi', value: drawerSupervisor?.examScheduleRoom?.examSchedule?.subject?.subjectName || selectedSchedule?.subject?.subjectName || '—', icon: Calendar },
+          { label: 'Ngày thi', value: drawerSupervisor?.examScheduleRoom?.examSchedule?.examDate ? new Date(drawerSupervisor?.examScheduleRoom?.examSchedule?.examDate).toLocaleDateString('vi-VN') : selectedSchedule?.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : '—', icon: Calendar },
           { label: 'Khung giờ thi', value: `${drawerSupervisor?.examScheduleRoom?.examSchedule?.startTime || selectedSchedule?.startTime || ''} – ${drawerSupervisor?.examScheduleRoom?.examSchedule?.endTime || selectedSchedule?.endTime || ''}`, icon: Clock },
           { label: 'Trạng thái', value: drawerSupervisor?.status === 'CONFIRMED' ? 'Đã xác nhận' : drawerSupervisor?.status === 'CHANGE_REQUESTED' ? 'Đề nghị thay đổi' : 'Đã phân công', icon: ShieldCheck },
         ]}

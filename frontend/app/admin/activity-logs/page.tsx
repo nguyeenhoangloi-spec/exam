@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 export const dynamic = 'force-dynamic';
 
 import React, { useCallback, useEffect, useMemo, useState, useRef, Suspense } from 'react';
@@ -240,7 +242,7 @@ function ActivityLogsContent() {
         const parts: string[] = [];
         if (search.trim()) parts.push(`Từ khóa: "${search.trim()}"`);
         if (entityFilter) parts.push(`Thực thể: "${getEntityLabel(entityFilter)}"`);
-        return parts.length > 0 ? parts.join(' | ') : 'Tất cả thao tác';
+        return parts.length > 0 ? parts.join(', ') : 'Tất cả thao tác';
     };
 
     /* ── CÁC CƠ CHẾ XUẤT FILE CHO TAB NHẬT KÝ THAO TÁC ── */
@@ -419,7 +421,7 @@ function ActivityLogsContent() {
         if (secSearch.trim()) parts.push(`Từ khóa: "${secSearch.trim()}"`);
         if (secCategory) parts.push(`Nhóm: "${secCategoryLabel[secCategory] || secCategory}"`);
         if (secOutcome) parts.push(`Kết quả: "${secOutcomeLabel[secOutcome] || secOutcome}"`);
-        return parts.length > 0 ? parts.join(' | ') : 'Tất cả sự kiện an ninh';
+        return parts.length > 0 ? parts.join(', ') : 'Tất cả sự kiện an ninh';
     };
 
     /* ── CÁC CƠ CHẾ XUẤT FILE CHO TAB KIỂM TOÁN AN NINH ── */
@@ -457,7 +459,7 @@ function ActivityLogsContent() {
             filename: `Kiem_toan_an_ninh_${new Date().toISOString().split('T')[0]}.xls`,
             templateCode: 'SYSTEM_AUDIT_LOG',
             title: 'BÁO CÁO KIỂM TOÁN AN NINH HỆ THỐNG',
-            subtitle: `Bộ lọc: ${filterDesc} (Tổng số: ${allData.length} sự kiện | Chuỗi toàn vẹn: ${secIntegrity?.valid ? 'Hợp lệ' : 'Đang xác thực'})`,
+            subtitle: `Bộ lọc: ${filterDesc} (Tổng số: ${allData.length} sự kiện, chuỗi toàn vẹn: ${secIntegrity?.valid ? 'Hợp lệ' : 'Đang xác thực'})`,
             columns,
             rows,
         });
@@ -490,7 +492,7 @@ function ActivityLogsContent() {
 
         printReport({
             title: 'BÁO CÁO KIỂM TOÁN AN NINH & TOÀN VẸN HỆ THỐNG',
-            subtitle: `Bộ lọc: ${filterDesc} (Tổng cộng: ${allData.length} sự kiện | Hash: ${secIntegrity?.valid ? 'Toàn vẹn' : 'Cần kiểm tra'})`,
+            subtitle: `Bộ lọc: ${filterDesc} (Tổng cộng: ${allData.length} sự kiện, hash: ${secIntegrity?.valid ? 'Toàn vẹn' : 'Cần kiểm tra'})`,
             facultyName: 'BAN AN TOÀN THÔNG TIN & KIỂM TOÁN HỆ THỐNG',
             columns: [
                 { header: 'STT', width: '40px', align: 'center' },
@@ -892,7 +894,7 @@ function ActivityLogsContent() {
                                                                 </span>
                                                                 {event.entityType && (
                                                                     <>
-                                                                        <span className="text-slate-400 dark:text-slate-600">|</span>
+                                                                        <MetaSeparator />
                                                                         <span className="font-medium text-type-body text-blue-600 dark:text-blue-400">
                                                                             {entityName}
                                                                         </span>
@@ -1084,7 +1086,7 @@ function ActivityLogsContent() {
                                                 ) : typeof val === 'boolean' ? (
                                                     val ? 'Có / Bật' : 'Không / Tắt'
                                                 ) : (
-                                                    String(val ?? '---')
+                                                    String(val ?? '—')
                                                 )}
                                             </span>
                                         </div>

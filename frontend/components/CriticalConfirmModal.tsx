@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { AlertTriangle, Lock, ShieldAlert, KeyRound, X, Eye, EyeOff, Check } from 'lucide-react';
@@ -255,7 +257,7 @@ export const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
                   <span className="font-semibold text-rose-600 dark:text-rose-400 tracking-wide">
                     {targetPhrase}
                   </span>
-                  <span className="text-slate-300 dark:text-slate-600">|</span>
+                  <MetaSeparator />
                   <button
                     type="button"
                     onClick={handleQuickFillPhrase}

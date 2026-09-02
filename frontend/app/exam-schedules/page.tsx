@@ -31,6 +31,7 @@ import { CancelScheduleModal } from '../../components/exam-schedules/CancelSched
 import { Calendar, Clock, Building, Users, AlertTriangle, FileSpreadsheet, Search, X } from 'lucide-react';
 import { PageSkeleton } from '../../components/ui/Skeleton';
 import { getCachedData } from '../../lib/api';
+import { formatTimeRange } from '../../lib/format';
 
 function calculateEndTime(startTime: string, durationMinutes: number): string {
   if (!startTime) return '08:30';
@@ -636,7 +637,7 @@ export default function ExamSchedulesPage() {
               s.shiftName || '—',
               s.roomName || 'Chưa xếp phòng',
               s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : '',
-              `${s.startTime || '—'} - ${s.endTime || '—'}`,
+              formatTimeRange(s.startTime, s.endTime),
               s.studentCount ?? 0,
               s.statusBadge === 'UPCOMING' ? 'Sắp diễn ra' : s.statusBadge === 'ONGOING' ? 'Đang diễn ra' : 'Đã diễn ra',
             ]);
@@ -672,7 +673,7 @@ export default function ExamSchedulesPage() {
                 s.periodName || '',
                 s.roomName || '',
                 s.examDate ? new Date(s.examDate).toLocaleDateString('vi-VN') : '',
-                `${s.startTime || '—'} - ${s.endTime || '—'}`,
+                formatTimeRange(s.startTime, s.endTime),
                 s.statusBadge === 'UPCOMING' ? 'Sắp diễn ra' : 'Đã diễn ra',
               ]),
             });
@@ -971,13 +972,13 @@ export default function ExamSchedulesPage() {
         }}
         details={[
           { label: 'Kỳ thi', value: drawerSchedule?.periodName, icon: Calendar },
-          { label: 'Môn thi', value: drawerSchedule?.subjectName ? `${drawerSchedule.subjectName} (${drawerSchedule.subjectCode || ''})` : '---', icon: Calendar },
+          { label: 'Môn thi', value: drawerSchedule?.subjectName ? `${drawerSchedule.subjectName} (${drawerSchedule.subjectCode || ''})` : '—', icon: Calendar },
           { label: 'Hình thức thi', value: drawerSchedule?.examType === 'TRAC_NGHIEM' ? 'Trắc nghiệm' : drawerSchedule?.examType === 'TU_LUAN' ? 'Tự luận' : drawerSchedule?.examType || 'Trắc nghiệm', icon: Clock },
           { label: 'Ca thi', value: drawerSchedule?.shiftName, icon: Clock },
-          { label: 'Phòng thi', value: drawerSchedule?.roomName || '---', icon: Building },
+          { label: 'Phòng thi', value: drawerSchedule?.roomName || '—', icon: Building },
           {
             label: 'Ngày thi',
-            value: drawerSchedule?.examDate ? new Date(drawerSchedule.examDate).toLocaleDateString('vi-VN') : '---',
+            value: drawerSchedule?.examDate ? new Date(drawerSchedule.examDate).toLocaleDateString('vi-VN') : '—',
             icon: Calendar,
           },
           { label: 'Khung giờ thi', value: `${drawerSchedule?.startTime} – ${drawerSchedule?.endTime}`, icon: Clock },

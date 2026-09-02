@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import api from '../lib/api';
@@ -827,7 +829,7 @@ export function AccountSettingsModal({
 
                       <div className="flex flex-wrap items-center gap-2 text-type-body-sm text-slate-600 dark:text-slate-300">
                         <span className="font-semibold text-blue-600 dark:text-blue-400">{roleName}</span>
-                        <span>|</span>
+                        <MetaSeparator />
                         <span className="text-slate-500 dark:text-slate-400 truncate">{deptOrClass}</span>
                       </div>
 

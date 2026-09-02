@@ -1,5 +1,7 @@
 'use client';
 
+import { MetaSeparator } from '@/components/ui/InlineMeta';
+
 import React from 'react';
 import { ArrowLeftRight } from 'lucide-react';
 
@@ -63,13 +65,13 @@ export function ExamReportFiltersCard({
             {formattedDate && <span>{formattedDate}</span>}
             {reportSchedule.startTime && (
               <>
-                {formattedDate && <span>|</span>}
+                {formattedDate && <MetaSeparator />}
                 <span>{reportSchedule.startTime} – {reportSchedule.endTime}</span>
               </>
             )}
             {reportSchedule.periodName && (
               <>
-                <span>|</span>
+                <MetaSeparator />
                 <span className="font-medium text-slate-700 dark:text-slate-300">
                   {reportSchedule.periodName}
                 </span>

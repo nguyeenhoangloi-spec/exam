@@ -804,7 +804,7 @@ function AdminEssayReviewContent() {
                         <div className="flex items-center justify-between gap-2 mt-1.5 text-type-helper text-slate-500 dark:text-slate-400">
                           <div className="flex items-center gap-1.5 min-w-0">
                             <IdentifierBadge tone={isCur ? 'blue' : 'neutral'}>
-                              {r.student?.studentCode || '---'}
+                              {r.student?.studentCode || '—'}
                             </IdentifierBadge>
                             <span
                               className="truncate max-w-[110px] font-normal"
@@ -1447,10 +1447,10 @@ function AdminEssayReviewContent() {
           status: profileCandidate?.gradingStatus || 'NOT_SUBMITTED',
         }}
         details={[
-          { label: 'Họ và tên thí sinh', value: profileCandidate?.student?.fullName || '---' },
+          { label: 'Họ và tên thí sinh', value: profileCandidate?.student?.fullName || '—' },
           {
             label: 'Mã số sinh viên',
-            value: <IdentifierBadge tone="blue">{profileCandidate?.student?.studentCode || '---'}</IdentifierBadge>,
+            value: <IdentifierBadge tone="blue">{profileCandidate?.student?.studentCode || '—'}</IdentifierBadge>,
           },
           { label: 'Email sinh viên', value: profileCandidate?.student?.email || 'Chưa cập nhật' },
           {
@@ -1458,7 +1458,7 @@ function AdminEssayReviewContent() {
             value:
               profileCandidate?.onlineExamConfig?.examSchedule?.subject?.subjectName ||
               profileCandidate?.subjectName ||
-              '---',
+              '—',
           },
           {
             label: 'Mã học phần',
@@ -1466,7 +1466,7 @@ function AdminEssayReviewContent() {
               <IdentifierBadge tone="neutral">
                 {profileCandidate?.onlineExamConfig?.examSchedule?.subject?.subjectCode ||
                   profileCandidate?.subjectCode ||
-                  '---'}
+                  '—'}
               </IdentifierBadge>
             ),
           },
@@ -1497,7 +1497,7 @@ function AdminEssayReviewContent() {
           },
           {
             label: 'Thời gian bắt đầu làm',
-            value: profileCandidate?.startedAt ? new Date(profileCandidate.startedAt).toLocaleString('vi-VN') : '---',
+            value: profileCandidate?.startedAt ? new Date(profileCandidate.startedAt).toLocaleString('vi-VN') : '—',
           },
           {
             label: 'Thời gian nộp bài',

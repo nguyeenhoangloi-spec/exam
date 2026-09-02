@@ -93,7 +93,7 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
       title="Đáp án & ba-rem chấm"
       subtitle={
         question.code
-          ? `Câu ${question.code} | Điểm tối đa: ${question.score || totalRubricScore || 0} điểm`
+          ? `Câu ${question.code}, điểm tối đa: ${question.score || totalRubricScore || 0} điểm`
           : `Điểm tối đa: ${question.score || totalRubricScore || 0} điểm`
       }
     >

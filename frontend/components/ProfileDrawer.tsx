@@ -17,6 +17,7 @@ export interface ProfileDrawerProps {
   extraSections?: { title: string; content: React.ReactNode }[];
   maxWidth?: 'md' | 'lg' | 'xl' | '2xl' | '3xl' | string;
   headerActions?: React.ReactNode;
+  footer?: React.ReactNode;
 }
 
 /**
@@ -34,6 +35,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
   extraSections,
   maxWidth = 'lg',
   headerActions,
+  footer,
 }) => {
   const idMatch = typeof subtitle === 'string' ? subtitle.match(/^(?:mã(?:\s+[a-zà-ỹ]+)*|mssv|id|code)\s*:\s*(.+)$/i) : null;
   const cleanSubtitle = idMatch ? null : subtitle;
@@ -69,11 +71,13 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
       subtitle={cleanSubtitle || undefined}
       headerActions={headerActions}
       footer={
-        <div className="flex items-center justify-end gap-3">
-          <Button type="button" variant="secondary" size="md" onClick={onClose}>
-            Đóng
-          </Button>
-        </div>
+        footer ?? (
+          <div className="flex items-center justify-end gap-3">
+            <Button type="button" variant="secondary" size="md" onClick={onClose}>
+              Đóng
+            </Button>
+          </div>
+        )
       }
     >
       {/* Body — Bố cục danh sách thông tin chi tiết */}
@@ -111,7 +115,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                         {item.value}
                       </IdentifierBadge>
                     ) : (
-                      item.value ?? '---'
+                      item.value ?? '—'
                     )}
                   </div>
                 </div>

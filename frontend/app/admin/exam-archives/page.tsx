@@ -398,7 +398,7 @@ export default function ExamArchivesPage() {
           </h1>
           <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
             {selectedSchedule
-              ? `${selectedSchedule.subjectName} (${selectedSchedule.subjectCode}) | ${selectedSchedule.examPeriodName} – ${selectedSchedule.schoolYear}`
+              ? `${selectedSchedule.subjectName} (${selectedSchedule.subjectCode}), ${selectedSchedule.examPeriodName} – ${selectedSchedule.schoolYear}`
               : 'Quản lý và trích lục hồ sơ bài thi đã công bố niêm phong theo quy chế khảo thí'}
           </p>
         </div>

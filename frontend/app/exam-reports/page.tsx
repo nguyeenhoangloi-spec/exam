@@ -890,7 +890,7 @@ export default function ExamReportsPage() {
                         const typeBadge = getScheduleTypeBadge(s);
                         const formatBadge = getExamFormatBadge(s);
                         const subj = s.subject || {};
-                        const period = s.periodName || '---';
+                        const period = s.periodName || '—';
 
                         return (
                           <button
@@ -904,7 +904,7 @@ export default function ExamReportsPage() {
                           >
                             <div className="flex items-center justify-between gap-3">
                               <span className="font-semibold text-slate-900 dark:text-white">
-                                {s.subjectName || subj.subjectName || 'Môn thi'} ({s.subjectCode || subj.subjectCode || '---'})
+                                {s.subjectName || subj.subjectName || 'Môn thi'} ({s.subjectCode || subj.subjectCode || '—'})
                               </span>
                               <StatusBadge status={statusBadge.key} customLabel={statusBadge.label} />
                             </div>
@@ -928,7 +928,7 @@ export default function ExamReportsPage() {
                   {/* Footer */}
                   <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60">
                     <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">
-                      Đã chọn lịch thi ID: <strong className="text-slate-800 dark:text-slate-100">#{selectedScheduleId || '---'}</strong>
+                      Đã chọn lịch thi ID: <strong className="text-slate-800 dark:text-slate-100">#{selectedScheduleId || '—'}</strong>
                     </span>
                     <Button variant="secondary" size="md" onClick={() => setShowSchedulePicker(false)}>
                       Đóng
@@ -1079,7 +1079,7 @@ export default function ExamReportsPage() {
                   idx + 1,
                   c.studentCode,
                   c.fullName,
-                  c.className || '---',
+                  c.className || '—',
                   c.status,
                   c.status === 'ABSENT' ? 'Vắng' : c.totalScore,
                   c.violationCount || 0,
@@ -1087,7 +1087,7 @@ export default function ExamReportsPage() {
                 exportToFormattedExcel({
                   filename: 'Bang_diem_thi_sinh_da_chon.xls',
                   title: 'KẾT QUẢ THI THÍ SINH ĐÃ CHỌN',
-                  subtitle: `Môn: ${report?.schedule?.subjectName || ''} | Đã trích xuất ${selectedCandidates.length} thí sinh`,
+                  subtitle: `Môn: ${report?.schedule?.subjectName || ''}, đã trích xuất ${selectedCandidates.length} thí sinh`,
                   columns,
                   rows,
                 });
@@ -1097,7 +1097,7 @@ export default function ExamReportsPage() {
                 const selectedCandidates = filteredCandidates.filter((c) => selected.includes(c.studentId));
                 printReport({
                   title: 'BẢNG ĐIỂM THÍ SINH ĐÃ CHỌN',
-                  subtitle: `Môn: ${report?.schedule?.subjectName || ''} (${report?.schedule?.subjectCode || ''}) - Ngày thi: ${report?.schedule?.examDate ? new Date(report.schedule.examDate).toLocaleDateString('vi-VN') : '---'}`,
+                  subtitle: `Môn: ${report?.schedule?.subjectName || ''} (${report?.schedule?.subjectCode || ''}), ngày thi: ${report?.schedule?.examDate ? new Date(report.schedule.examDate).toLocaleDateString('vi-VN') : '—'}`,
                   metaInfo: [
                     { label: 'Số lượng thí sinh', value: String(selectedCandidates.length) },
                   ],
@@ -1113,7 +1113,7 @@ export default function ExamReportsPage() {
                     idx + 1,
                     c.studentCode,
                     c.fullName,
-                    c.className || '---',
+                    c.className || '—',
                     c.status === 'ABSENT' ? 'Vắng thi' : 'Đã nộp',
                     c.status === 'ABSENT' ? '0.0' : String(c.totalScore),
                   ]),
@@ -1139,7 +1139,7 @@ export default function ExamReportsPage() {
         details={[
           { label: 'Họ và tên thí sinh', value: drawerCandidate?.fullName, icon: GraduationCap },
           { label: 'Mã số sinh viên', value: drawerCandidate?.studentCode, icon: GraduationCap },
-          { label: 'Lớp sinh hoạt', value: drawerCandidate?.className || '---', icon: GraduationCap },
+          { label: 'Lớp sinh hoạt', value: drawerCandidate?.className || '—', icon: GraduationCap },
           { label: 'Trạng thái thi', value: drawerCandidate?.status === 'ABSENT' ? 'Vắng thi' : drawerCandidate?.status === 'GRADED' ? 'Đã chấm điểm' : drawerCandidate?.status === 'SUBMITTED' ? 'Đã nộp bài' : 'Chưa nộp', icon: FileCheck },
           {
             label: 'Điểm số đạt được',

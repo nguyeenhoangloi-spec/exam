@@ -746,7 +746,16 @@ Nhằm đảm bảo giao diện luôn mạch lạc, phẳng, thoáng đãng và 
 
 ## 22. Quy Chuẩn Phân Tách Dữ Liệu Đồng Nhất Toàn Hệ Thống 2026 (Unified Data Separation Standard)
 
-Để hệ thống đạt chuẩn hành chính và chuyên môn học thuật cao nhất, toàn bộ dữ liệu bắt buộc tuân theo **5 quy tắc cố định**, loại bỏ triệt để việc dùng lẫn lộn dấu chấm nhỏ `·`, gạch dài `—`, gạch ngang `-` hay gạch đứng `|`:
+Áp dụng bắt buộc cho Web UI, modal, drawer, bảng dữ liệu, thanh công cụ và nội dung mô tả. Mục tiêu là loại bỏ việc từng page tự ghép chuỗi bằng `|`, `-`, `·`, `•` hoặc `---`, đồng thời giữ đúng ý nghĩa ngôn ngữ và nghiệp vụ của từng dấu.
+
+### 22.0 Nguyên tắc nền tảng
+
+- **Bố cục thay cho ký tự:** Khi các thông tin là những phần tử UI độc lập, dùng spacing, hai tầng typography hoặc đường hairline bằng CSS; không dùng ký tự text `|`, `·`, `•` để tạo bố cục.
+- **Nguồn dùng chung bắt buộc:** Metadata ngang phải dùng `InlineMeta`/`MetaSeparator`; khoảng thời gian và dữ liệu trống phải dùng formatter trong `lib/format.ts`. Không tự ghép lại tại page.
+- **Hairline separator:** Là phần tử trang trí rộng `1px`, cao `14px`, màu `border-slate-200 dark:border-slate-700`, có `aria-hidden="true"`. Không được đọc bởi screen reader.
+- **Responsive:** Separator phải đi cùng mục đứng sau, không được rơi một mình ở đầu dòng. Ở màn hình nhỏ, ưu tiên ẩn separator và chuyển metadata thành xếp tầng hoặc wrap có khoảng cách rõ ràng.
+- **Giới hạn mật độ:** Một cụm inline tối đa 3 mục. Từ 4 mục trở lên phải chuyển sang lưới thông tin, danh sách hai tầng hoặc `DetailDrawer` field grid.
+- **Giá trị trống duy nhất:** Dùng em dash `—`. Cấm dùng `-`, `--`, `---`, chuỗi rỗng có chủ ý hoặc `N/A` trong giao diện tiếng Việt.
 
 ### 22.1 Thời gian (Giờ & Ngày tháng)
 - **Trong Bảng dữ liệu (Table Body)**: Bắt buộc dùng **2 tầng độc lập**:
@@ -756,6 +765,7 @@ Nhằm đảm bảo giao diện luôn mạch lạc, phẳng, thoáng đãng và 
   - `14:45:02, 28/08/2026` (Quy chuẩn văn bản hành chính Việt Nam).
 - **Khoảng thời gian (Time Range)**: Dùng **gạch ngang En-dash chuẩn ` – `**:
   - `07:30 – 09:30` (Không dùng `->`, `~` hay `-` dính liền).
+- Mọi khoảng giờ/ngày phải đi qua `formatTimeRange()` hoặc `formatDateRange()`; nếu thiếu một đầu mút chỉ hiển thị giá trị đang có, không để dấu nối thừa.
 
 ### 22.2 Tên Đối Tượng & Mã Định Danh
 - **Trong Bảng dữ liệu**:
@@ -766,8 +776,8 @@ Nhằm đảm bảo giao diện luôn mạch lạc, phẳng, thoáng đãng và 
   - `Nguyễn Văn A (GV0012)`
 
 ### 22.3 Thông Số Kỹ Thuật Nghiệp Vụ (Số câu, Thời lượng, Điểm số)
-- **Trong Bảng dữ liệu / Chip thông số**: Dùng **gạch đứng mảnh mờ ` | `** (`text-slate-300 dark:text-slate-700 select-none`):
-  - `40 câu | 60 phút | 10.0 điểm`
+- **Trong Bảng dữ liệu / Card / Drawer**: Dùng `InlineMeta` với đường hairline CSS, không viết ký tự `|`:
+  - Hiển thị trực quan: `40 câu  │  60 phút  │  10,0 điểm` nhưng vạch dọc phải là phần tử CSS, không phải ký tự.
 - **Trong Văn bản mô tả / Thuyết minh**: Dùng **dấu phẩy hành chính `, `**:
   - `Đề thi gồm 40 câu hỏi, thời gian làm bài 60 phút, thang điểm 10.`
 
@@ -779,10 +789,30 @@ Nhằm đảm bảo giao diện luôn mạch lạc, phẳng, thoáng đãng và 
 - **Trong Bảng dữ liệu / Danh sách người dùng (2 tầng thông tin)**:
   - **Dòng 1 (Họ tên / Tên tài khoản)**: Cỡ chữ chính `text-type-body` (15px / line-height 22–24px), độ đậm `font-semibold` hoặc `font-medium` (500–600), màu chữ Deep Ink Tầng 1 (`text-slate-900 dark:text-slate-100` hoặc `#020617` / `#F8FAFC`).
   - **Dòng 2 (Vai trò & Email / MSSV)**: Cỡ chữ phụ `text-type-helper` (13px / line-height 18–20px), độ đậm `font-normal` (400), màu chữ Deep Ink Tầng 2–3 (`text-slate-600 dark:text-slate-400` hoặc `--ui-text-muted-soft` `#1F2937` / `#CBD5E1`).
-  - **Dấu phân tách inline**: Giữa Vai trò và Email/Mã dùng **gạch đứng mảnh mờ ` | `** (`text-slate-300 dark:text-slate-700 select-none`):
-    - Ví dụ: `Giảng viên | nguyen@hcmue.edu.vn`
-    - Ví dụ: `Quản trị viên | admin@exam.edu.vn`
-    - Ví dụ: `Sinh viên | 21110123`
+  - **Phân tách inline**: Giữa vai trò và email/mã dùng `InlineMeta` với hairline CSS; trên mobile chuyển thành hai dòng. Cấm viết ký tự `|` trực tiếp.
+    - Desktop: `Giảng viên  │  nguyen@hcmue.edu.vn`
+    - Mobile: dòng 1 `Giảng viên`, dòng 2 `nguyen@hcmue.edu.vn`
+
+### 22.6 Tên, mã, nhãn và văn bản tự nhiên
+
+- **Tên + mã:** dùng ngoặc đơn, ví dụ `Lập trình Web (IT4409)`; trong bảng ưu tiên tên ở dòng 1 và mã ở dòng 2.
+- **Nhãn + giá trị:** dùng dấu hai chấm, ví dụ `Phòng: P.301`, không dùng `Phòng - P.301`.
+- **Các vế trong câu:** dùng dấu phẩy hoặc viết thành câu đầy đủ; không dùng separator trang trí.
+- **Breadcrumb:** dùng icon `ChevronRight` có nhãn truy cập phù hợp; không dùng `/`, `>`, `|` dạng text.
+
+### 22.7 Dấu được phép giữ nguyên theo ngữ nghĩa
+
+- Dấu `/` trong ngày tháng (`02/09/2026`), tỷ lệ/điểm (`8,5/10`) và tên gọi nghiệp vụ đã được duyệt.
+- Dấu `-` trong mã định danh (`CNTT-K65`, `KT-101`, `P.301-B1`), slug, URL và biểu thức kỹ thuật.
+- En dash `–` trong khoảng giá trị và năm học (`2025–2026`).
+- Cụm hành chính, pháp lý hoặc mẫu biểu bắt buộc như `Độc lập - Tự do - Hạnh phúc` giữ nguyên theo mẫu được phê duyệt.
+- File Word/PDF/Excel/CSV tuân theo quy chuẩn tài liệu xuất; không áp dụng thay thế hàng loạt từ Web UI.
+
+### 22.8 Quy tắc kiểm soát chất lượng
+
+- `audit:ui` phải báo lỗi khi Web UI có `<span>|</span>`, ký tự `•`/`·` dùng làm separator, hoặc fallback `---` ngoài danh sách ngoại lệ đã giải trình.
+- Khi review phải kiểm tra tối thiểu ở 375px, 430px, 768px, 1024px và 1440px.
+- Không chấp nhận separator bị orphan, wrap lệch, làm tăng chiều cao hàng bất thường hoặc khiến nội dung bị đọc sai bởi screen reader.
 
 ## 23. Quy Chuẩn Thanh Chuyển Đổi Tab Trượt (Sliding Segmented Control 2026)
 

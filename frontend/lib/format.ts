@@ -38,6 +38,52 @@ export function formatTimeHHmm(time: string | null | undefined): string {
     return match ? `${match[1]}:${match[2]}` : time;
 }
 
+export function formatTimeRange(
+    start: string | null | undefined,
+    end: string | null | undefined,
+    fallback = '—',
+): string {
+    const startValue = start ? formatTimeHHmm(start) : '';
+    const endValue = end ? formatTimeHHmm(end) : '';
+    if (startValue && endValue) return `${startValue} – ${endValue}`;
+    return startValue || endValue || fallback;
+}
+
+export function formatDateRange(
+    start: string | Date | null | undefined,
+    end: string | Date | null | undefined,
+    fallback = '—',
+): string {
+    const startValue = start ? formatDate(start) : '';
+    const endValue = end ? formatDate(end) : '';
+    if (startValue && endValue) return `${startValue} – ${endValue}`;
+    return startValue || endValue || fallback;
+}
+
+export function formatAcademicYear(startYear: number, endYear = startYear + 1): string {
+    return `${startYear}–${endYear}`;
+}
+
+export function formatEntityLabel(
+    name: string | null | undefined,
+    code: string | null | undefined,
+    fallback = '—',
+): string {
+    const cleanName = name?.trim();
+    const cleanCode = code?.trim();
+    if (cleanName && cleanCode) return `${cleanName} (${cleanCode})`;
+    return cleanName || cleanCode || fallback;
+}
+
+export function formatEmptyValue(
+    value: string | number | null | undefined,
+    fallback = '—',
+): string {
+    if (value === null || value === undefined) return fallback;
+    if (typeof value === 'string' && value.trim() === '') return fallback;
+    return String(value);
+}
+
 /** Relative "time ago" in Vietnamese, e.g. "5 phút trước". */
 export function timeAgo(date: string | Date | null | undefined): string {
     if (!date) return 'vừa xong';
