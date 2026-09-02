@@ -73,7 +73,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
       footer={
         footer ?? (
           <div className="flex items-center justify-end gap-3">
-            <Button type="button" variant="secondary" size="md" onClick={onClose}>
+            <Button type="button" variant="ghost" size="md" onClick={onClose}>
               Đóng
             </Button>
           </div>

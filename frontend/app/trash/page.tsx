@@ -758,41 +758,49 @@ function TrashPageContent() {
               </div>
             ),
           },
-          {
-            title: 'Thao tác bản ghi',
-            content: (
-              <div className="flex items-center justify-between gap-3 pt-1">
-                <Button
-                  type="button"
-                  variant="danger"
-                  size="sm"
-                  onClick={() => {
-                    const item = detailItem;
-                    setDetailItem(null);
-                    if (item) handleHardDelete(item);
-                  }}
-                  leftIcon={<Trash2 className="w-3.5 h-3.5" />}
-                >
-                  Xóa vĩnh viễn
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="sm"
-                  onClick={() => {
-                    const item = detailItem;
-                    setDetailItem(null);
-                    if (item) handleRestore(item);
-                  }}
-                  leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
-                >
-                  Khôi phục
-                </Button>
-              </div>
-            ),
-          },
         ]}
+        footer={
+          <div className="flex items-center justify-between w-full gap-3">
+            <Button
+              type="button"
+              variant="danger-outline"
+              size="md"
+              onClick={() => {
+                const item = detailItem;
+                setDetailItem(null);
+                if (item) handleHardDelete(item);
+              }}
+              leftIcon={<Trash2 className="w-4 h-4" />}
+            >
+              Xóa vĩnh viễn
+            </Button>
+
+            <div className="flex items-center gap-2.5">
+              <Button
+                type="button"
+                variant="ghost"
+                size="md"
+                onClick={() => setDetailItem(null)}
+              >
+                Đóng
+              </Button>
+
+              <Button
+                type="button"
+                variant="primary"
+                size="md"
+                onClick={() => {
+                  const item = detailItem;
+                  setDetailItem(null);
+                  if (item) handleRestore(item);
+                }}
+                leftIcon={<RotateCcw className="w-4 h-4" />}
+              >
+                Khôi phục
+              </Button>
+            </div>
+          </div>
+        }
       />
     </main>
   );
