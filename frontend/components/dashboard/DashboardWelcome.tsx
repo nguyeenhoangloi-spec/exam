@@ -52,7 +52,7 @@ export function DashboardWelcome({
             type="button"
             onClick={onExportPDF}
             className="flex items-center gap-1.5 rounded-xl bg-white text-primary-800 hover:bg-blue-50 px-4 py-2 text-type-helper font-medium transition active:scale-95 cursor-pointer shadow-sm"
-            title="Xuất Báo cáo PDF"
+            title="Xuất báo cáo PDF"
           >
             <FileText className="h-3.5 w-3.5" />
             <span>Xuất PDF</span>

@@ -435,6 +435,13 @@ const button = await readFile(join(root, 'components', 'ui', 'Button.tsx'), 'utf
 const input = await readFile(join(root, 'components', 'ui', 'Input.tsx'), 'utf8');
 const identifierBadge = await readFile(join(root, 'components', 'ui', 'IdentifierBadge.tsx'), 'utf8');
 const statusBadge = await readFile(join(root, 'components', 'common', 'StatusBadge.tsx'), 'utf8');
+const categoryBadge = await readFile(join(root, 'components', 'ui', 'CategoryBadge.tsx'), 'utf8');
+const deadlineBadge = await readFile(join(root, 'components', 'ui', 'DeadlineBadge.tsx'), 'utf8');
+const backupTypeBadge = await readFile(join(root, 'components', 'backups', 'BackupTypeBadge.tsx'), 'utf8');
+const uiLabels = await readFile(join(root, 'lib', 'ui-labels.ts'), 'utf8');
+const backupPage = await readFile(join(root, 'app', 'admin', 'backups', 'page.tsx'), 'utf8');
+const backupFilter = await readFile(join(root, 'components', 'backups', 'BackupFilterPopover.tsx'), 'utf8');
+const trashPage = await readFile(join(root, 'app', 'trash', 'page.tsx'), 'utf8');
 const sidebar = await readFile(join(root, 'components', 'Sidebar.tsx'), 'utf8');
 const sharedUiPrimitiveFiles = [
   'components/ui/Button.tsx',
@@ -657,6 +664,54 @@ if (!/variant === 'pill'/.test(statusBadge)
   || !/ui-pill-solid/.test(statusBadge)
   || !/bg-transparent/.test(statusBadge)) {
   violations.push('components/common/StatusBadge.tsx: status pill phải outline mặc định, rounded-full, 13px/500 và chỉ dùng nền đặc qua emphasis="solid"');
+}
+
+if (!/CategoryBadgeTone/.test(categoryBadge)
+  || !/ui-pill inline-flex/.test(categoryBadge)
+  || !/rounded-full/.test(categoryBadge)
+  || !/border bg-transparent/.test(categoryBadge)
+  || !/text-type-helper/.test(categoryBadge)
+  || !/font-medium/.test(categoryBadge)
+  || /ui-pill-solid/.test(categoryBadge)) {
+  violations.push('components/ui/CategoryBadge.tsx: nhãn phân loại phải dùng pill outline dùng chung, 13px/500 và không được dùng nền đặc');
+}
+
+if (!/remainingDays/.test(deadlineBadge)
+  || !/Clock/.test(deadlineBadge)
+  || !/text-type-helper/.test(deadlineBadge)
+  || !/text-amber-600/.test(deadlineBadge)
+  || !/text-rose-600/.test(deadlineBadge)
+  || !/Hết hạn/.test(deadlineBadge)) {
+  violations.push('components/ui/DeadlineBadge.tsx: thời hạn phải dùng primitive icon + text và tự đổi amber/rose theo mức khẩn cấp');
+}
+
+for (const [code, label] of Object.entries({
+  FULL: 'Toàn bộ',
+  DATABASE: 'Cơ sở dữ liệu',
+  UPLOADS: 'Tệp tải lên',
+  SAFETY: 'Bản an toàn',
+})) {
+  if (!new RegExp(`${code}: ['\"]${label}['\"]`).test(uiLabels)) {
+    violations.push(`lib/ui-labels.ts: thiếu nhãn tiếng Việt cố định cho loại backup ${code}`);
+  }
+}
+
+if (!/CategoryBadge/.test(backupTypeBadge)
+  || !/getBackupTypeLabel\(type\)/.test(backupTypeBadge)
+  || !/toneByType/.test(backupTypeBadge)
+  || !/BackupTypeBadge/.test(backupPage)
+  || !/getBackupTypeLabel\(j\.type\)/.test(backupPage)
+  || />\s*\{job\.type\}\s*</.test(backupPage)
+  || !/StatusBadge[\s\S]*?Tiến trình sao lưu:[\s\S]*?variant="pill"/.test(backupPage)) {
+  violations.push('app/admin/backups/page.tsx: loại backup và trạng thái Worker phải dùng registry/semantic badge chung, không hiển thị enum thô');
+}
+
+if (!/getBackupTypeLabel/.test(backupFilter) || /\((?:FULL|DATABASE|UPLOADS|SAFETY)\)/.test(backupFilter)) {
+  violations.push('components/backups/BackupFilterPopover.tsx: bộ lọc loại backup phải lấy nhãn tiếng Việt từ registry, không hiển thị mã enum trong ngoặc');
+}
+
+if (!/DeadlineBadge/.test(trashPage) || /Còn \{remainingDays\} ngày/.test(trashPage)) {
+  violations.push('app/trash/page.tsx: thời hạn lưu trong thùng rác phải dùng DeadlineBadge dùng chung');
 }
 
 if (!/\.typography-scale \.ui-pill\s*\{[\s\S]*?border-radius:\s*9999px !important[\s\S]*?font-size:\s*var\(--fs-helper\) !important[\s\S]*?font-weight:\s*500 !important/.test(globalCss)

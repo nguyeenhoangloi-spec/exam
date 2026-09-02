@@ -2,6 +2,8 @@ export * from './Button';
 export * from './Input';
 export * from './Card';
 export * from './Badge';
+export * from './CategoryBadge';
+export * from './DeadlineBadge';
 export * from './IdentifierBadge';
 export * from './Tabs';
 export * from './FilterSelect';

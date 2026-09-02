@@ -757,7 +757,7 @@ export default function ExamSupervisorsPage() {
           { label: 'Phòng coi thi', value: `${drawerSupervisor?.examScheduleRoom?.room?.roomName || drawerSupervisor?.examScheduleRoom?.room?.roomCode || `Phòng #${drawerSupervisor?.examScheduleRoomId}`} ${drawerSupervisor?.examScheduleRoom?.room?.building ? `(${drawerSupervisor?.examScheduleRoom?.room?.building})` : ''}`, icon: DoorOpen },
           { label: 'Môn thi', value: drawerSupervisor?.examScheduleRoom?.examSchedule?.subject?.subjectName || selectedSchedule?.subject?.subjectName || '---', icon: Calendar },
           { label: 'Ngày thi', value: drawerSupervisor?.examScheduleRoom?.examSchedule?.examDate ? new Date(drawerSupervisor?.examScheduleRoom?.examSchedule?.examDate).toLocaleDateString('vi-VN') : selectedSchedule?.examDate ? new Date(selectedSchedule.examDate).toLocaleDateString('vi-VN') : '---', icon: Calendar },
-          { label: 'Khung giờ thi', value: `${drawerSupervisor?.examScheduleRoom?.examSchedule?.startTime || selectedSchedule?.startTime || ''} - ${drawerSupervisor?.examScheduleRoom?.examSchedule?.endTime || selectedSchedule?.endTime || ''}`, icon: Clock },
+          { label: 'Khung giờ thi', value: `${drawerSupervisor?.examScheduleRoom?.examSchedule?.startTime || selectedSchedule?.startTime || ''} – ${drawerSupervisor?.examScheduleRoom?.examSchedule?.endTime || selectedSchedule?.endTime || ''}`, icon: Clock },
           { label: 'Trạng thái', value: drawerSupervisor?.status === 'CONFIRMED' ? 'Đã xác nhận' : drawerSupervisor?.status === 'CHANGE_REQUESTED' ? 'Đề nghị thay đổi' : 'Đã phân công', icon: ShieldCheck },
         ]}
       />

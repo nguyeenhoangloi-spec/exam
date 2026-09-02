@@ -766,7 +766,7 @@ export default function StudentCurriculumPage() {
             { label: 'Tên học phần', value: detailItem?.subjectName, icon: BookOpen },
             { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{detailItem?.subjectCode || '---'}</IdentifierBadge>, icon: Info },
             { label: 'Học kỳ đào tạo', value: detailItem ? `Học kỳ ${detailItem.recommendedSemester}` : '', icon: BookMarked },
-            { label: 'Số tín chỉ', value: detailItem ? `${detailItem.credits} Tín chỉ` : '', icon: Layers },
+            { label: 'Số tín chỉ', value: detailItem ? `${detailItem.credits} tín chỉ` : '', icon: Layers },
             { label: 'Phân loại học phần', value: detailItem?.type === 'MANDATORY' ? 'Môn học bắt buộc' : 'Môn học tự chọn', icon: Award },
             ...(detailItem?.note ? [{ label: 'Ghi chú học phần', value: detailItem.note }] : []),
           ]}

@@ -669,7 +669,7 @@ export default function ClassesPage() {
       <ProfileDrawer
         isOpen={Boolean(drawerClass)}
         onClose={() => setDrawerClass(null)}
-        title={drawerClass?.name || 'Chi tiết Lớp sinh hoạt'}
+        title={drawerClass?.name || 'Chi tiết lớp sinh hoạt'}
         subtitle={drawerClass?.code ? `Mã lớp: ${drawerClass.code}` : ''}
         avatarText={drawerClass?.code || 'LH'}
         details={[

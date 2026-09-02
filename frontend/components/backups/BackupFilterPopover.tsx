@@ -17,6 +17,7 @@ import {
   Layers,
   ShieldCheck,
 } from 'lucide-react';
+import { getBackupTypeLabel } from '../../lib/ui-labels';
 
 interface BackupFilterPopoverProps {
   filterType: string;
@@ -343,7 +344,7 @@ export function BackupFilterPopover({
                     >
                       <div className="min-w-0 pr-2">
                         <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
-                          Bản sao lưu toàn phần (FULL)
+                          {getBackupTypeLabel('FULL')}
                         </div>
                         <div className="text-type-helper text-slate-500 dark:text-slate-400 truncate">
                           Bao gồm cả CSDL và file đính kèm
@@ -373,7 +374,7 @@ export function BackupFilterPopover({
                     >
                       <div className="min-w-0 pr-2">
                         <div className="text-type-helper font-semibold text-slate-900 dark:text-slate-100">
-                          Snapshot an toàn (SAFETY)
+                          {getBackupTypeLabel('SAFETY')}
                         </div>
                         <div className="text-type-helper text-slate-500 dark:text-slate-400 truncate">
                           Tạo tự động trước khi restore
@@ -397,10 +398,10 @@ export function BackupFilterPopover({
                   <div className="space-y-1.5">
                     {[
                       { key: '', label: 'Tất cả loại sao lưu', desc: 'Mọi định dạng snapshot', count: counts.total },
-                      { key: 'FULL', label: 'Toàn phần (FULL)', desc: 'CSDL và file uploads', count: counts.full },
-                      { key: 'DATABASE', label: 'Chỉ CSDL (DATABASE)', desc: 'Dump PostgreSQL schema & data', count: counts.db },
-                      { key: 'UPLOADS', label: 'Chỉ tệp đính kèm (UPLOADS)', desc: 'Tài liệu, đề thi và ảnh', count: counts.uploads },
-                      { key: 'SAFETY', label: 'Bảo vệ an toàn (SAFETY)', desc: 'Snapshot phòng ngừa rủi ro', count: counts.safety },
+                      { key: 'FULL', label: getBackupTypeLabel('FULL'), desc: 'Cơ sở dữ liệu và tệp tải lên', count: counts.full },
+                      { key: 'DATABASE', label: getBackupTypeLabel('DATABASE'), desc: 'Dữ liệu và cấu trúc PostgreSQL', count: counts.db },
+                      { key: 'UPLOADS', label: getBackupTypeLabel('UPLOADS'), desc: 'Tài liệu, đề thi và hình ảnh', count: counts.uploads },
+                      { key: 'SAFETY', label: getBackupTypeLabel('SAFETY'), desc: 'Bản sao phòng ngừa rủi ro', count: counts.safety },
                     ].map((item) => (
                       <button
                         key={item.key}

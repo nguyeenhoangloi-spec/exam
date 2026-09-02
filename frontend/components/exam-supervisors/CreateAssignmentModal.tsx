@@ -104,8 +104,8 @@ export function CreateAssignmentModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Thêm Phân Công Giám Thị"
-      subtitle="Chỉ định Giám thị 1 (Chính) và Giám thị 2 (Phụ) cho phòng thi."
+      title="Thêm phân công giám thị"
+      subtitle="Chỉ định giám thị 1 (chính) và giám thị 2 (phụ) cho phòng thi."
       size="xl"
     >
       <form onSubmit={handleSubmit} className="space-y-4 pt-1">

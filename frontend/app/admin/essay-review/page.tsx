@@ -936,7 +936,7 @@ function AdminEssayReviewContent() {
                           size="sm"
                           onClick={() => setIsEditMode(true)}
                           leftIcon={<Pencil className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />}
-                          title="Chấm điểm hoặc điều chỉnh điểm bài thi trực tiếp với quyền Quản trị viên"
+                          title="Chấm điểm hoặc điều chỉnh điểm bài thi trực tiếp với quyền quản trị viên"
                         >
                           Sửa / Chấm điểm
                         </Button>
@@ -1432,7 +1432,7 @@ function AdminEssayReviewContent() {
       <ProfileDrawer
         isOpen={!!profileCandidate}
         onClose={() => setProfileCandidate(null)}
-        title={profileCandidate?.student?.fullName || 'Hồ Sơ & Bài Thi Sinh Viên'}
+        title={profileCandidate?.student?.fullName || 'Hồ sơ và bài thi sinh viên'}
         subtitle={profileCandidate?.student?.studentCode ? `Mã sinh viên: ${profileCandidate.student.studentCode}` : ''}
         avatarText={profileCandidate?.student?.fullName?.trim().split(' ').pop()?.slice(0, 2)?.toUpperCase() || 'SV'}
         badge={{

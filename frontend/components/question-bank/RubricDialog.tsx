@@ -226,7 +226,7 @@ export function RubricDialog({ isOpen, question, onClose, onSuccess }: RubricDia
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        title="Thiết Lập Ba-rem (Rubric) Chấm Điểm"
+        title="Thiết lập ba-rem (rubric) chấm điểm"
         subtitle="Chia nhỏ câu hỏi thành các ý để chấm điểm chính xác"
         size="2xl"
       >

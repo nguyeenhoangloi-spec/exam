@@ -1856,7 +1856,7 @@ export default function ProctorDashboardPage() {
       <ProfileDrawer
         isOpen={!!inspectStudent}
         onClose={() => setInspectStudent(null)}
-        title={inspectStudent?.student?.fullName || 'Hồ Sơ Thí Sinh & Phiên Thi'}
+        title={inspectStudent?.student?.fullName || 'Hồ sơ thí sinh và phiên thi'}
         subtitle={inspectStudent?.student?.studentCode ? `Mã sinh viên: ${inspectStudent.student.studentCode}` : ''}
         avatarText={inspectStudent?.student?.fullName?.trim().split(' ').pop()?.slice(0, 2)?.toUpperCase() || 'SV'}
         badge={{

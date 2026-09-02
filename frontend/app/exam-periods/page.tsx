@@ -673,7 +673,7 @@ export default function ExamPeriodsPage() {
         isOpen={Boolean(drawerPeriod)}
         onClose={() => setDrawerPeriod(null)}
         title={drawerPeriod?.name || 'Chi tiết kỳ thi'}
-        subtitle={`Học kỳ: ${drawerPeriod?.semester || ''} | Năm học: ${drawerPeriod?.schoolYear || ''}`}
+        subtitle={drawerPeriod?.semester && drawerPeriod?.schoolYear ? `${drawerPeriod.semester} – Năm học ${drawerPeriod.schoolYear}` : drawerPeriod?.semester || drawerPeriod?.schoolYear || ''}
         avatarText={drawerPeriod?.semester || 'KT'}
         badge={{
           status: drawerPeriod?.status || 'UPCOMING',

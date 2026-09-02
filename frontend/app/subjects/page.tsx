@@ -849,7 +849,7 @@ export default function SubjectsPage() {
         title={drawerSubject?.subjectName || ''}
         subtitle={
           drawerSubject?.credits
-            ? `${drawerSubject.credits} Tín chỉ`
+            ? `${drawerSubject.credits} tín chỉ`
             : undefined
         }
         badge={

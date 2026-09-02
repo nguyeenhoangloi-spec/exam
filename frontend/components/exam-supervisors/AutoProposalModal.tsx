@@ -114,7 +114,7 @@ export function AutoProposalModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Phương Án Phân Công Giám Thị Tự Động"
+      title="Phương án phân công giám thị tự động"
       subtitle={`Thuật toán đã tự động tính toán và điền sẵn cán bộ cho ${rooms.length} phòng thi.`}
       size="4xl"
     >

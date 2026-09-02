@@ -60,8 +60,10 @@ import { PageSkeleton } from '../../../components/ui/Skeleton';
 import { exportToFormattedExcel } from '../../../lib/export-excel';
 import { exportCsvData } from '../../../lib/export-csv';
 import { printReport } from '../../../lib/export-print';
+import { getBackupTypeLabel } from '../../../lib/ui-labels';
 import { BackupFilterPopover } from '../../../components/backups/BackupFilterPopover';
 import { BackupBulkAction } from '../../../components/backups/BackupBulkAction';
+import { BackupTypeBadge } from '../../../components/backups/BackupTypeBadge';
 
 type BackupJobType = 'FULL' | 'DATABASE' | 'UPLOADS' | 'SAFETY';
 type BackupStatus = 'QUEUED' | 'RUNNING' | 'VERIFYING' | 'SUCCEEDED' | 'FAILED' | 'VERIFY_FAILED' | 'CANCELLED';
@@ -374,7 +376,7 @@ export default function BackupsPage() {
         ];
         const rows = sortedJobs.map((j) => [
             j.snapshotId,
-            j.type,
+            getBackupTypeLabel(j.type),
             j.initiatedBy?.username ? `Thủ công (${j.initiatedBy.username})` : 'Tự động',
             formatDate(j.completedAt || j.createdAt),
             calculateDuration(j.startedAt || j.createdAt, j.completedAt),
@@ -397,7 +399,7 @@ export default function BackupsPage() {
         const headers = ['Mã Snapshot', 'Loại', 'Phương thức', 'Thời gian', 'Thời lượng', 'Dung lượng', 'Trạng thái', 'Checksum'];
         const rows = sortedJobs.map((j) => [
             j.snapshotId,
-            j.type,
+            getBackupTypeLabel(j.type),
             j.initiatedBy?.username || 'Tự động',
             formatDate(j.completedAt || j.createdAt),
             calculateDuration(j.startedAt || j.createdAt, j.completedAt),
@@ -426,7 +428,7 @@ export default function BackupsPage() {
             rows: sortedJobs.map((j, idx) => [
                 idx + 1,
                 j.snapshotId,
-                j.type,
+                getBackupTypeLabel(j.type),
                 j.initiatedBy?.username || 'Tự động',
                 formatDate(j.completedAt || j.createdAt),
                 formatBytes(j.sizeBytes),
@@ -612,10 +614,11 @@ export default function BackupsPage() {
                             Sao lưu dữ liệu
                         </h1>
                         {overview?.worker && (
-                            <span className="ui-pill inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-400 text-type-helper font-medium">
-                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
-                                <span>Worker: {overview.worker.enabled ? 'Bật' : 'Tắt'}</span>
-                            </span>
+                            <StatusBadge
+                                status={overview.worker.enabled ? 'ACTIVE' : 'INACTIVE'}
+                                customLabel={`Tiến trình sao lưu: ${overview.worker.enabled ? 'Bật' : 'Tắt'}`}
+                                variant="pill"
+                            />
                         )}
                     </div>
                     <p className="text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400">
@@ -823,18 +826,7 @@ export default function BackupsPage() {
                                         </td>
 
                                         <td className="p-3.5 whitespace-nowrap">
-                                            <span
-                                                className={`table-badge ui-pill font-medium text-type-helper leading-[18px] px-2.5 py-0.5 rounded-full border ${job.type === 'FULL'
-                                                    ? 'ui-pill-solid bg-blue-600 text-white shadow-2xs'
-                                                    : job.type === 'DATABASE'
-                                                        ? 'text-blue-700 border-blue-300 dark:text-blue-400 dark:border-blue-700'
-                                                        : job.type === 'UPLOADS'
-                                                            ? 'text-sky-700 border-sky-300 dark:text-sky-400 dark:border-sky-700'
-                                                            : 'text-amber-700 border-amber-300 dark:text-amber-400 dark:border-amber-700'
-                                                    }`}
-                                            >
-                                                {job.type}
-                                            </span>
+                                            <BackupTypeBadge type={job.type} className="table-badge" />
                                         </td>
 
                                         <td className="p-3.5 whitespace-nowrap text-type-body font-medium text-slate-700 dark:text-slate-300">
@@ -1074,7 +1066,7 @@ export default function BackupsPage() {
             <DetailDrawer
                 isOpen={Boolean(detailJob)}
                 onClose={() => setDetailJob(null)}
-                title="Bản sao lưu Snapshot"
+                title="Bản sao lưu snapshot"
                 subtitle={detailJob ? `Mã: ${detailJob.snapshotId}` : undefined}
                 badge={detailJob ? <StatusBadge status={detailJob.status} /> : undefined}
                 avatarIcon={<DatabaseBackup className="h-6 w-6 text-white" />}
@@ -1101,7 +1093,7 @@ export default function BackupsPage() {
                             <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
                                 <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                                     <span className="text-slate-500 dark:text-slate-400 font-medium">Loại sao lưu:</span>
-                                    <span className="font-semibold text-blue-600 dark:text-blue-400">{detailJob.type}</span>
+                                    <BackupTypeBadge type={detailJob.type} />
                                 </div>
 
                                 <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">

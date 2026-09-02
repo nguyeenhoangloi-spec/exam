@@ -116,7 +116,7 @@ export function ExamPaperExportModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="In đề thi & Xuất PDF"
+      title="In đề thi & xuất PDF"
       size="md"
     >
       <div className="space-y-4">

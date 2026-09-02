@@ -613,13 +613,7 @@ Status pill mặc định không dùng nền màu. Màu semantic được thể 
 />
 ```
 
-Với nhãn viết trực tiếp chưa thể dùng `StatusBadge`, phải khai báo đủ contract:
-
-```tsx
-<span className="ui-pill rounded-full border border-blue-300 px-2.5 py-1 text-type-helper font-medium text-blue-700">
-  Đang xử lý
-</span>
-```
+Không được tự viết `span` trạng thái và tự ghép màu tại page. Nếu trạng thái chưa có trong registry, phải bổ sung cấu hình vào `StatusBadge` trước rồi mới sử dụng.
 
 ### 18.3 Các Nơi NÊN DÙNG Badge Trạng Thái
 - **Kỳ thi:** Nháp (`DRAFT`), Sắp diễn ra (`UPCOMING`), Đang diễn ra (`ONGOING`), Đã kết thúc (`COMPLETED`), Đã hủy (`CANCELLED`).
@@ -662,6 +656,27 @@ Với nhãn viết trực tiếp chưa thể dùng `StatusBadge`, phải khai b�
 - [ ] Mã kỹ thuật dùng `IdentifierBadge`, không bị chuyển thành status pill.
 - [ ] Button/control không bị chuyển thành `rounded-full`.
 - [ ] Chạy `npm run audit:ui` sau khi chỉnh sửa.
+
+### 18.8 Hệ Thống Nhãn Semantic Dùng Chung
+
+Mọi nhãn phải được phân loại trước khi chọn component. Không chọn component chỉ dựa trên hình dạng mong muốn.
+
+| Bản chất dữ liệu | Component bắt buộc | Hình thức mặc định | Ví dụ |
+|---|---|---|---|
+| Trạng thái vòng đời/nghiệp vụ | `StatusBadge` | Trong bảng dùng `dot`; ở header/drawer dùng `pill` outline; cảnh báo thời gian có thể dùng `icon` | Thành công, Chờ duyệt, Đã khóa |
+| Loại hoặc phân loại cố định | `CategoryBadge` | Pill outline, không có chấm trạng thái, không dùng nền đặc | Toàn bộ, Cơ sở dữ liệu, Tệp tải lên |
+| Thời hạn động | `DeadlineBadge` | Icon đồng hồ + chữ; amber bình thường, rose khi còn tối đa 5 ngày | Còn 29 ngày, Còn 3 ngày, Hết hạn |
+| Mã định danh kỹ thuật | `IdentifierBadge` | Typography phẳng, `tabular-nums`, không dùng pill trạng thái | SV2024001, LCT001, Q-99 |
+| Số đếm trong tab/bộ lọc | Component tab/filter tương ứng | Badge số đếm nhỏ; chỉ solid khi tab đang chọn | 12, 129 |
+
+Quy tắc bắt buộc:
+
+- Nhãn tiếng Việt cố định phải đặt tại registry dùng chung trong `lib/ui-labels.ts`; không lặp ternary dịch mã kỹ thuật tại nhiều page.
+- Không hiển thị trực tiếp mã enum tiếng Anh như `FULL`, `DATABASE`, `UPLOADS`, `SAFETY` cho người dùng.
+- `CategoryBadge` không dùng màu success/warning/danger để mô tả vòng đời; màu chỉ giúp phân biệt nhóm.
+- `DeadlineBadge` chỉ mô tả thời gian, không thay thế trạng thái nghiệp vụ.
+- Pill nền đặc không được dùng để trang trí một loại dữ liệu trong bảng; chỉ dành cho trạng thái được chọn hoặc cảnh báo chính có chủ đích.
+- Khi cần một kiểu nhãn mới, mở rộng primitive/registry dùng chung trước; cấm tạo class badge riêng trong page.
 
 ## 19. Quy tắc Chuẩn Hóa Nhãn Hành Động (Action Dropdown & Confirm Modals)
 
@@ -751,19 +766,23 @@ Nhằm đảm bảo giao diện luôn mạch lạc, phẳng, thoáng đãng và 
   - `Nguyễn Văn A (GV0012)`
 
 ### 22.3 Thông Số Kỹ Thuật Nghiệp Vụ (Số câu, Thời lượng, Điểm số)
-- **Trong Bảng dữ liệu / Chip thông số**: Dùng **gạch đứng mảnh mờ ` | `** (`text-slate-300 dark:text-slate-700`):
+- **Trong Bảng dữ liệu / Chip thông số**: Dùng **gạch đứng mảnh mờ ` | `** (`text-slate-300 dark:text-slate-700 select-none`):
   - `40 câu | 60 phút | 10.0 điểm`
 - **Trong Văn bản mô tả / Thuyết minh**: Dùng **dấu phẩy hành chính `, `**:
   - `Đề thi gồm 40 câu hỏi, thời gian làm bài 60 phút, thang điểm 10.`
 
 ### 22.4 Học Kỳ & Năm Học (Kỳ Thi)
 - Dùng **gạch ngang En-dash chuẩn ` – `**:
-  - `Học kỳ 1 – Năm học 2025–2026` (hoặc `HK1 – 2025/2026`).
+  - `Học kỳ 1 – Năm học 2025–2026` (hoặc `HK1 – Năm học 2025–2026`).
 
-### 22.5 Thông Tin Người Dùng & Vai Trò
-- **Trong Bảng dữ liệu**:
-  - Dòng 1: Họ tên hoặc Tên tài khoản (`font-medium text-slate-900`).
-  - Dòng 2: Nhãn vai trò (`table-meta text-slate-500`) + Email/MSSV.
+### 22.5 Thông Tin Người Dùng & Vai Trò (User Info & Role Hierarchy)
+- **Trong Bảng dữ liệu / Danh sách người dùng (2 tầng thông tin)**:
+  - **Dòng 1 (Họ tên / Tên tài khoản)**: Cỡ chữ chính `text-type-body` (15px / line-height 22–24px), độ đậm `font-semibold` hoặc `font-medium` (500–600), màu chữ Deep Ink Tầng 1 (`text-slate-900 dark:text-slate-100` hoặc `#020617` / `#F8FAFC`).
+  - **Dòng 2 (Vai trò & Email / MSSV)**: Cỡ chữ phụ `text-type-helper` (13px / line-height 18–20px), độ đậm `font-normal` (400), màu chữ Deep Ink Tầng 2–3 (`text-slate-600 dark:text-slate-400` hoặc `--ui-text-muted-soft` `#1F2937` / `#CBD5E1`).
+  - **Dấu phân tách inline**: Giữa Vai trò và Email/Mã dùng **gạch đứng mảnh mờ ` | `** (`text-slate-300 dark:text-slate-700 select-none`):
+    - Ví dụ: `Giảng viên | nguyen@hcmue.edu.vn`
+    - Ví dụ: `Quản trị viên | admin@exam.edu.vn`
+    - Ví dụ: `Sinh viên | 21110123`
 
 ## 23. Quy Chuẩn Thanh Chuyển Đổi Tab Trượt (Sliding Segmented Control 2026)
 

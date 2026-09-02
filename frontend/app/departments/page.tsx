@@ -788,7 +788,7 @@ export default function DepartmentsPage() {
       <ProfileDrawer
         isOpen={Boolean(drawerDepartment)}
         onClose={() => setDrawerDepartment(null)}
-        title={drawerDepartment?.name || 'Chi tiết Khoa đào tạo'}
+        title={drawerDepartment?.name || 'Chi tiết khoa đào tạo'}
         subtitle={drawerDepartment?.code ? `Mã khoa: ${drawerDepartment.code}` : ''}
         avatarText={drawerDepartment?.code || 'KH'}
         details={[

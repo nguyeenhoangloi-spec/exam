@@ -64,17 +64,9 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
               {identifierCode}
             </IdentifierBadge>
           )}
-
-          {cleanSubtitle && (
-            <>
-              <span className="text-slate-300 dark:text-slate-700 select-none">|</span>
-              <span className="text-type-body-sm font-medium text-slate-600 dark:text-slate-300 truncate">
-                {cleanSubtitle}
-              </span>
-            </>
-          )}
         </div>
       }
+      subtitle={cleanSubtitle || undefined}
       headerActions={headerActions}
       footer={
         <div className="flex items-center justify-end gap-3">

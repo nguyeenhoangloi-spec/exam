@@ -10,6 +10,7 @@ import { Toast } from '../../components/Toast';
 import { ConfirmModal } from '../../components/ConfirmModal';
 import { Button } from '../../components/ui/Button';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
+import { DeadlineBadge } from '../../components/ui/DeadlineBadge';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { KPICards, KPICardItem } from '../../components/KPICards';
 import { TrashPaginationBar } from '../../components/trash/TrashPaginationBar';
@@ -611,11 +612,7 @@ function TrashPageContent() {
                       )}
                       {visibleColumns.expiresIn && (
                         <td className="px-5 whitespace-nowrap py-3.5">
-                          <span className={`table-badge inline-flex items-center gap-[6px] text-type-helper leading-[20px] font-medium ${remainingDays <= 5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'
-                            }`}>
-                            <Clock className="w-3.5 h-3.5" />
-                            Còn {remainingDays} ngày
-                          </span>
+                          <DeadlineBadge remainingDays={remainingDays} className="table-badge" />
                         </td>
                       )}
                       {visibleColumns.deletedBy && (

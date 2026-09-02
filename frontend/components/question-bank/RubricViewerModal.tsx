@@ -90,7 +90,7 @@ export function RubricViewerModal({ isOpen, question, onClose }: RubricViewerMod
       isOpen={isOpen}
       onClose={onClose}
       size="2xl"
-      title="Đáp án & Ba-rem chấm"
+      title="Đáp án & ba-rem chấm"
       subtitle={
         question.code
           ? `Câu ${question.code} | Điểm tối đa: ${question.score || totalRubricScore || 0} điểm`

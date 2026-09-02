@@ -1553,7 +1553,7 @@ function TeacherEssayGradingContent() {
       <ProfileDrawer
         isOpen={!!profileCandidate}
         onClose={() => setProfileCandidate(null)}
-        title={profileCandidate?.student?.fullName || 'Hồ Sơ & Bài Thi Sinh Viên'}
+        title={profileCandidate?.student?.fullName || 'Hồ sơ và bài thi sinh viên'}
         subtitle={profileCandidate?.student?.studentCode || ''}
         avatarText={profileCandidate?.student?.fullName?.trim().split(' ').pop()?.slice(0, 2)?.toUpperCase() || 'SV'}
         badge={{

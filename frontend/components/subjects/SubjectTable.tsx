@@ -121,7 +121,7 @@ export function SubjectTable({
                       type="button"
                       onClick={() => onEnroll(s)}
                       className="flex items-center gap-1 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-2.5 py-1 text-type-body leading-[22px] font-medium transition cursor-pointer shadow-2xs"
-                      title="Gán Sinh viên đăng ký môn học"
+                      title="Gán sinh viên đăng ký môn học"
                     >
                       <UserPlus className="h-3.5 w-3.5 text-slate-500" />
                       <span>Gán SV</span>

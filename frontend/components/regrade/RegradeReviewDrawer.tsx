@@ -90,7 +90,7 @@ export function RegradeReviewDrawer({
       <DetailDrawer
         isOpen={Boolean(selectedAppeal)}
         onClose={onClose}
-        title="Thẩm định Đơn Phúc khảo"
+        title="Thẩm định đơn phúc khảo"
         subtitle={
           selectedAppeal?.student
             ? `Sinh viên: ${selectedAppeal.student.fullName}${selectedAppeal.student.class?.code ? ` (${selectedAppeal.student.class.code})` : ''}`
@@ -115,7 +115,7 @@ export function RegradeReviewDrawer({
               onClick={handleSaveReview}
               isLoading={submitting}
             >
-              Lưu &amp; Công bố kết quả
+              Lưu &amp; công bố kết quả
             </Button>
           </div>
         }

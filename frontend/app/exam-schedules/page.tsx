@@ -980,7 +980,7 @@ export default function ExamSchedulesPage() {
             value: drawerSchedule?.examDate ? new Date(drawerSchedule.examDate).toLocaleDateString('vi-VN') : '---',
             icon: Calendar,
           },
-          { label: 'Khung giờ thi', value: `${drawerSchedule?.startTime} - ${drawerSchedule?.endTime}`, icon: Clock },
+          { label: 'Khung giờ thi', value: `${drawerSchedule?.startTime} – ${drawerSchedule?.endTime}`, icon: Clock },
           { label: 'Số lượng thí sinh', value: `${(drawerSchedule as any)?._count?.examRoomStudents ?? drawerSchedule?.studentCount ?? 0} thí sinh`, icon: Users },
           { label: 'Cán bộ giám thị', value: `${drawerSchedule?.supervisorCount || '2/2'} cán bộ`, icon: Users },
         ]}
