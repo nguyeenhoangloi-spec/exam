@@ -67,7 +67,7 @@ export function PaginationBar({
   return (
     <div className={`flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-3 pb-1 ${className}`}>
       <p className="text-type-body-sm font-normal text-slate-500 dark:text-slate-400">
-        Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{startItem}</span> -{' '}
+        Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{startItem}</span> –{' '}
         <span className="font-semibold text-slate-900 dark:text-slate-100">{endItem}</span> trong{' '}
         <span className="font-semibold text-slate-900 dark:text-slate-100">{totalItems.toLocaleString('vi-VN')}</span> {unit}
       </p>

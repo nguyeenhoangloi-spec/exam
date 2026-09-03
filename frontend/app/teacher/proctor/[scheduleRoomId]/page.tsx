@@ -35,6 +35,7 @@ import {
 
 import { KPICards, KPICardItem } from '@/components/KPICards';
 import { FilterSelect } from '@/components/ui/FilterSelect';
+import { PaginationBar } from '@/components/ui/PaginationBar';
 import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
 import { TabBar } from '@/components/ui/TabBar';
 import { SortDropdown } from '@/components/ui/SortDropdown';
@@ -414,24 +415,6 @@ export default function ProctorDashboardPage() {
   const handleColumnToggle = (key: string) => {
     setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }));
   };
-
-  const startItem = totalItems > 0 ? (page - 1) * limit + 1 : 0;
-  const endItem = Math.min(page * limit, totalItems);
-
-  const paginationPages: (number | string)[] = [];
-  if (totalPages <= 7) {
-    for (let i = 1; i <= totalPages; i++) paginationPages.push(i);
-  } else {
-    paginationPages.push(1);
-    if (page > 3) paginationPages.push('...');
-    const start = Math.max(2, page - 1);
-    const end = Math.min(totalPages - 1, page + 1);
-    for (let i = start; i <= end; i++) {
-      if (!paginationPages.includes(i)) paginationPages.push(i);
-    }
-    if (page < totalPages - 2) paginationPages.push('...');
-    if (!paginationPages.includes(totalPages)) paginationPages.push(totalPages);
-  }
 
   /* ── Loading ── */
   if (loading) {
@@ -985,81 +968,21 @@ export default function ProctorDashboardPage() {
         </div>
       )}
 
-      {/* ── 6. Standard Pagination Bar ── */}
+      {/* ── 6. Standard Pagination Bar (Đồng bộ component dùng chung PaginationBar) ── */}
       {totalItems > 0 && (
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-1">
-          <p className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">
-            Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{startItem}</span> –{' '}
-            <span className="font-semibold text-slate-900 dark:text-slate-100">{endItem}</span> trong{' '}
-            <span className="font-semibold text-slate-900 dark:text-slate-100">{totalItems.toLocaleString('vi-VN')}</span> thí sinh
-          </p>
-
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                disabled={page <= 1}
-                onClick={() => setPage(page - 1)}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer shadow-2xs"
-                title="Trang trước"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-
-              {paginationPages.map((p, idx) => {
-                if (p === '...') {
-                  return (
-                    <span key={`dots-${idx}`} className="px-1 text-type-helper font-semibold text-slate-400 dark:text-slate-500">
-                      ...
-                    </span>
-                  );
-                }
-
-                const pNum = Number(p);
-                const isCurrent = pNum === page;
-
-                return (
-                  <button
-                    key={pNum}
-                    type="button"
-                    onClick={() => setPage(pNum)}
-                    className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-type-helper font-semibold transition cursor-pointer shadow-2xs ${isCurrent
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : 'border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
-                      }`}
-                  >
-                    {pNum}
-                  </button>
-                );
-              })}
-
-              <button
-                type="button"
-                disabled={page >= totalPages}
-                onClick={() => setPage(page + 1)}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer shadow-2xs"
-                title="Trang sau"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-
-            {/* Rows Per Page Dropdown */}
-            <FilterSelect
-              value={limit}
-              onChange={(e) => {
-                setLimit(Number(e.target.value));
-                setPage(1);
-              }}
-              className="h-9 appearance-none rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-3 pr-7 text-type-body font-medium text-slate-700 dark:text-slate-200 outline-none hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer shadow-2xs"
-            >
-              <option value={10}>10 / trang</option>
-              <option value={20}>20 / trang</option>
-              <option value={50}>50 / trang</option>
-              <option value={100}>100 / trang</option>
-            </FilterSelect>
-          </div>
-        </div>
+        <PaginationBar
+          page={page}
+          totalPages={totalPages}
+          limit={limit}
+          totalItems={totalItems}
+          unit="thí sinh"
+          onPage={setPage}
+          onLimit={(l) => {
+            setLimit(l);
+            setPage(1);
+          }}
+          limitOptions={[10, 20, 50, 100]}
+        />
       )}
 
       {/* ── 7. Floating Multi-Student Bulk Action Bar (Chuẩn Sleek Blue-White Floating HUD Dock) ── */}
