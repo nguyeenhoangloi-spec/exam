@@ -573,11 +573,22 @@ export default function ProctorDashboardPage() {
               </span>
             </div>
 
-            <p className="flex items-center gap-4 text-type-body-sm font-normal leading-[22px] text-slate-500 dark:text-slate-400 flex-wrap">
-              <span>Môn: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{data.subjectName}</strong></span>
-              <span>Ngày: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{new Date(data.examDate).toLocaleDateString('vi-VN')}</strong></span>
-              <span>Ca thi: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{data.startTime} – {data.endTime}</strong></span>
-            </p>
+            <div className="flex items-center gap-3 text-type-body-sm font-normal leading-[22px] text-slate-600 dark:text-slate-400 flex-wrap pt-0.5">
+              <span>Môn: <strong className="text-slate-900 dark:text-slate-100 font-medium">{data.subjectName}</strong></span>
+              <span className="inline-block h-3.5 w-px bg-slate-200 dark:bg-slate-700" aria-hidden="true" />
+              <span>Ngày: <strong className="text-slate-900 dark:text-slate-100 font-medium">
+                {(() => {
+                  if (!data.examDate) return '—';
+                  const d = new Date(data.examDate);
+                  if (isNaN(d.getTime())) return '—';
+                  const day = String(d.getDate()).padStart(2, '0');
+                  const month = String(d.getMonth() + 1).padStart(2, '0');
+                  return `${day}/${month}/${d.getFullYear()}`;
+                })()}
+              </strong></span>
+              <span className="inline-block h-3.5 w-px bg-slate-200 dark:bg-slate-700" aria-hidden="true" />
+              <span>Ca thi: <strong className="text-slate-900 dark:text-slate-100 font-medium">{data.startTime} – {data.endTime}</strong></span>
+            </div>
           </div>
         </div>
 
@@ -778,14 +789,14 @@ export default function ProctorDashboardPage() {
         /* ── 5.1 Standard List View Mode (Default Table) ── */
         <div className="ui-table-wrap w-full max-w-full overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card">
           <table className="ui-table w-full min-w-[750px] text-left text-type-body text-slate-700 border-collapse">
-            <thead className="bg-slate-50 text-type-body-sm font-medium tracking-wider text-slate-600 border-b border-slate-200">
+            <thead className="bg-white dark:bg-slate-800/80 text-type-body-sm font-medium tracking-wider text-slate-700 dark:text-slate-200 border-b border-slate-200/90 dark:border-slate-800">
               <tr>
                 <th scope="col" className="p-3.5 pl-4 text-center w-10">
                   <input
                     type="checkbox"
                     checked={allSelected}
                     onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                   />
                 </th>
                 {visibleColumns.seat !== false && <th scope="col" className="p-3.5 whitespace-nowrap">SBD / Ghế</th>}
@@ -806,24 +817,26 @@ export default function ProctorDashboardPage() {
                 const isChecked = selectedIds.includes(s.student.id);
 
                 return (
-                  <tr key={s.student.id} className={`hover:bg-blue-50/40 transition ${isChecked ? 'bg-blue-50/60' : ''}`}>
+                  <tr key={s.student.id} className={`hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition ${isChecked ? 'bg-blue-50/40 dark:bg-blue-950/30' : ''}`}>
                     {/* Checkbox */}
                     <td className="p-3.5 pl-4 text-center">
                       <input
                         type="checkbox"
                         checked={isChecked}
                         onChange={(e) => handleSelectOne(s.student.id, e.target.checked)}
-                        className="h-4 w-4 rounded-xl border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                        className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                       />
                     </td>
 
                     {/* SBD / Seat */}
                     {visibleColumns.seat !== false && (
                       <td className="p-3.5 whitespace-nowrap">
-                        <IdentifierBadge tone="neutral">{s.examNumber}</IdentifierBadge>
-                        <span className="table-badge ml-2 ui-pill inline-flex items-center text-type-helper font-medium text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded-full border border-blue-100 dark:border-blue-900">
-                          Ghế {s.seatNumber}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <IdentifierBadge tone="neutral">{s.examNumber}</IdentifierBadge>
+                          <span className="text-type-body font-normal text-slate-600 dark:text-slate-400 tabular-nums">
+                            Ghế {s.seatNumber}
+                          </span>
+                        </div>
                       </td>
                     )}
 
@@ -847,7 +860,7 @@ export default function ProctorDashboardPage() {
                     {/* Student code */}
                     {visibleColumns.code !== false && (
                       <td className="p-3.5 whitespace-nowrap">
-                        <IdentifierBadge tone="blue">{s.student.studentCode}</IdentifierBadge>
+                        <IdentifierBadge tone="neutral">{s.student.studentCode}</IdentifierBadge>
                       </td>
                     )}
 
@@ -865,7 +878,7 @@ export default function ProctorDashboardPage() {
                     {visibleColumns.risk !== false && (
                       <td className="p-3.5 text-center whitespace-nowrap">
                         <span className={`text-type-body leading-[22px] ${riskCls}`}>
-                          {riskScore}đ ({riskLevel})
+                          {riskScore} điểm ({riskLevel})
                         </span>
                       </td>
                     )}
@@ -963,10 +976,10 @@ export default function ProctorDashboardPage() {
       {/* ── 6. Standard Pagination Bar ── */}
       {totalItems > 0 && (
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-1">
-          <p className="text-type-helper font-semibold text-slate-500">
-            Hiển thị <span className="font-semibold text-slate-900">{startItem}</span> -{' '}
-            <span className="font-semibold text-slate-900">{endItem}</span> trong{' '}
-            <span className="font-semibold text-slate-900">{totalItems.toLocaleString('vi-VN')}</span> Thí sinh
+          <p className="text-type-helper font-semibold text-slate-500 dark:text-slate-400">
+            Hiển thị <span className="font-semibold text-slate-900 dark:text-slate-100">{startItem}</span> –{' '}
+            <span className="font-semibold text-slate-900 dark:text-slate-100">{endItem}</span> trong{' '}
+            <span className="font-semibold text-slate-900 dark:text-slate-100">{totalItems.toLocaleString('vi-VN')}</span> thí sinh
           </p>
 
           <div className="flex items-center gap-3">
@@ -975,7 +988,7 @@ export default function ProctorDashboardPage() {
                 type="button"
                 disabled={page <= 1}
                 onClick={() => setPage(page - 1)}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer shadow-2xs"
                 title="Trang trước"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -984,7 +997,7 @@ export default function ProctorDashboardPage() {
               {paginationPages.map((p, idx) => {
                 if (p === '...') {
                   return (
-                    <span key={`dots-${idx}`} className="px-1 text-type-helper font-semibold text-slate-400">
+                    <span key={`dots-${idx}`} className="px-1 text-type-helper font-semibold text-slate-400 dark:text-slate-500">
                       ...
                     </span>
                   );
@@ -1000,7 +1013,7 @@ export default function ProctorDashboardPage() {
                     onClick={() => setPage(pNum)}
                     className={`flex h-9 min-w-[36px] items-center justify-center rounded-xl px-2.5 text-type-helper font-semibold transition cursor-pointer shadow-2xs ${isCurrent
                       ? 'bg-blue-600 text-white shadow-xs'
-                      : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                      : 'border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
                       }`}
                   >
                     {pNum}
@@ -1012,7 +1025,7 @@ export default function ProctorDashboardPage() {
                 type="button"
                 disabled={page >= totalPages}
                 onClick={() => setPage(page + 1)}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition disabled:opacity-40 disabled:hover:bg-white cursor-pointer shadow-2xs"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-slate-900 cursor-pointer shadow-2xs"
                 title="Trang sau"
               >
                 <ChevronRight className="h-4 w-4" />
@@ -1026,7 +1039,7 @@ export default function ProctorDashboardPage() {
                 setLimit(Number(e.target.value));
                 setPage(1);
               }}
-              className="h-9 appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-7 text-type-body font-medium text-slate-700 outline-none hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+              className="h-9 appearance-none rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-3 pr-7 text-type-body font-medium text-slate-700 dark:text-slate-200 outline-none hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer shadow-2xs"
             >
               <option value={10}>10 / trang</option>
               <option value={20}>20 / trang</option>
@@ -1098,7 +1111,7 @@ export default function ProctorDashboardPage() {
                     </strong>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <IdentifierBadge tone="blue">{selectedStudent.student.studentCode}</IdentifierBadge>
+                    <IdentifierBadge tone="neutral">{selectedStudent.student.studentCode}</IdentifierBadge>
                     {selectedStudent.examNumber && (
                       <IdentifierBadge tone="neutral">{selectedStudent.examNumber}</IdentifierBadge>
                     )}
@@ -1842,7 +1855,7 @@ export default function ProctorDashboardPage() {
         }}
         details={[
           { label: 'Họ và tên thí sinh', value: inspectStudent?.student?.fullName || '—' },
-          { label: 'Mã số sinh viên', value: <IdentifierBadge tone="blue">{inspectStudent?.student?.studentCode || '—'}</IdentifierBadge> },
+          { label: 'Mã số sinh viên', value: <IdentifierBadge tone="neutral">{inspectStudent?.student?.studentCode || '—'}</IdentifierBadge> },
           { label: 'Số báo danh (SBD)', value: <IdentifierBadge tone="neutral">{inspectStudent?.examNumber || '—'}</IdentifierBadge> },
           { label: 'Số thứ tự ghế', value: `Ghế số ${inspectStudent?.seatNumber || '—'}` },
           { label: 'Phòng thi', value: data?.roomName || '—' },
