@@ -217,11 +217,23 @@ Tất cả các script triển khai và cài đặt được gom gọn gàng tro
    JWT_EXPIRES_IN="7d"
    ```
 
-4. Đồng bộ Schema CSDL & Nạp dữ liệu mẫu (Seed):
-   ```bash
-   npx prisma db push
-   npm run seed
-   ```
+4. Khởi tạo Cơ sở dữ liệu (Chọn 1 trong 2 cách thuận tiện nhất):
+
+   * **Cách 1: Dùng lệnh tự động (Khuyến nghị - Nhanh & chuẩn nhất)**:
+     ```bash
+     # Tại thư mục gốc dự án, chạy đúng 1 lệnh:
+     npm run db:setup
+     # Hoặc: npm run db:migrate && npm run seed
+     ```
+     *(Hệ thống sẽ tự động tạo đủ bảng qua Prisma và nạp sẵn tài khoản Admin, Giảng viên, Sinh viên, Đề thi mẫu)*
+
+   * **Cách 2: Import trực tiếp file SQL (Dành cho pgAdmin / DBeaver / psql)**:
+     - File database đầy đủ có sẵn tại: `database-backups/EXAM_MANAGEMENT_CURRENT_DATABASE.sql`
+     - **Qua giao diện pgAdmin / DBeaver**: Tạo Database tên `exam` -> Mở **Query Tool** -> Mở file `EXAM_MANAGEMENT_CURRENT_DATABASE.sql` -> Nhấn **Execute (F5)**.
+     - **Qua dòng lệnh terminal**:
+       ```bash
+       psql -U postgres -d exam -f database-backups/EXAM_MANAGEMENT_CURRENT_DATABASE.sql
+       ```
 
 5. Khởi động Backend API Server (Cổng `3001`):
    ```bash

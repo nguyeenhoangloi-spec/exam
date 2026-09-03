@@ -97,7 +97,9 @@ backend/prisma/data-export/
 backend/online-full.sql
 backup-runtime/
 backup-staging-uploads/
-database-backups/
+database-backups/*
+!database-backups/EXAM_MANAGEMENT_CURRENT_DATABASE.sql
+!database.sql
 mirror_backup/
 *.dump
 *.backup
