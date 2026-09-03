@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Sparkles, Check, GraduationCap, FileCheck, Shield, BookOpen, AlertCircle } from 'lucide-react';
+import { X, BookmarkCheck, Check, GraduationCap, FileCheck, Shield, BookOpen, AlertCircle } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 interface RolePresetsModalProps {
@@ -102,7 +102,7 @@ export function RolePresetsModal({
         <div className="p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
-              <Sparkles className="h-4 w-4" />
+              <BookmarkCheck className="h-4 w-4" />
             </div>
             <div>
               <h3 id="presets-modal-title" className="text-type-card font-semibold text-slate-900 dark:text-slate-100">

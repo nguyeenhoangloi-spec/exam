@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Calendar, Clock, UserCheck, CheckCircle2, XCircle } from 'lucide-react';
+import { Calendar, Clock, CalendarCheck, CheckCircle2, XCircle } from 'lucide-react';
 import { KPICards, KPICardItem } from '../KPICards';
 
 interface ExamScheduleKPICardsProps {
@@ -46,7 +46,7 @@ export function ExamScheduleKPICards({
       value: completed,
       subtext: 'Đã hoàn thành',
       progressPercent: total > 0 ? Math.round((completed / total) * 100) : 100,
-      icon: UserCheck,
+      icon: CalendarCheck,
     },
     {
       title: 'Đã hủy',

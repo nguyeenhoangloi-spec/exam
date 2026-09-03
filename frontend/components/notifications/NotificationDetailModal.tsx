@@ -46,6 +46,7 @@ export function NotificationDetailModal({
       title="Chi tiết thông báo"
       subtitle="Thông báo hệ thống khảo thí"
       size="md"
+      icon={<Bell className="h-6 w-6 text-white" />}
     >
       <div className="space-y-4 text-type-body">
         {/* Header Icon + Title */}

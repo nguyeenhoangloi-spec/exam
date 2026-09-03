@@ -11,7 +11,7 @@ import {
   FileText,
   Calendar,
   Zap,
-  Award,
+  CheckCircle2,
   Layers,
 } from 'lucide-react';
 import { ExamPaper, ExamSchedule } from '../../types';
@@ -169,7 +169,7 @@ export function ExamPaperFilterPopover({
   const categories = [
     { id: 'presets' as FilterCategory, label: 'Lọc nhanh', shortcut: '1', icon: Zap, badge: null },
     { id: 'schedule' as FilterCategory, label: 'Lịch thi', shortcut: '2', icon: Calendar, badge: selectedScheduleId ? '1' : null },
-    { id: 'status' as FilterCategory, label: 'Trạng thái', shortcut: '3', icon: Award, badge: statusFilter && statusFilter !== 'ALL' ? '1' : null },
+    { id: 'status' as FilterCategory, label: 'Trạng thái', shortcut: '3', icon: CheckCircle2, badge: statusFilter && statusFilter !== 'ALL' ? '1' : null },
     { id: 'examType' as FilterCategory, label: 'Hình thức', shortcut: '4', icon: Layers, badge: selectedExamType ? '1' : null },
   ];
 

@@ -2,7 +2,7 @@
 import { FilterSelect } from '../ui/FilterSelect';
 
 import { useState, useRef } from 'react';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Sparkles } from 'lucide-react';
 import api from '../../lib/api';
 import { Subject } from '../../types';
 import { Modal } from '../Modal';
@@ -132,7 +132,7 @@ export function QuestionAIWizard({
   };
 
   return (
-    <Modal isOpen={open} onClose={onClose} title="Trình tạo câu hỏi bằng AI">
+    <Modal isOpen={open} onClose={onClose} title="Trình tạo câu hỏi bằng AI" icon={<Sparkles className="h-6 w-6 text-white" />}>
       <div className="space-y-4 text-slate-900">
         {/* Banner Header */}
         <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-3.5">

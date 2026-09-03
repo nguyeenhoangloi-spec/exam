@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { PlusCircle, Layers, FilePlus2, ShieldCheck, ArrowRight } from 'lucide-react';
+import { PlusCircle, LayoutGrid, FilePlus2, ShieldCheck, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export function QuickActionsBar() {
@@ -19,7 +19,7 @@ export function QuickActionsBar() {
       id: 'auto-arrange',
       title: 'Xếp phòng tự động',
       subtitle: 'Phân bổ phòng máy & ca thi',
-      icon: Layers,
+      icon: LayoutGrid,
       route: '/exam-arrangement',
     },
     {

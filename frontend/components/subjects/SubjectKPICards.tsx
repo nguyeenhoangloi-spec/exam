@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { BookOpen, Award, Building2, BookMarked, HelpCircle } from 'lucide-react';
+import { BookOpen, GraduationCap, Building2, BookMarked, HelpCircle } from 'lucide-react';
 import { KPICards, KPICardItem } from '../KPICards';
 
 interface SubjectKPICardsProps {
@@ -32,7 +32,7 @@ export function SubjectKPICards({
       value: totalCredits,
       subtext: 'Tổng số TC tích lũy',
       progressPercent: totalCredits > 0 ? 100 : 0,
-      icon: Award,
+      icon: GraduationCap,
       unit: ' TC',
     },
     {

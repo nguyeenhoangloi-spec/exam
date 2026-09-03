@@ -17,7 +17,7 @@ import { Button } from '../../components/ui/Button';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
 import { CriticalConfirmModal, CriticalConfirmPayload } from '../../components/CriticalConfirmModal';
 import { ExamPaper, ExamSchedule, User } from '../../types';
-import { Search, X, ChevronDown, Download, KeyRound, Printer, Eye, HelpCircle, CheckCircle2, Award, RotateCcw, RefreshCw, Trash2, Send, Archive, FileText } from 'lucide-react';
+import { Search, X, ChevronDown, Download, KeyRound, Printer, Eye, HelpCircle, CheckCircle2, Award, RotateCcw, RefreshCw, Trash2, Send, Archive, FileText, Shuffle } from 'lucide-react';
 
 import { ExamPaperHeader } from '../../components/exam-papers/ExamPaperHeader';
 import { ExamPaperKPICards } from '../../components/exam-papers/ExamPaperKPICards';
@@ -1155,6 +1155,7 @@ export default function ExamPapersPage() {
           isOpen={swapModal.isOpen}
           onClose={() => setSwapModal({ isOpen: false, questionIndex: null, targetQuestion: null, alternatives: [], loading: false })}
           title={`Đổi câu hỏi #${(swapModal.questionIndex ?? 0) + 1} – Gợi ý thay thế`}
+          icon={<Shuffle className="h-6 w-6 text-white" />}
         >
           <div className="space-y-4">
             {/* Header thông tin câu hỏi đang thay thế */}

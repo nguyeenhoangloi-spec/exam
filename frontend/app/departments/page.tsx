@@ -13,7 +13,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { Button } from '../../components/ui/Button';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { Department, Subject } from '../../types';
-import { Building2, Search, X, Plus, Trash2, BookOpen, GraduationCap, Award, Users } from 'lucide-react';
+import { Building2, Search, X, Plus, Trash2, BookOpen, GraduationCap, Award, Users, BookMarked } from 'lucide-react';
 
 import { DepartmentHeader } from '../../components/departments/DepartmentHeader';
 import { DepartmentKPICards } from '../../components/departments/DepartmentKPICards';
@@ -655,6 +655,7 @@ export default function DepartmentsPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={editingDepartment ? 'Sửa khoa' : 'Thêm khoa'}
+        icon={<Building2 className="h-6 w-6 text-white" />}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -702,6 +703,7 @@ export default function DepartmentsPage() {
         onClose={() => setCurriculumDept(null)}
         size="3xl"
         title={`Khung chương trình đào tạo: ${curriculumDept?.name || ''}`}
+        icon={<BookMarked className="h-6 w-6 text-white" />}
         subtitle={
           curriculumDept?.code ? (
             <div className="flex items-center gap-2 mt-0.5 text-type-helper text-slate-500 dark:text-slate-400">

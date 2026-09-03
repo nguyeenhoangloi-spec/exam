@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Modal } from '../Modal';
 import { Button } from '../ui/Button';
 import { FilterSelect } from '../ui/FilterSelect';
-import { DoorOpen, ShieldCheck, UserCheck, ShieldAlert, AlertTriangle } from 'lucide-react';
+import { DoorOpen, ShieldCheck, Shield, ShieldAlert, AlertTriangle } from 'lucide-react';
 
 interface AutoProposalModalProps {
   isOpen: boolean;
@@ -117,6 +117,7 @@ export function AutoProposalModal({
       title="Phương án phân công giám thị tự động"
       subtitle={`Thuật toán đã tự động tính toán và điền sẵn cán bộ cho ${rooms.length} phòng thi.`}
       size="4xl"
+      icon={<ShieldCheck className="h-6 w-6 text-white" />}
     >
       <div className="space-y-4 pt-1">
         {/* Unassigned Warning Note if any */}
@@ -194,7 +195,7 @@ export function AutoProposalModal({
                   <div className="space-y-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-2.5">
                     <label className="flex items-center justify-between text-type-body font-medium text-slate-700 dark:text-slate-300">
                       <span className="flex items-center gap-1.5">
-                        <UserCheck className="h-3.5 w-3.5 text-slate-500" />
+                        <Shield className="h-3.5 w-3.5 text-slate-500" />
                         Giám thị 2 (Phụ)
                       </span>
                     </label>

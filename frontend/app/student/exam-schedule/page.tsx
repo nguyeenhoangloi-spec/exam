@@ -175,7 +175,7 @@ export default function StudentExamSchedulePage() {
       unit: ' ca thi',
       subtext: 'Đã duyệt SBD & Ghế',
       progressPercent: schedules.length > 0 ? Math.round((sbdCount / schedules.length) * 100) : 0,
-      icon: Award,
+      icon: Ticket,
     },
   ];
 

@@ -33,7 +33,6 @@ import {
   Layers,
   Search,
   Award,
-  Sparkles,
   Building2,
   School,
   User,
@@ -49,6 +48,7 @@ import {
   Eye,
   Check,
   BookMarked,
+  BookmarkCheck,
   Info,
 } from 'lucide-react';
 
@@ -270,7 +270,7 @@ export default function StudentCurriculumPage() {
       value: stats?.totalMandatoryCredits ?? 0,
       subtext: 'Khối kiến thức cốt lõi',
       progressPercent: stats?.totalCredits ? Math.round(((stats.totalMandatoryCredits || 0) / stats.totalCredits) * 100) : 0,
-      icon: Award,
+      icon: CheckCircle2,
       unit: ' TC',
     },
     {
@@ -628,7 +628,7 @@ export default function StudentCurriculumPage() {
                           <td className="py-3.5 px-4 whitespace-nowrap">
                             {item.type === 'MANDATORY' ? (
                               <span className="table-badge inline-flex items-center gap-1.5 text-type-helper font-medium text-blue-600 dark:text-blue-400">
-                                <Award className="h-3.5 w-3.5" /> Bắt buộc
+                                <CheckCircle2 className="h-3.5 w-3.5" /> Bắt buộc
                               </span>
                             ) : (
                               <span className="table-badge inline-flex items-center gap-1.5 text-type-helper font-medium text-blue-600 dark:text-blue-400">
@@ -767,7 +767,7 @@ export default function StudentCurriculumPage() {
             { label: 'Mã học phần', value: <IdentifierBadge tone="blue">{detailItem?.subjectCode || '—'}</IdentifierBadge>, icon: Info },
             { label: 'Học kỳ đào tạo', value: detailItem ? `Học kỳ ${detailItem.recommendedSemester}` : '', icon: BookMarked },
             { label: 'Số tín chỉ', value: detailItem ? `${detailItem.credits} tín chỉ` : '', icon: Layers },
-            { label: 'Phân loại học phần', value: detailItem?.type === 'MANDATORY' ? 'Môn học bắt buộc' : 'Môn học tự chọn', icon: Award },
+            { label: 'Phân loại học phần', value: detailItem?.type === 'MANDATORY' ? 'Môn học bắt buộc' : 'Môn học tự chọn', icon: BookmarkCheck },
             ...(detailItem?.note ? [{ label: 'Ghi chú học phần', value: detailItem.note }] : []),
           ]}
           extraSections={detailItem ? [

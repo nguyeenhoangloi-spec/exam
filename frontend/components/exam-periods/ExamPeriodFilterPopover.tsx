@@ -193,7 +193,7 @@ export function ExamPeriodFilterPopover({
       id: 'semester' as FilterCategory,
       label: 'Học kỳ',
       shortcut: '3',
-      icon: GraduationCap,
+      icon: Layers,
       badge: selectedSemester ? '1' : null,
     },
     {

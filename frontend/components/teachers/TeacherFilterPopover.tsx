@@ -11,7 +11,7 @@ import {
   Building2,
   GraduationCap,
   Zap,
-  Award,
+  CheckCircle2,
 } from 'lucide-react';
 import { Teacher, Department } from '../../types';
 
@@ -160,7 +160,7 @@ export function TeacherFilterPopover({
     { id: 'presets' as FilterCategory, label: 'Lọc nhanh', shortcut: '1', icon: Zap, badge: null },
     { id: 'department' as FilterCategory, label: 'Khoa / Bộ môn', shortcut: '2', icon: Building2, badge: selectedDeptId ? '1' : null },
     { id: 'degree' as FilterCategory, label: 'Học vị / Học hàm', shortcut: '3', icon: GraduationCap, badge: selectedDegree ? '1' : null },
-    { id: 'status' as FilterCategory, label: 'Thuộc Khoa', shortcut: '4', icon: Award, badge: selectedStatus ? '1' : null },
+    { id: 'status' as FilterCategory, label: 'Thuộc Khoa', shortcut: '4', icon: CheckCircle2, badge: selectedStatus ? '1' : null },
   ];
 
   const degreeList = [

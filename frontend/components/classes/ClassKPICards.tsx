@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { GraduationCap, Building2, Users, BarChart3, Flame } from 'lucide-react';
+import { School, Building2, Users, BarChart3, TrendingUp } from 'lucide-react';
 import { KPICards, KPICardItem } from '../KPICards';
 
 interface ClassKPICardsProps {
@@ -25,7 +25,7 @@ export function ClassKPICards({
       value: total,
       subtext: 'Lớp sinh viên',
       progressPercent: total > 0 ? 100 : 0,
-      icon: GraduationCap,
+      icon: School,
     },
     {
       title: 'Khoa đào tạo',
@@ -56,7 +56,7 @@ export function ClassKPICards({
       value: maxClassStudents,
       subtext: 'Lớp đông sinh viên nhất',
       progressPercent: maxClassStudents > 0 ? 100 : 0,
-      icon: Flame,
+      icon: TrendingUp,
       unit: ' SV',
     },
   ];

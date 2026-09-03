@@ -139,6 +139,7 @@ export function RescheduleModal({
       title="Dời lịch thi & Đổi ca thi"
       subtitle={`${schedule.subject?.subjectName || schedule.periodName || 'Học phần'} (${schedule.code})`}
       size="lg"
+      icon={<Clock className="h-6 w-6 text-white" />}
     >
       <div className="space-y-4 text-type-body">
         {/* Current Schedule Summary (Bố cục phẳng inline) */}

@@ -27,12 +27,16 @@ import {
   Activity,
   KeyRound,
   Headphones,
-  Sparkles,
   ClipboardList,
   FileCog,
   ShieldAlert,
   Settings,
   Archive,
+  LayoutGrid,
+  Scale,
+  CalendarClock,
+  DoorOpen,
+  PenTool,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Role, User } from '../types';
@@ -148,8 +152,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         items: [
           { name: 'Kỳ thi', href: '/exam-periods', icon: CalendarDays },
           { name: 'Lịch thi', href: '/exam-schedules', icon: CalendarCheck },
-          { name: 'Phòng thi', href: '/exam-rooms', icon: Building2 },
-          { name: 'Xếp phòng thi', href: '/exam-arrangement', icon: Users },
+          { name: 'Phòng thi', href: '/exam-rooms', icon: DoorOpen },
+          { name: 'Xếp phòng thi', href: '/exam-arrangement', icon: LayoutGrid },
           { name: 'Phân công coi thi', href: '/exam-supervisors', icon: ShieldCheck },
         ],
       },
@@ -166,7 +170,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           { name: 'Bảng điểm ca thi', href: '/exam-reports?view=schedule', icon: ClipboardList },
           { name: 'Kho lưu trữ bài thi', href: '/admin/exam-archives', icon: Archive },
           { name: 'Duyệt bài tự luận', href: '/admin/essay-review', icon: FileCheck },
-          { name: 'Xử lý phúc khảo', href: '/admin/grade-appeals', icon: Award },
+          { name: 'Xử lý phúc khảo', href: '/admin/grade-appeals', icon: Scale },
         ],
       },
       {
@@ -178,11 +182,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {
         group: 'Danh mục',
         items: [
-          { name: 'Khoa đào tạo', href: '/departments', icon: School },
+          { name: 'Khoa đào tạo', href: '/departments', icon: Building2 },
           { name: 'Môn học', href: '/subjects', icon: BookOpen },
-          { name: 'Lớp sinh viên', href: '/classes', icon: GraduationCap },
+          { name: 'Lớp sinh viên', href: '/classes', icon: School },
           { name: 'Sinh viên', href: '/students', icon: Users },
-          { name: 'Giảng viên', href: '/teachers', icon: ShieldCheck },
+          { name: 'Giảng viên', href: '/teachers', icon: GraduationCap },
         ],
       },
       {
@@ -217,8 +221,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         group: 'Công tác coi thi & chấm thi',
         items: [
           { name: 'Lịch coi thi', href: '/teacher/assignments', icon: CalendarCheck },
-          { name: 'Chấm thi tự luận', href: '/teacher/essay-grading', icon: FileCheck },
-          { name: 'Thẩm định phúc khảo', href: '/teacher/regrade', icon: Award },
+          { name: 'Chấm thi tự luận', href: '/teacher/essay-grading', icon: PenTool },
+          { name: 'Thẩm định phúc khảo', href: '/teacher/regrade', icon: Scale },
           { name: 'Bảng điểm ca thi', href: '/exam-reports?view=schedule', icon: ClipboardList },
           { name: 'Kho lưu trữ bài thi', href: '/admin/exam-archives', icon: Archive },
         ],
@@ -232,7 +236,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {
         group: 'Thi thử & tài liệu chuyên môn',
         items: [
-          { name: 'Lịch thi thử', href: '/exam-schedules', icon: Sparkles },
+          { name: 'Lịch thi thử', href: '/exam-schedules', icon: CalendarClock },
           { name: 'Ngân hàng câu hỏi', href: '/question-bank', icon: HelpCircle },
           { name: 'Kho đề thi', href: '/exam-papers', icon: FileText },
         ],
@@ -249,7 +253,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         items: [
           { name: 'Lịch thi cá nhân', href: '/student/exam-schedule', icon: CalendarDays },
           { name: 'Kết quả bài thi', href: '/student/results', icon: Award },
-          { name: 'Chương trình đào tạo', href: '/student/curriculum', icon: BookOpen },
+          { name: 'Chương trình đào tạo', href: '/student/curriculum', icon: BookMarked },
         ],
       },
     ],

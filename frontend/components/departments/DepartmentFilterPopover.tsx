@@ -11,6 +11,7 @@ import {
   Building2,
   Users,
   GraduationCap,
+  School,
   BookOpen,
   Zap,
 } from 'lucide-react';
@@ -163,8 +164,8 @@ export function DepartmentFilterPopover({
 
   const categories = [
     { id: 'presets' as FilterCategory, label: 'Lọc nhanh', shortcut: '1', icon: Zap, badge: null },
-    { id: 'classes' as FilterCategory, label: 'Lớp học', shortcut: '2', icon: GraduationCap, badge: hasClassFilter ? '1' : null },
-    { id: 'teachers' as FilterCategory, label: 'Giảng viên', shortcut: '3', icon: Users, badge: hasTeacherFilter ? '1' : null },
+    { id: 'classes' as FilterCategory, label: 'Lớp học', shortcut: '2', icon: School, badge: hasClassFilter ? '1' : null },
+    { id: 'teachers' as FilterCategory, label: 'Giảng viên', shortcut: '3', icon: GraduationCap, badge: hasTeacherFilter ? '1' : null },
     { id: 'subjects' as FilterCategory, label: 'Môn học', shortcut: '4', icon: BookOpen, badge: hasSubjectFilter ? '1' : null },
   ];
 

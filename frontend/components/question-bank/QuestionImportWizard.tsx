@@ -7,7 +7,7 @@ import { Subject } from '../../types';
 import { Modal } from '../Modal';
 import { ConfirmModal } from '../ConfirmModal';
 import { Toast } from '../Toast';
-import { Download } from 'lucide-react';
+import { Download, FileSpreadsheet } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { DynamicImage } from '../ui/DynamicImage';
 
@@ -382,7 +382,7 @@ export function QuestionImportWizard({
   };
 
   return (
-    <Modal isOpen={open} onClose={onClose} title="Nhập ngân hàng câu hỏi: Tải lên → Xem trước → Lưu" size="3xl">
+    <Modal isOpen={open} onClose={onClose} title="Nhập ngân hàng câu hỏi: Tải lên → Xem trước → Lưu" size="3xl" icon={<FileSpreadsheet className="h-6 w-6 text-white" />}>
       <div className="space-y-5">
         {/* Mode Selector Tabs */}
         <div className="flex gap-2 border-b border-slate-200 pb-3">

@@ -4,8 +4,9 @@ import React from 'react';
 import {
   Building2,
   Users,
-  Award,
+  TrendingUp,
   GraduationCap,
+  FileCheck,
   FileSpreadsheet,
   Printer,
   ArrowRight,
@@ -137,7 +138,7 @@ export function SummaryScheduleDrawer({
 
             <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
               <div className="flex items-center gap-2 text-type-helper font-medium text-slate-700 dark:text-slate-300 mb-1">
-                <Award className="h-4 w-4" />
+                <TrendingUp className="h-4 w-4" />
                 <span>Điểm TB</span>
               </div>
               <p className="text-type-section font-semibold text-slate-900 dark:text-slate-100">
@@ -160,7 +161,7 @@ export function SummaryScheduleDrawer({
                 { label: 'Khoa phụ trách', value: schedule.departmentName, icon: Building2 },
                 { label: 'Học phần / Môn học', value: `${schedule.subjectName} (${schedule.subjectCode})`, icon: BookOpen },
                 { label: 'Kỳ thi áp dụng', value: schedule.periodName, icon: GraduationCap },
-                { label: 'Số lượng bài đã chấm', value: `${schedule.graded} / ${schedule.submitted} bài`, icon: Award },
+                { label: 'Số lượng bài đã chấm', value: `${schedule.graded} / ${schedule.submitted} bài`, icon: FileCheck },
                 { label: 'Số sinh viên Đạt (>= 4.0)', value: `${schedule.passCount} sinh viên (${passRate}%)`, icon: CheckCircle2 },
               ].map((r) => {
                 const Icon = r.icon;

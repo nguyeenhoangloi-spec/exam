@@ -134,7 +134,7 @@ export const ExcelImportModal: React.FC<ExcelImportModalProps> = ({
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} title={title} size="lg">
+      <Modal isOpen={isOpen} onClose={onClose} title={title} size="lg" icon={<FileSpreadsheet className="h-6 w-6 text-white" />}>
         <div className="space-y-4 py-1">
           {/* Frameless Template Download Line */}
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">

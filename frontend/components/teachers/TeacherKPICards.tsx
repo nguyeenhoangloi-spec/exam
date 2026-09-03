@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { GraduationCap, Award, Building2, Users } from 'lucide-react';
+import { GraduationCap, Award, Building2, Users, Filter } from 'lucide-react';
 import { KPICards, KPICardItem } from '../KPICards';
 
 interface TeacherKPICardsProps {
@@ -39,7 +39,7 @@ export function TeacherKPICards({ total, withDegree, withDept, filtered }: Teach
       value: filtered,
       subtext: 'Theo bộ lọc hiện tại',
       progressPercent: total > 0 ? Math.round((filtered / total) * 100) : 100,
-      icon: Users,
+      icon: Filter,
     },
   ];
 

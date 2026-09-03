@@ -12,7 +12,7 @@ import {
   BookOpen,
   Zap,
   Users,
-  Award,
+  Layers,
 } from 'lucide-react';
 import { Subject, Department } from '../../types';
 
@@ -161,7 +161,7 @@ export function SubjectFilterPopover({
   const categories = [
     { id: 'presets' as FilterCategory, label: 'Lọc nhanh', shortcut: '1', icon: Zap, badge: null },
     { id: 'department' as FilterCategory, label: 'Khoa / Bộ môn', shortcut: '2', icon: Building2, badge: selectedDeptId ? '1' : null },
-    { id: 'credits' as FilterCategory, label: 'Số tín chỉ', shortcut: '3', icon: Award, badge: filterCredits ? '1' : null },
+    { id: 'credits' as FilterCategory, label: 'Số tín chỉ', shortcut: '3', icon: Layers, badge: filterCredits ? '1' : null },
     { id: 'students' as FilterCategory, label: 'Sinh viên', shortcut: '4', icon: Users, badge: filterHasStudents ? '1' : null },
   ];
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { FileText, Layers, UserCheck, Send, ChevronRight } from 'lucide-react';
+import { FileText, LayoutGrid, ShieldCheck, Send, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { DashboardAttention } from '../../types/dashboard';
 
@@ -22,7 +22,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
       title: 'Kỳ thi chưa xếp phòng',
       subtitle: 'Chưa hoàn tất xếp phòng thi',
       count: attention?.unassignedRooms ?? 0,
-      icon: Layers,
+      icon: LayoutGrid,
       route: '/exam-arrangement',
     },
     {
@@ -30,7 +30,7 @@ export function TaskAttention({ attention }: { attention?: Partial<DashboardAtte
       title: 'Ca thi thiếu giám thị',
       subtitle: 'Chưa đủ cán bộ coi thi',
       count: attention?.missingSupervisors ?? 0,
-      icon: UserCheck,
+      icon: ShieldCheck,
       route: '/exam-supervisors',
     },
     {

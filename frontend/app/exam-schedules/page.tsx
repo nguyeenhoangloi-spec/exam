@@ -28,7 +28,7 @@ import { ExamScheduleTable, ExamScheduleItemExtended, computeShiftName, computeS
 import { ExamSchedulePaginationBar } from '../../components/exam-schedules/ExamSchedulePaginationBar';
 import { RescheduleModal } from '../../components/exam-schedules/RescheduleModal';
 import { CancelScheduleModal } from '../../components/exam-schedules/CancelScheduleModal';
-import { Calendar, Clock, Building, Users, AlertTriangle, FileSpreadsheet, Search, X } from 'lucide-react';
+import { Calendar, Clock, Building, Users, AlertTriangle, FileSpreadsheet, Search, X, CalendarCheck } from 'lucide-react';
 import { PageSkeleton } from '../../components/ui/Skeleton';
 import { getCachedData } from '../../lib/api';
 import { formatTimeRange } from '../../lib/format';
@@ -721,6 +721,7 @@ export default function ExamSchedulesPage() {
         onClose={() => setIsModalOpen(false)}
         title={editingSchedule ? 'Sửa lịch thi' : 'Tạo lịch thi'}
         size="2xl"
+        icon={<CalendarCheck className="h-6 w-6 text-white" />}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">

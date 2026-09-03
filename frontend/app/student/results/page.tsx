@@ -51,6 +51,7 @@ import {
   ChevronRight,
   Check,
   GraduationCap,
+  Scale,
 } from 'lucide-react';
 
 interface ExamResultItem {
@@ -1023,7 +1024,7 @@ export default function StudentResultsPage() {
           }}
           title="Gửi yêu cầu phúc khảo"
           subtitle={`Môn học: ${(detailItem || selectedExamForAppeal)?.subjectName} (${(detailItem || selectedExamForAppeal)?.subjectCode})`}
-          icon={<MessageSquare className="h-6 w-6 text-white" />}
+          icon={<Scale className="h-6 w-6 text-white" />}
           badge="Phúc khảo"
           variant="gradient"
           size="md"

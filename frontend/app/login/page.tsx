@@ -10,6 +10,7 @@ import { Toast } from '../../components/Toast';
 import { Button } from '../../components/ui/Button';
 import {
   Award,
+  CalendarCheck,
   BarChart3,
   CheckCircle2,
   ChevronDown,
@@ -496,7 +497,7 @@ export default function LoginPage() {
 
             <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/80 dark:bg-slate-900/70 border border-slate-200/70 dark:border-slate-800 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
-                <Award className="h-6 w-6" />
+                <CalendarCheck className="h-6 w-6" />
               </div>
               <div className="min-w-0">
                 <p className="text-type-card sm:text-type-section font-semibold text-slate-900 dark:text-white leading-tight truncate">

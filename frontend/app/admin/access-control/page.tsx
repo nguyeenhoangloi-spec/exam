@@ -16,7 +16,6 @@ import {
   Building2,
   BookOpen,
   GraduationCap,
-  Sparkles,
   Check,
   RotateCcw,
   Shield,
@@ -859,7 +858,7 @@ export default function AccessControlPage() {
       value: usersWithOverridesCount,
       unit: ' tài khoản',
       subtext: 'Ngoại lệ phân quyền',
-      icon: Sparkles,
+      icon: SlidersHorizontal,
       progressPercent: users.length > 0 ? Math.round((usersWithOverridesCount / users.length) * 100) : 0,
     },
     {

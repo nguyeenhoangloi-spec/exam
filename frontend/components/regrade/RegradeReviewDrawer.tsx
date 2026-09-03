@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Award, GraduationCap, Clock, BookOpen, Eye, ExternalLink, MessageSquareQuote, CheckCircle2, AlertCircle } from 'lucide-react';
+import { FileText, School, Clock, BookOpen, Eye, ExternalLink, MessageSquareQuote, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
 import { StatusBadge } from '../common/StatusBadge';
@@ -144,7 +144,7 @@ export function RegradeReviewDrawer({
 
                 <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                   <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-medium shrink-0">
-                    <Award className="h-4 w-4 text-blue-600 shrink-0" />
+                    <FileText className="h-4 w-4 text-blue-600 shrink-0" />
                     Điểm thi ban đầu:
                   </span>
                   <span className="font-semibold text-blue-600 dark:text-blue-400">
@@ -154,7 +154,7 @@ export function RegradeReviewDrawer({
 
                 <div className="py-2.5 flex items-center justify-between gap-3 text-type-body-sm">
                   <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-medium shrink-0">
-                    <GraduationCap className="h-4 w-4 text-blue-600 shrink-0" />
+                    <School className="h-4 w-4 text-blue-600 shrink-0" />
                     Lớp sinh viên:
                   </span>
                   <span className="font-semibold text-slate-900 dark:text-white">

@@ -139,6 +139,7 @@ export function ReportTemplatePickerModal({
       title="Quản lý Mẫu Báo Cáo & Xuất Dữ Liệu Tùy Biến"
       subtitle="Lựa chọn mẫu báo cáo chuẩn có sẵn hoặc lưu lại mẫu thiết kế riêng của Khoa / Bộ môn."
       size="xl"
+      icon={<FileSpreadsheet className="h-6 w-6 text-white" />}
     >
       <div className="space-y-4 py-1">
         {/* Navigation Tabs (Sliding Segmented Control) */}

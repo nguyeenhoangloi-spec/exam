@@ -16,7 +16,7 @@ import {
   BLOOM_LABELS,
 } from '../../lib/enum-labels';
 import { getImageUrl } from '../../lib/media-utils';
-import { ImageIcon, Trash2, Video, Volume2 } from 'lucide-react';
+import { ImageIcon, Trash2, Video, Volume2, HelpCircle } from 'lucide-react';
 import { DynamicImage } from '../ui/DynamicImage';
 
 const option = z.object({
@@ -292,7 +292,7 @@ export function QuestionFormDialog({
 
   return (
     <>
-      <Modal isOpen={open} onClose={onClose} title={question ? 'Chỉnh sửa câu hỏi' : 'Thêm câu hỏi'} size="2xl">
+      <Modal isOpen={open} onClose={onClose} title={question ? 'Chỉnh sửa câu hỏi' : 'Thêm câu hỏi'} size="2xl" icon={<HelpCircle className="h-6 w-6 text-white" />}>
         <form onSubmit={handleSubmit(submit, onInvalid)} className="space-y-4">
           {/* Thuộc tính cơ bản câu hỏi */}
           <div className="grid gap-3 md:grid-cols-2">

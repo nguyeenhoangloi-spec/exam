@@ -11,7 +11,7 @@ import {
   Calendar,
   BookOpen,
   Building2,
-  GraduationCap,
+  School,
   Zap,
 } from 'lucide-react';
 
@@ -166,7 +166,7 @@ export function ExamReportFilterPopover({
       id: 'classes' as FilterCategory,
       label: 'Lớp học',
       shortcut: '5',
-      icon: GraduationCap,
+      icon: School,
       badge: summaryFilters.classId !== 'ALL' ? 1 : undefined,
     },
   ];

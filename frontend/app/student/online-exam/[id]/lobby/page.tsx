@@ -16,8 +16,11 @@ import {
   User,
   Ticket,
   MapPin,
+  DoorOpen,
+  School,
   Clock,
   GraduationCap,
+  LayoutGrid,
   AlertCircle,
   Maximize2,
   ShieldCheck,
@@ -810,6 +813,7 @@ export default function StudentExamLobbyPage() {
         onClose={() => setShowPasswordModal(false)}
         title="Xác thực mật khẩu phòng thi"
         size="sm"
+        icon={<Lock className="h-6 w-6 text-white" />}
       >
         <div className="space-y-4">
           <p className="text-type-helper sm:text-type-body-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
@@ -916,6 +920,7 @@ export default function StudentExamLobbyPage() {
         onClose={() => setShowSeatMapModal(false)}
         title={`Sơ đồ vị trí chỗ ngồi - Phòng ${roomName} (${building})`}
         size="lg"
+        icon={<LayoutGrid className="h-6 w-6 text-white" />}
       >
         <div className="space-y-5">
           {/* Header Bàn giám thị */}
@@ -986,10 +991,10 @@ export default function StudentExamLobbyPage() {
         details={[
           { label: 'Họ và tên thí sinh', value: fullName, icon: User },
           { label: 'Mã số sinh viên', value: <IdentifierBadge tone="blue">{studentCode}</IdentifierBadge> },
-          { label: 'Lớp sinh hoạt', value: studentClass, icon: GraduationCap },
+          { label: 'Lớp sinh hoạt', value: studentClass, icon: School },
           { label: 'Môn thi', value: schedule?.subject?.subjectName || examInfo?.subjectName || '—', icon: BookOpen },
           { label: 'Mã học phần', value: <IdentifierBadge tone="neutral">{cleanSubjectCode}</IdentifierBadge> },
-          { label: 'Phòng thi', value: `${roomName} (${building})`, icon: MapPin },
+          { label: 'Phòng thi', value: `${roomName} (${building})`, icon: DoorOpen },
           { label: 'Số báo danh (SBD)', value: <IdentifierBadge tone="neutral">{examNumber}</IdentifierBadge>, icon: Ticket },
           { label: 'Vị trí ghế ngồi', value: `Ghế số ${seatNumber}` },
           { label: 'Khung giờ thi', value: timeSlotStr, icon: Clock },

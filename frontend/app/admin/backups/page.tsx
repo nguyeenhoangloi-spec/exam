@@ -1195,7 +1195,7 @@ export default function BackupsPage() {
             </DetailDrawer>
 
             {/* Initial Restore Creation Modal */}
-            <Modal isOpen={restoreOpen} onClose={() => !actionLoading && setRestoreOpen(false)} title="Tạo yêu cầu khôi phục dữ liệu" size="md">
+            <Modal isOpen={restoreOpen} onClose={() => !actionLoading && setRestoreOpen(false)} title="Tạo yêu cầu khôi phục dữ liệu" size="md" icon={<ArchiveRestore className="h-6 w-6 text-white" />}>
                 <div className="space-y-4 py-1">
                     {/* Frameless Notice */}
                     <div className="flex items-start gap-2 text-type-helper font-medium text-amber-800 pb-1 border-b border-slate-100">

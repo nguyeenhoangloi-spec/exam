@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Building2, BookOpen, GraduationCap, Users, Sparkles } from 'lucide-react';
+import { Building2, BookOpen, School, GraduationCap, BookMarked } from 'lucide-react';
 import { KPICards, KPICardItem } from '../KPICards';
 
 interface DepartmentKPICardsProps {
@@ -41,7 +41,7 @@ export function DepartmentKPICards({
       value: totalClasses,
       subtext: 'Lớp sinh viên',
       progressPercent: totalClasses > 0 ? 100 : 0,
-      icon: GraduationCap,
+      icon: School,
       unit: ' lớp',
     },
     {
@@ -49,7 +49,7 @@ export function DepartmentKPICards({
       value: totalTeachers,
       subtext: 'Cán bộ giảng dạy',
       progressPercent: totalTeachers > 0 ? 100 : 0,
-      icon: Users,
+      icon: GraduationCap,
       unit: ' GV',
     },
     {
@@ -57,7 +57,7 @@ export function DepartmentKPICards({
       value: curriculumCount,
       subtext: 'Khung môn học đã lập',
       progressPercent: total > 0 ? Math.round((curriculumCount / total) * 100) : 0,
-      icon: Sparkles,
+      icon: BookMarked,
       unit: ' khung',
     },
   ];

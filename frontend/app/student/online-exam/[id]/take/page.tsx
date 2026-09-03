@@ -861,6 +861,7 @@ export default function StudentExamTakePage() {
     onClose={() => setShowSubmitModal(false)}
     title="Xác nhận nộp bài thi?"
     size="md"
+    icon={<CheckCircle2 className="h-6 w-6 text-white" />}
   >
     <div className="space-y-4">
       <p className="text-type-helper sm:text-type-body-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
@@ -911,6 +912,7 @@ export default function StudentExamTakePage() {
     onClose={() => setShowIncidentModal(false)}
     title="Báo cáo sự cố kỹ thuật"
     size="md"
+    icon={<AlertTriangle className="h-6 w-6 text-white" />}
   >
     <div className="space-y-4">
       <p className="text-type-helper sm:text-type-body-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">

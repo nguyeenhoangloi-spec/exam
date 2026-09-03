@@ -76,6 +76,7 @@ export function ChangeExamPasswordModal({
         isOpen={isOpen}
         onClose={onClose}
         title="Cấu hình / Đổi mật khẩu ca thi"
+        icon={<KeyRound className="h-6 w-6 text-white" />}
         footer={(
           <ModalFooter
             onClose={onClose}

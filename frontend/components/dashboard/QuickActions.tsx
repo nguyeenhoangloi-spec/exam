@@ -4,11 +4,10 @@ import React from 'react';
 import {
   CalendarPlus,
   Clock,
-  Layers,
-  UserCheck,
+  LayoutGrid,
+  ShieldCheck,
   CheckSquare,
   FileText,
-  FileSpreadsheet,
   BarChart3,
   LucideIcon,
   Zap,
@@ -44,7 +43,7 @@ const quickActions: QuickActionItem[] = [
   {
     title: 'Xếp phòng',
     desc: 'Xếp tự động',
-    icon: Layers,
+    icon: LayoutGrid,
     route: '/exam-arrangement',
     iconBg: 'bg-blue-50',
     iconColor: 'text-blue-600',
@@ -52,7 +51,7 @@ const quickActions: QuickActionItem[] = [
   {
     title: 'Phân công GT',
     desc: 'Coi thi',
-    icon: UserCheck,
+    icon: ShieldCheck,
     route: '/exam-supervisors',
     iconBg: 'bg-blue-50',
     iconColor: 'text-blue-600',
@@ -76,7 +75,7 @@ const quickActions: QuickActionItem[] = [
   {
     title: 'Thống kê kỳ thi',
     desc: 'Kết quả & điểm',
-    icon: FileSpreadsheet,
+    icon: BarChart3,
     route: '/exam-reports',
     iconBg: 'bg-blue-50',
     iconColor: 'text-blue-600',

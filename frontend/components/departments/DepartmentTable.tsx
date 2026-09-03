@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, Edit, Trash2, Building2, BookOpen, GraduationCap, Users, Sparkles, MoreVertical } from 'lucide-react';
+import { Eye, Edit, Trash2, Building2, BookMarked, GraduationCap, Users, MoreVertical } from 'lucide-react';
 import { Department } from '../../types';
 import { ActionDropdownPortal } from '../common/ActionDropdownPortal';
 import { IdentifierBadge } from '../ui/IdentifierBadge';
@@ -132,7 +132,7 @@ export function DepartmentTable({
                       className="flex items-center gap-1.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-2.5 py-1 text-type-body leading-[22px] font-medium transition cursor-pointer shadow-2xs"
                       title="Quản lý khung chương trình đào tạo"
                     >
-                      <BookOpen className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                      <BookMarked className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
                       <span>Khung đào tạo</span>
                     </button>
 
@@ -161,7 +161,7 @@ export function DepartmentTable({
                                 }}
                                 className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
                               >
-                                <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                                <BookMarked className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                                 <span>Chương trình đào tạo</span>
                               </button>
 

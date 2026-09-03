@@ -14,7 +14,7 @@ import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Button } from '../../components/ui/Button';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { ExamPeriod } from '../../types';
-import { Calendar, Clock, Search, X, ChevronDown, FileSpreadsheet } from 'lucide-react';
+import { Calendar, Clock, Search, X, ChevronDown, FileSpreadsheet, CalendarDays } from 'lucide-react';
 
 import { ExamPeriodHeader } from '../../components/exam-periods/ExamPeriodHeader';
 import { ExamPeriodKPICards } from '../../components/exam-periods/ExamPeriodKPICards';
@@ -549,7 +549,7 @@ export default function ExamPeriodsPage() {
         onClose={() => setIsModalOpen(false)}
         title={editingPeriod ? 'Sửa kỳ thi' : 'Tạo kỳ thi'}
         subtitle={editingPeriod ? `Kỳ thi: ${editingPeriod.name}` : 'Thiết lập thời gian và quy chế kỳ thi'}
-        icon={<Calendar className="h-6 w-6 text-white" />}
+        icon={<CalendarDays className="h-6 w-6 text-white" />}
         badge={editingPeriod ? 'Chỉnh sửa' : 'Tạo mới'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">

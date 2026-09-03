@@ -15,7 +15,7 @@ import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { Button } from '../../components/ui/Button';
 import { ExamSchedule, User } from '../../types';
-import { Search, X, Calendar, BookOpen, Clock, ChevronDown, Award, AlertTriangle, GraduationCap, FileCheck, RotateCcw } from 'lucide-react';
+import { Search, X, Calendar, BookOpen, Clock, ChevronDown, Award, AlertTriangle, GraduationCap, FileCheck, RotateCcw, User as UserIcon, Hash, School, CheckCircle2 } from 'lucide-react';
 
 import { ExamReportHeader } from '../../components/exam-reports/ExamReportHeader';
 import { ExamReportKPICards } from '../../components/exam-reports/ExamReportKPICards';
@@ -1137,14 +1137,14 @@ export default function ExamReportsPage() {
           label: drawerCandidate.status === 'ABSENT' ? 'Vắng thi' : drawerCandidate.status === 'GRADED' ? 'Đã chấm điểm' : drawerCandidate.status === 'SUBMITTED' ? 'Đã nộp bài' : 'Chưa nộp',
         } : undefined}
         details={[
-          { label: 'Họ và tên thí sinh', value: drawerCandidate?.fullName, icon: GraduationCap },
-          { label: 'Mã số sinh viên', value: drawerCandidate?.studentCode, icon: GraduationCap },
-          { label: 'Lớp sinh hoạt', value: drawerCandidate?.className || '—', icon: GraduationCap },
+          { label: 'Họ và tên thí sinh', value: drawerCandidate?.fullName, icon: UserIcon },
+          { label: 'Mã số sinh viên', value: drawerCandidate?.studentCode, icon: Hash },
+          { label: 'Lớp sinh hoạt', value: drawerCandidate?.className || '—', icon: School },
           { label: 'Trạng thái thi', value: drawerCandidate?.status === 'ABSENT' ? 'Vắng thi' : drawerCandidate?.status === 'GRADED' ? 'Đã chấm điểm' : drawerCandidate?.status === 'SUBMITTED' ? 'Đã nộp bài' : 'Chưa nộp', icon: FileCheck },
           {
             label: 'Điểm số đạt được',
             value: drawerCandidate?.status === 'ABSENT' ? '0.0 (Vắng thi)' : `${drawerCandidate?.totalScore ?? 0} / 10 điểm`,
-            icon: Award,
+            icon: CheckCircle2,
           },
           {
             label: 'Số lần ghi nhận vi phạm',

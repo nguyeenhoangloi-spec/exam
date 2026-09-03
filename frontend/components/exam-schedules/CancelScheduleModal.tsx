@@ -66,6 +66,7 @@ export function CancelScheduleModal({
       title="Xác nhận hủy ca thi"
       subtitle={`${schedule.subject?.subjectName || schedule.periodName || 'Học phần'} (${schedule.code})`}
       size="md"
+      icon={<AlertTriangle className="h-6 w-6 text-white" />}
     >
       <div className="space-y-4 text-type-body">
         {/* Warning & Schedule Summary (Bố cục phẳng kết hợp) */}

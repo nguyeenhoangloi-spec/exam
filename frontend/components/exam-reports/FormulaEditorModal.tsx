@@ -10,7 +10,7 @@ import {
   validateFormula,
   evaluateFormula,
 } from '../../lib/formula-engine';
-import { CheckCircle2, AlertCircle, Variable, Code2, Plus, ChevronDown, Check } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Variable, Code2, Plus, ChevronDown, Check, Calculator } from 'lucide-react';
 
 export interface DynamicColumnDefinition {
   id: string;
@@ -500,6 +500,7 @@ export function FormulaEditorModal({
       title={initialColumn ? 'Chỉnh sửa cột tính toán' : 'Thêm tiêu chuẩn / công thức điểm'}
       subtitle="Tạo cột tự động tính toán hoặc phân loại kết quả"
       size="lg"
+      icon={<Calculator className="h-6 w-6 text-white" />}
     >
       <div className="space-y-4 py-1">
         {/* ── HÀNG 1: TÊN CỘT & CĂN LỀ ── */}

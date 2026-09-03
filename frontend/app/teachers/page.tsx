@@ -663,7 +663,7 @@ export default function TeachersPage() {
         onClose={() => setIsModalOpen(false)}
         title={editingTeacher ? 'Sửa giảng viên' : 'Thêm giảng viên'}
         subtitle={editingTeacher ? `Mã cán bộ: ${editingTeacher.teacherCode}` : 'Cấu hình thông tin cá nhân và học vị'}
-        icon={<UserCheck className="h-6 w-6 text-white" />}
+        icon={<GraduationCap className="h-6 w-6 text-white" />}
         badge={editingTeacher ? 'Chỉnh sửa' : 'Tạo mới'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">

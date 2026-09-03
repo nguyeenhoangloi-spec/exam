@@ -13,7 +13,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Button } from '../../components/ui/Button';
 import { ClassItem, Department } from '../../types';
-import { GraduationCap, Building2, Search, X, Users, ChevronDown, Phone, Mail, BookOpen, FileSpreadsheet, School } from 'lucide-react';
+import { Hash, Building2, Search, X, Users, ChevronDown, Phone, Mail, BookOpen, FileSpreadsheet, School } from 'lucide-react';
 
 import { ClassHeader } from '../../components/classes/ClassHeader';
 import { ClassKPICards } from '../../components/classes/ClassKPICards';
@@ -588,7 +588,7 @@ export default function ClassesPage() {
         onClose={() => setIsModalOpen(false)}
         title={editingClass ? 'Sửa lớp' : 'Thêm lớp'}
         subtitle={editingClass ? `Mã lớp: ${editingClass.code}` : 'Thêm lớp học vào danh mục quản lý'}
-        icon={<GraduationCap className="h-6 w-6 text-white" />}
+        icon={<School className="h-6 w-6 text-white" />}
         badge={editingClass ? 'Chỉnh sửa' : 'Tạo mới'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -673,8 +673,8 @@ export default function ClassesPage() {
         subtitle={drawerClass?.code ? `Mã lớp: ${drawerClass.code}` : ''}
         avatarText={drawerClass?.code || 'LH'}
         details={[
-          { label: 'Mã lớp sinh hoạt', value: drawerClass?.code, icon: School },
-          { label: 'Tên lớp học', value: drawerClass?.name, icon: GraduationCap },
+          { label: 'Mã lớp sinh hoạt', value: drawerClass?.code, icon: Hash },
+          { label: 'Tên lớp học', value: drawerClass?.name, icon: School },
           {
             label: 'Khoa trực thuộc',
             value: drawerClass?.department?.name || 'Chưa gán',

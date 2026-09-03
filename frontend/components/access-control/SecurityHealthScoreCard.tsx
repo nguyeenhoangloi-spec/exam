@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { ShieldCheck, ShieldAlert, AlertTriangle, Sparkles, CheckCircle2, ChevronRight } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, AlertTriangle, FileStack, ArrowLeftRight, PlayCircle, CheckCircle2, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 interface SecurityHealthScoreCardProps {
@@ -151,9 +151,9 @@ export function SecurityHealthScoreCard({
               variant="secondary"
               size="md"
               onClick={onOpenPresets}
-              leftIcon={<Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+              leftIcon={<FileStack className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
             >
-              Hồ sơ mẫu vị trí 📋
+              Hồ sơ mẫu vị trí
             </Button>
           )}
 
@@ -162,9 +162,9 @@ export function SecurityHealthScoreCard({
               variant="secondary"
               size="md"
               onClick={onOpenCompare}
-              leftIcon={<ShieldCheck className="h-4 w-4 text-emerald-600" />}
+              leftIcon={<ArrowLeftRight className="h-4 w-4 text-emerald-600" />}
             >
-              So sánh 2 tài khoản ⚖️
+              So sánh 2 tài khoản
             </Button>
           )}
 
@@ -172,9 +172,9 @@ export function SecurityHealthScoreCard({
             variant="primary"
             size="md"
             onClick={onOpenSimulator}
-            leftIcon={<Sparkles className="h-4 w-4" />}
+            leftIcon={<PlayCircle className="h-4 w-4" />}
           >
-            Thử mô phỏng quyền 🧪
+            Thử mô phỏng quyền
           </Button>
         </div>
       </div>

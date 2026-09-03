@@ -25,7 +25,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { printReport } from '../../lib/export-print';
 import { DashboardOverview } from '../../types/dashboard';
 import { User } from '../../types';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, RefreshCw, XCircle } from 'lucide-react';
 
 export default function DashboardPage() {
   usePageTitle('Tổng quan');
@@ -267,6 +267,7 @@ export default function DashboardPage() {
           }
         }}
         title={`Từ chối câu hỏi ${rejecting?.code || ''}`}
+        icon={<XCircle className="h-6 w-6 text-white" />}
       >
         <div className="space-y-4">
           <div>

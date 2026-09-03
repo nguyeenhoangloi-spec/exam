@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { X, ArrowLeftRight, Check, Minus, Search, ShieldAlert, Users, Building2, BookOpen } from 'lucide-react';
+import { X, ArrowLeftRight, Check, Minus, Search, ShieldAlert, Users, Building2, BookOpen, User } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { FilterSelect } from '../ui/FilterSelect';
 
@@ -150,8 +150,9 @@ export function PermissionCompareModal({
           {/* User Selection Row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-4">
             <div className="space-y-1.5">
-              <label className="text-type-body font-medium text-slate-700 dark:text-slate-300">
-                👤 Tài khoản thứ nhất (A)
+              <label className="text-type-body font-medium text-slate-700 dark:text-slate-300 inline-flex items-center gap-1.5">
+                <User className="h-4 w-4 text-slate-500 shrink-0" />
+                <span>Tài khoản thứ nhất (A)</span>
               </label>
               <FilterSelect
                 value={userAId}
@@ -170,8 +171,9 @@ export function PermissionCompareModal({
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-type-body font-medium text-slate-700 dark:text-slate-300">
-                👤 Tài khoản thứ hai (B)
+              <label className="text-type-body font-medium text-slate-700 dark:text-slate-300 inline-flex items-center gap-1.5">
+                <User className="h-4 w-4 text-slate-500 shrink-0" />
+                <span>Tài khoản thứ hai (B)</span>
               </label>
               <FilterSelect
                 value={userBId}

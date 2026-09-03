@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   FolderSync,
   HardDrive,
+  DatabaseBackup,
 } from 'lucide-react';
 import { Modal } from '../Modal';
 import { Button } from '../ui/Button';
@@ -113,6 +114,7 @@ export function BackupSettingsModal({
       onClose={onClose}
       title="Cài đặt tự động sao lưu"
       size="lg"
+      icon={<DatabaseBackup className="h-6 w-6 text-white" />}
     >
       <form onSubmit={handleSubmit} className="divide-y divide-slate-100 dark:divide-slate-800">
         {/* 1. Lịch tự động sao lưu */}

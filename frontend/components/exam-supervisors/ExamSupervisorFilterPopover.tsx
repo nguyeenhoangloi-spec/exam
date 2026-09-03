@@ -9,7 +9,7 @@ import {
   RotateCcw,
   Check,
   ShieldCheck,
-  Award,
+  CheckCircle2,
   Zap,
   GraduationCap,
   Users,
@@ -166,7 +166,7 @@ export function ExamSupervisorFilterPopover({
   const categories = [
     { id: 'presets' as FilterCategory, label: 'Lọc nhanh', shortcut: '1', icon: Zap, badge: null },
     { id: 'role' as FilterCategory, label: 'Vai trò', shortcut: '2', icon: ShieldCheck, badge: roleFilter ? '1' : null },
-    { id: 'status' as FilterCategory, label: 'Trạng thái', shortcut: '3', icon: Award, badge: statusFilter && statusFilter !== 'ALL' ? '1' : null },
+    { id: 'status' as FilterCategory, label: 'Trạng thái', shortcut: '3', icon: CheckCircle2, badge: statusFilter && statusFilter !== 'ALL' ? '1' : null },
     { id: 'degree' as FilterCategory, label: 'Học vị', shortcut: '4', icon: GraduationCap, badge: degreeFilter ? '1' : null },
   ];
 

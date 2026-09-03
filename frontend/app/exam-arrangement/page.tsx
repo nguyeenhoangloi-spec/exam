@@ -39,6 +39,9 @@ import {
   X,
   History,
   User,
+  Hash,
+  Ticket,
+  School,
   ShieldCheck,
   Plus,
   Trash2,
@@ -1439,11 +1442,11 @@ export default function ExamArrangementPage() {
         avatarText={drawerStudentDetail?.fullName?.trim().split(' ').pop()?.slice(0, 2).toUpperCase() || 'SV'}
         details={[
           { label: 'Họ và tên thí sinh', value: drawerStudentDetail?.fullName, icon: User },
-          { label: 'Mã số sinh viên', value: drawerStudentDetail?.studentCode, icon: User },
-          { label: 'Số báo danh (SBD)', value: drawerStudentDetail?.examNumber, icon: ShieldCheck },
-          { label: 'Vị trí chỗ ngồi', value: `Ghế #${drawerStudentDetail?.seatNumber || '--'}`, icon: DoorOpen },
-          { label: 'Phòng thi', value: `${drawerStudentDetail?.roomName || drawerStudentDetail?.roomCode || '—'} ${drawerStudentDetail?.building ? `(${drawerStudentDetail.building})` : ''}`, icon: Building2 },
-          { label: 'Lớp sinh hoạt', value: drawerStudentDetail?.className || '—', icon: GraduationCap },
+          { label: 'Mã số sinh viên', value: drawerStudentDetail?.studentCode, icon: Hash },
+          { label: 'Số báo danh (SBD)', value: drawerStudentDetail?.examNumber, icon: Ticket },
+          { label: 'Vị trí chỗ ngồi', value: `Ghế #${drawerStudentDetail?.seatNumber || '--'}`, icon: LayoutGrid },
+          { label: 'Phòng thi', value: `${drawerStudentDetail?.roomName || drawerStudentDetail?.roomCode || '—'} ${drawerStudentDetail?.building ? `(${drawerStudentDetail.building})` : ''}`, icon: DoorOpen },
+          { label: 'Lớp sinh hoạt', value: drawerStudentDetail?.className || '—', icon: School },
           { label: 'Khoa / Viện', value: drawerStudentDetail?.departmentName || '—', icon: Building2 },
         ]}
       />

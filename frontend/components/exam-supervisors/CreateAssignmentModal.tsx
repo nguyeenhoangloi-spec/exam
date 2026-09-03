@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Modal } from '../Modal';
 import { Button } from '../ui/Button';
 import { FilterSelect } from '../ui/FilterSelect';
-import { DoorOpen, UserCheck, ShieldCheck } from 'lucide-react';
+import { DoorOpen, Shield, ShieldCheck } from 'lucide-react';
 
 interface CreateAssignmentModalProps {
   isOpen: boolean;
@@ -107,6 +107,7 @@ export function CreateAssignmentModal({
       title="Thêm phân công giám thị"
       subtitle="Chỉ định giám thị 1 (chính) và giám thị 2 (phụ) cho phòng thi."
       size="xl"
+      icon={<ShieldCheck className="h-6 w-6 text-white" />}
     >
       <form onSubmit={handleSubmit} className="space-y-4 pt-1">
         {/* 1. Phòng Thi */}
@@ -173,7 +174,7 @@ export function CreateAssignmentModal({
           <div className="space-y-1.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-3">
             <label className="flex items-center justify-between text-type-body font-medium text-slate-900 dark:text-slate-100">
               <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-                <UserCheck className="h-4 w-4 text-slate-500" />
+                <Shield className="h-4 w-4 text-slate-500" />
                 Giám thị 2 (Phụ)
               </span>
               <span className="text-type-helper text-slate-400 font-normal">Cán bộ phối hợp</span>

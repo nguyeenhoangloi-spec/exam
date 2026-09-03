@@ -14,6 +14,7 @@ import {
   Clock,
   Zap,
   CalendarDays,
+  CheckCircle2,
   GraduationCap,
   DoorOpen,
   Bookmark,
@@ -208,14 +209,14 @@ export function ExamScheduleFilterPopover({
       id: 'period' as ScheduleFilterCategory,
       label: 'Kỳ thi',
       shortcut: '2',
-      icon: Bookmark,
+      icon: CalendarDays,
       badge: filters.examPeriodId ? '1' : null,
     },
     {
       id: 'status' as ScheduleFilterCategory,
       label: 'Trạng thái',
       shortcut: '3',
-      icon: Clock,
+      icon: CheckCircle2,
       badge: filters.status ? '1' : null,
     },
     {
@@ -229,7 +230,7 @@ export function ExamScheduleFilterPopover({
       id: 'shift' as ScheduleFilterCategory,
       label: 'Ca thi',
       shortcut: '5',
-      icon: Layers,
+      icon: Clock,
       badge: filters.shift ? '1' : null,
     },
   ];

@@ -120,6 +120,7 @@ export function ExamPaperExportModal({
       onClose={onClose}
       title="In đề thi & xuất PDF"
       size="md"
+      icon={<Printer className="h-6 w-6 text-white" />}
     >
       <div className="space-y-4">
         {/* Tóm tắt thông tin đề thi */}

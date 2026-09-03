@@ -1,6 +1,6 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { X, Sparkles } from 'lucide-react';
+import { X, Layers } from 'lucide-react';
 import { IdentifierBadge } from './ui/IdentifierBadge';
 import { Button, ButtonVariant } from './ui/Button';
 
@@ -103,7 +103,7 @@ export const Modal: React.FC<ModalProps> = ({
   const widthClass = sizeClasses[size] || sizeClasses.md;
   const isGradient = variant !== 'default';
 
-  const defaultIcon = icon || <Sparkles className="h-5 w-5 text-white" />;
+  const defaultIcon = icon || <Layers className="h-5 w-5 text-white" />;
   const defaultBadge = badge || (typeof title === 'string' && (title.includes('Sửa') || title.includes('Chỉnh') || title.includes('Tạo') || title.includes('Thêm')) ? (title.includes('Sửa') || title.includes('Chỉnh') ? 'Cập nhật' : 'Tạo mới') : 'Hệ thống');
   const defaultSubtitle = subtitle || 'Quản lý thông tin trên hệ thống khảo thí';
   const isIdentifierSubtitle = typeof defaultSubtitle === 'string' && /(^|\s)(mã|mssv|id|code|snapshot)/i.test(defaultSubtitle);

@@ -14,7 +14,7 @@ import { ConfirmModal } from '../../components/ConfirmModal';
 import { ExcelImportModal } from '../../components/ExcelImportModal';
 import { Button } from '../../components/ui/Button';
 import { Subject, Department } from '../../types';
-import { BookOpen, Building2, Search, X, Award, ChevronDown, Users, GraduationCap, BookMarked, FileSpreadsheet } from 'lucide-react';
+import { BookOpen, Building2, Search, X, Award, ChevronDown, Users, GraduationCap, BookMarked, FileSpreadsheet, School, Layers } from 'lucide-react';
 
 import { SubjectHeader } from '../../components/subjects/SubjectHeader';
 import { SubjectKPICards } from '../../components/subjects/SubjectKPICards';
@@ -748,6 +748,7 @@ export default function SubjectsPage() {
         isOpen={Boolean(enrollClassSubject)}
         onClose={() => setEnrollClassSubject(null)}
         title={`Gán Lớp vào Môn – ${enrollClassSubject?.subjectName || ''}`}
+        icon={<School className="h-6 w-6 text-white" />}
       >
         <form onSubmit={handleEnrollByClass} className="space-y-4">
           {/* Chọn lớp */}
@@ -863,7 +864,7 @@ export default function SubjectsPage() {
         maxWidth="md"
         tabs={[
           { id: 'info', label: 'Thông tin', icon: BookOpen },
-          { id: 'classes', label: 'Lớp đã gán', icon: GraduationCap },
+          { id: 'classes', label: 'Lớp đã gán', icon: School },
           {
             id: 'students',
             label: 'Sinh viên',
@@ -915,8 +916,8 @@ export default function SubjectsPage() {
               <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
                 {[
                   { label: 'Mã môn học', value: drawerSubject.subjectCode, icon: BookOpen },
-                  { label: 'Tên môn học', value: drawerSubject.subjectName, icon: BookMarked },
-                  { label: 'Số tín chỉ', value: `${drawerSubject.credits} tín chỉ`, icon: Award },
+                  { label: 'Tên môn học', value: drawerSubject.subjectName, icon: BookOpen },
+                  { label: 'Số tín chỉ', value: `${drawerSubject.credits} tín chỉ`, icon: Layers },
                   { label: 'Khoa đào tạo', value: (drawerSubject as any).department?.name || 'Chưa gán', icon: Building2 },
                 ].map((r) => {
                   const Icon = r.icon;
@@ -949,7 +950,7 @@ export default function SubjectsPage() {
                   type="button"
                   variant="primary"
                   size="md"
-                  leftIcon={<GraduationCap className="h-4 w-4 shrink-0" />}
+                  leftIcon={<School className="h-4 w-4 shrink-0" />}
                   onClick={() => openEnrollClassModal(drawerSubject)}
                   className="w-full justify-center"
                 >
@@ -977,7 +978,7 @@ export default function SubjectsPage() {
               <div className="space-y-2">{[1, 2, 3].map((i) => <div key={i} className="h-14 animate-pulse rounded-xl bg-slate-100" />)}</div>
             ) : drawerClassSummary.length === 0 ? (
               <div className="py-12 text-center">
-                <BookMarked className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+                <School className="h-8 w-8 text-slate-400 mx-auto mb-2" />
                 <p className="text-type-body-sm font-semibold text-slate-500">Chưa có lớp nào được gán vào môn học này.</p>
                 {currentUser?.role === 'ADMIN' && drawerSubject && (
                   <Button

@@ -780,6 +780,7 @@ export default function ContactSupportPage() {
         isOpen={Boolean(selectedArticle)}
         onClose={() => setSelectedArticle(null)}
         title={selectedArticle?.title || 'Chi tiết bài viết'}
+        icon={<FileText className="h-6 w-6 text-white" />}
       >
         {selectedArticle && (
           <div className="space-y-6 pt-1">
