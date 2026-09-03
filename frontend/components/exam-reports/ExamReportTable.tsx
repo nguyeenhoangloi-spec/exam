@@ -187,19 +187,6 @@ export function ExamReportTable({
  <ActionDropdownPortal>
  {(closeMenu) => (
  <>
-                          {c.attemptId && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                closeMenu();
-                                setReviewAttemptId(c.attemptId!);
-                              }}
-                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
-                            >
-                              <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                              <span>Xem bài làm</span>
-                            </button>
-                          )}
                           <button
                             type="button"
                             onClick={() => {
@@ -211,6 +198,19 @@ export function ExamReportTable({
                             <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                             <span>Xem chi tiết</span>
                           </button>
+                          {c.attemptId && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                closeMenu();
+                                setReviewAttemptId(c.attemptId!);
+                              }}
+                              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
+                            >
+                              <FileText className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                              <span>Xem bài làm</span>
+                            </button>
+                          )}
  </>
  )}
  </ActionDropdownPortal>

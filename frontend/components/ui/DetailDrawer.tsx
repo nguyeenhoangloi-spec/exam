@@ -33,6 +33,7 @@ export interface DetailDrawerProps {
   bodyClassName?: string;
   headerClassName?: string;
   ariaLabel?: string;
+  role?: string;
   isLoading?: boolean;
 }
 
@@ -80,6 +81,7 @@ export function DetailDrawer({
   bodyClassName = '',
   headerClassName = '',
   ariaLabel = 'Thông tin chi tiết',
+  role = 'dialog',
   isLoading = false,
 }: DetailDrawerProps) {
   const [isMounted, setIsMounted] = useState(isOpen);
@@ -272,20 +274,31 @@ export function DetailDrawer({
                     active.title
                   )}
 
-                  {/* Badges & Subtitle */}
+                  {/* Badges & Subtitle — Chuẩn 2 tầng phân cấp Apple */}
                   {(active.badge || active.subtitle) && (
-                    <div className="mt-2 flex items-center gap-2 min-w-0 flex-nowrap overflow-hidden">
+                    <div className="mt-1.5 flex items-center gap-2.5 min-w-0 flex-nowrap overflow-hidden">
                       {active.badge && (
                         <div className="shrink-0 flex items-center">{active.badge}</div>
                       )}
 
+                      {active.badge && active.subtitle && (
+                        <span className="inline-block h-3.5 w-px bg-slate-200 dark:bg-slate-700 shrink-0" aria-hidden="true" />
+                      )}
+
                       {active.subtitle && (
                         <div className="min-w-0 flex-1 shrink truncate flex items-center">
-                          {typeof active.subtitle === 'string' &&
+                          {typeof active.subtitle === 'string' && active.subtitle.includes(':') ? (
+                            <p className="text-type-body-sm font-medium text-slate-600 dark:text-slate-400 tabular-nums truncate">
+                              {active.subtitle.split(':')[0]}:{' '}
+                              <strong className="font-semibold text-slate-900 dark:text-slate-100">
+                                {active.subtitle.split(':').slice(1).join(':').trim()}
+                              </strong>
+                            </p>
+                          ) : typeof active.subtitle === 'string' &&
                             (/(^|\s)(mã|id|code|snapshot)\s*:\s*/i.test(active.subtitle) ||
                               isIdentifierSubtitle) ? (
                             <IdentifierBadge tone="neutral" title={active.subtitle} className="max-w-full">
-                              {active.subtitle.replace(/^(?:mã(?:\s+[a-zà-ỹ]+)*|id|code|snapshot)\s*:\s*/i, '').trim()}
+                              {active.subtitle}
                             </IdentifierBadge>
                           ) : typeof active.subtitle === 'string' ? (
                             <p className="text-type-body-sm font-medium text-slate-600 dark:text-slate-300 tabular-nums truncate">

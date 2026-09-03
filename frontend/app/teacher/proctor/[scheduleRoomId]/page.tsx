@@ -9,7 +9,6 @@ import {
   WifiOff,
   CheckCircle2,
   AlertTriangle,
-  RefreshCw,
   Clock,
   ShieldAlert,
   ArrowLeft,
@@ -18,17 +17,10 @@ import {
   Flag,
   RotateCcw,
   PlusCircle,
-  FileText,
   Search,
-  List,
-  LayoutGrid,
-  Layers,
-  ChevronLeft,
-  ChevronRight,
   Megaphone,
   Bell,
   Radio,
-  SlidersHorizontal,
   Eye,
   Check,
 } from 'lucide-react';
@@ -37,6 +29,7 @@ import { KPICards, KPICardItem } from '@/components/KPICards';
 import { FilterSelect } from '@/components/ui/FilterSelect';
 import { PaginationBar } from '@/components/ui/PaginationBar';
 import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
+import { InlineMeta } from '@/components/ui/InlineMeta';
 import { TabBar } from '@/components/ui/TabBar';
 import { SortDropdown } from '@/components/ui/SortDropdown';
 import { ColumnToggleDropdown } from '@/components/ui/ColumnToggleDropdown';
@@ -50,6 +43,7 @@ import { ProctorFilterPopover } from '@/components/proctor/ProctorFilterPopover'
 import { ProctorBulkAction } from '@/components/exam-supervisors/ProctorBulkAction';
 import { ProfileDrawer } from '@/components/ProfileDrawer';
 import { PageSkeleton } from '@/components/ui/Skeleton';
+import { formatDate, formatTimeRange } from '@/lib/format';
 
 const EMPTY_STUDENTS: any[] = [];
 
@@ -86,6 +80,7 @@ export default function ProctorDashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<any>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [backgroundRefreshError, setBackgroundRefreshError] = useState(false);
 
   // Filters & Search
   const [search, setSearch] = useState('');
@@ -94,7 +89,6 @@ export default function ProctorDashboardPage() {
 
   // Toolbar & View state
   const [sortOrder, setSortOrder] = useState('seat_asc');
-  const [openColumnMenu, setOpenColumnMenu] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     seat: true,
     name: true,
@@ -111,6 +105,8 @@ export default function ProctorDashboardPage() {
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const refreshInFlightRef = useRef(false);
+  const dashboardFingerprintRef = useRef<string | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -139,14 +135,11 @@ export default function ProctorDashboardPage() {
   const [bulkMinutes, setBulkMinutes] = useState(15);
   const [bulkReason, setBulkReason] = useState('Sự cố kỹ thuật mạng / hệ thống diện rộng');
   const [bulkProcessing, setBulkProcessing] = useState(false);
-  const [bulkError, setBulkError] = useState<string | null>(null);
-  const [bulkSuccessMsg, setBulkSuccessMsg] = useState<string | null>(null);
 
   // Reopen Entry Modal
   const [showReopenEntryModal, setShowReopenEntryModal] = useState(false);
   const [lateWindowMinutes, setLateWindowMinutes] = useState(30);
   const [reopenEntryProcessing, setReopenEntryProcessing] = useState(false);
-  const [reopenEntryError, setReopenEntryError] = useState<string | null>(null);
 
   // Broadcast Modal
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
@@ -177,16 +170,36 @@ export default function ProctorDashboardPage() {
 
   const loadDashboard = useCallback(
     async (isBackground = false) => {
+      if (!Number.isInteger(scheduleRoomId) || scheduleRoomId <= 0) {
+        setError('Mã phòng thi không hợp lệ. Vui lòng quay lại danh sách phân công.');
+        setLoading(false);
+        return;
+      }
+
+      if (refreshInFlightRef.current) return;
+      refreshInFlightRef.current = true;
       try {
         if (!isBackground) setLoading(true);
+        if (isBackground) setIsRefreshing(true);
         const res = await onlineExamService.getLiveDashboard(scheduleRoomId);
-        setData(res);
+        const fingerprint = JSON.stringify(res);
+        if (dashboardFingerprintRef.current !== fingerprint) {
+          dashboardFingerprintRef.current = fingerprint;
+          setData(res);
+        }
         setLastUpdated(new Date());
         setError(null);
+        setBackgroundRefreshError(false);
       } catch (err: any) {
-        if (!isBackground) setError(err.message || 'Không thể tải dashboard giám thị');
+        if (!isBackground) {
+          setError(err.message || 'Không thể tải dashboard giám thị');
+        } else {
+          setBackgroundRefreshError(true);
+        }
       } finally {
         if (!isBackground) setLoading(false);
+        if (isBackground) setIsRefreshing(false);
+        refreshInFlightRef.current = false;
       }
     },
     [scheduleRoomId]
@@ -198,12 +211,20 @@ export default function ProctorDashboardPage() {
   }, []);
 
   useEffect(() => {
-    if (!scheduleRoomId) return;
+    if (!Number.isInteger(scheduleRoomId) || scheduleRoomId <= 0) {
+      void loadDashboardRef.current?.();
+      return;
+    }
     void loadDashboardRef.current?.();
-    const interval = setInterval(() => {
-      void loadDashboardRef.current?.(true);
-    }, 3000);
-    return () => clearInterval(interval);
+    const refreshWhenVisible = () => {
+      if (!document.hidden) void loadDashboardRef.current?.(true);
+    };
+    const interval = window.setInterval(refreshWhenVisible, 3000);
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', refreshWhenVisible);
+    };
   }, [scheduleRoomId]);
 
   const handleBulkExtend = async () => {
@@ -385,6 +406,18 @@ export default function ProctorDashboardPage() {
 
   const allSelected = currentStudents.length > 0 && currentStudents.every((s: any) => selectedIds.includes(s.student.id));
 
+  useEffect(() => {
+    const availableIds = new Set(students.map((student: any) => student?.student?.id).filter(Boolean));
+    setSelectedIds((previous) => {
+      const next = previous.filter((id) => availableIds.has(id));
+      return next.length === previous.length ? previous : next;
+    });
+  }, [students]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
+
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       const pageIds = currentStudents.map((s: any) => s.student.id);
@@ -529,7 +562,7 @@ export default function ProctorDashboardPage() {
   };
 
   return (
-    <main className="w-full min-w-0 max-w-full overflow-x-hidden px-4 sm:px-6 py-6 space-y-5 min-h-screen text-slate-900 dark:text-slate-100">
+    <main className="w-full min-w-0 max-w-full overflow-x-hidden px-6 py-6 space-y-5 min-h-screen text-slate-900 dark:text-slate-100">
       {/* ── 1. Standard Page Header ── */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-1">
         <div className="flex items-start sm:items-center gap-3 min-w-0">
@@ -546,7 +579,7 @@ export default function ProctorDashboardPage() {
           <div className="min-w-0 space-y-0.5">
             <div className="flex items-center gap-2.5 flex-wrap">
               <h1 className="text-type-page font-semibold leading-[36px] tracking-tight text-slate-900 dark:text-slate-100">
-                Giám Thị Phòng: <span className="text-blue-600 dark:text-blue-400">{data.roomName}</span>
+                Giám thị phòng: <span className="text-blue-600 dark:text-blue-400">{data.roomName}</span>
               </h1>
               <span className="inline-flex items-center gap-1.5 text-type-helper font-semibold text-emerald-600 shrink-0">
                 <span className="relative flex w-2 h-2">
@@ -557,22 +590,14 @@ export default function ProctorDashboardPage() {
               </span>
             </div>
 
-            <div className="flex items-center gap-3 text-type-body-sm font-normal leading-[22px] text-slate-600 dark:text-slate-400 flex-wrap pt-0.5">
-              <span>Môn: <strong className="text-slate-900 dark:text-slate-100 font-medium">{data.subjectName}</strong></span>
-              <span className="inline-block h-3.5 w-px bg-slate-200 dark:bg-slate-700" aria-hidden="true" />
-              <span>Ngày: <strong className="text-slate-900 dark:text-slate-100 font-medium">
-                {(() => {
-                  if (!data.examDate) return '—';
-                  const d = new Date(data.examDate);
-                  if (isNaN(d.getTime())) return '—';
-                  const day = String(d.getDate()).padStart(2, '0');
-                  const month = String(d.getMonth() + 1).padStart(2, '0');
-                  return `${day}/${month}/${d.getFullYear()}`;
-                })()}
-              </strong></span>
-              <span className="inline-block h-3.5 w-px bg-slate-200 dark:bg-slate-700" aria-hidden="true" />
-              <span>Ca thi: <strong className="text-slate-900 dark:text-slate-100 font-medium">{data.startTime} – {data.endTime}</strong></span>
-            </div>
+            <InlineMeta
+              className="pt-0.5 text-type-body-sm font-normal leading-[22px] text-slate-600 dark:text-slate-400"
+              items={[
+                <span key="subject">Môn: <strong className="font-medium text-slate-900 dark:text-slate-100">{data.subjectName || '—'}</strong></span>,
+                <span key="date">Ngày: <strong className="font-medium text-slate-900 dark:text-slate-100">{formatDate(data.examDate)}</strong></span>,
+                <span key="time">Ca thi: <strong className="font-medium text-slate-900 dark:text-slate-100">{formatTimeRange(data.startTime, data.endTime)}</strong></span>,
+              ]}
+            />
           </div>
         </div>
 

@@ -30,6 +30,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
   onClose,
   title,
   subtitle,
+  avatarText,
   badge,
   details,
   extraSections,
@@ -37,38 +38,26 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
   headerActions,
   footer,
 }) => {
-  const idMatch = typeof subtitle === 'string' ? subtitle.match(/^(?:mã(?:\s+[a-zà-ỹ]+)*|mssv|id|code)\s*:\s*(.+)$/i) : null;
-  const cleanSubtitle = idMatch ? null : subtitle;
-  const identifierCode = idMatch ? idMatch[1].trim() : null;
-
   return (
     <DetailDrawer
-      ariaLabel="role='dialog' className='z-[100]'"
+      role="dialog"
+      className="z-[100]"
+      ariaLabel="Thông tin chi tiết"
       isOpen={isOpen}
       onClose={onClose}
-      showAvatar={false}
+      showAvatar={Boolean(avatarText)}
+      avatarText={avatarText}
       maxWidth={maxWidth}
-      title={
-        <div className="flex items-center gap-2.5 flex-wrap min-w-0">
-          <span className="text-type-card font-semibold text-slate-950 dark:text-white">
-            {title || 'Chi tiết thông tin'}
-          </span>
-
-          {badge && (
-            <StatusBadge
-              status={badge.status || badge.label}
-              customLabel={badge.label}
-            />
-          )}
-
-          {identifierCode && (
-            <IdentifierBadge tone="neutral" title={identifierCode}>
-              {identifierCode}
-            </IdentifierBadge>
-          )}
-        </div>
+      title={title || 'Chi tiết thông tin'}
+      badge={
+        badge ? (
+          <StatusBadge
+            status={badge.status || badge.label}
+            customLabel={badge.label}
+          />
+        ) : undefined
       }
-      subtitle={cleanSubtitle || undefined}
+      subtitle={subtitle || undefined}
       headerActions={headerActions}
       footer={
         footer ?? (
