@@ -33,6 +33,7 @@ import {
   Check,
 } from 'lucide-react';
 
+import { KPICards, KPICardItem } from '@/components/KPICards';
 import { FilterSelect } from '@/components/ui/FilterSelect';
 import { IdentifierBadge } from '@/components/ui/IdentifierBadge';
 import { TabBar } from '@/components/ui/TabBar';
@@ -460,41 +461,56 @@ export default function ProctorDashboardPage() {
     );
   }
 
-  const KPI_CARDS = [
+  const kpiItems: KPICardItem[] = [
     {
-      label: 'Tổng thí sinh',
+      title: 'Tổng thí sinh',
       value: stats.total ?? 0,
       subtext: 'Trong danh sách phòng',
-      progressPercent: stats.total > 0 ? 100 : 0,
       icon: Users,
+      onClick: () => {
+        setFilter('ALL');
+        setPage(1);
+      },
     },
     {
-      label: 'Đang làm bài',
+      title: 'Đang làm bài',
       value: stats.inProgress ?? 0,
       subtext: 'Đang thao tác trực tuyến',
-      progressPercent: stats.total > 0 ? Math.round(((stats.inProgress || 0) / stats.total) * 100) : 0,
       icon: Activity,
+      onClick: () => {
+        setFilter('IN_PROGRESS');
+        setPage(1);
+      },
     },
     {
-      label: 'Mất kết nối',
+      title: 'Mất kết nối',
       value: stats.disconnected ?? 0,
       subtext: 'Cần hỗ trợ mạng / thiết bị',
-      progressPercent: stats.total > 0 ? Math.round(((stats.disconnected || 0) / stats.total) * 100) : 0,
       icon: WifiOff,
+      onClick: () => {
+        setFilter('DISCONNECTED');
+        setPage(1);
+      },
     },
     {
-      label: 'Đã nộp bài',
+      title: 'Đã nộp bài',
       value: stats.submitted ?? 0,
       subtext: 'Hoàn tất gửi bài thi',
-      progressPercent: stats.total > 0 ? Math.round(((stats.submitted || 0) / stats.total) * 100) : 0,
       icon: CheckCircle2,
+      onClick: () => {
+        setFilter('SUBMITTED');
+        setPage(1);
+      },
     },
     {
-      label: 'Có cảnh báo',
+      title: 'Có cảnh báo',
       value: stats.flagged ?? 0,
       subtext: 'Vi phạm quy chế thi',
-      progressPercent: stats.total > 0 ? Math.round(((stats.flagged || 0) / stats.total) * 100) : 0,
       icon: ShieldAlert,
+      onClick: () => {
+        setFilter('FLAGGED');
+        setPage(1);
+      },
     },
   ];
 
@@ -627,47 +643,8 @@ export default function ProctorDashboardPage() {
         </div>
       )}
 
-      {/* ── 2. Standard 5 KPI Cards With Micro Progress Tracks ── */}
-      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-5">
-        {KPI_CARDS.map(({ label, value, subtext, progressPercent, icon: Icon }) => (
-          <div
-            key={label}
-            className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300/90 dark:hover:border-slate-700 hover:shadow-md cursor-pointer"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="space-y-1 min-w-0">
-                <span className="text-type-helper font-semibold text-slate-500 dark:text-slate-400 block truncate">
-                  {label}
-                </span>
-                <div className="text-type-kpi font-bold text-slate-900 dark:text-slate-100 leading-[38px] tracking-tight tabular-nums">
-                  {value}
-                </div>
-              </div>
-
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold transition-all duration-200 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white">
-                <Icon className="h-5 w-5 stroke-[2.2]" />
-              </div>
-            </div>
-
-            {/* Thanh đo tiến độ tỷ lệ động nhỏ mảnh, tinh tế (Micro Progress Track h-1) */}
-            <div className="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
-              <div
-                className="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-500"
-                style={{ width: `${Math.min(Math.max(progressPercent, 5), 100)}%` }}
-              />
-            </div>
-
-            <div className="mt-2.5">
-              <span
-                title={subtext}
-                className="text-type-helper font-normal text-slate-500 dark:text-slate-400 block truncate group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
-              >
-                {subtext}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* ── 2. Standard 5 KPI Cards With Sparkline & Semantic Colors ── */}
+      <KPICards items={kpiItems} columns={5} showSparkline={true} />
 
       {/* ── 3. Status Filter TabBar ── */}
       <TabBar
