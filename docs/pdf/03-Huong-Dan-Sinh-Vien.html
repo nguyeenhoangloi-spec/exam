@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CẨM NANG THÍ SINH & SINH VIÊN</title>
+  <style>
+    
+  @page {
+    size: A4 portrait;
+    margin: 20mm 15mm 20mm 25mm;
+  }
+  
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Times New Roman', 'Segoe UI', serif;
+    font-size: 12.5pt;
+    line-height: 1.55;
+    color: #111827;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* TRANG BÌA SANG TRỌNG */
+  .cover-container {
+    width: 100%;
+    min-height: 90vh;
+    border: 3px double #1e3a8a;
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    page-break-after: always;
+    break-after: page;
+    background: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
+  }
+
+  .cover-header-national {
+    font-size: 13pt;
+    font-weight: bold;
+    color: #1e293b;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  .cover-motto {
+    font-size: 11pt;
+    font-weight: normal;
+    color: #334155;
+    margin-top: 4px;
+    border-bottom: 1px solid #64748b;
+    display: inline-block;
+    padding-bottom: 4px;
+  }
+
+  .cover-badge {
+    margin: 30px 0;
+    font-size: 40pt;
+  }
+
+  .cover-title-main {
+    font-size: 22pt;
+    font-weight: 900;
+    color: #1e3a8a;
+    text-transform: uppercase;
+    line-height: 1.3;
+    margin: 10px 0;
+    letter-spacing: 0.5px;
+  }
+
+  .cover-title-sub {
+    font-size: 16pt;
+    font-weight: bold;
+    color: #0369a1;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+  }
+
+  .cover-desc-box {
+    max-width: 580px;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px auto;
+    font-size: 11pt;
+    color: #334155;
+    text-align: left;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  }
+
+  .cover-desc-box ul {
+    margin: 6px 0;
+    padding-left: 20px;
+  }
+
+  .cover-footer {
+    margin-top: 40px;
+    font-size: 11.5pt;
+    color: #475569;
+    line-height: 1.6;
+    border-top: 1px solid #e2e8f0;
+    width: 100%;
+    padding-top: 15px;
+  }
+
+  /* MỤC LỤC TỰ ĐỘNG */
+  .toc-container {
+    page-break-after: always;
+    break-after: page;
+    padding: 10px 0;
+  }
+
+  .toc-title {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #0f172a;
+    text-transform: uppercase;
+    border-bottom: 2px solid #1e3a8a;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-item-part {
+    font-size: 13pt;
+    font-weight: bold;
+    color: #1e3a8a;
+    margin-top: 16px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed #cbd5e1;
+  }
+
+  .toc-item-sub {
+    font-size: 11.5pt;
+    color: #334155;
+    margin: 6px 0 6px 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* NỘI DUNG CHƯƠNG MỤC */
+  .chapter-section {
+    page-break-before: always;
+    break-before: page;
+    margin-top: 20px;
+  }
+
+  h1 {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #1e3a8a;
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 8px;
+    margin-top: 10px;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 14.5pt;
+    font-weight: bold;
+    color: #0f172a;
+    margin-top: 24px;
+    margin-bottom: 10px;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  h3 {
+    font-size: 13pt;
+    font-weight: bold;
+    color: #1e293b;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  p {
+    margin: 8px 0;
+    text-align: justify;
+  }
+
+  /* BẢNG BIỂU CHUẨN MỰC */
+  .table-container {
+    margin: 14px 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11pt;
+  }
+
+  th, td {
+    border: 1px solid #94a3b8;
+    padding: 7px 10px;
+    vertical-align: top;
+  }
+
+  th {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+
+  /* ALERT BOXES */
+  .alert {
+    padding: 10px 14px;
+    margin: 14px 0;
+    border-radius: 6px;
+    border-left: 4px solid;
+    font-size: 11pt;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .alert-header {
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  .alert-note { background-color: #eff6ff; border-color: #3b82f6; color: #1e40af; }
+  .alert-tip { background-color: #f0fdf4; border-color: #22c55e; color: #15803d; }
+  .alert-important { background-color: #fffbeb; border-color: #f59e0b; color: #b45309; }
+  .alert-warning { background-color: #fff7ed; border-color: #ea580c; color: #c2410c; }
+  .alert-caution { background-color: #fef2f2; border-color: #ef4444; color: #b91c1c; }
+
+  /* CODE BLOCKS */
+  pre {
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 10px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 10pt;
+    overflow-x: auto;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    line-height: 1.4;
+  }
+
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    background-color: #f1f5f9;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #0f172a;
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+  }
+
+  hr.divider {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 20px 0;
+  }
+
+  .page-break {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  /* HEADER & FOOTER KHI IN */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    body {
+      padding: 0;
+    }
+  }
+
+  </style>
+</head>
+<body>
+  
+    <div class="cover-container">
+      <div class="cover-header-national">
+        BỘ GIÁO DỤC VÀ ĐÀO TẠO — TRƯỜNG ĐẠI HỌC<br/>
+        <span class="cover-motto">Độc lập – Tự do – Hạnh phúc</span>
+      </div>
+
+      <div>
+        <div class="cover-badge">🎓 ⚖️ 📚</div>
+        <div class="cover-title-main">CẨM NANG THÍ SINH & SINH VIÊN</div>
+        <div class="cover-title-sub">LỊCH THI, THI TRỰC TUYẾN, XEM ĐIỂM & PHÚC KHẢO</div>
+        
+        <div class="cover-desc-box">
+          <strong>ĐỐI TƯỢNG VÀ PHẠM VI ÁP DỤNG:</strong>
+          <ul>
+            <li>Toàn thể Thí sinh, Sinh viên các hệ Đào tạo chính quy & Vừa làm vừa học</li>
+            <li>Chuẩn hóa theo Quy chế Khảo thí Đại học hiện hành</li>
+            <li>Hỗ trợ khảo thí trực tuyến, chống gian lận & Trợ lý AI</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cover-footer">
+        <strong>HỆ THỐNG QUẢN LÝ KHẢO THÍ SINH VIÊN (EXAM MANAGEMENT SYSTEM)</strong><br/>
+        Phiên bản Phát hành: Version 1.0 — Năm học 2025 – 2026<br/>
+        Lưu hành nội bộ — Xuất bản ngày 3/9/2026
+      </div>
+    </div>
+  
+  
+    <div class="toc-container">
+      <div class="toc-title">MỤC LỤC TỔNG THỂ</div>
+      <ul class="toc-list">
+  <li class="toc-item-part">Phần 3: Cẩm Nang Thí Sinh / Sinh Viên (Students)</li><li class="toc-item-sub"><span>• 01. HƯỚNG DẪN TRA CỨU LỊCH THI, SỐ BÁO DANH & ÔN LUYỆN TỰ DO</span></li><li class="toc-item-sub"><span>• 02. HƯỚNG DẪN LÀM BÀI THI TRỰC TUYẾN TỪ A ĐẾN Z (ONLINE EXAM)</span></li><li class="toc-item-sub"><span>• 03. QUY CHẾ PHÒNG THI TRỰC TUYẾN & HƯỚNG DẪN XỬ LÝ SỰ CỐ KỸ THUẬT</span></li><li class="toc-item-sub"><span>• 04. HƯỚNG DẪN TRA CỨU KẾT QUẢ THI & BẢNG ĐIỂM HỌC KỲ</span></li><li class="toc-item-sub"><span>• 05. HƯỚNG DẪN NỘP ĐƠN PHÚC KHẢO ĐIỂM THI TRỰC TUYẾN</span></li>
+      </ul>
+    </div>
+  
+  <div class="main-content">
+    <div class="chapter-article"><h1>01. HƯỚNG DẪN TRA CỨU LỊCH THI, SỐ BÁO DANH & ÔN LUYỆN TỰ DO</h1>
+<p>Tài liệu này hướng dẫn các bạn Thí sinh / Sinh viên cách tra cứu lịch thi học kỳ cá nhân, kiểm tra số báo danh, số ghế và sử dụng không gian luyện tập trắc nghiệm tự do trên hệ thống.</p>
+<hr class="divider"/>
+<h2>🔍 1. Tra Cứu Lịch Thi Cá Nhân (<code>/student/exam-schedule</code>)</h2>
+<p>Sau khi Phòng Khảo thí công bố lịch thi chính thức, bạn có thể dễ dàng kiểm tra toàn bộ thông tin dự thi của mình:</p>
+<h3>Các bước thực hiện:</h3>
+<li value="1">Đăng nhập vào hệ thống bằng tài khoản email sinh viên (Ví dụ: <code>student1@exam.local</code>).</li>
+<li value="2">Nhấp vào menu <strong>"Lịch Thi Của Tôi"</strong> trên thanh điều hướng bên trái hoặc truy cập URL <code>/student/exam-schedule</code>.</li>
+<li value="3">Bảng danh sách các môn thi của bạn trong học kỳ sẽ hiển thị với các thông tin chi tiết:</li>
+<div class="table-container"><table><tr><th>Trường thông tin</th><th>Ý nghĩa & Hướng dẫn</th></tr><tr><td><strong>Môn thi</strong></td><td>Tên môn học và Mã môn (Ví dụ: <em>Cơ sở dữ liệu - IT101</em>).</td></tr><tr><td><strong>Ngày thi</strong></td><td>Ngày chính xác diễn ra ca thi (Định dạng: <code>Thứ..., DD/MM/YYYY</code>).</td></tr><tr><td><strong>Khung giờ thi</strong></td><td>Giờ bắt đầu và Giờ kết thúc (Ví dụ: <code>07:30 – 09:30</code>). Bạn cần có mặt trước giờ này 15 phút.</td></tr><tr><td><strong>Phòng thi & Địa điểm</strong></td><td>Số hiệu phòng và Tòa nhà (Ví dụ: <em>Phòng Máy tính LAB-03, Tòa B2</em>).</td></tr><tr><td><strong>Số Báo Danh (SBD)</strong></td><td>Mã số dự thi riêng biệt của bạn (Ví dụ: <code>KT1-CSDL-0045</code>).</td></tr><tr><td><strong>Số Ghế</strong></td><td>Vị trí ngồi chính xác của bạn trong phòng thi (Ví dụ: <code>Ghế số 12</code>).</td></tr><tr><td><strong>Hình thức thi</strong></td><td>Trắc nghiệm máy tính (<code>ONLINE_QUIZ</code>), Tự luận giấy (<code>ESSAY</code>), hoặc Kết hợp (<code>HYBRID</code>).</td></tr></table></div>
+<hr class="divider"/>
+<h2>🖨️ 2. Tải & In Giấy Báo Dự Thi</h2>
+<p>Để thuận tiện xuất trình cho cán bộ coi thi hoặc bảo vệ khi vào cổng trường:</p>
+<li value="1">Tại góc trên bên phải trang lịch thi, nhấn nút <strong>"In Giấy Báo Dự Thi"</strong>.</li>
+<li value="2">Hệ thống sẽ tạo một file PDF chuẩn chứa:</li>
+<li>Họ và tên, Mã sinh viên, Lớp sinh hoạt.</li>
+<li>Bảng tổng hợp toàn bộ các môn thi kèm SBD, phòng thi và giờ thi.</li>
+<li value="3">Bạn có thể lưu file PDF vào điện thoại hoặc in ra giấy A4 mang theo trong suốt đợt thi.</li>
+
+        <div class="alert alert-tip">
+          <div class="alert-header"><span class="alert-icon">💡</span> <strong>Mẹo hay</strong></div>
+          <div class="alert-body"><strong>Lưu ý quan trọng</strong>: Nếu phát hiện trùng lịch thi (2 môn thi trong cùng 1 buổi) hoặc sai thông tin cá nhân, bạn hãy liên hệ ngay với Văn phòng Khoa hoặc Phòng Khảo thí tối thiểu <strong>3 ngày trước ngày thi</strong> để được hỗ trợ điều chỉnh kịp thời.</div>
+        </div>
+      
+<hr class="divider"/>
+<h2>🎯 3. Không Gian Luyện Tập Trắc Nghiệm Tự Do (<code>/practice</code>)</h2>
+<p>Để giúp sinh viên không bị bỡ ngỡ với giao diện làm bài thi trực tuyến, hệ thống cung cấp phân hệ <strong>Luyện tập tự do</strong>:</p>
+<h3>Lợi ích khi thi thử:</h3>
+<li>Làm quen với đồng hồ đếm ngược, bảng điều hướng câu hỏi và thao tác chọn/đổi đáp án.</li>
+<li>Kiểm tra thử độ tương thích của trình duyệt trên máy tính cá nhân.</li>
+<li><strong>Hoàn toàn miễn phí & Không ảnh hưởng điểm số</strong>: Kết quả thi thử chỉ mang tính chất ôn tập cá nhân, tuyệt đối không được ghi nhận vào điểm học bạ chính thức.</li>
+<h3>Các bước luyện tập:</h3>
+<li value="1">Truy cập menu <strong>"Ôn Luyện Tự Do"</strong> (<code>/practice</code>).</li>
+<li value="2">Chọn <strong>Môn học</strong> bạn muốn ôn tập từ danh mục môn học.</li>
+<li value="3">Chọn số lượng câu hỏi (Ví dụ: <code>20 câu</code>, <code>40 câu</code>) và thời lượng làm bài mong muốn.</li>
+<li value="4">Nhấn <strong>"Bắt đầu làm bài thử"</strong>.</li>
+<li value="5">Sau khi nộp bài, hệ thống sẽ chấm điểm tức thì và hiển thị phần <strong>Giải thích đáp án chi tiết</strong> cho từng câu hỏi để bạn rút kinh nghiệm.</li></div><div class="page-break"></div><div class="chapter-article"><h1>02. HƯỚNG DẪN LÀM BÀI THI TRỰC TUYẾN TỪ A ĐẾN Z (ONLINE EXAM)</h1>
+<p>Tài liệu này hướng dẫn chi tiết từng bước cho Sinh viên khi tham gia làm bài thi trực tuyến tại phân hệ <strong>Thi Trực Tuyến (<code>/student/online-exam</code>)</strong>.</p>
+<hr class="divider"/>
+<h2>🛠️ 1. Chuẩn Bị Trước Giờ Làm Bài (Pre-Exam Checklist)</h2>
+<p>Để buổi thi diễn ra thuận lợi, không gặp trục trặc kỹ thuật, bạn cần chuẩn bị:</p>
+<li value="1"><strong>Thiết bị & Đường truyền</strong>:</li>
+<li>Sử dụng máy tính bàn (PC) hoặc Laptop có bàn phím và chuột hoạt động tốt.</li>
+<li>Kết nối mạng dây mạng LAN ổn định (nếu thi tại phòng máy trường) hoặc Wi-Fi tốc độ cao và ổn định.</li>
+<li>Kiểm tra pin laptop hoặc cắm sạc trực tiếp trong suốt buổi thi.</li>
+<li value="2"><strong>Trình duyệt khuyến nghị</strong>:</li>
+<li>Sử dụng <strong>Google Chrome</strong> hoặc <strong>Microsoft Edge</strong> phiên bản mới nhất.</li>
+<li>Đăng xuất toàn bộ các tài khoản mạng xã hội (Facebook, Zalo, Discord, Telegram).</li>
+<li>Tắt các tiện ích mở rộng (Extensions) dịch tự động hoặc tiện ích chặn quảng cáo để tránh xung đột mã JavaScript.</li>
+<li value="3"><strong>Thời gian có mặt</strong>:</li>
+<li>Đăng nhập vào hệ thống trước giờ bắt đầu làm bài <strong>15 phút</strong>.</li>
+<hr class="divider"/>
+<h2>🔑 2. Vào Phòng Thi Ảo & Mở Đề Thi Bằng Mật Khẩu</h2>
+<pre><code class="language-mermaid">
+flowchart LR
+    Login["1. Đăng nhập hệ thống"] --&gt; OpenPage["2. Vào trang /student/online-exam"]
+    OpenPage --&gt; SelectSubject["3. Chọn môn thi trong danh sách ca thi hôm nay"]
+    SelectSubject --&gt; WaitPassword["4. Chờ Giám thị đọc Mật khẩu Đề thi đúng giờ G"]
+    WaitPassword --&gt; InputPass["5. Nhập Mật khẩu đề thi &amp; Bấm 'Bắt đầu làm bài'"]
+    InputPass --&gt; ExamScreen["6. Chuyển vào Giao diện làm bài toàn màn hình"]
+</code></pre>
+<h3>Các bước mở đề:</h3>
+<li value="1">Truy cập menu <strong>"Vào Phòng Thi"</strong> (<code>/student/online-exam</code>).</li>
+<li value="2">Chọn đúng môn thi theo lịch thi hôm nay.</li>
+<li value="3">Màn hình sẽ hiển thị thông tin ca thi: Tên môn học, Thời lượng làm bài (ví dụ: <em>60 phút</em>), Tổng số câu hỏi (ví dụ: <em>40 câu</em>).</li>
+<li value="4">Khi Giám thị đọc hoặc công bố <strong>Mật khẩu đề thi</strong>, bạn nhập chính xác mật khẩu vào ô quy định (chú ý chữ hoa, chữ thường và ký tự đặc biệt).</li>
+<li value="5">Nhấn nút <strong>"Bắt đầu làm bài"</strong>.</li>
+<hr class="divider"/>
+<h2>🖥️ 3. Làm Quen Giao Diện Phòng Thi Trực Tuyến</h2>
+<p>Giao diện làm bài được thiết kế trực quan và tập trung tối đa cho thí sinh:</p>
+<pre><code class="language-">
++---------------------------------------------------------------------------------------+
+|  📚 MÔN: CƠ SỞ DỮ LIỆU | THÍ SINH: NGUYỄN VĂN AN (SBD: 0045)  | ⏱️ THỜI GIAN: 45:30    |
++---------------------------------------------------------------------------------------+
+|  [CÂU HỎI 14 / 40]                                         |  BẢNG CÂU HỎI (PALETTE)   |
+|  Cho quan hệ R(A, B, C, D) với các phụ thuộc hàm F = ...   |  [01] [02] [03] [04] [05] |
+|  Khóa chính tối thiểu của quan hệ R là gì?                 |  [06] [07] [08] [09] [10] |
+|                                                            |  [11] [12] [13] [14*][15] |
+|  ( ) A. Thuộc tính AB                                      |  [16] [17] [18] [19] [20] |
+|  (•) B. Thuộc tính AC (Đang chọn)                          |  [21] [22] [23] [24] [25] |
+|  ( ) C. Thuộc tính AD                                      |  ...                      |
+|  ( ) D. Thuộc tính BCD                                     |  ------------------------ |
+|                                                            |  Chú thích màu sắc:       |
+|  [ 🚩 Đặt cờ xem lại sau ]                                 |  🟦 Xanh: Đã trả lời (28) |
+|  [ &lt;- Câu trước ]              [ Câu tiếp theo -&gt; ]        |  ⬜ Xám: Chưa làm (12)    |
+|                                                            |  🚩 Cờ: Cần xem lại (3)   |
+|                                                            |  ------------------------ |
+|                                                            |  [ 📤 NỘP BÀI THI NGAY ]  |
++---------------------------------------------------------------------------------------+
+</code></pre>
+<h3>Các thành phần chính:</h3>
+<li value="1"><strong>Đồng hồ đếm ngược (Countdown Timer)</strong>:</li>
+<li>Hiển thị thời gian còn lại từng giây.</li>
+<li>Khi thời gian còn dưới 5 phút, đồng hồ sẽ nhấp nháy màu đỏ để nhắc bạn chuẩn bị kiểm tra lại bài.</li>
+<li value="2"><strong>Bảng ma trận câu hỏi (Question Palette)</strong>:</li>
+<li>Giúp bạn biết chính xác mình đã làm được bao nhiêu câu và câu nào còn sót.</li>
+<li>Bấm vào bất kỳ ô số nào để nhảy nhanh đến câu hỏi đó mà không cần bấm nút qua trang nhiều lần.</li>
+<li value="3"><strong>Tính năng Đặt cờ (Flag for Review)</strong>:</li>
+<li>Nếu gặp câu hỏi khó cần suy nghĩ thêm, hãy bấm <strong>"Đặt cờ xem lại"</strong>. Ô số đó sẽ có biểu tượng lá cờ đỏ nhắc bạn quay lại trước khi nộp bài.</li>
+<li value="4"><strong>Cơ chế Tự Động Lưu Đáp Án (Auto-Save)</strong>:</li>
+<li>Ngay khi bạn nhấp chọn một đáp án A, B, C hoặc D, hệ thống lập tức lưu lựa chọn của bạn vào bộ nhớ máy và đồng bộ lên server. Bạn <strong>không cần bấm nút Lưu</strong> thủ công.</li>
+<hr class="divider"/>
+<h2>📤 4. Quy Trình Nộp Bài Thi (Submission)</h2>
+<h3>Trường hợp 1: Chủ động nộp bài khi đã làm xong:</h3>
+<li value="1">Sau khi hoàn thành và kiểm tra kỹ các câu hỏi, nhấn nút <strong>"Nộp bài thi"</strong>.</li>
+<li value="2"><strong>Bảng xác nhận nộp bài</strong> xuất hiện thông báo rõ ràng:</li>
+<li><em>"Bạn đã trả lời: 38 / 40 câu hỏi."</em></li>
+<li><em>"Còn 2 câu chưa trả lời. Bạn có chắc chắn muốn nộp bài sớm?"</em></li>
+<li value="3">Nếu muốn kiểm tra tiếp, bấm <strong>"Tiếp tục làm bài"</strong>.</li>
+<li value="4">Nếu chắc chắn nộp, bấm <strong>"Xác nhận nộp bài"</strong>.</li>
+<h3>Trường hợp 2: Tự động nộp bài khi hết giờ:</h3>
+<li>Khi đồng hồ đếm ngược điểm về <code>00:00:00</code>, màn hình sẽ tự động khóa lại ngay lập tức.</li>
+<li>Hệ thống tự động thu toàn bộ các câu trả lời bạn đã chọn và gửi lên máy chủ an toàn.</li>
+<hr class="divider"/>
+<h2>🎯 5. Xem Kết Quả Bài Làm</h2>
+<li><strong>Đối với môn thi trắc nghiệm 100%</strong>: Ngay sau khi nộp bài thành công, màn hình sẽ hiển thị thông báo chúc mừng kèm <strong>Tổng số câu đúng</strong> và <strong>Điểm trắc nghiệm tạm tính</strong>.</li>
+<li><strong>Đối với môn thi có phần tự luận</strong>: Điểm trắc nghiệm sẽ được ghi nhận trước; điểm tổng kết chính thức sẽ được công bố sau khi Thầy/Cô hoàn thành chấm phần tự luận.</li></div><div class="page-break"></div><div class="chapter-article"><h1>03. QUY CHẾ PHÒNG THI TRỰC TUYẾN & HƯỚNG DẪN XỬ LÝ SỰ CỐ KỸ THUẬT</h1>
+<p>Tài liệu này cung cấp các quy định bắt buộc về kỷ luật phòng thi, cơ chế chống gian lận tự động và hướng dẫn xử lý khi gặp sự cố kỹ thuật (rớt mạng, đơ máy tính, mất điện) dành cho Sinh viên.</p>
+<hr class="divider"/>
+<h2>🚫 1. Các Hành Vi Nghiêm Cấm Tuyệt Đối Trong Giờ Thi</h2>
+<p>Nhằm đảm bảo sự công bằng và nghiêm túc, phần mềm khảo thí trang bị hệ thống giám sát tự động. Thí sinh <strong>TUYỆT ĐỐI KHÔNG</strong> thực hiện các hành vi sau:</p>
+<li value="1"><strong>Rời khỏi cửa sổ bài thi</strong>: Không mở thêm tab mới trên trình duyệt, không mở các cửa sổ ứng dụng khác, không sử dụng phím tắt chuyển cửa sổ (<code>Alt + Tab</code>, phím <code>Windows</code>).</li>
+<li value="2"><strong>Sử dụng công cụ trợ giúp AI hoặc tra cứu tài liệu</strong>: Nghiêm cấm mở ChatGPT, Google Search, từ điển hoặc mở file tài liệu lưu sẵn trên ổ cứng máy tính.</li>
+<li value="3"><strong>Mở công cụ lập trình viên (Developer Tools)</strong>: Tuyệt đối không bấm phím <code>F12</code>, <code>Ctrl + Shift + I</code> hoặc click chuột phải chọn "Kiểm tra phần tử" (Inspect Element). Mọi hành vi này đều bị hệ thống ghi nhận là cố ý can thiệp mã nguồn đề thi.</li>
+<li value="4"><strong>Sử dụng thiết bị ngoại vi trái phép</strong>: Không đeo tai nghe, không nhìn vào điện thoại di động, không sử dụng phần mềm điều khiển từ xa (TeamViewer, UltraViewer, AnyDesk).</li>
+<hr class="divider"/>
+<h2>👁️ 2. Cơ Chế Bắt Gian Lận Tự Động Hoạt Động Như Thế Nào?</h2>
+<pre><code class="language-mermaid">
+graph TD
+    Action["Thí sinh bấm Alt+Tab hoặc Mở tab khác"] --&gt; Trigger["Trình duyệt kích hoạt sự kiện mất tiêu điểm (blur / hidden)"]
+    Trigger --&gt; Log["Hệ thống lưu vết: Số lần vi phạm + Thời gian rời màn hình (giây)"]
+    Log --&gt; AlertScreen["Màn hình thí sinh: Hiện cảnh báo nhắc nhở màu đỏ"]
+    Log --&gt; AlertProctor["Màn hình Giám thị: Đổi sang cờ đỏ nhấp nháy 'CẢNH BÁO VI PHẠM'"]
+    AlertProctor --&gt; Decision{"Giám thị phòng thi đưa ra quyết định xử lý"}
+    Decision --&gt;|Vi phạm nhẹ lần 1| Remind["Nhắc nhở trực tiếp tại chỗ ngồi"]
+    Decision --&gt;|Cố tình tái phạm| Discipline["Lập biên bản Kỷ luật / Buộc dừng thi ngay lập tức"]
+</code></pre>
+<h3>Các mức độ xử lý kỷ luật theo quy chế:</h3>
+<li><strong>Khiển trách</strong>: Áp dụng đối với thí sinh vi phạm 1 lần nhưng chưa gây hậu quả nghiêm trọng. Bị <strong>trừ 25% tổng điểm</strong> của bài thi.</li>
+<li><strong>Cảnh cáo</strong>: Áp dụng đối với thí sinh cố tình tái phạm chuyển tab hoặc trao đổi bài sau khi đã bị nhắc nhở. Bị <strong>trừ 50% tổng điểm</strong> của bài thi.</li>
+<li><strong>Đình chỉ thi</strong>: Áp dụng đối với thí sinh nhờ người thi hộ, sử dụng tài liệu trái phép hoặc có hành vi gian lận nghiêm trọng. Nhận <strong>điểm 0 (Không)</strong> cho môn thi đó và bị xử lý kỷ luật theo quy chế học vụ của nhà trường.</li>
+<hr class="divider"/>
+<h2>🛠️ 3. Sổ Tay Xử Lý Sự Cố Kỹ Thuật Dành Cho Sinh Viên (Troubleshooting)</h2>
+<p>Trong quá trình thi trực tuyến, nếu gặp phải sự cố kỹ thuật ngoài ý muốn, bạn hãy <strong>HẾT SỨC BÌNH TĨNH</strong> và thực hiện theo đúng chỉ dẫn dưới đây:</p>
+<h3>Sự cố 1: Máy tính bị mất mạng internet tạm thời</h3>
+<li><strong>Hiện tượng</strong>: Màn hình xuất hiện thông báo màu vàng: <em>"Mất kết nối máy chủ, đang thử kết nối lại..."</em></li>
+<li><strong>Cách xử lý</strong>:</li>
+<li><strong>TUYỆT ĐỐI KHÔNG TẮT TRÌNH DUYỆT!</strong></li>
+<li>Hệ thống khảo thí được trang bị công nghệ <strong>Bộ nhớ đệm dự phòng (Local Cache)</strong>. Mọi đáp án bạn đã chọn trước đó vẫn được lưu an toàn 100% trên máy tính của bạn.</li>
+<li>Bạn vẫn có thể tiếp tục đọc và chọn đáp án cho các câu tiếp theo.</li>
+<li>Giữ nguyên màn hình, khi đường truyền internet khôi phục trở lại, hệ thống sẽ tự động đồng bộ ngầm toàn bộ bài làm lên máy chủ mà không làm mất bài của bạn.</li>
+<h3>Sự cố 2: Máy tính bị đơ (treo máy), sập nguồn hoặc mất điện đột ngột</h3>
+<li><strong>Hiện tượng</strong>: Máy tính tự khởi động lại hoặc đứng hình hoàn toàn không di chuyển được chuột.</li>
+<li><strong>Cách xử lý</strong>:</li>
+<li value="1"><strong>Lập tức giơ tay báo cáo Giám thị phòng thi</strong> để được ghi nhận thời điểm gặp sự cố.</li>
+<li value="2">Giám thị sẽ chuyển bạn sang một máy tính dự phòng khác trong phòng thi hoặc khởi động lại máy tính hiện tại.</li>
+<li value="3">Mở lại trình duyệt và đăng nhập lại đúng tài khoản của bạn.</li>
+<li value="4">Vào lại ca thi: <strong>Toàn bộ tiến trình làm bài, các câu hỏi đã chọn trước thời điểm gặp sự cố sẽ được khôi phục nguyên vẹn 100%</strong> từ máy chủ.</li>
+<li value="5">Giám thị sẽ dùng quyền can thiệp để <strong>Cộng bù thêm thời gian</strong> tương ứng với số phút bạn bị gián đoạn do sự cố máy tính. Bạn hoàn toàn không bị thiệt thòi về thời gian làm bài!</li></div><div class="page-break"></div><div class="chapter-article"><h1>04. HƯỚNG DẪN TRA CỨU KẾT QUẢ THI & BẢNG ĐIỂM HỌC KỲ</h1>
+<p>Tài liệu này hướng dẫn Sinh viên tra cứu điểm thi kết thúc học phần, xem chi tiết bài làm đã chấm và tải bảng điểm điện tử tại phân hệ <strong>Kết Quả Thi (<code>/student/results</code>)</strong>.</p>
+<hr class="divider"/>
+<h2>📊 1. Tra Cứu Kết Quả Thi Cá Nhân (<code>/student/results</code>)</h2>
+<p>Sau khi Hội đồng Khảo thí hoàn tất công tác chấm thi và chính thức công bố kết quả:</p>
+<li value="1">Đăng nhập vào hệ thống bằng tài khoản sinh viên của bạn.</li>
+<li value="2">Chọn menu <strong>"Kết Quả Thi"</strong> trên thanh điều hướng hoặc truy cập đường dẫn <code>/student/results</code>.</li>
+<li value="3">Bảng điểm tổng hợp các môn thi trong kỳ sẽ hiển thị chi tiết:</li>
+<div class="table-container"><table><tr><th>Cột thông tin</th><th>Mô tả & Ý nghĩa</th></tr><tr><td><strong>Mã môn & Tên môn học</strong></td><td>Tên môn thi tương ứng trong học kỳ (Ví dụ: <em>Cơ sở dữ liệu - IT101</em>).</td></tr><tr><td><strong>Số tín chỉ</strong></td><td>Số đơn vị học trình của môn học (Ví dụ: <code>3 tín chỉ</code>).</td></tr><tr><td><strong>Điểm Trắc nghiệm</strong></td><td>Điểm số phần thi trắc nghiệm khách quan trên máy tính (Thang điểm 10).</td></tr><tr><td><strong>Điểm Tự luận</strong></td><td>Điểm số do Thầy/Cô chấm theo barem Rubric (Thang điểm 10).</td></tr><tr><td><strong>Điểm Tổng kết Học phần</strong></td><td>Điểm số trung bình có trọng số theo đề cương môn học (Thang điểm 10).</td></tr><tr><td><strong>Điểm Chữ (Thang 4)</strong></td><td>Xếp loại học lực: <code>A</code> (8.5 - 10), <code>B</code> (7.0 - 8.4), <code>C</code> (5.5 - 6.9), <code>D</code> (4.0 - 5.4), <code>F</code> (< 4.0).</td></tr><tr><td><strong>Kết luận môn học</strong></td><td>🟢 <code>ĐẠT</code> (Passed - Hoàn thành môn học) hoặc 🔴 <code>KHÔNG ĐẠT</code> (Failed - Phải học lại/thi lại).</td></tr></table></div>
+<hr class="divider"/>
+<h2>🔍 2. Xem Chi Tiết Bài Làm & Nhận Xét Của Giảng Viên</h2>
+<p>Nếu môn thi được Trưởng bộ môn cấu hình cho phép sinh viên xem lại bài thi:</p>
+<li value="1">Bấm vào nút <strong>"Xem chi tiết bài làm"</strong> tại môn học tương ứng.</li>
+<li value="2">Bạn sẽ xem được:</li>
+<li><strong>Đối với câu hỏi trắc nghiệm</strong>: Lựa chọn của bạn và đáp án chính xác của hệ thống (giúp bạn nhận biết rõ mình đã nhầm lẫn ở điểm kiến thức nào).</li>
+<li><strong>Đối với câu hỏi tự luận</strong>: Xem lại toàn bộ đoạn văn bản bài làm của bạn, mức điểm đạt được tại từng tiêu chí Rubric và <strong>đoạn nhận xét, góp ý chi tiết</strong> của Thầy/Cô chấm thi.</li>
+
+        <div class="alert alert-note">
+          <div class="alert-header"><span class="alert-icon">ℹ️</span> <strong>Lưu ý quan trọng</strong></div>
+          <div class="alert-body">Đối với một số môn học thuộc danh mục đề thi bảo mật đặc biệt của nhà trường, hệ thống có thể chỉ hiển thị điểm tổng kết mà không hiển thị chi tiết từng câu hỏi nhằm bảo vệ kho đề thi cho các đợt thi sau.</div>
+        </div>
+      
+<hr class="divider"/>
+<h2>📥 3. Tải Bảng Điểm Điện Tử Cá Nhân (PDF Transcript)</h2>
+<p>Để phục vụ nhu cầu nộp hồ sơ xin học bổng, xét khen thưởng hoặc lưu trữ cá nhân:</p>
+<li value="1">Nhấn nút <strong>"Xuất Bảng Điểm Điện Tử"</strong> ở góc trên màn hình kết quả thi.</li>
+<li value="2">File PDF được tạo với định dạng trang trọng:</li>
+<li>Có đầy đủ logo và tên trường đại học.</li>
+<li>Thống kê Điểm trung bình học kỳ (GPA) và Điểm rèn luyện.</li>
+<li>Kèm theo <strong>Mã xác thực điện tử (Verification Code / QR Code)</strong> giúp nhà tuyển dụng hoặc các đơn vị bên ngoài có thể quét mã để kiểm tra tính xác thực của bảng điểm.</li></div><div class="page-break"></div><div class="chapter-article"><h1>05. HƯỚNG DẪN NỘP ĐƠN PHÚC KHẢO ĐIỂM THI TRỰC TUYẾN</h1>
+<p>Tài liệu này hướng dẫn Sinh viên quy trình làm và nộp đơn xin chấm thẩm định lại bài thi (Phúc khảo điểm thi) hoàn toàn trực tuyến trên hệ thống mà không cần phải nộp đơn giấy tại văn phòng khoa.</p>
+<hr class="divider"/>
+<h2>⏱️ 1. Điều Kiện & Thời Hạn Nộp Đơn Phúc Khảo</h2>
+<li><strong>Khi nào bạn nên nộp đơn phúc khảo?</strong></li>
+<li>Khi bạn nhận thấy điểm số công bố có sự chênh lệch lớn so với kết quả bài làm thực tế của mình.</li>
+<li>Khi bạn nghi vấn có sự nhầm lẫn trong quá trình nhập điểm hoặc cộng sót điểm ở phần tự luận.</li>
+<li><strong>Thời hạn nộp đơn</strong>:</li>
+<li>Chức năng nộp đơn phúc khảo chỉ mở trong vòng <strong>05 đến 07 ngày</strong> kể từ ngày Ban Khảo thí chính thức công bố điểm của môn thi đó.</li>
+<li>Sau thời hạn quy định, hệ thống sẽ tự động khóa chức năng gửi đơn của môn thi đó để tiến hành tổng kết học kỳ.</li>
+<hr class="divider"/>
+<h2>📝 2. Các Bước Nộp Đơn Phúc Khảo Trực Tuyến</h2>
+<pre><code class="language-mermaid">
+flowchart TD
+    Step1["1. Vào trang Kết quả thi (/student/results)"] --&gt; Step2["2. Bấm nút 'Nộp Đơn Phúc Khảo' tại môn học tương ứng"]
+    Step2 --&gt; Step3["3. Điền lý do khiếu nại cụ thể (Nêu rõ câu hỏi có nghi vấn)"]
+    Step3 --&gt; Step4["4. Tải lên ảnh minh chứng / nháp (nếu có) &amp; Bấm 'Gửi đơn'"]
+    Step4 --&gt; Step5["5. Nhận Mã theo dõi đơn (Ví dụ: PK-2025-0045)"]
+</code></pre>
+<h3>Hướng dẫn điền thông tin phiếu phúc khảo:</h3>
+<li value="1">Đăng nhập hệ thống và vào trang <code>/student/results</code>.</li>
+<li value="2">Tìm đến môn học bạn có thắc mắc về điểm số và bấm nút <strong>"Nộp Đơn Phúc Khảo"</strong>.</li>
+<li value="3">Form điện tử sẽ hiện ra với các trường:</li>
+<li><strong>Môn thi & Điểm số hiện tại</strong>: Hệ thống tự động điền sẵn.</li>
+<li><strong>Phần thi muốn phúc khảo</strong>: Chọn <em>Phần thi Tự luận</em>, <em>Phần thi Trắc nghiệm</em>, hoặc <em>Toàn bộ bài thi</em>.</li>
+<li><strong>Lý do xin phúc khảo (Bắt buộc)</strong>: Bạn cần trình bày ngắn gọn, lịch sự và nêu rõ căn cứ thắc mắc.</li>
+<li><em>Ví dụ mẫu</em>: <em>"Kính gửi Ban Khảo thí và Quý Thầy/Cô bộ môn Cơ sở dữ liệu. Em nhận thấy câu số 3 phần thiết kế câu lệnh SQL em đã viết đầy đủ mệnh đề GROUP BY và HAVING đúng theo yêu cầu của đề bài, nhưng chỉ được 0.5/2.0 điểm. Em kính xin Quý Thầy/Cô kiểm tra và chấm thẩm định lại giúp em. Em xin chân thành cảm ơn!"</em></li>
+<li><strong>File minh chứng đính kèm (Tùy chọn)</strong>: Tải lên hình ảnh hoặc tài liệu liên quan nếu cần.</li>
+<li value="4">Nhấn nút <strong>"Xác Nhận & Gửi Đơn Phúc Khảo"</strong>.</li>
+<hr class="divider"/>
+<h2>🔍 3. Theo Dõi Tiến Độ Giải Quyết Đơn Của Bạn</h2>
+<p>Sau khi gửi đơn, bạn có thể kiểm tra trạng thái xử lý bất cứ lúc nào tại tab <strong>"Lịch Sử Phúc Khảo"</strong>:</p>
+<li>🟡 <strong>Đã tiếp nhận (PENDING)</strong>: Đơn của bạn đã vào hệ thống, đang chờ Ban Khảo thí phân công 2 giảng viên thẩm định độc lập.</li>
+<li>🔵 <strong>Đang thẩm định (IN_REVIEW)</strong>: Hội đồng chấm thi đang mở lại bài làm gốc của bạn và tiến hành chấm lại theo barem Rubric.</li>
+<li>🟢 <strong>Đã có kết luận (RESOLVED)</strong>: Đơn đã được giải quyết xong. Màn hình sẽ hiển thị rõ:</li>
+<li><strong>Kết quả</strong>: <em>Tăng điểm</em> (kèm điểm số mới), <em>Giữ nguyên điểm</em>, hoặc <em>Hạ điểm</em>.</li>
+<li><strong>Biên bản giải trình của Thầy/Cô</strong>: Giải thích chi tiết lý do vì sao điểm thay đổi hoặc vì sao giữ nguyên điểm.</li>
+<li>Bảng điểm chính thức của bạn sẽ tự động được cập nhật ngay lập tức.</li></div><div class="page-break"></div>
+  </div>
+</body>
+</html>

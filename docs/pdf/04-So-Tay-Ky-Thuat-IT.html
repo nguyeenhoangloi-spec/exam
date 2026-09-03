@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SỔ TAY KỸ THUẬT & VẬN HÀNH MÁY CHỦ</title>
+  <style>
+    
+  @page {
+    size: A4 portrait;
+    margin: 20mm 15mm 20mm 25mm;
+  }
+  
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Times New Roman', 'Segoe UI', serif;
+    font-size: 12.5pt;
+    line-height: 1.55;
+    color: #111827;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* TRANG BÌA SANG TRỌNG */
+  .cover-container {
+    width: 100%;
+    min-height: 90vh;
+    border: 3px double #1e3a8a;
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    page-break-after: always;
+    break-after: page;
+    background: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
+  }
+
+  .cover-header-national {
+    font-size: 13pt;
+    font-weight: bold;
+    color: #1e293b;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  .cover-motto {
+    font-size: 11pt;
+    font-weight: normal;
+    color: #334155;
+    margin-top: 4px;
+    border-bottom: 1px solid #64748b;
+    display: inline-block;
+    padding-bottom: 4px;
+  }
+
+  .cover-badge {
+    margin: 30px 0;
+    font-size: 40pt;
+  }
+
+  .cover-title-main {
+    font-size: 22pt;
+    font-weight: 900;
+    color: #1e3a8a;
+    text-transform: uppercase;
+    line-height: 1.3;
+    margin: 10px 0;
+    letter-spacing: 0.5px;
+  }
+
+  .cover-title-sub {
+    font-size: 16pt;
+    font-weight: bold;
+    color: #0369a1;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+  }
+
+  .cover-desc-box {
+    max-width: 580px;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px auto;
+    font-size: 11pt;
+    color: #334155;
+    text-align: left;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  }
+
+  .cover-desc-box ul {
+    margin: 6px 0;
+    padding-left: 20px;
+  }
+
+  .cover-footer {
+    margin-top: 40px;
+    font-size: 11.5pt;
+    color: #475569;
+    line-height: 1.6;
+    border-top: 1px solid #e2e8f0;
+    width: 100%;
+    padding-top: 15px;
+  }
+
+  /* MỤC LỤC TỰ ĐỘNG */
+  .toc-container {
+    page-break-after: always;
+    break-after: page;
+    padding: 10px 0;
+  }
+
+  .toc-title {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #0f172a;
+    text-transform: uppercase;
+    border-bottom: 2px solid #1e3a8a;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-item-part {
+    font-size: 13pt;
+    font-weight: bold;
+    color: #1e3a8a;
+    margin-top: 16px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed #cbd5e1;
+  }
+
+  .toc-item-sub {
+    font-size: 11.5pt;
+    color: #334155;
+    margin: 6px 0 6px 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* NỘI DUNG CHƯƠNG MỤC */
+  .chapter-section {
+    page-break-before: always;
+    break-before: page;
+    margin-top: 20px;
+  }
+
+  h1 {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #1e3a8a;
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 8px;
+    margin-top: 10px;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 14.5pt;
+    font-weight: bold;
+    color: #0f172a;
+    margin-top: 24px;
+    margin-bottom: 10px;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  h3 {
+    font-size: 13pt;
+    font-weight: bold;
+    color: #1e293b;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  p {
+    margin: 8px 0;
+    text-align: justify;
+  }
+
+  /* BẢNG BIỂU CHUẨN MỰC */
+  .table-container {
+    margin: 14px 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11pt;
+  }
+
+  th, td {
+    border: 1px solid #94a3b8;
+    padding: 7px 10px;
+    vertical-align: top;
+  }
+
+  th {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+
+  /* ALERT BOXES */
+  .alert {
+    padding: 10px 14px;
+    margin: 14px 0;
+    border-radius: 6px;
+    border-left: 4px solid;
+    font-size: 11pt;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .alert-header {
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  .alert-note { background-color: #eff6ff; border-color: #3b82f6; color: #1e40af; }
+  .alert-tip { background-color: #f0fdf4; border-color: #22c55e; color: #15803d; }
+  .alert-important { background-color: #fffbeb; border-color: #f59e0b; color: #b45309; }
+  .alert-warning { background-color: #fff7ed; border-color: #ea580c; color: #c2410c; }
+  .alert-caution { background-color: #fef2f2; border-color: #ef4444; color: #b91c1c; }
+
+  /* CODE BLOCKS */
+  pre {
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 10px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 10pt;
+    overflow-x: auto;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    line-height: 1.4;
+  }
+
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    background-color: #f1f5f9;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #0f172a;
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+  }
+
+  hr.divider {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 20px 0;
+  }
+
+  .page-break {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  /* HEADER & FOOTER KHI IN */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    body {
+      padding: 0;
+    }
+  }
+
+  </style>
+</head>
+<body>
+  
+    <div class="cover-container">
+      <div class="cover-header-national">
+        BỘ GIÁO DỤC VÀ ĐÀO TẠO — TRƯỜNG ĐẠI HỌC<br/>
+        <span class="cover-motto">Độc lập – Tự do – Hạnh phúc</span>
+      </div>
+
+      <div>
+        <div class="cover-badge">🎓 ⚖️ 📚</div>
+        <div class="cover-title-main">SỔ TAY KỸ THUẬT & VẬN HÀNH MÁY CHỦ</div>
+        <div class="cover-title-sub">CÀI ĐẶT MÔI TRƯỜNG, DOCKER & ỨNG CỨU SỰ CỐ</div>
+        
+        <div class="cover-desc-box">
+          <strong>ĐỐI TƯỢNG VÀ PHẠM VI ÁP DỤNG:</strong>
+          <ul>
+            <li>Đội ngũ Kỹ sư Trung tâm CNTT, Quản trị viên Mạng & DevOps</li>
+            <li>Chuẩn hóa theo Quy chế Khảo thí Đại học hiện hành</li>
+            <li>Hỗ trợ khảo thí trực tuyến, chống gian lận & Trợ lý AI</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cover-footer">
+        <strong>HỆ THỐNG QUẢN LÝ KHẢO THÍ SINH VIÊN (EXAM MANAGEMENT SYSTEM)</strong><br/>
+        Phiên bản Phát hành: Version 1.0 — Năm học 2025 – 2026<br/>
+        Lưu hành nội bộ — Xuất bản ngày 3/9/2026
+      </div>
+    </div>
+  
+  
+    <div class="toc-container">
+      <div class="toc-title">MỤC LỤC TỔNG THỂ</div>
+      <ul class="toc-list">
+  <li class="toc-item-part">Phần 4: Sổ Tay Kỹ Thuật & Vận Hành Khẩn Cấp (IT / DevOps)</li><li class="toc-item-sub"><span>• 01. SỔ TAY CÀI ĐẶT & CẤU HÌNH MÔI TRƯỜNG VẬN HÀNH (DEV / PRODUCTION)</span></li><li class="toc-item-sub"><span>• 02. HƯỚNG DẪN TRIỂN KHAI & VẬN HÀNH HỆ THỐNG BẰNG DOCKER</span></li><li class="toc-item-sub"><span>• 03. SỔ TAY XỬ LÝ SỰ CỐ KHẨN CẤP DÀNH CHO KỸ SƯ HỆ THỐNG (IT RUNBOOK)</span></li>
+      </ul>
+    </div>
+  
+  <div class="main-content">
+    <div class="chapter-article"><h1>01. SỔ TAY CÀI ĐẶT & CẤU HÌNH MÔI TRƯỜNG VẬN HÀNH (DEV / PRODUCTION)</h1>
+<p>Tài liệu này dành riêng cho Kỹ sư IT, Quản trị viên hệ thống (DevOps / SysAdmin) để cài đặt, cấu hình và khởi chạy hệ thống khảo thí trên máy chủ Windows hoặc Linux (Ubuntu/Debian/RHEL).</p>
+<hr class="divider"/>
+<h2>💻 1. Yêu Cầu Phần Cứng & Phần Mềm Nền Tảng</h2>
+<h3>Yêu cầu phần cứng khuyến nghị:</h3>
+<li><strong>Môi trường Phát triển (Dev / Testing)</strong>: CPU 4 Cores, RAM tối thiểu 8GB, Ổ cứng SSD còn trống tối thiểu 20GB.</li>
+<li><strong>Môi trường Vận hành Chính thức (Production - Cho 1.000+ thí sinh đồng thời)</strong>:</li>
+<li>CPU: 8 đến 16 Cores (Intel Xeon / AMD EPYC).</li>
+<li>RAM: 16GB đến 32GB RAM.</li>
+<li>Ổ cứng: NVMe SSD 100GB+ (Tốc độ đọc/ghi cao phục vụ ghi Audit Log và Database I/O).</li>
+<li>Băng thông mạng: Tối thiểu 1 Gbps.</li>
+<h3>Yêu cầu phần mềm bắt buộc:</h3>
+<li value="1"><strong>Node.js</strong>: Phiên bản LTS ổn định <strong>v18.x</strong> hoặc <strong>v20.x</strong> (Khuyến nghị Node.js 20.12+ LTS).</li>
+<li value="2"><strong>NPM</strong>: Phiên bản 9.x hoặc 10.x (kèm theo Node.js).</li>
+<li value="3"><strong>Cơ sở dữ liệu</strong>: <strong>PostgreSQL</strong> phiên bản 15 hoặc 16.</li>
+<li value="4"><strong>Git</strong>: Phiên bản mới nhất.</li>
+<hr class="divider"/>
+<h2>⚙️ 2. Cấu Hình Biến Môi Trường (.env)</h2>
+<p>Hệ thống tách biệt rõ ràng biến môi trường giữa Backend và Frontend:</p>
+<h3>A. Cấu hình Backend (<code>backend/.env</code>):</h3>
+<p>Sao chép từ file mẫu <code>backend/.env.example</code>:</p>
+<pre><code class="language-bash">
+cd backend
+cp .env.example .env
+</code></pre>
+<p>Các tham số quan trọng cần thiết lập trong <code>backend/.env</code>:</p>
+<pre><code class="language-ini">
+# Cổng dịch vụ API Backend
+PORT=3001
+
+# Chuỗi kết nối Cơ sở Dữ liệu PostgreSQL
+DATABASE_URL="postgresql://postgres:MatKhauManh123@localhost:5432/exam_management_db?schema=public"
+
+# Khóa bí mật mã hóa JWT (Bắt buộc dùng chuỗi ngẫu nhiên tối thiểu 32 ký tự)
+JWT_SECRET="super-secret-jwt-key-for-exam-production-2026"
+JWT_EXPIRES_IN="7d"
+
+# Cấu hình AI Provider chấm thi tự luận (Gemini hoặc DeepSeek)
+AI_PROVIDER="gemini"
+GEMINI_API_KEY="AIzaSyYourGeminiApiKeyHere..."
+
+# Cấu hình thư mục lưu trữ bản sao lưu CSDL
+BACKUP_STORAGE_DIR="./database-backups"
+</code></pre>
+<h3>B. Cấu hình Frontend (<code>frontend/.env.local</code>):</h3>
+<pre><code class="language-ini">
+# Địa chỉ API Gateway backend mà trình duyệt gọi tới
+NEXT_PUBLIC_API_URL="http://localhost:3001"
+</code></pre>
+<hr class="divider"/>
+<h2>🚀 3. Hướng Dẫn Cài Đặt & Khởi Chạy Từng Bước</h2>
+<p>Tại thư mục gốc của dự án (<code>exam-management/</code>):</p>
+<h3>Bước 1: Cài đặt toàn bộ thư viện phụ thuộc (Dependencies)</h3>
+<pre><code class="language-bash">
+npm run install:all
+</code></pre>
+<p><em>Lệnh này sẽ tự động cài đặt <code>node_modules</code> cho cả thư mục <code>backend</code> và <code>frontend</code>.</em></p>
+<h3>Bước 2: Khởi tạo Cơ sở dữ liệu & Seed dữ liệu mẫu ban đầu</h3>
+<pre><code class="language-bash">
+# Tạo cấu trúc bảng từ schema.prisma vào PostgreSQL
+npm run db:migrate
+
+# Bơm dữ liệu mẫu (Khoa, Lớp, Môn học, Tài khoản Admin, GV, SV)
+npm run seed
+</code></pre>
+<h3>Bước 3: Khởi chạy Môi trường Phát triển (Development Mode)</h3>
+<pre><code class="language-bash">
+npm run dev
+</code></pre>
+<p><em>Lệnh này dùng <code>concurrently</code> để chạy song song:</em></p>
+<li><strong>Backend API</strong>: <code>http://localhost:3001</code></li>
+<li><strong>Frontend Web UI</strong>: <code>http://localhost:3000</code></li>
+<hr class="divider"/>
+<h2>🏭 4. Đóng Gói & Chạy Môi Trường Vận Hành (Production Mode)</h2>
+<p>Khi đưa lên máy chủ chính thức của trường:</p>
+<pre><code class="language-bash">
+# 1. Sinh Prisma Client và Biên dịch toàn bộ mã nguồn
+npm run build:all
+
+# 2. Khởi chạy ở chế độ Production tối ưu hiệu năng
+npm run start
+</code></pre>
+
+        <div class="alert alert-tip">
+          <div class="alert-header"><span class="alert-icon">💡</span> <strong>Mẹo hay</strong></div>
+          <div class="alert-body">Trên môi trường Production Linux, khuyến nghị sử dụng công cụ quản lý tiến trình <strong>PM2</strong> (<code>pm2 start npm --name "exam-backend" -- run start:prod --prefix backend</code>) để tự động khởi động lại ứng dụng nếu gặp sự cố sập nguồn hoặc crash bộ nhớ.</div>
+        </div>
+      </div><div class="page-break"></div><div class="chapter-article"><h1>02. HƯỚNG DẪN TRIỂN KHAI & VẬN HÀNH HỆ THỐNG BẰNG DOCKER</h1>
+<p>Tài liệu này hướng dẫn Kỹ sư DevOps triển khai Hệ thống Khảo thí bằng công nghệ container hóa <strong>Docker</strong> và <strong>Docker Compose</strong>, giúp hệ thống vận hành cô lập, ổn định và dễ dàng mở rộng.</p>
+<hr class="divider"/>
+<h2>🐳 1. Mô Hình Các Dịch Vụ Container (Architecture)</h2>
+<p>Hệ thống được đóng gói thành cụm 3 container liên kết nội bộ trong mạng riêng <code>exam-network</code>:</p>
+<pre><code class="language-mermaid">
+graph TD
+    User["🌐 Người Dùng / Trình Duyệt Thí Sinh &amp; Cán Bộ"] --&gt;|Port 80/443| Nginx["🛡️ Nginx Reverse Proxy (SSL/HTTPS)"]
+    Nginx --&gt;|Port 3000| Frontend["🖥️ Container: exam-frontend-web (Next.js 14 Standalone)"]
+    Nginx --&gt;|Port 3001| Backend["⚡ Container: exam-backend-api (NestJS API Gateway)"]
+    Backend --&gt;|Port 5432| DB[("🐘 Container: exam-postgres-db (PostgreSQL 16 Alpine)")]
+
+    DB --&gt; VolDB[("💾 Volume: postgres_data")]
+    Backend --&gt; VolUploads[("📂 Volume: backend_uploads")]
+    Backend --&gt; VolBackups[("📦 Volume: backend_backups")]
+</code></pre>
+<hr class="divider"/>
+<h2>🚀 2. Các Lệnh Điều Hành Docker Nhanh</h2>
+<p>Tại thư mục gốc dự án (<code>exam-management/</code>), bạn có thể sử dụng các lệnh script có sẵn trong <code>package.json</code>:</p>
+<div class="table-container"><table><tr><th>Thao tác</th><th>Lệnh NPM viết tắt</th><th>Lệnh Docker Compose gốc</th></tr><tr><td><strong>Khởi chạy ngầm toàn bộ</strong></td><td><code>npm run docker:up</code></td><td><code>docker compose up -d</code></td></tr><tr><td><strong>Dừng & Hủy container</strong></td><td><code>npm run docker:down</code></td><td><code>docker compose down</code></td></tr><tr><td><strong>Đóng gói lại Image (Build)</strong></td><td><code>npm run docker:build</code></td><td><code>docker compose build</code></td></tr><tr><td><strong>Xem Log trực tiếp (Live Logs)</strong></td><td>-</td><td><code>docker compose logs -f</code></td></tr><tr><td><strong>Xem Log riêng Backend</strong></td><td>-</td><td><code>docker compose logs -f backend</code></td></tr><tr><td><strong>Xem Trạng thái các container</strong></td><td>-</td><td><code>docker compose ps</code></td></tr></table></div>
+<hr class="divider"/>
+<h2>💾 3. Quản Lý Dữ Liệu Tồn Tại Lâu Dài (Persistent Volumes)</h2>
+<p>Để dữ liệu không bao giờ bị mất khi khởi động lại hoặc cập nhật phiên bản container mới, 3 volume chuyên dụng được liên kết với máy chủ chủ (Host Machine):</p>
+<li value="1"><strong><code>postgres_data</code></strong>: Lưu trữ toàn bộ bảng biểu, tài khoản, điểm số của PostgreSQL tại <code>/var/lib/postgresql/data</code>. Tuyệt đối không xóa volume này trừ khi muốn làm mới hoàn toàn hệ thống.</li>
+<li value="2"><strong><code>backend_uploads</code></strong>: Lưu trữ các file đính kèm, ảnh chụp minh chứng đề thi, bài làm tự luận của sinh viên.</li>
+<li value="3"><strong><code>backend_backups</code></strong>: Nơi lưu các file backup <code>.sql</code> tự động do worker sinh ra. Kỹ sư IT có thể copy dữ liệu từ thư mục này sang ổ đĩa ngoài định kỳ.</li>
+<hr class="divider"/>
+<h2>🩺 4. Kiểm Tra Sức Khỏe & Truy Cập Container (Healthcheck & Exec)</h2>
+<h3>Kiểm tra cơ sở dữ liệu PostgreSQL đã sẵn sàng chưa:</h3>
+<p>Container <code>exam-postgres-db</code> có tích hợp cơ chế Healthcheck tự động:</p>
+<pre><code class="language-bash">
+docker exec -it exam-postgres-db pg_isready -U postgres -d exam
+</code></pre>
+<p><em>Kết quả trả về: <code>exam:5432 - accepting connections</code> nghĩa là CSDL đang hoạt động hoàn hảo.</em></p>
+<h3>Mở dòng lệnh Terminal bên trong Container Backend:</h3>
+<p>Khi cần chạy các lệnh đặc biệt như seed dữ liệu hoặc kiểm tra log file:</p>
+<pre><code class="language-bash">
+docker exec -it exam-backend-api sh
+
+# Chạy seed dữ liệu thủ công bên trong container:
+npm run seed
+</code></pre>
+<hr class="divider"/>
+<h2>🔒 5. Cấu Hình Nginx Reverse Proxy & Chứng Chỉ SSL HTTPS</h2>
+<p>Khi triển khai trên máy chủ thật có tên miền chính thức (Ví dụ: <code>khaothi.truongdaihoc.edu.vn</code>), khuyến nghị thiết lập cấu hình Nginx phía trước:</p>
+<pre><code class="language-nginx">
+server {
+    listen 80;
+    server_name khaothi.truongdaihoc.edu.vn;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name khaothi.truongdaihoc.edu.vn;
+
+    ssl_certificate /etc/letsencrypt/live/khaothi.truongdaihoc.edu.vn/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/khaothi.truongdaihoc.edu.vn/privkey.pem;
+
+    # Chuyển tiếp các request thông thường về Frontend Next.js
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Chuyển tiếp các request API hoặc WebSocket về Backend NestJS
+    location /api/ {
+        proxy_pass http://127.0.0.1:3001/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 300s;
+    }
+}
+</code></pre>
+
+        <div class="alert alert-tip">
+          <div class="alert-header"><span class="alert-icon">💡</span> <strong>Mẹo hay</strong></div>
+          <div class="alert-body">Sử dụng công cụ miễn phí <strong>Certbot</strong> (<code>certbot --nginx -d khaothi.truongdaihoc.edu.vn</code>) để tự động cài đặt và gia hạn chứng chỉ bảo mật SSL Let's Encrypt 90 ngày một lần.</div>
+        </div>
+      </div><div class="page-break"></div><div class="chapter-article"><h1>03. SỔ TAY XỬ LÝ SỰ CỐ KHẨN CẤP DÀNH CHO KỸ SƯ HỆ THỐNG (IT RUNBOOK)</h1>
+<p>Tài liệu này là cẩm nang phản ứng nhanh (<strong>Incident Response Runbook</strong>) dành cho đội ngũ Quản trị IT / DevOps khi hệ thống gặp trục trặc trong quá trình tổ chức kỳ thi.</p>
+<hr class="divider"/>
+<h2>🚨 1. Sự Cố 1: Backend API Bị Crash Hoặc Thoát Đột Ngột</h2>
+<h3>Hiện tượng:</h3>
+<p>Frontend báo lỗi <em>"Network Error"</em> hoặc <em>"502 Bad Gateway"</em>. Terminal hoặc Docker báo backend dừng với exit code 1.</p>
+<h3>Quy trình chẩn đoán & Khắc phục:</h3>
+<li value="1"><strong>Kiểm tra nhật ký lỗi tức thời</strong>:</li>
+<pre><code class="language-bash">
+   # Nếu chạy Docker:
+   docker compose logs --tail=100 backend
+
+   # Nếu chạy PM2:
+   pm2 logs exam-backend
+</code></pre>
+<li value="2"><strong>Các nguyên nhân phổ biến</strong>:</li>
+<li><strong>Tràn bộ nhớ RAM (Out of Memory - OOM)</strong>: Do hàng trăm sinh viên cùng nộp bài tự luận chứa ảnh dung lượng lớn trong cùng một giây.</li>
+<li><em>Giải pháp</em>: Tăng giới hạn RAM cho tiến trình Node.js bằng cờ:</li>
+<p>       <code>NODE_OPTIONS="--max-old-space-size=4096" npm run start:prod</code></p>
+<li><strong>Thiếu biến môi trường hoặc sai cấu hình JWT</strong>: Kiểm tra xem file <code>backend/.env</code> có bị xóa nhầm hoặc thiếu <code>JWT_SECRET</code> hay không.</li>
+<li value="3"><strong>Khởi động lại dịch vụ ngay lập tức</strong>:</li>
+<pre><code class="language-bash">
+   docker compose restart backend
+</code></pre>
+<hr class="divider"/>
+<h2>🐘 2. Sự Cố 2: Lỗi Kết Nối Cơ Sở Dữ Liệu PostgreSQL (Prisma P1001)</h2>
+<h3>Hiện tượng:</h3>
+<p>Log backend xuất hiện lỗi: <code>PrismaClientInitializationError: Can't reach database server at 'db:5432'</code>.</p>
+<h3>Quy trình chẩn đoán & Khắc phục:</h3>
+<li value="1"><strong>Kiểm tra tiến trình PostgreSQL</strong>:</li>
+<pre><code class="language-bash">
+   docker ps | grep postgres
+</code></pre>
+<p>   Nếu container bị tắt, kiểm tra nguyên nhân sập máy:</p>
+<pre><code class="language-bash">
+   docker compose logs db
+</code></pre>
+<li value="2"><strong>Tràn số lượng kết nối tối đa (<code>Too many connections</code>)</strong>:</li>
+<li>Mặc định PostgreSQL chỉ cho phép 100 kết nối đồng thời. Trong kỳ thi lớn, hàng chục tiến trình backend có thể làm cạn kiệt Connection Pool.</li>
+<li><em>Khắc phục</em>: Tăng <code>max_connections</code> trong file cấu hình PostgreSQL hoặc khởi chạy lại container với tham số:</li>
+<p>     <code>command: postgres -c max_connections=300 -c shared_buffers=512MB</code></p>
+<li>Điều chỉnh chuỗi kết nối Prisma trong <code>.env</code>:</li>
+<p>     <code>DATABASE_URL="postgresql://user:pass@db:5432/exam?schema=public&connection_limit=50"</code></p>
+<hr class="divider"/>
+<h2>⚡ 3. Sự Cố 3: Quá Tải Đột Biến Đầu Giờ Thi (Traffic Spike)</h2>
+<h3>Hiện tượng:</h3>
+<p>Vào đúng thời điểm 07:30 (khi giám thị đọc mật khẩu đề thi), 1.000 đến 2.000 sinh viên cùng nhấn F5 hoặc bấm nút "Bắt đầu làm bài", khiến CPU máy chủ chạm ngưỡng 100%, trang web phản hồi chậm.</p>
+<h3>Các biện pháp giải tỏa tắc nghẽn khẩn cấp:</h3>
+<li value="1"><strong>Bật bộ đệm tĩnh (Static Caching) trên Nginx</strong>:</li>
+<li>Đảm bảo toàn bộ tài nguyên CSS, JS, hình ảnh được Nginx lưu cache trực tiếp trên RAM, không đẩy request về Node.js.</li>
+<li value="2"><strong>Kỹ thuật Mở ca thi So le (Staggered Schedule)</strong>:</li>
+<li>Phòng Khảo thí nên cấu hình thời gian bắt đầu làm bài của các Khoa lệch nhau từ 5 đến 10 phút (Ví dụ: Khoa CNTT thi lúc 07:30, Khoa Kinh tế thi lúc 07:40). Biện pháp này triệt tiêu hoàn toàn đỉnh nhọn quá tải (Traffic Spike) mà không cần tốn thêm chi phí nâng cấp phần cứng máy chủ.</li>
+<hr class="divider"/>
+<h2>💾 4. Sự Cố 4: Khôi Phục Dữ Liệu Khẩn Cấp Bằng Lệnh Dòng Lệnh (CLI Restore)</h2>
+<p>Nếu giao diện web bị lỗi hoàn toàn và không thể truy cập vào trang <code>/admin/backups</code>, Kỹ sư IT có thể khôi phục database trực tiếp bằng công cụ <code>psql</code>:</p>
+<pre><code class="language-bash">
+# Bước 1: Xác định file sao lưu gần nhất trong thư mục database-backups/
+ls -lh database-backups/
+
+# Bước 2: Bơm dữ liệu từ file backup vào PostgreSQL (Áp dụng cho Docker):
+docker exec -i exam-postgres-db psql -U postgres -d exam &lt; database-backups/backup-2026-09-02-02-00-00.sql
+
+# Bước 3: Khởi động lại backend để nhận dữ liệu mới:
+docker compose restart backend
+</code></pre>
+<hr class="divider"/>
+<h2>✅ 5. Bảng Kiểm Tra Sẵn Sàng Trước Giờ Thi (Pre-Flight Checklist)</h2>
+<p>Đội ngũ kỹ thuật IT phải hoàn thành kiểm tra 6 mục này tối thiểu <strong>30 phút trước mỗi ca thi</strong>:</p>
+<li>[ ] <strong>1. Dung lượng ổ cứng</strong>: Kiểm tra ổ cứng máy chủ còn trống tối thiểu <strong>20GB</strong> (<code>df -h</code>).</li>
+<li>[ ] <strong>2. Sao lưu CSDL</strong>: Đã có bản backup sạch sẽ của CSDL được tạo trong vòng 24 giờ qua.</li>
+<li>[ ] <strong>3. Kết nối mạng phòng máy</strong>: Đảm bảo toàn bộ switch mạng, dây cáp mạng và máy trạm tại các phòng LAB thông suốt tới máy chủ.</li>
+<li>[ ] <strong>4. Kiểm tra tài khoản Quản trị</strong>: Đăng nhập thử vào trang Admin, kiểm tra đồng hồ máy chủ đã được đồng bộ chuẩn giờ internet qua NTP.</li>
+<li>[ ] <strong>5. Mở cổng Firewall</strong>: Đảm bảo các cổng <code>80</code>, <code>443</code>, <code>3000</code>, <code>3001</code> không bị tường lửa Windows Defender hoặc iptables chặn ngoài ý muốn.</li>
+<li>[ ] <strong>6. Cán bộ thường trực</strong>: Tối thiểu 2 kỹ sư kỹ thuật túc trực tại phòng điều khiển máy chủ trong suốt thời gian diễn ra ca thi để kịp thời ứng cứu khi có sự cố.</li></div><div class="page-break"></div>
+  </div>
+</body>
+</html>

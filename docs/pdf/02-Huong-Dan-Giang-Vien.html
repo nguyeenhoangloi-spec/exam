@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CẨM NANG GIẢNG VIÊN COI THI & CHẤM THI</title>
+  <style>
+    
+  @page {
+    size: A4 portrait;
+    margin: 20mm 15mm 20mm 25mm;
+  }
+  
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Times New Roman', 'Segoe UI', serif;
+    font-size: 12.5pt;
+    line-height: 1.55;
+    color: #111827;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* TRANG BÌA SANG TRỌNG */
+  .cover-container {
+    width: 100%;
+    min-height: 90vh;
+    border: 3px double #1e3a8a;
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    page-break-after: always;
+    break-after: page;
+    background: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
+  }
+
+  .cover-header-national {
+    font-size: 13pt;
+    font-weight: bold;
+    color: #1e293b;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  .cover-motto {
+    font-size: 11pt;
+    font-weight: normal;
+    color: #334155;
+    margin-top: 4px;
+    border-bottom: 1px solid #64748b;
+    display: inline-block;
+    padding-bottom: 4px;
+  }
+
+  .cover-badge {
+    margin: 30px 0;
+    font-size: 40pt;
+  }
+
+  .cover-title-main {
+    font-size: 22pt;
+    font-weight: 900;
+    color: #1e3a8a;
+    text-transform: uppercase;
+    line-height: 1.3;
+    margin: 10px 0;
+    letter-spacing: 0.5px;
+  }
+
+  .cover-title-sub {
+    font-size: 16pt;
+    font-weight: bold;
+    color: #0369a1;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+  }
+
+  .cover-desc-box {
+    max-width: 580px;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px auto;
+    font-size: 11pt;
+    color: #334155;
+    text-align: left;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  }
+
+  .cover-desc-box ul {
+    margin: 6px 0;
+    padding-left: 20px;
+  }
+
+  .cover-footer {
+    margin-top: 40px;
+    font-size: 11.5pt;
+    color: #475569;
+    line-height: 1.6;
+    border-top: 1px solid #e2e8f0;
+    width: 100%;
+    padding-top: 15px;
+  }
+
+  /* MỤC LỤC TỰ ĐỘNG */
+  .toc-container {
+    page-break-after: always;
+    break-after: page;
+    padding: 10px 0;
+  }
+
+  .toc-title {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #0f172a;
+    text-transform: uppercase;
+    border-bottom: 2px solid #1e3a8a;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-item-part {
+    font-size: 13pt;
+    font-weight: bold;
+    color: #1e3a8a;
+    margin-top: 16px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed #cbd5e1;
+  }
+
+  .toc-item-sub {
+    font-size: 11.5pt;
+    color: #334155;
+    margin: 6px 0 6px 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* NỘI DUNG CHƯƠNG MỤC */
+  .chapter-section {
+    page-break-before: always;
+    break-before: page;
+    margin-top: 20px;
+  }
+
+  h1 {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #1e3a8a;
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 8px;
+    margin-top: 10px;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 14.5pt;
+    font-weight: bold;
+    color: #0f172a;
+    margin-top: 24px;
+    margin-bottom: 10px;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  h3 {
+    font-size: 13pt;
+    font-weight: bold;
+    color: #1e293b;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  p {
+    margin: 8px 0;
+    text-align: justify;
+  }
+
+  /* BẢNG BIỂU CHUẨN MỰC */
+  .table-container {
+    margin: 14px 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11pt;
+  }
+
+  th, td {
+    border: 1px solid #94a3b8;
+    padding: 7px 10px;
+    vertical-align: top;
+  }
+
+  th {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+
+  /* ALERT BOXES */
+  .alert {
+    padding: 10px 14px;
+    margin: 14px 0;
+    border-radius: 6px;
+    border-left: 4px solid;
+    font-size: 11pt;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .alert-header {
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  .alert-note { background-color: #eff6ff; border-color: #3b82f6; color: #1e40af; }
+  .alert-tip { background-color: #f0fdf4; border-color: #22c55e; color: #15803d; }
+  .alert-important { background-color: #fffbeb; border-color: #f59e0b; color: #b45309; }
+  .alert-warning { background-color: #fff7ed; border-color: #ea580c; color: #c2410c; }
+  .alert-caution { background-color: #fef2f2; border-color: #ef4444; color: #b91c1c; }
+
+  /* CODE BLOCKS */
+  pre {
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 10px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 10pt;
+    overflow-x: auto;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    line-height: 1.4;
+  }
+
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    background-color: #f1f5f9;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #0f172a;
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+  }
+
+  hr.divider {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 20px 0;
+  }
+
+  .page-break {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  /* HEADER & FOOTER KHI IN */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    body {
+      padding: 0;
+    }
+  }
+
+  </style>
+</head>
+<body>
+  
+    <div class="cover-container">
+      <div class="cover-header-national">
+        BỘ GIÁO DỤC VÀ ĐÀO TẠO — TRƯỜNG ĐẠI HỌC<br/>
+        <span class="cover-motto">Độc lập – Tự do – Hạnh phúc</span>
+      </div>
+
+      <div>
+        <div class="cover-badge">🎓 ⚖️ 📚</div>
+        <div class="cover-title-main">CẨM NANG GIẢNG VIÊN COI THI & CHẤM THI</div>
+        <div class="cover-title-sub">GIÁM SÁT TRỰC TUYẾN, CHẤM TỰ LUẬN AI & PHÚC KHẢO</div>
+        
+        <div class="cover-desc-box">
+          <strong>ĐỐI TƯỢNG VÀ PHẠM VI ÁP DỤNG:</strong>
+          <ul>
+            <li>Cán Bộ Coi Thi (Giám Thị 1 & 2), Cán Bộ Chấm Thi & Hội Đồng Thẩm Định</li>
+            <li>Chuẩn hóa theo Quy chế Khảo thí Đại học hiện hành</li>
+            <li>Hỗ trợ khảo thí trực tuyến, chống gian lận & Trợ lý AI</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cover-footer">
+        <strong>HỆ THỐNG QUẢN LÝ KHẢO THÍ SINH VIÊN (EXAM MANAGEMENT SYSTEM)</strong><br/>
+        Phiên bản Phát hành: Version 1.0 — Năm học 2025 – 2026<br/>
+        Lưu hành nội bộ — Xuất bản ngày 3/9/2026
+      </div>
+    </div>
+  
+  
+    <div class="toc-container">
+      <div class="toc-title">MỤC LỤC TỔNG THỂ</div>
+      <ul class="toc-list">
+  <li class="toc-item-part">Phần 2: Cẩm Nang Giảng Viên & Cán Bộ Coi Thi / Chấm Thi (Teachers)</li><li class="toc-item-sub"><span>• 01. TỔNG QUAN KHÔNG GIAN LÀM VIỆC CỦA GIẢNG VIÊN</span></li><li class="toc-item-sub"><span>• 02. HƯỚNG DẪN TRA CỨU LỊCH COI THI & NGHIỆP VỤ PHÒNG THI ĐẦU GIỜ</span></li><li class="toc-item-sub"><span>• 03. HƯỚNG DẪN GIÁM SÁT PHÒNG THI TRỰC TUYẾN THỜI GIAN THỰC (PROCTORING)</span></li><li class="toc-item-sub"><span>• 04. HƯỚNG DẪN CHẤM THI TỰ LUẬN THEO TIÊU CHÍ RUBRIC & TRỢ LÝ AI</span></li><li class="toc-item-sub"><span>• 05. HƯỚNG DẪN TIẾP NHẬN & GIẢI QUYẾT ĐƠN PHÚC KHẢO ĐIỂM THI</span></li>
+      </ul>
+    </div>
+  
+  <div class="main-content">
+    <div class="chapter-article"><h1>01. TỔNG QUAN KHÔNG GIAN LÀM VIỆC CỦA GIẢNG VIÊN</h1>
+<p>Tài liệu này giới thiệu tổng quan giao diện, chức năng và phạm vi nghiệp vụ dành riêng cho Thầy/Cô với vai trò <strong>Giảng viên / Cán bộ Coi thi & Chấm thi (<code>TEACHER</code>)</strong>.</p>
+<hr class="divider"/>
+<h2>🖥️ 1. Giao Diện & Thanh Điều Hướng Chuyên Biệt</h2>
+<p>Sau khi đăng nhập bằng tài khoản Giảng viên, thanh Sidebar bên trái sẽ tự động tối ưu gọn gàng, chỉ hiển thị các chức năng phục vụ giảng dạy và khảo thí:</p>
+<pre><code class="language-">
+[HỆ THỐNG KHẢO THÍ]
+├── 📅 Lịch Coi Thi Của Tôi (/teacher/assignments)
+├── 🛡️ Giám Sát Phòng Thi Trực Tuyến (/teacher/proctor)
+├── 📝 Chấm Thi Tự Luận &amp; Trợ Lý AI (/teacher/essay-grading)
+├── ⚖️ Giải Quyết Phúc Khảo (/teacher/regrade)
+└── 📚 Ngân Hàng Câu Hỏi &amp; Biên Soạn Đề (/question-bank - Nếu được phân quyền)
+</code></pre>
+<h3>Các khu vực làm việc chính:</h3>
+<li value="1"><strong>Lịch Coi Thi Của Tôi (<code>/teacher/assignments</code>)</strong>: Nơi tra cứu nhanh danh sách các ca thi mà Thầy/Cô được phân công làm Giám thị 1 hoặc Giám thị 2; xem số phòng, giờ bắt đầu và tải danh sách sinh viên.</li>
+<li value="2"><strong>Giám Sát Phòng Thi Trực Tuyến (<code>/teacher/proctor</code>)</strong>: Bảng điều khiển giám sát thời gian thực khi sinh viên đang làm bài thi trên máy tính; theo dõi cảnh báo gian lận và gửi thông báo cho phòng thi.</li>
+<li value="3"><strong>Chấm Thi Tự Luận (<code>/teacher/essay-grading</code>)</strong>: Không gian chấm bài thi tự luận theo biểu điểm Rubric, có sự đồng hành của trợ lý trí tuệ nhân tạo (Gemini/DeepSeek) để gợi ý điểm và nhận xét nhanh.</li>
+<li value="4"><strong>Giải Quyết Đơn Phúc Khảo (<code>/teacher/regrade</code>)</strong>: Tiếp nhận các khiếu nại về điểm số của sinh viên, mở lại bài thi để chấm thẩm định và lập biên bản kết luận.</li>
+<hr class="divider"/>
+<h2>🔒 2. Cơ Chế Phạm Vi Dữ Liệu (Data Scoping)</h2>
+<p>Để đảm bảo tính bảo mật và riêng tư, hệ thống áp dụng cơ chế phân lập dữ liệu nghiêm ngặt cho vai trò Giảng viên:</p>
+<li><strong>Chỉ xem dữ liệu liên quan</strong>: Giảng viên không nhìn thấy danh sách sinh viên hay đề thi của các môn học ngoài phạm vi chuyên môn của mình, trừ các ca thi mà giảng viên được phân công làm cán bộ coi thi.</li>
+<li><strong>Bảo vệ tính khách quan của đề thi</strong>: Giảng viên chỉ có thể xem nội dung đề thi khi ca thi chính thức bắt đầu và đã được Ban Khảo thí mở khóa.</li>
+<hr class="divider"/>
+<h2>⚙️ 3. Quy Tắc Kỷ Luật & Văn Hóa Khảo Thí Số</h2>
+<p>Khi thao tác trên hệ thống khảo thí học đường, Thầy/Cô vui lòng tuân thủ các quy tắc sau:</p>
+<li value="1"><strong>Bảo mật tuyệt đối thông tin đăng nhập</strong>: Tuyệt đối không cung cấp tài khoản và mật khẩu cho sinh viên hoặc người khác sử dụng.</li>
+<li value="2"><strong>Đăng xuất an toàn</strong>: Sau khi kết thúc buổi coi thi tại các phòng máy tính công cộng, bắt buộc phải nhấn nút <strong>"Đăng xuất"</strong> ở góc phải thanh Header và đóng toàn bộ trình duyệt.</li>
+<li value="3"><strong>Ghi nhật ký giải trình</strong>: Khi thực hiện các thao tác quan trọng (như sửa điểm chấm thi, duyệt phúc khảo, hoặc lập biên bản kỷ luật thí sinh), hệ thống yêu cầu nhập lý do giải trình. Thầy/Cô vui lòng ghi rõ ràng, khách quan để làm căn cứ lưu hồ sơ học vụ.</li></div><div class="page-break"></div><div class="chapter-article"><h1>02. HƯỚNG DẪN TRA CỨU LỊCH COI THI & NGHIỆP VỤ PHÒNG THI ĐẦU GIỜ</h1>
+<p>Tài liệu này hướng dẫn Thầy/Cô tra cứu lịch phân công coi thi (<code>/teacher/assignments</code>) và thực hiện quy trình nghiệp vụ điểm danh, kiểm tra tư cách thí sinh trước giờ thi.</p>
+<hr class="divider"/>
+<h2>📅 1. Tra Cứu Lịch Coi Thi Của Cá Nhân (<code>/teacher/assignments</code>)</h2>
+<p>Khi Ban Khảo thí hoàn tất việc phân công cán bộ coi thi, thông tin sẽ xuất hiện ngay lập tức trên trang làm việc của Thầy/Cô.</p>
+<h3>Thông tin hiển thị trên mỗi ca thi:</h3>
+<li><strong>Môn thi</strong>: Tên môn học và Mã môn (Ví dụ: <em>Cơ sở dữ liệu - IT101</em>).</li>
+<li><strong>Kỳ thi</strong>: Ví dụ: <em>Kỳ thi kết thúc học phần Học kỳ 1 - 2025–2026</em>.</li>
+<li><strong>Thời gian</strong>: Ngày thi, Giờ bắt đầu và Giờ kết thúc (Ví dụ: <em>07:30 – 09:30, Thứ Ba ngày 15/12/2025</em>).</li>
+<li><strong>Địa điểm</strong>: Phòng thi và Tòa nhà (Ví dụ: <em>Phòng LAB-03, Tòa nhà B2</em>).</li>
+<li><strong>Vai trò trong ca</strong>:</li>
+<li><strong>Giám thị 1 (Chính)</strong>: Chịu trách nhiệm chung, điều hành phòng thi và mở ca thi.</li>
+<li><strong>Giám thị 2 (Phụ)</strong>: Hỗ trợ giám sát trật tự, đối chiếu căn cước và giám sát hành lang.</li>
+<li><strong>Cán bộ coi thi cùng ca</strong>: Hiển thị họ tên và số điện thoại của đồng nghiệp cùng coi thi để tiện liên hệ phối hợp.</li>
+<hr class="divider"/>
+<h2>📋 2. Tải Dữ Liệu & Chuẩn Bị Trước Giờ Thi</h2>
+<p>Thầy/Cô nên đăng nhập và tải tài liệu trước ngày thi:</p>
+<li value="1">Nhấn nút <strong>"Xem chi tiết phòng thi"</strong>.</li>
+<li value="2">Nhấn nút <strong>"Tải danh sách thí sinh"</strong> (<code>.pdf</code> hoặc <code>.xlsx</code>) để in danh sách kiểm diện.</li>
+<li value="3">Nhấn nút <strong>"Tải bảng ký tên nộp bài"</strong> để chuẩn bị cho thí sinh ký biên bản khi nộp bài.</li>
+
+        <div class="alert alert-important">
+          <div class="alert-header"><span class="alert-icon">❗</span> <strong>Quy định bắt buộc</strong></div>
+          <div class="alert-body"><strong>Quy định thời gian</strong>: Cán bộ coi thi bắt buộc phải có mặt tại Phòng Hội đồng thi hoặc trước cửa phòng thi tối thiểu <strong>15 đến 20 phút</strong> trước giờ bắt đầu làm bài để nhận bàn giao và thực hiện công tác chuẩn bị.</div>
+        </div>
+      
+<hr class="divider"/>
+<h2>🚪 3. Quy Trình Nghiệp Vụ Đầu Giờ Tại Phòng Thi</h2>
+<p>Thầy/Cô thực hiện tuần tự 5 bước nghiệp vụ chuẩn:</p>
+<pre><code class="language-mermaid">
+flowchart TD
+    Step1["1. Kiểm tra phòng thi (Máy tính, điện, mạng internet hoạt động tốt)"] --&gt; Step2["2. Nhắc nhở thí sinh để toàn bộ tư trang, điện thoại ngoài hành lang"]
+    Step2 --&gt; Step3["3. Giám thị 1 gọi tên thí sinh theo Số Báo Danh (SBD) vào phòng"]
+    Step3 --&gt; Step4["4. Giám thị 2 kiểm tra Thẻ Sinh Viên / CCCD đối chiếu gương mặt"]
+    Step4 --&gt; Step5["5. Hướng dẫn thí sinh ngồi đúng Số ghế đã được dán trên bàn máy"]
+    Step5 --&gt; Step6["6. Phổ biến quy chế thi &amp; Công bố Mật khẩu mở đề khi đúng giờ"]
+</code></pre>
+<h3>Chi tiết các lưu ý quan trọng:</h3>
+<li value="1"><strong>Kiểm tra thiết bị</strong>: Nếu là phòng máy tính thi trực tuyến, bật máy chủ/máy trạm, kiểm tra kết nối mạng internet tới địa chỉ máy chủ thi. Nếu máy tính nào bị lỗi phần cứng, lập tức báo cán bộ kỹ thuật chuyển thí sinh sang máy dự phòng.</li>
+<li value="2"><strong>Kiểm tra danh tính</strong>:</li>
+<li>Đối chiếu kỹ khuôn mặt thí sinh với Thẻ sinh viên hoặc Căn cước công dân (CCCD).</li>
+<li>Thí sinh không có thẻ sinh viên hoặc mất giấy tờ tùy thân phải được Giám thị 1 lập biên bản cam kết và xin ý kiến của Trưởng Ban Khảo thí tại phòng Hội đồng.</li>
+<li value="3"><strong>Tuyệt đối cấm thiết bị thu phát sóng</strong>: Toàn bộ điện thoại thông minh, đồng hồ thông minh, tai nghe bluetooth phải tắt nguồn và để ở bàn phía đầu phòng hoặc ngoài hành lang trước khi bước vào chỗ ngồi.</li>
+<li value="4"><strong>Công bố Mật khẩu Đề thi</strong>: Chỉ công bố mật khẩu đề thi đúng vào thời điểm bắt đầu tính giờ làm bài (Ví dụ đúng 07:30). Không phát mật khẩu sớm để tránh việc thí sinh bắt đầu làm bài không đồng loạt.</li></div><div class="page-break"></div><div class="chapter-article"><h1>03. HƯỚNG DẪN GIÁM SÁT PHÒNG THI TRỰC TUYẾN THỜI GIAN THỰC (PROCTORING)</h1>
+<p>Tài liệu này hướng dẫn Giảng viên sử dụng Bảng điều khiển <strong>Giám sát Phòng thi Trực tuyến (<code>/teacher/proctor</code>)</strong> để theo dõi trạng thái làm bài của thí sinh, phát hiện các hành vi gian lận và thực hiện các can thiệp nghiệp vụ trong ca thi.</p>
+<hr class="divider"/>
+<h2>🖥️ 1. Giao Diện Bảng Giám Sát Phòng Thi (<code>/teacher/proctor</code>)</h2>
+<p>Khi ca thi bắt đầu, Giám thị đăng nhập vào hệ thống và chọn phòng thi đang diễn ra. Màn hình sẽ hiển thị dạng lưới (Grid) hoặc danh sách (Table) toàn bộ thí sinh trong phòng với trạng thái thời gian thực:</p>
+<pre><code class="language-">
+[BẢNG ĐIỀU KHIỂN PHÒNG THI: LAB-03 | MÔN: CƠ SỞ DỮ LIỆU | THỜI GIAN CÒN LẠI: 48:20]
+--------------------------------------------------------------------------------------
+[SBD: 001] Nguyễn Văn An   | Đang làm: Câu 24/40 | 🟢 Bình thường (0 vi phạm)
+[SBD: 002] Trần Thị Bình   | Đang làm: Câu 18/40 | 🔴 CẢNH BÁO (Rời màn hình 2 lần!) [Xử lý]
+[SBD: 003] Lê Hoàng Cường  | Mất kết nối 1 phút  | 🟡 Đang chờ kết nối lại...
+[SBD: 004] Phạm Thu Dung   | Đã nộp bài (38/40)  | ⚪ Hoàn thành (Nộp lúc 08:15)
+--------------------------------------------------------------------------------------
+[Thao tác nhanh]: [📢 Gửi thông báo toàn phòng]  [⏱️ Cộng giờ]  [🔒 Khóa ca thi]
+</code></pre>
+<h3>Ý nghĩa 4 trạng thái thí sinh:</h3>
+<li value="1">🟢 <strong>Đang làm bài (Active)</strong>: Thí sinh đang tập trung trên cửa sổ thi, chuột và bàn phím tương tác bình thường.</li>
+<li value="2">🔴 <strong>Cảnh báo vi phạm (Violation Alert)</strong>: Thí sinh vừa có hành vi chuyển tab trình duyệt, mở ứng dụng khác hoặc thu nhỏ cửa sổ làm bài.</li>
+<li value="3">🟡 <strong>Mất kết nối (Disconnected)</strong>: Máy tính thí sinh bị rớt mạng hoặc tắt trình duyệt đột ngột (hệ thống tự động bảo lưu bài làm tại LocalStorage).</li>
+<li value="4">⚪ <strong>Đã nộp bài (Submitted)</strong>: Thí sinh đã chủ động xác nhận nộp bài thi thành công.</li>
+<hr class="divider"/>
+<h2>🚨 2. Cơ Chế Tự Động Bắt Gian Lận (Anti-Cheat & Tab-Switch Detection)</h2>
+<p>Hệ thống tích hợp động cơ giám sát sự kiện trình duyệt (<code>Page Visibility API</code> & <code>Window Focus/Blur Event</code>):</p>
+<pre><code class="language-mermaid">
+sequenceDiagram
+    actor Student as 🎓 Thí Sinh
+    participant Client as 💻 Trình Duyệt Sinh Viên
+    participant Server as ⚡ Hệ Thống Khảo Thí
+    actor Teacher as 👨‍🏫 Giám Thị Phòng Thi
+
+    Student-&gt;&gt;Client: Nhấn Alt+Tab / Mở Tab Google tìm tài liệu
+    Client-&gt;&gt;Client: Kích hoạt sự kiện visibilitychange (Rời màn hình)
+    Client-&gt;&gt;Server: Gửi bản tin cảnh báo vi phạm (Event: TAB_SWITCH)
+    Server-&gt;&gt;Teacher: Đẩy thông báo đỏ nổi bật trên Dashboard Giám thị
+    Server--&gt;&gt;Client: Hiển thị Popup cảnh báo toàn màn hình: "BẠN VỪA RỜI MÀN HÌNH THI!"
+</code></pre>
+<h3>Quy tắc phân cấp xử lý vi phạm:</h3>
+<li><strong>Vi phạm Lần 1</strong>: Hệ thống hiển thị cảnh báo nhẹ trên màn hình thí sinh: <em>"Lần 1: Vui lòng không rời khỏi cửa sổ thi! Hành vi này đã được ghi nhận."</em></li>
+<li><strong>Vi phạm Lần 2</strong>: Bảng điều khiển của Giám thị đổi sang màu vàng cam kèm tiếng chuông cảnh báo nhẹ. Giám thị nên đi xuống trực tiếp bàn thi để nhắc nhở thí sinh.</li>
+<li><strong>Vi phạm Lần 3 trở lên</strong>: Hệ thống đổi sang cảnh báo đỏ đậm (<code>CRITICAL_VIOLATION</code>). Giám thị tiến hành nhắc nhở lần cuối hoặc lập biên bản khiển trách/cảnh cáo theo quy chế thi.</li>
+<hr class="divider"/>
+<h2>🛠️ 3. Các Quyền Can Thiệp Ca Thi Của Giám Thị (Proctor Actions)</h2>
+<p>Trên thanh công cụ, Giám thị có đầy đủ các thẩm quyền can thiệp ca thi:</p>
+<h3>A. Gửi thông báo toàn phòng (Broadcast Message):</h3>
+<li>Bấm nút <strong>"Gửi thông báo toàn phòng"</strong>.</li>
+<li>Nhập nội dung (Ví dụ: <em>"Còn 15 phút kết thúc giờ làm bài, các em chú ý kiểm tra lại các câu chưa chọn đáp án"</em>).</li>
+<li>Thông báo sẽ lập tức hiển thị thành banner nổi bật trên đầu màn hình của tất cả thí sinh trong phòng.</li>
+<h3>B. Cộng thêm thời gian làm bài (Add Extra Time):</h3>
+<li>Áp dụng khi máy tính của 1 thí sinh bị sự cố phần cứng, màn hình xanh hoặc mất điện phòng thi cục bộ dẫn đến mất thời gian làm bài:</li>
+<li value="1">Chọn thí sinh bị ảnh hưởng trong danh sách.</li>
+<li value="2">Chọn lệnh <strong>"Cộng giờ làm bài"</strong>.</li>
+<li value="3">Chọn số phút bù (Ví dụ: <code>+5 phút</code>, <code>+10 phút</code>, <code>+15 phút</code>) và nhập lý do giải trình.</li>
+<li value="4">Đồng hồ đếm ngược trên máy thí sinh đó sẽ tự động được cộng thêm số phút tương ứng.</li>
+<h3>C. Khóa bài tạm thời / Đình chỉ thi (Suspend / Force Submit):</h3>
+<li>Nếu thí sinh cố tình tái diễn vi phạm gian lận hoặc gây rối trật tự phòng thi:</li>
+<li value="1">Bấm nút <strong>"Xử lý vi phạm"</strong> trên dòng thí sinh.</li>
+<li value="2">Chọn <strong>"Đình chỉ thi & Buộc nộp bài"</strong>.</li>
+<li value="3">Hệ thống sẽ ngay lập tức khóa quyền làm bài của thí sinh, thu bài tại trạng thái hiện tại và chấm điểm các câu đã làm.</li>
+<li value="4">Giám thị lập biên bản đình chỉ thi bằng văn bản giấy có chữ ký của 2 giám thị và thí sinh.</li>
+<hr class="divider"/>
+<h2>🏁 4. Nghiệp Vụ Kết Thúc Ca Thi</h2>
+<li value="1">Khi đồng hồ đếm ngược của phòng thi về <code>00:00</code>, toàn bộ máy tính của thí sinh sẽ tự động khóa và nộp bài lên máy chủ.</li>
+<li value="2">Giám thị kiểm tra trên màn hình để đảm bảo 100% thí sinh đã chuyển sang trạng thái <strong>⚪ Đã nộp bài</strong>.</li>
+<li value="3">Cho từng thí sinh ký tên xác nhận vào <strong>Bảng ký nộp bài</strong>.</li>
+<li value="4">Bấm nút <strong>"Khóa ca thi" (Close Proctoring Session)</strong> trên giao diện giám thị để đóng quyền truy cập ca thi.</li>
+<li value="5">Ký biên bản bàn giao phòng thi và gửi về Ban Khảo thí tại phòng Hội đồng.</li></div><div class="page-break"></div><div class="chapter-article"><h1>04. HƯỚNG DẪN CHẤM THI TỰ LUẬN THEO TIÊU CHÍ RUBRIC & TRỢ LÝ AI</h1>
+<p>Tài liệu này hướng dẫn Giảng viên khai thác không gian <strong>Chấm thi Tự luận Thông minh (<code>/teacher/essay-grading</code>)</strong> kết hợp tiêu chí Rubric đa tầng và Trợ lý Trí tuệ Nhân tạo (AI Gemini / DeepSeek) để đẩy nhanh tiến độ và nâng cao độ chính xác khi chấm thi.</p>
+<hr class="divider"/>
+<h2>🔒 1. Cơ Chế Rọc Phách Ẩn Danh Điện Tử (Blind Grading)</h2>
+<p>Để đảm bảo tính khách quan và công bằng tuyệt đối trong đánh giá học thuật:</p>
+<li>Khi Giảng viên mở giao diện chấm bài, toàn bộ thông tin cá nhân của thí sinh (Họ và tên, Mã sinh viên, Lớp học) <strong>đều được tự động ẩn đi hoàn toàn</strong>.</li>
+<li>Mỗi bài làm được đại diện bằng một <strong>Mã phách điện tử ngẫu nhiên</strong> (Ví dụ: <code>PHACH-94021</code>).</li>
+<li>Giảng viên chỉ tập trung thuần túy vào chất lượng nội dung bài làm của thí sinh mà không bị chi phối bởi bất kỳ định kiến cá nhân nào.</li>
+<hr class="divider"/>
+<h2>🖥️ 2. Giao Diện Chấm Bài 2 Cột Thông Minh (Split-View)</h2>
+<p>Màn hình chấm bài được thiết kế theo bố cục song song tiện lợi:</p>
+<pre><code class="language-">
++-------------------------------------------------------+-------------------------------------------------------+
+|  📄 NỘI DUNG BÀI LÀM THÍ SINH (MÃ PHÁCH: #94021)       |  📝 KHUNG CHẤM ĐIỂM THEO TIÊU CHÍ (RUBRIC)            |
++-------------------------------------------------------+-------------------------------------------------------+
+| [CÂU 1 (4.0 điểm)]: Thiết kế mô hình CSDL Quản lý...  | [Tiêu chí 1]: Xác định đúng thực thể &amp; thuộc tính     |
+|                                                       | ⚪ Chưa đạt (0đ)  ⚪ Cơ bản (1.0đ)  🔘 Tốt (2.0đ/2.0đ)  |
+| Bài làm của thí sinh:                                 |                                                       |
+| "Em xin trình bày các thực thể như sau:               | [Tiêu chí 2]: Quan hệ &amp; Khóa chính / Khóa ngoại       |
+| 1. KHACH_HANG (MaKH, TenKH, DiaChi)                   | ⚪ Chưa đạt (0đ)  🔘 Khá (1.5đ)   ⚪ Tốt (2.0đ/2.0đ)  |
+| 2. DON_HANG (MaDH, NgayDat, MaKH)..."                 |                                                       |
+|                                                       | ----------------------------------------------------- |
+|                                                       | 🤖 [TRỢ LÝ AI GỢI Ý ĐIỂM: 3.5 / 4.0 ĐIỂM]             |
+|                                                       | Nhận xét AI: "Thí sinh xác định đầy đủ thực thể..."   |
+|                                                       |                                                       |
+|                                                       | [Ghi chú nhận xét của Thầy/Cô]:                       |
+|                                                       | [Bài làm rõ ràng, cần lưu ý thêm kiểu dữ liệu date..] |
+|                                                       |                                                       |
+|                                                       | TỔNG ĐIỂM CÂU 1: [ 3.5 ] / 4.0 điểm                   |
+|                                                       | [💾 Lưu bài này &amp; Chuyển sang bài tiếp theo -&gt;]       |
++-------------------------------------------------------+-------------------------------------------------------+
+</code></pre>
+<hr class="divider"/>
+<h2>📐 3. Quy Trình Chấm Theo Khung Tiêu Chí Rubric</h2>
+<p>Hệ thống hỗ trợ cấu hình ma trận tiêu chí Rubric minh bạch:</p>
+<li value="1">Mỗi câu hỏi tự luận có thể chia thành nhiều tiêu chí thành phần (Ví dụ: <em>Kiến thức lý thuyết</em>, <em>Kỹ năng lập luận</em>, <em>Tính sáng tạo / Tối ưu</em>).</li>
+<li value="2">Thầy/Cô chỉ cần click chọn mức độ thí sinh đạt được tại từng tiêu chí:</li>
+<li>Hệ thống sẽ tự động tính toán tổng điểm tích lũy của câu hỏi.</li>
+<li>Tránh hoàn toàn lỗi cộng sai điểm số thường gặp khi chấm trên giấy truyền thống.</li>
+<hr class="divider"/>
+<h2>🤖 4. Trợ Lý AI Hỗ Trợ Chấm Thi (AI-Assisted Grading)</h2>
+<p>Hệ thống tích hợp các mô hình ngôn ngữ lớn tiên tiến (Google Gemini / DeepSeek API) để hỗ trợ Thầy/Cô:</p>
+<h3>A. Cách sử dụng tính năng Chấm gợi ý bằng AI:</h3>
+<li value="1">Tại góc phải của câu hỏi, nhấn nút <strong>"🤖 AI Phân Tích & Chấm Thử"</strong>.</li>
+<li value="2">Động cơ AI sẽ đọc đồng thời: Đề bài, Đáp án chuẩn của bộ môn, Tiêu chí Rubric và Văn bản bài làm của thí sinh.</li>
+<li value="3">Sau khoảng 2-3 giây, AI sẽ trả về:</li>
+<li><strong>Điểm số đề xuất</strong> cho từng tiêu chí thành phần.</li>
+<li><strong>Nhận xét phân tích chi tiết</strong>: Nêu rõ thí sinh đã làm đúng ý nào, thiếu sót ý nào, lập luận có lỗ hổng logic nào không.</li>
+<li><strong>Phát hiện dấu hiệu bất thường</strong>: Cảnh báo nếu văn phong bài làm có dấu hiệu sao chép trực tiếp từ tài liệu mạng hoặc trùng lặp với bài của thí sinh khác.</li>
+<li value="4">Thầy/Cô có thể bấm <strong>"Áp dụng điểm gợi ý của AI"</strong> nếu thấy hoàn toàn chính xác, hoặc tự chỉnh sửa lại điểm theo cảm nhận sư phạm cá nhân.</li>
+
+        <div class="alert alert-important">
+          <div class="alert-header"><span class="alert-icon">❗</span> <strong>Quy định bắt buộc</strong></div>
+          <div class="alert-body"><strong>Nguyên tắc Sư phạm Bất di bất dịch</strong>: AI chỉ đóng vai trò trợ lý sơ khảo gợi ý. <strong>Giảng viên con người chịu trách nhiệm pháp lý 100% đối với điểm số chính thức của bài thi</strong>. Hệ thống không bao giờ tự động lưu điểm của AI nếu không có thao tác xác nhận và phê duyệt của Giảng viên.</div>
+        </div>
+      
+<hr class="divider"/>
+<h2>💾 5. Chốt Điểm & Hoàn Tất Túi Bài Chấm</h2>
+<li value="1">Thầy/Cô chấm tuần tự từng bài trong túi bài được giao (Tiến độ hiển thị: <em>Ví dụ: Đã chấm 38 / 40 bài</em>).</li>
+<li value="2">Kiểm tra lại danh sách để đảm bảo không bỏ sót bất kỳ bài thi nào.</li>
+<li value="3">Nhấn nút <strong>"Chốt Túi Điểm & Gửi Báo Cáo"</strong>.</li>
+<li value="4">Toàn bộ điểm số tự luận sẽ được đồng bộ vào CSDL, tự động cộng với điểm thi trắc nghiệm (nếu là môn thi kết hợp) để tạo ra Tổng điểm học phần chính thức của thí sinh.</li></div><div class="page-break"></div><div class="chapter-article"><h1>05. HƯỚNG DẪN TIẾP NHẬN & GIẢI QUYẾT ĐƠN PHÚC KHẢO ĐIỂM THI</h1>
+<p>Tài liệu này hướng dẫn Giảng viên và Hội đồng Chấm thi thực hiện quy trình thẩm định lại bài thi và xử lý đơn khiếu nại điểm số của sinh viên tại phân hệ <strong>Giải Quyết Phúc Khảo (<code>/teacher/regrade</code>)</strong>.</p>
+<hr class="divider"/>
+<h2>⚖️ 1. Quy Trình 4 Bước Thẩm Định Phúc Khảo Chuẩn Học Viện</h2>
+<p>Hệ thống số hóa toàn bộ chu trình xử lý đơn phúc khảo nhằm đảm bảo tính minh bạch, khách quan và đúng hạn định học vụ:</p>
+<pre><code class="language-mermaid">
+sequenceDiagram
+    autonumber
+    actor Student as 🎓 Sinh Viên
+    actor Teacher1 as 👨‍🏫 Giảng Viên Thẩm Định 1
+    actor Teacher2 as 👨‍🏫 Giảng Viên Thẩm Định 2
+    actor Board as 👑 Hội Đồng Khảo Thí
+
+    Student-&gt;&gt;Board: 1. Nộp đơn phúc khảo trực tuyến kèm lý do khiếu nại
+    Board-&gt;&gt;Teacher1: 2. Phân công 2 giảng viên chấm thẩm định độc lập
+    Teacher1-&gt;&gt;Teacher1: 3. Chấm lại bài làm tự luận theo Rubric
+    Teacher2-&gt;&gt;Teacher2: Chấm lại bài làm tự luận độc lập
+    Teacher1--&gt;&gt;Board: 4. Thống nhất điểm số mới &amp; Lập biên bản giải trình
+    Board-&gt;&gt;Student: 5. Phê duyệt &amp; Cập nhật bảng điểm chính thức mới
+</code></pre>
+<hr class="divider"/>
+<h2>📥 2. Tiếp Nhận Đơn Khiếu Nại Tại <code>/teacher/regrade</code></h2>
+<p>Khi được phân công thẩm định đơn phúc khảo:</p>
+<li value="1">Thầy/Cô truy cập menu <strong>"Giải quyết Phúc khảo"</strong> (<code>/teacher/regrade</code>).</li>
+<li value="2">Danh sách các đơn cần xử lý sẽ hiển thị với các thông số:</li>
+<li><strong>Mã đơn</strong>: Ví dụ: <code>PK-2025-0012</code>.</li>
+<li><strong>Môn học</strong>: Tên môn thi cần phúc khảo.</li>
+<li><strong>Điểm cũ đã công bố</strong>: Điểm số ban đầu của thí sinh (Ví dụ: <code>6.0</code>).</li>
+<li><strong>Lý do phúc khảo của sinh viên</strong>: Đoạn văn bản thí sinh trình bày (Ví dụ: <em>"Em đã làm đầy đủ câu 3 phần SQL nhưng điểm câu này chỉ được 0.5 điểm, em kính xin Thầy/Cô chấm lại"</em>).</li>
+<li><strong>Hạn chót xử lý</strong>: Thời hạn phải hoàn thành thẩm định theo quy chế (thường là 7–10 ngày sau khi tiếp nhận đơn).</li>
+<hr class="divider"/>
+<h2>🔍 3. Nghiệp Vụ Chấm Lại Bài Thi (Re-evaluating)</h2>
+<li value="1">Bấm nút <strong>"Xem bài thi & Thẩm định"</strong> trên dòng đơn tương ứng.</li>
+<li value="2">Màn hình sẽ hiển thị lại toàn bộ bài thi gốc của thí sinh:</li>
+<li><strong>Đối với phần Trắc nghiệm</strong>: Hệ thống hiển thị bảng so khớp các câu trả lời của thí sinh với đáp án chuẩn. Kiểm tra xem có lỗi chấm sai do cập nhật đáp án ngân hàng câu hỏi muộn hay không.</li>
+<li><strong>Đối với phần Tự luận</strong>: Mở lại bài làm văn bản của thí sinh và phiếu chấm điểm Rubric của giảng viên chấm đợt 1.</li>
+<li value="3">Tiến hành đối chiếu kỹ lưỡng từng câu hỏi mà sinh viên có khiếu nại.</li>
+<li value="4">Nhập điểm thẩm định mới vào ô <strong>"Điểm sau phúc khảo"</strong>.</li>
+<hr class="divider"/>
+<h2>📝 4. Kết Luận Phúc Khảo & Lập Biên Bản</h2>
+<p>Hệ thống hỗ trợ 3 kết quả thẩm định:</p>
+<li>⚪ <strong>Giữ nguyên điểm số</strong>: Nếu phát hiện đợt chấm 1 đã chấm hoàn toàn chính xác, đúng thang điểm và barem.</li>
+<li>🟢 <strong>Tăng điểm</strong>: Nếu phát hiện đợt chấm 1 có sai sót (cộng nhầm điểm, sót ý làm bài của sinh viên).</li>
+<li>🔴 <strong>Hạ điểm</strong>: Nếu phát hiện đợt chấm 1 đã chấm nhầm thừa điểm cho thí sinh (Áp dụng theo quy chế khảo thí hiện hành).</li>
+<h3>Yêu cầu giải trình bắt buộc:</h3>
+<p>Thầy/Cô bắt buộc phải nhập nội dung vào ô <strong>"Lý do kết luận thẩm định"</strong> (Ví dụ: <em>"Đã kiểm tra lại bài làm câu 2. Cán bộ chấm đợt 1 cộng sót 1.0 điểm tại ý thiết kế bảng chuẩn hóa 3NF. Điều chỉnh điểm câu 2 từ 1.0 lên 2.0. Tổng điểm điều chỉnh từ 6.0 lên 7.0"</em>).</p>
+<hr class="divider"/>
+<h2>✅ 5. Phê Duyệt & Tự Động Cập Nhật Bảng Điểm</h2>
+<li value="1">Nhấn nút <strong>"Gửi Kết Quả Thẩm Định Lên Hội Đồng"</strong>.</li>
+<li value="2">Trưởng Ban Khảo thí hoặc Trưởng Khoa sẽ kiểm tra lại biên bản giải trình và nhấn <strong>"Phê duyệt Phúc khảo"</strong>.</li>
+<li value="3"><strong>Hiệu ứng tức thời trên hệ thống</strong>:</li>
+<li>Bảng điểm cá nhân của sinh viên được cập nhật ngay sang điểm mới.</li>
+<li>Báo cáo tổng kết kỳ thi tự động điều chỉnh lại phổ điểm và điểm trung bình.</li>
+<li>Gửi thông báo trực tuyến về tài khoản của sinh viên để sinh viên nhận kết quả.</li>
+<li>Toàn bộ lịch sử thay đổi điểm được lưu vĩnh viễn trong Audit Log phục vụ thanh tra.</li></div><div class="page-break"></div>
+  </div>
+</body>
+</html>
