@@ -23,6 +23,8 @@ import { DepartmentTable } from '../../components/departments/DepartmentTable';
 import { DepartmentPaginationBar } from '../../components/departments/DepartmentPaginationBar';
 import { DepartmentBulkAction } from '../../components/departments/DepartmentBulkAction';
 import { IdentifierBadge } from '../../components/ui/IdentifierBadge';
+import { CategoryBadge } from '../../components/ui/CategoryBadge';
+import { MetaSeparator } from '../../components/ui/InlineMeta';
 import { ProfileDrawer } from '../../components/ProfileDrawer';
 import { PageSkeleton } from '../../components/ui/Skeleton';
 import { getCachedData } from '../../lib/api';
@@ -328,16 +330,25 @@ export default function DepartmentsPage() {
     }
   };
 
-  const handleDeleteCurriculum = async (curriculumId: number) => {
+  const handleDeleteCurriculum = (item: CurriculumItem) => {
     if (!curriculumDept) return;
-    try {
-      await api.delete(`/departments/${curriculumDept.id}/curriculum/${curriculumId}`);
-      setToast({ message: 'Đã xóa môn học khỏi khung chương trình!', type: 'success' });
-      handleOpenCurriculumModal(curriculumDept);
-      fetchData();
-    } catch (err: any) {
-      setToast({ message: err.message || 'Lỗi xóa môn khỏi khung đào tạo', type: 'error' });
-    }
+    setConfirmModal({
+      isOpen: true,
+      title: 'Xóa môn khỏi khung chương trình?',
+      message: `Bạn có chắc chắn muốn xóa môn "${item.subject?.subjectName || ''} (${item.subject?.subjectCode || ''})" khỏi khung chương trình của khoa ${curriculumDept.name}?`,
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.delete(`/departments/${curriculumDept.id}/curriculum/${item.id}`);
+          setToast({ message: 'Đã xóa môn học khỏi khung chương trình!', type: 'success' });
+          handleOpenCurriculumModal(curriculumDept);
+          fetchData();
+        } catch (err: any) {
+          setToast({ message: err.message || 'Lỗi xóa môn khỏi khung đào tạo', type: 'error' });
+        }
+      },
+    });
   };
 
   const prepareDepartmentExportData = () => {
@@ -689,17 +700,38 @@ export default function DepartmentsPage() {
       <Modal
         isOpen={Boolean(curriculumDept)}
         onClose={() => setCurriculumDept(null)}
+        size="3xl"
         title={`Khung chương trình đào tạo: ${curriculumDept?.name || ''}`}
+        subtitle={
+          curriculumDept?.code ? (
+            <div className="flex items-center gap-2 mt-0.5 text-type-helper text-slate-500 dark:text-slate-400">
+              <IdentifierBadge tone="neutral">{curriculumDept.code}</IdentifierBadge>
+              <MetaSeparator />
+              <span>{curriculumList.length} môn học trong khung</span>
+            </div>
+          ) : undefined
+        }
+        footer={
+          <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+            <span className="text-type-helper text-slate-600 dark:text-slate-400">
+              Tổng số tín chỉ: <strong className="font-semibold text-slate-900 dark:text-slate-100">{curriculumList.reduce((sum, item) => sum + (item.subject?.credits || 0), 0)} TC</strong>
+            </span>
+            <Button type="button" variant="ghost" size="md" onClick={() => setCurriculumDept(null)}>
+              Đóng
+            </Button>
+          </div>
+        }
       >
         <div className="space-y-5">
           {/* Form thêm môn */}
           {currentUser?.role === 'ADMIN' && (
-            <form onSubmit={handleAddCurriculum} className="rounded-xl border border-slate-200/80 bg-slate-50/60 p-3.5 space-y-3">
-              <div className="text-type-helper font-semibold text-slate-800  tracking-wider">
-                Thêm môn vào khung đào tạo
+            <div className="rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 p-3.5 space-y-2.5">
+              <div className="flex items-center gap-2 text-type-helper font-semibold text-slate-900 dark:text-slate-100">
+                <span className="h-3.5 w-1 rounded-full bg-blue-600" />
+                <span>Thêm môn vào khung đào tạo</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
-                <div className="sm:col-span-2">
+              <form onSubmit={handleAddCurriculum} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                <div className="flex-1 min-w-0">
                   <FilterSelect
                     containerClassName="w-full"
                     value={addCurriculumForm.subjectId}
@@ -713,7 +745,7 @@ export default function DepartmentsPage() {
                     ))}
                   </FilterSelect>
                 </div>
-                <div>
+                <div className="w-full sm:w-36 shrink-0">
                   <FilterSelect
                     containerClassName="w-full"
                     value={addCurriculumForm.type}
@@ -723,63 +755,86 @@ export default function DepartmentsPage() {
                     <option value="ELECTIVE">Tự chọn</option>
                   </FilterSelect>
                 </div>
-                <div>
-                  <Button type="submit" variant="primary" size="md" className="w-full h-10">
-                    <Plus className="h-4 w-4 mr-1" /> Thêm môn
-                  </Button>
-                </div>
-              </div>
-            </form>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="md"
+                  leftIcon={<Plus className="h-4 w-4 shrink-0" />}
+                  className="shrink-0 whitespace-nowrap h-10 px-4"
+                >
+                  Thêm môn
+                </Button>
+              </form>
+            </div>
           )}
 
           {/* Danh sách môn */}
-          <div className="ui-table-wrap rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card overflow-hidden">
-            {loadingCurriculum ? (
-              <div className="p-8 text-center text-type-helper text-slate-400">Đang tải danh sách học phần...</div>
-            ) : curriculumList.length === 0 ? (
-              <div className="p-8 text-center text-type-helper text-slate-400 font-medium">
-                Chưa có môn học nào trong khung chương trình của khoa này.
-              </div>
-            ) : (
-              <table className="ui-table w-full text-left text-type-body">
-                <thead className="bg-slate-50 text-type-body-sm font-medium text-slate-500 border-b border-slate-200">
-                  <tr>
-                    <th className="p-3">Mã môn</th>
-                    <th className="p-3">Tên môn học</th>
-                    <th className="p-3 text-center">Số TC</th>
-                    <th className="p-3">Tính chất</th>
-                    {currentUser?.role === 'ADMIN' && <th className="p-3 text-right">Thao tác</th>}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {curriculumList.map((item) => (
-                    <tr key={item.id} className="hover:bg-slate-50/50">
-                      <td className="p-3 font-normal font-semibold text-slate-800">{item.subject?.subjectCode}</td>
-                      <td className="p-3 font-medium text-slate-800">{item.subject?.subjectName}</td>
-                      <td className="p-3 text-center font-semibold text-blue-600">{item.subject?.credits}</td>
-                      <td className="p-3">
-                        <span className={`px-2 py-0.5 rounded text-type-body font-semibold ${item.type === 'MANDATORY' ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-600'
-                          }`}>
-                          {item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}
-                        </span>
-                      </td>
-                      {currentUser?.role === 'ADMIN' && (
-                        <td className="p-3 text-right">
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteCurriculum(item.id)}
-                            className="text-slate-400 hover:text-rose-600 p-1 transition cursor-pointer"
-                            title="Xóa môn"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+          <div>
+            <div className="ui-table-wrap overflow-hidden rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-apple-card">
+              {loadingCurriculum ? (
+                <div className="p-8 text-center text-type-helper text-slate-400">Đang tải danh sách học phần...</div>
+              ) : curriculumList.length === 0 ? (
+                <div className="py-10 px-4 text-center">
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400">
+                    <BookOpen className="h-6 w-6" />
+                  </div>
+                  <p className="text-type-body font-semibold text-slate-900 dark:text-slate-100">
+                    Chưa có môn học nào trong khung chương trình
+                  </p>
+                  <p className="text-type-helper text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
+                    {currentUser?.role === 'ADMIN'
+                      ? 'Chọn môn học và tính chất ở trên để thêm vào khung đào tạo của khoa này.'
+                      : 'Khoa này hiện chưa có môn học trong khung chương trình.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="ui-table w-full text-left text-type-body">
+                    <thead className="bg-slate-50/80 dark:bg-slate-800/80 text-type-body-sm font-medium text-slate-700 dark:text-slate-300 border-b border-slate-200/90 dark:border-slate-800">
+                      <tr>
+                        <th className="px-4 py-3 w-32 whitespace-nowrap">Mã môn</th>
+                        <th className="px-4 py-3 min-w-[200px]">Tên môn học</th>
+                        <th className="px-4 py-3 text-center w-24 whitespace-nowrap">Số TC</th>
+                        <th className="px-4 py-3 text-center w-32 whitespace-nowrap">Tính chất</th>
+                        {currentUser?.role === 'ADMIN' && <th className="px-4 py-3 text-right w-20 whitespace-nowrap">Thao tác</th>}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                      {curriculumList.map((item) => (
+                        <tr key={item.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+                          <td className="px-4 py-3 font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
+                            <IdentifierBadge tone="neutral">{item.subject?.subjectCode}</IdentifierBadge>
+                          </td>
+                          <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
+                            {item.subject?.subjectName}
+                          </td>
+                          <td className="px-4 py-3 text-center font-semibold text-blue-600 dark:text-blue-400 tabular-nums">
+                            {item.subject?.credits}
+                          </td>
+                          <td className="px-4 py-3 text-center whitespace-nowrap">
+                            <CategoryBadge tone={item.type === 'MANDATORY' ? 'blue' : 'neutral'}>
+                              {item.type === 'MANDATORY' ? 'Bắt buộc' : 'Tự chọn'}
+                            </CategoryBadge>
+                          </td>
+                          {currentUser?.role === 'ADMIN' && (
+                            <td className="px-4 py-3 text-right whitespace-nowrap">
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteCurriculum(item)}
+                                className="inline-flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                                title="Xóa môn khỏi khung chương trình"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </td>
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </Modal>
