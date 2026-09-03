@@ -228,11 +228,11 @@ Tất cả các script triển khai và cài đặt được gom gọn gàng tro
      *(Hệ thống sẽ tự động tạo đủ bảng qua Prisma và nạp sẵn tài khoản Admin, Giảng viên, Sinh viên, Đề thi mẫu)*
 
    * **Cách 2: Import trực tiếp file SQL (Dành cho pgAdmin / DBeaver / psql)**:
-     - File database đầy đủ có sẵn tại: `database-backups/EXAM_MANAGEMENT_CURRENT_DATABASE.sql`
-     - **Qua giao diện pgAdmin / DBeaver**: Tạo Database tên `exam` -> Mở **Query Tool** -> Mở file `EXAM_MANAGEMENT_CURRENT_DATABASE.sql` -> Nhấn **Execute (F5)**.
+     - File database đầy đủ có sẵn ngay tại thư mục gốc: `database.sql` (hoặc `database-backups/EXAM_MANAGEMENT_CURRENT_DATABASE.sql`)
+     - **Qua giao diện pgAdmin / DBeaver**: Tạo Database tên `exam` -> Mở **Query Tool** -> Mở file `database.sql` -> Nhấn **Execute (F5)**.
      - **Qua dòng lệnh terminal**:
        ```bash
-       psql -U postgres -d exam -f database-backups/EXAM_MANAGEMENT_CURRENT_DATABASE.sql
+       psql -U postgres -d exam -f database.sql
        ```
 
 5. Khởi động Backend API Server (Cổng `3001`):
