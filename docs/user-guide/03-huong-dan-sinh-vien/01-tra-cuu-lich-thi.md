@@ -8,10 +8,15 @@ Tài liệu này hướng dẫn các bạn Thí sinh / Sinh viên cách tra cứ
 
 Sau khi Phòng Khảo thí công bố lịch thi chính thức, bạn có thể dễ dàng kiểm tra toàn bộ thông tin dự thi của mình:
 
-### Các bước thực hiện:
-1. Đăng nhập vào hệ thống bằng tài khoản email sinh viên (Ví dụ: `student1@exam.local`).
-2. Nhấp vào menu **"Lịch Thi Của Tôi"** trên thanh điều hướng bên trái hoặc truy cập URL `/student/exam-schedule`.
-3. Bảng danh sách các môn thi của bạn trong học kỳ sẽ hiển thị với các thông tin chi tiết:
+### Các bước đăng nhập Localhost dành cho Sinh viên:
+1. Mở trình duyệt web truy cập: **`http://localhost:3000/login`**
+2. Nhìn bên dưới nút "Đăng nhập với Google", bấm vào dòng chữ: **"Đăng nhập tài khoản nội bộ"**.
+3. Nhập thông tin tài khoản Sinh viên mẫu:
+   - **Tên đăng nhập**: `sv001` (hoặc `sv002`, `sv003`... đến `sv105`)
+   - **Mật khẩu**: `123456`
+   - *Gợi ý*: Sinh viên `sv001` thuộc Lớp `CNTT-K64A` (Khoa CNTT) đã có sẵn lịch thi các môn học kỳ.
+4. Nhấn nút **"Đăng nhập"**. Hệ thống sẽ tự động đưa bạn đến thẳng trang **Lịch Thi Của Tôi (`/student/exam-schedule`)**.
+5. Bảng danh sách các môn thi của bạn trong học kỳ sẽ hiển thị với các thông tin chi tiết:
 
 | Trường thông tin | Ý nghĩa & Hướng dẫn |
 | :--- | :--- |

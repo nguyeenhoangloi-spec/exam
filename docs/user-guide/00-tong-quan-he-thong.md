@@ -50,20 +50,28 @@ Hệ thống quản lý chặt chẽ theo 3 nhóm đối tượng người dùng
 
 ---
 
-## 🔑 3. Tài Khoản Diễn Tập & Kiểm Thử Mặc Định
+## 🔑 3. Danh Sách Tài Khoản Mẫu Đăng Nhập Local (Seed Accounts)
 
-Để cán bộ, giảng viên và quản trị viên làm quen với hệ thống, hệ thống đã khởi tạo sẵn bộ tài khoản mẫu (Seed Data) phản ánh đúng 3 vai trò:
+Hệ thống đã nạp sẵn dữ liệu mẫu thực tế vào cơ sở dữ liệu (`npm run seed`), bao gồm tài khoản Quản trị viên, 20 Giảng viên và 105 Sinh viên:
 
-| Vai trò | Tên đăng nhập / Email | Mật khẩu mặc định | Mục đích sử dụng |
-| :--- | :--- | :--- | :--- |
-| **Quản trị viên (Admin)** | `admin@exam.local` | `Admin@123` | Quản trị cao nhất, có toàn quyền trên toàn hệ thống |
-| **Giảng viên 1 (Teacher)** | `teacher1@exam.local` | `Teacher@123` | Coi thi ca sáng, chấm thi tự luận môn Cơ sở dữ liệu |
-| **Giảng viên 2 (Teacher)** | `teacher2@exam.local` | `Teacher@123` | Coi thi ca chiều, thẩm định phúc khảo |
-| **Sinh viên 1 (Student)** | `student1@exam.local` | `Student@123` | Thí sinh thuộc Khoa Công nghệ thông tin (Đã có lịch thi) |
-| **Sinh viên 2 (Student)** | `student2@exam.local` | `Student@123` | Thí sinh đã hoàn thành bài thi (Xem điểm và gửi phúc khảo) |
+| Vai trò | Tên đăng nhập (Username) | Mật khẩu mặc định | Email liên kết | Ghi chú & Quyền hạn |
+| :--- | :--- | :--- | :--- | :--- |
+| **👑 Quản trị viên (Admin)** | `admin` | `admin123` | `admin@school.edu.vn` | Toàn quyền quản trị hệ thống, chuyển về `/dashboard` |
+| **👨‍🏫 Giảng viên 1 (Teacher)** | `GV001` | `GV001` | `nguyenvanan@school.edu.vn` | GS.TS Nguyễn Văn An (Khoa CNTT), chuyển về `/teacher/assignments` |
+| **👨‍🏫 Giảng viên 2 (Teacher)** | `GV002` | `GV002` | `tranthibinh@school.edu.vn` | TS. Trần Thị Bình (Khoa CNTT), mật khẩu trùng mã GV |
+| **👨‍🏫 Giảng viên khác** | `GV003` đến `GV020` | Trùng mã GV (ví dụ: `GV003`) | `...` | Danh sách 20 giảng viên thuộc 5 khoa |
+| **🎓 Sinh viên 1 (Student)** | `sv001` | `123456` | `sv001@sv.edu.vn` | Sinh viên lớp CNTT-K64A, chuyển về `/student/exam-schedule` |
+| **🎓 Sinh viên 2 (Student)** | `sv002` | `123456` | `sv002@sv.edu.vn` | Sinh viên lớp CNTT-K64A, mật khẩu chung `123456` |
+| **🎓 Sinh viên khác** | `sv003` đến `sv105` | `123456` | `sv...@sv.edu.vn` | Danh sách 105 sinh viên thuộc 20 lớp |
+
+### 📌 Các bước đăng nhập Local trên trình duyệt:
+1. Mở trình duyệt truy cập: **`http://localhost:3000/login`**
+2. Nhìn bên dưới nút "Đăng nhập với Google", bấm vào dòng chữ: **"Đăng nhập tài khoản nội bộ"** (có biểu tượng hình người và mũi tên trỏ xuống) để mở khung nhập liệu.
+3. Điền **Tên đăng nhập** (hoặc Email) và **Mật khẩu** theo bảng trên.
+4. Nhấn nút **"Đăng nhập"**. Hệ thống sẽ tự động điều hướng đúng theo vai trò của bạn!
 
 > [!CAUTION]
-> Khi đưa hệ thống vào môi trường Production (Chính thức), Quản trị viên **BẮT BUỘC** phải đổi mật khẩu của tài khoản `admin@exam.local` hoặc vô hiệu hóa các tài khoản demo để đảm bảo an toàn tuyệt đối.
+> Khi triển khai hệ thống lên môi trường Production thực tế của nhà trường, Quản trị viên **BẮT BUỘC** phải đổi mật khẩu tài khoản `admin` và yêu cầu toàn bộ giảng viên, sinh viên đổi mật khẩu ngay trong lần đăng nhập đầu tiên.
 
 ---
 

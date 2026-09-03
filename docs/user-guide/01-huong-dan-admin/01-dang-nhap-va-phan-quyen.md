@@ -6,19 +6,20 @@ Tài liệu này hướng dẫn chi tiết quy trình đăng nhập an toàn và
 
 ## 🔐 1. Quy Trình Đăng Nhập & Bảo Mật Phiên Làm Việc
 
-### Các bước đăng nhập:
-1. Mở trình duyệt web (Google Chrome, Microsoft Edge, Firefox, Safari phiên bản mới nhất).
-2. Truy cập địa chỉ hệ thống: `http://localhost:3000/login` (hoặc tên miền chính thức của nhà trường).
-3. Nhập **Email / Tên đăng nhập** và **Mật khẩu**.
-4. Nhấn nút **"Đăng nhập"**.
-5. Hệ thống xác thực thông tin qua NestJS API và cấp phiên làm việc bằng chuỗi khóa an toàn **JWT (JSON Web Token)** được lưu trữ an toàn trong HttpOnly Cookie/LocalStorage.
-6. Căn cứ theo vai trò của tài khoản, hệ thống sẽ tự động điều hướng:
-   - Tài khoản `ADMIN`: Chuyển về Bảng điều khiển Quản trị (`/dashboard`).
-   - Tài khoản `TEACHER`: Chuyển về Không gian Giảng viên (`/teacher/assignments`).
-   - Tài khoản `STUDENT`: Chuyển về Lịch thi Sinh viên (`/student/exam-schedule`).
+### Các bước đăng nhập Localhost (Môi trường Thử nghiệm):
+1. Mở trình duyệt web (Google Chrome, Microsoft Edge, Firefox phiên bản mới nhất).
+2. Truy cập địa chỉ hệ thống: **`http://localhost:3000/login`**
+3. Trên giao diện đăng nhập, bên dưới nút xanh Google, bấm vào dòng: **"Đăng nhập tài khoản nội bộ"** (có icon hình người và mũi tên mở rộng).
+4. Khung đăng nhập nội bộ mở ra, bạn nhập thông tin tài khoản Quản trị viên:
+   - **Tên đăng nhập (Username)**: `admin` (hoặc email: `admin@school.edu.vn`)
+   - **Mật khẩu (Password)**: `admin123`
+5. Nhấn nút **"Đăng nhập"**.
+6. Hệ thống xác thực thông tin qua NestJS API và cấp phiên làm việc an toàn bằng **JWT (JSON Web Token)**, sau đó tự động điều hướng bạn vào thẳng **Bảng điều khiển Quản trị (`/dashboard`)**.
 
 > [!NOTE]
-> Nếu tài khoản đang bị khóa tạm thời hoặc hệ thống đang ở chế độ bảo trì (`Maintenance Mode`), màn hình thông báo sẽ xuất hiện nêu rõ lý do và thời gian dự kiến mở lại.
+> Nếu bạn muốn đăng nhập thử nghiệm bằng vai trò khác để kiểm tra giao diện:
+> - Giảng viên: Tên đăng nhập `GV001`, Mật khẩu: `GV001` (chuyển về `/teacher/assignments`).
+> - Sinh viên: Tên đăng nhập `sv001`, Mật khẩu: `123456` (chuyển về `/student/exam-schedule`).
 
 ---
 

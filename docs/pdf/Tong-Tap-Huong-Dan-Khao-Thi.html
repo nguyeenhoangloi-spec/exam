@@ -374,13 +374,18 @@ graph TB
 <p>Hệ thống quản lý chặt chẽ theo 3 nhóm đối tượng người dùng chính:</p>
 <div class="table-container"><table><tr><th>Vai trò</th><th>Mã hệ thống</th><th>Trách nhiệm chính trong chu trình khảo thí</th></tr><tr><td><strong>Quản trị viên / Cán bộ Khảo thí</strong></td><td><code>ADMIN</code></td><td>Quản trị toàn hệ thống; thiết lập phân quyền RBAC; quản lý danh mục đào tạo (Khoa, Lớp, Môn học); lập đợt thi, phòng thi, lịch thi; chạy thuật toán xếp phòng & sinh SBD; duyệt đề thi; xuất báo cáo tổng hợp; sao lưu dữ liệu.</td></tr><tr><td><strong>Giảng viên / Cán bộ Coi thi & Chấm thi</strong></td><td><code>TEACHER</code></td><td>Xem ca coi thi được phân công; giám sát phòng thi trực tuyến thời gian thực (nhắc nhở, cảnh cáo, xử lý vi phạm); chấm bài thi tự luận theo tiêu chí Rubric kết hợp gợi ý từ AI; thẩm định và giải quyết đơn phúc khảo bài thi.</td></tr><tr><td><strong>Thí sinh / Sinh viên</strong></td><td><code>STUDENT</code></td><td>Tra cứu lịch thi, phòng thi, số báo danh; tham gia thi trực tuyến (trắc nghiệm và tự luận); tra cứu điểm số, phổ điểm và lịch sử bài làm; gửi đơn phúc khảo trực tuyến khi có thắc mắc về kết quả.</td></tr></table></div>
 <hr class="divider"/>
-<h2>🔑 3. Tài Khoản Diễn Tập & Kiểm Thử Mặc Định</h2>
-<p>Để cán bộ, giảng viên và quản trị viên làm quen với hệ thống, hệ thống đã khởi tạo sẵn bộ tài khoản mẫu (Seed Data) phản ánh đúng 3 vai trò:</p>
-<div class="table-container"><table><tr><th>Vai trò</th><th>Tên đăng nhập / Email</th><th>Mật khẩu mặc định</th><th>Mục đích sử dụng</th></tr><tr><td><strong>Quản trị viên (Admin)</strong></td><td><code>admin@exam.local</code></td><td><code>Admin@123</code></td><td>Quản trị cao nhất, có toàn quyền trên toàn hệ thống</td></tr><tr><td><strong>Giảng viên 1 (Teacher)</strong></td><td><code>teacher1@exam.local</code></td><td><code>Teacher@123</code></td><td>Coi thi ca sáng, chấm thi tự luận môn Cơ sở dữ liệu</td></tr><tr><td><strong>Giảng viên 2 (Teacher)</strong></td><td><code>teacher2@exam.local</code></td><td><code>Teacher@123</code></td><td>Coi thi ca chiều, thẩm định phúc khảo</td></tr><tr><td><strong>Sinh viên 1 (Student)</strong></td><td><code>student1@exam.local</code></td><td><code>Student@123</code></td><td>Thí sinh thuộc Khoa Công nghệ thông tin (Đã có lịch thi)</td></tr><tr><td><strong>Sinh viên 2 (Student)</strong></td><td><code>student2@exam.local</code></td><td><code>Student@123</code></td><td>Thí sinh đã hoàn thành bài thi (Xem điểm và gửi phúc khảo)</td></tr></table></div>
+<h2>🔑 3. Danh Sách Tài Khoản Mẫu Đăng Nhập Local (Seed Accounts)</h2>
+<p>Hệ thống đã nạp sẵn dữ liệu mẫu thực tế vào cơ sở dữ liệu (<code>npm run seed</code>), bao gồm tài khoản Quản trị viên, 20 Giảng viên và 105 Sinh viên:</p>
+<div class="table-container"><table><tr><th>Vai trò</th><th>Tên đăng nhập (Username)</th><th>Mật khẩu mặc định</th><th>Email liên kết</th><th>Ghi chú & Quyền hạn</th></tr><tr><td><strong>👑 Quản trị viên (Admin)</strong></td><td><code>admin</code></td><td><code>admin123</code></td><td><code>admin@school.edu.vn</code></td><td>Toàn quyền quản trị hệ thống, chuyển về <code>/dashboard</code></td></tr><tr><td><strong>👨‍🏫 Giảng viên 1 (Teacher)</strong></td><td><code>GV001</code></td><td><code>GV001</code></td><td><code>nguyenvanan@school.edu.vn</code></td><td>GS.TS Nguyễn Văn An (Khoa CNTT), chuyển về <code>/teacher/assignments</code></td></tr><tr><td><strong>👨‍🏫 Giảng viên 2 (Teacher)</strong></td><td><code>GV002</code></td><td><code>GV002</code></td><td><code>tranthibinh@school.edu.vn</code></td><td>TS. Trần Thị Bình (Khoa CNTT), mật khẩu trùng mã GV</td></tr><tr><td><strong>👨‍🏫 Giảng viên khác</strong></td><td><code>GV003</code> đến <code>GV020</code></td><td>Trùng mã GV (ví dụ: <code>GV003</code>)</td><td><code>...</code></td><td>Danh sách 20 giảng viên thuộc 5 khoa</td></tr><tr><td><strong>🎓 Sinh viên 1 (Student)</strong></td><td><code>sv001</code></td><td><code>123456</code></td><td><code>sv001@sv.edu.vn</code></td><td>Sinh viên lớp CNTT-K64A, chuyển về <code>/student/exam-schedule</code></td></tr><tr><td><strong>🎓 Sinh viên 2 (Student)</strong></td><td><code>sv002</code></td><td><code>123456</code></td><td><code>sv002@sv.edu.vn</code></td><td>Sinh viên lớp CNTT-K64A, mật khẩu chung <code>123456</code></td></tr><tr><td><strong>🎓 Sinh viên khác</strong></td><td><code>sv003</code> đến <code>sv105</code></td><td><code>123456</code></td><td><code>sv...@sv.edu.vn</code></td><td>Danh sách 105 sinh viên thuộc 20 lớp</td></tr></table></div>
+<h3>📌 Các bước đăng nhập Local trên trình duyệt:</h3>
+<li value="1">Mở trình duyệt truy cập: <strong><code>http://localhost:3000/login</code></strong></li>
+<li value="2">Nhìn bên dưới nút "Đăng nhập với Google", bấm vào dòng chữ: <strong>"Đăng nhập tài khoản nội bộ"</strong> (có biểu tượng hình người và mũi tên trỏ xuống) để mở khung nhập liệu.</li>
+<li value="3">Điền <strong>Tên đăng nhập</strong> (hoặc Email) và <strong>Mật khẩu</strong> theo bảng trên.</li>
+<li value="4">Nhấn nút <strong>"Đăng nhập"</strong>. Hệ thống sẽ tự động điều hướng đúng theo vai trò của bạn!</li>
 
         <div class="alert alert-caution">
           <div class="alert-header"><span class="alert-icon">🛑</span> <strong>Nguy hiểm</strong></div>
-          <div class="alert-body">Khi đưa hệ thống vào môi trường Production (Chính thức), Quản trị viên <strong>BẮT BUỘC</strong> phải đổi mật khẩu của tài khoản <code>admin@exam.local</code> hoặc vô hiệu hóa các tài khoản demo để đảm bảo an toàn tuyệt đối.</div>
+          <div class="alert-body">Khi triển khai hệ thống lên môi trường Production thực tế của nhà trường, Quản trị viên <strong>BẮT BUỘC</strong> phải đổi mật khẩu tài khoản <code>admin</code> và yêu cầu toàn bộ giảng viên, sinh viên đổi mật khẩu ngay trong lần đăng nhập đầu tiên.</div>
         </div>
       
 <hr class="divider"/>
@@ -444,20 +449,19 @@ sequenceDiagram
 <p>Tài liệu này hướng dẫn chi tiết quy trình đăng nhập an toàn và quản trị ma trận phân quyền truy cập người dùng (<strong>Role-Based Access Control - RBAC</strong>) tại trang Quản trị Hệ thống (<code>/admin/access-control</code>).</p>
 <hr class="divider"/>
 <h2>🔐 1. Quy Trình Đăng Nhập & Bảo Mật Phiên Làm Việc</h2>
-<h3>Các bước đăng nhập:</h3>
-<li value="1">Mở trình duyệt web (Google Chrome, Microsoft Edge, Firefox, Safari phiên bản mới nhất).</li>
-<li value="2">Truy cập địa chỉ hệ thống: <code>http://localhost:3000/login</code> (hoặc tên miền chính thức của nhà trường).</li>
-<li value="3">Nhập <strong>Email / Tên đăng nhập</strong> và <strong>Mật khẩu</strong>.</li>
-<li value="4">Nhấn nút <strong>"Đăng nhập"</strong>.</li>
-<li value="5">Hệ thống xác thực thông tin qua NestJS API và cấp phiên làm việc bằng chuỗi khóa an toàn <strong>JWT (JSON Web Token)</strong> được lưu trữ an toàn trong HttpOnly Cookie/LocalStorage.</li>
-<li value="6">Căn cứ theo vai trò của tài khoản, hệ thống sẽ tự động điều hướng:</li>
-<li>Tài khoản <code>ADMIN</code>: Chuyển về Bảng điều khiển Quản trị (<code>/dashboard</code>).</li>
-<li>Tài khoản <code>TEACHER</code>: Chuyển về Không gian Giảng viên (<code>/teacher/assignments</code>).</li>
-<li>Tài khoản <code>STUDENT</code>: Chuyển về Lịch thi Sinh viên (<code>/student/exam-schedule</code>).</li>
+<h3>Các bước đăng nhập Localhost (Môi trường Thử nghiệm):</h3>
+<li value="1">Mở trình duyệt web (Google Chrome, Microsoft Edge, Firefox phiên bản mới nhất).</li>
+<li value="2">Truy cập địa chỉ hệ thống: <strong><code>http://localhost:3000/login</code></strong></li>
+<li value="3">Trên giao diện đăng nhập, bên dưới nút xanh Google, bấm vào dòng: <strong>"Đăng nhập tài khoản nội bộ"</strong> (có icon hình người và mũi tên mở rộng).</li>
+<li value="4">Khung đăng nhập nội bộ mở ra, bạn nhập thông tin tài khoản Quản trị viên:</li>
+<li><strong>Tên đăng nhập (Username)</strong>: <code>admin</code> (hoặc email: <code>admin@school.edu.vn</code>)</li>
+<li><strong>Mật khẩu (Password)</strong>: <code>admin123</code></li>
+<li value="5">Nhấn nút <strong>"Đăng nhập"</strong>.</li>
+<li value="6">Hệ thống xác thực thông tin qua NestJS API và cấp phiên làm việc an toàn bằng <strong>JWT (JSON Web Token)</strong>, sau đó tự động điều hướng bạn vào thẳng <strong>Bảng điều khiển Quản trị (<code>/dashboard</code>)</strong>.</li>
 
         <div class="alert alert-note">
           <div class="alert-header"><span class="alert-icon">ℹ️</span> <strong>Lưu ý quan trọng</strong></div>
-          <div class="alert-body">Nếu tài khoản đang bị khóa tạm thời hoặc hệ thống đang ở chế độ bảo trì (<code>Maintenance Mode</code>), màn hình thông báo sẽ xuất hiện nêu rõ lý do và thời gian dự kiến mở lại.</div>
+          <div class="alert-body">Nếu bạn muốn đăng nhập thử nghiệm bằng vai trò khác để kiểm tra giao diện:<br/>- Giảng viên: Tên đăng nhập <code>GV001</code>, Mật khẩu: <code>GV001</code> (chuyển về <code>/teacher/assignments</code>).<br/>- Sinh viên: Tên đăng nhập <code>sv001</code>, Mật khẩu: <code>123456</code> (chuyển về <code>/student/exam-schedule</code>).</div>
         </div>
       
 <hr class="divider"/>
@@ -917,7 +921,17 @@ flowchart TD
 <li>Thao tác này sẽ xóa sạch bản ghi khỏi CSDL và không thể hoàn tác lại được.</li></div><div class="page-break"></div><div class="chapter-section"><h1 style="color: #1e3a8a; border-bottom: 3px double #1e3a8a;">Phần 2: Cẩm Nang Giảng Viên & Cán Bộ Coi Thi / Chấm Thi (Teachers)</h1></div><div class="chapter-article"><h1>01. TỔNG QUAN KHÔNG GIAN LÀM VIỆC CỦA GIẢNG VIÊN</h1>
 <p>Tài liệu này giới thiệu tổng quan giao diện, chức năng và phạm vi nghiệp vụ dành riêng cho Thầy/Cô với vai trò <strong>Giảng viên / Cán bộ Coi thi & Chấm thi (<code>TEACHER</code>)</strong>.</p>
 <hr class="divider"/>
-<h2>🖥️ 1. Giao Diện & Thanh Điều Hướng Chuyên Biệt</h2>
+<h2>🔑 1. Hướng Dẫn Đăng Nhập Tài Khoản Giảng Viên (Localhost)</h2>
+<p>Để đăng nhập vào không gian làm việc của Giảng viên trên môi trường nội bộ:</p>
+<li value="1">Truy cập: <strong><code>http://localhost:3000/login</code></strong></li>
+<li value="2">Bấm vào dòng: <strong>"Đăng nhập tài khoản nội bộ"</strong> (bên dưới nút Google).</li>
+<li value="3">Nhập thông tin tài khoản Giảng viên mẫu (được nạp sẵn trong hệ thống):</li>
+<li><strong>Tên đăng nhập</strong>: <code>GV001</code> (hoặc <code>GV002</code>, <code>GV003</code>... đến <code>GV020</code>)</li>
+<li><strong>Mật khẩu</strong>: Trùng với mã giảng viên (Ví dụ: <code>GV001</code> thì mật khẩu là <code>GV001</code>)</li>
+<li><em>Gợi ý</em>: Tài khoản <code>GV001</code> (GS.TS Nguyễn Văn An - Khoa CNTT) hoặc <code>GV002</code> (TS. Trần Thị Bình).</li>
+<li value="4">Nhấn nút <strong>"Đăng nhập"</strong>. Hệ thống sẽ tự động đưa Thầy/Cô vào trang <strong>Lịch Coi Thi (<code>/teacher/assignments</code>)</strong>.</li>
+<hr class="divider"/>
+<h2>🖥️ 2. Giao Diện & Thanh Điều Hướng Chuyên Biệt</h2>
 <p>Sau khi đăng nhập bằng tài khoản Giảng viên, thanh Sidebar bên trái sẽ tự động tối ưu gọn gàng, chỉ hiển thị các chức năng phục vụ giảng dạy và khảo thí:</p>
 <pre><code class="language-">
 [HỆ THỐNG KHẢO THÍ]
@@ -1170,10 +1184,15 @@ sequenceDiagram
 <hr class="divider"/>
 <h2>🔍 1. Tra Cứu Lịch Thi Cá Nhân (<code>/student/exam-schedule</code>)</h2>
 <p>Sau khi Phòng Khảo thí công bố lịch thi chính thức, bạn có thể dễ dàng kiểm tra toàn bộ thông tin dự thi của mình:</p>
-<h3>Các bước thực hiện:</h3>
-<li value="1">Đăng nhập vào hệ thống bằng tài khoản email sinh viên (Ví dụ: <code>student1@exam.local</code>).</li>
-<li value="2">Nhấp vào menu <strong>"Lịch Thi Của Tôi"</strong> trên thanh điều hướng bên trái hoặc truy cập URL <code>/student/exam-schedule</code>.</li>
-<li value="3">Bảng danh sách các môn thi của bạn trong học kỳ sẽ hiển thị với các thông tin chi tiết:</li>
+<h3>Các bước đăng nhập Localhost dành cho Sinh viên:</h3>
+<li value="1">Mở trình duyệt web truy cập: <strong><code>http://localhost:3000/login</code></strong></li>
+<li value="2">Nhìn bên dưới nút "Đăng nhập với Google", bấm vào dòng chữ: <strong>"Đăng nhập tài khoản nội bộ"</strong>.</li>
+<li value="3">Nhập thông tin tài khoản Sinh viên mẫu:</li>
+<li><strong>Tên đăng nhập</strong>: <code>sv001</code> (hoặc <code>sv002</code>, <code>sv003</code>... đến <code>sv105</code>)</li>
+<li><strong>Mật khẩu</strong>: <code>123456</code></li>
+<li><em>Gợi ý</em>: Sinh viên <code>sv001</code> thuộc Lớp <code>CNTT-K64A</code> (Khoa CNTT) đã có sẵn lịch thi các môn học kỳ.</li>
+<li value="4">Nhấn nút <strong>"Đăng nhập"</strong>. Hệ thống sẽ tự động đưa bạn đến thẳng trang <strong>Lịch Thi Của Tôi (<code>/student/exam-schedule</code>)</strong>.</li>
+<li value="5">Bảng danh sách các môn thi của bạn trong học kỳ sẽ hiển thị với các thông tin chi tiết:</li>
 <div class="table-container"><table><tr><th>Trường thông tin</th><th>Ý nghĩa & Hướng dẫn</th></tr><tr><td><strong>Môn thi</strong></td><td>Tên môn học và Mã môn (Ví dụ: <em>Cơ sở dữ liệu - IT101</em>).</td></tr><tr><td><strong>Ngày thi</strong></td><td>Ngày chính xác diễn ra ca thi (Định dạng: <code>Thứ..., DD/MM/YYYY</code>).</td></tr><tr><td><strong>Khung giờ thi</strong></td><td>Giờ bắt đầu và Giờ kết thúc (Ví dụ: <code>07:30 – 09:30</code>). Bạn cần có mặt trước giờ này 15 phút.</td></tr><tr><td><strong>Phòng thi & Địa điểm</strong></td><td>Số hiệu phòng và Tòa nhà (Ví dụ: <em>Phòng Máy tính LAB-03, Tòa B2</em>).</td></tr><tr><td><strong>Số Báo Danh (SBD)</strong></td><td>Mã số dự thi riêng biệt của bạn (Ví dụ: <code>KT1-CSDL-0045</code>).</td></tr><tr><td><strong>Số Ghế</strong></td><td>Vị trí ngồi chính xác của bạn trong phòng thi (Ví dụ: <code>Ghế số 12</code>).</td></tr><tr><td><strong>Hình thức thi</strong></td><td>Trắc nghiệm máy tính (<code>ONLINE_QUIZ</code>), Tự luận giấy (<code>ESSAY</code>), hoặc Kết hợp (<code>HYBRID</code>).</td></tr></table></div>
 <hr class="divider"/>
 <h2>🖨️ 2. Tải & In Giấy Báo Dự Thi</h2>

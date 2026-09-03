@@ -342,10 +342,15 @@
 <hr class="divider"/>
 <h2>🔍 1. Tra Cứu Lịch Thi Cá Nhân (<code>/student/exam-schedule</code>)</h2>
 <p>Sau khi Phòng Khảo thí công bố lịch thi chính thức, bạn có thể dễ dàng kiểm tra toàn bộ thông tin dự thi của mình:</p>
-<h3>Các bước thực hiện:</h3>
-<li value="1">Đăng nhập vào hệ thống bằng tài khoản email sinh viên (Ví dụ: <code>student1@exam.local</code>).</li>
-<li value="2">Nhấp vào menu <strong>"Lịch Thi Của Tôi"</strong> trên thanh điều hướng bên trái hoặc truy cập URL <code>/student/exam-schedule</code>.</li>
-<li value="3">Bảng danh sách các môn thi của bạn trong học kỳ sẽ hiển thị với các thông tin chi tiết:</li>
+<h3>Các bước đăng nhập Localhost dành cho Sinh viên:</h3>
+<li value="1">Mở trình duyệt web truy cập: <strong><code>http://localhost:3000/login</code></strong></li>
+<li value="2">Nhìn bên dưới nút "Đăng nhập với Google", bấm vào dòng chữ: <strong>"Đăng nhập tài khoản nội bộ"</strong>.</li>
+<li value="3">Nhập thông tin tài khoản Sinh viên mẫu:</li>
+<li><strong>Tên đăng nhập</strong>: <code>sv001</code> (hoặc <code>sv002</code>, <code>sv003</code>... đến <code>sv105</code>)</li>
+<li><strong>Mật khẩu</strong>: <code>123456</code></li>
+<li><em>Gợi ý</em>: Sinh viên <code>sv001</code> thuộc Lớp <code>CNTT-K64A</code> (Khoa CNTT) đã có sẵn lịch thi các môn học kỳ.</li>
+<li value="4">Nhấn nút <strong>"Đăng nhập"</strong>. Hệ thống sẽ tự động đưa bạn đến thẳng trang <strong>Lịch Thi Của Tôi (<code>/student/exam-schedule</code>)</strong>.</li>
+<li value="5">Bảng danh sách các môn thi của bạn trong học kỳ sẽ hiển thị với các thông tin chi tiết:</li>
 <div class="table-container"><table><tr><th>Trường thông tin</th><th>Ý nghĩa & Hướng dẫn</th></tr><tr><td><strong>Môn thi</strong></td><td>Tên môn học và Mã môn (Ví dụ: <em>Cơ sở dữ liệu - IT101</em>).</td></tr><tr><td><strong>Ngày thi</strong></td><td>Ngày chính xác diễn ra ca thi (Định dạng: <code>Thứ..., DD/MM/YYYY</code>).</td></tr><tr><td><strong>Khung giờ thi</strong></td><td>Giờ bắt đầu và Giờ kết thúc (Ví dụ: <code>07:30 – 09:30</code>). Bạn cần có mặt trước giờ này 15 phút.</td></tr><tr><td><strong>Phòng thi & Địa điểm</strong></td><td>Số hiệu phòng và Tòa nhà (Ví dụ: <em>Phòng Máy tính LAB-03, Tòa B2</em>).</td></tr><tr><td><strong>Số Báo Danh (SBD)</strong></td><td>Mã số dự thi riêng biệt của bạn (Ví dụ: <code>KT1-CSDL-0045</code>).</td></tr><tr><td><strong>Số Ghế</strong></td><td>Vị trí ngồi chính xác của bạn trong phòng thi (Ví dụ: <code>Ghế số 12</code>).</td></tr><tr><td><strong>Hình thức thi</strong></td><td>Trắc nghiệm máy tính (<code>ONLINE_QUIZ</code>), Tự luận giấy (<code>ESSAY</code>), hoặc Kết hợp (<code>HYBRID</code>).</td></tr></table></div>
 <hr class="divider"/>
 <h2>🖨️ 2. Tải & In Giấy Báo Dự Thi</h2>

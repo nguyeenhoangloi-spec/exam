@@ -4,7 +4,20 @@ Tài liệu này giới thiệu tổng quan giao diện, chức năng và phạm
 
 ---
 
-## 🖥️ 1. Giao Diện & Thanh Điều Hướng Chuyên Biệt
+## 🔑 1. Hướng Dẫn Đăng Nhập Tài Khoản Giảng Viên (Localhost)
+
+Để đăng nhập vào không gian làm việc của Giảng viên trên môi trường nội bộ:
+1. Truy cập: **`http://localhost:3000/login`**
+2. Bấm vào dòng: **"Đăng nhập tài khoản nội bộ"** (bên dưới nút Google).
+3. Nhập thông tin tài khoản Giảng viên mẫu (được nạp sẵn trong hệ thống):
+   - **Tên đăng nhập**: `GV001` (hoặc `GV002`, `GV003`... đến `GV020`)
+   - **Mật khẩu**: Trùng với mã giảng viên (Ví dụ: `GV001` thì mật khẩu là `GV001`)
+   - *Gợi ý*: Tài khoản `GV001` (GS.TS Nguyễn Văn An - Khoa CNTT) hoặc `GV002` (TS. Trần Thị Bình).
+4. Nhấn nút **"Đăng nhập"**. Hệ thống sẽ tự động đưa Thầy/Cô vào trang **Lịch Coi Thi (`/teacher/assignments`)**.
+
+---
+
+## 🖥️ 2. Giao Diện & Thanh Điều Hướng Chuyên Biệt
 
 Sau khi đăng nhập bằng tài khoản Giảng viên, thanh Sidebar bên trái sẽ tự động tối ưu gọn gàng, chỉ hiển thị các chức năng phục vụ giảng dạy và khảo thí:
 

@@ -341,20 +341,19 @@
 <p>Tài liệu này hướng dẫn chi tiết quy trình đăng nhập an toàn và quản trị ma trận phân quyền truy cập người dùng (<strong>Role-Based Access Control - RBAC</strong>) tại trang Quản trị Hệ thống (<code>/admin/access-control</code>).</p>
 <hr class="divider"/>
 <h2>🔐 1. Quy Trình Đăng Nhập & Bảo Mật Phiên Làm Việc</h2>
-<h3>Các bước đăng nhập:</h3>
-<li value="1">Mở trình duyệt web (Google Chrome, Microsoft Edge, Firefox, Safari phiên bản mới nhất).</li>
-<li value="2">Truy cập địa chỉ hệ thống: <code>http://localhost:3000/login</code> (hoặc tên miền chính thức của nhà trường).</li>
-<li value="3">Nhập <strong>Email / Tên đăng nhập</strong> và <strong>Mật khẩu</strong>.</li>
-<li value="4">Nhấn nút <strong>"Đăng nhập"</strong>.</li>
-<li value="5">Hệ thống xác thực thông tin qua NestJS API và cấp phiên làm việc bằng chuỗi khóa an toàn <strong>JWT (JSON Web Token)</strong> được lưu trữ an toàn trong HttpOnly Cookie/LocalStorage.</li>
-<li value="6">Căn cứ theo vai trò của tài khoản, hệ thống sẽ tự động điều hướng:</li>
-<li>Tài khoản <code>ADMIN</code>: Chuyển về Bảng điều khiển Quản trị (<code>/dashboard</code>).</li>
-<li>Tài khoản <code>TEACHER</code>: Chuyển về Không gian Giảng viên (<code>/teacher/assignments</code>).</li>
-<li>Tài khoản <code>STUDENT</code>: Chuyển về Lịch thi Sinh viên (<code>/student/exam-schedule</code>).</li>
+<h3>Các bước đăng nhập Localhost (Môi trường Thử nghiệm):</h3>
+<li value="1">Mở trình duyệt web (Google Chrome, Microsoft Edge, Firefox phiên bản mới nhất).</li>
+<li value="2">Truy cập địa chỉ hệ thống: <strong><code>http://localhost:3000/login</code></strong></li>
+<li value="3">Trên giao diện đăng nhập, bên dưới nút xanh Google, bấm vào dòng: <strong>"Đăng nhập tài khoản nội bộ"</strong> (có icon hình người và mũi tên mở rộng).</li>
+<li value="4">Khung đăng nhập nội bộ mở ra, bạn nhập thông tin tài khoản Quản trị viên:</li>
+<li><strong>Tên đăng nhập (Username)</strong>: <code>admin</code> (hoặc email: <code>admin@school.edu.vn</code>)</li>
+<li><strong>Mật khẩu (Password)</strong>: <code>admin123</code></li>
+<li value="5">Nhấn nút <strong>"Đăng nhập"</strong>.</li>
+<li value="6">Hệ thống xác thực thông tin qua NestJS API và cấp phiên làm việc an toàn bằng <strong>JWT (JSON Web Token)</strong>, sau đó tự động điều hướng bạn vào thẳng <strong>Bảng điều khiển Quản trị (<code>/dashboard</code>)</strong>.</li>
 
         <div class="alert alert-note">
           <div class="alert-header"><span class="alert-icon">ℹ️</span> <strong>Lưu ý quan trọng</strong></div>
-          <div class="alert-body">Nếu tài khoản đang bị khóa tạm thời hoặc hệ thống đang ở chế độ bảo trì (<code>Maintenance Mode</code>), màn hình thông báo sẽ xuất hiện nêu rõ lý do và thời gian dự kiến mở lại.</div>
+          <div class="alert-body">Nếu bạn muốn đăng nhập thử nghiệm bằng vai trò khác để kiểm tra giao diện:<br/>- Giảng viên: Tên đăng nhập <code>GV001</code>, Mật khẩu: <code>GV001</code> (chuyển về <code>/teacher/assignments</code>).<br/>- Sinh viên: Tên đăng nhập <code>sv001</code>, Mật khẩu: <code>123456</code> (chuyển về <code>/student/exam-schedule</code>).</div>
         </div>
       
 <hr class="divider"/>
