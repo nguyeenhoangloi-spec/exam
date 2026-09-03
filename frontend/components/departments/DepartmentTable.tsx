@@ -129,11 +129,11 @@ export function DepartmentTable({
                     <button
                       type="button"
                       onClick={() => onOpenCurriculum(d)}
-                      className="flex items-center gap-1 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 px-2.5 py-1 text-type-body leading-[22px] font-medium transition cursor-pointer shadow-2xs"
+                      className="flex items-center gap-1.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-2.5 py-1 text-type-body leading-[22px] font-medium transition cursor-pointer shadow-2xs"
                       title="Quản lý khung chương trình đào tạo"
                     >
-                      <Sparkles className="h-3.5 w-3.5 text-slate-500" />
-                      <span>Khung CTDT</span>
+                      <BookOpen className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                      <span>Khung đào tạo</span>
                     </button>
 
                     <ActionDropdownPortal>
@@ -161,8 +161,8 @@ export function DepartmentTable({
                                 }}
                                 className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
                               >
-                                <Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                                <span>Khung CTĐT</span>
+                                <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                                <span>Chương trình đào tạo</span>
                               </button>
 
                               <button

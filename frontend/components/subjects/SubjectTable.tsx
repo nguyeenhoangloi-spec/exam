@@ -134,23 +134,23 @@ export function SubjectTable({
                             type="button"
                             onClick={() => {
                               closeMenu();
-                              onEnroll(s);
-                            }}
-                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-blue-600 dark:text-blue-400 text-type-body font-medium transition cursor-pointer select-none"
-                          >
-                            <UserPlus className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                            <span>Gán sinh viên</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              closeMenu();
                               onDetail(s);
                             }}
                             className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
                           >
                             <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                             <span>Xem chi tiết</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              closeMenu();
+                              onEnroll(s);
+                            }}
+                            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-type-body font-medium transition cursor-pointer select-none"
+                          >
+                            <UserPlus className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                            <span>Gán sinh viên</span>
                           </button>
 
                           {isAdmin && (
