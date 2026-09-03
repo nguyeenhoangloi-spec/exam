@@ -278,3 +278,36 @@ Hệ thống được thiết kế và kiểm soát theo các quy chuẩn khắt
   - `npm run audit:ui` (Frontend): Kiểm tra chuẩn hóa 100% token giao diện.
   - `npm run audit:ui:artifact` (Frontend): Kiểm tra CSS bundle sau biên dịch.
   - `npm run test` (Backend): Toàn bộ 29 Test Suites (98 Tests) tự động.
+
+---
+
+## 📖 Bộ Tài Liệu Hướng Dẫn Sử Dụng Chi Tiết (User Manual)
+
+Hệ thống cung cấp cẩm nang hướng dẫn sử dụng chi tiết từng bước, phân chia theo từng vai trò người dùng trong thư mục [docs/user-guide/](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/README.md):
+
+* 🌟 **[Tổng Quan Hệ Thống & Kiến Trúc Nghiệp Vụ](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/00-tong-quan-he-thong.md)**: Chu trình khảo thí 5 giai đoạn, danh sách tài khoản demo.
+* 👑 **[Cẩm Nang Quản Trị Viên & Khảo Thí (Admin)](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/01-huong-dan-admin/01-dang-nhap-va-phan-quyen.md)**:
+  - [01. Đăng nhập, Bảo mật & Ma trận Phân quyền RBAC](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/01-huong-dan-admin/01-dang-nhap-va-phan-quyen.md)
+  - [02. Quản lý Đào tạo & Nhập/Xuất Excel Hàng loạt](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/01-huong-dan-admin/02-quan-ly-dao-tao.md)
+  - [03. Tổ chức Kỳ thi, Phòng thi & Lập Lịch thi Chống trùng](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/01-huong-dan-admin/03-to-chuc-ky-thi.md)
+  - [04. Xếp Phòng thi, Sinh SBD & Phân công Giám thị Tự động](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/01-huong-dan-admin/04-xep-phong-va-phan-cong.md)
+  - [05. Ngân hàng Câu hỏi & Tạo Đề thi Ma trận Tự động](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/01-huong-dan-admin/05-ngan-hang-cau-hoi-de-thi.md)
+  - [06. Trung tâm Tổng báo cáo & Xuất File Excel/CSV Chuẩn](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/01-huong-dan-admin/06-tong-hop-va-xuat-bao-cao.md)
+  - [07. Quản trị Sao lưu Dữ liệu, Nhật ký Hệ thống & Thùng rác](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/01-huong-dan-admin/07-sao-luu-va-nhat-ky.md)
+* 👨‍🏫 **[Cẩm Nang Giảng Viên / Cán Bộ Coi Thi & Chấm Thi](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/02-huong-dan-giang-vien/01-tong-quan-giao-dien.md)**:
+  - [01. Tổng quan Không gian Làm việc Giảng viên](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/02-huong-dan-giang-vien/01-tong-quan-giao-dien.md)
+  - [02. Tra cứu Lịch Coi thi & Nghiệp vụ Đầu giờ Phòng thi](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/02-huong-dan-giang-vien/02-lich-coi-thi-phan-cong.md)
+  - [03. Giám sát Phòng thi Trực tuyến & Xử lý Vi phạm](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/02-huong-dan-giang-vien/03-giam-sat-phong-thi.md)
+  - [04. Chấm thi Tự luận Theo Rubric & Trợ lý AI Hỗ trợ](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/02-huong-dan-giang-vien/04-cham-thi-tu-luan.md)
+  - [05. Tiếp nhận & Giải quyết Đơn Phúc khảo Điểm thi](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/02-huong-dan-giang-vien/05-giai-quyet-phuc-khao.md)
+* 🎓 **[Cẩm Nang Thí Sinh / Sinh Viên](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/03-huong-dan-sinh-vien/01-tra-cuu-lich-thi.md)**:
+  - [01. Tra cứu Lịch thi, Số Báo Danh & Ôn luyện Tự do](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/03-huong-dan-sinh-vien/01-tra-cuu-lich-thi.md)
+  - [02. Hướng dẫn Làm Bài thi Trực tuyến Từ A đến Z](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/03-huong-dan-sinh-vien/02-huong-dan-thi-truc-tuyen.md)
+  - [03. Quy chế Phòng thi & Hướng dẫn Xử lý Sự cố Kỹ thuật](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/03-huong-dan-sinh-vien/03-quy-che-va-chong-gian-lan.md)
+  - [04. Tra cứu Kết quả Thi & Bảng điểm Học kỳ](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/03-huong-dan-sinh-vien/04-xem-ket-qua-va-bang-diem.md)
+  - [05. Hướng dẫn Nộp Đơn Phúc khảo Điểm thi Trực tuyến](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/03-huong-dan-sinh-vien/05-nop-don-phuc-khao.md)
+* 🛠️ **[Sổ Tay Kỹ Thuật IT & Vận Hành Khẩn Cấp](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/04-huong-dan-ky-thuat-it/01-cai-dat-moi-truong.md)**:
+  - [01. Sổ tay Cài đặt & Cấu hình Môi trường Vận hành](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/04-huong-dan-ky-thuat-it/01-cai-dat-moi-truong.md)
+  - [02. Hướng dẫn Triển khai & Vận hành Hệ thống Bằng Docker](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/04-huong-dan-ky-thuat-it/02-van-hanh-docker.md)
+  - [03. Sổ tay Xử lý Sự cố Khẩn cấp Dành cho Kỹ sư IT (Runbook)](file:///c:/Users/loiho/.gemini/antigravity-ide/scratch/exam-management/docs/user-guide/04-huong-dan-ky-thuat-it/03-khac-phuc-su-co.md)
+
